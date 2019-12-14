@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HalloApp</string>
+    <string name="title_home">Home</string>
+    <string name="title_messages">Messages</string>
+    <string name="title_profile">Profile</string>
+    <string name="comment">Comment</string>
+    <string name="message">Message</string>
+    <string name="add_post">Add post</string>
+    <string name="notifications">Notifications</string>
+</resources>
