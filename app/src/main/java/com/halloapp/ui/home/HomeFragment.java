@@ -26,6 +26,8 @@ import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.widget.BadgedDrawable;
 
+import java.util.UUID;
+
 public class HomeFragment extends Fragment {
 
     private PostsAdapter adapter = new PostsAdapter();
@@ -75,8 +77,18 @@ public class HomeFragment extends Fragment {
                 return true;
             }
             case R.id.add_post: {
-                Post post = new Post();
-                post.text = "Current time is " + System.currentTimeMillis();
+                Post post = new Post(
+                        0,
+                        "feed@s.halloapp.net",
+                        "16505553000@s.halloapp.net",
+                        UUID.randomUUID().toString().replaceAll("-", ""),
+                        "",
+                        0,
+                        System.currentTimeMillis(),
+                        Post.POST_STATUS_SENT,
+                        Post.POST_TYPE_TEXT,
+                        "Current time is " + System.currentTimeMillis(),
+                        "");
                 PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
                 // TODO (ds): add post
                 return true;

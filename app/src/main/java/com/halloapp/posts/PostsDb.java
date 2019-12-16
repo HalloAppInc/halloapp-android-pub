@@ -3,6 +3,7 @@ package com.halloapp.posts;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -10,10 +11,13 @@ import android.provider.BaseColumns;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -28,6 +32,7 @@ public class PostsDb {
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
+        void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull Post post);
     }
 
@@ -58,29 +63,36 @@ public class PostsDb {
         }
     }
 
-    private void notifyPostAdded(@NonNull Post post) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostAdded(post);
-            }
-        }
-    }
-
-    private void notifyPostDeleted(@NonNull Post post) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostDeleted(post);
-            }
-        }
-    }
-
     public void addPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_CHAT_JID, post.chatJid);
+            values.put(PostsTable.COLUMN_SENDER_JID, post.senderJid);
+            values.put(PostsTable.COLUMN_POST_ID, post.postId);
+            values.put(PostsTable.COLUMN_POST_GROUP_ID, post.groupId);
+            values.put(PostsTable.COLUMN_POST_REPLY_ID, post.replyRowId);
+            values.put(PostsTable.COLUMN_POST_TIMESTAMP, post.timestamp);
+            values.put(PostsTable.COLUMN_POST_STATUS, post.status);
+            values.put(PostsTable.COLUMN_POST_TYPE, post.type);
             values.put(PostsTable.COLUMN_POST_TEXT, post.text);
+            values.put(PostsTable.COLUMN_POST_MEDIA, post.mediaFile);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-            db.replaceOrThrow(PostsTable.TABLE_NAME, null, values);
-            notifyPostAdded(post);
+            try {
+                db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+                notifyPostAdded(post);
+                Log.i("PostsDb.addPost.added " + post.keyString());
+            } catch (SQLiteConstraintException ex) {
+                Log.w("PostsDb.addPost.duplicate " + post.keyString());
+                notifyPostDuplicate(post);
+            }
+        });
+    }
+
+    public void deletePost(@NonNull Post post) {
+        databaseWriteExecutor.execute(() -> {
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            db.delete(PostsTable.TABLE_NAME, PostsTable._ID + "=?", new String[] {Long.toString(post.rowId)});
+            notifyPostDeleted(post);
         });
     }
 
@@ -93,10 +105,10 @@ public class PostsDb {
                         PostsTable.COLUMN_SENDER_JID,
                         PostsTable.COLUMN_POST_ID,
                         PostsTable.COLUMN_POST_GROUP_ID,
+                        PostsTable.COLUMN_POST_REPLY_ID,
                         PostsTable.COLUMN_POST_TIMESTAMP,
                         PostsTable.COLUMN_POST_STATUS,
                         PostsTable.COLUMN_POST_TYPE,
-                        PostsTable.COLUMN_POST_QUOTE_ID,
                         PostsTable.COLUMN_POST_TEXT,
                         PostsTable.COLUMN_POST_MEDIA },
                 id == null ? null : PostsTable._ID + (after ? " < " : " > ") + id, null,
@@ -105,22 +117,46 @@ public class PostsDb {
                 Integer.toString(count))) {
 
             while (cursor.moveToNext()) {
-                final Post post = new Post();
-                post.rowId = cursor.getLong(0);
-                post.chatJid = cursor.getString(1);
-                post.senderJid = cursor.getString(2);
-                post.postId = cursor.getString(3);
-                post.groupId = cursor.getString(4);
-                post.timestamp = cursor.getLong(5);
-                post.status = cursor.getInt(6);
-                post.type = cursor.getInt(7);
-                post.quotedRowId = cursor.getLong(8);
-                post.text = cursor.getString(9);
-                post.mediaFile = cursor.getString(10);
+                final Post post = new Post(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getLong(5),
+                        cursor.getLong(6),
+                        cursor.getInt(7),
+                        cursor.getInt(8),
+                        cursor.getString(9),
+                        cursor.getString(10));
                 posts.add(post);
             }
         }
         return posts;
+    }
+
+    private void notifyPostAdded(@NonNull Post post) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onPostAdded(post);
+            }
+        }
+    }
+
+    private void notifyPostDuplicate(@NonNull Post post) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onPostDuplicate(post);
+            }
+        }
+    }
+
+    private void notifyPostDeleted(@NonNull Post post) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onPostDeleted(post);
+            }
+        }
     }
 
     private static final class PostsTable implements BaseColumns {
@@ -129,14 +165,16 @@ public class PostsDb {
 
         static final String TABLE_NAME = "posts";
 
+        static final String INDEX_POST_KEY = "post_key";
+
         static final String COLUMN_CHAT_JID = "chat_jid";
         static final String COLUMN_SENDER_JID = "sender_jid";
         static final String COLUMN_POST_ID = "post_id";
         static final String COLUMN_POST_GROUP_ID = "group_id";
+        static final String COLUMN_POST_REPLY_ID = "reply_id";
         static final String COLUMN_POST_TIMESTAMP = "timestamp";
         static final String COLUMN_POST_STATUS = "status";
         static final String COLUMN_POST_TYPE = "type";
-        static final String COLUMN_POST_QUOTE_ID = "quote_id";
         static final String COLUMN_POST_TEXT = "text";
         static final String COLUMN_POST_MEDIA = "media";
     }
@@ -156,21 +194,36 @@ public class PostsDb {
             db.execSQL("DROP TABLE IF EXISTS " + PostsTable.TABLE_NAME);
             db.execSQL("CREATE TABLE " + PostsTable.TABLE_NAME + " ("
                     + PostsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + PostsTable.COLUMN_CHAT_JID + " TEXT,"
-                    + PostsTable.COLUMN_SENDER_JID + " TEXT,"
-                    + PostsTable.COLUMN_POST_ID + " TEXT,"
+                    + PostsTable.COLUMN_CHAT_JID + " TEXT NOT NULL,"
+                    + PostsTable.COLUMN_SENDER_JID + " TEXT NOT NULL,"
+                    + PostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_POST_GROUP_ID + " TEXT,"
+                    + PostsTable.COLUMN_POST_REPLY_ID + " INTEGER,"
                     + PostsTable.COLUMN_POST_TIMESTAMP + " INTEGER,"
                     + PostsTable.COLUMN_POST_STATUS + " INTEGER,"
                     + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
-                    + PostsTable.COLUMN_POST_QUOTE_ID + " INTEGER,"
                     + PostsTable.COLUMN_POST_TEXT + " TEXT,"
                     + PostsTable.COLUMN_POST_MEDIA + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
+            db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
+                    + PostsTable.COLUMN_CHAT_JID + ", "
+                    + PostsTable.COLUMN_SENDER_JID + ", "
+                    + PostsTable.COLUMN_POST_ID
                     + ");");
 
             // testing-only
             for (int i = 0; i < 77; i++) {
                 final ContentValues values = new ContentValues();
+                values.put(PostsTable.COLUMN_CHAT_JID, "feed@s.halloapp.net");
+                values.put(PostsTable.COLUMN_SENDER_JID, "");
+                values.put(PostsTable.COLUMN_POST_ID, UUID.randomUUID().toString().replaceAll("-", ""));
+                values.put(PostsTable.COLUMN_POST_GROUP_ID, "");
+                values.put(PostsTable.COLUMN_POST_REPLY_ID, 0);
+                values.put(PostsTable.COLUMN_POST_TIMESTAMP, System.currentTimeMillis());
+                values.put(PostsTable.COLUMN_POST_STATUS, Post.POST_STATUS_SENT);
+                values.put(PostsTable.COLUMN_POST_TYPE, Post.POST_TYPE_IMAGE);
                 values.put(PostsTable.COLUMN_POST_TEXT, "This is post #" + i + ". I'll make " + (77 - i) + " more posts today and " + (i*2) + " posts tomorrow.");
                 db.replaceOrThrow(PostsTable.TABLE_NAME, null, values);
             }

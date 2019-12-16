@@ -24,19 +24,48 @@ public class Post {
     public static final int POST_STATUS_RECEIVING = 3;
     public static final int POST_STATUS_RECEIVED = 4; // after sent delivery receipt to the server
 
-    public long rowId; // could be 0 when post not inserted yet
-    public String chatJid;
-    public String senderJid;
-    public String postId;
-    public long timestamp;
-    public String groupId; // same for messages sent in a group
+    public final long rowId; // could be 0 when post not inserted yet
+    public final String chatJid;
+    public final String senderJid;
+    public final String postId;
+    public final String groupId; // same for messages sent in a group
+    public final long replyRowId;
+    public final long timestamp;
 
     public @PostStatus int status;
 
-    public @PostType int type;
-    public long quotedRowId;
-    public String text;
+    public final @PostType int type;
+    public final String text;
     public String mediaFile;
+
+    public Post(
+            long rowId,
+            String chatJid,
+            String senderJid,
+            String postId,
+            String groupId,
+            long replyRowId,
+            long timestamp,
+            @PostStatus int status,
+            @PostType int type,
+            String text,
+            String mediaFile) {
+        this.rowId = rowId;
+        this.chatJid = chatJid;
+        this.senderJid = senderJid;
+        this.postId = postId;
+        this.groupId = groupId;
+        this.replyRowId = replyRowId;
+        this.timestamp = timestamp;
+        this.status = status;
+        this.type = type;
+        this.text = text;
+        this.mediaFile = mediaFile;
+    }
+
+    public String keyString() {
+        return "{" + chatJid + ", " + senderJid + ", " + postId + "}";
+    }
 
     @Override
     public boolean equals(Object o) {

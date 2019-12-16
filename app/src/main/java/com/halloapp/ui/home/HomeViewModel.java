@@ -16,19 +16,21 @@ import com.halloapp.posts.PostsDb;
 public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
-    private final DataSource<Long, Post> mostRecentDataSource;
     private final PostsDb postsDb;
 
     private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
         @Override
         public void onPostAdded(@NonNull Post post) {
-            //mostRecentDataSource.invalidate();
             postList.getValue().getDataSource().invalidate();
         }
 
         @Override
+        public void onPostDuplicate(@NonNull Post post) {
+            // do not update model on duplicate post
+        }
+
+        @Override
         public void onPostDeleted(@NonNull Post post) {
-            //mostRecentDataSource.invalidate();
             postList.getValue().getDataSource().invalidate();
         }
     };
@@ -40,8 +42,6 @@ public class HomeViewModel extends AndroidViewModel {
         postsDb.addObserver(postsObserver);
 
         final PostsDataSourceFactory dataSourceFactory = new PostsDataSourceFactory(postsDb);
-        mostRecentDataSource = dataSourceFactory.create();
-
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
     }
