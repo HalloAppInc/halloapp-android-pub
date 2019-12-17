@@ -38,7 +38,7 @@ dependencies {
     implementation "androidx.paging:paging-runtime:2.1.0"
     implementation 'com.google.android.material:material:1.2.0-alpha02'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
-    implementation "org.igniterealtime.smack:smack-android:4.3.0"
+    implementation "org.igniterealtime.smack:smack-android-extensions:4.3.0"
     implementation "org.igniterealtime.smack:smack-tcp:4.3.0"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

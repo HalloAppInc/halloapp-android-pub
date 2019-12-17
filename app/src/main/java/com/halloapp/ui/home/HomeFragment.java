@@ -1,6 +1,7 @@
 package com.halloapp.ui.home;
 
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,9 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,7 +30,7 @@ import java.util.UUID;
 public class HomeFragment extends Fragment {
 
     private PostsAdapter adapter = new PostsAdapter();
-    private HomeViewModel viewModel;
+    private BadgedDrawable notificationDrawable;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -40,7 +39,7 @@ public class HomeFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_home, container, false);
         final RecyclerView postsView = root.findViewById(R.id.posts);
 
-        viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        final HomeViewModel viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> postsView.scrollToPosition(0)));
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -50,8 +49,6 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
-
-    BadgedDrawable notificationDrawable;
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -77,20 +74,21 @@ public class HomeFragment extends Fragment {
                 return true;
             }
             case R.id.add_post: {
-                Post post = new Post(
+                final Post post = new Post(
                         0,
-                        "feed@s.halloapp.net",
                         "16505553000@s.halloapp.net",
+                        "",
                         UUID.randomUUID().toString().replaceAll("-", ""),
                         "",
                         0,
                         System.currentTimeMillis(),
-                        Post.POST_STATUS_SENT,
+                        Post.POST_STATE_SENT,
                         Post.POST_TYPE_TEXT,
-                        "Current time is " + System.currentTimeMillis(),
+                        "This is a comment for my post I made on " +
+                                DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
+                                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
                         "");
                 PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
-                // TODO (ds): add post
                 return true;
             }
             default: {
@@ -159,7 +157,7 @@ public class HomeFragment extends Fragment {
         }
 
         public long getItemId(int position) {
-            return getItem(position).rowId;
+            return Preconditions.checkNotNull(getItem(position)).rowId;
         }
 
         @NonNull

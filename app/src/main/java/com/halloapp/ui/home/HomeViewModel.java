@@ -3,6 +3,7 @@ package com.halloapp.ui.home;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.DataSource;
@@ -21,7 +22,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
         @Override
         public void onPostAdded(@NonNull Post post) {
-            postList.getValue().getDataSource().invalidate();
+            Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate();
         }
 
         @Override
@@ -31,7 +32,13 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onPostDeleted(@NonNull Post post) {
-            postList.getValue().getDataSource().invalidate();
+            Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate();
+        }
+
+        @Override
+        public void onPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, int state) {
+            // TODO (ds): probably not need to invalidate the entire data
+            Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate();
         }
     };
 

@@ -3,6 +3,7 @@ package com.halloapp.posts;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -34,6 +35,7 @@ public class PostsDb {
         void onPostAdded(@NonNull Post post);
         void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull Post post);
+        void onPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, int state);
     }
 
     public static PostsDb getInstance(final @NonNull Context context) {
@@ -72,7 +74,7 @@ public class PostsDb {
             values.put(PostsTable.COLUMN_POST_GROUP_ID, post.groupId);
             values.put(PostsTable.COLUMN_POST_REPLY_ID, post.replyRowId);
             values.put(PostsTable.COLUMN_POST_TIMESTAMP, post.timestamp);
-            values.put(PostsTable.COLUMN_POST_STATUS, post.status);
+            values.put(PostsTable.COLUMN_POST_STATE, post.state);
             values.put(PostsTable.COLUMN_POST_TYPE, post.type);
             values.put(PostsTable.COLUMN_POST_TEXT, post.text);
             values.put(PostsTable.COLUMN_POST_MEDIA, post.mediaFile);
@@ -96,6 +98,25 @@ public class PostsDb {
         });
     }
 
+    public void setPostState(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @Post.PostState int state) {
+        databaseWriteExecutor.execute(() -> {
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_POST_STATE, state);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_CHAT_JID + "=? AND " + PostsTable.COLUMN_SENDER_JID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {chatJid, senderJid, postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                notifyPostStateChanged(chatJid, senderJid, postId, state);
+                Log.i("PostsDb.setPostState.updated");
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setPostState.failed");
+                throw ex;
+            }
+        });
+    }
+
     public List<Post> getPosts(final @Nullable Long id, final int count, final boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -107,7 +128,7 @@ public class PostsDb {
                         PostsTable.COLUMN_POST_GROUP_ID,
                         PostsTable.COLUMN_POST_REPLY_ID,
                         PostsTable.COLUMN_POST_TIMESTAMP,
-                        PostsTable.COLUMN_POST_STATUS,
+                        PostsTable.COLUMN_POST_STATE,
                         PostsTable.COLUMN_POST_TYPE,
                         PostsTable.COLUMN_POST_TEXT,
                         PostsTable.COLUMN_POST_MEDIA },
@@ -159,6 +180,14 @@ public class PostsDb {
         }
     }
 
+    private void notifyPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @Post.PostState int state) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onPostStateChanged(chatJid, senderJid, postId, state);
+            }
+        }
+    }
+
     private static final class PostsTable implements BaseColumns {
 
         private PostsTable() { }
@@ -173,7 +202,7 @@ public class PostsDb {
         static final String COLUMN_POST_GROUP_ID = "group_id";
         static final String COLUMN_POST_REPLY_ID = "reply_id";
         static final String COLUMN_POST_TIMESTAMP = "timestamp";
-        static final String COLUMN_POST_STATUS = "status";
+        static final String COLUMN_POST_STATE = "state";
         static final String COLUMN_POST_TYPE = "type";
         static final String COLUMN_POST_TEXT = "text";
         static final String COLUMN_POST_MEDIA = "media";
@@ -200,7 +229,7 @@ public class PostsDb {
                     + PostsTable.COLUMN_POST_GROUP_ID + " TEXT,"
                     + PostsTable.COLUMN_POST_REPLY_ID + " INTEGER,"
                     + PostsTable.COLUMN_POST_TIMESTAMP + " INTEGER,"
-                    + PostsTable.COLUMN_POST_STATUS + " INTEGER,"
+                    + PostsTable.COLUMN_POST_STATE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TEXT + " TEXT,"
                     + PostsTable.COLUMN_POST_MEDIA + " TEXT"
@@ -222,7 +251,7 @@ public class PostsDb {
                 values.put(PostsTable.COLUMN_POST_GROUP_ID, "");
                 values.put(PostsTable.COLUMN_POST_REPLY_ID, 0);
                 values.put(PostsTable.COLUMN_POST_TIMESTAMP, System.currentTimeMillis());
-                values.put(PostsTable.COLUMN_POST_STATUS, Post.POST_STATUS_SENT);
+                values.put(PostsTable.COLUMN_POST_STATE, Post.POST_STATE_SENT);
                 values.put(PostsTable.COLUMN_POST_TYPE, Post.POST_TYPE_IMAGE);
                 values.put(PostsTable.COLUMN_POST_TEXT, "This is post #" + i + ". I'll make " + (77 - i) + " more posts today and " + (i*2) + " posts tomorrow.");
                 db.replaceOrThrow(PostsTable.TABLE_NAME, null, values);
