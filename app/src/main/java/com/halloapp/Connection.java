@@ -18,10 +18,13 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jivesoftware.smackx.amp.AMPManager;
-import org.jivesoftware.smackx.amp.packet.AMPExtension;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
+import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
+import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.IOException;
@@ -52,8 +55,9 @@ public class Connection {
     }
 
     public interface Observer {
-        void onPostAcked(@NonNull String chatJid, @NonNull String postId);
-        void onPostReceived(@NonNull Post post);
+        void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId);
+        void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId);
+        void onIncomingPostReceived(@NonNull Post post);
     }
 
     private Connection(@NonNull Observer observer) {
@@ -81,16 +85,18 @@ public class Connection {
                 Log.e("connection: cannot create connection", e);
                 return;
             }
+
+            ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
+            if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
+                sdm.addFeature(DeliveryReceipt.NAMESPACE);
+            }
+
             try {
                 connection.connect();
                 connection.login();
-                /*
-                AMPManager.setServiceEnabled(connection, true);
-                boolean ampEnabled = AMPManager.isServiceEnabled(connection);
-                Log.i("ampEnabled:" + ampEnabled);
-                boolean notifySupported = AMPManager.isActionSupported(connection, AMPExtension.Action.notify);
-                Log.i("notifySupported:" + notifySupported);
-                */
+
+                final DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(connection);
+                deliveryReceiptManager.addReceiptReceivedListener(new MessageReceiptsListener());
                 connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
                 connection.addStanzaAcknowledgedListener(new MessageAckListener());
             } catch (XMPPException | SmackException | IOException | InterruptedException e) {
@@ -117,10 +123,29 @@ public class Connection {
                 return;
             }
             try {
-                Message message = new Message(post.chatJid, post.text);
+                final Message message = new Message(post.chatJid, post.text);
                 message.setStanzaId(post.postId);
                 message.addExtension(new DeliveryReceiptRequest());
                 Log.i("connection: sending message " + post.postId + " to " + post.chatJid);
+                connection.sendStanza(message);
+            } catch (XmppStringprepException | SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send message", e);
+            }
+
+        });
+    }
+
+    public void sendDeliveryReceipt(final @NonNull Post post) {
+        handler.post(() -> {
+            if (connection == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+            try {
+                final Message message = new Message(JidCreate.from(post.senderJid));
+                message.setStanzaId(post.postId);
+                message.addExtension(new DeliveryReceipt(post.postId));
+                Log.i("connection: sending delivery receipt " + post.postId + " to " + post.chatJid);
                 connection.sendStanza(message);
             } catch (XmppStringprepException | SmackException.NotConnectedException | InterruptedException e) {
                 Log.e("connection: cannot send message", e);
@@ -135,11 +160,10 @@ public class Connection {
         public void processStanza(final Stanza packet) {
             final Message msg = (Message) packet;
             if (msg.getBodies().size() > 0 && !Message.Type.error.equals(msg.getType())) {
-                //Text message
                 Log.i("connection: got message " + msg);
-                Post post = new Post(0,
-                        packet.getFrom().toString(),
-                        packet.getFrom().toString(),
+                final Post post = new Post(0,
+                        packet.getFrom().asBareJid().toString(),
+                        packet.getFrom().asBareJid().toString(),
                         packet.getStanzaId(),
                         "",
                         0,
@@ -148,7 +172,7 @@ public class Connection {
                         Post.POST_TYPE_IMAGE,
                         msg.getBody(),
                         "");
-                observer.onPostReceived(post);
+                observer.onIncomingPostReceived(post);
             } else {
                 //This must be sth like delivery receipt or Chat state msg
                 Log.i("connection: got message with empty body or error " + msg);
@@ -161,11 +185,20 @@ public class Connection {
         @Override
         public void processStanza(Stanza packet) {
             if (packet instanceof Message) {
-                observer.onPostAcked(packet.getTo().toString(), packet.getStanzaId());
+                observer.onOutgoingPostAcked(packet.getTo().toString(), packet.getStanzaId());
                 Log.i("connection: post " + packet.getStanzaId() + " acked");
             } else {
                 Log.i("connection: stanza " + packet.getStanzaId() + " acked");
             }
+        }
+    }
+
+    class MessageReceiptsListener implements ReceiptReceivedListener {
+
+        @Override
+        public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
+            Log.i("connection: delivered to:" + toJid + ", from:" + fromJid + " , id:" + receiptId);
+            observer.onOutgoingPostDelivered(fromJid.asBareJid().toString(), receiptId);
         }
     }
 }

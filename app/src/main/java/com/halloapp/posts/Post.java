@@ -18,13 +18,14 @@ public class Post {
     public static final int POST_TYPE_IMAGE = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({POST_STATE_UNDEFINED, POST_STATE_SENDING, POST_STATE_SENT, POST_STATE_RECEIVING, POST_STATE_RECEIVED})
+    @IntDef({POST_STATE_UNDEFINED, POST_STATE_SENDING, POST_STATE_SENT, POST_STATE_DELIVERED, POST_STATE_RECEIVING, POST_STATE_RECEIVED})
     public @interface PostState {}
     public static final int POST_STATE_UNDEFINED = 0;
     public static final int POST_STATE_SENDING = 1;
     public static final int POST_STATE_SENT = 2; // after got ack from server
-    public static final int POST_STATE_RECEIVING = 3;
-    public static final int POST_STATE_RECEIVED = 4; // after sent delivery receipt to the server
+    public static final int POST_STATE_DELIVERED = 3; // after got receipt
+    public static final int POST_STATE_RECEIVING = 4;
+    public static final int POST_STATE_RECEIVED = 5; // after sent delivery receipt to the server
 
     public final long rowId; // could be 0 when post not inserted yet
     public final String chatJid;
@@ -92,6 +93,13 @@ public class Post {
         return rowId == post.rowId &&
                 Objects.equals(chatJid, post.chatJid) &&
                 Objects.equals(senderJid, post.senderJid) &&
-                Objects.equals(postId, post.postId);
+                Objects.equals(postId, post.postId) &&
+                Objects.equals(groupId, post.groupId) &&
+                replyRowId == post.replyRowId &&
+                timestamp == post.timestamp &&
+                type == post.type &&
+                Objects.equals(text, post.text) &&
+                Objects.equals(mediaFile, post.mediaFile) &&
+                state == post.state;
     }
 }

@@ -17,6 +17,8 @@ public class MainPostsObserver implements PostsDb.Observer {
     public void onPostAdded(@NonNull Post post) {
         if (post.isOutgoing()) {
             connection.sendPost(post);
+        } else { // if (post.isIncoming())
+            connection.sendDeliveryReceipt(post);
         }
     }
 

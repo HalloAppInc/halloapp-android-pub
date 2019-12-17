@@ -14,12 +14,17 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onPostAcked(@NonNull String chatJid, @NonNull String postId) {
+    public void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId) {
         postsDb.setPostState(chatJid, "", postId, Post.POST_STATE_SENT);
     }
 
     @Override
-    public void onPostReceived(@NonNull Post post) {
+    public void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId) {
+        postsDb.setPostState(chatJid, "", postId, Post.POST_STATE_DELIVERED);
+    }
+
+    @Override
+    public void onIncomingPostReceived(@NonNull Post post) {
         postsDb.addPost(post);
     }
 }
