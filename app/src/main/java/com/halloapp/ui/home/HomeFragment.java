@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -32,6 +33,7 @@ public class HomeFragment extends Fragment {
     private PostsAdapter adapter = new PostsAdapter();
     private BadgedDrawable notificationDrawable;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
@@ -82,7 +84,7 @@ public class HomeFragment extends Fragment {
                         "",
                         0,
                         System.currentTimeMillis(),
-                        Post.POST_STATE_SENT,
+                        Post.POST_STATE_SENDING,
                         Post.POST_TYPE_TEXT,
                         "This is a comment for my post I made on " +
                                 DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
@@ -102,6 +104,7 @@ public class HomeFragment extends Fragment {
         final ImageView avatarView;
         final TextView nameView;
         final TextView timeView;
+        final View progressView;
         final ImageView imageView;
         final TextView captionView;
         final View commentView;
@@ -112,6 +115,7 @@ public class HomeFragment extends Fragment {
             avatarView = v.findViewById(R.id.avatar);
             nameView = v.findViewById(R.id.name);
             timeView = v.findViewById(R.id.time);
+            progressView = v.findViewById(R.id.progress);
             imageView = v.findViewById(R.id.image);
             captionView = v.findViewById(R.id.caption);
             commentView = v.findViewById(R.id.comment);
@@ -122,8 +126,15 @@ public class HomeFragment extends Fragment {
             captionView.setText(post.text);
 
             avatarView.setImageResource(R.drawable.avatar_person); // testing-only
-            nameView.setText("Ded Pihtov"); // testing-only
-            timeView.setText("1h"); // testing-only
+            nameView.setText(post.isOutgoing() ? nameView.getContext().getString(R.string.me) : post.senderJid); // testing-only
+            if (post.state == Post.POST_STATE_SENDING) {
+                progressView.setVisibility(View.VISIBLE);
+                timeView.setVisibility(View.GONE);
+            } else {
+                progressView.setVisibility(View.GONE);
+                timeView.setVisibility(View.VISIBLE);
+                timeView.setText("1h"); // testing-only
+            }
             imageView.setImageResource(post.rowId % 3 == 0 ? R.drawable.test0 : (post.rowId % 3 == 1 ? R.drawable.test1 : R.drawable.test2)); // testing-only
 
             commentView.setOnClickListener(v -> {

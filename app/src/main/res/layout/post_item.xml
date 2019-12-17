@@ -58,6 +58,12 @@
                     android:textColor="?android:attr/textColorSecondary"
                     tools:text="1h"/>
 
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:padding="2dp"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
