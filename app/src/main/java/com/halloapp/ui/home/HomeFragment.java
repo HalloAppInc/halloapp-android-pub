@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.posts.PostsImageLoader;
 import com.halloapp.widget.BadgedDrawable;
 
 import java.util.UUID;
@@ -32,6 +33,19 @@ public class HomeFragment extends Fragment {
 
     private PostsAdapter adapter = new PostsAdapter();
     private BadgedDrawable notificationDrawable;
+    private PostsImageLoader postsImageLoader;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        postsImageLoader = new PostsImageLoader(Preconditions.checkNotNull(getContext()));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        postsImageLoader.destroy();
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,7 +113,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    static class PostViewHolder extends RecyclerView.ViewHolder {
+    private class PostViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView avatarView;
         final TextView nameView;
@@ -135,7 +149,7 @@ public class HomeFragment extends Fragment {
                 timeView.setVisibility(View.VISIBLE);
                 timeView.setText("1h"); // testing-only
             }
-            imageView.setImageResource(post.rowId % 3 == 0 ? R.drawable.test0 : (post.rowId % 3 == 1 ? R.drawable.test1 : R.drawable.test2)); // testing-only
+            postsImageLoader.load(imageView, post);
 
             commentView.setOnClickListener(v -> {
                 // TODO (ds): start comment activity
@@ -146,21 +160,21 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    static class PostsAdapter extends PagedListAdapter<Post, PostViewHolder> {
+    private static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK = new DiffUtil.ItemCallback<Post>() {
 
-        private static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK = new DiffUtil.ItemCallback<Post>() {
+        @Override
+        public boolean areItemsTheSame(Post oldItem, Post newItem) {
+            // The ID property identifies when items are the same.
+            return oldItem.rowId == newItem.rowId;
+        }
 
-            @Override
-            public boolean areItemsTheSame(Post oldItem, Post newItem) {
-                // The ID property identifies when items are the same.
-                return oldItem.rowId == newItem.rowId;
-            }
+        @Override
+        public boolean areContentsTheSame(@NonNull Post oldItem, @NonNull Post newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
 
-            @Override
-            public boolean areContentsTheSame(@NonNull Post oldItem, @NonNull Post newItem) {
-                return oldItem.equals(newItem);
-            }
-        };
+    private class PostsAdapter extends PagedListAdapter<Post, PostViewHolder> {
 
         PostsAdapter() {
             super(DIFF_CALLBACK);
