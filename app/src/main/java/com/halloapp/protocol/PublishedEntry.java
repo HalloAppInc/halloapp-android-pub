@@ -137,7 +137,7 @@ public class PublishedEntry {
         }
 
         Builder url(String url) {
-            this.id = id;
+            this.url = url;
             return this;
         }
 
