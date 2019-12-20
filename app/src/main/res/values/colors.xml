@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#637DA0</color>
-    <color name="colorPrimaryDark">#51688B</color>
-    <color name="colorAccent">#75A5E7</color>
+    <color name="color_primary">#fff6f6f6</color>
+    <color name="color_primary_dark">#757575</color>
+    <color name="color_accent">#75A5E7</color>
+    <color name="window_background">#fff6f6f6</color>
     <color name="post_actions_separator">#20000000</color>
-    <color name="badge_text_color">#ffffff</color>
-    <color name="badge_background_color">#ffff0000</color>
+    <color name="badge_text">#ffffff</color>
+    <color name="badge_background">#ffff0000</color>
+    <color name="tab_active">#414141</color>
+    <color name="tab_inactive">#a1a1a1</color>
 
 </resources>

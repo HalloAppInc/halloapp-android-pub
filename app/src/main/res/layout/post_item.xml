@@ -114,7 +114,7 @@
                     android:background="?selectableItemBackground">
 
                     <TextView
-                        style="@style/PostActionButton"
+                        style="@style/PostButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -131,7 +131,7 @@
                     android:background="?selectableItemBackground">
 
                     <TextView
-                        style="@style/PostActionButton"
+                        style="@style/PostButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

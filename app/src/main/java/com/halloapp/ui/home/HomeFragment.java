@@ -75,8 +75,8 @@ public class HomeFragment extends Fragment {
         notificationDrawable = new BadgedDrawable(
                 Preconditions.checkNotNull(getContext()),
                 notificationsMenuItem.getIcon(),
-                getResources().getColor(R.color.badge_text_color),
-                getResources().getColor(R.color.badge_background_color),
+                getResources().getColor(R.color.badge_text),
+                getResources().getColor(R.color.badge_background),
                 getResources().getDimension(R.dimen.badge));
         notificationDrawable.setBadge("2"); // testing-only
         notificationsMenuItem.setIcon(notificationDrawable);
@@ -105,7 +105,7 @@ public class HomeFragment extends Fragment {
                         "Please read my post I made on " +
                                 DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
                                         DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
-                        "");
+                        null);
                 PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
                 return true;
             }
