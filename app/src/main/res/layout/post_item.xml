@@ -83,7 +83,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/caption"
+                android:id="@+id/text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"

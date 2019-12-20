@@ -9,9 +9,16 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/add_post"
         android:icon="@drawable/ic_add_post"
         android:title="@string/add_post"
-        app:showAsAction="always"/>
+        app:showAsAction="always">
+
+        <menu>
+            <item android:id="@+id/add_post_text"
+                android:title="@string/text_post" />
+            <item android:id="@+id/add_post_image"
+                android:title="@string/image_post" />
+        </menu>
+    </item>
 
 </menu>

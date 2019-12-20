@@ -1,6 +1,7 @@
 package com.halloapp.ui.home;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -90,7 +91,7 @@ public class HomeFragment extends Fragment {
                 // TODO (ds): open notifications
                 return true;
             }
-            case R.id.add_post: {
+            case R.id.add_post_text: {
                 final Post post = new Post(
                         0,
                         Connection.FEED_JID.toString(),
@@ -108,6 +109,24 @@ public class HomeFragment extends Fragment {
                 PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
                 return true;
             }
+            case R.id.add_post_image: {
+                final Post post = new Post(
+                        0,
+                        Connection.FEED_JID.toString(),
+                        "",
+                        UUID.randomUUID().toString().replaceAll("-", ""),
+                        "",
+                        0,
+                        System.currentTimeMillis(),
+                        Post.POST_STATE_OUTGOING_SENDING,
+                        Post.POST_TYPE_IMAGE,
+                        "This is a comment for my post I made on " +
+                                DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
+                                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
+                        "https://cdn.pixabay.com/photo/2019/09/25/15/12/chapel-4503926_640.jpg");
+                PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
+                return true;
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
@@ -121,9 +140,9 @@ public class HomeFragment extends Fragment {
         final TextView timeView;
         final View progressView;
         final ImageView imageView;
-        final TextView captionView;
-        final View commentView;
-        final View messageView;
+        final TextView textView;
+        final View commentButton;
+        final View messageButton;
 
         PostViewHolder(final @NonNull View v) {
             super(v);
@@ -132,13 +151,12 @@ public class HomeFragment extends Fragment {
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
             imageView = v.findViewById(R.id.image);
-            captionView = v.findViewById(R.id.caption);
-            commentView = v.findViewById(R.id.comment);
-            messageView = v.findViewById(R.id.message);
+            textView = v.findViewById(R.id.text);
+            commentButton = v.findViewById(R.id.comment);
+            messageButton = v.findViewById(R.id.message);
         }
 
         void bindTo(final @NonNull Post post) {
-            captionView.setText(post.text);
 
             avatarView.setImageResource(R.drawable.avatar_person); // testing-only
             nameView.setText(post.isOutgoing() ? nameView.getContext().getString(R.string.me) : post.senderJid); // testing-only
@@ -150,12 +168,24 @@ public class HomeFragment extends Fragment {
                 timeView.setVisibility(View.VISIBLE);
                 timeView.setText("1h"); // testing-only
             }
-            postsImageLoader.load(imageView, post);
+            if (post.type == Post.POST_TYPE_TEXT) {
+                imageView.setVisibility(View.GONE);
+            } else {
+                imageView.setVisibility(View.VISIBLE);
+                postsImageLoader.load(imageView, post);
+            }
 
-            commentView.setOnClickListener(v -> {
+            textView.setText(post.text);
+            if (TextUtils.isEmpty(post.text)) {
+                textView.setVisibility(View.GONE);
+            } else {
+                textView.setVisibility(View.VISIBLE);
+            }
+
+            commentButton.setOnClickListener(v -> {
                 // TODO (ds): start comment activity
             });
-            messageView.setOnClickListener(v -> {
+            messageButton.setOnClickListener(v -> {
                 // TODO (ds): start message activity
             });
             nameView.setOnClickListener(v -> PostsDb.getInstance(Preconditions.checkNotNull(getContext())).deletePost(post)); // testing-only
