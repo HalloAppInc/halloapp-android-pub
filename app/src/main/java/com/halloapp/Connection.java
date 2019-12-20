@@ -298,7 +298,7 @@ public class Connection {
                         null,
                         0,
                         System.currentTimeMillis(),
-                        Post.POST_STATE_RECEIVED,
+                        Post.POST_STATE_INCOMING_PREPARING,
                         entry.url == null ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                         entry.text,
                         entry.url
@@ -380,7 +380,7 @@ public class Connection {
                         "",
                         0,
                         System.currentTimeMillis(), /*TODO (ds): use actual time*/
-                        Post.POST_STATE_RECEIVED,
+                        Post.POST_STATE_INCOMING_PREPARING,
                         Post.POST_TYPE_TEXT,
                         msg.getBody(),
                         null);

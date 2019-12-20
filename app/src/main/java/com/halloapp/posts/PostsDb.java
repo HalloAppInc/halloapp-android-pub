@@ -12,6 +12,7 @@ import android.provider.BaseColumns;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.Connection;
 import com.halloapp.util.Log;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class PostsDb {
             values.put(PostsTable.COLUMN_POST_STATE, post.state);
             values.put(PostsTable.COLUMN_POST_TYPE, post.type);
             values.put(PostsTable.COLUMN_POST_TEXT, post.text);
-            values.put(PostsTable.COLUMN_POST_MEDIA, post.mediaFile);
+            values.put(PostsTable.COLUMN_POST_URL, post.url);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
@@ -131,7 +132,7 @@ public class PostsDb {
                         PostsTable.COLUMN_POST_STATE,
                         PostsTable.COLUMN_POST_TYPE,
                         PostsTable.COLUMN_POST_TEXT,
-                        PostsTable.COLUMN_POST_MEDIA },
+                        PostsTable.COLUMN_POST_URL },
                 id == null ? null : PostsTable._ID + (after ? " < " : " > ") + id, null,
                 null, null,
                 PostsTable._ID + " DESC",
@@ -205,7 +206,7 @@ public class PostsDb {
         static final String COLUMN_POST_STATE = "state";
         static final String COLUMN_POST_TYPE = "type";
         static final String COLUMN_POST_TEXT = "text";
-        static final String COLUMN_POST_MEDIA = "media";
+        static final String COLUMN_POST_URL = "url";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
@@ -232,7 +233,7 @@ public class PostsDb {
                     + PostsTable.COLUMN_POST_STATE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TEXT + " TEXT,"
-                    + PostsTable.COLUMN_POST_MEDIA + " TEXT"
+                    + PostsTable.COLUMN_POST_URL + " TEXT"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
@@ -245,14 +246,14 @@ public class PostsDb {
             // testing-only
             for (int i = 0; i < 77; i++) {
                 final ContentValues values = new ContentValues();
-                values.put(PostsTable.COLUMN_CHAT_JID, "feed@s.halloapp.net");
+                values.put(PostsTable.COLUMN_CHAT_JID, Connection.FEED_JID.toString());
                 values.put(PostsTable.COLUMN_SENDER_JID, "");
                 values.put(PostsTable.COLUMN_POST_ID, UUID.randomUUID().toString().replaceAll("-", ""));
                 values.put(PostsTable.COLUMN_POST_GROUP_ID, "");
                 values.put(PostsTable.COLUMN_POST_REPLY_ID, 0);
                 values.put(PostsTable.COLUMN_POST_TIMESTAMP, System.currentTimeMillis());
-                values.put(PostsTable.COLUMN_POST_STATE, Post.POST_STATE_SENT);
-                values.put(PostsTable.COLUMN_POST_TYPE, Post.POST_TYPE_IMAGE);
+                values.put(PostsTable.COLUMN_POST_STATE, Post.POST_STATE_OUTGOING_SENT);
+                values.put(PostsTable.COLUMN_POST_TYPE, Post.POST_TYPE_TEXT);
                 values.put(PostsTable.COLUMN_POST_TEXT, "This is post #" + i + ". I'll make " + (77 - i) + " more posts today and " + (i*2) + " posts tomorrow.");
                 db.replaceOrThrow(PostsTable.TABLE_NAME, null, values);
             }

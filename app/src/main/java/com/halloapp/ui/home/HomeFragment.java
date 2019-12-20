@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.Connection;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
@@ -92,15 +93,15 @@ public class HomeFragment extends Fragment {
             case R.id.add_post: {
                 final Post post = new Post(
                         0,
-                        "16505553000@s.halloapp.net",
+                        Connection.FEED_JID.toString(),
                         "",
                         UUID.randomUUID().toString().replaceAll("-", ""),
                         "",
                         0,
                         System.currentTimeMillis(),
-                        Post.POST_STATE_SENDING,
+                        Post.POST_STATE_OUTGOING_SENDING,
                         Post.POST_TYPE_TEXT,
-                        "This is a comment for my post I made on " +
+                        "Please read my post I made on " +
                                 DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
                                         DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
                         "");
@@ -141,7 +142,7 @@ public class HomeFragment extends Fragment {
 
             avatarView.setImageResource(R.drawable.avatar_person); // testing-only
             nameView.setText(post.isOutgoing() ? nameView.getContext().getString(R.string.me) : post.senderJid); // testing-only
-            if (post.state == Post.POST_STATE_SENDING) {
+            if (post.state < Post.POST_STATE_OUTGOING_SENT) {
                 progressView.setVisibility(View.VISIBLE);
                 timeView.setVisibility(View.GONE);
             } else {
@@ -157,6 +158,7 @@ public class HomeFragment extends Fragment {
             messageView.setOnClickListener(v -> {
                 // TODO (ds): start message activity
             });
+            nameView.setOnClickListener(v -> PostsDb.getInstance(Preconditions.checkNotNull(getContext())).deletePost(post)); // testing-only
         }
     }
 

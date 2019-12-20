@@ -18,14 +18,21 @@ public class Post {
     public static final int POST_TYPE_IMAGE = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({POST_STATE_UNDEFINED, POST_STATE_SENDING, POST_STATE_SENT, POST_STATE_DELIVERED, POST_STATE_RECEIVING, POST_STATE_RECEIVED})
+    @IntDef({POST_STATE_UNDEFINED,
+            POST_STATE_OUTGOING_PREPARING, POST_STATE_OUTGOING_UPLOADING, POST_STATE_OUTGOING_SENDING, POST_STATE_OUTGOING_SENT, POST_STATE_OUTGOING_DELIVERED,
+            POST_STATE_INCOMING_PREPARING, POST_STATE_INCOMING_DOWNLOADING, POST_STATE_INCOMING_RECEIVED})
     public @interface PostState {}
     public static final int POST_STATE_UNDEFINED = 0;
-    public static final int POST_STATE_SENDING = 1;
-    public static final int POST_STATE_SENT = 2; // after got ack from server
-    public static final int POST_STATE_DELIVERED = 3; // after got receipt
-    public static final int POST_STATE_RECEIVING = 4;
-    public static final int POST_STATE_RECEIVED = 5; // after sent delivery receipt to the server
+    // outgoing states:
+    public static final int POST_STATE_OUTGOING_PREPARING = 0x10; // initial state for outgoing posts
+    public static final int POST_STATE_OUTGOING_UPLOADING = 0x11; // for media messages
+    public static final int POST_STATE_OUTGOING_SENDING = 0x12; // after media uploaded
+    public static final int POST_STATE_OUTGOING_SENT = 0x13; // after got ack from server
+    public static final int POST_STATE_OUTGOING_DELIVERED = 0x14; // after got delivery receipt
+    // incoming states:
+    public static final int POST_STATE_INCOMING_PREPARING = 0x20;
+    public static final int POST_STATE_INCOMING_DOWNLOADING = 0x21;
+    public static final int POST_STATE_INCOMING_RECEIVED = 0x22;
 
     public final long rowId; // could be 0 when post not inserted yet
     public final String chatJid;
@@ -39,7 +46,7 @@ public class Post {
 
     public final @PostType int type;
     public final String text;
-    public String mediaFile;
+    public final String url;
 
     public Post(
             long rowId,
@@ -52,7 +59,7 @@ public class Post {
             @PostState int state,
             @PostType int type,
             String text,
-            String mediaFile) {
+            String url) {
         this.rowId = rowId;
         this.chatJid = chatJid;
         this.senderJid = senderJid;
@@ -63,7 +70,7 @@ public class Post {
         this.state = state;
         this.type = type;
         this.text = text;
-        this.mediaFile = mediaFile;
+        this.url = url;
     }
 
     public String keyString() {
@@ -99,7 +106,7 @@ public class Post {
                 timestamp == post.timestamp &&
                 type == post.type &&
                 Objects.equals(text, post.text) &&
-                Objects.equals(mediaFile, post.mediaFile) &&
+                Objects.equals(url, post.url) &&
                 state == post.state;
     }
 }
