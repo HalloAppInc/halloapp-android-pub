@@ -5,6 +5,7 @@ import android.os.HandlerThread;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.posts.Post;
@@ -50,7 +51,9 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 public class Connection {
@@ -93,7 +96,7 @@ public class Connection {
         handler = new Handler(handlerThread.getLooper());
     }
 
-    void connect(final @NonNull String user, final @NonNull String password) {
+    public void connect(final @NonNull String user, final @NonNull String password) {
         handler.post(() -> {
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
@@ -127,7 +130,7 @@ public class Connection {
                 connection.login();
             } catch (XMPPException | SmackException | IOException | InterruptedException e) {
                 Log.e("connection: cannot connect", e);
-                disconnect();
+                disconnectInBackground();
                 return;
             }
 
@@ -136,48 +139,34 @@ public class Connection {
             connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
             connection.addStanzaAcknowledgedListener(new MessageAckListener());
 
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-            Node node = null;
             try {
-                try {
-                    node = pubSubManager.getNode("feed-" + user);
-                } catch (XMPPException.XMPPErrorException e) {
-                    if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
-                        final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
-                        configureForm.setAccessModel(AccessModel.whitelist);
-                        configureForm.setPublishModel(PublishModel.open);
-                        configureForm.setMaxItems(10);
-                        node = pubSubManager.createNode("feed-" + user, configureForm);
-                    }
-                }
-                if (node == null) {
-                    Log.e("connection: cannot create node");
-                    disconnect();
-                    return;
-                }
-                node.addItemEventListener((ItemEventListener<PayloadItem<SimplePayload>>) items -> {
-                    Log.i("connection: got " + items.getItems().size() + " items on my feed, " + items.getPublishedDate());
+                configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
+                    Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
+                    // TODO (ds): refresh
+                });
+                configureNode(getMyFeedNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
+                    Log.i("connection: got " + items.getItems().size() + " items on my feed node, " + items.getPublishedDate());
                     processPublishedItems(items);
                 });
-
-                node.subscribe(connection.getUser().asBareJid().toString());
-
-            } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException e) {
+            } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
                 Log.e("connection: cannot subscribe to pubsub", e);
-                disconnect();
+                disconnectInBackground();
             }
         });
     }
 
-    void disconnect() {
-        handler.post(() -> {
-            if (connection == null) {
-                Log.e("connection: cannot disconnect, no connection");
-                return;
-            }
-            connection.disconnect();
-            connection = null;
-        });
+    public void disconnect() {
+        handler.post(this::disconnectInBackground);
+    }
+
+    @WorkerThread
+    private void disconnectInBackground() {
+        if (connection == null) {
+            Log.e("connection: cannot disconnect, no connection");
+            return;
+        }
+        connection.disconnect();
+        connection = null;
     }
 
     public void syncPubSub(@NonNull final List<Jid> jids) {
@@ -186,127 +175,16 @@ public class Connection {
                 Log.e("connection: sync pubsub: no connection");
                 return;
             }
-            final Jid selfJid = connection.getUser().asEntityBareJid();
-
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-
             try {
-                final Node myFeedNode = pubSubManager.getNode(getMyFeedId());
-                final List<Affiliation> currentAffiliations = myFeedNode.getAffiliationsAsOwner();
-                final List<Jid> currentJids  = new ArrayList<>();
-                for (Affiliation affiliation : currentAffiliations) {
-                    if (affiliation.getJid() == null) {
-                        continue;
-                    }
-                    Jid jid = affiliation.getJid();
-                    if (jid.equals(selfJid)) {
-                        continue;
-                    }
-                    if (affiliation.getAffiliation() == Affiliation.Type.member) {
-                        currentJids.add(jid);
-                    }
-                }
-
-                final List<Jid> removeJids = new ArrayList<>(currentJids);
-                removeJids.removeAll(jids);
-
-                final List<Jid> addJids = new ArrayList<>(jids);
-                addJids.removeAll(currentJids);
-
-                final List<Affiliation> modifyAffiliations = new ArrayList<>();
-                for (Jid jid : removeJids) {
-                    if (!jid.equals(selfJid)) {
-                        modifyAffiliations.add(new Affiliation(JidCreate.bareFrom(jid), Affiliation.Type.none));
-                    }
-                }
-                for (Jid jid : addJids) {
-                    if (!jid.equals(selfJid)) {
-                        modifyAffiliations.add(new Affiliation(JidCreate.bareFrom(jid), Affiliation.Type.member));
-                    }
-                }
-                if (!modifyAffiliations.isEmpty()) {
-                    myFeedNode.modifyAffiliationAsOwner(modifyAffiliations);
-                }
+                syncAffiliations(jids, getMyContactsNodeId());
+                syncAffiliations(jids, getMyFeedNodeId());
+                syncSubscriptions(jids);
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub", e);
             } catch (XmppStringprepException e) {
                 Log.e("connection: sync pubsub: invalid jid", e);
             }
-
-            try {
-                final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
-                final List<String> addFeeds = new ArrayList<>(jids.size());
-                final List<String> subscribedFeeds = new ArrayList<>(jids.size());
-                for (Jid jid : jids) {
-                    addFeeds.add(getFeedId(jid));
-                }
-                for (Subscription subscription : subscriptions) {
-                    if (subscription.getJid() == null) {
-                        continue;
-                    }
-                    final String feed = subscription.getNode();
-                    if (!addFeeds.remove(feed)) {
-                        try {
-                            final Node node = pubSubManager.getNode(feed);
-                            node.unsubscribe(subscription.getJid().toString());
-                        } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
-                            Log.e("connection: sync pubsub: cannot unsubscribe, no such node", e);
-                        }
-                    } else if (!feed.equals(getMyFeedId())){
-                        subscribedFeeds.add(feed);
-                    }
-                }
-                for (String addFeed : addFeeds) {
-                    try {
-                        final Node node = pubSubManager.getNode(addFeed);
-                        node.subscribe(selfJid.asBareJid().toString());
-                    } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
-                        Log.e("connection: sync pubsub: cannot subscribe, no such node", e);
-                        subscribedFeeds.remove(addFeed);
-                    }
-                }
-                for (String subscribedFeed : subscribedFeeds) {
-                    final Node node;
-                    try {
-                        node = pubSubManager.getNode(subscribedFeed);
-                        node.addItemEventListener((ItemEventListener<PayloadItem<SimplePayload>>) items -> {
-                            Log.i("connection: got " + items.getItems().size() + " items on " + subscribedFeed + " feed, " + items.getPublishedDate());
-                            processPublishedItems(items);
-                        });
-                    } catch (PubSubException.NotAPubSubNodeException e) {
-                        Log.e("connection: sync pubsub: cannot listen, no such node", e);
-                    }
-                }
-                
-            } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: sync pubsub", e);
-            }
         });
-    }
-
-    private void processPublishedItems(ItemPublishEvent<PayloadItem<SimplePayload>> items) {
-        Preconditions.checkNotNull(connection);
-        final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
-        for (PublishedEntry entry : entries) {
-            if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
-                observer.onOutgoingPostAcked(FEED_JID.toString(), entry.id);
-            } else {
-                Post post = new Post(0,
-                        FEED_JID.toString(),
-                        JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(entry.user), Domainpart.fromOrThrowUnchecked(XMPP_DOMAIN)).toString(),
-                        entry.id,
-                        null,
-                        0,
-                        System.currentTimeMillis(),
-                        Post.POST_STATE_INCOMING_PREPARING,
-                        entry.url == null ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
-                        entry.text,
-                        entry.url
-                        );
-                observer.onIncomingPostReceived(post);
-            }
-        }
-
     }
 
     public void sendPost(final @NonNull Post post) {
@@ -318,7 +196,7 @@ public class Connection {
             if (post.chatJid.startsWith(FEED_JID.getLocalpartOrThrow().toString())) {
                 final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 try {
-                    final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedId());
+                    final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
                     final SimplePayload payload = new SimplePayload(new PublishedEntry(null, connection.getUser().getLocalpart().toString(), post.text, post.url).toXml());
                     final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                     myFeedNode.publish(item);
@@ -358,12 +236,193 @@ public class Connection {
         });
     }
 
-    private String getMyFeedId() {
-        return getFeedId(Preconditions.checkNotNull(connection).getUser());
+    private class ConfigureNodeException extends PubSubException {
+
+        protected ConfigureNodeException(String nodeId) {
+            super(nodeId);
+        }
     }
 
-    private static String getFeedId(@NonNull Jid jid) {
-        return "feed-" + jid.asEntityBareJidOrThrow().getLocalpart().toString();
+    @WorkerThread
+    private void configureNode(@NonNull String nodeId, @NonNull ItemEventListener listener) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, PubSubException.NotAPubSubNodeException, ConfigureNodeException {
+        Preconditions.checkNotNull(connection);
+        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+        Node node = null;
+        try {
+            node = pubSubManager.getNode(nodeId);
+        } catch (XMPPException.XMPPErrorException e) {
+            if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
+                final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
+                configureForm.setAccessModel(AccessModel.whitelist);
+                configureForm.setPublishModel(PublishModel.open);
+                configureForm.setMaxItems(10);
+                node = pubSubManager.createNode(nodeId, configureForm);
+            }
+        }
+        if (node == null) {
+            Log.e("connection: cannot create node");
+            throw new ConfigureNodeException(nodeId);
+        }
+        node.addItemEventListener(listener);
+
+        node.subscribe(connection.getUser().asBareJid().toString());
+
+    }
+
+    @WorkerThread
+    private void syncAffiliations(@NonNull List<Jid> jids, @NonNull String nodeId) throws XMPPException.XMPPErrorException, PubSubException.NotAPubSubNodeException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, XmppStringprepException {
+        Preconditions.checkNotNull(connection);
+        final Jid selfJid = connection.getUser().asEntityBareJid();
+        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+
+        final Node node = pubSubManager.getNode(nodeId);
+        final List<Affiliation> currentAffiliations = node.getAffiliationsAsOwner();
+        final List<Jid> currentJids  = new ArrayList<>();
+        for (Affiliation affiliation : currentAffiliations) {
+            if (affiliation.getJid() == null) {
+                continue;
+            }
+            Jid jid = affiliation.getJid();
+            if (jid.equals(selfJid)) {
+                continue;
+            }
+            if (affiliation.getAffiliation() == Affiliation.Type.member) {
+                currentJids.add(jid);
+            }
+        }
+
+        final List<Jid> removeJids = new ArrayList<>(currentJids);
+        removeJids.removeAll(jids);
+
+        final List<Jid> addJids = new ArrayList<>(jids);
+        addJids.removeAll(currentJids);
+
+        final List<Affiliation> modifyAffiliations = new ArrayList<>();
+        for (Jid jid : removeJids) {
+            if (!jid.equals(selfJid)) {
+                modifyAffiliations.add(new Affiliation(JidCreate.bareFrom(jid), Affiliation.Type.none));
+            }
+        }
+        for (Jid jid : addJids) {
+            if (!jid.equals(selfJid)) {
+                modifyAffiliations.add(new Affiliation(JidCreate.bareFrom(jid), Affiliation.Type.member));
+            }
+        }
+        if (!modifyAffiliations.isEmpty()) {
+            node.modifyAffiliationAsOwner(modifyAffiliations);
+        }
+    }
+
+    @WorkerThread
+    private void syncSubscriptions(@NonNull List<Jid> jids) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
+        Preconditions.checkNotNull(connection);
+        final Jid selfJid = connection.getUser().asEntityBareJid();
+        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+
+        final List<Affiliation> allAffiliations = pubSubManager.getAffiliations();
+        final Set<String> affiliatedNodes = new HashSet<>();
+        for (Affiliation affiliation : allAffiliations) {
+            affiliatedNodes.add(affiliation.getNode());
+        }
+
+        final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
+        final List<String> addFeeds = new ArrayList<>(jids.size());
+        final List<String> subscribedFeeds = new ArrayList<>(jids.size());
+        for (Jid jid : jids) {
+            final String feedNodeId = getFeedNodeId(jid);
+            if (affiliatedNodes.contains(feedNodeId)) {
+                addFeeds.add(feedNodeId);
+            }
+        }
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getJid() == null) {
+                continue;
+            }
+            final String feed = subscription.getNode();
+            if (!isFeedNodeId(feed)) {
+                continue;
+            }
+            if (!addFeeds.remove(feed)) {
+                try {
+                    final Node node = pubSubManager.getNode(feed);
+                    node.unsubscribe(subscription.getJid().toString());
+                } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
+                    Log.e("connection: sync pubsub: cannot unsubscribe, no such node", e);
+                }
+            } else if (!feed.equals(getMyFeedNodeId())){
+                subscribedFeeds.add(feed);
+            }
+        }
+        for (String addFeed : addFeeds) {
+            try {
+                final Node node = pubSubManager.getNode(addFeed);
+                node.subscribe(selfJid.asBareJid().toString());
+            } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: sync pubsub: cannot subscribe, no such node", e);
+                subscribedFeeds.remove(addFeed);
+            }
+        }
+        for (String subscribedFeed : subscribedFeeds) {
+            final Node node;
+            try {
+                node = pubSubManager.getNode(subscribedFeed);
+                node.addItemEventListener((ItemEventListener<PayloadItem<SimplePayload>>) items -> {
+                    Log.i("connection: got " + items.getItems().size() + " items on " + subscribedFeed + " feed, " + items.getPublishedDate());
+                    processPublishedItems(items);
+                });
+            } catch (PubSubException.NotAPubSubNodeException e) {
+                Log.e("connection: sync pubsub: cannot listen, no such node", e);
+            }
+        }
+    }
+
+    private void processPublishedItems(ItemPublishEvent<PayloadItem<SimplePayload>> items) {
+        Preconditions.checkNotNull(connection);
+        final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
+        for (PublishedEntry entry : entries) {
+            if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
+                observer.onOutgoingPostAcked(FEED_JID.toString(), entry.id);
+            } else {
+                Post post = new Post(0,
+                        FEED_JID.toString(),
+                        JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(entry.user), Domainpart.fromOrThrowUnchecked(XMPP_DOMAIN)).toString(),
+                        entry.id,
+                        null,
+                        0,
+                        System.currentTimeMillis(),
+                        Post.POST_STATE_INCOMING_PREPARING,
+                        entry.url == null ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
+                        entry.text,
+                        entry.url
+                );
+                observer.onIncomingPostReceived(post);
+            }
+        }
+
+    }
+
+    private String getMyFeedNodeId() {
+        return getFeedNodeId(Preconditions.checkNotNull(connection).getUser());
+    }
+
+    private String getMyContactsNodeId() {
+        return getContactsNodeId(Preconditions.checkNotNull(connection).getUser());
+    }
+
+    private static String getFeedNodeId(@NonNull Jid jid) {
+        return getNodeId("feed", jid);
+    }
+
+    private static String getContactsNodeId(@NonNull Jid jid) {
+        return getNodeId("contacts", jid);
+    }
+
+    private static boolean isFeedNodeId(@NonNull String nodeId) {
+        return nodeId.startsWith("feed-");
+    }
+
+    private static String getNodeId(@NonNull String prefix, @NonNull Jid jid) {
+        return prefix + "-" + jid.asEntityBareJidOrThrow().getLocalpart().toString();
     }
 
     class MessagePacketListener implements StanzaListener {
