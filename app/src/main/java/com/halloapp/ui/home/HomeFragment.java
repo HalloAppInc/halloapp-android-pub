@@ -1,8 +1,10 @@
 package com.halloapp.ui.home;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,16 +25,20 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.Connection;
+import com.halloapp.media.SendImageTask;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.PostsImageLoader;
+import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.widget.BadgedDrawable;
 
+import java.io.File;
 import java.util.UUID;
 
 public class HomeFragment extends Fragment {
+
+    private static final int REQUEST_CODE_PICK_IMAGE = 1;
 
     private PostsAdapter adapter = new PostsAdapter();
     private BadgedDrawable notificationDrawable;
@@ -92,6 +99,7 @@ public class HomeFragment extends Fragment {
                 return true;
             }
             case R.id.add_post_text: {
+                /*
                 final Post post = new Post(
                         0,
                         Connection.FEED_JID.toString(),
@@ -105,11 +113,15 @@ public class HomeFragment extends Fragment {
                         "Please read my post I made on " +
                                 DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
                                         DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
+                        null,
                         null);
                 PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
+                */
+                startActivity(new Intent(getContext(), PostComposerActivity.class));
                 return true;
             }
             case R.id.add_post_image: {
+                /*
                 final Post post = new Post(
                         0,
                         Connection.FEED_JID.toString(),
@@ -123,14 +135,50 @@ public class HomeFragment extends Fragment {
                         "This is a comment for my post I made on " +
                                 DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
                                         DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
-                        "https://cdn.pixabay.com/photo/2019/09/25/15/12/chapel-4503926_640.jpg");
+                        "https://cdn.pixabay.com/photo/2019/09/25/15/12/chapel-4503926_640.jpg",
+                        null);
                 PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
+                */
+                pickImage();
                 return true;
             }
             default: {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(final int request, final int result, final Intent data) {
+        super.onActivityResult(request, result, data);
+        switch (request) {
+            case REQUEST_CODE_PICK_IMAGE: {
+                if (result == Activity.RESULT_OK) {
+                    if (data == null) {
+                        Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
+                    } else {
+                        final Uri uri = data.getData();
+                        if (uri != null) {
+                            loadUri(uri);
+                        } else {
+                            Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    private void loadUri(Uri uri) {
+        final File postFile = new File(getContext().getFilesDir(), UUID.randomUUID().toString().replace("-", "") + ".jpg");
+        new SendImageTask(getContext().getApplicationContext(), uri, postFile).execute();
+    }
+
+    private void pickImage() {
+        final Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        pickIntent.setDataAndType(android.provider.MediaStore.Video.Media.INTERNAL_CONTENT_URI, "image/*");
+        startActivityForResult(pickIntent, REQUEST_CODE_PICK_IMAGE);
     }
 
     private class PostViewHolder extends RecyclerView.ViewHolder {
