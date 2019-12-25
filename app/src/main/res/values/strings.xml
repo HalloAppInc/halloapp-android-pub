@@ -10,4 +10,5 @@
     <string name="me">Me</string>
     <string name="image_post">Image post</string>
     <string name="text_post">Text post</string>
+    <string name="bad_image">Unsupported media type</string>
 </resources>

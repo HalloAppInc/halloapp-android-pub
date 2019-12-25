@@ -40,6 +40,12 @@ public class HomeViewModel extends AndroidViewModel {
             // TODO (ds): probably not need to invalidate the entire data
             Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate();
         }
+
+        @Override
+        public void onPostMediaUpdated(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId) {
+            // TODO (ds): probably not need to invalidate the entire data
+            Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate();
+        }
     };
 
     public HomeViewModel(@NonNull Application application) {

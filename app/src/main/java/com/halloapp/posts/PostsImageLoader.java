@@ -13,6 +13,7 @@ import com.halloapp.R;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
@@ -41,7 +42,19 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Post post) {
         final Callable<Bitmap> loader = () -> {
-            return BitmapFactory.decodeResource(context.getResources(), post.rowId % 3 == 0 ? R.drawable.test0 : (post.rowId % 3 == 1 ? R.drawable.test1 : R.drawable.test2));  // testing-only
+            Bitmap bitmap = null;
+            if (post.file != null) {
+                File file = new File(context.getFilesDir(), post.file);
+                if (file.exists()) {
+                    bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                }
+            }
+            if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+                return BitmapFactory.decodeResource(context.getResources(), R.drawable.test0);
+            } else {
+                return bitmap;
+            }
+
         };
         final ViewDataLoader.Displayer<ImageView, Bitmap> displayer = new ViewDataLoader.Displayer<ImageView, Bitmap>() {
 

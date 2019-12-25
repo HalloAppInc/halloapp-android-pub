@@ -20,6 +20,10 @@ public class Log {
         android.util.Log.w(TAG, msg);
     }
 
+    public static void w(String msg, Throwable tr) {
+        android.util.Log.w(TAG, msg, tr);
+    }
+
     public static void e(String msg) {
         android.util.Log.e(TAG, msg);
     }

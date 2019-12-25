@@ -1,5 +1,7 @@
 package com.halloapp.protocol;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Preconditions;
 
@@ -39,9 +41,9 @@ public class PublishedEntry {
         this.url = url;
     }
 
-    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull ItemPublishEvent<PayloadItem<SimplePayload>> items) {
+    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PayloadItem<SimplePayload>> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
-        for (PayloadItem<SimplePayload> item : items.getItems()) {
+        for (PayloadItem<SimplePayload> item : items) {
             final String xml = item.getPayload().toXML(null);
             final XmlPullParser parser = android.util.Xml.newPullParser();
             try {
@@ -80,6 +82,9 @@ public class PublishedEntry {
                 serializer.text(url);
                 serializer.endTag(NAMESPACE, ELEMENT_URL);
             }
+            serializer.startTag(NAMESPACE, "timestamp"); // TODO (ds): remove
+            serializer.text(Long.toString(System.currentTimeMillis() / 1000));
+            serializer.endTag(NAMESPACE, "timestamp");
             serializer.endTag(NAMESPACE, ELEMENT_ENTRY);
             serializer.flush();
         } catch (IOException e) {
@@ -137,6 +142,9 @@ public class PublishedEntry {
         }
 
         Builder url(String url) {
+            if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
+                url = "https://cdn.image4.io/hallo" + url;
+            }
             this.url = url;
             return this;
         }

@@ -2,6 +2,7 @@ package com.halloapp;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,8 +14,10 @@ import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -98,6 +101,12 @@ public class Connection {
 
     public void connect(final @NonNull String user, final @NonNull String password) {
         handler.post(() -> {
+            if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+                Log.i("connection: already connected");
+                return;
+            }
+
+            Log.i("connection: connecting...");
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
 
@@ -114,6 +123,7 @@ public class Connection {
                         .build();
                 connection = new XMPPTCPConnection(config);
                 connection.setReplyTimeout(REPLY_TIMEOUT);
+                connection.addConnectionListener(new HalloConnectionListener());
             } catch (XmppStringprepException e) {
                 Log.e("connection: cannot create connection", e);
                 connection = null;
@@ -146,12 +156,14 @@ public class Connection {
                 });
                 configureNode(getMyFeedNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
                     Log.i("connection: got " + items.getItems().size() + " items on my feed node, " + items.getPublishedDate());
-                    processPublishedItems(items);
+                    processPublishedItems(items.getItems());
                 });
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
                 Log.e("connection: cannot subscribe to pubsub", e);
                 disconnectInBackground();
             }
+
+            Log.i("connection: connected");
         });
     }
 
@@ -363,20 +375,21 @@ public class Connection {
             }
         }
         for (String subscribedFeed : subscribedFeeds) {
-            final Node node;
+            final LeafNode node;
             try {
                 node = pubSubManager.getNode(subscribedFeed);
                 node.addItemEventListener((ItemEventListener<PayloadItem<SimplePayload>>) items -> {
                     Log.i("connection: got " + items.getItems().size() + " items on " + subscribedFeed + " feed, " + items.getPublishedDate());
-                    processPublishedItems(items);
+                    processPublishedItems(items.getItems());
                 });
+                processPublishedItems(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
             } catch (PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub: cannot listen, no such node", e);
             }
         }
     }
 
-    private void processPublishedItems(ItemPublishEvent<PayloadItem<SimplePayload>> items) {
+    private void processPublishedItems(List<PayloadItem<SimplePayload>> items) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
@@ -391,9 +404,10 @@ public class Connection {
                         0,
                         System.currentTimeMillis(),
                         Post.POST_STATE_INCOMING_PREPARING,
-                        entry.url == null ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
+                        TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                         entry.text,
-                        entry.url
+                        entry.url,
+                        null
                 );
                 observer.onIncomingPostReceived(post);
             }
@@ -442,6 +456,7 @@ public class Connection {
                         Post.POST_STATE_INCOMING_PREPARING,
                         Post.POST_TYPE_TEXT,
                         msg.getBody(),
+                        null,
                         null);
                 observer.onIncomingPostReceived(post);
             } else {
@@ -470,6 +485,29 @@ public class Connection {
         public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
             Log.i("connection: delivered to:" + toJid + ", from:" + fromJid + " , id:" + receiptId);
             observer.onOutgoingPostDelivered(fromJid.asBareJid().toString(), receiptId);
+        }
+    }
+
+    class HalloConnectionListener implements ConnectionListener {
+
+        @Override
+        public void connected(XMPPConnection connection) {
+            Log.i("connection: onConnected");
+        }
+
+        @Override
+        public void authenticated(XMPPConnection connection, boolean resumed) {
+            Log.i("connection: onAuthenticated");
+        }
+
+        @Override
+        public void connectionClosed() {
+            Log.i("connection: onClosed");
+        }
+
+        @Override
+        public void connectionClosedOnError(Exception e) {
+            Log.w("connection: onConnectedOnError", e);
         }
     }
 }

@@ -46,7 +46,8 @@ public class Post {
 
     public final @PostType int type;
     public final String text;
-    public final String url;
+    public String url;
+    public String file;
 
     public Post(
             long rowId,
@@ -59,7 +60,8 @@ public class Post {
             @PostState int state,
             @PostType int type,
             String text,
-            String url) {
+            String url,
+            String file) {
         this.rowId = rowId;
         this.chatJid = chatJid;
         this.senderJid = senderJid;
@@ -71,6 +73,7 @@ public class Post {
         this.type = type;
         this.text = text;
         this.url = url;
+        this.file = file;
     }
 
     public String keyString() {
@@ -107,6 +110,7 @@ public class Post {
                 type == post.type &&
                 Objects.equals(text, post.text) &&
                 Objects.equals(url, post.url) &&
+                Objects.equals(file, post.file) &&
                 state == post.state;
     }
 }

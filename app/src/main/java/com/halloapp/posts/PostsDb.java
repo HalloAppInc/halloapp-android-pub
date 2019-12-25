@@ -37,6 +37,7 @@ public class PostsDb {
         void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull Post post);
         void onPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, int state);
+        void onPostMediaUpdated(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId);
     }
 
     public static PostsDb getInstance(final @NonNull Context context) {
@@ -79,6 +80,7 @@ public class PostsDb {
             values.put(PostsTable.COLUMN_POST_TYPE, post.type);
             values.put(PostsTable.COLUMN_POST_TEXT, post.text);
             values.put(PostsTable.COLUMN_POST_URL, post.url);
+            values.put(PostsTable.COLUMN_POST_FILE, post.file);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
@@ -118,6 +120,44 @@ public class PostsDb {
         });
     }
 
+    public void setPostFile(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @NonNull String file) {
+        databaseWriteExecutor.execute(() -> {
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_POST_FILE, file);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_CHAT_JID + "=? AND " + PostsTable.COLUMN_SENDER_JID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {chatJid, senderJid, postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                notifyPostMediaUpdated(chatJid, senderJid, postId);
+                Log.i("PostsDb.setPostState.updated");
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setPostState.failed");
+                throw ex;
+            }
+        });
+    }
+
+    public void setPostUrl(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @NonNull String url) {
+        databaseWriteExecutor.execute(() -> {
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_POST_URL, url);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_CHAT_JID + "=? AND " + PostsTable.COLUMN_SENDER_JID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {chatJid, senderJid, postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                notifyPostMediaUpdated(chatJid, senderJid, postId);
+                Log.i("PostsDb.setPostState.updated");
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setPostState.failed");
+                throw ex;
+            }
+        });
+    }
+
     public List<Post> getPosts(final @Nullable Long id, final int count, final boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -132,7 +172,9 @@ public class PostsDb {
                         PostsTable.COLUMN_POST_STATE,
                         PostsTable.COLUMN_POST_TYPE,
                         PostsTable.COLUMN_POST_TEXT,
-                        PostsTable.COLUMN_POST_URL },
+                        PostsTable.COLUMN_POST_URL,
+                        PostsTable.COLUMN_POST_FILE
+                },
                 id == null ? null : PostsTable._ID + (after ? " < " : " > ") + id, null,
                 null, null,
                 PostsTable._ID + " DESC",
@@ -150,7 +192,8 @@ public class PostsDb {
                         cursor.getInt(7),
                         cursor.getInt(8),
                         cursor.getString(9),
-                        cursor.getString(10));
+                        cursor.getString(10),
+                        cursor.getString(11));
                 posts.add(post);
             }
         }
@@ -189,6 +232,14 @@ public class PostsDb {
         }
     }
 
+    private void notifyPostMediaUpdated(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onPostMediaUpdated(chatJid, senderJid, postId);
+            }
+        }
+    }
+
     private static final class PostsTable implements BaseColumns {
 
         private PostsTable() { }
@@ -207,6 +258,7 @@ public class PostsDb {
         static final String COLUMN_POST_TYPE = "type";
         static final String COLUMN_POST_TEXT = "text";
         static final String COLUMN_POST_URL = "url";
+        static final String COLUMN_POST_FILE = "file";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
@@ -233,7 +285,8 @@ public class PostsDb {
                     + PostsTable.COLUMN_POST_STATE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TEXT + " TEXT,"
-                    + PostsTable.COLUMN_POST_URL + " TEXT"
+                    + PostsTable.COLUMN_POST_URL + " TEXT,"
+                    + PostsTable.COLUMN_POST_FILE + " TEXT"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
