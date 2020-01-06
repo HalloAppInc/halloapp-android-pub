@@ -41,6 +41,8 @@ public class PostComposerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_composer);
 
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         final EditText editText = findViewById(R.id.entry);
 
         final View sendButton = findViewById(R.id.send);
@@ -85,6 +87,12 @@ public class PostComposerActivity extends AppCompatActivity {
         } else {
             editText.requestFocus();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     static class LoadPostUriTask extends AsyncTask<Void, Void, Bitmap> {
