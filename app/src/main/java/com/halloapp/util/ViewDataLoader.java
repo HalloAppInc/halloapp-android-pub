@@ -40,6 +40,7 @@ public class ViewDataLoader<V extends View, R, K> {
             final R result = cache.get(key);
             if (result != null) {
                 displayer.showResult(view, result);
+                return;
             }
         }
 
