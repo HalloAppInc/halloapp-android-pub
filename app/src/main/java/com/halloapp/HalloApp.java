@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.crashlytics.android.Crashlytics;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
@@ -27,6 +28,8 @@ public class HalloApp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.i("halloapp: onCreate");
+
+        Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
         SmackConfiguration.DEBUG = BuildConfig.DEBUG;
 
@@ -51,10 +54,10 @@ public class HalloApp extends Application {
         });
 
         List<Jid> contacts = Arrays.asList(
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("13477521636"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // duygu
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14703381473"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // murali
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14154121848"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // michael
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14088922686"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // tony
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("13477521636"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // duygu
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14703381473"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // murali
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14154121848"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // michael
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14088922686"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // tony
                 JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502752675"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)),
                 JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502813677"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN))
         );
@@ -65,8 +68,10 @@ public class HalloApp extends Application {
     private void connect(@NonNull Connection connection) {
         if (Build.MODEL.contains("Android SDK")) {
             connection.connect("16502752675", "CdnEMOAcO4xSoOsOhsDs4ChGeV2weCHK");
+            Crashlytics.setString("user", "16502752675");
         } else {
             connection.connect("16502813677", "_SBgWL2sz6GRbBa12AdbUJ1IuO4q1o2j");
+            Crashlytics.setString("user", "16502813677");
         }
     }
 

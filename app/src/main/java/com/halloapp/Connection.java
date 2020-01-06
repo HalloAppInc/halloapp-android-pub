@@ -19,6 +19,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.debugger.SmackDebugger;
+import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
@@ -26,6 +28,7 @@ import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.pubsub.AccessModel;
 import org.jivesoftware.smackx.pubsub.Affiliation;
@@ -119,6 +122,22 @@ public class Connection {
                         .setSendPresence(true)
                         .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
                         .setPort(PORT)
+                        .setDebuggerFactory(new SmackDebuggerFactory() {
+                            @Override
+                            public SmackDebugger create(XMPPConnection connection) throws IllegalArgumentException {
+                                return new AndroidDebugger(connection) {
+                                    @Override
+                                    protected void log(String logMessage) {
+                                        Log.d("connection: " + logMessage);
+                                    }
+
+                                    @Override
+                                    protected void log(String logMessage, Throwable throwable) {
+                                        Log.w("connection: " + logMessage, throwable);
+                                    }
+                                };
+                            }
+                        })
                         .build();
                 connection = new XMPPTCPConnection(config);
                 connection.setReplyTimeout(REPLY_TIMEOUT);
