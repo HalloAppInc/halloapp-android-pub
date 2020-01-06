@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.exifinterface.media.ExifInterface;
 
 import java.io.File;
@@ -56,11 +57,14 @@ public class MediaUtils {
         return matrix;
     }
 
-    public static Bitmap decode(@NonNull File file, int maxDimension) throws IOException {
+    public static @Nullable Bitmap decode(@NonNull File file, int maxDimension) throws IOException {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         int dimension = Math.max(options.outWidth, options.outHeight);
+        if (dimension <= 0) {
+            return null;
+        }
         options.inSampleSize = 1;
         while (dimension > maxDimension) {
             dimension /= 2;
@@ -68,14 +72,20 @@ public class MediaUtils {
         }
         options.inJustDecodeBounds = false;
         final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+            return null;
+        }
         final Matrix matrix = fromOrientation(getExifOrientation(file));
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
-    public static void transcode(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {
+    public static @Nullable Bitmap transcode(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {
         final Bitmap bitmap = decode(fileFrom, maxDimension);
-        try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, streamTo);
+        if (bitmap != null) {
+            try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, streamTo);
+            }
         }
+        return bitmap;
     }
 }

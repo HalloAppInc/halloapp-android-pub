@@ -1,28 +1,23 @@
 package com.halloapp.util;
 
-import android.content.ContentResolver;
-import android.content.Context;
+import android.app.Application;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class LoadUriTask extends AsyncTask<Void, Void, File> {
 
     private final Uri uri;
     private final File file;
-    protected final Context context;
+    protected final Application context;
 
-    public LoadUriTask(final @NonNull Context context, final @NonNull Uri uri, final @NonNull File file) {
+    public LoadUriTask(final @NonNull Application context, final @NonNull Uri uri, final @NonNull File file) {
         this.uri = uri;
         this.file = file;
-        this.context = context.getApplicationContext();
+        this.context = context;
     }
 
     @Override

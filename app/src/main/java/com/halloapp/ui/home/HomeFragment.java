@@ -25,16 +25,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.media.SendImageTask;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.PostsImageLoader;
 import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.widget.BadgedDrawable;
-
-import java.io.File;
-import java.util.UUID;
 
 public class HomeFragment extends Fragment {
 
@@ -99,46 +95,10 @@ public class HomeFragment extends Fragment {
                 return true;
             }
             case R.id.add_post_text: {
-                /*
-                final Post post = new Post(
-                        0,
-                        Connection.FEED_JID.toString(),
-                        "",
-                        UUID.randomUUID().toString().replaceAll("-", ""),
-                        "",
-                        0,
-                        System.currentTimeMillis(),
-                        Post.POST_STATE_OUTGOING_SENDING,
-                        Post.POST_TYPE_TEXT,
-                        "Please read my post I made on " +
-                                DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
-                                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
-                        null,
-                        null);
-                PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
-                */
                 startActivity(new Intent(getContext(), PostComposerActivity.class));
                 return true;
             }
             case R.id.add_post_image: {
-                /*
-                final Post post = new Post(
-                        0,
-                        Connection.FEED_JID.toString(),
-                        "",
-                        UUID.randomUUID().toString().replaceAll("-", ""),
-                        "",
-                        0,
-                        System.currentTimeMillis(),
-                        Post.POST_STATE_OUTGOING_SENDING,
-                        Post.POST_TYPE_IMAGE,
-                        "This is a comment for my post I made on " +
-                                DateUtils.formatDateTime(getContext(), System.currentTimeMillis(),
-                                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_ALL),
-                        "https://cdn.pixabay.com/photo/2019/09/25/15/12/chapel-4503926_640.jpg",
-                        null);
-                PostsDb.getInstance(Preconditions.checkNotNull(getContext())).addPost(post);
-                */
                 pickImage();
                 return true;
             }
@@ -159,7 +119,9 @@ public class HomeFragment extends Fragment {
                     } else {
                         final Uri uri = data.getData();
                         if (uri != null) {
-                            loadUri(uri);
+                            final Intent intent = new Intent(getContext(), PostComposerActivity.class);
+                            intent.setData(uri);
+                            startActivity(intent);
                         } else {
                             Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
                         }
@@ -168,11 +130,6 @@ public class HomeFragment extends Fragment {
                 break;
             }
         }
-    }
-
-    private void loadUri(Uri uri) {
-        final File postFile = new File(getContext().getFilesDir(), UUID.randomUUID().toString().replace("-", "") + ".jpg");
-        new SendImageTask(getContext().getApplicationContext(), uri, postFile).execute();
     }
 
     private void pickImage() {
