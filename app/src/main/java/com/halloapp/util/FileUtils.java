@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Closeable;
@@ -20,29 +21,29 @@ import java.security.NoSuchAlgorithmException;
 public class FileUtils {
 
 
-    public static byte[] createFileMD5(File file) throws IOException {
-        InputStream fis =  new FileInputStream(file);
-        byte[] buffer = new byte[1024];
-        MessageDigest complete = null;
+    public static byte[] createFileMD5(@NonNull File file) throws IOException {
+        final InputStream fileInputStream =  new FileInputStream(file);
+        final byte[] buffer = new byte[1024];
+        final MessageDigest messageDigest;
         try {
-            complete = MessageDigest.getInstance("MD5");
+            messageDigest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             Log.e("FileUtils: no MD5");
             throw new FileNotFoundException("no MD5");
         }
         int numRead;
         do {
-            numRead = fis.read(buffer);
+            numRead = fileInputStream.read(buffer);
             if (numRead > 0) {
-                complete.update(buffer, 0, numRead);
+                messageDigest.update(buffer, 0, numRead);
             }
         }
         while (numRead != -1);
-        fis.close();
-        return complete.digest();
+        fileInputStream.close();
+        return messageDigest.digest();
     }
 
-    public static String getFileMD5(File file) throws IOException {
+    public static String getFileMD5(@NonNull File file) throws IOException {
         final byte [] md5 = createFileMD5(file);
         final StringBuilder result = new StringBuilder();
         for (byte value : md5) {
@@ -51,8 +52,8 @@ public class FileUtils {
         return result.toString();
     }
 
-    public static void uriToFile(Context context, Uri uri, File file) {
-        ContentResolver cr = context.getContentResolver();
+    public static void uriToFile(@NonNull Context context, @NonNull Uri uri, @NonNull File file) {
+        final ContentResolver cr = context.getContentResolver();
         if (cr != null) {
             InputStream inputStream = null;
             OutputStream outputStream = null;

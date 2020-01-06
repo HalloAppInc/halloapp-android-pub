@@ -22,9 +22,9 @@ import java.util.UUID;
 
 public class SendImageTask extends LoadUriTask {
 
-    final File imageFile;
+    private final File imageFile;
 
-    public SendImageTask(Context context, final @NonNull Uri uri, final @NonNull File file) {
+    public SendImageTask(final @NonNull Context context, final @NonNull Uri uri, final @NonNull File file) {
         super(context, uri, new File(context.getCacheDir(), "tmp.jpg"));
         imageFile = file;
     }

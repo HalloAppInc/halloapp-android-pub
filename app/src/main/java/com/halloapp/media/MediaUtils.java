@@ -3,9 +3,6 @@ package com.halloapp.media;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.exifinterface.media.ExifInterface;
@@ -72,8 +69,6 @@ public class MediaUtils {
         options.inJustDecodeBounds = false;
         final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         final Matrix matrix = fromOrientation(getExifOrientation(file));
-        //final RectF rect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        //matrix.mapRect(rect);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 

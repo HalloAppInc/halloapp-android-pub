@@ -15,11 +15,11 @@ import java.io.OutputStream;
 
 public class LoadUriTask extends AsyncTask<Void, Void, File> {
 
-    final Uri uri;
-    final File file;
-    protected Context context;
+    private final Uri uri;
+    private final File file;
+    protected final Context context;
 
-    public LoadUriTask(Context context, final @NonNull Uri uri, final @NonNull File file) {
+    public LoadUriTask(final @NonNull Context context, final @NonNull Uri uri, final @NonNull File file) {
         this.uri = uri;
         this.file = file;
         this.context = context.getApplicationContext();

@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
-import com.halloapp.HalloApp;
-import com.halloapp.R;
 import com.halloapp.util.FileUtils;
 
 import java.io.BufferedOutputStream;

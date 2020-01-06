@@ -1,6 +1,5 @@
 package com.halloapp;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 

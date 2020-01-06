@@ -1,19 +1,14 @@
 package com.halloapp;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.halloapp.media.Downloader;
-import com.halloapp.media.Uploader;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
@@ -23,8 +18,6 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
 import org.jxmpp.jid.parts.Localpart;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 

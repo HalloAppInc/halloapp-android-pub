@@ -7,7 +7,7 @@ import com.halloapp.posts.PostsDb;
 
 public class ConnectionObserver implements Connection.Observer {
 
-    final PostsDb postsDb;
+    private final PostsDb postsDb;
 
     ConnectionObserver(PostsDb postsDb) {
         this.postsDb = postsDb;

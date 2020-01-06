@@ -23,8 +23,8 @@ public class ViewDataLoader<V extends View, R, K> {
     private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public interface Displayer<V, R> {
-        void showResult(V view, R result);
-        void showLoading(V view);
+        void showResult(@NonNull V view, @Nullable R result);
+        void showLoading(@NonNull V view);
     }
 
     @MainThread
@@ -46,7 +46,7 @@ public class ViewDataLoader<V extends View, R, K> {
         displayer.showLoading(view);
         final Future future = executor.submit(() -> {
             try {
-                R result = loader.call();
+                final R result = loader.call();
                 if (result != null && cache != null) {
                     cache.put(key, result);
                 }
@@ -64,7 +64,7 @@ public class ViewDataLoader<V extends View, R, K> {
         executor.shutdownNow();
     }
 
-    private void executeShowResult(V view, Displayer<V, R> displayer, K key, R result) {
+    private void executeShowResult(@NonNull V view, @NonNull Displayer<V, R> displayer, @NonNull K key, @Nullable R result) {
         if (view.getTag() == key) {
             mainHandler.post(() -> {
                 if (view.getTag() == key) {

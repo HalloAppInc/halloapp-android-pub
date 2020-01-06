@@ -59,12 +59,12 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
         final ViewDataLoader.Displayer<ImageView, Bitmap> displayer = new ViewDataLoader.Displayer<ImageView, Bitmap>() {
 
             @Override
-            public void showResult(ImageView view, Bitmap result) {
+            public void showResult(@NonNull ImageView view, Bitmap result) {
                 view.setImageBitmap(result);
             }
 
             @Override
-            public void showLoading(ImageView view) {
+            public void showLoading(@NonNull ImageView view) {
                 view.setImageDrawable(null);
             }
         };
