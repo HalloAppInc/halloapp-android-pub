@@ -76,7 +76,15 @@ public class MediaUtils {
             return null;
         }
         final Matrix matrix = fromOrientation(getExifOrientation(file));
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        if (matrix.isIdentity()) {
+            return bitmap;
+        } else {
+            final Bitmap transformedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            if (transformedBitmap != bitmap) {
+                bitmap.recycle();
+            }
+            return transformedBitmap;
+        }
     }
 
     public static @Nullable Bitmap transcode(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {
