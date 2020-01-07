@@ -12,7 +12,6 @@ import android.provider.BaseColumns;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.Connection;
 import com.halloapp.util.Log;
 
 import java.util.ArrayList;
@@ -85,9 +84,9 @@ public class PostsDb {
             try {
                 db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 notifyPostAdded(post);
-                Log.i("PostsDb.addPost.added " + post.keyString());
+                Log.i("PostsDb.addPost: added " + post.keyString());
             } catch (SQLiteConstraintException ex) {
-                Log.w("PostsDb.addPost.duplicate " + post.keyString());
+                Log.w("PostsDb.addPost: duplicate " + post.keyString());
                 notifyPostDuplicate(post);
             }
         });
@@ -103,6 +102,7 @@ public class PostsDb {
 
     public void setPostState(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @Post.PostState int state) {
         databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setPostFile: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " state=" + state);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_POST_STATE, state);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -112,9 +112,8 @@ public class PostsDb {
                         new String [] {chatJid, senderJid, postId},
                         SQLiteDatabase.CONFLICT_ABORT);
                 notifyPostStateChanged(chatJid, senderJid, postId, state);
-                Log.i("PostsDb.setPostState.updated");
             } catch (SQLException ex) {
-                Log.e("PostsDb.setPostState.failed");
+                Log.e("PostsDb.setPostState: failed");
                 throw ex;
             }
         });
@@ -122,6 +121,7 @@ public class PostsDb {
 
     public void setPostFile(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @NonNull String file) {
         databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setPostFile: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " file=" + file);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_POST_FILE, file);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -131,9 +131,8 @@ public class PostsDb {
                         new String [] {chatJid, senderJid, postId},
                         SQLiteDatabase.CONFLICT_ABORT);
                 notifyPostMediaUpdated(chatJid, senderJid, postId);
-                Log.i("PostsDb.setPostState.updated");
             } catch (SQLException ex) {
-                Log.e("PostsDb.setPostState.failed");
+                Log.e("PostsDb.setPostFile: failed", ex);
                 throw ex;
             }
         });
@@ -141,6 +140,7 @@ public class PostsDb {
 
     public void setPostUrl(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @NonNull String url) {
         databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setPostUrl: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " url=" + url);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_POST_URL, url);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -150,9 +150,8 @@ public class PostsDb {
                         new String [] {chatJid, senderJid, postId},
                         SQLiteDatabase.CONFLICT_ABORT);
                 notifyPostMediaUpdated(chatJid, senderJid, postId);
-                Log.i("PostsDb.setPostState.updated");
             } catch (SQLException ex) {
-                Log.e("PostsDb.setPostState.failed");
+                Log.e("PostsDb.setPostState: failed", ex);
                 throw ex;
             }
         });
@@ -197,6 +196,7 @@ public class PostsDb {
                 posts.add(post);
             }
         }
+        Log.i("PostsDb.getPosts: start=" + id + " count=" + count + " after=" + after + " posts.size=" + posts.size());
         return posts;
     }
 
@@ -295,21 +295,6 @@ public class PostsDb {
                     + PostsTable.COLUMN_SENDER_JID + ", "
                     + PostsTable.COLUMN_POST_ID
                     + ");");
-
-            // testing-only
-            for (int i = 0; i < 77; i++) {
-                final ContentValues values = new ContentValues();
-                values.put(PostsTable.COLUMN_CHAT_JID, Connection.FEED_JID.toString());
-                values.put(PostsTable.COLUMN_SENDER_JID, "");
-                values.put(PostsTable.COLUMN_POST_ID, UUID.randomUUID().toString().replaceAll("-", ""));
-                values.put(PostsTable.COLUMN_POST_GROUP_ID, "");
-                values.put(PostsTable.COLUMN_POST_REPLY_ID, 0);
-                values.put(PostsTable.COLUMN_POST_TIMESTAMP, System.currentTimeMillis());
-                values.put(PostsTable.COLUMN_POST_STATE, Post.POST_STATE_OUTGOING_SENT);
-                values.put(PostsTable.COLUMN_POST_TYPE, Post.POST_TYPE_TEXT);
-                values.put(PostsTable.COLUMN_POST_TEXT, "This is post #" + i + ". I'll make " + (77 - i) + " more posts today and " + (i*2) + " posts tomorrow.");
-                db.replaceOrThrow(PostsTable.TABLE_NAME, null, values);
-            }
         }
 
         @Override
