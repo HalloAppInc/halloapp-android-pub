@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,26 +32,43 @@ import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.PostsImageLoader;
 import com.halloapp.ui.PostComposerActivity;
+import com.halloapp.util.Log;
+import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.BadgedDrawable;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 1;
 
-    private PostsAdapter adapter = new PostsAdapter();
+    private final PostsAdapter adapter = new PostsAdapter();
     private BadgedDrawable notificationDrawable;
     private PostsImageLoader postsImageLoader;
+
+    private long refreshTimestampsTime = Long.MAX_VALUE;
+    private final Runnable refreshTimestampsRunnable = () -> {
+        Log.v("HomeFragment: refreshing timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(System.currentTimeMillis())));
+        refreshTimestampsTime = Long.MAX_VALUE;
+        adapter.notifyDataSetChanged();
+    };
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("HomeFragment: onCreate");
         postsImageLoader = new PostsImageLoader(Preconditions.checkNotNull(getContext()));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("HomeFragment: onDestroy");
         postsImageLoader.destroy();
+        mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
 
     @Override
@@ -91,6 +110,7 @@ public class HomeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.notifications: {
                 notificationDrawable.setBadge("3"); // testing-only
+                adapter.notifyDataSetChanged();
                 // TODO (ds): open notifications
                 return true;
             }
@@ -138,6 +158,16 @@ public class HomeFragment extends Fragment {
         startActivityForResult(pickIntent, REQUEST_CODE_PICK_IMAGE);
     }
 
+    private void scheduleTimestampRefresh(long postTimestamp) {
+        long refreshTime = TimeUtils.getRefreshTime(postTimestamp);
+        if (refreshTime < refreshTimestampsTime) {
+            refreshTimestampsTime = refreshTime;
+            Log.v("HomeFragment: will refresh timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(refreshTimestampsTime)));
+            mainHandler.removeCallbacks(refreshTimestampsRunnable);
+            mainHandler.postDelayed(refreshTimestampsRunnable, refreshTimestampsTime - System.currentTimeMillis());
+        }
+    }
+
     private class PostViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView avatarView;
@@ -171,7 +201,8 @@ public class HomeFragment extends Fragment {
             } else {
                 progressView.setVisibility(View.GONE);
                 timeView.setVisibility(View.VISIBLE);
-                timeView.setText("1h"); // testing-only
+                timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
+                scheduleTimestampRefresh(post.timestamp);
             }
             if (post.type == Post.POST_TYPE_TEXT) {
                 imageView.setVisibility(View.GONE);

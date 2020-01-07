@@ -11,4 +11,17 @@
     <string name="image_post">Image post</string>
     <string name="text_post">Text post</string>
     <string name="bad_image">Unsupported media type</string>
+    <string name="time_diff_now">now</string>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">%dm</item>
+        <item quantity="other">%dm</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">%dh</item>
+        <item quantity="other">%dh</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">%dd</item>
+        <item quantity="other">%dd</item>
+    </plurals>
 </resources>
