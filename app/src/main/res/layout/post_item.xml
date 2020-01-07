@@ -33,7 +33,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="1"
-                    tools:background="@color/colorAccent"/>
+                    tools:background="@color/color_primary_dark"/>
 
                 <TextView
                     android:id="@+id/name"
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
-                    tools:src="@drawable/test0"/>
+                    tools:src="@mipmap/ic_launcher"/>
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -89,7 +89,7 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:paddingTop="2dp"
-                android:paddingBottom="6dp"
+                android:paddingBottom="8dp"
                 android:textAppearance="?textAppearanceListItemSmall"
                 android:textSize="16sp"
                 tools:text="This is image caption"/>

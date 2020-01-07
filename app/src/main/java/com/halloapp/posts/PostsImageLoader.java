@@ -9,7 +9,9 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
@@ -28,7 +30,7 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        Log.i("create " + cacheSize + "KB cache for post imeges");
+        Log.i("PostsImageLoader: create " + cacheSize + "KB cache for post imeges");
         cache = new LruCache<Long, Bitmap>(cacheSize) {
 
             @Override
@@ -44,13 +46,16 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
             if (post.file != null) {
-                File file = new File(context.getFilesDir(), post.file);
+                final File file = new File(context.getFilesDir(), post.file);
                 if (file.exists()) {
-                    bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                    bitmap = MediaUtils.decode(file, Constants.MAX_IMAGE_DIMENSION);
+                } else {
+                    Log.i("PostsImageLoader:load file " + file.getAbsolutePath() + " doesn't exist");
                 }
             }
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                return BitmapFactory.decodeResource(context.getResources(), R.drawable.test0);
+                Log.i("PostsImageLoader:load cannot decode " + post.file);
+                return null;
             } else {
                 return bitmap;
             }
