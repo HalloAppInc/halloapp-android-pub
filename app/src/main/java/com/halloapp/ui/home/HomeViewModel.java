@@ -14,14 +14,23 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDataSourceFactory;
 import com.halloapp.posts.PostsDb;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
     private final PostsDb postsDb;
+    private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
+    private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
 
     private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
         @Override
         public void onPostAdded(@NonNull Post post) {
+            if (post.isOutgoing()) {
+                pendingOutgoing.set(true);
+            } else {
+                pendingIncoming.set(true);
+            }
             Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate();
         }
 
@@ -62,5 +71,13 @@ public class HomeViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         postsDb.removeObserver(postsObserver);
+    }
+
+    boolean checkPendingOutgoing() {
+        return pendingOutgoing.compareAndSet(true, false);
+    }
+
+    boolean checkPendingIncoming() {
+        return pendingIncoming.compareAndSet(true, false);
     }
 }

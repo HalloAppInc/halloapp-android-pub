@@ -19,12 +19,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.posts.Post;
@@ -78,12 +81,37 @@ public class HomeFragment extends Fragment {
 
         final View root = inflater.inflate(R.layout.fragment_home, container, false);
         final RecyclerView postsView = root.findViewById(R.id.posts);
+        final View emptyView = root.findViewById(android.R.id.empty);
 
         final HomeViewModel viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> postsView.scrollToPosition(0)));
+        viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
+            if (viewModel.checkPendingOutgoing()) {
+                postsView.smoothScrollToPosition(0);
+            } else if (viewModel.checkPendingIncoming()) {
+                postsView.smoothScrollBy(0, -getResources().getDimensionPixelSize(R.dimen.incoming_post_scroll_up));
+            }
+            emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+        }));
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
+
+        final float scrolledElevation = getResources().getDimension(R.dimen.scrolled_elevation);
+        postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                final View childView = layoutManager.getChildAt(0);
+                final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
+                final AppCompatActivity activity = Preconditions.checkNotNull((AppCompatActivity)getActivity());
+                final ActionBar actionBar = Preconditions.checkNotNull(activity.getSupportActionBar());
+                final float elevation = scrolled ? scrolledElevation : 0;
+                if (actionBar.getElevation() != elevation) {
+                    actionBar.setElevation(elevation);
+                }
+            }
+        });
+
 
         postsView.setAdapter(adapter);
 
@@ -110,7 +138,6 @@ public class HomeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.notifications: {
                 notificationDrawable.setBadge("3"); // testing-only
-                adapter.notifyDataSetChanged();
                 // TODO (ds): open notifications
                 return true;
             }

@@ -1,3 +1,5 @@
 <resources>
     <dimen name="badge">13dp</dimen>
+    <dimen name="incoming_post_scroll_up">6dp</dimen>
+    <dimen name="scrolled_elevation">4dp</dimen>
 </resources>
