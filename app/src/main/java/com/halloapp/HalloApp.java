@@ -1,7 +1,9 @@
 package com.halloapp;
 
 import android.app.Application;
-import android.os.Build;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
@@ -13,31 +15,26 @@ import com.crashlytics.android.Crashlytics;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
-
-import java.util.Arrays;
-import java.util.List;
-
 public class HalloApp extends Application {
+
+    public static HalloApp instance;
+
+    private Connection connection;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i("halloapp: onCreate");
 
+        instance = this;
+
         Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
-        SmackConfiguration.DEBUG = BuildConfig.DEBUG;
-
         final PostsDb postsDb = PostsDb.getInstance(this);
-        final Connection connection = Connection.getInstance(new ConnectionObserver(postsDb));
+        connection = Connection.getInstance(new ConnectionObserver(postsDb));
         postsDb.addObserver(new MainPostsObserver(connection, getFilesDir(), postsDb));
 
-        connect(connection);
+        connect();
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new LifecycleObserver() {
 
@@ -49,35 +46,56 @@ public class HalloApp extends Application {
             @OnLifecycleEvent(Lifecycle.Event.ON_START)
             void onForeground() {
                 Log.i("halloapp: onForeground");
-                connect(connection);
+                connect();
             }
         });
-
-        List<Jid> contacts = Arrays.asList(
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("13477521636"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // duygu
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14703381473"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // murali
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14154121848"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // michael
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14088922686"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // tony
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502752675"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)),
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502813677"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN))
-        );
-        connection.syncPubSub(contacts);
-        //AddressBookContacts.getAddressBookContacts(this);
     }
 
-    private void connect(@NonNull Connection connection) {
-        if (Build.MODEL.contains("Android SDK")) {
-            connection.connect("16502752675", "CdnEMOAcO4xSoOsOhsDs4ChGeV2weCHK");
-            Crashlytics.setString("user", "16502752675");
-        } else {
-            connection.connect("16502813677", "_SBgWL2sz6GRbBa12AdbUJ1IuO4q1o2j");
-            Crashlytics.setString("user", "16502813677");
+    private void connect() {
+        if (!isRegistered()) {
+            Log.i("halloapp: not registered");
+            return;
         }
+        connection.connect(getUser(), getPassword());
+
+        Crashlytics.setString("user", getUser());
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         Log.w("low memory");
+    }
+
+    private static final String PREF_KEY_USER_ID = "user_id";
+    private static final String PREF_KEY_PASSWORD = "password";
+
+    public SharedPreferences getPreferences() {
+        return getSharedPreferences("prefs", Context.MODE_PRIVATE);
+    }
+
+    public boolean isRegistered() {
+        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword());
+    }
+
+    public String getUser() {
+        return getPreferences().getString(PREF_KEY_USER_ID, null);
+    }
+
+    public String getPassword() {
+        return getPreferences().getString(PREF_KEY_PASSWORD, null);
+    }
+
+    public void saveRegistration(@NonNull String user, @NonNull String password) {
+        if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).commit()) {
+            Log.e("failed to save registration");
+        }
+        connect();
+    }
+
+    public void resetRegistration() {
+        if (!getPreferences().edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).commit()) {
+            Log.e("failed to reset registration");
+        }
     }
 }

@@ -1,12 +1,17 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="android:windowBackground">@color/window_background</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
+    </style>
+
+    <style name="ActionBar" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
+        <item name="background">@color/color_action_bar</item>
+        <item name="backgroundStacked">@color/color_action_bar</item>
+        <item name="backgroundSplit">@color/color_action_bar</item>
     </style>
 
     <style name="PostButton">

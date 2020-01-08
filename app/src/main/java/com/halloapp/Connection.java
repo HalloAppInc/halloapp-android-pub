@@ -15,6 +15,7 @@ import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
@@ -26,6 +27,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.sasl.SASLErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
@@ -89,6 +91,9 @@ public class Connection {
     }
 
     public interface Observer {
+        void onConnected();
+        void onDisconnected();
+        void onLoginFailed();
         void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId);
         void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
@@ -99,6 +104,7 @@ public class Connection {
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
+        SmackConfiguration.DEBUG = BuildConfig.DEBUG;
     }
 
     public void connect(final @NonNull String user, final @NonNull String password) {
@@ -155,9 +161,23 @@ public class Connection {
 
             try {
                 connection.connect();
-                connection.login();
             } catch (XMPPException | SmackException | IOException | InterruptedException e) {
                 Log.e("connection: cannot connect", e);
+                disconnectInBackground();
+                return;
+            }
+
+            try {
+                connection.login();
+            } catch (SASLErrorException e) {
+                Log.e("connection: cannot login", e);
+                disconnectInBackground();
+                if ("not-authorized".equals(e.getSASLFailure().getSASLErrorString())) {
+                    observer.onLoginFailed();
+                }
+                return;
+            } catch (XMPPException | SmackException | IOException | InterruptedException e) {
+                Log.e("connection: cannot login", e);
                 disconnectInBackground();
                 return;
             }
@@ -179,7 +199,10 @@ public class Connection {
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
                 Log.e("connection: cannot subscribe to pubsub", e);
                 disconnectInBackground();
+                return;
             }
+
+            observer.onConnected();
 
             Log.i("connection: connected");
         });
@@ -197,6 +220,7 @@ public class Connection {
         }
         connection.disconnect();
         connection = null;
+        observer.onDisconnected();
     }
 
     public void syncPubSub(@NonNull final List<Jid> jids) {

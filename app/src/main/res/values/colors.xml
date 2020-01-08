@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_primary">#fff6f6f6</color>
+    <color name="color_primary">#75A5E7</color>
     <color name="color_primary_dark">#757575</color>
     <color name="color_accent">#75A5E7</color>
+    <color name="color_action_bar">#fff6f6f6</color>
     <color name="window_background">#fff6f6f6</color>
     <color name="post_actions_separator">#20000000</color>
     <color name="badge_text">#ffffff</color>

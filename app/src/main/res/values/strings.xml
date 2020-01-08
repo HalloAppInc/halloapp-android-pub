@@ -4,6 +4,7 @@
     <string name="title_messages">Messages</string>
     <string name="title_profile">Profile</string>
     <string name="comment">Comment</string>
+    <string name="next">Next</string>
     <string name="message">Message</string>
     <string name="add_post">Add post</string>
     <string name="notifications">Notifications</string>
@@ -12,6 +13,13 @@
     <string name="text_post">Text post</string>
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">now</string>
+    <string name="phone_number_hint">Phone number</string>
+    <string name="request_registration_title">Enter your phone number to get started</string>
+    <string name="request_registration_subtitle">You will receive verification code. Carrier rates may apply.</string>
+    <string name="code_hint">Code</string>
+    <string name="verify_registration_title">Enter the code we sent to\n%s</string>
+    <string name="registration_code_invalid">Invalid registration code, try again</string>
+    <string name="registration_failed">Failed to register phone number, try again</string>
     <plurals name="time_diff_minutes">
         <item quantity="one">%dm</item>
         <item quantity="other">%dm</item>
