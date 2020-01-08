@@ -15,7 +15,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -27,6 +29,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
+import com.halloapp.widget.PostEditText;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +46,7 @@ public class PostComposerActivity extends AppCompatActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        final EditText editText = findViewById(R.id.entry);
+        final PostEditText editText = findViewById(R.id.entry);
 
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
@@ -84,8 +87,20 @@ public class PostComposerActivity extends AppCompatActivity {
                 }
                 sendButton.setEnabled(true);
             });
+            editText.setHint(R.string.type_a_caption_hint);
         } else {
             editText.requestFocus();
+            editText.setHint(R.string.type_a_post_hint);
+            editText.setPreImeListener(new PostEditText.PreImeListener() {
+                @Override
+                public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+                    if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                        finish();
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
     }
 

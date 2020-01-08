@@ -24,10 +24,10 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onConnected() {
         final List<Jid> contacts = Arrays.asList(
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("13477521636"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // duygu
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14703381473"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // murali
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14154121848"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // michael
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14088922686"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // tony
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("13477521636"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // duygu
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14703381473"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // murali
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14154121848"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // michael
+                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14088922686"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // tony
                 JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502752675"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)),
                 JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502813677"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN))
         );

@@ -20,6 +20,10 @@
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
     <string name="registration_code_invalid">Invalid registration code, try again</string>
     <string name="registration_failed">Failed to register phone number, try again</string>
+    <string name="type_a_post_hint">Type a post</string>
+    <string name="type_a_caption_hint">Type a caption</string>
+    <string name="send">Send</string>
+    <string name="new_post">New post</string>
     <plurals name="time_diff_minutes">
         <item quantity="one">%dm</item>
         <item quantity="other">%dm</item>

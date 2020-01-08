@@ -33,6 +33,8 @@
         <activity android:name=".ui.RegistrationRequestActivity" />
         <activity
             android:name=".ui.PostComposerActivity"
+            android:theme="@style/AppTheme.PostComposer"
+            android:label="@string/new_post"
             android:windowSoftInputMode="adjustResize" />
     </application>
 
