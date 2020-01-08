@@ -196,7 +196,7 @@ public class PostsDb {
                 posts.add(post);
             }
         }
-        Log.i("PostsDb.getPosts: start=" + id + " count=" + count + " after=" + after + " posts.size=" + posts.size());
+        Log.i("PostsDb.getPosts: start=" + id + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId)));
         return posts;
     }
 
