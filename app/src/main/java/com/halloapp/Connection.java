@@ -251,7 +251,7 @@ public class Connection {
                 final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 try {
                     final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
-                    final SimplePayload payload = new SimplePayload(new PublishedEntry(null, connection.getUser().getLocalpart().toString(), post.text, post.url).toXml());
+                    final SimplePayload payload = new SimplePayload(new PublishedEntry(null, post.timestamp, connection.getUser().getLocalpart().toString(), post.text, post.url).toXml());
                     final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                     myFeedNode.publish(item);
                 } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -411,6 +411,9 @@ public class Connection {
             try {
                 final Node node = pubSubManager.getNode(addFeed);
                 node.subscribe(selfJid.asBareJid().toString());
+                if (!addFeed.equals(getMyFeedNodeId())){
+                    subscribedFeeds.add(addFeed);
+                }
             } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: sync pubsub: cannot subscribe, no such node", e);
                 subscribedFeeds.remove(addFeed);
@@ -444,7 +447,7 @@ public class Connection {
                         entry.id,
                         null,
                         0,
-                        System.currentTimeMillis(),
+                        entry.timestamp,
                         Post.POST_STATE_INCOMING_PREPARING,
                         TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                         entry.text,

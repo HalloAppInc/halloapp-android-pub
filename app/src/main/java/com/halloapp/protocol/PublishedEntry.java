@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.core.util.Preconditions;
 
+import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
@@ -26,16 +27,19 @@ public class PublishedEntry {
     public static final String ELEMENT_USER = "username";
     public static final String ELEMENT_URL = "imageUrl";
     public static final String ELEMENT_TEXT = "text";
+    public static final String ELEMENT_TIMESTAMP = "timestamp";
 
     private static final String NAMESPACE = "http://halloapp.com/published-entry";
 
     public final String id;
+    public final long timestamp;
     public final String user;
     public final String text;
     public final String url;
 
-    public PublishedEntry(String id, String user, String text, String url) {
+    public PublishedEntry(String id, long timestamp, String user, String text, String url) {
         this.id = id;
+        this.timestamp = timestamp;
         this.user = user;
         this.text = text;
         this.url = url;
@@ -82,9 +86,9 @@ public class PublishedEntry {
                 serializer.text(url);
                 serializer.endTag(NAMESPACE, ELEMENT_URL);
             }
-            serializer.startTag(NAMESPACE, "timestamp"); // TODO (ds): remove
-            serializer.text(Long.toString(System.currentTimeMillis() / 1000));
-            serializer.endTag(NAMESPACE, "timestamp");
+            serializer.startTag(NAMESPACE, ELEMENT_TIMESTAMP); // TODO (ds): remove; should be set on server
+            serializer.text(Long.toString(timestamp / 1000));
+            serializer.endTag(NAMESPACE, ELEMENT_TIMESTAMP);
             serializer.endTag(NAMESPACE, ELEMENT_ENTRY);
             serializer.flush();
         } catch (IOException e) {
@@ -113,6 +117,12 @@ public class PublishedEntry {
                 builder.url(Xml.readText(parser));
             } else if (name.equals(ELEMENT_TEXT)) {
                 builder.text(Xml.readText(parser));
+            } else if (name.equals(ELEMENT_TIMESTAMP)) {
+                try {
+                    builder.timestamp(1000L * Long.parseLong(Xml.readText(parser)));
+                } catch (NumberFormatException ex) {
+                    Log.e("PublishedEntry: failed reading timestamp", ex);
+                }
             } else {
                 Xml.skip(parser);
             }
@@ -122,6 +132,7 @@ public class PublishedEntry {
 
     private static class Builder {
         String id;
+        long timestamp;
         String user;
         String text;
         String url;
@@ -141,16 +152,21 @@ public class PublishedEntry {
             return this;
         }
 
+        Builder timestamp(long timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
         Builder url(String url) {
             if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
-                url = "https://cdn.image4.io/hallo" + url;
+                url = "https://cdn.image4.io/hallo" + url; // TODO (ds): remove
             }
             this.url = url;
             return this;
         }
 
         PublishedEntry build() {
-            return new PublishedEntry(id, user, text, url);
+            return new PublishedEntry(id, timestamp, user, text, url);
         }
     }
 
