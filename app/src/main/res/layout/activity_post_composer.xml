@@ -47,6 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
                     android:hint="@string/type_a_caption_hint"
                     android:importantForAutofill="no"
                     android:inputType="textCapSentences"/>

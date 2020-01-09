@@ -128,7 +128,6 @@ public class HomeFragment extends Fragment {
                 getResources().getColor(R.color.badge_text),
                 getResources().getColor(R.color.badge_background),
                 getResources().getDimension(R.dimen.badge));
-        notificationDrawable.setBadge("2"); // testing-only
         notificationsMenuItem.setIcon(notificationDrawable);
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -137,7 +136,14 @@ public class HomeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.notifications: {
-                notificationDrawable.setBadge("3"); // testing-only
+                // testing-only
+                String badge = notificationDrawable.getBadge();
+                if (TextUtils.isEmpty(badge)) {
+                    notificationDrawable.setBadge("1");
+                } else {
+                    int newBadge = (Integer.parseInt(badge) + 1) % 10;
+                    notificationDrawable.setBadge(newBadge == 0 ? null : Integer.toString(newBadge));
+                }
                 // TODO (ds): open notifications
                 return true;
             }
