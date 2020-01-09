@@ -52,10 +52,11 @@ public class Registration {
 
             inStream = connection.getInputStream();
             final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
+            /*
             final String result = responseJson.getString("result");
             if (!"Added user to the database.".equals(result)) {
                 throw new IOException("Unexpected result: " + result);
-            }
+            }*/
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
