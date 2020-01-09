@@ -184,6 +184,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
                 }
                 return new RegistrationVerificationResult(phone, password, RegistrationVerificationResult.RESULT_OK);
             } catch (IOException | JSONException e) {
+                Log.e("RegistrationVerificationTask", e);
                 return new RegistrationVerificationResult(phone, null, RegistrationVerificationResult.RESULT_FAILED_NETWORK);
             }
         }

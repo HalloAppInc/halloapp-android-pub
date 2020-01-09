@@ -162,6 +162,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
                 Registration.getInstance().requestRegistration(phone);
                 return new RegistrationRequestResult(phone, RegistrationRequestResult.RESULT_OK);
             } catch (IOException | JSONException e) {
+                Log.e("RegistrationRequestTask", e);
                 return new RegistrationRequestResult(phone, RegistrationRequestResult.RESULT_FAILED_NETWORK);
             }
         }
