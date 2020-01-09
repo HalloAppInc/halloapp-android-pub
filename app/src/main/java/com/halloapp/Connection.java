@@ -251,7 +251,7 @@ public class Connection {
                 final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 try {
                     final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
-                    final SimplePayload payload = new SimplePayload(new PublishedEntry(null, post.timestamp, connection.getUser().getLocalpart().toString(), post.text, post.url).toXml());
+                    final SimplePayload payload = new SimplePayload(new PublishedEntry(PublishedEntry.ENTRY_FEED, null, post.timestamp, connection.getUser().getLocalpart().toString(), post.text, post.url, null).toXml());
                     final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                     myFeedNode.publish(item);
                 } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -447,20 +447,25 @@ public class Connection {
             if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
                 observer.onOutgoingPostAcked(FEED_JID.toString(), entry.id);
             } else {
-                Post post = new Post(0,
-                        FEED_JID.toString(),
-                        JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(entry.user), Domainpart.fromOrThrowUnchecked(XMPP_DOMAIN)).toString(),
-                        entry.id,
-                        null,
-                        0,
-                        entry.timestamp,
-                        Post.POST_STATE_INCOMING_PREPARING,
-                        TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
-                        entry.text,
-                        entry.url,
-                        null
-                );
-                observer.onIncomingPostReceived(post);
+                if (entry.type == PublishedEntry.ENTRY_FEED) {
+                    Post post = new Post(0,
+                            FEED_JID.toString(),
+                            JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(entry.user), Domainpart.fromOrThrowUnchecked(XMPP_DOMAIN)).toString(),
+                            entry.id,
+                            null,
+                            0,
+                            entry.timestamp,
+                            Post.POST_STATE_INCOMING_PREPARING,
+                            TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
+                            entry.text,
+                            entry.url,
+                            null
+                    );
+                    observer.onIncomingPostReceived(post);
+                } else {
+                    // TODO (ds): process comments
+                    Log.i("connection: comment received");
+                }
             }
         }
 
