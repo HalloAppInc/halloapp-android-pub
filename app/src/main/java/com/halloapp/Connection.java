@@ -374,52 +374,58 @@ public class Connection {
         final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
 
         final List<Affiliation> allAffiliations = pubSubManager.getAffiliations();
-        final Set<String> affiliatedNodes = new HashSet<>();
+        final Set<String> affiliatedFeedNodeIds = new HashSet<>();
         for (Affiliation affiliation : allAffiliations) {
-            affiliatedNodes.add(affiliation.getNode());
+            final String nodeId = affiliation.getNode();
+            if (isFeedNodeId(nodeId)) {
+                affiliatedFeedNodeIds.add(nodeId);
+            }
         }
 
         final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
-        final List<String> addFeeds = new ArrayList<>(jids.size());
-        final List<String> subscribedFeeds = new ArrayList<>(jids.size());
+        final List<String> addFeedNodeIds = new ArrayList<>(jids.size());
+        final List<String> subscribedFeedNodeIds = new ArrayList<>(jids.size());
         for (Jid jid : jids) {
             final String feedNodeId = getFeedNodeId(jid);
-            if (affiliatedNodes.contains(feedNodeId)) {
-                addFeeds.add(feedNodeId);
+            if (affiliatedFeedNodeIds.contains(feedNodeId)) {
+                addFeedNodeIds.add(feedNodeId);
             }
         }
         for (Subscription subscription : subscriptions) {
             if (subscription.getJid() == null) {
                 continue;
             }
-            final String feed = subscription.getNode();
-            if (!isFeedNodeId(feed)) {
+            final String feedNodeId = subscription.getNode();
+            if (!isFeedNodeId(feedNodeId)) {
                 continue;
             }
-            if (!addFeeds.remove(feed)) {
+            if (feedNodeId.equals(getMyFeedNodeId())) {
+                continue;
+            }
+            if (!addFeedNodeIds.remove(feedNodeId)) {
                 try {
-                    final Node node = pubSubManager.getNode(feed);
+                    final Node node = pubSubManager.getNode(feedNodeId);
                     node.unsubscribe(subscription.getJid().toString());
                 } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
                     Log.e("connection: sync pubsub: cannot unsubscribe, no such node", e);
                 }
-            } else if (!feed.equals(getMyFeedNodeId())){
-                subscribedFeeds.add(feed);
+            } else {
+                subscribedFeedNodeIds.add(feedNodeId);
             }
         }
-        for (String addFeed : addFeeds) {
+        for (String addFeedNodeId : addFeedNodeIds) {
             try {
-                final Node node = pubSubManager.getNode(addFeed);
+                final Node node = pubSubManager.getNode(addFeedNodeId);
                 node.subscribe(selfJid.asBareJid().toString());
-                if (!addFeed.equals(getMyFeedNodeId())){
-                    subscribedFeeds.add(addFeed);
+                if (!addFeedNodeId.equals(getMyFeedNodeId())){
+                    subscribedFeedNodeIds.add(addFeedNodeId);
                 }
             } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: sync pubsub: cannot subscribe, no such node", e);
-                subscribedFeeds.remove(addFeed);
+                subscribedFeedNodeIds.remove(addFeedNodeId);
             }
         }
-        for (String subscribedFeed : subscribedFeeds) {
+        for (String subscribedFeed : subscribedFeedNodeIds) {
             final LeafNode node;
             try {
                 node = pubSubManager.getNode(subscribedFeed);
