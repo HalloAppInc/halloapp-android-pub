@@ -31,6 +31,7 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.sasl.SASLErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.ParserUtils;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.pubsub.AccessModel;
@@ -46,6 +47,7 @@ import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
+import org.jivesoftware.smackx.pubsub.provider.AffiliationProvider;
 import org.jivesoftware.smackx.pubsub.provider.AffiliationsProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
@@ -53,11 +55,13 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -120,6 +124,7 @@ public class Connection {
             Log.i("connection: connecting...");
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
+            ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
 
             try {
                 final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
@@ -582,5 +587,40 @@ public class Connection {
         public void connectionClosedOnError(Exception e) {
             Log.w("connection: onConnectedOnError", e);
         }
+    }
+
+    // smack doesn't handle affiliation='publish-only' type
+    public class HalloAffiliationProvider extends AffiliationProvider {
+
+        @Override
+        public Affiliation parse(XmlPullParser parser, int initialDepth)
+                throws Exception {
+            String node = parser.getAttributeValue(null, "node");
+            BareJid jid = ParserUtils.getBareJidAttribute(parser);
+            String namespaceString = parser.getNamespace();
+            Affiliation.AffiliationNamespace namespace = Affiliation.AffiliationNamespace.fromXmlns(namespaceString);
+
+            String affiliationString = parser.getAttributeValue(null, "affiliation");
+            Affiliation.Type affiliationType = null;
+            if (affiliationString != null && !"publish-only".equals(affiliationString)) {
+                affiliationType = Affiliation.Type.valueOf(affiliationString);
+            }
+            Affiliation affiliation;
+            if (node != null && jid == null) {
+                // affiliationType may be empty
+                affiliation = new Affiliation(node, affiliationType, namespace);
+            }
+            else if (node == null && jid != null) {
+                affiliation = new Affiliation(jid, affiliationType, namespace);
+            }
+            else {
+                throw new SmackException("Invalid affililation. Either one of 'node' or 'jid' must be set"
+                        + ". Node: " + node
+                        + ". Jid: " + jid
+                        + '.');
+            }
+            return affiliation;
+        }
+
     }
 }
