@@ -83,18 +83,20 @@ public class HomeFragment extends Fragment {
         final RecyclerView postsView = root.findViewById(R.id.posts);
         final View emptyView = root.findViewById(android.R.id.empty);
 
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        postsView.setLayoutManager(layoutManager);
+
         final HomeViewModel viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
-            if (viewModel.checkPendingOutgoing()) {
+            final View childView = layoutManager.getChildAt(0);
+            final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
+            if (viewModel.checkPendingOutgoing() || !scrolled) {
                 postsView.smoothScrollToPosition(0);
             } else if (viewModel.checkPendingIncoming()) {
                 postsView.smoothScrollBy(0, -getResources().getDimensionPixelSize(R.dimen.incoming_post_scroll_up));
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
-
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        postsView.setLayoutManager(layoutManager);
 
         final float scrolledElevation = getResources().getDimension(R.dimen.scrolled_elevation);
         postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
