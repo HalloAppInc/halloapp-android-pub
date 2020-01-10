@@ -24,6 +24,7 @@ import org.jivesoftware.smack.debugger.SmackDebugger;
 import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -37,6 +38,7 @@ import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.Node;
+import org.jivesoftware.smackx.pubsub.NotificationType;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubException;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
@@ -49,6 +51,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
+import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -125,7 +128,7 @@ public class Connection {
                         .setXmppDomain(XMPP_DOMAIN)
                         .setHost(HOST)
                         .setConnectTimeout(CONNECTION_TIMEOUT)
-                        .setSendPresence(true)
+                        .setSendPresence(false)
                         .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
                         .setPort(PORT)
                         .setDebuggerFactory(new SmackDebuggerFactory() {
@@ -233,6 +236,13 @@ public class Connection {
                 syncAffiliations(jids, getMyContactsNodeId());
                 syncAffiliations(jids, getMyFeedNodeId());
                 syncSubscriptions(jids);
+
+                try {
+                    connection.sendStanza(new Presence(Presence.Type.available));
+                } catch (SmackException.NotConnectedException | InterruptedException e) {
+                    Log.e("connection: cannot send presence", e);
+                }
+
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub", e);
             } catch (XmppStringprepException e) {
@@ -310,6 +320,13 @@ public class Connection {
                 configureForm.setAccessModel(AccessModel.whitelist);
                 configureForm.setPublishModel(PublishModel.open);
                 configureForm.setMaxItems(10);
+                configureForm.setNotifyDelete(false);
+                configureForm.setNotifyRetract(false);
+                configureForm.setNotificationType(NotificationType.normal);
+                final FormField field = new FormField("pubsub#send_last_published_item");
+                field.setType(FormField.Type.hidden);
+                configureForm.addField(field);
+                configureForm.setAnswer("pubsub#send_last_published_item", "never");
                 node = pubSubManager.createNode(nodeId, configureForm);
             }
         }
