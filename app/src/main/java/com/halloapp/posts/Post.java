@@ -48,6 +48,8 @@ public class Post {
     public final String text;
     public String url;
     public String file;
+    public int width;
+    public int height;
 
     public Post(
             long rowId,
@@ -61,7 +63,9 @@ public class Post {
             @PostType int type,
             String text,
             String url,
-            String file) {
+            String file,
+            int width,
+            int height) {
         this.rowId = rowId;
         this.chatJid = chatJid;
         this.senderJid = senderJid;
@@ -74,6 +78,8 @@ public class Post {
         this.text = text;
         this.url = url;
         this.file = file;
+        this.width = width;
+        this.height = height;
     }
 
     public String keyString() {
@@ -111,6 +117,8 @@ public class Post {
                 Objects.equals(text, post.text) &&
                 Objects.equals(url, post.url) &&
                 Objects.equals(file, post.file) &&
+                width == post.width &&
+                height == post.height &&
                 state == post.state;
     }
 }

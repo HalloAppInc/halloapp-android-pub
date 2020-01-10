@@ -481,7 +481,9 @@ public class Connection {
                             TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                             entry.text,
                             entry.url,
-                            null
+                            null,
+                            0,
+                            0
                     );
                     observer.onIncomingPostReceived(post);
                 } else {
@@ -535,7 +537,9 @@ public class Connection {
                         Post.POST_TYPE_TEXT,
                         msg.getBody(),
                         null,
-                        null);
+                        null,
+                        0,
+                        0);
                 observer.onIncomingPostReceived(post);
             } else {
                 //This must be sth like delivery receipt or Chat state msg

@@ -12,6 +12,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.crashlytics.android.Crashlytics;
+import com.halloapp.media.MediaStore;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
@@ -32,7 +33,7 @@ public class HalloApp extends Application {
 
         final PostsDb postsDb = PostsDb.getInstance(this);
         connection = Connection.getInstance(new ConnectionObserver(postsDb));
-        postsDb.addObserver(new MainPostsObserver(connection, getFilesDir(), postsDb));
+        postsDb.addObserver(new MainPostsObserver(connection, MediaStore.getInstance(this), postsDb));
 
         connect();
 

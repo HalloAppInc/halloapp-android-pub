@@ -3,14 +3,22 @@ package com.halloapp.posts;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
+import androidx.core.content.ContextCompat;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
@@ -20,12 +28,15 @@ import java.util.concurrent.Callable;
 
 public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
 
-    private final Context context;
+    private final MediaStore mediaStore;
     private final LruCache<Long, Bitmap> cache;
+    private final int placeholderColor;
 
     @MainThread
     public PostsImageLoader(@NonNull Context context) {
-        this.context = context;
+
+        mediaStore = MediaStore.getInstance(context);
+        placeholderColor = ContextCompat.getColor(context, R.color.media_placeholder);
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -46,7 +57,7 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
             if (post.file != null) {
-                final File file = new File(context.getFilesDir(), post.file);
+                final File file = mediaStore.getMediaFile(post.file);
                 if (file.exists()) {
                     bitmap = MediaUtils.decode(file, Constants.MAX_IMAGE_DIMENSION);
                 } else {
@@ -70,9 +81,54 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageDrawable(null);
+                if (post.width != 0 && post.height != 0) {
+                    view.setImageDrawable(new PlaceholderDrawable(post.width, post.height, placeholderColor));
+                } else {
+                    view.setImageDrawable(null);
+                }
             }
         };
         load(view, loader, displayer, post.rowId, cache);
+    }
+
+    static class PlaceholderDrawable extends Drawable {
+
+        final int width;
+        final int height;
+        final int color;
+
+        PlaceholderDrawable(int width, int height, int color) {
+            this.width = width;
+            this.height = height;
+            this.color = color;
+        }
+
+        public int getIntrinsicWidth() {
+            return width;
+        }
+
+        public int getIntrinsicHeight() {
+            return height;
+        }
+
+        @Override
+        public void draw(@NonNull Canvas canvas) {
+            canvas.drawColor(color);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+
+        }
+
+        @Override
+        public void setColorFilter(@Nullable ColorFilter colorFilter) {
+
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.OPAQUE;
+        }
     }
 }

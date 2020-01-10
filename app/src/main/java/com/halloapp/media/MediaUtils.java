@@ -3,6 +3,7 @@ package com.halloapp.media;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,6 +86,13 @@ public class MediaUtils {
             }
             return transformedBitmap;
         }
+    }
+
+    public static Size getDimensions(@NonNull File file) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        return new Size(options.outWidth, options.outHeight);
     }
 
     public static @Nullable Bitmap transcode(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {

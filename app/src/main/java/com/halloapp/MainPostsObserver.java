@@ -6,24 +6,24 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.halloapp.media.Downloader;
+import com.halloapp.media.MediaStore;
 import com.halloapp.media.Uploader;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
 public class MainPostsObserver implements PostsDb.Observer {
 
     private final Connection connection;
-    private final File filesDir;
+    private final MediaStore mediaStore;
     private final PostsDb postsDb;
 
-    MainPostsObserver(@NonNull Connection connection, @NonNull File filesDir, @NonNull PostsDb postsDb) {
+    MainPostsObserver(@NonNull Connection connection, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
         this.connection = connection;
-        this.filesDir = filesDir;
+        this.mediaStore = mediaStore;
         this.postsDb = postsDb;
     }
 
@@ -45,7 +45,7 @@ public class MainPostsObserver implements PostsDb.Observer {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         try {
-                            post.url = Uploader.run(new File(filesDir, post.file), uploadListener);
+                            post.url = Uploader.run(mediaStore.getMediaFile(post.file), uploadListener);
                             postsDb.setPostUrl(post.chatJid, post.senderJid, post.postId, post.url);
                             //postsDb.setPostState(post.chatJid, post.senderJid, post.postId, Post.POST_STATE_OUTGOING_SENDING);
                             connection.sendPost(post);
@@ -73,7 +73,7 @@ public class MainPostsObserver implements PostsDb.Observer {
                     protected Void doInBackground(Void... voids) {
                         try {
                             final String file = UUID.randomUUID().toString().replaceAll("-", "") + ".jpg";
-                            Downloader.run(post.url, new File(filesDir, file), downloadListener);
+                            Downloader.run(post.url, mediaStore.getMediaFile(file), downloadListener);
                             postsDb.setPostFile(post.chatJid, post.senderJid, post.postId, file);
                         } catch (IOException e) {
                             Log.e("upload", e);

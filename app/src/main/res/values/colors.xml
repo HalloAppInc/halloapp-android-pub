@@ -10,5 +10,6 @@
     <color name="badge_background">#FF613F</color>
     <color name="tab_active">#414141</color>
     <color name="tab_inactive">#a1a1a1</color>
+    <color name="media_placeholder">#a1a1a1</color>
 
 </resources>

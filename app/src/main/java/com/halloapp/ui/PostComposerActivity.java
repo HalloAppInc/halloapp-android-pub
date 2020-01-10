@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import com.halloapp.Connection;
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
@@ -67,14 +68,16 @@ public class PostComposerActivity extends AppCompatActivity {
                     postFile == null ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                     postText,
                     null,
-                    postFile == null ? null : postFile.getName());
+                    postFile == null ? null : postFile.getName(),
+                    0,
+                    0);
             PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addPost(post);
             finish();
         });
 
         final Uri uri = getIntent().getData();
         if (uri != null) {
-            final File file = new File(getFilesDir(), UUID.randomUUID().toString().replace("-", "") + ".jpg");
+            final File file = MediaStore.getInstance(this).getMediaFile(UUID.randomUUID().toString().replace("-", "") + ".jpg");
             sendButton.setEnabled(false);
 
             final PostComposerViewModel model = ViewModelProviders.of(this,

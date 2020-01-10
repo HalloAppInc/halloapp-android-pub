@@ -8,12 +8,16 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.media.MediaStore;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +33,7 @@ public class PostsDb {
     private Executor databaseWriteExecutor = Executors.newSingleThreadExecutor();
 
     private final DatabaseHelper databaseHelper;
+    private final MediaStore mediaStore;
     private final Set<Observer> observers = new HashSet<>();
 
     public interface Observer {
@@ -52,6 +57,7 @@ public class PostsDb {
 
     private PostsDb(final @NonNull Context context) {
         databaseHelper = new DatabaseHelper(context.getApplicationContext());
+        mediaStore = MediaStore.getInstance(context);
     }
 
     public void addObserver(Observer observer) {
@@ -72,14 +78,31 @@ public class PostsDb {
             values.put(PostsTable.COLUMN_CHAT_JID, post.chatJid);
             values.put(PostsTable.COLUMN_SENDER_JID, post.senderJid);
             values.put(PostsTable.COLUMN_POST_ID, post.postId);
-            values.put(PostsTable.COLUMN_POST_GROUP_ID, post.groupId);
+            if (post.groupId != null) {
+                values.put(PostsTable.COLUMN_POST_GROUP_ID, post.groupId);
+            }
             values.put(PostsTable.COLUMN_POST_REPLY_ID, post.replyRowId);
             values.put(PostsTable.COLUMN_POST_TIMESTAMP, post.timestamp);
             values.put(PostsTable.COLUMN_POST_STATE, post.state);
             values.put(PostsTable.COLUMN_POST_TYPE, post.type);
-            values.put(PostsTable.COLUMN_POST_TEXT, post.text);
-            values.put(PostsTable.COLUMN_POST_URL, post.url);
-            values.put(PostsTable.COLUMN_POST_FILE, post.file);
+            if (post.text != null) {
+                values.put(PostsTable.COLUMN_POST_TEXT, post.text);
+            }
+            if (post.url != null) {
+                values.put(PostsTable.COLUMN_POST_URL, post.url);
+            }
+            if (post.file != null) {
+                values.put(PostsTable.COLUMN_POST_FILE, post.file);
+                if (post.width == 0 || post.height == 0) {
+                    final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(post.file));
+                    post.width = dimensions.getWidth();
+                    post.height = dimensions.getHeight();
+                }
+            }
+            if (post.width > 0 && post.height > 0) {
+                values.put(PostsTable.COLUMN_POST_WIDTH, post.width);
+                values.put(PostsTable.COLUMN_POST_HEIGHT, post.height);
+            }
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
@@ -124,6 +147,11 @@ public class PostsDb {
             Log.i("PostsDb.setPostFile: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " file=" + file);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_POST_FILE, file);
+            final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(file));
+            if (dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
+                values.put(PostsTable.COLUMN_POST_WIDTH, dimensions.getWidth());
+                values.put(PostsTable.COLUMN_POST_HEIGHT, dimensions.getHeight());
+            }
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
@@ -172,7 +200,9 @@ public class PostsDb {
                         PostsTable.COLUMN_POST_TYPE,
                         PostsTable.COLUMN_POST_TEXT,
                         PostsTable.COLUMN_POST_URL,
-                        PostsTable.COLUMN_POST_FILE
+                        PostsTable.COLUMN_POST_FILE,
+                        PostsTable.COLUMN_POST_WIDTH,
+                        PostsTable.COLUMN_POST_HEIGHT
                 },
                 id == null ? null : PostsTable._ID + (after ? " < " : " > ") + id, null,
                 null, null,
@@ -192,7 +222,9 @@ public class PostsDb {
                         cursor.getInt(8),
                         cursor.getString(9),
                         cursor.getString(10),
-                        cursor.getString(11));
+                        cursor.getString(11),
+                        cursor.getInt(12),
+                        cursor.getInt(13));
                 posts.add(post);
             }
         }
@@ -259,6 +291,8 @@ public class PostsDb {
         static final String COLUMN_POST_TEXT = "text";
         static final String COLUMN_POST_URL = "url";
         static final String COLUMN_POST_FILE = "file";
+        static final String COLUMN_POST_WIDTH = "width";
+        static final String COLUMN_POST_HEIGHT = "height";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
@@ -286,7 +320,9 @@ public class PostsDb {
                     + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TEXT + " TEXT,"
                     + PostsTable.COLUMN_POST_URL + " TEXT,"
-                    + PostsTable.COLUMN_POST_FILE + " TEXT"
+                    + PostsTable.COLUMN_POST_FILE + " TEXT,"
+                    + PostsTable.COLUMN_POST_WIDTH + " INTEGER,"
+                    + PostsTable.COLUMN_POST_HEIGHT + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
