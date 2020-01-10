@@ -32,31 +32,45 @@
         android:text="@string/request_registration_subtitle"/>
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <LinearLayout
         android:id="@+id/phone_number_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:background="@drawable/outline_background"
+        android:gravity="center_vertical"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/subtitle">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/ccp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:ccp_countryPreference="us,in"
+            app:ccp_autoDetectCountry="true"
+            app:ccp_useFlagEmoji="true"
+            app:ccp_hintExampleNumberType="MOBILE"/>
+
+        <EditText
             android:id="@+id/phone_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/phone_number_hint"
+            android:autofillHints="phoneNational"
             android:inputType="phone"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
+            android:background="@null"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button"
         android:id="@+id/next"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:text="@string/next"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
@@ -69,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

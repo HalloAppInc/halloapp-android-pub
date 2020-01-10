@@ -25,6 +25,7 @@
     <string name="send">Send</string>
     <string name="new_post">New post</string>
     <string name="posts_empty">Your posts will appear here</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
     <plurals name="time_diff_minutes">
         <item quantity="one">%dm</item>
         <item quantity="other">%dm</item>

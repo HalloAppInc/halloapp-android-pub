@@ -22,6 +22,7 @@ import com.halloapp.R;
 import com.halloapp.Registration;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.util.Log;
+import com.hbb20.CountryCodePicker;
 
 import org.json.JSONException;
 
@@ -36,6 +37,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
 
     private RegistrationRequestViewModel registrationRequestViewModel;
 
+    private CountryCodePicker countryCodePicker;
     private EditText phoneNumberEditText;
     private View nextButton;
     private View loadingProgressBar;
@@ -50,8 +52,12 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
 
         phoneNumberEditText = findViewById(R.id.phone_number);
+        countryCodePicker = findViewById(R.id.ccp);
+        countryCodePicker.registerCarrierNumberEditText(phoneNumberEditText);
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
+
+        phoneNumberEditText.setTextColor(phoneNumberEditText.getCurrentTextColor()); // so phoneNumberEditText.setEnabled(false) doesn't change color
 
         registrationRequestViewModel = ViewModelProviders.of(this).get(RegistrationRequestViewModel.class);
         registrationRequestViewModel.getRegistrationRequestResult().observe(this, result -> {
@@ -67,6 +73,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
                 CenterToast.show(this, R.string.registration_failed);
                 nextButton.setVisibility(View.VISIBLE);
                 phoneNumberEditText.setEnabled(true);
+
             }
             loadingProgressBar.setVisibility(View.GONE);
         });
@@ -109,10 +116,18 @@ public class RegistrationRequestActivity extends AppCompatActivity {
     }
 
     private void startRegistrationRequest() {
+        if (!countryCodePicker.isValidFullNumber()) {
+            CenterToast.show(this, R.string.invalid_phone_number);
+            return;
+        }
+
         loadingProgressBar.setVisibility(View.VISIBLE);
         nextButton.setVisibility(View.GONE);
         phoneNumberEditText.setEnabled(false);
-        registrationRequestViewModel.requestRegistration(phoneNumberEditText.getText().toString().replaceAll("[^\\d.]", ""));
+        countryCodePicker.setCcpClickable(false);
+        Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
+
+        registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber());
     }
 
     private static class RegistrationRequestResult {
