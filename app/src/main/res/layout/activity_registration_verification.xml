@@ -19,27 +19,23 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:text="@string/verify_registration_title"/>
 
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:id="@+id/code_layout"
+    <com.halloapp.widget.CodeEditText
+        android:id="@+id/code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="numberPassword"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:singleLine="true"
+        app:cetBorderColor="@color/color_primary"
+        app:cetBorderSize="2dp"
         android:layout_marginTop="16dp"
+        android:background="@null"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:singleLine="true"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@id/title"/>
 
     <ProgressBar
         android:id="@+id/loading"
@@ -50,6 +46,6 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/code_layout"/>
+        app:layout_constraintTop_toBottomOf="@id/code"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
