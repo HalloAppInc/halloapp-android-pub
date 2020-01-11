@@ -291,7 +291,16 @@ public class Connection {
                 final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 try {
                     final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
-                    final SimplePayload payload = new SimplePayload(new PublishedEntry(PublishedEntry.ENTRY_FEED, null, post.timestamp, connection.getUser().getLocalpart().toString(), post.text, post.url, null).toXml());
+                    final SimplePayload payload = new SimplePayload(new PublishedEntry(
+                            PublishedEntry.ENTRY_FEED,
+                            null,
+                            post.timestamp,
+                            connection.getUser().getLocalpart().toString(),
+                            post.text,
+                            post.url,
+                            post.width,
+                            post.height,
+                            null).toXml());
                     final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                     myFeedNode.publish(item);
                 } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -507,8 +516,8 @@ public class Connection {
                             entry.text,
                             entry.url,
                             null,
-                            0,
-                            0
+                            entry.width,
+                            entry.height
                     );
                     observer.onIncomingPostReceived(post);
                 } else {

@@ -26,20 +26,22 @@ import java.util.List;
 
 public class PublishedEntry {
 
-    public static final String ELEMENT_ENTRY = "entry";
-    public static final String ELEMENT_FEED_POST = "feedpost";
-    public static final String ELEMENT_COMMENT = "comment";
-    public static final String ELEMENT_USER = "username";
-    public static final String ELEMENT_URL = "imageUrl";
-    public static final String ELEMENT_TEXT = "text";
-    public static final String ELEMENT_TIMESTAMP = "timestamp";
-    public static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
+    private static final String ELEMENT_ENTRY = "entry";
+    private static final String ELEMENT_FEED_POST = "feedpost";
+    private static final String ELEMENT_COMMENT = "comment";
+    private static final String ELEMENT_USER = "username";
+    private static final String ELEMENT_URL = "imageUrl";
+    private static final String ELEMENT_TEXT = "text";
+    private static final String ELEMENT_WIDTH = "width";
+    private static final String ELEMENT_HEIGHT = "height";
+    private static final String ELEMENT_TIMESTAMP = "timestamp";
+    private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
 
     private static final String NAMESPACE = "http://halloapp.com/published-entry";
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ENTRY_FEED, ENTRY_COMMENT})
-    public @interface EntryType {}
+    @interface EntryType {}
     public static final int ENTRY_FEED = 0;
     public static final int ENTRY_COMMENT = 1;
 
@@ -49,15 +51,19 @@ public class PublishedEntry {
     public final String user;
     public final String text;
     public final String url;
+    public final int width;
+    public final int height;
     public final String feedItemId;
 
-    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String url, String feedItemId) {
+    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String url, int width, int height, String feedItemId) {
         this.type = type;
         this.id = id;
         this.timestamp = timestamp;
         this.user = user;
         this.text = text;
         this.url = url;
+        this.width = width;
+        this.height = height;
         this.feedItemId = feedItemId;
     }
 
@@ -117,6 +123,16 @@ public class PublishedEntry {
                 serializer.text(url);
                 serializer.endTag(NAMESPACE, ELEMENT_URL);
             }
+            if (width != 0) {
+                serializer.startTag(NAMESPACE, ELEMENT_WIDTH);
+                serializer.text(Integer.toString(width));
+                serializer.endTag(NAMESPACE, ELEMENT_WIDTH);
+            }
+            if (height != 0) {
+                serializer.startTag(NAMESPACE, ELEMENT_HEIGHT);
+                serializer.text(Integer.toString(height));
+                serializer.endTag(NAMESPACE, ELEMENT_HEIGHT);
+            }
             serializer.startTag(NAMESPACE, ELEMENT_TIMESTAMP); // TODO (ds): remove; should be set on server
             serializer.text(Long.toString(timestamp / 1000));
             serializer.endTag(NAMESPACE, ELEMENT_TIMESTAMP);
@@ -157,28 +173,20 @@ public class PublishedEntry {
                 continue;
             }
             final String name = Preconditions.checkNotNull(parser.getName());
-            if (name.equals(ELEMENT_USER)) {
+            if (ELEMENT_USER.equals(name)) {
                 builder.user(Xml.readText(parser));
-            } else if (name.equals(ELEMENT_URL)) {
+            } else if (ELEMENT_URL.equals(name)) {
                 builder.url(Xml.readText(parser));
-            } else if (name.equals(ELEMENT_TEXT)) {
+            } else if (ELEMENT_WIDTH.equals(name)) {
+                builder.width(Xml.readText(parser));
+            } else if (ELEMENT_HEIGHT.equals(name)) {
+                builder.height(Xml.readText(parser));
+            } else if (ELEMENT_TEXT.equals(name)) {
                 builder.text(Xml.readText(parser));
-            } else if (name.equals(ELEMENT_FEED_ITEM_ID)) {
+            } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
                 builder.feedItemId(Xml.readText(parser));
-            } else if (name.equals(ELEMENT_TIMESTAMP)) {
-                final String timestampText = Xml.readText(parser);
-                long timestampSeconds;
-                try {
-                    timestampSeconds = Long.parseLong(timestampText);
-                } catch (NumberFormatException e) {
-                    try {
-                        timestampSeconds = (long)Double.parseDouble(timestampText);
-                    } catch (NumberFormatException ex) {
-                        Log.e("PublishedEntry: failed reading timestamp", ex);
-                        timestampSeconds = System.currentTimeMillis() / 1000;
-                    }
-                }
-                builder.timestamp(timestampSeconds * 1000L);
+            } else if (ELEMENT_TIMESTAMP.equals(name)) {
+                builder.timestamp(Xml.readText(parser));
             } else {
                 Xml.skip(parser);
             }
@@ -186,6 +194,7 @@ public class PublishedEntry {
         return builder.build();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private static class Builder {
         @EntryType int type;
         String id;
@@ -193,6 +202,8 @@ public class PublishedEntry {
         String user;
         String text;
         String url;
+        int width;
+        int height;
         String feedItemId;
 
         Builder type(@EntryType int type) {
@@ -215,8 +226,17 @@ public class PublishedEntry {
             return this;
         }
 
-        Builder timestamp(long timestamp) {
-            this.timestamp = timestamp;
+        Builder timestamp(String timestampText) {
+            try {
+                this.timestamp = 1000L * Long.parseLong(timestampText);
+            } catch (NumberFormatException e) {
+                try {
+                    this.timestamp = 1000L * (long)Double.parseDouble(timestampText);
+                } catch (NumberFormatException ex) {
+                    Log.e("PublishedEntry: failed reading timestamp", ex);
+                    this.timestamp = System.currentTimeMillis() / 1000;
+                }
+            }
             return this;
         }
 
@@ -233,9 +253,28 @@ public class PublishedEntry {
             return this;
         }
 
-        PublishedEntry build() {
-            return new PublishedEntry(type, id, timestamp, user, text, url, feedItemId);
+        Builder width(String widthText) {
+            try {
+                this.width = Integer.parseInt(widthText);
+            } catch (NumberFormatException ex) {
+                Log.e("PublishedEntry: invalid width", ex);
+            }
+            return this;
         }
+
+        Builder height(String heightText) {
+            try {
+                this.height = Integer.parseInt(heightText);
+            } catch (NumberFormatException ex) {
+                Log.e("PublishedEntry: invalid height", ex);
+            }
+            return this;
+        }
+
+        PublishedEntry build() {
+            return new PublishedEntry(type, id, timestamp, user, text, url, width, height, feedItemId);
+        }
+
     }
 
 }

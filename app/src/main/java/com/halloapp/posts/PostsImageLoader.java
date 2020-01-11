@@ -76,7 +76,11 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                view.setImageBitmap(result);
+                if (result == null && post.width != 0 && post.height != 0) {
+                    view.setImageDrawable(new PlaceholderDrawable(post.width, post.height, placeholderColor));
+                } else {
+                    view.setImageBitmap(result);
+                }
             }
 
             @Override
