@@ -27,7 +27,6 @@ public class ContactsSyncResponse extends IQ {
     ContactsSyncResponse(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);
 
-        String tag = parser.getName();
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -42,7 +41,7 @@ public class ContactsSyncResponse extends IQ {
     }
 
     private Contact parseContact(XmlPullParser parser) throws IOException, XmlPullParserException {
-        Contact contact = new Contact();
+        final Contact contact = new Contact();
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;

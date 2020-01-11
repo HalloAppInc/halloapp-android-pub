@@ -12,17 +12,16 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -185,6 +184,7 @@ public class PostsDb {
         });
     }
 
+    @WorkerThread
     public List<Post> getPosts(final @Nullable Long id, final int count, final boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
