@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.ui.RegistrationRequestActivity;
-import com.halloapp.ui.RegistrationVerificationActivity;
 import com.halloapp.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,15 +25,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        /*
-        if (true) {
-            Intent intent = new Intent(this, RegistrationVerificationActivity.class);
-            intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, "16502813677");
-            startActivity(intent);
-            finish();
-            return;
-        }
-        */
 
         setContentView(R.layout.activity_main);
         final BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -51,6 +41,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.i("MainActivity.onDestroy");
-        Connection.getInstance(null).disconnect();
     }
 }
