@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.RegistrationVerificationActivity;
+import com.halloapp.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -18,12 +19,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("MainActivity.onCreate");
 
         if (!HalloApp.instance.isRegistered()) {
             startActivity(new Intent(this, RegistrationRequestActivity.class));
             finish();
             return;
         }
+        /*
+        if (true) {
+            Intent intent = new Intent(this, RegistrationVerificationActivity.class);
+            intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, "16502813677");
+            startActivity(intent);
+            finish();
+            return;
+        }
+        */
 
         setContentView(R.layout.activity_main);
         final BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -34,5 +45,12 @@ public class MainActivity extends AppCompatActivity {
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("MainActivity.onDestroy");
+        Connection.getInstance(null).disconnect();
     }
 }
