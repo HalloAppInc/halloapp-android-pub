@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.contacts.Contacts;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
@@ -229,7 +230,7 @@ public class HomeFragment extends Fragment {
         void bindTo(final @NonNull Post post) {
 
             avatarView.setImageResource(R.drawable.avatar_person); // testing-only
-            nameView.setText(post.isOutgoing() ? nameView.getContext().getString(R.string.me) : post.senderJid); // testing-only
+            nameView.setText(post.isOutgoing() ? nameView.getContext().getString(R.string.me) : Contacts.getInstance().getName(post.senderJid));
             if (post.state < Post.POST_STATE_OUTGOING_SENT) {
                 progressView.setVisibility(View.VISIBLE);
                 timeView.setVisibility(View.GONE);

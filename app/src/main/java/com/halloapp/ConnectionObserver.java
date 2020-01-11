@@ -2,16 +2,9 @@ package com.halloapp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.contacts.Contacts;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class ConnectionObserver implements Connection.Observer {
 
@@ -23,15 +16,8 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onConnected() {
-        final List<Jid> contacts = Arrays.asList(
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("13477521636"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // duygu
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14703381473"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // murali
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14154121848"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // michael
-                //JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("14088922686"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), // tony
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502752675"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)),
-                JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("16502813677"), Domainpart.fromOrNull(Connection.XMPP_DOMAIN))
-        );
-        Connection.getInstance(this).syncPubSub(contacts);
+        Connection.getInstance(this).syncPubSub(Contacts.getInstance().getMemberJids());
+        Connection.getInstance(this).syncContacts(Contacts.getInstance().getPhones());
     }
 
     @Override

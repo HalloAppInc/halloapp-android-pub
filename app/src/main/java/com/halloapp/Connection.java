@@ -10,6 +10,9 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.posts.Post;
+import com.halloapp.protocol.ContactsSyncResponse;
+import com.halloapp.protocol.ContactsSyncResponseProvider;
+import com.halloapp.protocol.ContactsSyncRequest;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.util.Log;
 
@@ -23,6 +26,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.debugger.SmackDebugger;
 import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
@@ -65,6 +69,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -125,6 +130,7 @@ public class Connection {
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
             ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
+            ProviderManager.addIQProvider(ContactsSyncResponse.ELEMENT, ContactsSyncResponse.NAMESPACE, new ContactsSyncResponseProvider());
 
             try {
                 final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
@@ -231,7 +237,7 @@ public class Connection {
         observer.onDisconnected();
     }
 
-    public void syncPubSub(@NonNull final List<Jid> jids) {
+    public void syncPubSub(@NonNull final Collection<Jid> jids) {
         handler.post(() -> {
             if (connection == null) {
                 Log.e("connection: sync pubsub: no connection");
@@ -252,6 +258,25 @@ public class Connection {
                 Log.e("connection: sync pubsub", e);
             } catch (XmppStringprepException e) {
                 Log.e("connection: sync pubsub: invalid jid", e);
+            }
+        });
+    }
+
+    public void syncContacts(@NonNull final Collection<String> phones) {
+        handler.post(() -> {
+            if (connection == null) {
+                Log.e("connection: sync pubsub: no connection");
+                return;
+            }
+            final ContactsSyncRequest contactsSyncIq = new ContactsSyncRequest(connection.getXMPPServiceDomain(), phones);
+            try {
+                final IQ response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
+                if (response instanceof ContactsSyncResponse) {
+                    // TODO (ds): handle contacts response here
+                }
+
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot sync contacts", e);
             }
         });
     }
@@ -346,7 +371,7 @@ public class Connection {
     }
 
     @WorkerThread
-    private void syncAffiliations(@NonNull List<Jid> jids, @NonNull String nodeId) throws XMPPException.XMPPErrorException, PubSubException.NotAPubSubNodeException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, XmppStringprepException {
+    private void syncAffiliations(@NonNull Collection<Jid> jids, @NonNull String nodeId) throws XMPPException.XMPPErrorException, PubSubException.NotAPubSubNodeException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, XmppStringprepException {
         Preconditions.checkNotNull(connection);
         final Jid selfJid = connection.getUser().asEntityBareJid();
         final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
@@ -390,7 +415,7 @@ public class Connection {
     }
 
     @WorkerThread
-    private void syncSubscriptions(@NonNull List<Jid> jids) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
+    private void syncSubscriptions(@NonNull Collection<Jid> jids) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final Jid selfJid = connection.getUser().asEntityBareJid();
         final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
@@ -597,8 +622,8 @@ public class Connection {
     public class HalloAffiliationProvider extends AffiliationProvider {
 
         @Override
-        public Affiliation parse(XmlPullParser parser, int initialDepth)
-                throws Exception {
+        public Affiliation parse(XmlPullParser parser, int initialDepth) throws Exception {
+
             String node = parser.getAttributeValue(null, "node");
             BareJid jid = ParserUtils.getBareJidAttribute(parser);
             String namespaceString = parser.getNamespace();
