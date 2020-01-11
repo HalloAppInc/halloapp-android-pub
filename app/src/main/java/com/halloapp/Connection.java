@@ -83,7 +83,7 @@ public class Connection {
     private static final String HOST = "s.halloapp.net";
     private static final int PORT = 5222;
     private static final int CONNECTION_TIMEOUT = 20_000;
-    private static final int REPLY_TIMEOUT = 220_000; //testing-only
+    private static final int REPLY_TIMEOUT = BuildConfig.DEBUG ? 220_000 : 20_000;
 
     public static final Jid FEED_JID = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("feed"), Domainpart.fromOrNull(XMPP_DOMAIN));
 
