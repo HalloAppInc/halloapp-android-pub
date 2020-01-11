@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.View;
@@ -54,6 +55,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         phoneNumberEditText = findViewById(R.id.phone_number);
         countryCodePicker = findViewById(R.id.ccp);
         countryCodePicker.registerCarrierNumberEditText(phoneNumberEditText);
+        countryCodePicker.useFlagEmoji(Build.VERSION.SDK_INT >= 28);
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
 
