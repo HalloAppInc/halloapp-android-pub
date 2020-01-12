@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -7,13 +8,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Arrays;
+import java.util.List;
+
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +45,50 @@ public class MainActivity extends AppCompatActivity {
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+
+        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
+                    REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i("MainActivity.onDestroy");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
+                // TODO (ds): start contact sync
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        // Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
+        // This will display a dialog directing them to enable the permission in app settings.
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            switch (requestCode) {
+                case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
+                    new AppSettingsDialog.Builder(this)
+                            .setRationale(getString(R.string.contacts_permission_rationale_denied))
+                            .build().show();
+                    break;
+                }
+            }
+        }
     }
 }

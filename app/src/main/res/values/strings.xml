@@ -38,4 +38,7 @@
         <item quantity="one">%dd</item>
         <item quantity="other">%dd</item>
     </plurals>
+    <string name="contacts_permission_rationale">To connect with your friends and family we need a permission to access contacts on your device</string>
+    <string name="contacts_permission_rationale_denied">To connect with your friends and family we need a permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
+
 </resources>
