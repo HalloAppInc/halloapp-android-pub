@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberPassword"
+        android:importantForAutofill="no"
         android:gravity="center"
         android:textSize="22sp"
         android:singleLine="true"
