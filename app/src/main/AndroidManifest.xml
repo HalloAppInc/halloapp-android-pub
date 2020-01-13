@@ -36,6 +36,12 @@
             android:theme="@style/AppTheme.PostComposer"
             android:label="@string/new_post"
             android:windowSoftInputMode="adjustResize" />
+
+        <receiver android:name=".registration.SmsVerificationReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

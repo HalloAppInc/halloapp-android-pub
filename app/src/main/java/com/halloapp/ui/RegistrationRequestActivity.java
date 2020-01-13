@@ -20,7 +20,8 @@ import android.widget.EditText;
 
 import com.halloapp.MainActivity;
 import com.halloapp.R;
-import com.halloapp.Registration;
+import com.halloapp.registration.Registration;
+import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.util.Log;
 import com.hbb20.CountryCodePicker;
@@ -129,6 +130,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         countryCodePicker.setCcpClickable(false);
         Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
 
+        SmsVerificationManager.getInstance().start(getApplicationContext());
         registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber());
     }
 

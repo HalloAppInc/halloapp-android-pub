@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 import com.halloapp.HalloApp;
 import com.halloapp.R;
-import com.halloapp.Registration;
+import com.halloapp.registration.Registration;
+import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.util.Log;
 
@@ -44,6 +45,20 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
 
     private TextView codeEditText;
     private View loadingProgressBar;
+
+    private SmsVerificationManager.Observer smsVerificationObserver = new SmsVerificationManager.Observer() {
+
+        @Override
+        public void onVerificationSmsReceived(String code) {
+            Log.i("RegistrationVerificationActivity.smsVerificationObserver.onVerificationSmsReceived: " + code);
+            codeEditText.setText(code);
+        }
+
+        @Override
+        public void onVerificationSmsFailed() {
+            Log.w("RegistrationVerificationActivity.smsVerificationObserver.onVerificationSmsFailed");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,12 +121,19 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
             }
         });
         codeEditText.requestFocus();
+
+        final String lastSmsCode = SmsVerificationManager.getInstance().getLastReceivedCode();
+        if (!TextUtils.isEmpty(lastSmsCode)) {
+            codeEditText.setText(lastSmsCode);
+        }
+        SmsVerificationManager.getInstance().addObserver(smsVerificationObserver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i("RegistrationVerificationActivity.onDestroy");
+        SmsVerificationManager.getInstance().removeObserver(smsVerificationObserver);
     }
 
     @Override

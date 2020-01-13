@@ -1,10 +1,11 @@
-package com.halloapp;
+package com.halloapp.registration;
 
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.Constants;
 import com.halloapp.util.FileUtils;
 
 import org.json.JSONException;
