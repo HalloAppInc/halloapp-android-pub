@@ -1,6 +1,8 @@
 package com.halloapp.posts;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
 
 import com.halloapp.util.Log;
@@ -10,6 +12,23 @@ import java.util.List;
 public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
     private final PostsDb postsDb;
+
+    public static class Factory extends DataSource.Factory<Long, Post> {
+
+        private final PostsDb postsDb;
+        private MutableLiveData<PostsDataSource> sourceLiveData = new MutableLiveData<>();
+
+        public Factory(@NonNull PostsDb postsDb) {
+            this.postsDb = postsDb;
+        }
+
+        @Override
+        public @NonNull DataSource<Long, Post> create() {
+            PostsDataSource latestSource = new PostsDataSource(postsDb);
+            sourceLiveData.postValue(latestSource);
+            return latestSource;
+        }
+    }
 
     PostsDataSource(@NonNull PostsDb postsDb) {
         this.postsDb = postsDb;

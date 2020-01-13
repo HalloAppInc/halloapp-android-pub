@@ -6,12 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDataSourceFactory;
+import com.halloapp.posts.PostsDataSource;
 import com.halloapp.posts.PostsDb;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,7 +62,7 @@ public class HomeViewModel extends AndroidViewModel {
         postsDb = PostsDb.getInstance(application);
         postsDb.addObserver(postsObserver);
 
-        final PostsDataSourceFactory dataSourceFactory = new PostsDataSourceFactory(postsDb);
+        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
     }

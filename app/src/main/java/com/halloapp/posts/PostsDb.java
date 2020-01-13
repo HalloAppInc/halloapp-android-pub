@@ -59,7 +59,7 @@ public class PostsDb {
         mediaStore = MediaStore.getInstance(context);
     }
 
-    public void addObserver(Observer observer) {
+    public void addObserver(@NonNull Observer observer) {
         synchronized (observers) {
             observers.add(observer);
         }
@@ -185,7 +185,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Post> getPosts(final @Nullable Long id, final int count, final boolean after) {
+    public List<Post> getPosts(@Nullable Long id, int count, boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
