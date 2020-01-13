@@ -17,11 +17,24 @@ import java.util.UUID;
 
 public class MainPostsObserver implements PostsDb.Observer {
 
+    private static MainPostsObserver instance;
+
     private final Connection connection;
     private final MediaStore mediaStore;
     private final PostsDb postsDb;
 
-    MainPostsObserver(@NonNull Connection connection, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
+    public static MainPostsObserver getInstance(@NonNull Connection connection, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
+        if (instance == null) {
+            synchronized(MainPostsObserver.class) {
+                if (instance == null) {
+                    instance = new MainPostsObserver(connection, mediaStore, postsDb);
+                }
+            }
+        }
+        return instance;
+    }
+
+    private MainPostsObserver(@NonNull Connection connection, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
         this.connection = connection;
         this.mediaStore = mediaStore;
         this.postsDb = postsDb;

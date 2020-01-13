@@ -33,7 +33,8 @@ public class HalloApp extends Application {
 
         final PostsDb postsDb = PostsDb.getInstance(this);
         connection = Connection.getInstance(new ConnectionObserver(postsDb));
-        postsDb.addObserver(new MainPostsObserver(connection, MediaStore.getInstance(this), postsDb));
+        final MainPostsObserver mainPostsObserver = MainPostsObserver.getInstance(connection, MediaStore.getInstance(this), postsDb);
+        postsDb.addObserver(mainPostsObserver);
 
         connect();
 
