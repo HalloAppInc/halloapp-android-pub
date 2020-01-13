@@ -3,6 +3,7 @@ package com.halloapp;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.ui.RegistrationRequestActivity;
@@ -15,7 +16,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.util.Arrays;
 import java.util.List;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
@@ -90,5 +90,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
+            Debug.showDebugMenu(this, findViewById(R.id.nav_view));
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
     }
 }

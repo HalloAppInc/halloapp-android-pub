@@ -63,6 +63,10 @@ public class HalloApp extends Application {
         Crashlytics.setString("user", getUser());
     }
 
+    public void disconnect() {
+        connection.disconnect();
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
