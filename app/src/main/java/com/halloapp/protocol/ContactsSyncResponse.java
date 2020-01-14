@@ -65,9 +65,9 @@ public class ContactsSyncResponse extends IQ {
         return null;
     }
 
-    static class Contact {
-        String role;
-        String phone;
-        String normalizedPhone;
+    public static class Contact {
+        public String role;
+        public String phone;
+        public String normalizedPhone;
     }
 }

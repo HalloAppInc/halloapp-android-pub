@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.contacts.ContactsDb;
+
 public class Debug {
 
     private static final String DEBUG_MENU_RESET_REGISTRATION = "Reset registration";
@@ -37,6 +39,8 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_DELETE_CONTACTS_DB: {
+                    ContactsDb.getInstance(context).deleteDb();
+                    Runtime.getRuntime().exit(0);
                     break;
                 }
             }

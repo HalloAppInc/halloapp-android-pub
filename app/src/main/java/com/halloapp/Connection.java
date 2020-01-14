@@ -73,6 +73,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @SuppressWarnings("WeakerAccess")
 public class Connection {
@@ -87,7 +90,7 @@ public class Connection {
 
     public static final Jid FEED_JID = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("feed"), Domainpart.fromOrNull(XMPP_DOMAIN));
 
-    private final Handler handler;
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
     private final Observer observer;
 
@@ -115,12 +118,11 @@ public class Connection {
         this.observer = observer;
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
         SmackConfiguration.DEBUG = BuildConfig.DEBUG;
     }
 
     public void connect(final @NonNull String user, final @NonNull String password) {
-        handler.post(() -> {
+        executor.execute(() -> {
             if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
                 Log.i("connection: already connected");
                 return;
@@ -223,7 +225,7 @@ public class Connection {
     }
 
     public void disconnect() {
-        handler.post(this::disconnectInBackground);
+        executor.execute(this::disconnectInBackground);
     }
 
     @WorkerThread
@@ -238,7 +240,7 @@ public class Connection {
     }
 
     public void syncPubSub(@NonNull final Collection<Jid> jids) {
-        handler.post(() -> {
+        executor.execute(() -> {
             if (connection == null) {
                 Log.e("connection: sync pubsub: no connection");
                 return;
@@ -262,27 +264,28 @@ public class Connection {
         });
     }
 
-    public void syncContacts(@NonNull final Collection<String> phones) {
-        handler.post(() -> {
+    public Future<List<ContactsSyncResponse.Contact>> syncContacts(@NonNull final Collection<String> phones) {
+        return executor.submit(() -> {
             if (connection == null) {
                 Log.e("connection: sync pubsub: no connection");
-                return;
+                return null;
             }
             final ContactsSyncRequest contactsSyncIq = new ContactsSyncRequest(connection.getXMPPServiceDomain(), phones);
             try {
                 final IQ response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
                 if (response instanceof ContactsSyncResponse) {
-                    // TODO (ds): handle contacts response here
+                    return ((ContactsSyncResponse)response).contactList;
                 }
 
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot sync contacts", e);
             }
+            return null;
         });
     }
 
     public void sendPost(final @NonNull Post post) {
-        handler.post(() -> {
+        executor.execute(() -> {
             if (connection == null) {
                 Log.e("connection: cannot send message, no connection");
                 return;
@@ -321,7 +324,7 @@ public class Connection {
     }
 
     public void sendDeliveryReceipt(final @NonNull Post post) {
-        handler.post(() -> {
+        executor.execute(() -> {
             if (connection == null) {
                 Log.e("connection: cannot send message, no connection");
                 return;

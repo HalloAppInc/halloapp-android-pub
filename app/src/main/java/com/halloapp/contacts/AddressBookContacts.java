@@ -3,35 +3,75 @@ package com.halloapp.contacts;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
 import com.halloapp.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 public class AddressBookContacts {
 
-    public static final void getAddressBookContacts(@NonNull Context context) {
+    static class AddressBookContact {
 
-        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
-        int idColumnIndex = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID);
-        int displayNameColumnIndex = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int phoneNumberColumnIndex = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int normPhoneNumberColumnIndex = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER);
-        int typeColumnIndex = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-        int labelColumnIndex = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL);
-        while (phones.moveToNext()) {
+        final long id;
+        final String name;
+        final String phone;
 
-            int id = phones.getInt(idColumnIndex);
-            String name = phones.getString(displayNameColumnIndex);
-            String phoneNumber = phones.getString(phoneNumberColumnIndex);
-            String normPhoneNumber = phones.getString(normPhoneNumberColumnIndex);
-            int type = phones.getInt(typeColumnIndex);
-            String label = phones.getString(labelColumnIndex);
-
-            Log.i(id + " contact:" + name + " phone:" + phoneNumber + " norm:" + normPhoneNumber + " type:" + ContactsContract.CommonDataKinds.Phone.getTypeLabel(context.getResources(), type, label));
-
+        AddressBookContact(long id, @NonNull String name, @NonNull String phone) {
+            this.id = id;
+            this.name = name;
+            this.phone = phone;
         }
-        Log.i(phones.getCount() + " contacts");
-        phones.close();
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            final AddressBookContact that = (AddressBookContact) o;
+            return name.equals(that.name) && phone.equals(that.phone);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, phone);
+        }
+    }
+
+    public static Collection<AddressBookContact> getAddressBookContacts(@NonNull Context context) {
+
+        final Set<AddressBookContact> contacts = new HashSet<>();
+        try (Cursor contactsCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null)) {
+            if (contactsCursor == null) {
+                Log.e("AddressBookContacts: no contacts cursor");
+                return null;
+            }
+            final int idColumnIndex = contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID);
+            final int nameColumnIndex = contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+            final int phoneColumnIndex = contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            while (contactsCursor.moveToNext()) {
+                final long id = contactsCursor.getLong(idColumnIndex);
+                final String name = contactsCursor.getString(nameColumnIndex);
+                final String phone = contactsCursor.getString(phoneColumnIndex);
+                if (!TextUtils.isEmpty(phone)) {
+                    contacts.add(new AddressBookContact(id, name == null ? "" : name, phone));
+                    Log.i(id + " contact:" + name + " phone:" + phone);
+                }
+            }
+            Log.i("AddressBookContacts: " + contacts.size() + " contacts");
+            return contacts;
+        } catch (SecurityException ex) {
+            Log.e("AddressBookContacts", ex);
+            return null;
+        }
     }
 }

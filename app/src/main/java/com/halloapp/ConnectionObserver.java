@@ -1,5 +1,8 @@
 package com.halloapp;
 
+import android.app.Application;
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.Contacts;
@@ -8,16 +11,18 @@ import com.halloapp.posts.PostsDb;
 
 public class ConnectionObserver implements Connection.Observer {
 
+    private final Context context;
     private final PostsDb postsDb;
 
-    ConnectionObserver(PostsDb postsDb) {
+    ConnectionObserver(@NonNull Context context, @NonNull PostsDb postsDb) {
+        this.context = context.getApplicationContext();
         this.postsDb = postsDb;
     }
 
     @Override
     public void onConnected() {
         Connection.getInstance(this).syncPubSub(Contacts.getInstance().getMemberJids());
-        Connection.getInstance(this).syncContacts(Contacts.getInstance().getPhones());
+        Contacts.getInstance().startContactSync(context);
     }
 
     @Override

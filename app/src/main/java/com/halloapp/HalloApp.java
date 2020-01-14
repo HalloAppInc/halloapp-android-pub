@@ -3,6 +3,9 @@ package com.halloapp;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.crashlytics.android.Crashlytics;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.media.MediaStore;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
@@ -20,7 +24,7 @@ public class HalloApp extends Application {
 
     public static HalloApp instance;
 
-    private Connection connection;
+    public Connection connection;
 
     @Override
     public void onCreate() {
@@ -32,7 +36,7 @@ public class HalloApp extends Application {
         Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
         final PostsDb postsDb = PostsDb.getInstance(this);
-        connection = Connection.getInstance(new ConnectionObserver(postsDb));
+        connection = Connection.getInstance(new ConnectionObserver(this, postsDb));
         final MainPostsObserver mainPostsObserver = MainPostsObserver.getInstance(connection, MediaStore.getInstance(this), postsDb);
         postsDb.addObserver(mainPostsObserver);
 
@@ -49,6 +53,16 @@ public class HalloApp extends Application {
             void onForeground() {
                 Log.i("halloapp: onForeground");
                 connect();
+            }
+        });
+
+        final ContactsDb contactsDb = ContactsDb.getInstance(this);
+        contactsDb.syncAddressBook();
+        getContentResolver().registerContentObserver(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, true, new ContentObserver(null) {
+
+            public void onChange(boolean selfChange, Uri uri) {
+                Log.i("halloapp: changed " + uri);
+                contactsDb.syncAddressBook();
             }
         });
     }
