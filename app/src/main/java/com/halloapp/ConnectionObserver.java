@@ -50,4 +50,10 @@ public class ConnectionObserver implements Connection.Observer {
         }
         PostsDb.getInstance(context).addPost(post);
     }
+
+    @Override
+    public void onSubscribersChanged() {
+        ContactsSync.getInstance(context).startContactSync();
+    }
+
 }

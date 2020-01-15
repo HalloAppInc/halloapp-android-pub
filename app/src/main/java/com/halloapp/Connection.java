@@ -114,6 +114,7 @@ public class Connection {
         void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId);
         void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
+        void onSubscribersChanged();
     }
 
     private Connection() {
@@ -211,7 +212,7 @@ public class Connection {
             try {
                 configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
                     Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
-                    // TODO (ds): refresh
+                    observer.onSubscribersChanged();
                 });
                 configureNode(getMyFeedNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
                     Log.i("connection: got " + items.getItems().size() + " items on my feed node, " + items.getPublishedDate());
