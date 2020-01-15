@@ -139,6 +139,9 @@ public class ContactsDb {
             } finally {
                 db.endTransaction();
             }
+            if (!updatedContacts.isEmpty()) {
+                notifyContactsChanged();
+            }
             return null;
         });
     }
