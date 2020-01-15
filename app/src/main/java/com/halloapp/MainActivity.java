@@ -2,12 +2,14 @@ package com.halloapp;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.InitialSyncActivity;
+import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.util.Log;
 
@@ -58,6 +60,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
                     REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
         }
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+            // The activity was not launched from history
+            processIntent(getIntent());
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        processIntent(intent);
     }
 
     @Override
@@ -106,5 +119,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
+    }
+
+    private void processIntent(Intent intent) {
+        final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (Intent.ACTION_SEND.equals(intent.getAction()) && uri != null) {
+            final Intent composerIntent = new Intent(this, PostComposerActivity.class);
+            composerIntent.setData(uri);
+            startActivity(composerIntent);
+        }
     }
 }
