@@ -34,13 +34,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class ContactsSync {
 
     public static final String ADDRESS_BOOK_SYNC_WORK_ID = "addess-book-sync";
     public static final String CONTACT_SYNC_WORK_ID = "contact-sync";
     public static final String PUBSUB_SYNC_WORK_ID = "pubsub-sync";
+
+    private static int CONTACT_SYNC_BATCH_SIZE = 128;
 
     private static ContactsSync instance;
 
@@ -129,53 +130,84 @@ public class ContactsSync {
             phoneContactList.add(contact);
         }
         Log.i("ContactsSync.performContactSync: " + phones.keySet().size() + " phones to sync");
-        final Future<List<ContactsSyncResponse.Contact>> future = Connection.getInstance().syncContacts(phones.keySet());
-        try {
-            final List<ContactsSyncResponse.Contact> contactSyncResults = future.get();
-            if (contactSyncResults == null) {
+        final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
+        final List<ContactsSyncResponse.Contact> contactSyncResults = new ArrayList<>(phonesBatch.size());
+        for (String phone : phones.keySet()) {
+            phonesBatch.add(phone);
+            if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
+                Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
+                try {
+                    contactSyncResults.addAll(Connection.getInstance().syncContacts(phonesBatch).get());
+                    phonesBatch.clear();
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e("ContactsSync.performContactSync: failed");
+                    return ListenableWorker.Result.failure();
+                }
+            }
+        }
+        if (phonesBatch.size() > 0) {
+            Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
+            try {
+                contactSyncResults.addAll(Connection.getInstance().syncContacts(phonesBatch).get());
+            } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.performContactSync: failed");
                 return ListenableWorker.Result.failure();
             }
-            final Collection<Contact> updatedContacts = new ArrayList<>();
-            for (ContactsSyncResponse.Contact contactsSyncResult : contactSyncResults) {
-                final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
-                if (phoneContacts == null) {
-                    Log.e("ContactsSync.performContactSync: phone " + contactsSyncResult.phone + "returned from server doesn't match to local phones");
-                    continue;
+        }
+
+        final Collection<Contact> updatedContacts = new ArrayList<>();
+        for (ContactsSyncResponse.Contact contactsSyncResult : contactSyncResults) {
+            final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
+            if (phoneContacts == null) {
+                Log.e("ContactsSync.performContactSync: phone " + contactsSyncResult.phone + "returned from server doesn't match to local phones");
+                continue;
+            }
+            for (Contact contact : phoneContacts) {
+                boolean contactUpdated = false;
+                if (contact.member != ("member".equals(contactsSyncResult.role))) {
+                    contact.member = !contact.member;
+                    contactUpdated = true;
+                    Log.i("ContactsSync.performContactSync: update membership for " + contact.name + " to " + contact.member);
                 }
-                for (Contact contact : phoneContacts) {
-                    boolean contactUpdated = false;
-                    if (contact.member != ("member".equals(contactsSyncResult.role))) {
-                        contact.member = !contact.member;
-                        contactUpdated = true;
+                if (!Objects.equals(contact.jid == null ? null : contact.jid.getLocalpartOrNull(), contactsSyncResult.normalizedPhone)) {
+                    if (contactsSyncResult.normalizedPhone == null) {
+                        contact.jid = null;
+                    } else {
+                        contact.jid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(contactsSyncResult.normalizedPhone), Domainpart.fromOrNull(Connection.XMPP_DOMAIN));
                     }
-                    if (!Objects.equals(contact.jid == null ? null : contact.jid.getLocalpartOrNull(), contactsSyncResult.normalizedPhone)) {
-                        if (contactsSyncResult.normalizedPhone == null) {
-                            contact.jid = null;
-                        } else {
-                            contact.jid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(contactsSyncResult.normalizedPhone), Domainpart.fromOrNull(Connection.XMPP_DOMAIN));
-                        }
-                        contactUpdated = true;
-                    }
-                    if (contactUpdated) {
-                        updatedContacts.add(contact);
-                    }
+                    Log.i("ContactsSync.performContactSync: update jid for " + contact.name + " to " + contact.jid);
+                    contactUpdated = true;
+                }
+                if (contactUpdated) {
+                    updatedContacts.add(contact);
                 }
             }
-            if (!updatedContacts.isEmpty()) {
+        }
+
+        if (!updatedContacts.isEmpty()) {
+            try {
                 contactsDb.updateContactsMembership(updatedContacts).get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("ContactsSync.performContactSync: failed to update membership", e);
+                return ListenableWorker.Result.failure();
             }
-            final Collection<Jid> memberJids = contactsDb.getMemberJids();
-            Log.i("ContactsSync.performContactSync: " + memberJids.size() + " to pubsub");
+        }
+
+        Log.i("ContactsSync.performContactSync: " + updatedContacts.size() + " contacts updated");
+
+        final Collection<Jid> memberJids = contactsDb.getMemberJids();
+        Log.i("ContactsSync.performContactSync: " + memberJids.size() + " to pubsub");
+
+        try {
             Connection.getInstance().syncPubSub(memberJids).get();
-
-            HalloApp.instance.setLastSyncTime(System.currentTimeMillis());
-
-            Log.d("ContactsSync.performContactSync: " + updatedContacts.size() + " contacts updated");
         } catch (ExecutionException | InterruptedException e) {
-            Log.e("ContactsSync.performContactSync", e);
+            Log.e("ContactsSync.performContactSync: failed to sync pubsub", e);
             return ListenableWorker.Result.failure();
         }
+
+        HalloApp.instance.setLastSyncTime(System.currentTimeMillis());
+
+        Log.i("ContactsSync.done: " + HalloApp.instance.getLastSyncTime());
 
         return ListenableWorker.Result.success();
     }
