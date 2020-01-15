@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.ContactsSync;
 
 public class Debug {
 
@@ -16,6 +17,7 @@ public class Debug {
     private static final String DEBUG_MENU_LOGOUT = "Logout";
     private static final String DEBUG_MENU_DELETE_POSTS_DB = "Delete posts DB";
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
+    private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
 
     static void showDebugMenu(@NonNull Context context, View anchor) {
         PopupMenu menu = new PopupMenu(context, anchor);
@@ -23,6 +25,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
         menu.getMenu().add(DEBUG_MENU_DELETE_POSTS_DB);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
+        menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -41,6 +44,10 @@ public class Debug {
                 case DEBUG_MENU_DELETE_CONTACTS_DB: {
                     ContactsDb.getInstance(context).deleteDb();
                     Runtime.getRuntime().exit(0);
+                    break;
+                }
+                case DEBUG_MENU_SYNC_CONTACTS: {
+                    ContactsSync.getInstance(context).startContactSync();
                     break;
                 }
             }
