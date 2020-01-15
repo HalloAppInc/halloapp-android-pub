@@ -32,10 +32,11 @@ public class PublishedEntry {
     private static final String ELEMENT_USER = "username";
     private static final String ELEMENT_URL = "imageUrl";
     private static final String ELEMENT_TEXT = "text";
-    private static final String ELEMENT_WIDTH = "width";
-    private static final String ELEMENT_HEIGHT = "height";
     private static final String ELEMENT_TIMESTAMP = "timestamp";
     private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
+
+    private static final String ATTRIBUTE_WIDTH = "width";
+    private static final String ATTRIBUTE_HEIGHT = "height";
 
     private static final String NAMESPACE = "http://halloapp.com/published-entry";
 
@@ -120,18 +121,14 @@ public class PublishedEntry {
             }
             if (url != null) {
                 serializer.startTag(NAMESPACE, ELEMENT_URL);
+                if (width != 0) {
+                    serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
+                }
+                if (height != 0) {
+                    serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
+                }
                 serializer.text(url);
                 serializer.endTag(NAMESPACE, ELEMENT_URL);
-            }
-            if (width != 0) {
-                serializer.startTag(NAMESPACE, ELEMENT_WIDTH);
-                serializer.text(Integer.toString(width));
-                serializer.endTag(NAMESPACE, ELEMENT_WIDTH);
-            }
-            if (height != 0) {
-                serializer.startTag(NAMESPACE, ELEMENT_HEIGHT);
-                serializer.text(Integer.toString(height));
-                serializer.endTag(NAMESPACE, ELEMENT_HEIGHT);
             }
             serializer.startTag(NAMESPACE, ELEMENT_TIMESTAMP); // TODO (ds): remove; should be set on server
             serializer.text(Long.toString(timestamp / 1000));
@@ -176,11 +173,9 @@ public class PublishedEntry {
             if (ELEMENT_USER.equals(name)) {
                 builder.user(Xml.readText(parser));
             } else if (ELEMENT_URL.equals(name)) {
+                builder.width(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
+                builder.height(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
                 builder.url(Xml.readText(parser));
-            } else if (ELEMENT_WIDTH.equals(name)) {
-                builder.width(Xml.readText(parser));
-            } else if (ELEMENT_HEIGHT.equals(name)) {
-                builder.height(Xml.readText(parser));
             } else if (ELEMENT_TEXT.equals(name)) {
                 builder.text(Xml.readText(parser));
             } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
@@ -254,19 +249,23 @@ public class PublishedEntry {
         }
 
         Builder width(String widthText) {
-            try {
-                this.width = Integer.parseInt(widthText);
-            } catch (NumberFormatException ex) {
-                Log.e("PublishedEntry: invalid width", ex);
+            if (widthText != null) {
+                try {
+                    this.width = Integer.parseInt(widthText);
+                } catch (NumberFormatException ex) {
+                    Log.e("PublishedEntry: invalid width", ex);
+                }
             }
             return this;
         }
 
         Builder height(String heightText) {
-            try {
-                this.height = Integer.parseInt(heightText);
-            } catch (NumberFormatException ex) {
-                Log.e("PublishedEntry: invalid height", ex);
+            if (heightText != null) {
+                try {
+                    this.height = Integer.parseInt(heightText);
+                } catch (NumberFormatException ex) {
+                    Log.e("PublishedEntry: invalid height", ex);
+                }
             }
             return this;
         }
