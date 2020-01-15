@@ -47,7 +47,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
     private TextView codeEditText;
     private View loadingProgressBar;
 
-    private SmsVerificationManager.Observer smsVerificationObserver = new SmsVerificationManager.Observer() {
+    private final SmsVerificationManager.Observer smsVerificationObserver = new SmsVerificationManager.Observer() {
 
         @Override
         public void onVerificationSmsReceived(String code) {
@@ -172,7 +172,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
 
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
 
-        private MutableLiveData<RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
+        private final MutableLiveData<RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
 
         public RegistrationVerificationViewModel(@NonNull Application application) {
             super(application);

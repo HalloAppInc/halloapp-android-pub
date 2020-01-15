@@ -1,14 +1,10 @@
 package com.halloapp.media;
 
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
-import com.halloapp.HalloApp;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 

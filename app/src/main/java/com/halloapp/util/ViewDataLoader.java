@@ -18,9 +18,9 @@ import java.util.concurrent.Future;
 
 public class ViewDataLoader<V extends View, R, K> {
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private Map<View, Future> queue = new HashMap<>();
-    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<View, Future> queue = new HashMap<>();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public interface Displayer<V, R> {
         void showResult(@NonNull V view, @Nullable R result);

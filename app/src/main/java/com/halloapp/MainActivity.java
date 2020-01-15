@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
                 ContactsSync.getInstance(this).startAddressBookListener();
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
         // This will display a dialog directing them to enable the permission in app settings.
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            //noinspection SwitchStatementWithTooFewBranches
             switch (requestCode) {
                 case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
                     new AppSettingsDialog.Builder(this)

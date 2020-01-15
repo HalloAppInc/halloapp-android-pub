@@ -84,7 +84,7 @@ public class FileUtils {
     public static String inputStreamToString(@NonNull InputStream inputStream) throws IOException {
         final StringBuilder string = new StringBuilder();
         try (Reader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName(StandardCharsets.UTF_8.name())))) {
-            int c = 0;
+            int c;
             while ((c = reader.read()) != -1) {
                 string.append((char) c);
             }

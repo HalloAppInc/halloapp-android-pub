@@ -29,7 +29,7 @@ public class PostsDb {
 
     private static PostsDb instance;
 
-    private Executor databaseWriteExecutor = Executors.newSingleThreadExecutor();
+    private final Executor databaseWriteExecutor = Executors.newSingleThreadExecutor();
 
     private final DatabaseHelper databaseHelper;
     private final MediaStore mediaStore;

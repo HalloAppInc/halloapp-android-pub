@@ -1,6 +1,5 @@
 package com.halloapp;
 
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 
@@ -10,9 +9,9 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.posts.Post;
+import com.halloapp.protocol.ContactsSyncRequest;
 import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.protocol.ContactsSyncResponseProvider;
-import com.halloapp.protocol.ContactsSyncRequest;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.util.Log;
 
@@ -23,8 +22,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.debugger.SmackDebugger;
-import org.jivesoftware.smack.debugger.SmackDebuggerFactory;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
@@ -71,7 +68,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -92,7 +88,7 @@ public class Connection {
 
     public static final Jid FEED_JID = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("feed"), Domainpart.fromOrNull(XMPP_DOMAIN));
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
     private Observer observer;
 
@@ -150,20 +146,15 @@ public class Connection {
                         .setSendPresence(false)
                         .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
                         .setPort(PORT)
-                        .setDebuggerFactory(new SmackDebuggerFactory() {
+                        .setDebuggerFactory(connection -> new AndroidDebugger(connection) {
                             @Override
-                            public SmackDebugger create(XMPPConnection connection) throws IllegalArgumentException {
-                                return new AndroidDebugger(connection) {
-                                    @Override
-                                    protected void log(String logMessage) {
-                                        Log.d("connection: " + logMessage);
-                                    }
+                            protected void log(String logMessage) {
+                                Log.d("connection: " + logMessage);
+                            }
 
-                                    @Override
-                                    protected void log(String logMessage, Throwable throwable) {
-                                        Log.w("connection: " + logMessage, throwable);
-                                    }
-                                };
+                            @Override
+                            protected void log(String logMessage, Throwable throwable) {
+                                Log.w("connection: " + logMessage, throwable);
                             }
                         })
                         .build();
@@ -666,7 +657,7 @@ public class Connection {
                 affiliation = new Affiliation(jid, affiliationType, namespace);
             }
             else {
-                throw new SmackException("Invalid affililation. Either one of 'node' or 'jid' must be set"
+                throw new SmackException("Invalid affiliation. Either one of 'node' or 'jid' must be set"
                         + ". Node: " + node
                         + ". Jid: " + jid
                         + '.');

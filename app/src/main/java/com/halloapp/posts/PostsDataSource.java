@@ -16,7 +16,7 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
     public static class Factory extends DataSource.Factory<Long, Post> {
 
         private final PostsDb postsDb;
-        private MutableLiveData<PostsDataSource> sourceLiveData = new MutableLiveData<>();
+        private final MutableLiveData<PostsDataSource> sourceLiveData = new MutableLiveData<>();
 
         public Factory(@NonNull PostsDb postsDb) {
             this.postsDb = postsDb;

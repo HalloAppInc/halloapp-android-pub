@@ -4,9 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.Contact;
@@ -14,7 +12,6 @@ import com.halloapp.contacts.ContactsDb;
 
 import java.text.Collator;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 

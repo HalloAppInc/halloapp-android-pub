@@ -9,7 +9,6 @@ import androidx.core.util.Preconditions;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
-import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.xmlpull.v1.XmlPullParser;

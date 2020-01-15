@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment {
         refreshTimestampsTime = Long.MAX_VALUE;
         adapter.notifyDataSetChanged();
     };
-    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -260,7 +260,7 @@ public class HomeFragment extends Fragment {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
                 contactNameLoader.load(nameView, JidCreate.bareFromOrNull(post.senderJid));
-            };
+            }
             if (post.state < Post.POST_STATE_OUTGOING_SENT) {
                 progressView.setVisibility(View.VISIBLE);
                 timeView.setVisibility(View.GONE);

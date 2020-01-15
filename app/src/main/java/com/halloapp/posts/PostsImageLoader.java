@@ -39,7 +39,7 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        Log.i("PostsImageLoader: create " + cacheSize + "KB cache for post imeges");
+        Log.i("PostsImageLoader: create " + cacheSize + "KB cache for post images");
         cache = new LruCache<Long, Bitmap>(cacheSize) {
 
             @Override

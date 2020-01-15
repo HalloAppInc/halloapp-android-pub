@@ -1,5 +1,14 @@
 package com.halloapp.ui;
 
+import android.app.Application;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
@@ -9,17 +18,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
-
-import android.app.Application;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.halloapp.Connection;
 import com.halloapp.Constants;
@@ -51,7 +49,7 @@ public class PostComposerActivity extends AppCompatActivity {
 
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            final String postText = editText.getText().toString();
+            final String postText = Preconditions.checkNotNull(editText.getText()).toString();
             if (postText.trim().isEmpty() && postFile == null) {
                 Log.w("PostComposerActivity: cannot post empty");
                 return;
@@ -94,15 +92,12 @@ public class PostComposerActivity extends AppCompatActivity {
         } else {
             editText.requestFocus();
             editText.setHint(R.string.type_a_post_hint);
-            editText.setPreImeListener(new PostEditText.PreImeListener() {
-                @Override
-                public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-                    if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                        finish();
-                        return true;
-                    }
-                    return false;
+            editText.setPreImeListener((keyCode, event) -> {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                    finish();
+                    return true;
                 }
+                return false;
             });
         }
     }
@@ -138,7 +133,9 @@ public class PostComposerActivity extends AppCompatActivity {
                 Log.e("failed to transcode image", e);
                 return null;
             } finally {
-                tmpFile.delete();
+                if (!tmpFile.delete()) {
+                    Log.e("PostComposerActivity: failed to delete temporary file " + tmpFile.getAbsolutePath());
+                }
             }
 
             return bitmap;
@@ -152,9 +149,9 @@ public class PostComposerActivity extends AppCompatActivity {
 
     public static class PostComposerViewModelFactory implements ViewModelProvider.Factory {
 
-        private Application application;
-        private Uri uri;
-        private File file;
+        private final Application application;
+        private final Uri uri;
+        private final File file;
 
 
         PostComposerViewModelFactory(@NonNull Application application, @NonNull Uri uri, @NonNull File file) {
@@ -165,7 +162,10 @@ public class PostComposerActivity extends AppCompatActivity {
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new PostComposerViewModel(application, uri, file);
+            if (modelClass.isAssignableFrom(PostComposerViewModel.class)) {
+                return (T) new PostComposerViewModel(application, uri, file);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }
 

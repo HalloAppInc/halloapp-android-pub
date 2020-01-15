@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.util.Log;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;

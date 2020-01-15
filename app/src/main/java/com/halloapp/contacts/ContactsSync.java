@@ -37,11 +37,11 @@ import java.util.concurrent.ExecutionException;
 
 public class ContactsSync {
 
-    public static final String ADDRESS_BOOK_SYNC_WORK_ID = "addess-book-sync";
+    public static final String ADDRESS_BOOK_SYNC_WORK_ID = "address-book-sync";
     public static final String CONTACT_SYNC_WORK_ID = "contact-sync";
     public static final String PUBSUB_SYNC_WORK_ID = "pubsub-sync";
 
-    private static int CONTACT_SYNC_BATCH_SIZE = 128;
+    private static final int CONTACT_SYNC_BATCH_SIZE = 128;
 
     private static ContactsSync instance;
 

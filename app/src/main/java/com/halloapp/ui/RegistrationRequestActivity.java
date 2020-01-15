@@ -154,7 +154,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
 
     public static class RegistrationRequestViewModel extends ViewModel {
 
-        private MutableLiveData<RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
+        private final MutableLiveData<RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
 
         LiveData<RegistrationRequestResult> getRegistrationRequestResult() {
             return registrationRequestResult;
