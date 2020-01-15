@@ -12,7 +12,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 
+import java.text.Collator;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class MessagesViewModel extends AndroidViewModel {
 
@@ -54,7 +58,10 @@ public class MessagesViewModel extends AndroidViewModel {
 
         @Override
         protected List<Contact> doInBackground(Void... voids) {
-            return ContactsDb.getInstance(application).getMemberContacts();
+            List<Contact> contacts = ContactsDb.getInstance(application).getMemberContacts();
+            final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
+            Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
+            return contacts;
         }
 
         @Override
