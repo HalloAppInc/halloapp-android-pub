@@ -17,7 +17,6 @@
     <string name="phone_number_hint">Phone number</string>
     <string name="request_registration_title">Enter your phone number to get started</string>
     <string name="request_registration_subtitle">You will receive verification code. Carrier rates may apply.</string>
-    <string name="code_hint">Code</string>
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
     <string name="registration_code_invalid">Invalid registration code, try again</string>
     <string name="registration_failed">Failed to register phone number, try again</string>
@@ -41,7 +40,7 @@
     </plurals>
     <string name="contacts_permission_rationale">To connect with your friends and family we need a permission to access contacts on your device</string>
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need a permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
-    <string name="initializing_please_wait">Initializing, please wait...</string>
+    <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
     <string name="failed_to_initialize">Failed to initialize</string>
 
