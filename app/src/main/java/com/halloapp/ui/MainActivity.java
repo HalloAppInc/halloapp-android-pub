@@ -1,4 +1,4 @@
-package com.halloapp;
+package com.halloapp.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -7,10 +7,11 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.halloapp.BuildConfig;
+import com.halloapp.Debug;
+import com.halloapp.HalloApp;
+import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.ui.InitialSyncActivity;
-import com.halloapp.ui.PostComposerActivity;
-import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.util.Log;
 
 import androidx.annotation.NonNull;

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.halloapp.HalloApp;
-import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.util.Log;

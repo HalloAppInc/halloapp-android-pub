@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
-import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.ui.MainActivity;
 
 public class Debug {
 
@@ -19,7 +20,7 @@ public class Debug {
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
 
-    static void showDebugMenu(@NonNull Context context, View anchor) {
+    public static void showDebugMenu(@NonNull Context context, View anchor) {
         PopupMenu menu = new PopupMenu(context, anchor);
         menu.getMenu().add(DEBUG_MENU_RESET_REGISTRATION);
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
