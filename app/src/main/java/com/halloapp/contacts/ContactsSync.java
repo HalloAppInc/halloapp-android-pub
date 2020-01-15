@@ -137,10 +137,16 @@ public class ContactsSync {
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    contactSyncResults.addAll(Connection.getInstance().syncContacts(phonesBatch).get());
-                    phonesBatch.clear();
+                    final List<ContactsSyncResponse.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
+                    if (contactSyncBatchResults != null) {
+                        contactSyncResults.addAll(contactSyncBatchResults);
+                        phonesBatch.clear();
+                    } else {
+                        Log.e("ContactsSync.performContactSync: failed to sync batch");
+                        return ListenableWorker.Result.failure();
+                    }
                 } catch (ExecutionException | InterruptedException e) {
-                    Log.e("ContactsSync.performContactSync: failed");
+                    Log.e("ContactsSync.performContactSync: failed to sync batch");
                     return ListenableWorker.Result.failure();
                 }
             }
@@ -148,9 +154,16 @@ public class ContactsSync {
         if (phonesBatch.size() > 0) {
             Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
             try {
-                contactSyncResults.addAll(Connection.getInstance().syncContacts(phonesBatch).get());
+                final List<ContactsSyncResponse.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
+                if (contactSyncBatchResults != null) {
+                    contactSyncResults.addAll(contactSyncBatchResults);
+                    phonesBatch.clear();
+                } else {
+                    Log.e("ContactsSync.performContactSync: failed to sync last batch");
+                    return ListenableWorker.Result.failure();
+                }
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.performContactSync: failed");
+                Log.e("ContactsSync.performContactSync: failed to sync last batch");
                 return ListenableWorker.Result.failure();
             }
         }
@@ -199,7 +212,10 @@ public class ContactsSync {
         Log.i("ContactsSync.performContactSync: " + memberJids.size() + " to pubsub");
 
         try {
-            Connection.getInstance().syncPubSub(memberJids).get();
+            boolean result = Connection.getInstance().syncPubSub(memberJids).get();
+            if (!result) {
+                Log.e("ContactsSync.performContactSync: failed to sync pubsub");
+            }
         } catch (ExecutionException | InterruptedException e) {
             Log.e("ContactsSync.performContactSync: failed to sync pubsub", e);
             return ListenableWorker.Result.failure();
@@ -222,7 +238,11 @@ public class ContactsSync {
 
         @Override
         public @NonNull Result doWork() {
-            return ContactsSync.getInstance(getApplicationContext()).performContactSync();
+            final Result result = ContactsSync.getInstance(getApplicationContext()).performContactSync();
+            if  (!Result.success().equals(result)) {
+                Log.sendErrorReport("ContactsSync failed");
+            }
+            return result;
         }
     }
 

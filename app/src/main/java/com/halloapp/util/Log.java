@@ -33,4 +33,9 @@ public class Log {
     public static void e(String msg, Throwable tr) {
         Crashlytics.log(android.util.Log.ERROR, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
     }
+
+    public static void sendErrorReport(String msg) {
+        Log.e(msg + " (sending error report)");
+        Crashlytics.logException(new RuntimeException(msg));
+    }
 }
