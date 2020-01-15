@@ -1,13 +1,18 @@
 package com.halloapp.media;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
+
+import com.halloapp.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -103,5 +108,16 @@ public class MediaUtils {
             }
         }
         return bitmap;
+    }
+
+    public static Uri getImageCaptureUri(@NonNull Context context) {
+        final File captureFolder = new File(context.getCacheDir(), "camera");
+        if (!captureFolder.exists()) {
+            if (!captureFolder.mkdirs()) {
+                Log.e("failed to create " + captureFolder.getAbsolutePath());
+            }
+        }
+        final File captureFile = new File(captureFolder, "tmp.jpg");
+        return FileProvider.getUriForFile(context, "com.halloapp.fileprovider", captureFile);
     }
 }

@@ -16,8 +16,10 @@
         <menu>
             <item android:id="@+id/add_post_text"
                 android:title="@string/text_post" />
-            <item android:id="@+id/add_post_image"
-                android:title="@string/image_post" />
+            <item android:id="@+id/add_post_camera"
+                android:title="@string/camera_post" />
+            <item android:id="@+id/add_post_gallery"
+                android:title="@string/gallery_post" />
         </menu>
     </item>
 

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.contacts.ContactNameLoader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
@@ -48,6 +50,7 @@ import java.util.Locale;
 public class HomeFragment extends Fragment {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 1;
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
 
     private final PostsAdapter adapter = new PostsAdapter();
     private BadgedDrawable notificationDrawable;
@@ -159,8 +162,12 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getContext(), PostComposerActivity.class));
                 return true;
             }
-            case R.id.add_post_image: {
-                pickImage();
+            case R.id.add_post_gallery: {
+                getImageFromGallery();
+                return true;
+            }
+            case R.id.add_post_camera: {
+                getImageFromCamera();
                 return true;
             }
             default: {
@@ -176,6 +183,7 @@ public class HomeFragment extends Fragment {
             case REQUEST_CODE_PICK_IMAGE: {
                 if (result == Activity.RESULT_OK) {
                     if (data == null) {
+                        Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no data");
                         Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
                     } else {
                         final Uri uri = data.getData();
@@ -184,19 +192,32 @@ public class HomeFragment extends Fragment {
                             intent.setData(uri);
                             startActivity(intent);
                         } else {
+                            Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no uri");
                             Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
                 break;
             }
+            case REQUEST_CODE_CAPTURE_IMAGE: {
+                final Intent intent = new Intent(getContext(), PostComposerActivity.class);
+                intent.setData(MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())));
+                startActivity(intent);
+                break;
+            }
         }
     }
 
-    private void pickImage() {
+    private void getImageFromGallery() {
         final Intent pickIntent = new Intent(Intent.ACTION_PICK);
-        pickIntent.setDataAndType(android.provider.MediaStore.Video.Media.INTERNAL_CONTENT_URI, "image/*");
+        pickIntent.setDataAndType(MediaStore.Video.Media.INTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(pickIntent, REQUEST_CODE_PICK_IMAGE);
+    }
+
+    private void getImageFromCamera() {
+        final Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())));
+        startActivityForResult(takePictureIntent, REQUEST_CODE_CAPTURE_IMAGE);
     }
 
     private void scheduleTimestampRefresh(long postTimestamp) {

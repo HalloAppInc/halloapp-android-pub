@@ -9,8 +9,9 @@
     <string name="add_post">Add post</string>
     <string name="notifications">Notifications</string>
     <string name="me">Me</string>
-    <string name="image_post">Image post</string>
-    <string name="text_post">Text post</string>
+    <string name="camera_post">Camera</string>
+    <string name="gallery_post">Gallery</string>
+    <string name="text_post">Text</string>
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">now</string>
     <string name="phone_number_hint">Phone number</string>
