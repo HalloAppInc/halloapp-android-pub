@@ -38,8 +38,9 @@ import java.util.concurrent.Future;
 
 public class ContactsSync {
 
-    public static final String CONTACT_SYNC_WORK_ID = "contact-sync";
     public static final String ADDRESS_BOOK_SYNC_WORK_ID = "addess-book-sync";
+    public static final String CONTACT_SYNC_WORK_ID = "contact-sync";
+    public static final String PUBSUB_SYNC_WORK_ID = "pubsub-sync";
 
     private static ContactsSync instance;
 
@@ -84,6 +85,7 @@ public class ContactsSync {
         }
     }
 
+    @MainThread
     public void startAddressBookSync() {
         WorkManager.getInstance(context).enqueueUniqueWork(ADDRESS_BOOK_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, new OneTimeWorkRequest.Builder(AddressBookSyncWorker.class).build());
     }
@@ -93,6 +95,11 @@ public class ContactsSync {
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).build();
         lastSyncRequestId = workRequest.getId();
         WorkManager.getInstance(context).enqueueUniqueWork(CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
+    }
+
+    @MainThread
+    public void startPubSubSync() {
+        WorkManager.getInstance(context).enqueueUniqueWork(PUBSUB_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, new OneTimeWorkRequest.Builder(PubSubSyncWorker.class).build());
     }
 
     @WorkerThread
@@ -209,6 +216,28 @@ public class ContactsSync {
                 return ListenableWorker.Result.success();
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.AddressBookSyncWorker", e);
+                return ListenableWorker.Result.failure();
+            }
+        }
+    }
+
+    public static class PubSubSyncWorker extends Worker {
+
+        public PubSubSyncWorker(
+                @NonNull Context context,
+                @NonNull WorkerParameters params) {
+            super(context, params);
+        }
+
+        @Override
+        public @NonNull Result doWork() {
+            try {
+                final Collection<Jid> memberJids = ContactsDb.getInstance(getApplicationContext()).getMemberJids();
+                Log.i("PubSubSyncWorker: " + memberJids.size() + " to pubsub");
+                Connection.getInstance().syncPubSub(memberJids).get();
+                return ListenableWorker.Result.success();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("PubSubSyncWorker", e);
                 return ListenableWorker.Result.failure();
             }
         }

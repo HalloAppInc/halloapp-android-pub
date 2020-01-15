@@ -19,7 +19,7 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onConnected() {
         if (HalloApp.instance.getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
-            ContactsSync.getInstance(context).startContactSync();
+            ContactsSync.getInstance(context).startPubSubSync();
         }
     }
 
