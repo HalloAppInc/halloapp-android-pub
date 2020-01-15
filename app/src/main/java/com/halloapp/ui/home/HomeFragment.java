@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment {
             final View childView = layoutManager.getChildAt(0);
             final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
             if (viewModel.checkPendingOutgoing() || !scrolled) {
-                postsView.smoothScrollToPosition(0);
+                postsView.scrollToPosition(0);
             } else if (viewModel.checkPendingIncoming()) {
                 postsView.smoothScrollBy(0, -getResources().getDimensionPixelSize(R.dimen.incoming_post_scroll_up));
             }
