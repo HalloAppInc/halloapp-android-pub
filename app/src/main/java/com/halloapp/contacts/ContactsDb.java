@@ -6,13 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
-import android.util.LongSparseArray;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
-import com.halloapp.HalloApp;
 import com.halloapp.util.Log;
 
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 
 import java.io.File;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,14 +30,13 @@ public class ContactsDb {
 
     private static ContactsDb instance;
 
-    private ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
-
+    private final Context context;
     private final DatabaseHelper databaseHelper;
+    private final ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
     private final Set<Observer> observers = new HashSet<>();
 
     public interface Observer {
-        void onContactAdded();
-        void onContactDeleted();
+        void onContactsChanged();
     }
 
     public static ContactsDb getInstance(final @NonNull Context context) {
@@ -52,7 +51,8 @@ public class ContactsDb {
     }
 
     private ContactsDb(final @NonNull Context context) {
-        databaseHelper = new DatabaseHelper(context.getApplicationContext());
+        this.context = context.getApplicationContext();
+        this.databaseHelper = new DatabaseHelper(context.getApplicationContext());
     }
 
     public void addObserver(Observer observer) {
@@ -67,52 +67,22 @@ public class ContactsDb {
         }
     }
 
-    public void syncAddressBook() {
-        databaseWriteExecutor.execute(() -> {
-            final Collection<AddressBookContacts.AddressBookContact> addressBookContacts = AddressBookContacts.getAddressBookContacts(HalloApp.instance);
+    Future<ContactsDiff> syncAddressBook() {
+        return databaseWriteExecutor.submit(() -> {
+            final Collection<AddressBookContacts.AddressBookContact> addressBookContacts = AddressBookContacts.getAddressBookContacts(context);
             if (addressBookContacts == null) {
-                return;
+                return null;
             }
+            final ContactsDiff diff = new ContactsDiff();
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             try {
                 final Collection<Contact> dbContacts = getAllContacts();
-                final LongSparseArray<Contact> halloContactsMap = new LongSparseArray<>();
-                for (Contact contact : dbContacts) {
-                    halloContactsMap.append(contact.addressBookId, contact);
-                }
-                final Collection<AddressBookContacts.AddressBookContact> toAdd = new ArrayList<>();
-                final Collection<Long> toRemove = new ArrayList<>();
-                final Collection<Contact> toUpdate = new ArrayList<>();
-
-                final Set<Long> halloContactsInAddressBook = new HashSet<>();
-                for (AddressBookContacts.AddressBookContact addressBookContact : addressBookContacts) {
-                    final Contact contact = halloContactsMap.get(addressBookContact.id);
-                    if (contact == null) {
-                        toAdd.add(addressBookContact);
-                    } else {
-                         if (!Objects.equals(contact.phone, addressBookContact.phone)) {
-                            contact.phone = addressBookContact.phone;
-                            contact.name = addressBookContact.name;
-                            contact.jid = null;
-                            contact.member = false;
-                            toUpdate.add(contact);
-                        } else if (!Objects.equals(contact.name, addressBookContact.name)) {
-                             contact.name = addressBookContact.name;
-                             toUpdate.add(contact);
-                         }
-                        halloContactsInAddressBook.add(contact.id);
-                    }
-                }
-                for (Contact contact : dbContacts) {
-                    if (!halloContactsInAddressBook.contains(contact.id)) {
-                        toRemove.add(contact.id);
-                    }
-                }
+                diff.calculate(addressBookContacts, dbContacts);
 
                 // update database
 
-                for (AddressBookContacts.AddressBookContact addressBookContact : toAdd) {
+                for (AddressBookContacts.AddressBookContact addressBookContact : diff.added) {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_ADDRESS_BOOK_ID, addressBookContact.id);
                     values.put(ContactsTable.COLUMN_NAME, addressBookContact.name);
@@ -120,7 +90,7 @@ public class ContactsDb {
                     db.insert(ContactsTable.TABLE_NAME, null, values);
                 }
 
-                for (Contact updateContact : toUpdate) {
+                for (Contact updateContact : diff.updated) {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_NAME, updateContact.name);
                     values.put(ContactsTable.COLUMN_PHONE, updateContact.phone);
@@ -131,23 +101,27 @@ public class ContactsDb {
                             new String [] {Long.toString(updateContact.id)},
                             SQLiteDatabase.CONFLICT_ABORT);
                 }
-                for (Long id : toRemove) {
+                for (Long id : diff.removed) {
                     db.delete(ContactsTable.TABLE_NAME,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(id)});
                 }
 
-                Log.i("ContactsDb.syncAddressBook: " + toAdd.size() + " added, " + toUpdate.size() + " updated, " + toRemove.size() + " removed");
+                Log.i("ContactsDb.syncAddressBook: " + diff);
 
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
             }
+            if (!diff.isEmpty()) {
+                notifyContactsChanged();
+            }
+            return diff;
         });
     }
 
-    public Future<Void> updateContactsMembership(Collection<Contact> updatedContacts) {
-        databaseWriteExecutor.execute(() -> {
+    Future<Void> updateContactsMembership(Collection<Contact> updatedContacts) {
+        return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             try {
@@ -165,19 +139,37 @@ public class ContactsDb {
             } finally {
                 db.endTransaction();
             }
+            return null;
         });
+    }
+
+    @WorkerThread
+    Contact getContact(@NonNull Jid jid) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] { ContactsTable._ID,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_ID,
+                        ContactsTable.COLUMN_NAME,
+                        ContactsTable.COLUMN_PHONE,
+                        ContactsTable.COLUMN_JID,
+                        ContactsTable.COLUMN_MEMBER
+                },
+                ContactsTable.COLUMN_JID + "=?", new String [] {jid.toString()}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return new Contact(
+                        cursor.getLong(0),
+                        cursor.getLong(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        jid,
+                        cursor.getInt(5) == 1);
+            }
+        }
         return null;
     }
 
-    public List<Contact> getAllContacts() {
-        return getContacts(false);
-    }
-
-    public List<Contact> getMemberContacts() {
-        return getContacts(true);
-    }
-
-    public List<Contact> getContacts(boolean membersOnly) {
+    @WorkerThread
+    List<Contact> getAllContacts() {
         final List<Contact> contacts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
@@ -188,10 +180,7 @@ public class ContactsDb {
                         ContactsTable.COLUMN_JID,
                         ContactsTable.COLUMN_MEMBER
                 },
-                membersOnly ? ContactsTable.COLUMN_MEMBER + "=1" : null, null,
-                null, null,
-                null,
-                null)) {
+                null, null, null, null, null, null)) {
 
             while (cursor.moveToNext()) {
                 final String jidStr = cursor.getString(4);
@@ -207,6 +196,70 @@ public class ContactsDb {
         }
         Log.i("ContactsDb.getAllContacts: " + contacts.size());
         return contacts;
+    }
+
+    @WorkerThread
+    public List<Contact> getMemberContacts() {
+        final List<Contact> contacts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] { ContactsTable._ID,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_ID,
+                        ContactsTable.COLUMN_NAME,
+                        ContactsTable.COLUMN_PHONE,
+                        ContactsTable.COLUMN_JID,
+                        ContactsTable.COLUMN_MEMBER
+                },
+                ContactsTable.COLUMN_MEMBER + "=1",
+                null, null, null, null)) {
+
+            final Set<String> jids = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String jidStr = cursor.getString(4);
+                if (jids.add(jidStr)) {
+                    final Contact contact = new Contact(
+                            cursor.getLong(0),
+                            cursor.getLong(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            jidStr == null ? null : JidCreate.bareFromOrNull(jidStr),
+                            cursor.getInt(5) == 1);
+                    contacts.add(contact);
+                }
+            }
+        }
+        Log.i("ContactsDb.getMemberContacts: " + contacts.size());
+        return contacts;
+    }
+
+    @WorkerThread
+    Collection<Jid> getMemberJids() {
+        final Collection<Jid> jids = new HashSet<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] { ContactsTable._ID,
+                        ContactsTable.COLUMN_JID,
+                },
+                ContactsTable.COLUMN_MEMBER + "=1",
+                null, null, null, null)) {
+
+            while (cursor.moveToNext()) {
+                final String jidStr = cursor.getString(1);
+                if (!TextUtils.isEmpty(jidStr)) {
+                    jids.add(JidCreate.bareFromOrNull(jidStr));
+                }
+            }
+        }
+        Log.i("ContactsDb.getMemberJids: " + jids.size());
+        return jids;
+    }
+
+    private void notifyContactsChanged() {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onContactsChanged();
+            }
+        }
     }
 
     public void deleteDb() {
@@ -233,11 +286,8 @@ public class ContactsDb {
         private static final String DATABASE_NAME = "contacts.db";
         private static final int DATABASE_VERSION = 1;
 
-        private final Context context;
-
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            this.context = context;
             setWriteAheadLoggingEnabled(true);
         }
 

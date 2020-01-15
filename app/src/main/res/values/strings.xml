@@ -40,5 +40,8 @@
     </plurals>
     <string name="contacts_permission_rationale">To connect with your friends and family we need a permission to access contacts on your device</string>
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need a permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="initializing_please_wait">Initializing, please wait...</string>
+    <string name="retry">Retry</string>
+    <string name="failed_to_initialize">Failed to initialize</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -23,11 +24,11 @@ public class MainPostsObserver implements PostsDb.Observer {
     private final MediaStore mediaStore;
     private final PostsDb postsDb;
 
-    public static MainPostsObserver getInstance(@NonNull Connection connection, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
+    public static MainPostsObserver getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized(MainPostsObserver.class) {
                 if (instance == null) {
-                    instance = new MainPostsObserver(connection, mediaStore, postsDb);
+                    instance = new MainPostsObserver(Connection.getInstance(), MediaStore.getInstance(context), PostsDb.getInstance(context));
                 }
             }
         }

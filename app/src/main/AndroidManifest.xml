@@ -29,17 +29,20 @@
         </activity>
         <activity
             android:name=".ui.RegistrationVerificationActivity"
-            android:windowSoftInputMode="stateAlwaysVisible"/>
+            android:windowSoftInputMode="stateAlwaysVisible" />
         <activity android:name=".ui.RegistrationRequestActivity" />
+        <activity android:name=".ui.InitialSyncActivity"/>
         <activity
             android:name=".ui.PostComposerActivity"
-            android:theme="@style/AppTheme.PostComposer"
             android:label="@string/new_post"
+            android:theme="@style/AppTheme.PostComposer"
             android:windowSoftInputMode="adjustResize" />
 
-        <receiver android:name=".registration.SmsVerificationReceiver" android:exported="true">
+        <receiver
+            android:name=".registration.SmsVerificationReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED"/>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
     </application>

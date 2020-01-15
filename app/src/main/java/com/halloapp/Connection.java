@@ -70,6 +70,8 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -92,13 +94,13 @@ public class Connection {
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
-    private final Observer observer;
+    private Observer observer;
 
-    public static Connection getInstance(@NonNull Observer observer) {
+    public static Connection getInstance() {
         if (instance == null) {
             synchronized(Connection.class) {
                 if (instance == null) {
-                    instance = new Connection(observer);
+                    instance = new Connection();
                 }
             }
         }
@@ -114,11 +116,14 @@ public class Connection {
         void onIncomingPostReceived(@NonNull Post post);
     }
 
-    private Connection(@NonNull Observer observer) {
-        this.observer = observer;
+    private Connection() {
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
         SmackConfiguration.DEBUG = BuildConfig.DEBUG;
+    }
+
+    public void setObserver(@NonNull Observer observer) {
+        this.observer = observer;
     }
 
     public void connect(final @NonNull String user, final @NonNull String password) {
@@ -239,11 +244,11 @@ public class Connection {
         observer.onDisconnected();
     }
 
-    public void syncPubSub(@NonNull final Collection<Jid> jids) {
-        executor.execute(() -> {
+    public Future<Boolean> syncPubSub(@NonNull final Collection<Jid> jids) {
+        return executor.submit(() -> {
             if (connection == null) {
                 Log.e("connection: sync pubsub: no connection");
-                return;
+                return false;
             }
             try {
                 syncAffiliations(jids, getMyContactsNodeId());
@@ -255,12 +260,14 @@ public class Connection {
                 } catch (SmackException.NotConnectedException | InterruptedException e) {
                     Log.e("connection: cannot send presence", e);
                 }
-
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub", e);
+                return false;
             } catch (XmppStringprepException e) {
                 Log.e("connection: sync pubsub: invalid jid", e);
+                return false;
             }
+            return true;
         });
     }
 
@@ -413,12 +420,12 @@ public class Connection {
         final List<Affiliation> modifyAffiliations = new ArrayList<>();
         for (Jid jid : removeJids) {
             if (!jid.equals(selfJid)) {
-                modifyAffiliations.add(new Affiliation(JidCreate.bareFrom(jid), Affiliation.Type.none));
+                modifyAffiliations.add(new Affiliation(jid.asBareJid(), Affiliation.Type.none));
             }
         }
         for (Jid jid : addJids) {
             if (!jid.equals(selfJid)) {
-                modifyAffiliations.add(new Affiliation(JidCreate.bareFrom(jid), Affiliation.Type.member));
+                modifyAffiliations.add(new Affiliation(jid.asBareJid(), Affiliation.Type.member));
             }
         }
         if (!modifyAffiliations.isEmpty()) {
@@ -484,6 +491,7 @@ public class Connection {
                 subscribedFeedNodeIds.remove(addFeedNodeId);
             }
         }
+        List<PayloadItem<SimplePayload>> publishedItems = new ArrayList<>();
         for (String subscribedFeed : subscribedFeedNodeIds) {
             final LeafNode node;
             try {
@@ -492,16 +500,18 @@ public class Connection {
                     Log.i("connection: got " + items.getItems().size() + " items on " + subscribedFeed + " feed, " + items.getPublishedDate());
                     processPublishedItems(items.getItems());
                 });
-                processPublishedItems(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
+                publishedItems.addAll(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
             } catch (PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub: cannot listen, no such node", e);
             }
         }
+        processPublishedItems(publishedItems);
     }
 
     private void processPublishedItems(List<PayloadItem<SimplePayload>> items) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
+        Collections.sort(entries, (o1, o2) -> Long.compare(o1.timestamp, o2.timestamp));
         for (PublishedEntry entry : entries) {
             if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
                 observer.onOutgoingPostAcked(FEED_JID.toString(), entry.id);

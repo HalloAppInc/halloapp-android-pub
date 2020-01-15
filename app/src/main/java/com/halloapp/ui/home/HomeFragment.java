@@ -27,10 +27,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.contacts.Contacts;
+import com.halloapp.contacts.ContactNameLoader;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
@@ -39,6 +38,8 @@ import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.BadgedDrawable;
+
+import org.jxmpp.jid.impl.JidCreate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment {
     private final PostsAdapter adapter = new PostsAdapter();
     private BadgedDrawable notificationDrawable;
     private PostsImageLoader postsImageLoader;
+    private ContactNameLoader contactNameLoader;
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
@@ -65,6 +67,7 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("HomeFragment: onCreate");
         postsImageLoader = new PostsImageLoader(Preconditions.checkNotNull(getContext()));
+        contactNameLoader = new ContactNameLoader(Preconditions.checkNotNull(getContext()));
     }
 
     @Override
@@ -72,6 +75,7 @@ public class HomeFragment extends Fragment {
         super.onDestroy();
         Log.d("HomeFragment: onDestroy");
         postsImageLoader.destroy();
+        contactNameLoader.destroy();
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
 
@@ -130,6 +134,7 @@ public class HomeFragment extends Fragment {
                 notificationsMenuItem.getIcon(),
                 getResources().getColor(R.color.badge_text),
                 getResources().getColor(R.color.badge_background),
+                getResources().getColor(R.color.window_background),
                 getResources().getDimension(R.dimen.badge));
         notificationsMenuItem.setIcon(notificationDrawable);
         super.onCreateOptionsMenu(menu,inflater);
@@ -230,7 +235,11 @@ public class HomeFragment extends Fragment {
         void bindTo(final @NonNull Post post) {
 
             avatarView.setImageResource(R.drawable.avatar_person); // testing-only
-            nameView.setText(post.isOutgoing() ? nameView.getContext().getString(R.string.me) : Contacts.getInstance().getName(post.senderJid));
+            if (post.isOutgoing()) {
+                nameView.setText(nameView.getContext().getString(R.string.me));
+            } else {
+                contactNameLoader.load(nameView, JidCreate.bareFromOrNull(post.senderJid));
+            };
             if (post.state < Post.POST_STATE_OUTGOING_SENT) {
                 progressView.setVisibility(View.VISIBLE);
                 timeView.setVisibility(View.GONE);
@@ -289,9 +298,8 @@ public class HomeFragment extends Fragment {
             return Preconditions.checkNotNull(getItem(position)).rowId;
         }
 
-        @NonNull
         @Override
-        public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public @NonNull PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new PostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false));
         }
 

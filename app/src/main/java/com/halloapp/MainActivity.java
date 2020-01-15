@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.halloapp.contacts.ContactsSync;
+import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.util.Log;
 
@@ -32,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         if (!HalloApp.instance.isRegistered()) {
             startActivity(new Intent(this, RegistrationRequestActivity.class));
+            finish();
+            return;
+        } else if (HalloApp.instance.getLastSyncTime() <= 0) {
+            startActivity(new Intent(this, InitialSyncActivity.class));
             finish();
             return;
         }
@@ -70,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                // TODO (ds): start contact sync
+                ContactsSync.getInstance(this).startAddressBookListener();
+                ContactsSync.getInstance(this).startAddressBookSync();
                 break;
             }
         }

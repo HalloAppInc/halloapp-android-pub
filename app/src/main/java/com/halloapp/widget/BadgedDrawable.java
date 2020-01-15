@@ -18,6 +18,7 @@ import com.halloapp.util.Rtl;
 public class BadgedDrawable extends InsetDrawable {
 
     private final Paint badgePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final float size;
     private final boolean rtl;
@@ -26,7 +27,7 @@ public class BadgedDrawable extends InsetDrawable {
     private final Rect tmpRect = new Rect();
     private final RectF badgeRect = new RectF();
 
-    public BadgedDrawable(@NonNull Context context, @Nullable Drawable drawable, int textColor, int badgeColor, float size) {
+    public BadgedDrawable(@NonNull Context context, @Nullable Drawable drawable, int textColor, int badgeColor, int borderColor, float size) {
         super(drawable, 0, 0, 0, 0);
         this.size = size;
         rtl = Rtl.isRtl(context);
@@ -35,6 +36,7 @@ public class BadgedDrawable extends InsetDrawable {
         textPaint.setFakeBoldText(true);
         textPaint.setTextSize(size * .8f);
         badgePaint.setColor(badgeColor);
+        borderPaint.setColor(borderColor);
     }
 
     public void setBadge(String text) {
@@ -55,6 +57,18 @@ public class BadgedDrawable extends InsetDrawable {
             badgeRect.set(
                     rtl ? bounds.left : bounds.right - size + size/4, bounds.top,
                     rtl ? bounds.left + size : bounds.right + size/4, bounds.top + size);
+
+            float borderSize = size / 10;
+            badgeRect.left -= borderSize;
+            badgeRect.right += borderSize;
+            badgeRect.top -= borderSize;
+            badgeRect.bottom += borderSize;
+            canvas.drawOval(badgeRect, borderPaint);
+
+            badgeRect.left += borderSize;
+            badgeRect.right -= borderSize;
+            badgeRect.top += borderSize;
+            badgeRect.bottom -= borderSize;
             canvas.drawOval(badgeRect, badgePaint);
 
             textPaint.getTextBounds(text, 0, text.length(), tmpRect);

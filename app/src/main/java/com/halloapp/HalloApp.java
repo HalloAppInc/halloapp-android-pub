@@ -3,9 +3,6 @@ package com.halloapp;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.ContentObserver;
-import android.net.Uri;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -15,16 +12,13 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.crashlytics.android.Crashlytics;
-import com.halloapp.contacts.ContactsDb;
-import com.halloapp.media.MediaStore;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
 public class HalloApp extends Application {
 
     public static HalloApp instance;
-
-    public Connection connection;
 
     @Override
     public void onCreate() {
@@ -35,10 +29,8 @@ public class HalloApp extends Application {
 
         Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
-        final PostsDb postsDb = PostsDb.getInstance(this);
-        connection = Connection.getInstance(new ConnectionObserver(this, postsDb));
-        final MainPostsObserver mainPostsObserver = MainPostsObserver.getInstance(connection, MediaStore.getInstance(this), postsDb);
-        postsDb.addObserver(mainPostsObserver);
+        Connection.getInstance().setObserver(new ConnectionObserver(this));
+        PostsDb.getInstance(this).addObserver(MainPostsObserver.getInstance(this));
 
         connect();
 
@@ -56,15 +48,10 @@ public class HalloApp extends Application {
             }
         });
 
-        final ContactsDb contactsDb = ContactsDb.getInstance(this);
-        contactsDb.syncAddressBook();
-        getContentResolver().registerContentObserver(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, true, new ContentObserver(null) {
-
-            public void onChange(boolean selfChange, Uri uri) {
-                Log.i("halloapp: changed " + uri);
-                contactsDb.syncAddressBook();
-            }
-        });
+        if (getLastSyncTime() > 0) {
+            ContactsSync.getInstance(this).startAddressBookListener();
+            ContactsSync.getInstance(this).startAddressBookSync();
+        }
     }
 
     private void connect() {
@@ -72,13 +59,13 @@ public class HalloApp extends Application {
             Log.i("halloapp: not registered");
             return;
         }
-        connection.connect(getUser(), getPassword());
+        Connection.getInstance().connect(getUser(), getPassword());
 
         Crashlytics.setString("user", getUser());
     }
 
     public void disconnect() {
-        connection.disconnect();
+        Connection.getInstance().disconnect();
     }
 
     @Override
@@ -89,6 +76,7 @@ public class HalloApp extends Application {
 
     private static final String PREF_KEY_USER_ID = "user_id";
     private static final String PREF_KEY_PASSWORD = "password";
+    private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
 
     public SharedPreferences getPreferences() {
         return getSharedPreferences("prefs", Context.MODE_PRIVATE);
@@ -116,6 +104,16 @@ public class HalloApp extends Application {
     public void resetRegistration() {
         if (!getPreferences().edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).commit()) {
             Log.e("failed to reset registration");
+        }
+    }
+
+    public long getLastSyncTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_SYNC_TIME, 0);
+    }
+
+    public void setLastSyncTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
+            Log.e("failed to set last sync time");
         }
     }
 }

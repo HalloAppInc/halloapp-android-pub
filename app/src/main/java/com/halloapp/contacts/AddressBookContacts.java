@@ -47,7 +47,7 @@ public class AddressBookContacts {
         }
     }
 
-    public static Collection<AddressBookContact> getAddressBookContacts(@NonNull Context context) {
+    static Collection<AddressBookContact> getAddressBookContacts(@NonNull Context context) {
 
         final Set<AddressBookContact> contacts = new HashSet<>();
         try (Cursor contactsCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null)) {

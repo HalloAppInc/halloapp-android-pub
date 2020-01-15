@@ -1,28 +1,26 @@
 package com.halloapp;
 
-import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.Contacts;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 
 public class ConnectionObserver implements Connection.Observer {
 
     private final Context context;
-    private final PostsDb postsDb;
 
-    ConnectionObserver(@NonNull Context context, @NonNull PostsDb postsDb) {
+    ConnectionObserver(@NonNull Context context) {
         this.context = context.getApplicationContext();
-        this.postsDb = postsDb;
     }
 
     @Override
     public void onConnected() {
-        Connection.getInstance(this).syncPubSub(Contacts.getInstance().getMemberJids());
-        Contacts.getInstance().startContactSync(context);
+        if (HalloApp.instance.getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
+            ContactsSync.getInstance(context).startContactSync();
+        }
     }
 
     @Override
@@ -37,12 +35,12 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId) {
-        postsDb.setPostState(chatJid, "", postId, Post.POST_STATE_OUTGOING_SENT);
+        PostsDb.getInstance(context).setPostState(chatJid, "", postId, Post.POST_STATE_OUTGOING_SENT);
     }
 
     @Override
     public void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId) {
-        postsDb.setPostState(chatJid, "", postId, Post.POST_STATE_OUTGOING_DELIVERED);
+        PostsDb.getInstance(context).setPostState(chatJid, "", postId, Post.POST_STATE_OUTGOING_DELIVERED);
     }
 
     @Override
@@ -50,6 +48,6 @@ public class ConnectionObserver implements Connection.Observer {
         if (post.type == Post.POST_TYPE_TEXT) {
             post.state = Post.POST_STATE_INCOMING_RECEIVED;
         }
-        postsDb.addPost(post);
+        PostsDb.getInstance(context).addPost(post);
     }
 }
