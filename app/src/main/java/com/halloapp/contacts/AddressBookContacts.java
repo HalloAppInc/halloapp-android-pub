@@ -64,7 +64,6 @@ public class AddressBookContacts {
                 final String phone = contactsCursor.getString(phoneColumnIndex);
                 if (!TextUtils.isEmpty(phone)) {
                     contacts.add(new AddressBookContact(id, name == null ? "" : name, phone));
-                    Log.i(id + " contact:" + name + " phone:" + phone);
                 }
             }
             Log.i("AddressBookContacts: " + contacts.size() + " contacts");
