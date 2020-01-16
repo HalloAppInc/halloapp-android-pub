@@ -38,6 +38,9 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.pubsub.AccessModel;
 import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.ConfigureForm;
+import org.jivesoftware.smackx.pubsub.EventElement;
+import org.jivesoftware.smackx.pubsub.EventElementType;
+import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.Node;
 import org.jivesoftware.smackx.pubsub.NotificationType;
@@ -48,6 +51,7 @@ import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
+import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
 import org.jivesoftware.smackx.pubsub.provider.AffiliationProvider;
 import org.jivesoftware.smackx.pubsub.provider.AffiliationsProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
@@ -167,6 +171,11 @@ public class Connection {
                 return;
             }
 
+            final DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(connection);
+            deliveryReceiptManager.addReceiptReceivedListener(new MessageReceiptsListener());
+            connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
+            connection.addStanzaAcknowledgedListener(new MessageAckListener());
+
             final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
             if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
                 sdm.addFeature(DeliveryReceipt.NAMESPACE);
@@ -195,22 +204,22 @@ public class Connection {
                 return;
             }
 
-            final DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(connection);
-            deliveryReceiptManager.addReceiptReceivedListener(new MessageReceiptsListener());
-            connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
-            connection.addStanzaAcknowledgedListener(new MessageAckListener());
-
             try {
                 configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
                     Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
                     observer.onSubscribersChanged();
                 });
-                configureNode(getMyFeedNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
-                    Log.i("connection: got " + items.getItems().size() + " items on my feed node, " + items.getPublishedDate());
-                    processPublishedItems(items.getItems());
-                });
+                configureNode(getMyFeedNodeId(), null);
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
                 Log.e("connection: cannot subscribe to pubsub", e);
+                disconnectInBackground();
+                return;
+            }
+
+            try {
+                connection.sendStanza(new Presence(Presence.Type.available));
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send presence", e);
                 disconnectInBackground();
                 return;
             }
@@ -246,17 +255,8 @@ public class Connection {
                 syncAffiliations(jids, getMyContactsNodeId());
                 syncAffiliations(jids, getMyFeedNodeId());
                 syncSubscriptions(jids);
-
-                try {
-                    connection.sendStanza(new Presence(Presence.Type.available));
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
-                    Log.e("connection: cannot send presence", e);
-                }
             } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub", e);
-                return false;
-            } catch (XmppStringprepException e) {
-                Log.e("connection: sync pubsub: invalid jid", e);
                 return false;
             }
             return true;
@@ -349,7 +349,7 @@ public class Connection {
     }
 
     @WorkerThread
-    private void configureNode(@NonNull String nodeId, @NonNull ItemEventListener listener) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, PubSubException.NotAPubSubNodeException, ConfigureNodeException {
+    private void configureNode(@NonNull String nodeId, @Nullable ItemEventListener listener) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, PubSubException.NotAPubSubNodeException, ConfigureNodeException {
         Preconditions.checkNotNull(connection);
         final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
         Node node = null;
@@ -375,14 +375,16 @@ public class Connection {
             Log.e("connection: cannot create node");
             throw new ConfigureNodeException(nodeId);
         }
-        node.addItemEventListener(listener);
+        if (listener != null) {
+            node.addItemEventListener(listener);
+        }
 
         node.subscribe(connection.getUser().asBareJid().toString());
 
     }
 
     @WorkerThread
-    private void syncAffiliations(@NonNull Collection<Jid> jids, @NonNull String nodeId) throws XMPPException.XMPPErrorException, PubSubException.NotAPubSubNodeException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, XmppStringprepException {
+    private void syncAffiliations(@NonNull Collection<Jid> jids, @NonNull String nodeId) throws XMPPException.XMPPErrorException, PubSubException.NotAPubSubNodeException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final Jid selfJid = connection.getUser().asEntityBareJid();
         final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
@@ -483,15 +485,10 @@ public class Connection {
                 subscribedFeedNodeIds.remove(addFeedNodeId);
             }
         }
-        List<PayloadItem<SimplePayload>> publishedItems = new ArrayList<>();
+        final List<PayloadItem<SimplePayload>> publishedItems = new ArrayList<>();
         for (String subscribedFeed : subscribedFeedNodeIds) {
-            final LeafNode node;
             try {
-                node = pubSubManager.getNode(subscribedFeed);
-                node.addItemEventListener((ItemEventListener<PayloadItem<SimplePayload>>) items -> {
-                    Log.i("connection: got " + items.getItems().size() + " items on " + subscribedFeed + " feed, " + items.getPublishedDate());
-                    processPublishedItems(items.getItems());
-                });
+                final LeafNode node = pubSubManager.getNode(subscribedFeed);
                 publishedItems.addAll(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
             } catch (PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub: cannot listen, no such node", e);
@@ -563,6 +560,7 @@ public class Connection {
         @Override
         public void processStanza(final Stanza packet) {
             final Message msg = (Message) packet;
+            boolean handled = false;
             if (msg.getBodies().size() > 0 && !Message.Type.error.equals(msg.getType())) {
                 Log.i("connection: got message " + msg);
                 final Post post = new Post(0,
@@ -580,9 +578,20 @@ public class Connection {
                         0,
                         0);
                 observer.onIncomingPostReceived(post);
+                handled = true;
             } else {
-                //This must be sth like delivery receipt or Chat state msg
-                Log.i("connection: got message with empty body or error " + msg);
+                final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
+                if (event != null && EventElementType.items.equals(event.getEventType())) {
+                    final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
+                    if (itemsElem != null) {
+                        Log.i("connection: got pubsub " + msg);
+                        processPublishedItems((List<PayloadItem<SimplePayload>>)(itemsElem.getItems()));
+                        handled = true;
+                    }
+                }
+            }
+            if (!handled) {
+                Log.i("connection: got unknown message " + msg);
             }
         }
     }
