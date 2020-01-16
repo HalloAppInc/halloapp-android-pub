@@ -41,8 +41,6 @@ import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.BadgedDrawable;
 
-import org.jxmpp.jid.impl.JidCreate;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -259,9 +257,9 @@ public class HomeFragment extends Fragment {
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
-                contactNameLoader.load(nameView, JidCreate.bareFromOrNull(post.senderJid));
+                contactNameLoader.load(nameView, post.senderUserId);
             }
-            if (post.state < Post.POST_STATE_OUTGOING_SENT) {
+            if (!post.transferred) {
                 progressView.setVisibility(View.VISIBLE);
                 timeView.setVisibility(View.GONE);
             } else {

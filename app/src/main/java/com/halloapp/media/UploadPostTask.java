@@ -32,7 +32,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
         try {
             post.url = Uploader.run(mediaStore.getMediaFile(post.file), uploadListener);
-            postsDb.setPostUrl(post.chatJid, post.senderJid, post.postId, post.url);
+            postsDb.setPostUrl(post.chatId, post.senderUserId, post.postId, post.url);
             connection.sendPost(post);
         } catch (IOException e) {
             Log.e("upload", e);

@@ -13,9 +13,6 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.util.Log;
 
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,7 +91,7 @@ public class ContactsDb {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_NAME, updateContact.name);
                     values.put(ContactsTable.COLUMN_PHONE, updateContact.phone);
-                    values.put(ContactsTable.COLUMN_JID, updateContact.jid == null ? null : updateContact.jid.toString());
+                    values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_MEMBER, updateContact.member);
                     db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
@@ -127,7 +124,7 @@ public class ContactsDb {
             try {
                 for (Contact updateContact : updatedContacts) {
                     final ContentValues values = new ContentValues();
-                    values.put(ContactsTable.COLUMN_JID, updateContact.jid == null ? null : updateContact.jid.toString());
+                    values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_MEMBER, updateContact.member);
                     db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
@@ -147,24 +144,24 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    Contact getContact(@NonNull Jid jid) {
+    Contact getContact(@NonNull UserId userId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
                 new String[] { ContactsTable._ID,
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID,
                         ContactsTable.COLUMN_NAME,
                         ContactsTable.COLUMN_PHONE,
-                        ContactsTable.COLUMN_JID,
+                        ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_MEMBER
                 },
-                ContactsTable.COLUMN_JID + "=?", new String [] {jid.toString()}, null, null, null, "1")) {
+                ContactsTable.COLUMN_USER_ID + "=?", new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return new Contact(
                         cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
                         cursor.getString(3),
-                        jid,
+                        userId,
                         cursor.getInt(5) == 1);
             }
         }
@@ -180,19 +177,19 @@ public class ContactsDb {
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID,
                         ContactsTable.COLUMN_NAME,
                         ContactsTable.COLUMN_PHONE,
-                        ContactsTable.COLUMN_JID,
+                        ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_MEMBER
                 },
                 null, null, null, null, null, null)) {
 
             while (cursor.moveToNext()) {
-                final String jidStr = cursor.getString(4);
+                final String userIdStr = cursor.getString(4);
                 final Contact contact = new Contact(
                         cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
                         cursor.getString(3),
-                        jidStr == null ? null : JidCreate.bareFromOrNull(jidStr),
+                        userIdStr == null ? null : new UserId(userIdStr),
                         cursor.getInt(5) == 1);
                 contacts.add(contact);
             }
@@ -210,22 +207,22 @@ public class ContactsDb {
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID,
                         ContactsTable.COLUMN_NAME,
                         ContactsTable.COLUMN_PHONE,
-                        ContactsTable.COLUMN_JID,
+                        ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_MEMBER
                 },
                 ContactsTable.COLUMN_MEMBER + "=1",
                 null, null, null, null)) {
 
-            final Set<String> jids = new HashSet<>();
+            final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
-                final String jidStr = cursor.getString(4);
-                if (jids.add(jidStr)) {
+                final String userIdStr = cursor.getString(4);
+                if (userIdStr != null && userIds.add(userIdStr)) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),
                             cursor.getString(2),
                             cursor.getString(3),
-                            jidStr == null ? null : JidCreate.bareFromOrNull(jidStr),
+                            new UserId(userIdStr),
                             cursor.getInt(5) == 1);
                     contacts.add(contact);
                 }
@@ -236,25 +233,25 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    Collection<Jid> getMemberJids() {
-        final Collection<Jid> jids = new HashSet<>();
+    Collection<UserId> getMemberUserIds() {
+        final Collection<UserId> userIds = new HashSet<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
                 new String[] { ContactsTable._ID,
-                        ContactsTable.COLUMN_JID,
+                        ContactsTable.COLUMN_USER_ID,
                 },
                 ContactsTable.COLUMN_MEMBER + "=1",
                 null, null, null, null)) {
 
             while (cursor.moveToNext()) {
-                final String jidStr = cursor.getString(1);
-                if (!TextUtils.isEmpty(jidStr)) {
-                    jids.add(JidCreate.bareFromOrNull(jidStr));
+                final String userIdStr = cursor.getString(1);
+                if (!TextUtils.isEmpty(userIdStr)) {
+                    userIds.add(new UserId(userIdStr));
                 }
             }
         }
-        Log.i("ContactsDb.getMemberJids: " + jids.size());
-        return jids;
+        Log.i("ContactsDb.getMemberUserIds: " + userIds.size());
+        return userIds;
     }
 
     private void notifyContactsChanged() {
@@ -278,7 +275,7 @@ public class ContactsDb {
         static final String INDEX_JID = "jid";
 
         static final String COLUMN_ADDRESS_BOOK_ID = "address_book_id";
-        static final String COLUMN_JID = "jid";
+        static final String COLUMN_USER_ID = "user_id";
         static final String COLUMN_NAME = "name";
         static final String COLUMN_PHONE = "phone";
         static final String COLUMN_MEMBER = "member";
@@ -300,7 +297,7 @@ public class ContactsDb {
             db.execSQL("CREATE TABLE " + ContactsTable.TABLE_NAME + " ("
                     + ContactsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " INTEGER,"
-                    + ContactsTable.COLUMN_JID + " TEXT,"
+                    + ContactsTable.COLUMN_USER_ID + " TEXT,"
                     + ContactsTable.COLUMN_NAME + " TEXT NOT NULL,"
                     + ContactsTable.COLUMN_PHONE + " TEXT,"
                     + ContactsTable.COLUMN_MEMBER + " INTEGER"
@@ -308,7 +305,7 @@ public class ContactsDb {
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_JID);
             db.execSQL("CREATE INDEX " + ContactsTable.INDEX_JID + " ON " + ContactsTable.TABLE_NAME + " ("
-                    + ContactsTable.COLUMN_JID
+                    + ContactsTable.COLUMN_USER_ID
                     + ");");
         }
 

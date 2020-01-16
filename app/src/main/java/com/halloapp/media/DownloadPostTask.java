@@ -30,7 +30,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
         final String file = UUID.randomUUID().toString().replaceAll("-", "") + ".jpg";
         try {
             Downloader.run(post.url, mediaStore.getMediaFile(file), downloadListener);
-            postsDb.setPostFile(post.chatJid, post.senderJid, post.postId, file);
+            postsDb.setPostFile(post.chatId, post.senderUserId, post.postId, file);
         } catch (IOException e) {
             Log.e("upload", e);
         }

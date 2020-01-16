@@ -1,23 +1,17 @@
 package com.halloapp;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.contacts.UserId;
 import com.halloapp.media.DownloadPostTask;
-import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadPostTask;
-import com.halloapp.media.Uploader;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.util.Log;
-
-import java.io.IOException;
-import java.util.UUID;
 
 public class MainPostsObserver implements PostsDb.Observer {
 
@@ -50,14 +44,12 @@ public class MainPostsObserver implements PostsDb.Observer {
             if (post.type == Post.POST_TYPE_TEXT) {
                 connection.sendPost(post);
             } else {
-                postsDb.setPostState(post.chatJid, post.senderJid, post.postId, Post.POST_STATE_OUTGOING_UPLOADING);
                 new UploadPostTask(post, connection, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
             connection.sendDeliveryReceipt(post);
 
             if (!TextUtils.isEmpty(post.url)) {
-                postsDb.setPostState(post.chatJid, post.senderJid, post.postId, Post.POST_STATE_INCOMING_DOWNLOADING);
                 new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         }
@@ -65,6 +57,7 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     @Override
     public void onPostDuplicate(@NonNull Post post) {
+        //connection.sendDeliveryReceipt(post);
     }
 
     @Override
@@ -72,10 +65,6 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, int state) {
-    }
-
-    @Override
-    public void onPostMediaUpdated(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId) {
+    public void onPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
     }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
+import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Post;
 import com.halloapp.protocol.ContactsSyncRequest;
 import com.halloapp.protocol.ContactsSyncResponse;
@@ -90,8 +91,6 @@ public class Connection {
     private static final int CONNECTION_TIMEOUT = 20_000;
     private static final int REPLY_TIMEOUT = BuildConfig.DEBUG ? 220_000 : 20_000;
 
-    public static final Jid FEED_JID = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked("feed"), Domainpart.fromOrNull(XMPP_DOMAIN));
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
     private Observer observer;
@@ -111,8 +110,8 @@ public class Connection {
         void onConnected();
         void onDisconnected();
         void onLoginFailed();
-        void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId);
-        void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId);
+        void onOutgoingPostAcked(@NonNull String chatId, @NonNull String postId);
+        void onOutgoingPostDelivered(@NonNull String chatId, @NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
         void onSubscribersChanged();
     }
@@ -164,7 +163,7 @@ public class Connection {
                         .build();
                 connection = new XMPPTCPConnection(config);
                 connection.setReplyTimeout(REPLY_TIMEOUT);
-                connection.setUseStreamManagement(false);
+                connection.setUseStreamManagement(true);
                 connection.addConnectionListener(new HalloConnectionListener());
             } catch (XmppStringprepException e) {
                 Log.e("connection: cannot create connection", e);
@@ -182,6 +181,7 @@ public class Connection {
                 sdm.addFeature(DeliveryReceipt.NAMESPACE);
             }
 
+            Log.i("connection: connecting...");
             try {
                 connection.connect();
             } catch (XMPPException | SmackException | IOException | InterruptedException e) {
@@ -190,6 +190,7 @@ public class Connection {
                 return;
             }
 
+            Log.i("connection: logging in...");
             try {
                 connection.login();
             } catch (SASLErrorException e) {
@@ -205,6 +206,7 @@ public class Connection {
                 return;
             }
 
+            Log.i("connection: configuring my nodes...");
             try {
                 configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
                     Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
@@ -246,13 +248,17 @@ public class Connection {
         observer.onDisconnected();
     }
 
-    public Future<Boolean> syncPubSub(@NonNull final Collection<Jid> jids) {
+    public Future<Boolean> syncPubSub(@NonNull final Collection<UserId> userIds) {
         return executor.submit(() -> {
             if (connection == null) {
                 Log.e("connection: sync pubsub: no connection");
                 return false;
             }
             try {
+                final Collection<Jid> jids = new ArrayList<>(userIds.size());
+                for (UserId userId : userIds) {
+                    jids.add(userIdToJid(userId));
+                }
                 syncAffiliations(jids, getMyContactsNodeId());
                 syncAffiliations(jids, getMyFeedNodeId());
                 syncSubscriptions(jids);
@@ -290,7 +296,7 @@ public class Connection {
                 Log.e("connection: cannot send message, no connection");
                 return;
             }
-            if (post.chatJid.startsWith(FEED_JID.getLocalpartOrThrow().toString())) {
+            if (Constants.FEED_CHAT_ID.equals(post.chatId)) {
                 final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 try {
                     final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
@@ -311,12 +317,13 @@ public class Connection {
                 }
             } else {
                 try {
-                    final Message message = new Message(post.chatJid, post.text);
+                    final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(post.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
+                    final Message message = new Message(recipientJid, post.text);
                     message.setStanzaId(post.postId);
                     message.addExtension(new DeliveryReceiptRequest());
-                    Log.i("connection: sending message " + post.postId + " to " + post.chatJid);
+                    Log.i("connection: sending message " + post.postId + " to " + recipientJid);
                     connection.sendStanza(message);
-                } catch (XmppStringprepException | SmackException.NotConnectedException | InterruptedException e) {
+                } catch (SmackException.NotConnectedException | InterruptedException e) {
                     Log.e("connection: cannot send message", e);
                 }
             }
@@ -330,12 +337,13 @@ public class Connection {
                 return;
             }
             try {
-                final Message message = new Message(JidCreate.from(post.senderJid));
+                final Jid recipientJid = userIdToJid(post.senderUserId);
+                final Message message = new Message(recipientJid);
                 message.setStanzaId(post.postId);
                 message.addExtension(new DeliveryReceipt(post.postId));
-                Log.i("connection: sending delivery receipt " + post.postId + " to " + post.chatJid);
+                Log.i("connection: sending delivery receipt " + post.postId + " to " + recipientJid);
                 connection.sendStanza(message);
-            } catch (XmppStringprepException | SmackException.NotConnectedException | InterruptedException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
                 Log.e("connection: cannot send message", e);
             }
 
@@ -504,17 +512,17 @@ public class Connection {
         Collections.sort(entries, (o1, o2) -> Long.compare(o1.timestamp, o2.timestamp));
         for (PublishedEntry entry : entries) {
             if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
-                observer.onOutgoingPostAcked(FEED_JID.toString(), entry.id);
+                observer.onOutgoingPostAcked(Constants.FEED_CHAT_ID, entry.id);
             } else {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     Post post = new Post(0,
-                            FEED_JID.toString(),
-                            JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(entry.user), Domainpart.fromOrThrowUnchecked(XMPP_DOMAIN)).toString(),
+                            Constants.FEED_CHAT_ID,
+                            new UserId(entry.user),
                             entry.id,
                             null,
                             0,
                             entry.timestamp,
-                            Post.POST_STATE_INCOMING_PREPARING,
+                            TextUtils.isEmpty(entry.url),
                             TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                             entry.text,
                             entry.url,
@@ -556,6 +564,10 @@ public class Connection {
         return prefix + "-" + jid.asEntityBareJidOrThrow().getLocalpart().toString();
     }
 
+    private static Jid userIdToJid(@NonNull UserId userId) {
+        return JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(userId.rawId()), Domainpart.fromOrNull(XMPP_DOMAIN));
+    }
+
     class MessagePacketListener implements StanzaListener {
 
         @Override
@@ -565,13 +577,13 @@ public class Connection {
             if (msg.getBodies().size() > 0 && !Message.Type.error.equals(msg.getType())) {
                 Log.i("connection: got message " + msg);
                 final Post post = new Post(0,
-                        packet.getFrom().asBareJid().toString(),
-                        packet.getFrom().asBareJid().toString(),
+                        packet.getFrom().getLocalpartOrThrow().toString(),
+                        new UserId(packet.getFrom().getLocalpartOrThrow().toString()),
                         packet.getStanzaId(),
                         "",
                         0,
                         System.currentTimeMillis(), /*TODO (ds): use actual time*/
-                        Post.POST_STATE_INCOMING_PREPARING,
+                        true,
                         Post.POST_TYPE_TEXT,
                         msg.getBody(),
                         null,
@@ -602,7 +614,7 @@ public class Connection {
         @Override
         public void processStanza(Stanza packet) {
             if (packet instanceof Message) {
-                observer.onOutgoingPostAcked(packet.getTo().toString(), packet.getStanzaId());
+                observer.onOutgoingPostAcked(packet.getTo().getLocalpartOrThrow().toString(), packet.getStanzaId());
                 Log.i("connection: post " + packet.getStanzaId() + " acked");
             } else {
                 Log.i("connection: stanza " + packet.getStanzaId() + " acked");
@@ -615,7 +627,7 @@ public class Connection {
         @Override
         public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
             Log.i("connection: delivered to:" + toJid + ", from:" + fromJid + " , id:" + receiptId);
-            observer.onOutgoingPostDelivered(fromJid.asBareJid().toString(), receiptId);
+            observer.onOutgoingPostDelivered(fromJid.asBareJid().getLocalpartOrThrow().toString(), receiptId);
         }
     }
 

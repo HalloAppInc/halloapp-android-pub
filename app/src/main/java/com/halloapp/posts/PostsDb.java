@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
@@ -39,8 +40,7 @@ public class PostsDb {
         void onPostAdded(@NonNull Post post);
         void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull Post post);
-        void onPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, int state);
-        void onPostMediaUpdated(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId);
+        void onPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId);
     }
 
     public static PostsDb getInstance(final @NonNull Context context) {
@@ -74,15 +74,15 @@ public class PostsDb {
     public void addPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_CHAT_JID, post.chatJid);
-            values.put(PostsTable.COLUMN_SENDER_JID, post.senderJid);
+            values.put(PostsTable.COLUMN_CHAT_ID, post.chatId);
+            values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
             values.put(PostsTable.COLUMN_POST_ID, post.postId);
             if (post.groupId != null) {
                 values.put(PostsTable.COLUMN_POST_GROUP_ID, post.groupId);
             }
-            values.put(PostsTable.COLUMN_POST_REPLY_ID, post.replyRowId);
+            values.put(PostsTable.COLUMN_POST_PARENT_ID, post.parentRowId);
             values.put(PostsTable.COLUMN_POST_TIMESTAMP, post.timestamp);
-            values.put(PostsTable.COLUMN_POST_STATE, post.state);
+            values.put(PostsTable.COLUMN_POST_TRANSFERRED, post.transferred);
             values.put(PostsTable.COLUMN_POST_TYPE, post.type);
             if (post.text != null) {
                 values.put(PostsTable.COLUMN_POST_TEXT, post.text);
@@ -122,18 +122,18 @@ public class PostsDb {
         });
     }
 
-    public void setPostState(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @Post.PostState int state) {
+    public void setPostTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostFile: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " state=" + state);
+            Log.i("PostsDb.setPostTransferred: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_POST_STATE, state);
+            values.put(PostsTable.COLUMN_POST_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_CHAT_JID + "=? AND " + PostsTable.COLUMN_SENDER_JID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String [] {chatJid, senderJid, postId},
+                        PostsTable.COLUMN_CHAT_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {chatId, senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostStateChanged(chatJid, senderJid, postId, state);
+                notifyPostUpdated(chatId, senderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setPostState: failed");
                 throw ex;
@@ -141,9 +141,9 @@ public class PostsDb {
         });
     }
 
-    public void setPostFile(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @NonNull String file) {
+    public void setPostFile(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId, @NonNull String file) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostFile: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " file=" + file);
+            Log.i("PostsDb.setPostFile: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId + " file=" + file);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_POST_FILE, file);
             final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(file));
@@ -151,13 +151,14 @@ public class PostsDb {
                 values.put(PostsTable.COLUMN_POST_WIDTH, dimensions.getWidth());
                 values.put(PostsTable.COLUMN_POST_HEIGHT, dimensions.getHeight());
             }
+            values.put(PostsTable.COLUMN_POST_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_CHAT_JID + "=? AND " + PostsTable.COLUMN_SENDER_JID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String [] {chatJid, senderJid, postId},
+                        PostsTable.COLUMN_CHAT_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {chatId, senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostMediaUpdated(chatJid, senderJid, postId);
+                notifyPostUpdated(chatId, senderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setPostFile: failed", ex);
                 throw ex;
@@ -165,18 +166,18 @@ public class PostsDb {
         });
     }
 
-    public void setPostUrl(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @NonNull String url) {
+    public void setPostUrl(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId, @NonNull String url) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostUrl: chatJid=" + chatJid + " senderJid=" + senderJid + " postId=" + postId + " url=" + url);
+            Log.i("PostsDb.setPostUrl: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId + " url=" + url);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_POST_URL, url);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_CHAT_JID + "=? AND " + PostsTable.COLUMN_SENDER_JID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String [] {chatJid, senderJid, postId},
+                        PostsTable.COLUMN_CHAT_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {chatId, senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostMediaUpdated(chatJid, senderJid, postId);
+                notifyPostUpdated(chatId, senderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setPostState: failed", ex);
                 throw ex;
@@ -190,13 +191,13 @@ public class PostsDb {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
                 new String[] { PostsTable._ID,
-                        PostsTable.COLUMN_CHAT_JID,
-                        PostsTable.COLUMN_SENDER_JID,
+                        PostsTable.COLUMN_CHAT_ID,
+                        PostsTable.COLUMN_SENDER_USER_ID,
                         PostsTable.COLUMN_POST_ID,
                         PostsTable.COLUMN_POST_GROUP_ID,
-                        PostsTable.COLUMN_POST_REPLY_ID,
+                        PostsTable.COLUMN_POST_PARENT_ID,
                         PostsTable.COLUMN_POST_TIMESTAMP,
-                        PostsTable.COLUMN_POST_STATE,
+                        PostsTable.COLUMN_POST_TRANSFERRED,
                         PostsTable.COLUMN_POST_TYPE,
                         PostsTable.COLUMN_POST_TEXT,
                         PostsTable.COLUMN_POST_URL,
@@ -213,12 +214,12 @@ public class PostsDb {
                 final Post post = new Post(
                         cursor.getLong(0),
                         cursor.getString(1),
-                        cursor.getString(2),
+                        new UserId(cursor.getString(2)),
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
                         cursor.getLong(6),
-                        cursor.getInt(7),
+                        cursor.getInt(7) == 1,
                         cursor.getInt(8),
                         cursor.getString(9),
                         cursor.getString(10),
@@ -256,18 +257,10 @@ public class PostsDb {
         }
     }
 
-    private void notifyPostStateChanged(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId, @Post.PostState int state) {
+    private void notifyPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Observer observer : observers) {
-                observer.onPostStateChanged(chatJid, senderJid, postId, state);
-            }
-        }
-    }
-
-    private void notifyPostMediaUpdated(@NonNull String chatJid, @NonNull String senderJid, @NonNull String postId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostMediaUpdated(chatJid, senderJid, postId);
+                observer.onPostUpdated(chatId, senderUserId, postId);
             }
         }
     }
@@ -280,13 +273,13 @@ public class PostsDb {
 
         static final String INDEX_POST_KEY = "post_key";
 
-        static final String COLUMN_CHAT_JID = "chat_jid";
-        static final String COLUMN_SENDER_JID = "sender_jid";
+        static final String COLUMN_CHAT_ID = "chat_id";
+        static final String COLUMN_SENDER_USER_ID = "sender_user_id";
         static final String COLUMN_POST_ID = "post_id";
         static final String COLUMN_POST_GROUP_ID = "group_id";
-        static final String COLUMN_POST_REPLY_ID = "reply_id";
+        static final String COLUMN_POST_PARENT_ID = "parent_id";
         static final String COLUMN_POST_TIMESTAMP = "timestamp";
-        static final String COLUMN_POST_STATE = "state";
+        static final String COLUMN_POST_TRANSFERRED = "transferred";
         static final String COLUMN_POST_TYPE = "type";
         static final String COLUMN_POST_TEXT = "text";
         static final String COLUMN_POST_URL = "url";
@@ -298,7 +291,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -310,13 +303,13 @@ public class PostsDb {
             db.execSQL("DROP TABLE IF EXISTS " + PostsTable.TABLE_NAME);
             db.execSQL("CREATE TABLE " + PostsTable.TABLE_NAME + " ("
                     + PostsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + PostsTable.COLUMN_CHAT_JID + " TEXT NOT NULL,"
-                    + PostsTable.COLUMN_SENDER_JID + " TEXT NOT NULL,"
+                    + PostsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
+                    + PostsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_POST_GROUP_ID + " TEXT,"
-                    + PostsTable.COLUMN_POST_REPLY_ID + " INTEGER,"
+                    + PostsTable.COLUMN_POST_PARENT_ID + " INTEGER,"
                     + PostsTable.COLUMN_POST_TIMESTAMP + " INTEGER,"
-                    + PostsTable.COLUMN_POST_STATE + " INTEGER,"
+                    + PostsTable.COLUMN_POST_TRANSFERRED + " INTEGER,"
                     + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
                     + PostsTable.COLUMN_POST_TEXT + " TEXT,"
                     + PostsTable.COLUMN_POST_URL + " TEXT,"
@@ -327,8 +320,8 @@ public class PostsDb {
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
             db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
-                    + PostsTable.COLUMN_CHAT_JID + ", "
-                    + PostsTable.COLUMN_SENDER_JID + ", "
+                    + PostsTable.COLUMN_CHAT_ID + ", "
+                    + PostsTable.COLUMN_SENDER_USER_ID + ", "
                     + PostsTable.COLUMN_POST_ID
                     + ");");
         }

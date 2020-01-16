@@ -9,13 +9,11 @@ import androidx.collection.LruCache;
 
 import com.halloapp.util.ViewDataLoader;
 
-import org.jxmpp.jid.Jid;
-
 import java.util.concurrent.Callable;
 
-public class ContactNameLoader extends ViewDataLoader<TextView, Contact, Jid> {
+public class ContactNameLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
-    private final LruCache<Jid, Contact> cache = new LruCache<>(512);
+    private final LruCache<UserId, Contact> cache = new LruCache<>(512);
     private final ContactsDb contactsDb;
 
     public ContactNameLoader(@NonNull Context context) {
@@ -23,8 +21,8 @@ public class ContactNameLoader extends ViewDataLoader<TextView, Contact, Jid> {
     }
 
     @MainThread
-    public void load(@NonNull TextView view, @NonNull Jid jid) {
-        final Callable<Contact> loader = () -> contactsDb.getContact(jid);
+    public void load(@NonNull TextView view, @NonNull UserId userId) {
+        final Callable<Contact> loader = () -> contactsDb.getContact(userId);
         final ViewDataLoader.Displayer<TextView, Contact> displayer = new ViewDataLoader.Displayer<TextView, Contact>() {
 
             @Override
@@ -39,7 +37,7 @@ public class ContactNameLoader extends ViewDataLoader<TextView, Contact, Jid> {
                 view.setText("");
             }
         };
-        load(view, loader, displayer, jid, cache);
+        load(view, loader, displayer, userId, cache);
     }
 
 }

@@ -30,7 +30,7 @@ public class ContactsDiff {
                 if (!Objects.equals(contact.phone, addressBookContact.phone)) {
                     contact.phone = addressBookContact.phone;
                     contact.name = addressBookContact.name;
-                    contact.jid = null;
+                    contact.userId = null;
                     contact.member = false;
                     updated.add(contact);
                 } else if (!Objects.equals(contact.name, addressBookContact.name)) {

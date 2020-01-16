@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 
@@ -34,20 +35,16 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onOutgoingPostAcked(@NonNull String chatJid, @NonNull String postId) {
-        PostsDb.getInstance(context).setPostState(chatJid, "", postId, Post.POST_STATE_OUTGOING_SENT);
+    public void onOutgoingPostAcked(@NonNull String chatId, @NonNull String postId) {
+        PostsDb.getInstance(context).setPostTransferred(chatId, UserId.ME, postId);
     }
 
     @Override
-    public void onOutgoingPostDelivered(@NonNull String chatJid, @NonNull String postId) {
-        PostsDb.getInstance(context).setPostState(chatJid, "", postId, Post.POST_STATE_OUTGOING_DELIVERED);
+    public void onOutgoingPostDelivered(@NonNull String chatId, @NonNull String postId) {
     }
 
     @Override
     public void onIncomingPostReceived(@NonNull Post post) {
-        if (post.type == Post.POST_TYPE_TEXT) {
-            post.state = Post.POST_STATE_INCOMING_RECEIVED;
-        }
         PostsDb.getInstance(context).addPost(post);
     }
 

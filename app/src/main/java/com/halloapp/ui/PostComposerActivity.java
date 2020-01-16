@@ -19,9 +19,9 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.halloapp.Connection;
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Post;
@@ -56,13 +56,13 @@ public class PostComposerActivity extends AppCompatActivity {
             }
             final Post post = new Post(
                     0,
-                    Connection.FEED_JID.toString(),
-                    "",
+                    Constants.FEED_CHAT_ID,
+                    UserId.ME,
                     UUID.randomUUID().toString().replaceAll("-", ""),
                     "",
                     0,
                     System.currentTimeMillis(),
-                    Post.POST_STATE_OUTGOING_SENDING,
+                    false,
                     postFile == null ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
                     postText,
                     null,

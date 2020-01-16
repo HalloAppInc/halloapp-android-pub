@@ -3,33 +3,28 @@ package com.halloapp.contacts;
 import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 
-import com.halloapp.Connection;
-
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
+import androidx.annotation.Nullable;
 
 public class Contact {
 
     final long id;
     final long addressBookId;
-    public String name;
-    public String phone;
-    public Jid jid;
+    public @Nullable String name;
+    public @Nullable String phone;
+    public @Nullable UserId userId;
     public boolean member;
 
-    public Contact(long id, long addressBookId, String name, String phone, String userId, boolean member) {
-        this(id, addressBookId, name, phone, userId == null ? null : JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(userId), Domainpart.fromOrNull(Connection.XMPP_DOMAIN)), member);
-    }
-
-    public Contact(long id, long addressBookId, String name, String phone, Jid jid, boolean member) {
+    public Contact(long id, long addressBookId, @Nullable String name, @Nullable String phone, @Nullable UserId userId, boolean member) {
         this.id = id;
         this.addressBookId = addressBookId;
         this.name = name;
         this.phone = phone;
-        this.jid = jid;
+        this.userId = userId;
         this.member = member;
+    }
+
+    public @Nullable String getRawUserId() {
+        return userId == null ? null : userId.rawId();
     }
 
     public String getDisplayName() {
@@ -37,8 +32,8 @@ public class Contact {
     }
 
     public String getInternationalPhone() {
-        if (jid != null) {
-            return PhoneNumberUtils.formatNumber("+" + jid.getLocalpartOrNull().toString(), null);
+        if (userId != null) {
+            return PhoneNumberUtils.formatNumber("+" + userId.rawId(), null);
         } else {
             return phone;
         }

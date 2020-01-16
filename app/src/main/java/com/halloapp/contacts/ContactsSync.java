@@ -22,11 +22,6 @@ import com.halloapp.HalloApp;
 import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.util.Log;
 
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -182,13 +177,13 @@ public class ContactsSync {
                     contactUpdated = true;
                     Log.i("ContactsSync.performContactSync: update membership for " + contact.name + " to " + contact.member);
                 }
-                if (!Objects.equals(contact.jid == null ? null : contact.jid.getLocalpartOrNull(), contactsSyncResult.normalizedPhone)) {
+                if (!Objects.equals(contact.userId == null ? null : contact.userId.rawId(), contactsSyncResult.normalizedPhone)) {
                     if (contactsSyncResult.normalizedPhone == null) {
-                        contact.jid = null;
+                        contact.userId = null;
                     } else {
-                        contact.jid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(contactsSyncResult.normalizedPhone), Domainpart.fromOrNull(Connection.XMPP_DOMAIN));
+                        contact.userId = new UserId(contactsSyncResult.normalizedPhone);
                     }
-                    Log.i("ContactsSync.performContactSync: update jid for " + contact.name + " to " + contact.jid);
+                    Log.i("ContactsSync.performContactSync: update jid for " + contact.name + " to " + contact.userId);
                     contactUpdated = true;
                 }
                 if (contactUpdated) {
@@ -208,11 +203,11 @@ public class ContactsSync {
 
         Log.i("ContactsSync.performContactSync: " + updatedContacts.size() + " contacts updated");
 
-        final Collection<Jid> memberJids = contactsDb.getMemberJids();
-        Log.i("ContactsSync.performContactSync: " + memberJids.size() + " to pubsub");
+        final Collection<UserId> memberUserIds = contactsDb.getMemberUserIds();
+        Log.i("ContactsSync.performContactSync: " + memberUserIds.size() + " to pubsub");
 
         try {
-            boolean result = Connection.getInstance().syncPubSub(memberJids).get();
+            boolean result = Connection.getInstance().syncPubSub(memberUserIds).get();
             if (!result) {
                 Log.e("ContactsSync.performContactSync: failed to sync pubsub");
             }
@@ -284,9 +279,9 @@ public class ContactsSync {
         @Override
         public @NonNull Result doWork() {
             try {
-                final Collection<Jid> memberJids = ContactsDb.getInstance(getApplicationContext()).getMemberJids();
-                Log.i("PubSubSyncWorker: " + memberJids.size() + " to pubsub");
-                Connection.getInstance().syncPubSub(memberJids).get();
+                final Collection<UserId> memberUserIds = ContactsDb.getInstance(getApplicationContext()).getMemberUserIds();
+                Log.i("PubSubSyncWorker: " + memberUserIds.size() + " to pubsub");
+                Connection.getInstance().syncPubSub(memberUserIds).get();
                 return ListenableWorker.Result.success();
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("PubSubSyncWorker", e);
