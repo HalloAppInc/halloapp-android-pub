@@ -3,13 +3,13 @@
     <color name="color_primary">#75A5E7</color>
     <color name="color_primary_dark">#757575</color>
     <color name="color_accent">#75A5E7</color>
-    <color name="color_action_bar">#fff6f6f6</color>
-    <color name="window_background">#fff6f6f6</color>
+    <color name="color_action_bar">#f6f6f6</color>
+    <color name="window_background">#f6f6f6</color>
     <color name="post_actions_separator">#20000000</color>
     <color name="badge_text">#ffffff</color>
     <color name="badge_background">#FF613F</color>
     <color name="tab_active">#414141</color>
     <color name="tab_inactive">#a1a1a1</color>
-    <color name="media_placeholder">#a1a1a1</color>
+    <color name="media_placeholder">#f6f6f6</color>
 
 </resources>
