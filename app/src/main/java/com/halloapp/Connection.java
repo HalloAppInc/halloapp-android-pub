@@ -148,7 +148,7 @@ public class Connection {
                         .setHost(HOST)
                         .setConnectTimeout(CONNECTION_TIMEOUT)
                         .setSendPresence(false)
-                        .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
+                        .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
                         .setPort(PORT)
                         .setDebuggerFactory(connection -> new AndroidDebugger(connection) {
                             @Override
