@@ -164,6 +164,7 @@ public class Connection {
                         .build();
                 connection = new XMPPTCPConnection(config);
                 connection.setReplyTimeout(REPLY_TIMEOUT);
+                connection.setUseStreamManagement(false);
                 connection.addConnectionListener(new HalloConnectionListener());
             } catch (XmppStringprepException e) {
                 Log.e("connection: cannot create connection", e);
