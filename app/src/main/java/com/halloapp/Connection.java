@@ -524,7 +524,7 @@ public class Connection {
                     observer.onIncomingPostReceived(post);
                 } else {
                     // TODO (ds): process comments
-                    Log.i("connection: comment received");
+                    Log.i("connection: comment received: " + entry);
                 }
             }
         }

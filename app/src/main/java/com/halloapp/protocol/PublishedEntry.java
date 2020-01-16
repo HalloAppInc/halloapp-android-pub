@@ -156,6 +156,11 @@ public class PublishedEntry {
         }
     }
 
+    @Override
+    public @NonNull String toString() {
+        return "PublishedEntry[id=" + id + " type=" + type + " text=" + text + "]";
+    }
+
     private boolean valid() {
         return user != null && (text != null || url != null);
     }
@@ -274,5 +279,4 @@ public class PublishedEntry {
         }
 
     }
-
 }
