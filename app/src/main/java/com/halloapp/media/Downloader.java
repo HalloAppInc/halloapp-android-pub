@@ -2,6 +2,7 @@ package com.halloapp.media;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.util.FileUtils;
@@ -28,6 +29,7 @@ public class Downloader {
         }
     }
 
+    @WorkerThread
     public static void run(@NonNull String remotePath, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
         InputStream inStream = null;
         BufferedOutputStream outStream = null;

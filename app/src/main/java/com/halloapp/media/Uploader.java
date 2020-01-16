@@ -32,7 +32,7 @@ public class Uploader {
     }
 
     @WorkerThread
-    static public String run(@NonNull File file, @Nullable UploadListener listener) throws IOException {
+    public static String run(@NonNull File file, @Nullable UploadListener listener) throws IOException {
         final String hash = FileUtils.getFileMD5(file);
 
         final String boundary = "----WebKitFormBoundaryZJvxBSLQp0sE6qAB";
