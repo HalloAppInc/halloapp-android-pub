@@ -233,6 +233,53 @@ public class PostsDb {
         return posts;
     }
 
+    public List<Post> getPendingPosts() {
+        final List<Post> posts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
+                new String[] { PostsTable._ID,
+                        PostsTable.COLUMN_CHAT_ID,
+                        PostsTable.COLUMN_SENDER_USER_ID,
+                        PostsTable.COLUMN_POST_ID,
+                        PostsTable.COLUMN_POST_GROUP_ID,
+                        PostsTable.COLUMN_POST_PARENT_ID,
+                        PostsTable.COLUMN_POST_TIMESTAMP,
+                        PostsTable.COLUMN_POST_TRANSFERRED,
+                        PostsTable.COLUMN_POST_TYPE,
+                        PostsTable.COLUMN_POST_TEXT,
+                        PostsTable.COLUMN_POST_URL,
+                        PostsTable.COLUMN_POST_FILE,
+                        PostsTable.COLUMN_POST_WIDTH,
+                        PostsTable.COLUMN_POST_HEIGHT
+                },
+                PostsTable.COLUMN_POST_TRANSFERRED + "=0", null,
+                null, null,
+                PostsTable._ID + " ASC",
+                null)) {
+
+            while (cursor.moveToNext()) {
+                final Post post = new Post(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getLong(5),
+                        cursor.getLong(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getInt(8),
+                        cursor.getString(9),
+                        cursor.getString(10),
+                        cursor.getString(11),
+                        cursor.getInt(12),
+                        cursor.getInt(13));
+                posts.add(post);
+            }
+        }
+        Log.i("PostsDb.getPendingPosts: posts.size=" + posts.size());
+        return posts;
+    }
+
     private void notifyPostAdded(@NonNull Post post) {
         synchronized (observers) {
             for (Observer observer : observers) {

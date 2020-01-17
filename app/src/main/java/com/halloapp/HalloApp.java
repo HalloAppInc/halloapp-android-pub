@@ -2,6 +2,7 @@ package com.halloapp;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
@@ -36,15 +37,26 @@ public class HalloApp extends Application {
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new LifecycleObserver() {
 
+            NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
+                public void onConnected(int type) {
+                    connect();
+                }
+
+                public void onDisconnected() {
+                }
+            };
+
             @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
             void onBackground() {
                 Log.i("halloapp: onBackground");
+                unregisterReceiver(receiver);
             }
 
             @OnLifecycleEvent(Lifecycle.Event.ON_START)
             void onForeground() {
                 Log.i("halloapp: onForeground");
                 connect();
+                registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             }
         });
 

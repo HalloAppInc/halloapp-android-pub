@@ -89,7 +89,7 @@ public class Connection {
     private static final String HOST = "s.halloapp.net";
     private static final int PORT = 5222;
     private static final int CONNECTION_TIMEOUT = 20_000;
-    private static final int REPLY_TIMEOUT = BuildConfig.DEBUG ? 220_000 : 20_000;
+    private static final int REPLY_TIMEOUT = BuildConfig.DEBUG ? 22_000 : 20_000;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
@@ -243,7 +243,10 @@ public class Connection {
             Log.e("connection: cannot disconnect, no connection");
             return;
         }
-        connection.disconnect();
+        if (connection.isConnected()) {
+            connection.setReplyTimeout(1_000);
+            connection.disconnect();
+        }
         connection = null;
         observer.onDisconnected();
     }

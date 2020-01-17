@@ -8,6 +8,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.posts.SendPendingPostsTask;
 
 public class ConnectionObserver implements Connection.Observer {
 
@@ -21,6 +22,7 @@ public class ConnectionObserver implements Connection.Observer {
     public void onConnected() {
         if (HalloApp.instance.getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
             ContactsSync.getInstance(context).startPubSubSync();
+            new SendPendingPostsTask(context).execute();
         }
     }
 
@@ -52,5 +54,4 @@ public class ConnectionObserver implements Connection.Observer {
     public void onSubscribersChanged() {
         ContactsSync.getInstance(context).startContactSync();
     }
-
 }
