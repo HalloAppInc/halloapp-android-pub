@@ -13,6 +13,7 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.core.util.Preconditions;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
@@ -77,39 +78,46 @@ public class PostsDb {
             values.put(PostsTable.COLUMN_CHAT_ID, post.chatId);
             values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
             values.put(PostsTable.COLUMN_POST_ID, post.postId);
-            if (post.groupId != null) {
-                values.put(PostsTable.COLUMN_POST_GROUP_ID, post.groupId);
-            }
-            values.put(PostsTable.COLUMN_POST_PARENT_ID, post.parentRowId);
-            values.put(PostsTable.COLUMN_POST_TIMESTAMP, post.timestamp);
-            values.put(PostsTable.COLUMN_POST_TRANSFERRED, post.transferred);
-            values.put(PostsTable.COLUMN_POST_TYPE, post.type);
+            values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
+            values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
             if (post.text != null) {
-                values.put(PostsTable.COLUMN_POST_TEXT, post.text);
-            }
-            if (post.url != null) {
-                values.put(PostsTable.COLUMN_POST_URL, post.url);
-            }
-            if (post.file != null) {
-                values.put(PostsTable.COLUMN_POST_FILE, post.file);
-                if (post.width == 0 || post.height == 0) {
-                    final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(post.file));
-                    post.width = dimensions.getWidth();
-                    post.height = dimensions.getHeight();
-                }
-            }
-            if (post.width > 0 && post.height > 0) {
-                values.put(PostsTable.COLUMN_POST_WIDTH, post.width);
-                values.put(PostsTable.COLUMN_POST_HEIGHT, post.height);
+                values.put(PostsTable.COLUMN_TEXT, post.text);
             }
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            db.beginTransaction();
             try {
-                db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostAdded(post);
-                Log.i("PostsDb.addPost: added " + post.keyString());
-            } catch (SQLiteConstraintException ex) {
-                Log.w("PostsDb.addPost: duplicate " + post.keyString());
-                notifyPostDuplicate(post);
+                try {
+                    post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+                    for (Media mediaItem : post.media) {
+                        final ContentValues mediaItemValues = new ContentValues();
+                        mediaItemValues.put(MediaTable.COLUMN_MEDIA_ID, mediaItem.id);
+                        mediaItemValues.put(MediaTable.COLUMN_POST_ROW_ID, post.rowId);
+                        if (mediaItem.url != null) {
+                            mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+                        }
+                        if (mediaItem.file != null) {
+                            mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file);
+                            if (mediaItem.width == 0 || mediaItem.height == 0) {
+                                final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(mediaItem.file));
+                                mediaItem.width = dimensions.getWidth();
+                                mediaItem.height = dimensions.getHeight();
+                            }
+                        }
+                        if (mediaItem.width > 0 && mediaItem.height > 0) {
+                            mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
+                            mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+                        }
+                        db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    }
+                    notifyPostAdded(post);
+                    Log.i("PostsDb.addPost: added " + post.keyString());
+                } catch (SQLiteConstraintException ex) {
+                    Log.w("PostsDb.addPost: duplicate " + post.keyString());
+                    notifyPostDuplicate(post);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
         });
     }
@@ -126,7 +134,7 @@ public class PostsDb {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setPostTransferred: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_POST_TRANSFERRED, true);
+            values.put(PostsTable.COLUMN_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
@@ -135,52 +143,48 @@ public class PostsDb {
                         SQLiteDatabase.CONFLICT_ABORT);
                 notifyPostUpdated(chatId, senderUserId, postId);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setPostState: failed");
+                Log.e("PostsDb.setPostTransferred: failed");
                 throw ex;
             }
         });
     }
 
-    public void setPostFile(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId, @NonNull String file) {
+    public void setMediaTransferred(@NonNull Post post, @NonNull Media media) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostFile: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId + " file=" + file);
+            Log.i("PostsDb.setMediaTransferred: post=" + post + " media=" + media);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_POST_FILE, file);
-            final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(file));
-            if (dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
-                values.put(PostsTable.COLUMN_POST_WIDTH, dimensions.getWidth());
-                values.put(PostsTable.COLUMN_POST_HEIGHT, dimensions.getHeight());
+            values.put(MediaTable.COLUMN_FILE, media.file);
+            values.put(MediaTable.COLUMN_URL, media.url);
+            if (media.width == 0 || media.height == 0) {
+                final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(media.file));
+                if (dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
+                    values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
+                    values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
+                }
             }
-            values.put(PostsTable.COLUMN_POST_TRANSFERRED, true);
+            values.put(MediaTable.COLUMN_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
-                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_CHAT_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String [] {chatId, senderUserId.rawId(), postId},
+                db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
+                        MediaTable.COLUMN_MEDIA_ID + "=?",
+                        new String [] {media.id},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostUpdated(chatId, senderUserId, postId);
+                notifyPostUpdated(post.chatId, post.senderUserId, post.postId);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setPostFile: failed", ex);
+                Log.e("PostsDb.setMediaTransferred: failed", ex);
                 throw ex;
             }
-        });
-    }
-
-    public void setPostUrl(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId, @NonNull String url) {
-        databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostUrl: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId + " url=" + url);
-            final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_POST_URL, url);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-            try {
-                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_CHAT_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String [] {chatId, senderUserId.rawId(), postId},
-                        SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostUpdated(chatId, senderUserId, postId);
-            } catch (SQLException ex) {
-                Log.e("PostsDb.setPostState: failed", ex);
-                throw ex;
+            if (post.isIncoming()) {
+                boolean transferred = true;
+                for (Media mediaItem : post.media) {
+                    if (!mediaItem.transferred) {
+                        transferred = false;
+                        break;
+                    }
+                }
+                if (transferred) {
+                    setPostTransferred(post.chatId, post.senderUserId, post.postId);
+                }
             }
         });
     }
@@ -189,44 +193,70 @@ public class PostsDb {
     public List<Post> getPosts(@Nullable Long id, int count, boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
-                new String[] { PostsTable._ID,
-                        PostsTable.COLUMN_CHAT_ID,
-                        PostsTable.COLUMN_SENDER_USER_ID,
-                        PostsTable.COLUMN_POST_ID,
-                        PostsTable.COLUMN_POST_GROUP_ID,
-                        PostsTable.COLUMN_POST_PARENT_ID,
-                        PostsTable.COLUMN_POST_TIMESTAMP,
-                        PostsTable.COLUMN_POST_TRANSFERRED,
-                        PostsTable.COLUMN_POST_TYPE,
-                        PostsTable.COLUMN_POST_TEXT,
-                        PostsTable.COLUMN_POST_URL,
-                        PostsTable.COLUMN_POST_FILE,
-                        PostsTable.COLUMN_POST_WIDTH,
-                        PostsTable.COLUMN_POST_HEIGHT
-                },
-                id == null ? null : PostsTable._ID + (after ? " < " : " > ") + id, null,
-                null, null,
-                PostsTable._ID + " DESC",
-                Integer.toString(count))) {
+        String where = id == null ? null : PostsTable.TABLE_NAME + "." + PostsTable._ID + (after ? " < " : " > ") + id;
+        String sql =
+            "SELECT " +
+                PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CHAT_ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                "m." + MediaTable.COLUMN_MEDIA_ID + "," +
+                "m." + MediaTable.COLUMN_TYPE + "," +
+                "m." + MediaTable.COLUMN_URL + "," +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_WIDTH + "," +
+                "m." + MediaTable.COLUMN_HEIGHT + "," +
+                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+             "FROM " +
+                PostsTable.TABLE_NAME + " LEFT JOIN " +
+                "(SELECT " +
+                    MediaTable.COLUMN_POST_ROW_ID + "," +
+                    MediaTable.COLUMN_MEDIA_ID + "," +
+                    MediaTable.COLUMN_TYPE + "," +
+                    MediaTable.COLUMN_URL + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_WIDTH + "," +
+                    MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " " +
+                "FROM " + MediaTable.TABLE_NAME + ") AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+            (where == null ? "" : "WHERE " + where + " ") +
+            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC " +
+            "LIMIT " + count;
 
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            Post post = null;
             while (cursor.moveToNext()) {
-                final Post post = new Post(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        new UserId(cursor.getString(2)),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getLong(5),
-                        cursor.getLong(6),
-                        cursor.getInt(7) == 1,
-                        cursor.getInt(8),
-                        cursor.getString(9),
-                        cursor.getString(10),
-                        cursor.getString(11),
-                        cursor.getInt(12),
-                        cursor.getInt(13));
-                posts.add(post);
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (post != null) {
+                        posts.add(post);
+                    }
+                    post = new Post(
+                            cursor.getLong(0),
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(5) == 1,
+                            cursor.getString(6));
+                }
+                final String mediaId = cursor.getString(7);
+                if (mediaId != null) {
+                    Preconditions.checkNotNull(post).media.add(new Media(
+                            mediaId,
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            cursor.getString(10),
+                            cursor.getInt(11),
+                            cursor.getInt(12),
+                            cursor.getInt(13) == 1));
+                }
             }
         }
         Log.i("PostsDb.getPosts: start=" + id + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId)));
@@ -234,46 +264,72 @@ public class PostsDb {
     }
 
     public List<Post> getPendingPosts() {
+
+
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
-                new String[] { PostsTable._ID,
-                        PostsTable.COLUMN_CHAT_ID,
-                        PostsTable.COLUMN_SENDER_USER_ID,
-                        PostsTable.COLUMN_POST_ID,
-                        PostsTable.COLUMN_POST_GROUP_ID,
-                        PostsTable.COLUMN_POST_PARENT_ID,
-                        PostsTable.COLUMN_POST_TIMESTAMP,
-                        PostsTable.COLUMN_POST_TRANSFERRED,
-                        PostsTable.COLUMN_POST_TYPE,
-                        PostsTable.COLUMN_POST_TEXT,
-                        PostsTable.COLUMN_POST_URL,
-                        PostsTable.COLUMN_POST_FILE,
-                        PostsTable.COLUMN_POST_WIDTH,
-                        PostsTable.COLUMN_POST_HEIGHT
-                },
-                PostsTable.COLUMN_POST_TRANSFERRED + "=0", null,
-                null, null,
-                PostsTable._ID + " ASC",
-                null)) {
+        String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CHAT_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                        "m." + MediaTable.COLUMN_MEDIA_ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "FROM " +
+                        PostsTable.TABLE_NAME + " LEFT JOIN " +
+                        "(SELECT " +
+                        MediaTable.COLUMN_POST_ROW_ID + "," +
+                        MediaTable.COLUMN_MEDIA_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + " " +
+                        "FROM " + MediaTable.TABLE_NAME + ") AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+                        "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=0 " +
+                        "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
 
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            Post post = null;
             while (cursor.moveToNext()) {
-                final Post post = new Post(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        new UserId(cursor.getString(2)),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getLong(5),
-                        cursor.getLong(6),
-                        cursor.getInt(7) == 1,
-                        cursor.getInt(8),
-                        cursor.getString(9),
-                        cursor.getString(10),
-                        cursor.getString(11),
-                        cursor.getInt(12),
-                        cursor.getInt(13));
-                posts.add(post);
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (post != null) {
+                        posts.add(post);
+                    }
+                    post = new Post(
+                            cursor.getLong(0),
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(5) == 1,
+                            cursor.getString(6));
+                }
+                final String mediaId = cursor.getString(7);
+                if (mediaId != null) {
+                    Preconditions.checkNotNull(post).media.add(new Media(
+                            mediaId,
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            cursor.getString(10),
+                            cursor.getInt(11),
+                            cursor.getInt(12),
+                            cursor.getInt(13) == 1));
+                }
             }
         }
         Log.i("PostsDb.getPendingPosts: posts.size=" + posts.size());
@@ -323,16 +379,25 @@ public class PostsDb {
         static final String COLUMN_CHAT_ID = "chat_id";
         static final String COLUMN_SENDER_USER_ID = "sender_user_id";
         static final String COLUMN_POST_ID = "post_id";
-        static final String COLUMN_POST_GROUP_ID = "group_id";
-        static final String COLUMN_POST_PARENT_ID = "parent_id";
-        static final String COLUMN_POST_TIMESTAMP = "timestamp";
-        static final String COLUMN_POST_TRANSFERRED = "transferred";
-        static final String COLUMN_POST_TYPE = "type";
-        static final String COLUMN_POST_TEXT = "text";
-        static final String COLUMN_POST_URL = "url";
-        static final String COLUMN_POST_FILE = "file";
-        static final String COLUMN_POST_WIDTH = "width";
-        static final String COLUMN_POST_HEIGHT = "height";
+        static final String COLUMN_TIMESTAMP = "timestamp";
+        static final String COLUMN_TRANSFERRED = "transferred";
+        static final String COLUMN_TEXT = "text";
+    }
+
+    private static final class MediaTable implements BaseColumns {
+
+        private MediaTable() { }
+
+        static final String TABLE_NAME = "media";
+
+        static final String COLUMN_MEDIA_ID = "id";
+        static final String COLUMN_POST_ROW_ID = "post_row_id";
+        static final String COLUMN_TYPE = "type";
+        static final String COLUMN_TRANSFERRED = "transferred";
+        static final String COLUMN_URL = "url";
+        static final String COLUMN_FILE = "file";
+        static final String COLUMN_WIDTH = "width";
+        static final String COLUMN_HEIGHT = "height";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
@@ -353,16 +418,22 @@ public class PostsDb {
                     + PostsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
-                    + PostsTable.COLUMN_POST_GROUP_ID + " TEXT,"
-                    + PostsTable.COLUMN_POST_PARENT_ID + " INTEGER,"
-                    + PostsTable.COLUMN_POST_TIMESTAMP + " INTEGER,"
-                    + PostsTable.COLUMN_POST_TRANSFERRED + " INTEGER,"
-                    + PostsTable.COLUMN_POST_TYPE + " INTEGER,"
-                    + PostsTable.COLUMN_POST_TEXT + " TEXT,"
-                    + PostsTable.COLUMN_POST_URL + " TEXT,"
-                    + PostsTable.COLUMN_POST_FILE + " TEXT,"
-                    + PostsTable.COLUMN_POST_WIDTH + " INTEGER,"
-                    + PostsTable.COLUMN_POST_HEIGHT + " INTEGER"
+                    + PostsTable.COLUMN_TIMESTAMP + " INTEGER,"
+                    + PostsTable.COLUMN_TRANSFERRED + " INTEGER,"
+                    + PostsTable.COLUMN_TEXT + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP TABLE IF EXISTS " + MediaTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + MediaTable.TABLE_NAME + " ("
+                    + MediaTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + MediaTable.COLUMN_MEDIA_ID + " TEXT NOT NULL,"
+                    + MediaTable.COLUMN_POST_ROW_ID + " INTEGER,"
+                    + MediaTable.COLUMN_TYPE + " INTEGER,"
+                    + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
+                    + MediaTable.COLUMN_URL + " TEXT,"
+                    + MediaTable.COLUMN_FILE + " FILE,"
+                    + MediaTable.COLUMN_WIDTH + " INTEGER,"
+                    + MediaTable.COLUMN_HEIGHT + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);

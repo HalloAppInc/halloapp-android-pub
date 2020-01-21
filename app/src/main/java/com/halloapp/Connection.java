@@ -9,12 +9,14 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.contacts.UserId;
+import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.protocol.ContactsSyncRequest;
 import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.protocol.ContactsSyncResponseProvider;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.util.Log;
+import com.halloapp.util.RandomId;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -303,16 +305,17 @@ public class Connection {
                 final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 try {
                     final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
-                    final SimplePayload payload = new SimplePayload(new PublishedEntry(
+                    final PublishedEntry entry = new PublishedEntry(
                             PublishedEntry.ENTRY_FEED,
                             null,
                             post.timestamp,
                             connection.getUser().getLocalpart().toString(),
                             post.text,
-                            post.url,
-                            post.width,
-                            post.height,
-                            null).toXml());
+                            null);
+                    for (Media media : post.media) {
+                        entry.media.add(new PublishedEntry.Media(0, media.url, media.width, media.height));
+                    }
+                    final SimplePayload payload = new SimplePayload(entry.toXml());
                     final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                     myFeedNode.publish(item);
                 } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -518,21 +521,17 @@ public class Connection {
                 observer.onOutgoingPostAcked(Constants.FEED_CHAT_ID, entry.id);
             } else {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
-                    Post post = new Post(0,
+                    final Post post = new Post(0,
                             Constants.FEED_CHAT_ID,
                             new UserId(entry.user),
                             entry.id,
-                            null,
-                            0,
                             entry.timestamp,
-                            TextUtils.isEmpty(entry.url),
-                            TextUtils.isEmpty(entry.url) ? Post.POST_TYPE_TEXT : Post.POST_TYPE_IMAGE,
-                            entry.text,
-                            entry.url,
-                            null,
-                            entry.width,
-                            entry.height
+                            entry.media.isEmpty(),
+                            entry.text
                     );
+                    for (PublishedEntry.Media entryMedia : entry.media) {
+                        post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url, entryMedia.width, entryMedia.height));
+                    }
                     observer.onIncomingPostReceived(post);
                 } else {
                     // TODO (ds): process comments
@@ -583,16 +582,9 @@ public class Connection {
                         packet.getFrom().getLocalpartOrThrow().toString(),
                         new UserId(packet.getFrom().getLocalpartOrThrow().toString()),
                         packet.getStanzaId(),
-                        "",
-                        0,
                         System.currentTimeMillis(), /*TODO (ds): use actual time*/
                         true,
-                        Post.POST_TYPE_TEXT,
-                        msg.getBody(),
-                        null,
-                        null,
-                        0,
-                        0);
+                        msg.getBody());
                 observer.onIncomingPostReceived(post);
                 handled = true;
             } else {

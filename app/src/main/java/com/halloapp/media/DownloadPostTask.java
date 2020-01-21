@@ -4,12 +4,13 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
+import com.halloapp.util.RandomId;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
 
@@ -26,13 +27,21 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        final Downloader.DownloadListener downloadListener = percent -> true;
-        final String file = UUID.randomUUID().toString().replaceAll("-", "") + ".jpg";
-        try {
-            Downloader.run(post.url, mediaStore.getMediaFile(file), downloadListener);
-            postsDb.setPostFile(post.chatId, post.senderUserId, post.postId, file);
-        } catch (IOException e) {
-            Log.e("upload", e);
+        for (Media media : post.media) {
+            if (media.transferred) {
+                continue;
+            }
+            final String file = RandomId.create() + ".jpg";
+            final Downloader.DownloadListener downloadListener = percent -> true;
+            try {
+                Downloader.run(media.url, mediaStore.getMediaFile(file), downloadListener);
+                media.file = file;
+                media.transferred = true;
+                postsDb.setMediaTransferred(post, media);
+            } catch (IOException e) {
+                Log.e("upload", e);
+                return null;
+            }
         }
         return null;
     }

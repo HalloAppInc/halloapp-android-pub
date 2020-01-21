@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 
 import com.halloapp.Connection;
+import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
@@ -28,15 +29,21 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Uploader.UploadListener uploadListener = percent -> true;
-
-        try {
-            post.url = Uploader.run(mediaStore.getMediaFile(post.file), uploadListener);
-            postsDb.setPostUrl(post.chatId, post.senderUserId, post.postId, post.url);
-            connection.sendPost(post);
-        } catch (IOException e) {
-            Log.e("upload", e);
+        for (Media media : post.media) {
+            if (media.transferred) {
+                continue;
+            }
+            final Uploader.UploadListener uploadListener = percent -> true;
+            try {
+                media.url = Uploader.run(mediaStore.getMediaFile(media.file), uploadListener);
+                media.transferred = true;
+                postsDb.setMediaTransferred(post, media);
+            } catch (IOException e) {
+                Log.e("upload", e);
+                return null;
+            }
         }
+        connection.sendPost(post);
         return null;
     }
 }

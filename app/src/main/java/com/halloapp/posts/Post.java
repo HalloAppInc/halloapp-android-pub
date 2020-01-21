@@ -1,70 +1,39 @@
 package com.halloapp.posts;
 
-import android.text.TextUtils;
-
-import androidx.annotation.IntDef;
-
 import com.halloapp.contacts.UserId;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Post {
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({POST_TYPE_UNKNOWN, POST_TYPE_TEXT, POST_TYPE_IMAGE})
-    public @interface PostType {}
-    public static final int POST_TYPE_UNKNOWN = 0;
-    public static final int POST_TYPE_TEXT = 1;
-    public static final int POST_TYPE_IMAGE = 2;
-
-    public final long rowId; // could be 0 when post not inserted yet
+    public long rowId; // could be 0 when post not inserted yet
     public final String chatId;
     public final UserId senderUserId;
     public final String postId;
-    public final String groupId; // same for messages sent in a group
-    public final long parentRowId;
     public final long timestamp;
 
     public boolean transferred;
 
-    public final @PostType int type;
     public final String text;
-    public String url;
-    public String file;
-    public int width;
-    public int height;
+    public final List<Media> media = new ArrayList<>();
 
     public Post(
             long rowId,
             String chatId,
             UserId senderUserId,
             String postId,
-            String groupId,
-            long parentRowId,
             long timestamp,
             boolean transferred,
-            @PostType int type,
-            String text,
-            String url,
-            String file,
-            int width,
-            int height) {
+            String text) {
         this.rowId = rowId;
         this.chatId = chatId;
         this.senderUserId = senderUserId;
         this.postId = postId;
-        this.groupId = groupId;
-        this.parentRowId = parentRowId;
         this.timestamp = timestamp;
         this.transferred = transferred;
-        this.type = type;
         this.text = text;
-        this.url = url;
-        this.file = file;
-        this.width = width;
-        this.height = height;
     }
 
     public String keyString() {
@@ -95,15 +64,8 @@ public class Post {
                 Objects.equals(chatId, post.chatId) &&
                 Objects.equals(senderUserId, post.senderUserId) &&
                 Objects.equals(postId, post.postId) &&
-                Objects.equals(groupId, post.groupId) &&
-                parentRowId == post.parentRowId &&
                 timestamp == post.timestamp &&
-                type == post.type &&
                 Objects.equals(text, post.text) &&
-                Objects.equals(url, post.url) &&
-                Objects.equals(file, post.file) &&
-                width == post.width &&
-                height == post.height &&
                 transferred == post.transferred;
     }
 }

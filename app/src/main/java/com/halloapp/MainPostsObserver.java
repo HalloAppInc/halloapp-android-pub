@@ -41,7 +41,7 @@ public class MainPostsObserver implements PostsDb.Observer {
     @Override
     public void onPostAdded(@NonNull Post post) {
         if (post.isOutgoing()) {
-            if (post.type == Post.POST_TYPE_TEXT) {
+            if (post.media.isEmpty()) {
                 connection.sendPost(post);
             } else {
                 new UploadPostTask(post, connection, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
@@ -49,7 +49,7 @@ public class MainPostsObserver implements PostsDb.Observer {
         } else { // if (post.isIncoming())
             connection.sendDeliveryReceipt(post);
 
-            if (!TextUtils.isEmpty(post.url)) {
+            if (!post.media.isEmpty()) {
                 new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         }

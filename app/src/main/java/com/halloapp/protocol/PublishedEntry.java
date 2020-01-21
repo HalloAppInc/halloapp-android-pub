@@ -29,11 +29,14 @@ public class PublishedEntry {
     private static final String ELEMENT_FEED_POST = "feedpost";
     private static final String ELEMENT_COMMENT = "comment";
     private static final String ELEMENT_USER = "username";
-    private static final String ELEMENT_URL = "imageUrl";
+    private static final String ELEMENT_IMAGE_URL = "imageUrl";
     private static final String ELEMENT_TEXT = "text";
     private static final String ELEMENT_TIMESTAMP = "timestamp";
     private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
+    private static final String ELEMENT_URL = "url";
+    private static final String ELEMENT_MEDIA = "media";
 
+    private static final String ATTRIBUTE_TYPE = "type";
     private static final String ATTRIBUTE_WIDTH = "width";
     private static final String ATTRIBUTE_HEIGHT = "height";
 
@@ -50,20 +53,56 @@ public class PublishedEntry {
     public final long timestamp;
     public final String user;
     public final String text;
-    public final String url;
-    public final int width;
-    public final int height;
     public final String feedItemId;
+    public final List<Media> media = new ArrayList<>();
 
-    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String url, int width, int height, String feedItemId) {
+    public static class Media {
+
+        public int type;
+        public String url;
+        public int width;
+        public int height;
+
+        public Media(int type, String url, int width, int height) {
+            this.type = type;
+            this.url = url;
+            this.width = width;
+            this.height = height;
+        }
+
+        Media(String type, String widthText, String heightText, String url) {
+            if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
+                this.url = "https://cdn.image4.io/hallo" + url; // TODO (ds): remove
+            } else {
+                this.url = url;
+            }
+
+            this.type = Integer.parseInt(type);
+
+            if (widthText != null) {
+                try {
+                    this.width = Integer.parseInt(widthText);
+                } catch (NumberFormatException ex) {
+                    Log.e("PublishedEntry: invalid width", ex);
+                }
+            }
+
+            if (heightText != null) {
+                try {
+                    this.height = Integer.parseInt(heightText);
+                } catch (NumberFormatException ex) {
+                    Log.e("PublishedEntry: invalid height", ex);
+                }
+            }
+        }
+    }
+
+    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId) {
         this.type = type;
         this.id = id;
         this.timestamp = timestamp;
         this.user = user;
         this.text = text;
-        this.url = url;
-        this.width = width;
-        this.height = height;
         this.feedItemId = feedItemId;
     }
 
@@ -118,16 +157,37 @@ public class PublishedEntry {
                 serializer.text(text);
                 serializer.endTag(NAMESPACE, ELEMENT_TEXT);
             }
-            if (url != null) {
-                serializer.startTag(NAMESPACE, ELEMENT_URL);
-                if (width != 0) {
-                    serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
+            if (!media.isEmpty()) {
+                // TODO (ds): begin remove
+                {
+                    Media mediaItem = media.get(0);
+                    serializer.startTag(NAMESPACE, ELEMENT_IMAGE_URL);
+                    if (mediaItem.width != 0) {
+                        serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(mediaItem.width));
+                    }
+                    if (mediaItem.height != 0) {
+                        serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(mediaItem.height));
+                    }
+                    serializer.text(mediaItem.url);
+                    serializer.endTag(NAMESPACE, ELEMENT_IMAGE_URL);
                 }
-                if (height != 0) {
-                    serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
+                // TODO (ds): end remove
+
+                serializer.startTag(NAMESPACE, ELEMENT_MEDIA);
+                for (Media mediaItem : media) {
+                    serializer.startTag(NAMESPACE, ELEMENT_URL);
+                    serializer.attribute(null, ATTRIBUTE_TYPE, Integer.toString(mediaItem.type));
+                    if (mediaItem.width != 0) {
+                        serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(mediaItem.width));
+                    }
+                    if (mediaItem.height != 0) {
+                        serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(mediaItem.height));
+                    }
+                    serializer.text(mediaItem.url);
+                    serializer.endTag(NAMESPACE, ELEMENT_URL);
                 }
-                serializer.text(url);
-                serializer.endTag(NAMESPACE, ELEMENT_URL);
+                serializer.endTag(NAMESPACE, ELEMENT_MEDIA);
+
             }
             serializer.startTag(NAMESPACE, ELEMENT_TIMESTAMP); // TODO (ds): remove; should be set on server
             serializer.text(Long.toString(timestamp / 1000));
@@ -142,7 +202,12 @@ public class PublishedEntry {
         return writer.toString();
     }
 
-    public @NonNull String getTag() {
+    @Override
+    public @NonNull String toString() {
+        return "PublishedEntry[id=" + id + " type=" + type + " text=" + text + "]";
+    }
+
+    private @NonNull String getTag() {
         switch (type) {
             case ENTRY_FEED: {
                 return ELEMENT_FEED_POST;
@@ -156,19 +221,15 @@ public class PublishedEntry {
         }
     }
 
-    @Override
-    public @NonNull String toString() {
-        return "PublishedEntry[id=" + id + " type=" + type + " text=" + text + "]";
-    }
-
     private boolean valid() {
-        return user != null && (text != null || url != null);
+        return user != null && (text != null || !media.isEmpty());
     }
 
     private static @NonNull PublishedEntry readEntry(XmlPullParser parser, @EntryType int type, String id) throws XmlPullParserException, IOException {
         final PublishedEntry.Builder builder = new PublishedEntry.Builder();
         builder.type(type);
         builder.id(id);
+        final List<Media> media = new ArrayList<>();
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -176,10 +237,19 @@ public class PublishedEntry {
             final String name = Preconditions.checkNotNull(parser.getName());
             if (ELEMENT_USER.equals(name)) {
                 builder.user(Xml.readText(parser));
-            } else if (ELEMENT_URL.equals(name)) {
-                builder.width(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
-                builder.height(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
-                builder.url(Xml.readText(parser));
+            } else if (ELEMENT_IMAGE_URL.equals(name)) { // TODO (ds): remove
+                if (media.isEmpty()) {
+                    final Media mediaItem = new Media("0",
+                            parser.getAttributeValue(null, ATTRIBUTE_WIDTH),
+                            parser.getAttributeValue(null, ATTRIBUTE_HEIGHT),
+                            Xml.readText(parser));
+                    if (!TextUtils.isEmpty(mediaItem.url)) {
+                        media.add(mediaItem);
+                    }
+                }
+            } else if (ELEMENT_MEDIA.equals(name)) {
+                media.clear();
+                media.addAll(readMedia(parser));
             } else if (ELEMENT_TEXT.equals(name)) {
                 builder.text(Xml.readText(parser));
             } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
@@ -190,7 +260,29 @@ public class PublishedEntry {
                 Xml.skip(parser);
             }
         }
-        return builder.build();
+        PublishedEntry entry = builder.build();
+        entry.media.addAll(media);
+        return entry;
+    }
+
+    private static List<Media> readMedia(XmlPullParser parser) throws IOException, XmlPullParserException {
+        final List<Media> media = new ArrayList<>();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            final String name = Preconditions.checkNotNull(parser.getName());
+            if (ELEMENT_URL.equals(name)) {
+                media.add(new Media(
+                        parser.getAttributeValue(null, ATTRIBUTE_TYPE),
+                        parser.getAttributeValue(null, ATTRIBUTE_WIDTH),
+                        parser.getAttributeValue(null, ATTRIBUTE_HEIGHT),
+                        Xml.readText(parser)));
+            } else {
+                Xml.skip(parser);
+            }
+        }
+        return media;
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -200,9 +292,6 @@ public class PublishedEntry {
         long timestamp;
         String user;
         String text;
-        String url;
-        int width;
-        int height;
         String feedItemId;
 
         Builder type(@EntryType int type) {
@@ -244,39 +333,8 @@ public class PublishedEntry {
             return this;
         }
 
-        Builder url(String url) {
-            if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
-                url = "https://cdn.image4.io/hallo" + url; // TODO (ds): remove
-            }
-            this.url = url;
-            return this;
-        }
-
-        Builder width(String widthText) {
-            if (widthText != null) {
-                try {
-                    this.width = Integer.parseInt(widthText);
-                } catch (NumberFormatException ex) {
-                    Log.e("PublishedEntry: invalid width", ex);
-                }
-            }
-            return this;
-        }
-
-        Builder height(String heightText) {
-            if (heightText != null) {
-                try {
-                    this.height = Integer.parseInt(heightText);
-                } catch (NumberFormatException ex) {
-                    Log.e("PublishedEntry: invalid height", ex);
-                }
-            }
-            return this;
-        }
-
         PublishedEntry build() {
-            return new PublishedEntry(type, id, timestamp, user, text, url, width, height, feedItemId);
+            return new PublishedEntry(type, id, timestamp, user, text, feedItemId);
         }
-
     }
 }

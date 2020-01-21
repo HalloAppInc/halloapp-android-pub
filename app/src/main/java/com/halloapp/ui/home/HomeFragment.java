@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.contacts.ContactNameLoader;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
@@ -268,11 +269,14 @@ public class HomeFragment extends Fragment {
                 timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
                 scheduleTimestampRefresh(post.timestamp);
             }
-            if (post.type == Post.POST_TYPE_TEXT) {
+            if (post.media.isEmpty()) {
                 imageView.setVisibility(View.GONE);
             } else {
                 imageView.setVisibility(View.VISIBLE);
-                postsImageLoader.load(imageView, post);
+                for (Media media : post.media) {
+                    postsImageLoader.load(imageView, media);
+                    break; // TODO(ds): load all media
+                }
             }
 
             textView.setText(post.text);
@@ -284,6 +288,7 @@ public class HomeFragment extends Fragment {
 
             commentButton.setOnClickListener(v -> {
                 // TODO (ds): start comment activity
+
             });
             messageButton.setOnClickListener(v -> {
                 // TODO (ds): start message activity

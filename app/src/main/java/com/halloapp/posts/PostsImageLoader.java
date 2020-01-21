@@ -24,10 +24,10 @@ import com.halloapp.util.ViewDataLoader;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
+public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private final MediaStore mediaStore;
-    private final LruCache<Long, Bitmap> cache;
+    private final LruCache<String, Bitmap> cache;
     private final int placeholderColor;
 
     @MainThread
@@ -40,10 +40,10 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
         Log.i("PostsImageLoader: create " + cacheSize + "KB cache for post images");
-        cache = new LruCache<Long, Bitmap>(cacheSize) {
+        cache = new LruCache<String, Bitmap>(cacheSize) {
 
             @Override
-            protected int sizeOf(@NonNull Long key, @NonNull Bitmap bitmap) {
+            protected int sizeOf(@NonNull String key, @NonNull Bitmap bitmap) {
                 // The cache size will be measured in kilobytes rather than number of items
                 return bitmap.getByteCount() / 1024;
             }
@@ -51,11 +51,11 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
     }
 
     @MainThread
-    public void load(@NonNull ImageView view, @NonNull Post post) {
+    public void load(@NonNull ImageView view, @NonNull Media media) {
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
-            if (post.file != null) {
-                final File file = mediaStore.getMediaFile(post.file);
+            if (media.file != null) {
+                final File file = mediaStore.getMediaFile(media.file);
                 if (file.exists()) {
                     bitmap = MediaUtils.decode(file, Constants.MAX_IMAGE_DIMENSION);
                 } else {
@@ -63,7 +63,7 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
                 }
             }
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                Log.i("PostsImageLoader:load cannot decode " + post.file);
+                Log.i("PostsImageLoader:load cannot decode " + media.file);
                 return null;
             } else {
                 return bitmap;
@@ -74,8 +74,8 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                if (result == null && post.width != 0 && post.height != 0) {
-                    view.setImageDrawable(new PlaceholderDrawable(post.width, post.height, placeholderColor));
+                if (result == null && media.width != 0 && media.height != 0) {
+                    view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
                 } else {
                     view.setImageBitmap(result);
                 }
@@ -83,14 +83,14 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                if (post.width != 0 && post.height != 0) {
-                    view.setImageDrawable(new PlaceholderDrawable(post.width, post.height, placeholderColor));
+                if (media.width != 0 && media.height != 0) {
+                    view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
                 } else {
                     view.setImageDrawable(null);
                 }
             }
         };
-        load(view, loader, displayer, post.rowId, cache);
+        load(view, loader, displayer, media.id, cache);
     }
 
     static class PlaceholderDrawable extends Drawable {

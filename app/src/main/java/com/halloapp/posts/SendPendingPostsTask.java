@@ -35,11 +35,11 @@ public class SendPendingPostsTask extends AsyncTask<Void, Void, Void> {
         Log.i("SendPendingPostsTask: " + posts.size() + " posts");
         for (Post post : posts) {
             if (post.isIncoming()) {
-                if (!TextUtils.isEmpty(post.url)) {
+                if (!post.media.isEmpty()) {
                     new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
                 }
             } else /*post.isOutgoing()*/ {
-                if (post.type == Post.POST_TYPE_TEXT || !TextUtils.isEmpty(post.url)) {
+                if (post.media.isEmpty()) {
                     connection.sendPost(post);
                 } else {
                     new UploadPostTask(post, connection, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
