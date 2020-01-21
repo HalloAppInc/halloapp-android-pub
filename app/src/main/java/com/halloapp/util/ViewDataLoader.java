@@ -66,9 +66,9 @@ public class ViewDataLoader<V extends View, R, K> {
     }
 
     private void executeShowResult(@NonNull V view, @NonNull Displayer<V, R> displayer, @NonNull K key, @Nullable R result) {
-        if (view.getTag() == key) {
+        if (key.equals(view.getTag())) {
             mainHandler.post(() -> {
-                if (view.getTag() == key) {
+                if (key.equals(view.getTag())) {
                     displayer.showResult(view, result);
                 }
             });
