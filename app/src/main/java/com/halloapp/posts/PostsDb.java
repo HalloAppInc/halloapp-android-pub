@@ -41,7 +41,7 @@ public class PostsDb {
         void onPostAdded(@NonNull Post post);
         void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull Post post);
-        void onPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId);
+        void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
     }
 
     public static PostsDb getInstance(final @NonNull Context context) {
@@ -75,7 +75,6 @@ public class PostsDb {
     public void addPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_CHAT_ID, post.chatId);
             values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
             values.put(PostsTable.COLUMN_POST_ID, post.postId);
             values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
@@ -130,18 +129,18 @@ public class PostsDb {
         });
     }
 
-    public void setPostTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
+    public void setPostTransferred(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostTransferred: chatId=" + chatId + " senderUserId=" + senderUserId + " postId=" + postId);
+            Log.i("PostsDb.setPostTransferred: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_CHAT_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String [] {chatId, senderUserId.rawId(), postId},
+                        PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostUpdated(chatId, senderUserId, postId);
+                notifyPostUpdated(senderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setPostTransferred: failed");
                 throw ex;
@@ -169,7 +168,7 @@ public class PostsDb {
                         MediaTable.COLUMN_MEDIA_ID + "=?",
                         new String [] {media.id},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostUpdated(post.chatId, post.senderUserId, post.postId);
+                notifyPostUpdated(post.senderUserId, post.postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setMediaTransferred: failed", ex);
                 throw ex;
@@ -183,7 +182,7 @@ public class PostsDb {
                     }
                 }
                 if (transferred) {
-                    setPostTransferred(post.chatId, post.senderUserId, post.postId);
+                    setPostTransferred(post.senderUserId, post.postId);
                 }
             }
         });
@@ -197,7 +196,6 @@ public class PostsDb {
         String sql =
             "SELECT " +
                 PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CHAT_ID + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
@@ -238,25 +236,27 @@ public class PostsDb {
                         posts.add(post);
                     }
                     post = new Post(
-                            cursor.getLong(0),
-                            cursor.getString(1),
-                            new UserId(cursor.getString(2)),
-                            cursor.getString(3),
-                            cursor.getLong(4),
-                            cursor.getInt(5) == 1,
-                            cursor.getString(6));
+                            rowId,
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4) == 1,
+                            cursor.getString(5));
                 }
-                final String mediaId = cursor.getString(7);
+                final String mediaId = cursor.getString(6);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
                             mediaId,
-                            cursor.getInt(8),
+                            cursor.getInt(7),
+                            cursor.getString(8),
                             cursor.getString(9),
-                            cursor.getString(10),
+                            cursor.getInt(10),
                             cursor.getInt(11),
-                            cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(12) == 1));
                 }
+            }
+            if (post != null && cursor.getCount() < count) {
+                posts.add(post);
             }
         }
         Log.i("PostsDb.getPosts: start=" + id + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId)));
@@ -271,7 +271,6 @@ public class PostsDb {
         String sql =
                 "SELECT " +
                         PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CHAT_ID + "," +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
@@ -311,25 +310,27 @@ public class PostsDb {
                         posts.add(post);
                     }
                     post = new Post(
-                            cursor.getLong(0),
-                            cursor.getString(1),
-                            new UserId(cursor.getString(2)),
-                            cursor.getString(3),
-                            cursor.getLong(4),
-                            cursor.getInt(5) == 1,
-                            cursor.getString(6));
+                            rowId,
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4) == 1,
+                            cursor.getString(5));
                 }
-                final String mediaId = cursor.getString(7);
+                final String mediaId = cursor.getString(6);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
                             mediaId,
-                            cursor.getInt(8),
+                            cursor.getInt(7),
+                            cursor.getString(8),
                             cursor.getString(9),
-                            cursor.getString(10),
+                            cursor.getInt(10),
                             cursor.getInt(11),
-                            cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(12) == 1));
                 }
+            }
+            if (post != null) {
+                posts.add(post);
             }
         }
         Log.i("PostsDb.getPendingPosts: posts.size=" + posts.size());
@@ -360,10 +361,10 @@ public class PostsDb {
         }
     }
 
-    private void notifyPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
+    private void notifyPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Observer observer : observers) {
-                observer.onPostUpdated(chatId, senderUserId, postId);
+                observer.onPostUpdated(senderUserId, postId);
             }
         }
     }
@@ -376,7 +377,6 @@ public class PostsDb {
 
         static final String INDEX_POST_KEY = "post_key";
 
-        static final String COLUMN_CHAT_ID = "chat_id";
         static final String COLUMN_SENDER_USER_ID = "sender_user_id";
         static final String COLUMN_POST_ID = "post_id";
         static final String COLUMN_TIMESTAMP = "timestamp";
@@ -403,7 +403,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 3;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -415,7 +415,6 @@ public class PostsDb {
             db.execSQL("DROP TABLE IF EXISTS " + PostsTable.TABLE_NAME);
             db.execSQL("CREATE TABLE " + PostsTable.TABLE_NAME + " ("
                     + PostsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + PostsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
                     + PostsTable.COLUMN_TIMESTAMP + " INTEGER,"
@@ -438,7 +437,6 @@ public class PostsDb {
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
             db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
-                    + PostsTable.COLUMN_CHAT_ID + ", "
                     + PostsTable.COLUMN_SENDER_USER_ID + ", "
                     + PostsTable.COLUMN_POST_ID
                     + ");");

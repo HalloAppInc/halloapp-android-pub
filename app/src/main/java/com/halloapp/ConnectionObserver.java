@@ -37,12 +37,8 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onOutgoingPostAcked(@NonNull String chatId, @NonNull String postId) {
-        PostsDb.getInstance(context).setPostTransferred(chatId, UserId.ME, postId);
-    }
-
-    @Override
-    public void onOutgoingPostDelivered(@NonNull String chatId, @NonNull String postId) {
+    public void onOutgoingPostAcked(@NonNull String postId) {
+        PostsDb.getInstance(context).setPostTransferred(UserId.ME, postId);
     }
 
     @Override

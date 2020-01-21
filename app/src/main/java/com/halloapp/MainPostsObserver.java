@@ -65,6 +65,6 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
+    public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
     }
 }

@@ -49,7 +49,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String postId) {
+        public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
             // TODO (ds): probably not need to invalidate the entire data
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }

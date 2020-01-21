@@ -1,7 +1,6 @@
 package com.halloapp;
 
 import android.os.HandlerThread;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +15,6 @@ import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.protocol.ContactsSyncResponseProvider;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.util.Log;
-import com.halloapp.util.RandomId;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -58,9 +56,6 @@ import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
 import org.jivesoftware.smackx.pubsub.provider.AffiliationProvider;
 import org.jivesoftware.smackx.pubsub.provider.AffiliationsProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
-import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jxmpp.jid.BareJid;
@@ -112,8 +107,7 @@ public class Connection {
         void onConnected();
         void onDisconnected();
         void onLoginFailed();
-        void onOutgoingPostAcked(@NonNull String chatId, @NonNull String postId);
-        void onOutgoingPostDelivered(@NonNull String chatId, @NonNull String postId);
+        void onOutgoingPostAcked(@NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
         void onSubscribersChanged();
     }
@@ -173,10 +167,7 @@ public class Connection {
                 return;
             }
 
-            final DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(connection);
-            deliveryReceiptManager.addReceiptReceivedListener(new MessageReceiptsListener());
             connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
-            connection.addStanzaAcknowledgedListener(new MessageAckListener());
 
             final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
             if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
@@ -301,37 +292,24 @@ public class Connection {
                 Log.e("connection: cannot send message, no connection");
                 return;
             }
-            if (Constants.FEED_CHAT_ID.equals(post.chatId)) {
-                final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-                try {
-                    final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
-                    final PublishedEntry entry = new PublishedEntry(
-                            PublishedEntry.ENTRY_FEED,
-                            null,
-                            post.timestamp,
-                            connection.getUser().getLocalpart().toString(),
-                            post.text,
-                            null);
-                    for (Media media : post.media) {
-                        entry.media.add(new PublishedEntry.Media(0, media.url, media.width, media.height));
-                    }
-                    final SimplePayload payload = new SimplePayload(entry.toXml());
-                    final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
-                    myFeedNode.publish(item);
-                } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                    Log.e("connection: cannot send message", e);
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
+                final PublishedEntry entry = new PublishedEntry(
+                        PublishedEntry.ENTRY_FEED,
+                        null,
+                        post.timestamp,
+                        connection.getUser().getLocalpart().toString(),
+                        post.text,
+                        null);
+                for (Media media : post.media) {
+                    entry.media.add(new PublishedEntry.Media(0, media.url, media.width, media.height));
                 }
-            } else {
-                try {
-                    final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(post.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
-                    final Message message = new Message(recipientJid, post.text);
-                    message.setStanzaId(post.postId);
-                    message.addExtension(new DeliveryReceiptRequest());
-                    Log.i("connection: sending message " + post.postId + " to " + recipientJid);
-                    connection.sendStanza(message);
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
-                    Log.e("connection: cannot send message", e);
-                }
+                final SimplePayload payload = new SimplePayload(entry.toXml());
+                final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
+                myFeedNode.publish(item);
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: cannot send message", e);
             }
         });
     }
@@ -518,11 +496,10 @@ public class Connection {
         Collections.sort(entries, (o1, o2) -> Long.compare(o1.timestamp, o2.timestamp));
         for (PublishedEntry entry : entries) {
             if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
-                observer.onOutgoingPostAcked(Constants.FEED_CHAT_ID, entry.id);
+                observer.onOutgoingPostAcked(entry.id);
             } else {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     final Post post = new Post(0,
-                            Constants.FEED_CHAT_ID,
                             new UserId(entry.user),
                             entry.id,
                             entry.timestamp,
@@ -576,53 +553,18 @@ public class Connection {
         public void processStanza(final Stanza packet) {
             final Message msg = (Message) packet;
             boolean handled = false;
-            if (msg.getBodies().size() > 0 && !Message.Type.error.equals(msg.getType())) {
-                Log.i("connection: got message " + msg);
-                final Post post = new Post(0,
-                        packet.getFrom().getLocalpartOrThrow().toString(),
-                        new UserId(packet.getFrom().getLocalpartOrThrow().toString()),
-                        packet.getStanzaId(),
-                        System.currentTimeMillis(), /*TODO (ds): use actual time*/
-                        true,
-                        msg.getBody());
-                observer.onIncomingPostReceived(post);
-                handled = true;
-            } else {
-                final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
-                if (event != null && EventElementType.items.equals(event.getEventType())) {
-                    final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
-                    if (itemsElem != null) {
-                        Log.i("connection: got pubsub " + msg);
-                        processPublishedItems((List<PayloadItem<SimplePayload>>)(itemsElem.getItems()));
-                        handled = true;
-                    }
+            final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
+            if (event != null && EventElementType.items.equals(event.getEventType())) {
+                final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
+                if (itemsElem != null) {
+                    Log.i("connection: got pubsub " + msg);
+                    processPublishedItems((List<PayloadItem<SimplePayload>>)(itemsElem.getItems()));
+                    handled = true;
                 }
             }
             if (!handled) {
                 Log.i("connection: got unknown message " + msg);
             }
-        }
-    }
-
-    class MessageAckListener implements StanzaListener {
-
-        @Override
-        public void processStanza(Stanza packet) {
-            if (packet instanceof Message) {
-                observer.onOutgoingPostAcked(packet.getTo().getLocalpartOrThrow().toString(), packet.getStanzaId());
-                Log.i("connection: post " + packet.getStanzaId() + " acked");
-            } else {
-                Log.i("connection: stanza " + packet.getStanzaId() + " acked");
-            }
-        }
-    }
-
-    class MessageReceiptsListener implements ReceiptReceivedListener {
-
-        @Override
-        public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
-            Log.i("connection: delivered to:" + toJid + ", from:" + fromJid + " , id:" + receiptId);
-            observer.onOutgoingPostDelivered(fromJid.asBareJid().getLocalpartOrThrow().toString(), receiptId);
         }
     }
 

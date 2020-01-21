@@ -57,7 +57,6 @@ public class PostComposerActivity extends AppCompatActivity {
             }
             final Post post = new Post(
                     0,
-                    Constants.FEED_CHAT_ID,
                     UserId.ME,
                     RandomId.create(),
                     System.currentTimeMillis(),

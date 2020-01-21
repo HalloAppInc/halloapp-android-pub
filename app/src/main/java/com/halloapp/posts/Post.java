@@ -9,7 +9,6 @@ import java.util.Objects;
 public class Post {
 
     public long rowId; // could be 0 when post not inserted yet
-    public final String chatId;
     public final UserId senderUserId;
     public final String postId;
     public final long timestamp;
@@ -21,14 +20,12 @@ public class Post {
 
     public Post(
             long rowId,
-            String chatId,
             UserId senderUserId,
             String postId,
             long timestamp,
             boolean transferred,
             String text) {
         this.rowId = rowId;
-        this.chatId = chatId;
         this.senderUserId = senderUserId;
         this.postId = postId;
         this.timestamp = timestamp;
@@ -37,7 +34,7 @@ public class Post {
     }
 
     public String keyString() {
-        return "{" + chatId + ", " + senderUserId + ", " + postId + "}";
+        return "{" + senderUserId + ", " + postId + "}";
     }
 
     public boolean isOutgoing() {
@@ -61,7 +58,6 @@ public class Post {
         }
         final Post post = (Post) o;
         return rowId == post.rowId &&
-                Objects.equals(chatId, post.chatId) &&
                 Objects.equals(senderUserId, post.senderUserId) &&
                 Objects.equals(postId, post.postId) &&
                 timestamp == post.timestamp &&
