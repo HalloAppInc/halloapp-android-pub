@@ -478,22 +478,19 @@ public class Connection {
                 subscribedFeedNodeIds.remove(addFeedNodeId);
             }
         }
-        final List<PayloadItem<SimplePayload>> publishedItems = new ArrayList<>();
         for (String subscribedFeed : subscribedFeedNodeIds) {
             try {
                 final LeafNode node = pubSubManager.getNode(subscribedFeed);
-                publishedItems.addAll(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
+                processPublishedItems(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
             } catch (PubSubException.NotAPubSubNodeException e) {
                 Log.e("connection: sync pubsub: cannot listen, no such node", e);
             }
         }
-        processPublishedItems(publishedItems);
     }
 
     private void processPublishedItems(List<PayloadItem<SimplePayload>> items) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
-        Collections.sort(entries, (o1, o2) -> Long.compare(o1.timestamp, o2.timestamp));
         for (PublishedEntry entry : entries) {
             if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
                 observer.onOutgoingPostAcked(entry.id);

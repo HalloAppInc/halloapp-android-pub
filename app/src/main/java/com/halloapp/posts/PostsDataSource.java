@@ -36,7 +36,7 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
     @Override
     public @NonNull Long getKey(@NonNull Post item) {
-        return item.rowId;
+        return item.timestamp;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
         }
         Log.d("PostsDataSource.loadInitial: requestedInitialKey=" + params.requestedInitialKey + " requestedLoadSize:" + params.requestedLoadSize + " got " + posts.size() +
-                (posts.isEmpty() ? "" : " posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId));
+                (posts.isEmpty() ? "" : " posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp));
         callback.onResult(posts);
     }
 

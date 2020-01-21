@@ -189,10 +189,10 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Post> getPosts(@Nullable Long id, int count, boolean after) {
+    public List<Post> getPosts(@Nullable Long timestamp, int count, boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String where = id == null ? null : PostsTable.TABLE_NAME + "." + PostsTable._ID + (after ? " < " : " > ") + id;
+        String where = timestamp == null ? null : PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " < " : " > ") + timestamp;
         String sql =
             "SELECT " +
                 PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
@@ -221,7 +221,7 @@ public class PostsDb {
                     MediaTable.COLUMN_TRANSFERRED + " " +
                 "FROM " + MediaTable.TABLE_NAME + ") AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
             (where == null ? "" : "WHERE " + where + " ") +
-            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC " +
+            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC " +
             "LIMIT " + count;
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -259,7 +259,7 @@ public class PostsDb {
                 posts.add(post);
             }
         }
-        Log.i("PostsDb.getPosts: start=" + id + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId)));
+        Log.i("PostsDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId)));
         return posts;
     }
 
@@ -376,6 +376,7 @@ public class PostsDb {
         static final String TABLE_NAME = "posts";
 
         static final String INDEX_POST_KEY = "post_key";
+        static final String INDEX_TIMESTAMP = "timestamp";
 
         static final String COLUMN_SENDER_USER_ID = "sender_user_id";
         static final String COLUMN_POST_ID = "post_id";
@@ -403,7 +404,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 3;
+        private static final int DATABASE_VERSION = 5;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -439,6 +440,11 @@ public class PostsDb {
             db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
                     + PostsTable.COLUMN_SENDER_USER_ID + ", "
                     + PostsTable.COLUMN_POST_ID
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
+            db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
+                    + PostsTable.COLUMN_TIMESTAMP
                     + ");");
         }
 
