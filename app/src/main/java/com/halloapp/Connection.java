@@ -14,6 +14,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.protocol.ContactsSyncRequest;
 import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.protocol.ContactsSyncResponseProvider;
+import com.halloapp.protocol.MediaUploadIq;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.util.Log;
 
@@ -25,7 +26,6 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
@@ -137,6 +137,7 @@ public class Connection {
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
             ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
             ProviderManager.addIQProvider(ContactsSyncResponse.ELEMENT, ContactsSyncResponse.NAMESPACE, new ContactsSyncResponseProvider());
+            ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
 
             try {
                 final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
@@ -269,6 +270,23 @@ public class Connection {
         });
     }
 
+    public Future<MediaUploadIq.Urls> requestMediaUpload() {
+        return executor.submit(() -> {
+            if (connection == null) {
+                Log.e("connection: sync pubsub: no connection");
+                return null;
+            }
+            final MediaUploadIq mediaUploadIq = new MediaUploadIq(connection.getXMPPServiceDomain());
+            try {
+                final MediaUploadIq response = connection.createStanzaCollectorAndSend(mediaUploadIq).nextResultOrThrow();
+                return response.urls;
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot sync contacts", e);
+            }
+            return null;
+        });
+    }
+
     public Future<List<ContactsSyncResponse.Contact>> syncContacts(@NonNull final Collection<String> phones) {
         return executor.submit(() -> {
             if (connection == null) {
@@ -277,11 +295,8 @@ public class Connection {
             }
             final ContactsSyncRequest contactsSyncIq = new ContactsSyncRequest(connection.getXMPPServiceDomain(), phones);
             try {
-                final IQ response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
-                if (response instanceof ContactsSyncResponse) {
-                    return ((ContactsSyncResponse)response).contactList;
-                }
-
+                final ContactsSyncResponse response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
+                return response.contactList;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot sync contacts", e);
             }

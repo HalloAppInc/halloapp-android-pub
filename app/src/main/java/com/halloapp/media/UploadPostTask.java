@@ -8,9 +8,11 @@ import com.halloapp.Connection;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.protocol.MediaUploadIq;
 import com.halloapp.util.Log;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
@@ -33,9 +35,18 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
             if (media.transferred) {
                 continue;
             }
+            final MediaUploadIq.Urls urls;
+            try {
+                urls = connection.requestMediaUpload().get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("upload", e);
+                return null;
+            }
+
             final Uploader.UploadListener uploadListener = percent -> true;
             try {
-                media.url = Uploader.run(mediaStore.getMediaFile(media.file), uploadListener);
+                Uploader.run(mediaStore.getMediaFile(media.file), urls.putUrl, uploadListener);
+                media.url = urls.getUrl;
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);
             } catch (IOException e) {

@@ -32,20 +32,12 @@ public class Uploader {
     }
 
     @WorkerThread
-    public static String run(@NonNull File file, @Nullable UploadListener listener) throws IOException {
-        final String hash = FileUtils.getFileMD5(file);
+    public static void run(@NonNull File file, @NonNull String url, @Nullable UploadListener listener) throws IOException {
 
-        final String boundary = "----WebKitFormBoundaryZJvxBSLQp0sE6qAB";
-        final String endLine = "\r\n";
+        final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
-        final URL url = new URL("https://www.stukalov.com/halloapp/upload/upload.php");
-        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod("PUT");
         connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
-        connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-
-        connection.setRequestProperty("Authorization", "Basic aGFsbG9hcHA6Zjc2VWlBWHlrRzNkWTU0");
         connection.setRequestProperty("Connection", "Keep-Alive");
         connection.setRequestProperty("Expect", "100-Continue");
         connection.setAllowUserInteraction(false);
@@ -55,12 +47,6 @@ public class Uploader {
         connection.setReadTimeout(30_000);
 
         final OutputStream out = connection.getOutputStream();
-        out.write(("--" + boundary + endLine).getBytes());
-        out.write(("Content-Disposition: form-data; name=\"hash\"" + endLine + endLine).getBytes());
-        out.write((hash + endLine).getBytes());
-        out.write(("--" + boundary + endLine).getBytes());
-        out.write(("Content-Disposition: form-data; name=\"media\"; filename=\"" + file.getName() + "\"" + endLine).getBytes());
-        out.write(("Content-Type: application/octet-stream" + endLine + endLine).getBytes());
         int outStreamSize = 0;
 
         final InputStream in = new FileInputStream(file);
@@ -80,30 +66,10 @@ public class Uploader {
                 cancelled = !listener.onProgress(outStreamSize * 100 / inStreamSize);
             }
         }
-        out.write((endLine + "--" + boundary + "--" + endLine).getBytes());
-        out.close();
-
-        if (cancelled) {
-            return "";
-        }
 
         final int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             throw new UploadException(responseCode);
         }
-
-        final StringBuilder response = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(connection.getInputStream()))) {
-            final char[] buffer = new char[0x2000];
-            int read;
-            do {
-                read = reader.read(buffer, 0, buffer.length);
-                if (read > 0) {
-                    response.append(buffer, 0, read);
-                }
-            }
-            while (read >= 0);
-        }
-        return response.toString();
     }
 }
