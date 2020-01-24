@@ -16,6 +16,7 @@ import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.protocol.ContactsSyncResponseProvider;
 import com.halloapp.protocol.MediaUploadIq;
 import com.halloapp.protocol.PublishedEntry;
+import com.halloapp.protocol.PushRegisterRequest;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -26,6 +27,7 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
@@ -301,6 +303,21 @@ public class Connection {
                 Log.e("connection: cannot sync contacts", e);
             }
             return null;
+        });
+    }
+
+    public void sendPushToken(@NonNull final String pushToken) {
+        executor.execute(() -> {
+            if (connection == null) {
+                Log.e("connection: trying to send push token: no connection");
+            }
+            final PushRegisterRequest pushIq = new PushRegisterRequest(connection.getXMPPServiceDomain(), pushToken);
+            try {
+                final IQ response = connection.createStanzaCollectorAndSend(pushIq).nextResultOrThrow();
+                Log.d("connection: response after setting the push token "+response.toString());
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot sync contacts", e);
+            }
         });
     }
 
