@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 
 public class Debug {
@@ -40,11 +41,13 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_DELETE_POSTS_DB: {
+                    PostsDb.getInstance(context).deleteDb();
+                    restart(context);
                     break;
                 }
                 case DEBUG_MENU_DELETE_CONTACTS_DB: {
                     ContactsDb.getInstance(context).deleteDb();
-                    Runtime.getRuntime().exit(0);
+                    restart(context);
                     break;
                 }
                 case DEBUG_MENU_SYNC_CONTACTS: {

@@ -10,8 +10,11 @@ import com.halloapp.media.DownloadPostTask;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadPostTask;
+import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+
+import java.util.Collection;
 
 public class MainPostsObserver implements PostsDb.Observer {
 
@@ -66,5 +69,31 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     @Override
     public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+    }
+
+    @Override
+    public void onCommentAdded(@NonNull Comment comment) {
+        if (comment.isOutgoing()) {
+            connection.sendComment(comment);
+        } else { // if (post.isIncoming())
+            connection.sendDeliveryReceipt(comment);
+        }
+    }
+
+    @Override
+    public void onCommentDuplicate(@NonNull Comment comment) {
+    }
+
+    @Override
+    public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    }
+
+    @Override
+    public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+        for (Post post : historyPosts) {
+            if (!post.media.isEmpty()) {
+                new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+            }
+        }
     }
 }

@@ -18,30 +18,42 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="image/*"/>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.RegistrationVerificationActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />
+
         <activity android:name=".ui.RegistrationRequestActivity" />
-        <activity android:name=".ui.InitialSyncActivity"/>
+
+        <activity android:name=".ui.InitialSyncActivity" />
+
         <activity
             android:name=".ui.PostComposerActivity"
             android:label="@string/new_post"
             android:theme="@style/AppTheme.PostComposer"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.CommentsActivity"
+            android:label="@string/comments"/>
 
         <receiver
             android:name=".registration.SmsVerificationReceiver"
@@ -58,7 +70,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

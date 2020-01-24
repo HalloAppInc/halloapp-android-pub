@@ -66,5 +66,4 @@ public class MessagesViewModel extends AndroidViewModel {
             data.postValue(contacts);
         }
     }
-
 }

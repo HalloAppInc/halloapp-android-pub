@@ -6,9 +6,12 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
+import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.SendPendingPostsTask;
+
+import java.util.Collection;
 
 public class ConnectionObserver implements Connection.Observer {
 
@@ -44,6 +47,21 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onIncomingPostReceived(@NonNull Post post) {
         PostsDb.getInstance(context).addPost(post);
+    }
+
+    @Override
+    public void onOutgoingCommentAcked(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+        PostsDb.getInstance(context).setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
+    }
+
+    @Override
+    public void onIncomingCommentReceived(@NonNull Comment comment) {
+        PostsDb.getInstance(context).addComment(comment);
+    }
+
+    @Override
+    public void onFeedHistoryReceived(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+        PostsDb.getInstance(context).addHistory(historyPosts, historyComments);
     }
 
     @Override

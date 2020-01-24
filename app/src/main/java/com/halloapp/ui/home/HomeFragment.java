@@ -37,6 +37,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.PostsImageLoader;
+import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
@@ -239,6 +240,7 @@ public class HomeFragment extends Fragment {
         final TextView textView;
         final View commentButton;
         final View messageButton;
+        final View newCommentsIindicator;
 
         PostViewHolder(final @NonNull View v) {
             super(v);
@@ -250,6 +252,7 @@ public class HomeFragment extends Fragment {
             textView = v.findViewById(R.id.text);
             commentButton = v.findViewById(R.id.comment);
             messageButton = v.findViewById(R.id.message);
+            newCommentsIindicator = v.findViewById(R.id.new_comments_indicator);
         }
 
         void bindTo(final @NonNull Post post) {
@@ -286,8 +289,13 @@ public class HomeFragment extends Fragment {
                 textView.setVisibility(View.VISIBLE);
             }
 
+            newCommentsIindicator.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
+
             commentButton.setOnClickListener(v -> {
-                // TODO (ds): start comment activity
+                final Intent intent = new Intent(getContext(), CommentsActivity.class);
+                intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
+                intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+                startActivity(intent);
 
             });
             messageButton.setOnClickListener(v -> {

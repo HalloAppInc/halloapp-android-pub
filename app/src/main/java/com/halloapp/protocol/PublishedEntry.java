@@ -33,6 +33,7 @@ public class PublishedEntry {
     private static final String ELEMENT_TEXT = "text";
     private static final String ELEMENT_TIMESTAMP = "timestamp";
     private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
+    private static final String ELEMENT_PARENT_COMMENT_ID = "parentCommentId";
     private static final String ELEMENT_URL = "url";
     private static final String ELEMENT_MEDIA = "media";
 
@@ -54,6 +55,7 @@ public class PublishedEntry {
     public final String user;
     public final String text;
     public final String feedItemId;
+    public final String parentCommentId;
     public final List<Media> media = new ArrayList<>();
 
     public static class Media {
@@ -97,13 +99,14 @@ public class PublishedEntry {
         }
     }
 
-    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId) {
+    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
         this.type = type;
         this.id = id;
         this.timestamp = timestamp;
         this.user = user;
         this.text = text;
         this.feedItemId = feedItemId;
+        this.parentCommentId = parentCommentId;
     }
 
     public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PayloadItem<SimplePayload>> items) {
@@ -156,6 +159,16 @@ public class PublishedEntry {
                 serializer.startTag(NAMESPACE, ELEMENT_TEXT);
                 serializer.text(text);
                 serializer.endTag(NAMESPACE, ELEMENT_TEXT);
+            }
+            if (feedItemId != null) {
+                serializer.startTag(NAMESPACE, ELEMENT_FEED_ITEM_ID);
+                serializer.text(feedItemId);
+                serializer.endTag(NAMESPACE, ELEMENT_FEED_ITEM_ID);
+            }
+            if (parentCommentId != null) {
+                serializer.startTag(NAMESPACE, ELEMENT_PARENT_COMMENT_ID);
+                serializer.text(parentCommentId);
+                serializer.endTag(NAMESPACE, ELEMENT_PARENT_COMMENT_ID);
             }
             if (!media.isEmpty()) {
                 // TODO (ds): begin remove
@@ -254,6 +267,8 @@ public class PublishedEntry {
                 builder.text(Xml.readText(parser));
             } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
                 builder.feedItemId(Xml.readText(parser));
+            } else if (ELEMENT_PARENT_COMMENT_ID.equals(name)) {
+                builder.parentCommentId(Xml.readText(parser));
             } else if (ELEMENT_TIMESTAMP.equals(name)) {
                 builder.timestamp(Xml.readText(parser));
             } else {
@@ -293,6 +308,7 @@ public class PublishedEntry {
         String user;
         String text;
         String feedItemId;
+        String parentCommentId;
 
         Builder type(@EntryType int type) {
             this.type = type;
@@ -333,8 +349,13 @@ public class PublishedEntry {
             return this;
         }
 
+        Builder parentCommentId(String parentCommentId) {
+            this.parentCommentId = parentCommentId;
+            return this;
+        }
+
         PublishedEntry build() {
-            return new PublishedEntry(type, id, timestamp, user, text, feedItemId);
+            return new PublishedEntry(type, id, timestamp, user, text, feedItemId, parentCommentId);
         }
     }
 }

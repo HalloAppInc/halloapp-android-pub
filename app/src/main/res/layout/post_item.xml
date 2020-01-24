@@ -33,7 +33,7 @@
                     android:id="@+id/avatar"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    tools:background="@color/color_primary_dark"/>
+                    tools:src="@color/color_primary_dark"/>
 
                 <TextView
                     android:id="@+id/name"
@@ -105,13 +105,14 @@
                 android:orientation="horizontal"
                 android:baselineAligned="false">
 
-                <FrameLayout
+                <LinearLayout
                     style="?actionButtonStyle"
                     android:id="@+id/comment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="?selectableItemBackground">
+                    android:background="?selectableItemBackground"
+                    android:orientation="horizontal">
 
                     <TextView
                         style="@style/PostButton"
@@ -120,7 +121,14 @@
                         android:layout_gravity="center"
                         android:text="@string/comment"
                         android:drawableStart="@drawable/ic_comment"/>
-                </FrameLayout>
+
+                    <View
+                        android:id="@+id/new_comments_indicator"
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_margin="6dp"
+                        android:background="@drawable/new_comments_indicator"/>
+                </LinearLayout>
 
                 <FrameLayout
                     style="?actionButtonStyle"

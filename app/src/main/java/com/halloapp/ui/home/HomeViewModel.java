@@ -12,10 +12,12 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.contacts.UserId;
+import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDataSource;
 import com.halloapp.posts.PostsDb;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeViewModel extends AndroidViewModel {
@@ -35,7 +37,7 @@ public class HomeViewModel extends AndroidViewModel {
             } else {
                 pendingIncoming.set(true);
             }
-            mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
+            invalidateDataSource();
         }
 
         @Override
@@ -45,12 +47,32 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onPostDeleted(@NonNull Post post) {
-            mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
+            invalidateDataSource();
         }
 
         @Override
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
-            // TODO (ds): probably not need to invalidate the entire data
+            invalidateDataSource();
+        }
+
+        @Override
+        public void onCommentAdded(@NonNull Comment comment) {
+        }
+
+        @Override
+        public void onCommentDuplicate(@NonNull Comment comment) {
+        }
+
+        @Override
+        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        }
+
+        @Override
+        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+            invalidateDataSource();
+        }
+
+        private void invalidateDataSource() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }
     };

@@ -8,6 +8,7 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.contacts.UserId;
+import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.protocol.ContactsSyncRequest;
@@ -69,7 +70,6 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -109,6 +109,9 @@ public class Connection {
         void onLoginFailed();
         void onOutgoingPostAcked(@NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
+        void onOutgoingCommentAcked(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
+        void onIncomingCommentReceived(@NonNull Comment comment);
+        void onFeedHistoryReceived(Collection<Post> historyPosts, Collection<Comment> historyComments);
         void onSubscribersChanged();
     }
 
@@ -289,7 +292,7 @@ public class Connection {
     public void sendPost(final @NonNull Post post) {
         executor.execute(() -> {
             if (connection == null) {
-                Log.e("connection: cannot send message, no connection");
+                Log.e("connection: cannot send post, no connection");
                 return;
             }
             final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
@@ -301,6 +304,7 @@ public class Connection {
                         post.timestamp,
                         connection.getUser().getLocalpart().toString(),
                         post.text,
+                        null,
                         null);
                 for (Media media : post.media) {
                     entry.media.add(new PublishedEntry.Media(0, media.url, media.width, media.height));
@@ -309,7 +313,34 @@ public class Connection {
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                 myFeedNode.publish(item);
             } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                Log.e("connection: cannot send message", e);
+                Log.e("connection: cannot send post", e);
+            }
+        });
+    }
+
+    public void sendComment(final @NonNull Comment comment) {
+        executor.execute(() -> {
+            if (connection == null) {
+                Log.e("connection: cannot send comment, no connection");
+                return;
+            }
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                final LeafNode feedNode = pubSubManager.getNode(
+                        comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)));
+                final PublishedEntry entry = new PublishedEntry(
+                        PublishedEntry.ENTRY_COMMENT,
+                        null,
+                        comment.timestamp,
+                        connection.getUser().getLocalpart().toString(),
+                        comment.text,
+                        comment.postId,
+                        comment.parentCommentId);
+                final SimplePayload payload = new SimplePayload(entry.toXml());
+                final PayloadItem<SimplePayload> item = new PayloadItem<>(comment.commentId, payload);
+                feedNode.publish(item);
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: cannot send comment", e);
             }
         });
     }
@@ -325,10 +356,30 @@ public class Connection {
                 final Message message = new Message(recipientJid);
                 message.setStanzaId(post.postId);
                 message.addExtension(new DeliveryReceipt(post.postId));
-                Log.i("connection: sending delivery receipt " + post.postId + " to " + recipientJid);
+                Log.i("connection: sending post delivery receipt " + post.postId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send message", e);
+                Log.e("connection: cannot send post delivery receipt", e);
+            }
+
+        });
+    }
+
+    public void sendDeliveryReceipt(final @NonNull Comment comment) {
+        executor.execute(() -> {
+            if (connection == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+            try {
+                final Jid recipientJid = userIdToJid(comment.commentSenderUserId);
+                final Message message = new Message(recipientJid);
+                message.setStanzaId(comment.commentId);
+                message.addExtension(new DeliveryReceipt(comment.commentId));
+                Log.i("connection: sending comment delivery receipt " + comment.commentId + " to " + recipientJid);
+                connection.sendStanza(message);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send comment delivery receipt", e);
             }
 
         });
@@ -478,26 +529,72 @@ public class Connection {
                 subscribedFeedNodeIds.remove(addFeedNodeId);
             }
         }
+
+        // TODO (ds): make server send offline posts, should be no need to pull posts here
+        final Collection<Post> historyPosts = new ArrayList<>();
+        final Collection<Comment> historyComments = new ArrayList<>();
         for (String subscribedFeed : subscribedFeedNodeIds) {
             try {
                 final LeafNode node = pubSubManager.getNode(subscribedFeed);
-                processPublishedItems(node.getItems()); // TODO (ds): make server send offline posts, should be no need to pull posts here
+                parsePublishedHistoryItems(getFeedUserId(subscribedFeed), node.getItems(), historyPosts, historyComments);
             } catch (PubSubException.NotAPubSubNodeException e) {
-                Log.e("connection: sync pubsub: cannot listen, no such node", e);
+                Log.e("connection: sync pubsub: no such node", e);
+            }
+        }
+        try {
+            final LeafNode node = pubSubManager.getNode(getMyFeedNodeId());
+            parsePublishedHistoryItems(UserId.ME, node.getItems(), historyPosts, historyComments);
+        } catch (PubSubException.NotAPubSubNodeException e) {
+            Log.e("connection: sync pubsub: no such node", e);
+        }
+        observer.onFeedHistoryReceived(historyPosts, historyComments);
+    }
+
+    private void parsePublishedHistoryItems(UserId feedUserId, List<PayloadItem<SimplePayload>> items, Collection<Post> posts, Collection<Comment> comments) {
+        final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
+        for (PublishedEntry entry : entries) {
+            if (entry.type == PublishedEntry.ENTRY_FEED) {
+                final Post post = new Post(0,
+                        getUserId(entry.user),
+                        entry.id,
+                        entry.timestamp,
+                        isMe(entry.user) || entry.media.isEmpty(),
+                        entry.text
+                );
+                for (PublishedEntry.Media entryMedia : entry.media) {
+                    post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url, entryMedia.width, entryMedia.height));
+                }
+                posts.add(post);
+            } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
+                final Comment comment = new Comment(0,
+                        feedUserId,
+                        entry.feedItemId,
+                        getUserId(entry.user),
+                        entry.id,
+                        entry.parentCommentId,
+                        entry.timestamp,
+                        true,
+                        entry.text
+                );
+                comments.add(comment);
             }
         }
     }
 
-    private void processPublishedItems(List<PayloadItem<SimplePayload>> items) {
+    private void processPublishedItems(UserId feedUserId, List<PayloadItem<SimplePayload>> items) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
-            if (entry.user.equals(connection.getUser().getLocalpart().toString())) {
-                observer.onOutgoingPostAcked(entry.id);
+            if (isMe(entry.user)) {
+                if (entry.type == PublishedEntry.ENTRY_FEED) {
+                    observer.onOutgoingPostAcked(entry.id);
+                } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
+                    observer.onOutgoingCommentAcked(feedUserId, entry.feedItemId, entry.id);
+                }
             } else {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     final Post post = new Post(0,
-                            new UserId(entry.user),
+                            getUserId(entry.user),
                             entry.id,
                             entry.timestamp,
                             entry.media.isEmpty(),
@@ -507,13 +604,29 @@ public class Connection {
                         post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url, entryMedia.width, entryMedia.height));
                     }
                     observer.onIncomingPostReceived(post);
-                } else {
-                    // TODO (ds): process comments
-                    Log.i("connection: comment received: " + entry);
+                } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
+                    final Comment comment = new Comment(0,
+                            feedUserId,
+                            entry.feedItemId,
+                            getUserId(entry.user),
+                            entry.id,
+                            entry.parentCommentId,
+                            entry.timestamp,
+                            true,
+                            entry.text
+                    );
+                    observer.onIncomingCommentReceived(comment);
                 }
             }
         }
+    }
 
+    private UserId getUserId(@NonNull String user) {
+        return isMe(user) ? UserId.ME : new UserId(user);
+    }
+
+    private boolean isMe(@NonNull String user) {
+        return user.equals(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
     }
 
     private String getMyFeedNodeId() {
@@ -536,6 +649,11 @@ public class Connection {
         return nodeId.startsWith("feed-");
     }
 
+    private UserId getFeedUserId(@NonNull String nodeId) {
+        Preconditions.checkArgument(isFeedNodeId(nodeId));
+        return getUserId(nodeId.substring("feed-".length()));
+    }
+
     private static String getNodeId(@NonNull String prefix, @NonNull Jid jid) {
         return prefix + "-" + jid.asEntityBareJidOrThrow().getLocalpart().toString();
     }
@@ -553,9 +671,10 @@ public class Connection {
             final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
             if (event != null && EventElementType.items.equals(event.getEventType())) {
                 final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
-                if (itemsElem != null) {
+                if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
+
                     Log.i("connection: got pubsub " + msg);
-                    processPublishedItems((List<PayloadItem<SimplePayload>>)(itemsElem.getItems()));
+                    processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<PayloadItem<SimplePayload>>)(itemsElem.getItems()));
                     handled = true;
                 }
             }

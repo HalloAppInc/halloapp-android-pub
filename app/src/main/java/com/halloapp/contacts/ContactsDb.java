@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.HalloApp;
 import com.halloapp.util.Log;
 
 import java.io.File;
@@ -144,7 +145,7 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    Contact getContact(@NonNull UserId userId) {
+    public Contact getContact(@NonNull UserId userId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
                 new String[] { ContactsTable._ID,
@@ -184,14 +185,16 @@ public class ContactsDb {
 
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
-                final Contact contact = new Contact(
-                        cursor.getLong(0),
-                        cursor.getLong(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        userIdStr == null ? null : new UserId(userIdStr),
-                        cursor.getInt(5) == 1);
-                contacts.add(contact);
+                if (userIdStr == null || !userIdStr.equals(HalloApp.instance.getUser())) {
+                    final Contact contact = new Contact(
+                            cursor.getLong(0),
+                            cursor.getLong(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            userIdStr == null ? null : new UserId(userIdStr),
+                            cursor.getInt(5) == 1);
+                    contacts.add(contact);
+                }
             }
         }
         Log.i("ContactsDb.getAllContacts: " + contacts.size());
@@ -216,7 +219,7 @@ public class ContactsDb {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
-                if (userIdStr != null && userIds.add(userIdStr)) {
+                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(HalloApp.instance.getUser())) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),

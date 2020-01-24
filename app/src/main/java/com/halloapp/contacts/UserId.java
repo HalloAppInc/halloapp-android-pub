@@ -39,10 +39,8 @@ public class UserId {
     }
 
 
-    /*
     @Override
     public @NonNull String toString() {
-        return id id;
+        return "{user:" + (isMe() ? "me" : id) + "}";
     }
-    */
 }

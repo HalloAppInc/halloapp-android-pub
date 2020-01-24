@@ -30,7 +30,7 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
         }
     }
 
-    PostsDataSource(@NonNull PostsDb postsDb) {
+    private PostsDataSource(@NonNull PostsDb postsDb) {
         this.postsDb = postsDb;
     }
 

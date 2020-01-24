@@ -1,5 +1,8 @@
 package com.halloapp.posts;
 
+import androidx.annotation.NonNull;
+
+import com.halloapp.BuildConfig;
 import com.halloapp.contacts.UserId;
 
 import java.util.ArrayList;
@@ -14,9 +17,12 @@ public class Post {
     public final long timestamp;
 
     public boolean transferred;
+    public boolean seen;
 
     public final String text;
     public final List<Media> media = new ArrayList<>();
+
+    public int commentCount;
 
     public Post(
             long rowId,
@@ -33,8 +39,9 @@ public class Post {
         this.text = text;
     }
 
-    public String keyString() {
-        return "{" + senderUserId + ", " + postId + "}";
+    @Override
+    public @NonNull String toString() {
+        return "{timestamp:" + timestamp + " sender:" + senderUserId + ", post:" + postId + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
 
     public boolean isOutgoing() {
@@ -62,6 +69,7 @@ public class Post {
                 Objects.equals(postId, post.postId) &&
                 timestamp == post.timestamp &&
                 Objects.equals(text, post.text) &&
-                transferred == post.transferred;
+                transferred == post.transferred &&
+                seen == post.seen;
     }
 }

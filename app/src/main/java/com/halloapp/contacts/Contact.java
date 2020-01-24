@@ -28,7 +28,7 @@ public class Contact {
     }
 
     public String getDisplayName() {
-        return TextUtils.isEmpty(name) ? phone : name;
+        return TextUtils.isEmpty(name) ? getInternationalPhone() : name;
     }
 
     public String getInternationalPhone() {

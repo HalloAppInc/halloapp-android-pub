@@ -1,6 +1,7 @@
 package com.halloapp.contacts;
 
 import android.content.Context;
+import android.telephony.PhoneNumberUtils;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -29,6 +30,8 @@ public class ContactNameLoader extends ViewDataLoader<TextView, Contact, UserId>
             public void showResult(@NonNull TextView view, Contact contact) {
                 if (contact != null) {
                     view.setText(contact.getDisplayName());
+                } else {
+                    view.setText(PhoneNumberUtils.formatNumber("+" + userId.rawId(), null));
                 }
             }
 
