@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -261,6 +262,7 @@ public class CommentsActivity extends AppCompatActivity {
                 mediaGallery.setAdapter(new CommentsAdapter(post.media));
             }
 
+            commentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
             commentView.setText(post.text);
         }
 
