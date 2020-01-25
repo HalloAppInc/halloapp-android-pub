@@ -350,7 +350,7 @@ public class PublishedEntry {
         }
 
         Builder parentCommentId(String parentCommentId) {
-            this.parentCommentId = parentCommentId;
+            this.parentCommentId = TextUtils.isEmpty(parentCommentId) ? null : parentCommentId;
             return this;
         }
 
