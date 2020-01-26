@@ -20,6 +20,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.crashlytics.android.Crashlytics;
 import com.halloapp.contacts.ContactsDb;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
@@ -33,6 +34,10 @@ public class HalloApp extends Application {
     private String channelId = "0";
     public Boolean appActiveStatus = false;
     private AtomicInteger notificationId = new AtomicInteger();
+
+    public interface HandlePushToken {
+        void onComplete(String pushToken);
+    }
 
     @Override
     public void onCreate() {
@@ -158,14 +163,18 @@ public class HalloApp extends Application {
         }
     }
 
-    public void savePushToken(@NonNull String token) {
-        if (!getPreferences().edit().putString(PREF_KEY_PUSH_TOKEN, token).commit()) {
-            Log.e("failed to set push token");
-        }
-    }
-
-    public String getPushToken() {
-        return getPreferences().getString(PREF_KEY_PUSH_TOKEN, null);
+    public void sendPushTokenFromFirebase(HandlePushToken codeBlock) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e( "getInstanceId failed", task.getException());
+                        return;
+                    }
+                    // Get the Instance ID token.
+                    final String pushToken = task.getResult().getToken();
+                    Log.d("halloapp: obtained the push token!");
+                    codeBlock.onComplete(pushToken);
+                });
     }
 
     public NotificationManager createNotificationChannel() {

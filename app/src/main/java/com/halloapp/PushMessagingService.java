@@ -36,7 +36,6 @@ public class PushMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        HalloApp.instance.savePushToken(token);
     }
 
 }

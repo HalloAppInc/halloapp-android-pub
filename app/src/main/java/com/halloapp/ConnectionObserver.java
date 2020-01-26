@@ -27,10 +27,11 @@ public class ConnectionObserver implements Connection.Observer {
             ContactsSync.getInstance(context).startPubSubSync();
             new SendPendingPostsTask(context).execute();
         }
-        final String pushToken = HalloApp.instance.getPushToken();
-        if (pushToken != null) {
-            Connection.getInstance().sendPushToken(pushToken);
-        }
+        HalloApp.instance.sendPushTokenFromFirebase(pushToken ->  {
+            if (pushToken != null) {
+                Connection.getInstance().sendPushToken(pushToken);
+            }
+        });
     }
 
     @Override
