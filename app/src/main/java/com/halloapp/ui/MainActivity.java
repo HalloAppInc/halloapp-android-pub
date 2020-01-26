@@ -21,6 +21,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -125,11 +127,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void processIntent(Intent intent) {
-        final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && uri != null) {
-            final Intent composerIntent = new Intent(this, PostComposerActivity.class);
-            composerIntent.setData(uri);
-            startActivity(composerIntent);
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if (uri != null) {
+                final Intent composerIntent = new Intent(this, PostComposerActivity.class);
+                composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
+                startActivity(composerIntent);
+            }
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
+            final ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            if (uris != null && !uris.isEmpty()) {
+                final Intent composerIntent = new Intent(this, PostComposerActivity.class);
+                composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+                startActivity(composerIntent);
+            }
         }
     }
 }

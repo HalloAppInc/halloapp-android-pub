@@ -3,6 +3,7 @@ package com.halloapp.media;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.util.Log;
 
@@ -13,6 +14,7 @@ public class MediaStore {
     private static MediaStore instance;
 
     private final File mediaDir;
+    private final File tmpDir;
 
     public static MediaStore getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -27,6 +29,7 @@ public class MediaStore {
 
     private MediaStore(Context context) {
         mediaDir = new File(context.getFilesDir(), "media");
+        tmpDir = new File(context.getCacheDir(), "media");
     }
 
     public File getMediaDir() {
@@ -38,8 +41,21 @@ public class MediaStore {
         return mediaDir;
     }
 
-    public File getMediaFile(@NonNull String name) {
-        return new File(getMediaDir(), name);
+    public File getMediaFile(@Nullable String name) {
+        return name == null ? null : new File(getMediaDir(), name);
+    }
+
+    public File getTmpDir() {
+        if (!tmpDir.exists()) {
+            if (!tmpDir.mkdirs()) {
+                Log.e("MediaStore: cannot create " + tmpDir.getAbsolutePath());
+            }
+        }
+        return mediaDir;
+    }
+
+    public File getTmpFile(@NonNull String name) {
+        return new File(getTmpDir(), name);
     }
 
 }

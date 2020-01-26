@@ -5,4 +5,10 @@
         <attr name="cetBorderColor" format="color" />
         <attr name="cetCodeLength" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="PostImageView">
+        <attr name="pivCornerRadius" format="dimension" />
+        <attr name="pivCornerColor" format="color" />
+        <attr name="pivMaxAspectRatio" format="float" />
+    </declare-styleable>
 </resources>

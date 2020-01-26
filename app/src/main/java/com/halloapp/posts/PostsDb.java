@@ -118,9 +118,9 @@ public class PostsDb {
                 mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
             }
             if (mediaItem.file != null) {
-                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file);
+                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
                 if (mediaItem.width == 0 || mediaItem.height == 0) {
-                    final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(mediaItem.file));
+                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file);
                     mediaItem.width = dimensions.getWidth();
                     mediaItem.height = dimensions.getHeight();
                 }
@@ -164,10 +164,10 @@ public class PostsDb {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setMediaTransferred: post=" + post + " media=" + media);
             final ContentValues values = new ContentValues();
-            values.put(MediaTable.COLUMN_FILE, media.file);
+            values.put(MediaTable.COLUMN_FILE, media.file.getName());
             values.put(MediaTable.COLUMN_URL, media.url);
             if (media.width == 0 || media.height == 0) {
-                final Size dimensions = MediaUtils.getDimensions(mediaStore.getMediaFile(media.file));
+                final Size dimensions = MediaUtils.getDimensions(media.file);
                 if (dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
                     values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
                     values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
@@ -272,7 +272,7 @@ public class PostsDb {
                         Log.i("PostsDb.addHistory: post duplicate " + comment);
                     }
                 }
-                if (!addedHistoryPosts.isEmpty() && !addedHistoryComments.isEmpty()) {
+                if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
                     notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
                 }
                 db.setTransactionSuccessful();
@@ -295,6 +295,7 @@ public class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -306,6 +307,7 @@ public class PostsDb {
             "FROM " + PostsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
+                    MediaTable._ID + "," +
                     MediaTable.COLUMN_POST_ROW_ID + "," +
                     MediaTable.COLUMN_MEDIA_ID + "," +
                     MediaTable.COLUMN_TYPE + "," +
@@ -313,7 +315,7 @@ public class PostsDb {
                     MediaTable.COLUMN_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ") " +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -344,18 +346,19 @@ public class PostsDb {
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
                             cursor.getString(5));
-                    post.commentCount = cursor.getInt(13);
+                    post.commentCount = cursor.getInt(14);
                 }
-                final String mediaId = cursor.getString(6);
+                final String mediaId = cursor.getString(7);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
+                            cursor.getLong(6),
                             mediaId,
-                            cursor.getInt(7),
-                            cursor.getString(8),
+                            cursor.getInt(8),
                             cursor.getString(9),
-                            cursor.getInt(10),
+                            mediaStore.getMediaFile(cursor.getString(10)),
                             cursor.getInt(11),
-                            cursor.getInt(12) == 1));
+                            cursor.getInt(12),
+                            cursor.getInt(13) == 1));
                 }
             }
             if (post != null && cursor.getCount() < count) {
@@ -378,6 +381,7 @@ public class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                    "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -388,6 +392,7 @@ public class PostsDb {
                 "FROM " + PostsTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
+                        MediaTable._ID + "," +
                         MediaTable.COLUMN_POST_ROW_ID + "," +
                         MediaTable.COLUMN_MEDIA_ID + "," +
                         MediaTable.COLUMN_TYPE + "," +
@@ -412,16 +417,17 @@ public class PostsDb {
                             cursor.getInt(4) == 1,
                             cursor.getString(5));
                 }
-                final String mediaId = cursor.getString(6);
+                final String mediaId = cursor.getString(7);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
+                            cursor.getLong(6),
                             mediaId,
-                            cursor.getInt(7),
-                            cursor.getString(8),
+                            cursor.getInt(8),
                             cursor.getString(9),
-                            cursor.getInt(10),
+                            mediaStore.getMediaFile(cursor.getString(10)),
                             cursor.getInt(11),
-                            cursor.getInt(12) == 1));
+                            cursor.getInt(12),
+                            cursor.getInt(13) == 1));
                 }
             }
         }
@@ -472,6 +478,7 @@ public class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                    "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -482,6 +489,7 @@ public class PostsDb {
                 "FROM " + PostsTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
+                        MediaTable._ID + "," +
                         MediaTable.COLUMN_POST_ROW_ID + "," +
                         MediaTable.COLUMN_MEDIA_ID + "," +
                         MediaTable.COLUMN_TYPE + "," +
@@ -513,16 +521,17 @@ public class PostsDb {
                             cursor.getInt(4) == 1,
                             cursor.getString(5));
                 }
-                final String mediaId = cursor.getString(6);
+                final String mediaId = cursor.getString(7);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
+                            cursor.getLong(6),
                             mediaId,
-                            cursor.getInt(7),
-                            cursor.getString(8),
+                            cursor.getInt(8),
                             cursor.getString(9),
-                            cursor.getInt(10),
+                            mediaStore.getMediaFile(cursor.getString(10)),
                             cursor.getInt(11),
-                            cursor.getInt(12) == 1));
+                            cursor.getInt(12),
+                            cursor.getInt(13) == 1));
                 }
             }
             if (post != null) {

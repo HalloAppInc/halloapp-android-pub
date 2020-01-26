@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +23,7 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
@@ -253,12 +255,20 @@ public class CommentsActivity extends AppCompatActivity {
             timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
             scheduleTimestampRefresh(post.timestamp);
 
-
             if (post.media.isEmpty()) {
                 mediaGallery.setVisibility(View.GONE);
             } else {
                 mediaGallery.setVisibility(View.VISIBLE);
-                mediaGallery.setLayoutManager(new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false));
+                final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
+                mediaGallery.setLayoutManager(layoutManager);
+                final int itemSpacing = getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing);
+                final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mediaGallery.getContext(), layoutManager.getOrientation()) {
+                    @Override
+                    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                        outRect.set(0, 0, itemSpacing, 0);
+                    }
+                };
+                mediaGallery.addItemDecoration(dividerItemDecoration);
                 mediaGallery.setAdapter(new CommentsAdapter(post.media));
             }
 

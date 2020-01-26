@@ -1,11 +1,15 @@
 package com.halloapp.ui.home;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.LongSparseArray;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -29,6 +34,8 @@ import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.contacts.ContactNameLoader;
 import com.halloapp.media.MediaUtils;
@@ -42,9 +49,13 @@ import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.BadgedDrawable;
+import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class HomeFragment extends Fragment {
@@ -56,6 +67,8 @@ public class HomeFragment extends Fragment {
     private BadgedDrawable notificationDrawable;
     private PostsImageLoader postsImageLoader;
     private ContactNameLoader contactNameLoader;
+
+    private LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
@@ -186,10 +199,21 @@ public class HomeFragment extends Fragment {
                         Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no data");
                         Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
                     } else {
-                        final Uri uri = data.getData();
-                        if (uri != null) {
+                        final ArrayList<Uri> uris = new ArrayList<>();
+                        final ClipData clipData = data.getClipData();
+                        if (clipData != null) {
+                            for (int i = 0; i < clipData.getItemCount(); i++) {
+                                uris.add(clipData.getItemAt(i).getUri());
+                            }
+                        } else {
+                            final Uri uri = data.getData();
+                            if (uri != null) {
+                                uris.add(uri);
+                            }
+                        }
+                        if (!uris.isEmpty()) {
                             final Intent intent = new Intent(getContext(), PostComposerActivity.class);
-                            intent.setData(uri);
+                            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
                             startActivity(intent);
                         } else {
                             Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no uri");
@@ -200,24 +224,32 @@ public class HomeFragment extends Fragment {
                 break;
             }
             case REQUEST_CODE_CAPTURE_IMAGE: {
-                final Intent intent = new Intent(getContext(), PostComposerActivity.class);
-                intent.setData(MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())));
-                startActivity(intent);
+                if (result == Activity.RESULT_OK) {
+                    final Intent intent = new Intent(getContext(), PostComposerActivity.class);
+                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                            new ArrayList<>(Collections.singleton(MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())))));
+                    startActivity(intent);
+                }
                 break;
             }
         }
     }
 
     private void getImageFromGallery() {
-        final Intent pickIntent = new Intent(Intent.ACTION_PICK);
-        pickIntent.setDataAndType(MediaStore.Video.Media.INTERNAL_CONTENT_URI, "image/*");
-        startActivityForResult(pickIntent, REQUEST_CODE_PICK_IMAGE);
+        final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        if (Build.VERSION.SDK_INT >= 26) {
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toURI()); // TODO (ds): doesn't seem to work properly, need to investigate
+        }
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
     }
 
     private void getImageFromCamera() {
-        final Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())));
-        startActivityForResult(takePictureIntent, REQUEST_CODE_CAPTURE_IMAGE);
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())));
+        startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
     }
 
     private void scheduleTimestampRefresh(long postTimestamp) {
@@ -236,11 +268,12 @@ public class HomeFragment extends Fragment {
         final TextView nameView;
         final TextView timeView;
         final View progressView;
-        final ImageView imageView;
+        final ViewPager mediaPagerView;
+        final WormDotsIndicator mediaPagerIndicator;
         final TextView textView;
         final View commentButton;
         final View messageButton;
-        final View newCommentsIindicator;
+        final View newCommentsIndicator;
 
         PostViewHolder(final @NonNull View v) {
             super(v);
@@ -248,11 +281,12 @@ public class HomeFragment extends Fragment {
             nameView = v.findViewById(R.id.name);
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
-            imageView = v.findViewById(R.id.image);
+            mediaPagerView = v.findViewById(R.id.media_pager);
+            mediaPagerIndicator = v.findViewById(R.id.media_pager_indicator);
             textView = v.findViewById(R.id.text);
             commentButton = v.findViewById(R.id.comment);
             messageButton = v.findViewById(R.id.message);
-            newCommentsIindicator = v.findViewById(R.id.new_comments_indicator);
+            newCommentsIndicator = v.findViewById(R.id.new_comments_indicator);
         }
 
         void bindTo(final @NonNull Post post) {
@@ -273,12 +307,40 @@ public class HomeFragment extends Fragment {
                 scheduleTimestampRefresh(post.timestamp);
             }
             if (post.media.isEmpty()) {
-                imageView.setVisibility(View.GONE);
+                mediaPagerView.setVisibility(View.GONE);
+                mediaPagerIndicator.setVisibility(View.GONE);
             } else {
-                imageView.setVisibility(View.VISIBLE);
-                for (Media media : post.media) {
-                    postsImageLoader.load(imageView, media);
-                    break; // TODO(ds): load all media
+                mediaPagerView.setVisibility(View.VISIBLE);
+                final PostMediaPagerAdapter mediaPagerAdapter = new PostMediaPagerAdapter(post.media);
+                mediaPagerView.setAdapter(mediaPagerAdapter);
+                mediaPagerView.setPageMargin(Preconditions.checkNotNull(getContext()).getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
+                if (post.media.size() > 1) {
+                    mediaPagerIndicator.setVisibility(View.VISIBLE);
+                    mediaPagerIndicator.setViewPager(mediaPagerView);
+                } else {
+                    mediaPagerIndicator.setVisibility(View.GONE);
+                }
+                mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        if (position == 0) {
+                            mediaPagerPositionMap.remove(post.rowId);
+                        } else {
+                            mediaPagerPositionMap.put(post.rowId, position);
+                        }
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+                    }
+                });
+                final Integer selPos = mediaPagerPositionMap.get(post.rowId);
+                if (selPos != null) {
+                    mediaPagerView.setCurrentItem(selPos);
                 }
             }
 
@@ -289,7 +351,7 @@ public class HomeFragment extends Fragment {
                 textView.setVisibility(View.VISIBLE);
             }
 
-            newCommentsIindicator.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
+            newCommentsIndicator.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
 
             commentButton.setOnClickListener(v -> {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);
@@ -302,6 +364,50 @@ public class HomeFragment extends Fragment {
                 // TODO (ds): start message activity
             });
             nameView.setOnClickListener(v -> PostsDb.getInstance(Preconditions.checkNotNull(getContext())).deletePost(post)); // testing-only
+        }
+
+
+        private class PostMediaPagerAdapter extends PagerAdapter {
+
+            final List<Media> media;
+
+            PostMediaPagerAdapter(@NonNull List<Media> media) {
+                this.media = media;
+            }
+
+            @Override
+            public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
+                final View view = getLayoutInflater().inflate(R.layout.media_pager_item, container, false);
+                final ImageView imageView = view.findViewById(R.id.image);
+                final Media mediaItem = media.get(position);
+                if (mediaItem.height > mediaItem.width) {
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } else {
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                }
+                postsImageLoader.load(imageView, mediaItem);
+                container.addView(view);
+                return view;
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object view) {
+                container.removeView((View) view);
+            }
+
+            public void finishUpdate(@NonNull ViewGroup container) {
+                container.requestLayout();
+            }
+
+            @Override
+            public int getCount() {
+                return media.size();
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
         }
     }
 

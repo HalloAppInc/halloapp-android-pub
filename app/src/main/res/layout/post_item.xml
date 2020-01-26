@@ -66,21 +66,23 @@
                     android:visibility="gone"/>
             </LinearLayout>
 
-            <androidx.cardview.widget.CardView
+            <com.halloapp.widget.MediaViewPager
+                android:id="@+id/media_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
+                android:layout_height="wrap_content"/>
 
-                <ImageView
-                    android:id="@+id/image"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    tools:src="@mipmap/ic_launcher"/>
-            </androidx.cardview.widget.CardView>
+            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                android:id="@+id/media_pager_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:dotsColor="@color/color_primary"
+                app:dotsStrokeColor="@color/color_primary"
+                app:dotsCornerRadius="4dp"
+                app:dotsSize="8dp"
+                app:dotsSpacing="4dp"
+                app:dotsStrokeWidth="2dp"
+                android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:id="@+id/text"

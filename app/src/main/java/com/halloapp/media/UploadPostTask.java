@@ -19,13 +19,11 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
     private final Post post;
 
     private final Connection connection;
-    private final MediaStore mediaStore;
     private final PostsDb postsDb;
 
-    public UploadPostTask(@NonNull Post post, Connection connection, MediaStore mediaStore, PostsDb postsDb) {
+    public UploadPostTask(@NonNull Post post, Connection connection, PostsDb postsDb) {
         this.post = post;
         this.connection = connection;
-        this.mediaStore = mediaStore;
         this.postsDb = postsDb;
     }
 
@@ -45,7 +43,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
             final Uploader.UploadListener uploadListener = percent -> true;
             try {
-                Uploader.run(mediaStore.getMediaFile(media.file), urls.putUrl, uploadListener);
+                Uploader.run(media.file, urls.putUrl, uploadListener);
                 media.url = urls.getUrl;
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);

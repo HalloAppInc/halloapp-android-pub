@@ -10,6 +10,7 @@ import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 
+import java.io.File;
 import java.io.IOException;
 
 public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
@@ -31,10 +32,10 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
             if (media.transferred) {
                 continue;
             }
-            final String file = RandomId.create() + ".jpg";
             final Downloader.DownloadListener downloadListener = percent -> true;
             try {
-                Downloader.run(media.url, mediaStore.getMediaFile(file), downloadListener);
+                final File file = mediaStore.getMediaFile(RandomId.create() + ".jpg");
+                Downloader.run(media.url, file, downloadListener);
                 media.file = file;
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);

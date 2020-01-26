@@ -16,24 +16,20 @@ import androidx.core.content.ContextCompat;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
-    private final MediaStore mediaStore;
     private final LruCache<String, Bitmap> cache;
     private final int placeholderColor;
 
     @MainThread
     public PostsImageLoader(@NonNull Context context) {
 
-        mediaStore = MediaStore.getInstance(context);
         placeholderColor = ContextCompat.getColor(context, R.color.media_placeholder);
 
         // Use 1/8th of the available memory for memory cache
@@ -55,11 +51,10 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> 
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
             if (media.file != null) {
-                final File file = mediaStore.getMediaFile(media.file);
-                if (file.exists()) {
-                    bitmap = MediaUtils.decode(file, Constants.MAX_IMAGE_DIMENSION);
+                if (media.file.exists()) {
+                    bitmap = MediaUtils.decode(media.file, Constants.MAX_IMAGE_DIMENSION);
                 } else {
-                    Log.i("PostsImageLoader:load file " + file.getAbsolutePath() + " doesn't exist");
+                    Log.i("PostsImageLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
                 }
             }
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {

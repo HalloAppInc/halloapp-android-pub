@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/footer"
-        android:background="#cccccc"
+        android:background="@color/reply_indicator_background"
         android:gravity="center_vertical"
         android:visibility="gone">
 
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:layout_gravity="bottom"
-        android:background="@android:color/white"
+        android:background="@color/card_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
