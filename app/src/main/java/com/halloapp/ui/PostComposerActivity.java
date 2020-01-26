@@ -34,6 +34,7 @@ import com.halloapp.posts.PostsImageLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.PostEditText;
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
@@ -72,6 +73,10 @@ public class PostComposerActivity extends AppCompatActivity {
 
         final ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (uris != null) {
+            if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
+                CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
+                uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
+            }
             sendButton.setEnabled(false);
             editText.setHint(R.string.type_a_caption_hint);
         } else {
