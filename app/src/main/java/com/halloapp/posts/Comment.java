@@ -41,6 +41,7 @@ public class Comment {
         this.timestamp = timestamp;
         this.transferred = transferred;
         this.text = text;
+        this.seen = commentSenderUserId.isMe();
     }
 
     @Override
