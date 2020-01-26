@@ -7,6 +7,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,11 +54,12 @@ public class Registration {
 
             inStream = connection.getInputStream();
             final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-            /*
-            final String result = responseJson.getString("result");
-            if (!"Added user to the database.".equals(result)) {
-                throw new IOException("Unexpected result: " + result);
-            }*/
+
+            final String result = responseJson.optString("result");
+            Log.i("Registration.requestRegistration: " + result);
+            if ("Error".equals(result)) {
+                throw new IOException("Registration error");
+            }
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
