@@ -322,6 +322,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     mediaPagerIndicator.setVisibility(View.GONE);
                 }
+                mediaPagerView.clearOnPageChangeListeners();
                 mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -341,9 +342,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
                 final Integer selPos = mediaPagerPositionMap.get(post.rowId);
-                if (selPos != null) {
-                    mediaPagerView.setCurrentItem(selPos);
-                }
+                mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos);
             }
 
             textView.setText(post.text);
