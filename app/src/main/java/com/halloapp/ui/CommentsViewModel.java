@@ -76,6 +76,10 @@ public class CommentsViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        }
+
+        @Override
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         }
 

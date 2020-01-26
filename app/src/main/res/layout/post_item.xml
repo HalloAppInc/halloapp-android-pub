@@ -125,7 +125,7 @@
                         android:drawableStart="@drawable/ic_comment"/>
 
                     <View
-                        android:id="@+id/new_comments_indicator"
+                        android:id="@+id/comments_indicator"
                         android:layout_width="6dp"
                         android:layout_height="6dp"
                         android:layout_margin="6dp"

@@ -57,6 +57,9 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
+            if (comment.isIncoming()) {
+                invalidateDataSource();
+            }
         }
 
         @Override
@@ -65,6 +68,11 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        }
+
+        @Override
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+            invalidateDataSource();
         }
 
         @Override

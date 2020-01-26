@@ -91,6 +91,8 @@ public class CommentsActivity extends AppCompatActivity {
         final UserId userId = HalloApp.instance.getUser().equals(user) ? UserId.ME : new UserId(user);
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
+        PostsDb.getInstance(this).setCommentsSeen(userId, postId);
+
         final View replyIndicator = findViewById(R.id.reply_indicator);
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);

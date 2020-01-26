@@ -89,6 +89,10 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
+    public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+    }
+
+    @Override
     public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         for (Post post : historyPosts) {
             if (!post.media.isEmpty()) {

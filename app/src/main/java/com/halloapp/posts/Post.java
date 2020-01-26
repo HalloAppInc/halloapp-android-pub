@@ -23,6 +23,7 @@ public class Post {
     public final List<Media> media = new ArrayList<>();
 
     public int commentCount;
+    public int unseenCommentCount;
 
     public Post(
             long rowId,
@@ -70,6 +71,8 @@ public class Post {
                 timestamp == post.timestamp &&
                 Objects.equals(text, post.text) &&
                 transferred == post.transferred &&
+                commentCount == post.commentCount &&
+                unseenCommentCount == post.unseenCommentCount &&
                 seen == post.seen;
     }
 }

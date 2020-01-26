@@ -135,7 +135,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
         postsView.setAdapter(adapter);
 
         return root;
@@ -273,7 +272,7 @@ public class HomeFragment extends Fragment {
         final TextView textView;
         final View commentButton;
         final View messageButton;
-        final View newCommentsIndicator;
+        final View commentsIndicator;
 
         PostViewHolder(final @NonNull View v) {
             super(v);
@@ -286,7 +285,7 @@ public class HomeFragment extends Fragment {
             textView = v.findViewById(R.id.text);
             commentButton = v.findViewById(R.id.comment);
             messageButton = v.findViewById(R.id.message);
-            newCommentsIndicator = v.findViewById(R.id.new_comments_indicator);
+            commentsIndicator = v.findViewById(R.id.comments_indicator);
         }
 
         void bindTo(final @NonNull Post post) {
@@ -351,7 +350,15 @@ public class HomeFragment extends Fragment {
                 textView.setVisibility(View.VISIBLE);
             }
 
-            newCommentsIndicator.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
+            if (post.unseenCommentCount > 0) {
+                commentsIndicator.setVisibility(View.VISIBLE);
+                commentsIndicator.setBackgroundResource(R.drawable.new_comments_indicator);
+            } else if (post.commentCount > 0) {
+                commentsIndicator.setVisibility(View.VISIBLE);
+                commentsIndicator.setBackgroundResource(R.drawable.old_comments_indicator);
+            } else {
+                commentsIndicator.setVisibility(View.GONE);
+            }
 
             commentButton.setOnClickListener(v -> {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);

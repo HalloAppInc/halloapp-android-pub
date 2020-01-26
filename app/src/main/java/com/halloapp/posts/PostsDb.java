@@ -48,6 +48,7 @@ public class PostsDb {
         void onCommentAdded(@NonNull Comment comment);
         void onCommentDuplicate(@NonNull Comment comment);
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
+        void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
     }
 
@@ -223,6 +224,7 @@ public class PostsDb {
         values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
         values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
         values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
+        values.put(CommentsTable.COLUMN_SEEN, comment.seen);
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
@@ -242,6 +244,27 @@ public class PostsDb {
                 notifyCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentTransferred: failed");
+                throw ex;
+            }
+        });
+    }
+
+    public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setCommentsSeen: postSenderUserId=" + postSenderUserId+ " postId=" + postId);
+            final ContentValues values = new ContentValues();
+            values.put(CommentsTable.COLUMN_SEEN, true);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                        CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
+                        new String [] {postSenderUserId.rawId(), postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                if (updatedCount > 0) {
+                    notifyCommentsSeen(postSenderUserId, postId);
+                }
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setCommentsSeen: failed");
                 throw ex;
             }
         });
@@ -303,7 +326,8 @@ public class PostsDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
-                "c.comment_count" + " " +
+                "c.comment_count" + ", " +
+                "c.seen_comment_count" + " " +
             "FROM " + PostsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -321,7 +345,8 @@ public class PostsDb {
                 "SELECT " +
                     "post_sender_user_id" + "," +
                     "post_id" + "," +
-                    "count(*) comment_count" + " " +
+                    "count(*) AS comment_count" + ", " +
+                    "sum(seen) AS seen_comment_count" + " " +
                     "FROM comments GROUP BY post_sender_user_id, post_id) " +
                 "AS c ON posts.sender_user_id=c.post_sender_user_id AND posts.post_id=c.post_id " +
             (where == null ? "" : "WHERE " + where + " ") +
@@ -347,6 +372,7 @@ public class PostsDb {
                             cursor.getInt(4) == 1,
                             cursor.getString(5));
                     post.commentCount = cursor.getInt(14);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(15);
                 }
                 final String mediaId = cursor.getString(7);
                 if (mediaId != null) {
@@ -597,6 +623,15 @@ public class PostsDb {
             }
         }
     }
+
+    private void notifyCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onCommentsSeen(postSenderUserId, postId);
+            }
+        }
+    }
+
 
     private void notifyHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         synchronized (observers) {
