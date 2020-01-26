@@ -40,7 +40,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/media"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="@dimen/comment_media_list_height"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toEndOf="parent"

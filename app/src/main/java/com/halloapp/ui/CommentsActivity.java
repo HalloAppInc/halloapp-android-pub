@@ -16,6 +16,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.AsyncPagedListDiffer;
@@ -145,7 +146,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         editText.requestFocus();
 
-        postsImageLoader = new PostsImageLoader(this);
+        postsImageLoader = new PostsImageLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactNameLoader = new ContactNameLoader(this);
 
         if (savedInstanceState != null) {
@@ -261,13 +262,8 @@ public class CommentsActivity extends AppCompatActivity {
                 mediaGallery.setVisibility(View.VISIBLE);
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
                 mediaGallery.setLayoutManager(layoutManager);
-                final int itemSpacing = getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing);
-                final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mediaGallery.getContext(), layoutManager.getOrientation()) {
-                    @Override
-                    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                        outRect.set(0, 0, itemSpacing, 0);
-                    }
-                };
+                final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mediaGallery.getContext(), layoutManager.getOrientation());
+                dividerItemDecoration.setDrawable(Preconditions.checkNotNull(ContextCompat.getDrawable(mediaGallery.getContext(), R.drawable.comment_media_list_spacing)));
                 mediaGallery.addItemDecoration(dividerItemDecoration);
                 mediaGallery.setAdapter(new CommentsAdapter(post.media));
             }
@@ -294,7 +290,9 @@ public class CommentsActivity extends AppCompatActivity {
             @NonNull
             @Override
             public PostMediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new PostMediaItemViewHolder(new ImageView(parent.getContext()));
+                final ImageView imageView = new ImageView(parent.getContext());
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                return new PostMediaItemViewHolder(imageView);
             }
 
             @Override

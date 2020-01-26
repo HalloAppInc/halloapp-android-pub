@@ -26,10 +26,17 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> 
 
     private final LruCache<String, Bitmap> cache;
     private final int placeholderColor;
+    private final int dimensionLimit;
 
     @MainThread
     public PostsImageLoader(@NonNull Context context) {
+        this(context, Constants.MAX_IMAGE_DIMENSION);
+    }
 
+    @MainThread
+    public PostsImageLoader(@NonNull Context context, int dimensionLimit) {
+
+        this.dimensionLimit = dimensionLimit;
         placeholderColor = ContextCompat.getColor(context, R.color.media_placeholder);
 
         // Use 1/8th of the available memory for memory cache
@@ -52,7 +59,7 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> 
             Bitmap bitmap = null;
             if (media.file != null) {
                 if (media.file.exists()) {
-                    bitmap = MediaUtils.decode(media.file, Constants.MAX_IMAGE_DIMENSION);
+                    bitmap = MediaUtils.decode(media.file, dimensionLimit);
                 } else {
                     Log.i("PostsImageLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
                 }

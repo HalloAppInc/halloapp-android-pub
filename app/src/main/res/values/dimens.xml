@@ -4,4 +4,5 @@
     <dimen name="scrolled_elevation">4dp</dimen>
     <dimen name="media_pager_margin">8dp</dimen>
     <dimen name="comment_media_list_spacing">4dp</dimen>
+    <dimen name="comment_media_list_height">72dp</dimen>
 </resources>
