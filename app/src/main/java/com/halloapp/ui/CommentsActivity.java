@@ -262,9 +262,11 @@ public class CommentsActivity extends AppCompatActivity {
                 mediaGallery.setVisibility(View.VISIBLE);
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
                 mediaGallery.setLayoutManager(layoutManager);
-                final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mediaGallery.getContext(), layoutManager.getOrientation());
-                dividerItemDecoration.setDrawable(Preconditions.checkNotNull(ContextCompat.getDrawable(mediaGallery.getContext(), R.drawable.comment_media_list_spacing)));
-                mediaGallery.addItemDecoration(dividerItemDecoration);
+                if (mediaGallery.getItemDecorationCount() == 0) {
+                    final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mediaGallery.getContext(), layoutManager.getOrientation());
+                    dividerItemDecoration.setDrawable(Preconditions.checkNotNull(ContextCompat.getDrawable(mediaGallery.getContext(), R.drawable.comment_media_list_spacing)));
+                    mediaGallery.addItemDecoration(dividerItemDecoration);
+                }
                 mediaGallery.setAdapter(new CommentsAdapter(post.media));
             }
 
