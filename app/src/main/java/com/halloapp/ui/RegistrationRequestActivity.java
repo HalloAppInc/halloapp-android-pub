@@ -75,7 +75,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
                 CenterToast.show(this, R.string.registration_failed);
                 nextButton.setVisibility(View.VISIBLE);
                 phoneNumberEditText.setEnabled(true);
-
+                countryCodePicker.setCcpClickable(true);
             }
             loadingProgressBar.setVisibility(View.GONE);
         });
@@ -111,6 +111,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
                 } else {
                     nextButton.setVisibility(View.VISIBLE);
                     phoneNumberEditText.setEnabled(true);
+                    countryCodePicker.setCcpClickable(true);
                 }
                 break;
             }
