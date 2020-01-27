@@ -18,6 +18,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+
 import com.crashlytics.android.Crashlytics;
 import com.halloapp.contacts.ContactsDb;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -25,7 +26,6 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.Log;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class HalloApp extends Application {
 
@@ -33,11 +33,6 @@ public class HalloApp extends Application {
     private NotificationManager notificationManager;
     private String channelId = "0";
     public Boolean appActiveStatus = false;
-    private AtomicInteger notificationId = new AtomicInteger();
-
-    public interface HandlePushToken {
-        void onComplete(String pushToken);
-    }
 
     @Override
     public void onCreate() {
@@ -163,7 +158,7 @@ public class HalloApp extends Application {
         }
     }
 
-    public void sendPushTokenFromFirebase(HandlePushToken codeBlock) {
+    public void sendPushTokenFromFirebase() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
@@ -171,9 +166,13 @@ public class HalloApp extends Application {
                         return;
                     }
                     // Get the Instance ID token.
-                    final String pushToken = task.getResult().getToken();
-                    Log.d("halloapp: obtained the push token!");
-                    codeBlock.onComplete(pushToken);
+                    try {
+                        final String pushToken = task.getResult().getToken();
+                        Log.d("halloapp: obtained the push token!");
+                        Connection.getInstance().sendPushToken(pushToken);
+                    } catch (NullPointerException e) {
+                        Log.e("halloapp: error getting push token");
+                    }
                 });
     }
 
@@ -200,15 +199,18 @@ public class HalloApp extends Application {
     }
 
     public void showNotification(String title, String body) {
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), channelId)
-                .setSmallIcon(R.drawable.ic_notifications)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        final Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
-        final PendingIntent pi = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pi);
-        notificationManager.notify(notificationId.incrementAndGet(), builder.build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), channelId)
+                    .setSmallIcon(R.drawable.ic_notifications)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            final Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+            final PendingIntent pi = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pi);
+            // Using the same notification-id to always show the latest notification for now.
+            notificationManager.notify(0, builder.build());
+        }
     }
 
     public void cancelAllNotifications() {

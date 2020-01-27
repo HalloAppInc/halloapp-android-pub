@@ -7,13 +7,11 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class PushMessagingService extends FirebaseMessagingService {
 
-    public static PushMessagingService instance;
     private static final String TAG = "PushMessagingService";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
     }
 
     @Override

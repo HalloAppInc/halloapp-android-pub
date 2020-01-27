@@ -316,7 +316,7 @@ public class Connection {
                 final IQ response = connection.createStanzaCollectorAndSend(pushIq).nextResultOrThrow();
                 Log.d("connection: response after setting the push token "+response.toString());
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
-                Log.e("connection: cannot sync contacts", e);
+                Log.e("connection: cannot send push token.", e);
             }
         });
     }
