@@ -13,6 +13,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.crashlytics.android.Crashlytics;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
@@ -32,6 +33,17 @@ public class HalloApp extends Application {
 
         Connection.getInstance().setObserver(new ConnectionObserver(this));
         PostsDb.getInstance(this).addObserver(MainPostsObserver.getInstance(this));
+        ContactsDb.getInstance(this).addObserver(new ContactsDb.Observer() {
+
+            @Override
+            public void onContactsChanged() {
+            }
+
+            @Override
+            public void onContactsReset() {
+                HalloApp.instance.setLastSyncTime(0);
+            }
+        });
 
         connect();
 

@@ -20,8 +20,17 @@ public class MessagesViewModel extends AndroidViewModel {
     final MutableLiveData<List<Contact>> contactsList;
     private final ContactsDb contactsDb;
 
-    private final ContactsDb.Observer contactsObserver = this::loadData;
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
 
+        @Override
+        public void onContactsChanged() {
+            loadData();
+        }
+
+        @Override
+        public void onContactsReset() {
+        }
+    };
 
     public MessagesViewModel(@NonNull Application application) {
         super(application);

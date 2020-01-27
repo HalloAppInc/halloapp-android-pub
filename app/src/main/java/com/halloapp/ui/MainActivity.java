@@ -11,6 +11,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.HalloApp;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.util.Log;
 
@@ -31,6 +32,19 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+
+        @Override
+        public void onContactsChanged() {
+        }
+
+        @Override
+        public void onContactsReset() {
+            startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             // The activity was not launched from history
             processIntent(getIntent());
         }
+
+        ContactsDb.getInstance(this).addObserver(contactsObserver);
     }
 
     @Override
@@ -79,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ContactsDb.getInstance(this).removeObserver(contactsObserver);
         Log.i("MainActivity.onDestroy");
     }
 

@@ -35,6 +35,7 @@ public class ContactsDb {
 
     public interface Observer {
         void onContactsChanged();
+        void onContactsReset();
     }
 
     public static ContactsDb getInstance(final @NonNull Context context) {
@@ -265,6 +266,14 @@ public class ContactsDb {
         }
     }
 
+    private void notifyContactsReset() {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onContactsReset();
+            }
+        }
+    }
+
     public void deleteDb() {
         databaseHelper.deleteDb();
     }
@@ -287,7 +296,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 4;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -316,8 +325,10 @@ public class ContactsDb {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             //noinspection SwitchStatementWithTooFewBranches
             switch (oldVersion) {
+                // TODO (ds): handle upgrades
                 default: {
                     onCreate(db);
+                    notifyContactsReset();
                     break;
                 }
             }
@@ -326,6 +337,7 @@ public class ContactsDb {
         @Override
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             onCreate(db);
+            notifyContactsReset();
         }
 
 
