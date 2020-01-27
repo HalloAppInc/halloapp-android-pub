@@ -28,6 +28,8 @@ import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.Log;
 
+import io.fabric.sdk.android.Fabric;
+
 public class HalloApp extends Application {
 
     public static HalloApp instance;
@@ -41,7 +43,9 @@ public class HalloApp extends Application {
 
         instance = this;
 
-        Crashlytics.setBool("debug", BuildConfig.DEBUG);
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
 
         Connection.getInstance().setObserver(new ConnectionObserver(this));
         PostsDb.getInstance(this).addObserver(MainPostsObserver.getInstance(this));
@@ -101,7 +105,9 @@ public class HalloApp extends Application {
         }
         Connection.getInstance().connect(getUser(), getPassword());
 
-        Crashlytics.setString("user", getUser());
+        if (Fabric.isInitialized()) {
+            Crashlytics.setString("user", getUser());
+        }
     }
 
     public void disconnect() {

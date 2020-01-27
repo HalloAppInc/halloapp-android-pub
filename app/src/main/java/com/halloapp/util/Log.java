@@ -2,6 +2,8 @@ package com.halloapp.util;
 
 import com.crashlytics.android.Crashlytics;
 
+import io.fabric.sdk.android.Fabric;
+
 public class Log {
 
     private static final String TAG = "halloapp";
@@ -11,31 +13,57 @@ public class Log {
     }
 
     public static void d(String msg) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, msg);
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.DEBUG, TAG, msg);
+        } else {
+            android.util.Log.d(TAG, msg);
+        }
     }
 
     public static void i(String msg) {
-        Crashlytics.log(android.util.Log.INFO, TAG, msg);
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.INFO, TAG, msg);
+        } else {
+            android.util.Log.i(TAG, msg);
+        }
     }
 
     public static void w(String msg) {
-        Crashlytics.log(android.util.Log.WARN, TAG, msg);
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.WARN, TAG, msg);
+        } else {
+            android.util.Log.w(TAG, msg);
+        }
     }
 
     public static void w(String msg, Throwable tr) {
-        Crashlytics.log(android.util.Log.WARN, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.WARN, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
+        } else {
+            android.util.Log.w(TAG, msg, tr);
+        }
     }
 
     public static void e(String msg) {
-        Crashlytics.log(android.util.Log.ERROR, TAG, msg);
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.ERROR, TAG, msg);
+        } else {
+            android.util.Log.e(TAG, msg);
+        }
     }
 
     public static void e(String msg, Throwable tr) {
-        Crashlytics.log(android.util.Log.ERROR, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.ERROR, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
+        } else {
+            android.util.Log.e(TAG, msg, tr);
+        }
     }
 
     public static void sendErrorReport(String msg) {
         Log.e(msg + " (sending error report)");
-        Crashlytics.logException(new RuntimeException(msg));
+        if (Fabric.isInitialized()) {
+            Crashlytics.logException(new RuntimeException(msg));
+        }
     }
 }
