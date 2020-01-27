@@ -13,6 +13,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -30,7 +31,6 @@ import com.halloapp.util.Log;
 public class HalloApp extends Application {
 
     public static HalloApp instance;
-    private NotificationManager notificationManager;
     private String channelId = "0";
     public Boolean appActiveStatus = false;
 
@@ -57,7 +57,7 @@ public class HalloApp extends Application {
             }
         });
 
-        notificationManager = createNotificationChannel();
+        createNotificationChannel();
 
         connect();
 
@@ -176,7 +176,7 @@ public class HalloApp extends Application {
                 });
     }
 
-    public NotificationManager createNotificationChannel() {
+    public void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -190,12 +190,10 @@ public class HalloApp extends Application {
             final NotificationManager notificationManager = getSystemService(NotificationManager.class);
             try {
                 notificationManager.createNotificationChannel(channel);
-                return notificationManager;
             } catch (NullPointerException e) {
                 Log.e("halloapp: cannot create notification channel", e);
             }
         }
-        return null;
     }
 
     public void showNotification(String title, String body) {
@@ -208,12 +206,14 @@ public class HalloApp extends Application {
             final Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
             final PendingIntent pi = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(pi);
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             // Using the same notification-id to always show the latest notification for now.
             notificationManager.notify(0, builder.build());
         }
     }
 
     public void cancelAllNotifications() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancelAll();
     }
 }
