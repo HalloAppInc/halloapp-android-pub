@@ -8,6 +8,8 @@
     <string name="message">Message</string>
     <string name="add_post">Add post</string>
     <string name="notifications">Notifications</string>
+    <string name="notification_channel_name">HalloApp Notifications</string>
+    <string name="notification_channel_description">All notifications for halloapp</string>
     <string name="me">Me</string>
     <string name="camera_post">Camera</string>
     <string name="gallery_post">Gallery</string>

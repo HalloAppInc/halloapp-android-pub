@@ -27,6 +27,7 @@ public class ConnectionObserver implements Connection.Observer {
             ContactsSync.getInstance(context).startPubSubSync();
             new SendPendingPostsTask(context).execute();
         }
+        HalloApp.instance.sendPushTokenFromFirebase();
     }
 
     @Override
@@ -47,6 +48,12 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onIncomingPostReceived(@NonNull Post post) {
         PostsDb.getInstance(context).addPost(post);
+        // Show push notifications if necessary.
+        if (!HalloApp.instance.appActiveStatus) {
+            final String title = post.senderUserId.rawId();
+            final String body = post.text.isEmpty() ? "Image": post.text;
+            HalloApp.instance.showNotification(title, body);
+        }
     }
 
     @Override

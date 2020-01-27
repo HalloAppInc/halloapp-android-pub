@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         ContactsDb.getInstance(this).addObserver(contactsObserver);
+        HalloApp.instance.cancelAllNotifications();
     }
 
     @Override

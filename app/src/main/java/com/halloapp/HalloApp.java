@@ -1,26 +1,38 @@
 package com.halloapp;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+
 import com.crashlytics.android.Crashlytics;
 import com.halloapp.contacts.ContactsDb;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.ui.MainActivity;
 import com.halloapp.util.Log;
 
 public class HalloApp extends Application {
 
     public static HalloApp instance;
+    private String channelId = "0";
+    public Boolean appActiveStatus = false;
 
     @Override
     public void onCreate() {
@@ -45,6 +57,8 @@ public class HalloApp extends Application {
             }
         });
 
+        createNotificationChannel();
+
         connect();
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new LifecycleObserver() {
@@ -62,11 +76,13 @@ public class HalloApp extends Application {
             void onBackground() {
                 Log.i("halloapp: onBackground");
                 unregisterReceiver(receiver);
+                appActiveStatus = false;
             }
 
             @OnLifecycleEvent(Lifecycle.Event.ON_START)
             void onForeground() {
                 Log.i("halloapp: onForeground");
+                appActiveStatus = true;
                 connect();
                 registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             }
@@ -101,6 +117,7 @@ public class HalloApp extends Application {
     private static final String PREF_KEY_USER_ID = "user_id";
     private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
+    private static final String PREF_KEY_PUSH_TOKEN = "push_token";
 
     public SharedPreferences getPreferences() {
         return getSharedPreferences("prefs", Context.MODE_PRIVATE);
@@ -139,5 +156,64 @@ public class HalloApp extends Application {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
             Log.e("failed to set last sync time");
         }
+    }
+
+    public void sendPushTokenFromFirebase() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e( "getInstanceId failed", task.getException());
+                        return;
+                    }
+                    // Get the Instance ID token.
+                    try {
+                        final String pushToken = task.getResult().getToken();
+                        Log.d("halloapp: obtained the push token!");
+                        Connection.getInstance().sendPushToken(pushToken);
+                    } catch (NullPointerException e) {
+                        Log.e("halloapp: error getting push token");
+                    }
+                });
+    }
+
+    public void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final CharSequence name = getString(R.string.notification_channel_name);
+            final String description = getString(R.string.notification_channel_description);
+            final int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            final NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            final NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            try {
+                notificationManager.createNotificationChannel(channel);
+            } catch (NullPointerException e) {
+                Log.e("halloapp: cannot create notification channel", e);
+            }
+        }
+    }
+
+    public void showNotification(String title, String body) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), channelId)
+                    .setSmallIcon(R.drawable.ic_notifications)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            final Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+            final PendingIntent pi = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pi);
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            // Using the same notification-id to always show the latest notification for now.
+            notificationManager.notify(0, builder.build());
+        }
+    }
+
+    public void cancelAllNotifications() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.cancelAll();
     }
 }
