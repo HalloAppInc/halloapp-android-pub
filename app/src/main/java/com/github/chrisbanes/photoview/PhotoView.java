@@ -186,6 +186,14 @@ public class PhotoView extends AppCompatImageView {
         return attacher.getScale();
     }
 
+    public void setReturnToMinScaleOnUp(boolean returnToMinScaleOnUp) {
+        attacher.setReturnToMinScaleOnUp(returnToMinScaleOnUp);
+    }
+
+    public void setAlwaysInterceptOnScale(boolean alwaysInterceptOnScale) {
+        attacher.setAlwaysInterceptOnScale(alwaysInterceptOnScale);
+    }
+
     public void setAllowParentInterceptOnEdge(boolean allow) {
         attacher.setAllowParentInterceptOnEdge(allow);
     }

@@ -2,14 +2,22 @@ package com.halloapp.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.halloapp.R;
 
-public class PostImageView extends androidx.appcompat.widget.AppCompatImageView {
+public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
     private float maxAspectRatio = 1.25f;
 
@@ -42,6 +50,19 @@ public class PostImageView extends androidx.appcompat.widget.AppCompatImageView 
         a.recycle();
     }
 
+    public void setImageBitmap(Bitmap bitmap) {
+        if (bitmap == null) {
+            super.setImageBitmap(null);
+        } else {
+            final int height = Math.min(bitmap.getHeight(), (int)(bitmap.getWidth() * maxAspectRatio));
+            final int heightPadding =  (bitmap.getHeight() - height) / 2;
+            final Rect clipRect = new Rect(0, heightPadding, bitmap.getWidth(), heightPadding + height);
+            final ClippedBitmapDrawable drawable = new ClippedBitmapDrawable(bitmap, clipRect);
+            setImageDrawable(drawable);
+
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -63,6 +84,46 @@ public class PostImageView extends androidx.appcompat.widget.AppCompatImageView 
             cornerPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
             canvas.clipPath(cornerPath);
             canvas.drawColor(cornerColor);
+        }
+    }
+
+    private static class ClippedBitmapDrawable extends Drawable {
+
+        final Bitmap bitmap;
+        final Rect clipRect;
+        final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+
+        ClippedBitmapDrawable(@NonNull Bitmap bitmap, @NonNull Rect clipRect) {
+            this.bitmap = bitmap;
+            this.clipRect = clipRect;
+        }
+
+        @Override
+        public void draw(@NonNull Canvas canvas) {
+            canvas.drawBitmap(bitmap, clipRect, getBounds(), paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+        }
+
+        @Override
+        public void setColorFilter(@Nullable ColorFilter colorFilter) {
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.OPAQUE;
+        }
+
+        @Override
+        public int getIntrinsicWidth() {
+            return clipRect.width();
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            return clipRect.height();
         }
     }
 }

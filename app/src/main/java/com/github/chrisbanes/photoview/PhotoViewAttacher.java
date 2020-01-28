@@ -60,6 +60,8 @@ public class PhotoViewAttacher implements View.OnTouchListener,
     private float mMidScale = DEFAULT_MID_SCALE;
     private float mMaxScale = DEFAULT_MAX_SCALE;
 
+    private boolean mReturnToMinScaleOnUp = true;
+    private boolean mAlwaysInterceptOnScale = true;
     private boolean mAllowParentInterceptOnEdge = true;
     private boolean mBlockParentIntercept = false;
 
@@ -349,7 +351,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
                 case MotionEvent.ACTION_UP:
                     // If the user has zoomed less than min scale, zoom back
                     // to min scale
-                    if (getScale() < mMinScale) {
+                    if (getScale() < mMinScale || mReturnToMinScaleOnUp) {
                         RectF rect = getDisplayRect();
                         if (rect != null) {
                             v.post(new AnimatedZoomRunnable(getScale(), mMinScale,
@@ -374,6 +376,10 @@ public class PhotoViewAttacher implements View.OnTouchListener,
                 boolean didntScale = !wasScaling && !mScaleDragDetector.isScaling();
                 boolean didntDrag = !wasDragging && !mScaleDragDetector.isDragging();
                 mBlockParentIntercept = didntScale && didntDrag;
+
+                if (mAlwaysInterceptOnScale) {
+                    mBlockParentIntercept |= ev.getPointerCount() > SINGLE_TOUCH;
+                }
             }
             // Check to see if the user double tapped
             if (mGestureDetector != null && mGestureDetector.onTouchEvent(ev)) {
@@ -382,6 +388,14 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
         }
         return handled;
+    }
+
+    public void setReturnToMinScaleOnUp(boolean returnToMinScaleOnUp) {
+        mReturnToMinScaleOnUp = returnToMinScaleOnUp;
+    }
+
+    public void setAlwaysInterceptOnScale(boolean alwaysInterceptOnScale) {
+        mAlwaysInterceptOnScale = alwaysInterceptOnScale;
     }
 
     public void setAllowParentInterceptOnEdge(boolean allow) {
