@@ -373,7 +373,6 @@ public class HomeFragment extends Fragment {
             messageButton.setOnClickListener(v -> {
                 // TODO (ds): start message activity
             });
-            nameView.setOnClickListener(v -> PostsDb.getInstance(Preconditions.checkNotNull(getContext())).deletePost(post)); // testing-only
         }
 
 
