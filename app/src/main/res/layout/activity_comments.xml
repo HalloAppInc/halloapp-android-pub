@@ -10,17 +10,18 @@
         android:id="@+id/comments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/footer"/>
+        app:layout_constraintBottom_toTopOf="@+id/reply_indicator"/>
 
     <LinearLayout
         android:id="@+id/reply_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/comments"
         app:layout_constraintBottom_toTopOf="@id/footer"
         android:background="@color/reply_indicator_background"
         android:gravity="center_vertical"
@@ -59,9 +60,9 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:elevation="3dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/comments"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reply_indicator"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.halloapp.widget.PostEditText

@@ -65,6 +65,8 @@ public class CommentsActivity extends AppCompatActivity {
     private String replyCommentId;
     private UserId replyUserId;
 
+    private PostEditText editText;
+
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
         Log.v("CommentsActivity: refreshing timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(System.currentTimeMillis())));
@@ -137,7 +139,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         commentsView.setAdapter(adapter);
 
-        final PostEditText editText = findViewById(R.id.entry);
+        editText = findViewById(R.id.entry);
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
             final String postText = Preconditions.checkNotNull(editText.getText()).toString();
@@ -256,7 +258,12 @@ public class CommentsActivity extends AppCompatActivity {
 
             commentView.setText(comment.text);
 
-            replyButton.setOnClickListener(v -> updateReplyIndicator(comment.commentSenderUserId, comment.commentId));
+            replyButton.setOnClickListener(v -> {
+                updateReplyIndicator(comment.commentSenderUserId, comment.commentId);
+                editText.requestFocus();
+                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+                imm.showSoftInput(editText,0);
+            });
         }
 
         void bindTo(final @Nullable Post post) {
