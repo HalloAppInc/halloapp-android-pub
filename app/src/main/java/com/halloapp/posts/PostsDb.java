@@ -343,12 +343,12 @@ public class PostsDb {
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
-                    "post_sender_user_id" + "," +
-                    "post_id" + "," +
+                    CommentsTable.COLUMN_POST_SENDER_USER_ID + "," +
+                    CommentsTable.COLUMN_POST_ID + "," +
                     "count(*) AS comment_count" + ", " +
-                    "sum(seen) AS seen_comment_count" + " " +
-                    "FROM comments GROUP BY post_sender_user_id, post_id) " +
-                "AS c ON posts.sender_user_id=c.post_sender_user_id AND posts.post_id=c.post_id " +
+                    "sum(" + CommentsTable.COLUMN_SEEN + ") AS seen_comment_count" + " " +
+                    "FROM " + CommentsTable.TABLE_NAME + " GROUP BY " + CommentsTable.COLUMN_POST_SENDER_USER_ID+ ", " + CommentsTable.COLUMN_POST_ID + ") " +
+                "AS c ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=c." + CommentsTable.COLUMN_POST_SENDER_USER_ID + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=c." + CommentsTable.COLUMN_POST_ID + " " +
             (where == null ? "" : "WHERE " + where + " ") +
             "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC " +
             "LIMIT " + count;
