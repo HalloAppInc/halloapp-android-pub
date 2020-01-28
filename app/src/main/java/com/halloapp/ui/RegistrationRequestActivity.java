@@ -1,14 +1,5 @@
 package com.halloapp.ui;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -18,11 +9,20 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Preconditions;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.util.Log;
+import com.halloapp.widget.CenterToast;
 import com.hbb20.CountryCodePicker;
 
 import org.json.JSONException;
@@ -61,7 +61,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
 
         phoneNumberEditText.setTextColor(phoneNumberEditText.getCurrentTextColor()); // so phoneNumberEditText.setEnabled(false) doesn't change color
 
-        registrationRequestViewModel = ViewModelProviders.of(this).get(RegistrationRequestViewModel.class);
+        registrationRequestViewModel = new ViewModelProvider(this).get(RegistrationRequestViewModel.class);
         registrationRequestViewModel.getRegistrationRequestResult().observe(this, result -> {
             if (result == null) {
                 return;

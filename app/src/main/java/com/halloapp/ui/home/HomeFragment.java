@@ -29,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,11 +38,11 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.halloapp.R;
 import com.halloapp.contacts.ContactNameLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
-import com.halloapp.R;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.PostsImageLoader;
 import com.halloapp.ui.CommentsActivity;
@@ -109,7 +109,7 @@ public class HomeFragment extends Fragment {
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
 
-        final HomeViewModel viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        final HomeViewModel viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
             final View childView = layoutManager.getChildAt(0);
             final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);

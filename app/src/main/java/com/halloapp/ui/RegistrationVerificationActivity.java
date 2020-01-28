@@ -1,15 +1,5 @@
 package com.halloapp.ui;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Application;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,12 +13,22 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Preconditions;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.halloapp.HalloApp;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.util.Log;
+import com.halloapp.widget.CenterToast;
 
 import org.json.JSONException;
 
@@ -74,7 +74,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
         codeEditText = findViewById(R.id.code);
         loadingProgressBar = findViewById(R.id.loading);
 
-        registrationVerificationViewModel = ViewModelProviders.of(this).get(RegistrationVerificationViewModel.class);
+        registrationVerificationViewModel = new ViewModelProvider(this).get(RegistrationVerificationViewModel.class);
         registrationVerificationViewModel.getRegistrationVerificationResult().observe(this, result -> {
             if (result == null) {
                 return;

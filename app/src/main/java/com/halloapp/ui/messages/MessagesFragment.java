@@ -12,7 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +36,7 @@ public class MessagesFragment extends Fragment {
         chatsView.setLayoutManager(layoutManager);
         chatsView.setAdapter(adapter);
 
-        final MessagesViewModel viewModel = ViewModelProviders.of(this).get(MessagesViewModel.class);
+        final MessagesViewModel viewModel = new ViewModelProvider(this).get(MessagesViewModel.class);
         viewModel.contactsList.observe(this, contacts -> {
             adapter.setContacts(contacts);
             emptyView.setVisibility(contacts.size() == 0 ? View.VISIBLE : View.GONE);

@@ -1,6 +1,5 @@
 package com.halloapp.ui;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Preconditions;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
@@ -97,7 +96,7 @@ public class CommentsActivity extends AppCompatActivity {
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
-        viewModel = ViewModelProviders.of(this, new CommentsViewModel.Factory(getApplication(), userId, postId)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), userId, postId)).get(CommentsViewModel.class);
         viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {
         }));
 
