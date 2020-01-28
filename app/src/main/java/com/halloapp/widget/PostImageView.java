@@ -59,7 +59,6 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
             final Rect clipRect = new Rect(0, heightPadding, bitmap.getWidth(), heightPadding + height);
             final ClippedBitmapDrawable drawable = new ClippedBitmapDrawable(bitmap, clipRect);
             setImageDrawable(drawable);
-
         }
     }
 

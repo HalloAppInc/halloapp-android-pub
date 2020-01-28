@@ -51,7 +51,7 @@ public class ConnectionObserver implements Connection.Observer {
         // Show push notifications if necessary.
         if (!HalloApp.instance.appActiveStatus) {
             final String title = post.senderUserId.rawId();
-            final String body = post.text.isEmpty() ? "Image": post.text;
+            final String body = post.text.isEmpty() ? "Image" : post.text;
             HalloApp.instance.showNotification(title, body);
         }
     }

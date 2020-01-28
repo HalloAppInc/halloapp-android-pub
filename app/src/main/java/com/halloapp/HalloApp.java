@@ -33,8 +33,9 @@ import io.fabric.sdk.android.Fabric;
 public class HalloApp extends Application {
 
     public static HalloApp instance;
-    private String channelId = "0";
-    public Boolean appActiveStatus = false;
+    public boolean appActiveStatus;
+
+    private static String NEW_POST_NOTIFICATION_CHANNEL_ID = "new_post_notification";
 
     @Override
     public void onCreate() {
@@ -117,7 +118,7 @@ public class HalloApp extends Application {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Log.w("low memory");
+        Log.w("halloapp: low memory");
     }
 
     private static final String PREF_KEY_USER_ID = "user_id";
@@ -143,14 +144,14 @@ public class HalloApp extends Application {
 
     public void saveRegistration(@NonNull String user, @NonNull String password) {
         if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).commit()) {
-            Log.e("failed to save registration");
+            Log.e("halloapp: failed to save registration");
         }
         connect();
     }
 
     public void resetRegistration() {
         if (!getPreferences().edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).commit()) {
-            Log.e("failed to reset registration");
+            Log.e("halloapp: failed to reset registration");
         }
     }
 
@@ -160,7 +161,7 @@ public class HalloApp extends Application {
 
     public void setLastSyncTime(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
-            Log.e("failed to set last sync time");
+            Log.e("halloapp: failed to set last sync time");
         }
     }
 
@@ -168,7 +169,7 @@ public class HalloApp extends Application {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.e( "getInstanceId failed", task.getException());
+                        Log.e( "halloapp: getInstanceId failed", task.getException());
                         return;
                     }
                     // Get the Instance ID token.
@@ -189,28 +190,22 @@ public class HalloApp extends Application {
             final CharSequence name = getString(R.string.notification_channel_name);
             final String description = getString(R.string.notification_channel_description);
             final int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            final NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+            final NotificationChannel channel = new NotificationChannel(NEW_POST_NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            final NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            try {
-                notificationManager.createNotificationChannel(channel);
-            } catch (NullPointerException e) {
-                Log.e("halloapp: cannot create notification channel", e);
-            }
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 
     public void showNotification(String title, String body) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), channelId)
+        if (Build.VERSION.SDK_INT >= 26) {
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NEW_POST_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notifications)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            final Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
-            final PendingIntent pi = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            final Intent intent = new Intent(this, MainActivity.class);
+            final PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(pi);
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             // Using the same notification-id to always show the latest notification for now.

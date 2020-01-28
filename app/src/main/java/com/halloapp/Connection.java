@@ -275,7 +275,7 @@ public class Connection {
     public Future<MediaUploadIq.Urls> requestMediaUpload() {
         return executor.submit(() -> {
             if (connection == null) {
-                Log.e("connection: sync pubsub: no connection");
+                Log.e("connection: request media upload: no connection");
                 return null;
             }
             final MediaUploadIq mediaUploadIq = new MediaUploadIq(connection.getXMPPServiceDomain());
@@ -283,7 +283,7 @@ public class Connection {
                 final MediaUploadIq response = connection.createStanzaCollectorAndSend(mediaUploadIq).nextResultOrThrow();
                 return response.urls;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
-                Log.e("connection: cannot sync contacts", e);
+                Log.e("connection: request media upload", e);
             }
             return null;
         });
@@ -292,7 +292,7 @@ public class Connection {
     public Future<List<ContactsSyncResponse.Contact>> syncContacts(@NonNull final Collection<String> phones) {
         return executor.submit(() -> {
             if (connection == null) {
-                Log.e("connection: sync pubsub: no connection");
+                Log.e("connection: sync contacts: no connection");
                 return null;
             }
             final ContactsSyncRequest contactsSyncIq = new ContactsSyncRequest(connection.getXMPPServiceDomain(), phones);
@@ -309,14 +309,14 @@ public class Connection {
     public void sendPushToken(@NonNull final String pushToken) {
         executor.execute(() -> {
             if (connection == null) {
-                Log.e("connection: trying to send push token: no connection");
+                Log.e("connection: send push token: no connection");
             }
             final PushRegisterRequest pushIq = new PushRegisterRequest(connection.getXMPPServiceDomain(), pushToken);
             try {
                 final IQ response = connection.createStanzaCollectorAndSend(pushIq).nextResultOrThrow();
-                Log.d("connection: response after setting the push token "+response.toString());
+                Log.d("connection: response after setting the push token " + response.toString());
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
-                Log.e("connection: cannot send push token.", e);
+                Log.e("connection: cannot send push token", e);
             }
         });
     }
