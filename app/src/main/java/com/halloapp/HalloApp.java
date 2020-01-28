@@ -124,7 +124,6 @@ public class HalloApp extends Application {
     private static final String PREF_KEY_USER_ID = "user_id";
     private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
-    private static final String PREF_KEY_PUSH_TOKEN = "push_token";
 
     public SharedPreferences getPreferences() {
         return getSharedPreferences("prefs", Context.MODE_PRIVATE);
@@ -173,12 +172,12 @@ public class HalloApp extends Application {
                         return;
                     }
                     // Get the Instance ID token.
-                    try {
-                        final String pushToken = task.getResult().getToken();
+                    final String pushToken = task.getResult() == null ? null : task.getResult().getToken();
+                    if (TextUtils.isEmpty(pushToken)) {
+                        Log.e("halloapp: error getting push token");
+                    } else {
                         Log.d("halloapp: obtained the push token!");
                         Connection.getInstance().sendPushToken(pushToken);
-                    } catch (NullPointerException e) {
-                        Log.e("halloapp: error getting push token");
                     }
                 });
     }
