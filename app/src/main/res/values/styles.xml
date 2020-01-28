@@ -22,6 +22,7 @@
         <item name="background">@color/color_action_bar</item>
         <item name="backgroundStacked">@color/color_action_bar</item>
         <item name="backgroundSplit">@color/color_action_bar</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="PostButton">

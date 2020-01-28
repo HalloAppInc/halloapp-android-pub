@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment {
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
 
-        final float scrolledElevation = getResources().getDimension(R.dimen.scrolled_elevation);
+        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
         postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override

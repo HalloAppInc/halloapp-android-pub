@@ -67,8 +67,6 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
         Log.i("RegistrationVerificationActivity.onCreate");
         setContentView(R.layout.activity_registration_verification);
 
-        setTitle("");
-        Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         codeEditText = findViewById(R.id.code);

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Preconditions;
@@ -86,6 +87,21 @@ public class CommentsActivity extends AppCompatActivity {
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         commentsView.setLayoutManager(layoutManager);
+
+        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
+        commentsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                final View childView = layoutManager.getChildAt(0);
+                final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
+                final ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
+                final float elevation = scrolled ? scrolledElevation : 0;
+                if (actionBar.getElevation() != elevation) {
+                    actionBar.setElevation(elevation);
+                }
+            }
+        });
 
         final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
         final UserId userId = HalloApp.instance.getUser().equals(user) ? UserId.ME : new UserId(user);

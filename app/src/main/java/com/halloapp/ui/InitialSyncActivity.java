@@ -1,15 +1,14 @@
 package com.halloapp.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.halloapp.HalloApp;
 import com.halloapp.R;
@@ -40,9 +39,6 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
             finish();
             return;
         }
-
-        setTitle("");
-        Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
 
         final View infoView = findViewById(R.id.info);
         final View loadingView = findViewById(R.id.loading);

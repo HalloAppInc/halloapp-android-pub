@@ -12,7 +12,6 @@ import android.widget.EditText;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -48,9 +47,6 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("RegistrationRequestActivity.onCreate");
         setContentView(R.layout.activity_registration_request);
-
-        setTitle("");
-        Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
 
         phoneNumberEditText = findViewById(R.id.phone_number);
         countryCodePicker = findViewById(R.id.ccp);
