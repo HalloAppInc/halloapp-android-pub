@@ -9,7 +9,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.posts.SendPendingPostsTask;
+import com.halloapp.posts.SendPendingItemsTask;
 
 import java.util.Collection;
 
@@ -25,7 +25,7 @@ public class ConnectionObserver implements Connection.Observer {
     public void onConnected() {
         if (HalloApp.instance.getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
             ContactsSync.getInstance(context).startPubSubSync();
-            new SendPendingPostsTask(context).execute();
+            new SendPendingItemsTask(context).execute();
         }
         HalloApp.instance.sendPushTokenFromFirebase();
     }
