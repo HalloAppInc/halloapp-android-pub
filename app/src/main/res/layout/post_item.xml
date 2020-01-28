@@ -71,17 +71,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+            <me.relex.circleindicator.CircleIndicator
                 android:id="@+id/media_pager_indicator"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="8dp"
                 android:layout_gravity="center_horizontal"
-                app:dotsColor="@color/color_primary"
-                app:dotsStrokeColor="@color/color_primary"
-                app:dotsCornerRadius="4dp"
-                app:dotsSize="8dp"
-                app:dotsSpacing="4dp"
-                app:dotsStrokeWidth="2dp"
+                app:ci_width="5dp"
+                app:ci_height="5dp"
+                app:ci_margin="4dp"
+                app:ci_drawable="@drawable/pager_item_indicator_selected"
+                app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+                app:ci_animator="@anim/pager_indicator"
                 android:layout_marginBottom="8dp"/>
 
             <TextView

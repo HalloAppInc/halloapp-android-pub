@@ -50,7 +50,6 @@ import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.BadgedDrawable;
-import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +57,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import me.relex.circleindicator.CircleIndicator;
 
 public class HomeFragment extends Fragment {
 
@@ -271,7 +272,7 @@ public class HomeFragment extends Fragment {
         final TextView timeView;
         final View progressView;
         final ViewPager mediaPagerView;
-        final WormDotsIndicator mediaPagerIndicator;
+        final CircleIndicator mediaPagerIndicator;
         final TextView textView;
         final View commentButton;
         final View messageButton;
@@ -316,13 +317,13 @@ public class HomeFragment extends Fragment {
                 final PostMediaPagerAdapter mediaPagerAdapter = new PostMediaPagerAdapter(post.media);
                 mediaPagerView.setAdapter(mediaPagerAdapter);
                 mediaPagerView.setPageMargin(Preconditions.checkNotNull(getContext()).getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
+                mediaPagerView.clearOnPageChangeListeners();
                 if (post.media.size() > 1) {
                     mediaPagerIndicator.setVisibility(View.VISIBLE);
                     mediaPagerIndicator.setViewPager(mediaPagerView);
                 } else {
                     mediaPagerIndicator.setVisibility(View.GONE);
                 }
-                mediaPagerView.clearOnPageChangeListeners();
                 mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
