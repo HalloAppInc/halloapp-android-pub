@@ -2,9 +2,11 @@ package com.halloapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.util.Log;
 
@@ -30,7 +32,12 @@ public class Preferences {
     }
 
     private Preferences(Context context) {
-        preferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
+        try {
+            preferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        } finally {
+            StrictMode.setThreadPolicy(threadPolicy);
+        }
     }
 
     public boolean isRegistered() {
@@ -38,11 +45,11 @@ public class Preferences {
     }
 
     public String getUser() {
-        return preferences.getString(PREF_KEY_USER_ID, null);
+        return getString(PREF_KEY_USER_ID, null);
     }
 
     public String getPassword() {
-        return preferences.getString(PREF_KEY_PASSWORD, null);
+        return getString(PREF_KEY_PASSWORD, null);
     }
 
     public void saveRegistration(@NonNull String user, @NonNull String password) {
@@ -58,12 +65,30 @@ public class Preferences {
     }
 
     public long getLastSyncTime() {
-        return preferences.getLong(PREF_KEY_LAST_SYNC_TIME, 0);
+        return getLong(PREF_KEY_LAST_SYNC_TIME, 0);
     }
 
     public void setLastSyncTime(long time) {
         if (!preferences.edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last sync time");
+        }
+    }
+
+    private String getString(@NonNull String key, @Nullable String defValue) {
+        final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
+        try {
+            return preferences.getString(key, defValue);
+        } finally {
+            StrictMode.setThreadPolicy(threadPolicy);
+        }
+    }
+
+    private long getLong(@NonNull String key, long defValue) {
+        final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
+        try {
+            return preferences.getLong(key, defValue);
+        } finally {
+            StrictMode.setThreadPolicy(threadPolicy);
         }
     }
 }

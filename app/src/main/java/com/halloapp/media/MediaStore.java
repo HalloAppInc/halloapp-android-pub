@@ -1,6 +1,7 @@
 package com.halloapp.media;
 
 import android.content.Context;
+import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,17 +28,28 @@ public class MediaStore {
         return instance;
     }
 
-    private MediaStore(Context context) {
-        mediaDir = new File(context.getFilesDir(), "media");
-        tmpDir = new File(context.getCacheDir(), "media");
+    private MediaStore(@NonNull Context context) {
+        final StrictMode.ThreadPolicy threadPolicy = StrictMode.getThreadPolicy();
+        StrictMode.allowThreadDiskReads();
+        StrictMode.allowThreadDiskWrites();
+        try {
+            mediaDir = prepareDir(new File(context.getFilesDir(), "media"));
+            tmpDir = prepareDir(new File(context.getCacheDir(), "media"));
+        } finally {
+            StrictMode.setThreadPolicy(threadPolicy);
+        }
     }
 
-    public File getMediaDir() {
-        if (!mediaDir.exists()) {
-            if (!mediaDir.mkdirs()) {
+    private File prepareDir(@NonNull File dir) {
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
                 Log.e("MediaStore: cannot create " + mediaDir.getAbsolutePath());
             }
         }
+        return dir;
+    }
+
+    public File getMediaDir() {
         return mediaDir;
     }
 
@@ -46,12 +58,7 @@ public class MediaStore {
     }
 
     public File getTmpDir() {
-        if (!tmpDir.exists()) {
-            if (!tmpDir.mkdirs()) {
-                Log.e("MediaStore: cannot create " + tmpDir.getAbsolutePath());
-            }
-        }
-        return mediaDir;
+        return tmpDir;
     }
 
     public File getTmpFile(@NonNull String name) {

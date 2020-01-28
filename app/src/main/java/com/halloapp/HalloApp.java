@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.core.app.NotificationCompat;
@@ -42,6 +43,12 @@ public class HalloApp extends Application {
 
         if (!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics());
+        } else {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyDeath()
+                    .penaltyDeathOnNetwork()
+                    .build());
         }
 
         Connection.getInstance().setObserver(new ConnectionObserver(this));
