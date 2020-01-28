@@ -36,13 +36,14 @@ import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.PostEditText;
-import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import me.relex.circleindicator.CircleIndicator;
 
 public class PostComposerActivity extends AppCompatActivity {
 
@@ -94,7 +95,7 @@ public class PostComposerActivity extends AppCompatActivity {
         final ViewPager viewPager = findViewById(R.id.media_pager);
         viewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
         viewPager.setVisibility(View.GONE);
-        final WormDotsIndicator mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
+        final CircleIndicator mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
         mediaPagerIndicator.setVisibility(View.GONE);
 
         viewModel = ViewModelProviders.of(this,
