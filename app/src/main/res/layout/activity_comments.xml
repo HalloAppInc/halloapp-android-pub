@@ -58,6 +58,7 @@
         android:background="@color/card_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:elevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/comments"

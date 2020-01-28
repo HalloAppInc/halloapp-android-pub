@@ -78,6 +78,7 @@ public class CommentsActivity extends AppCompatActivity {
         Log.d("CommentsActivity: onCreate");
         setContentView(R.layout.activity_comments);
 
+        Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final RecyclerView commentsView = findViewById(R.id.comments);
@@ -217,7 +218,7 @@ public class CommentsActivity extends AppCompatActivity {
             super(v);
             avatarView = v.findViewById(R.id.avatar);
             nameView = v.findViewById(R.id.name);
-            commentView = v.findViewById(R.id.comment);
+            commentView = v.findViewById(R.id.comment_text);
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
             replyButton = v.findViewById(R.id.reply);
