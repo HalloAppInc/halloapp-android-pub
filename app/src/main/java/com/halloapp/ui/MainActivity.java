@@ -10,6 +10,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.HalloApp;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
@@ -51,11 +52,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         Log.i("MainActivity.onCreate");
 
-        if (!HalloApp.instance.isRegistered()) {
+        if (!Preferences.getInstance(this).isRegistered()) {
             startActivity(new Intent(this, RegistrationRequestActivity.class));
             finish();
             return;
-        } else if (HalloApp.instance.getLastSyncTime() <= 0) {
+        } else if (Preferences.getInstance(this).getLastSyncTime() <= 0) {
             startActivity(new Intent(this, InitialSyncActivity.class));
             finish();
             return;

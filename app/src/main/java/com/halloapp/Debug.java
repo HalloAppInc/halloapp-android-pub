@@ -32,12 +32,12 @@ public class Debug {
             Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_RESET_REGISTRATION: {
-                    HalloApp.instance.resetRegistration();
+                    Preferences.getInstance(context).resetRegistration();
                     restart(context);
                     break;
                 }
                 case DEBUG_MENU_LOGOUT: {
-                    HalloApp.instance.disconnect();
+                    Connection.getInstance().disconnect();
                     break;
                 }
                 case DEBUG_MENU_DELETE_POSTS_DB: {

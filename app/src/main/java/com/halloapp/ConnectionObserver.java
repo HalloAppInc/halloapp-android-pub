@@ -23,7 +23,7 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onConnected() {
-        if (HalloApp.instance.getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
+        if (Preferences.getInstance(context).getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
             ContactsSync.getInstance(context).startPubSubSync();
             new SendPendingItemsTask(context).execute();
         }
@@ -37,7 +37,7 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onLoginFailed() {
-        HalloApp.instance.resetRegistration();
+        Preferences.getInstance(context).resetRegistration();
     }
 
     @Override

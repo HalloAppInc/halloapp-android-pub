@@ -23,7 +23,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Connection;
 import com.halloapp.HalloApp;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
@@ -202,7 +204,8 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
             try {
                 String password = Registration.getInstance().verifyRegistration(phone, code);
                 if (!TextUtils.isEmpty(password)) {
-                    HalloApp.instance.saveRegistration(phone, password);
+                    Preferences.getInstance(viewModel.getApplication()).saveRegistration(phone, password);
+                    Connection.getInstance().connect(phone, password);
                 }
                 return new RegistrationVerificationResult(phone, password, RegistrationVerificationResult.RESULT_OK);
             } catch (IOException | JSONException e) {

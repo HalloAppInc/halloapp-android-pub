@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.halloapp.HalloApp;
+import com.halloapp.Preferences;
 import com.halloapp.util.Log;
 
 import java.io.File;
@@ -186,7 +186,7 @@ public class ContactsDb {
 
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
-                if (userIdStr == null || !userIdStr.equals(HalloApp.instance.getUser())) {
+                if (userIdStr == null || !userIdStr.equals(Preferences.getInstance(context).getUser())) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),
@@ -220,7 +220,7 @@ public class ContactsDb {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
-                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(HalloApp.instance.getUser())) {
+                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Preferences.getInstance(context).getUser())) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import com.halloapp.HalloApp;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.util.Log;
@@ -30,11 +30,11 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
         Log.i("InitialSyncActivity.onCreate");
         setContentView(R.layout.activity_initial_sync);
 
-        if (!HalloApp.instance.isRegistered()) {
+        if (!Preferences.getInstance(this).isRegistered()) {
             startActivity(new Intent(this, RegistrationRequestActivity.class));
             finish();
             return;
-        } else if (HalloApp.instance.getLastSyncTime() > 0) {
+        } else if (Preferences.getInstance(this).getLastSyncTime() > 0) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
             return;

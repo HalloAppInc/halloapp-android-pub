@@ -18,7 +18,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.Connection;
-import com.halloapp.HalloApp;
+import com.halloapp.Preferences;
 import com.halloapp.protocol.ContactsSyncResponse;
 import com.halloapp.util.Log;
 
@@ -102,7 +102,7 @@ public class ContactsSync {
     private ListenableWorker.Result performContactSync() {
 
         Log.i("ContactsSync.performContactSync");
-        if (HalloApp.instance.getLastSyncTime() <= 0) {
+        if (Preferences.getInstance(context).getLastSyncTime() <= 0) {
             // initial sync, need to sync address book first
             Log.i("ContactsSync.performContactSync: initial address book sync");
             try {
@@ -216,9 +216,9 @@ public class ContactsSync {
             return ListenableWorker.Result.failure();
         }
 
-        HalloApp.instance.setLastSyncTime(System.currentTimeMillis());
+        Preferences.getInstance(context).setLastSyncTime(System.currentTimeMillis());
 
-        Log.i("ContactsSync.done: " + HalloApp.instance.getLastSyncTime());
+        Log.i("ContactsSync.done: " + Preferences.getInstance(context).getLastSyncTime());
 
         return ListenableWorker.Result.success();
     }

@@ -1,13 +1,13 @@
 package com.halloapp.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
-
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 
-import com.halloapp.HalloApp;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Preconditions;
+
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
@@ -38,7 +38,7 @@ public class AddCommentActivity extends AppCompatActivity {
                 return;
             }
             final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
-            final UserId userId = HalloApp.instance.getUser().equals(user) ? UserId.ME : new UserId(user);
+            final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);
             final Comment comment = new Comment(
                     0,
                     userId,

@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.HalloApp;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactNameLoader;
 import com.halloapp.contacts.UserId;
@@ -104,7 +104,7 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
         final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
-        final UserId userId = HalloApp.instance.getUser().equals(user) ? UserId.ME : new UserId(user);
+        final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         PostsDb.getInstance(this).setCommentsSeen(userId, postId);
