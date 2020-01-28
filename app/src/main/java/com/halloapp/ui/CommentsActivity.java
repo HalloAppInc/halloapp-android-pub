@@ -172,7 +172,7 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_REPLY_USER_ID, replyUserId.rawId());
+        outState.putString(KEY_REPLY_USER_ID, replyUserId == null ? null : replyUserId.rawId());
         outState.putString(KEY_REPLY_COMMENT_ID, replyCommentId);
     }
 
