@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Preconditions;
@@ -42,6 +41,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.PostEditText;
+import com.halloapp.widget.ActionBarShadowProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,20 +90,7 @@ public class CommentsActivity extends AppCompatActivity {
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         commentsView.setLayoutManager(layoutManager);
 
-        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
-        commentsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                final View childView = layoutManager.getChildAt(0);
-                final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
-                final ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
-                final float elevation = scrolled ? scrolledElevation : 0;
-                if (actionBar.getElevation() != elevation) {
-                    actionBar.setElevation(elevation);
-                }
-            }
-        });
+        commentsView.addOnScrollListener(new ActionBarShadowProvider(this));
 
         final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
         final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);

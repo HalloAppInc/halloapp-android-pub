@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,6 +33,7 @@ import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Log;
 import com.halloapp.widget.BadgedDrawable;
+import com.halloapp.widget.ActionBarShadowProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,21 +81,7 @@ public class HomeFragment extends PostsFragment {
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
 
-        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
-        postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                final View childView = layoutManager.getChildAt(0);
-                final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
-                final AppCompatActivity activity = Preconditions.checkNotNull((AppCompatActivity)getActivity());
-                final ActionBar actionBar = Preconditions.checkNotNull(activity.getSupportActionBar());
-                final float elevation = scrolled ? scrolledElevation : 0;
-                if (actionBar.getElevation() != elevation) {
-                    actionBar.setElevation(elevation);
-                }
-            }
-        });
+        postsView.addOnScrollListener(new ActionBarShadowProvider((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 

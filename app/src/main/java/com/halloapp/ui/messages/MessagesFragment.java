@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.widget.ActionBarShadowProvider;
 
 import java.util.List;
 
@@ -42,21 +42,7 @@ public class MessagesFragment extends Fragment {
             emptyView.setVisibility(contacts.size() == 0 ? View.VISIBLE : View.GONE);
         });
 
-        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
-        chatsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                final View childView = layoutManager.getChildAt(0);
-                final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
-                final AppCompatActivity activity = Preconditions.checkNotNull((AppCompatActivity)getActivity());
-                final ActionBar actionBar = Preconditions.checkNotNull(activity.getSupportActionBar());
-                final float elevation = scrolled ? scrolledElevation : 0;
-                if (actionBar.getElevation() != elevation) {
-                    actionBar.setElevation(elevation);
-                }
-            }
-        });
+        chatsView.addOnScrollListener(new ActionBarShadowProvider((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
         return root;
     }
