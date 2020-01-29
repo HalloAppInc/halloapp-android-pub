@@ -1,19 +1,103 @@
 package com.halloapp.ui.profile;
 
+import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.NonNull;
+import androidx.core.util.Preconditions;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
-public class ProfileViewModel extends ViewModel {
+import com.halloapp.contacts.UserId;
+import com.halloapp.posts.Comment;
+import com.halloapp.posts.Post;
+import com.halloapp.posts.PostsDataSource;
+import com.halloapp.posts.PostsDb;
 
-    private MutableLiveData<String> mText;
+import java.util.Collection;
 
-    public ProfileViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is a placeholder for profile fragment");
+public class ProfileViewModel extends AndroidViewModel {
+
+    final LiveData<PagedList<Post>> postList;
+    private final PostsDb postsDb;
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
+
+        @Override
+        public void onPostAdded(@NonNull Post post) {
+            if (post.isOutgoing()) {
+                invalidateDataSource();
+            }
+        }
+
+        @Override
+        public void onPostDuplicate(@NonNull Post post) {
+            // do not update model on duplicate post
+        }
+
+        @Override
+        public void onPostDeleted(@NonNull Post post) {
+            if (post.isOutgoing()) {
+                invalidateDataSource();
+            }
+        }
+
+        @Override
+        public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+            if (senderUserId.isMe()) {
+                invalidateDataSource();
+            }
+        }
+
+        @Override
+        public void onCommentAdded(@NonNull Comment comment) {
+            if (comment.isIncoming()) {
+                invalidateDataSource();
+            }
+        }
+
+        @Override
+        public void onCommentDuplicate(@NonNull Comment comment) {
+        }
+
+        @Override
+        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        }
+
+        @Override
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+            if (postSenderUserId.isMe()) {
+                invalidateDataSource();
+            }
+        }
+
+        @Override
+        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+            invalidateDataSource();
+        }
+
+        private void invalidateDataSource() {
+            mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
+        }
+    };
+
+    public ProfileViewModel(@NonNull Application application) {
+        super(application);
+
+        postsDb = PostsDb.getInstance(application);
+        postsDb.addObserver(postsObserver);
+
+        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb, true);
+        postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    @Override
+    protected void onCleared() {
+        postsDb.removeObserver(postsObserver);
     }
 }

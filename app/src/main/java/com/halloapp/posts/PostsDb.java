@@ -306,10 +306,18 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Post> getPosts(@Nullable Long timestamp, int count, boolean after) {
+    public List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where = timestamp == null ? null : PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " < " : " > ") + timestamp;
+        if (outgoingOnly) {
+            if (where == null) {
+                where = "";
+            } else {
+                where += " AND ";
+            }
+            where += PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''";
+        }
         String sql =
             "SELECT " +
                 PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +

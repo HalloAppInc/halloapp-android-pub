@@ -12,26 +12,31 @@ import java.util.List;
 public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
     private final PostsDb postsDb;
+    private final boolean outgoingOnly;
 
     public static class Factory extends DataSource.Factory<Long, Post> {
 
         private final PostsDb postsDb;
+        private final boolean outgoingOnly;
+
         private final MutableLiveData<PostsDataSource> sourceLiveData = new MutableLiveData<>();
 
-        public Factory(@NonNull PostsDb postsDb) {
+        public Factory(@NonNull PostsDb postsDb, boolean outgoingOnly) {
             this.postsDb = postsDb;
+            this.outgoingOnly = outgoingOnly;
         }
 
         @Override
         public @NonNull DataSource<Long, Post> create() {
-            PostsDataSource latestSource = new PostsDataSource(postsDb);
+            final PostsDataSource latestSource = new PostsDataSource(postsDb, outgoingOnly);
             sourceLiveData.postValue(latestSource);
             return latestSource;
         }
     }
 
-    private PostsDataSource(@NonNull PostsDb postsDb) {
+    private PostsDataSource(@NonNull PostsDb postsDb, boolean outgoingOnly) {
         this.postsDb = postsDb;
+        this.outgoingOnly = outgoingOnly;
     }
 
     @Override
@@ -43,11 +48,11 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Post> callback) {
         final List<Post> posts;
         if (params.requestedInitialKey == null) {
-            posts = postsDb.getPosts(null, params.requestedLoadSize, true);
+            posts = postsDb.getPosts(null, params.requestedLoadSize, true, outgoingOnly);
         } else {
             // load around params.requestedInitialKey, otherwise the view that represents this data may jump
-            posts = postsDb.getPosts(params.requestedInitialKey, params.requestedLoadSize / 2, false);
-            posts.addAll(postsDb.getPosts(params.requestedInitialKey + 1, params.requestedLoadSize / 2, true));
+            posts = postsDb.getPosts(params.requestedInitialKey, params.requestedLoadSize / 2, false, outgoingOnly);
+            posts.addAll(postsDb.getPosts(params.requestedInitialKey + 1, params.requestedLoadSize / 2, true, outgoingOnly));
 
         }
         Log.d("PostsDataSource.loadInitial: requestedInitialKey=" + params.requestedInitialKey + " requestedLoadSize:" + params.requestedLoadSize + " got " + posts.size() +
@@ -58,12 +63,12 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Post> callback) {
         Log.d("PostsDataSource.loadAfter: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(postsDb.getPosts(params.key, params.requestedLoadSize, true));
+        callback.onResult(postsDb.getPosts(params.key, params.requestedLoadSize, true, outgoingOnly));
     }
 
     @Override
     public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Post> callback) {
         Log.d("PostsDataSource.loadBefore: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(postsDb.getPosts(params.key, params.requestedLoadSize, false));
+        callback.onResult(postsDb.getPosts(params.key, params.requestedLoadSize, false, outgoingOnly));
     }
 }

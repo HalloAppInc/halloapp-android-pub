@@ -91,7 +91,7 @@ public class HomeViewModel extends AndroidViewModel {
         postsDb = PostsDb.getInstance(application);
         postsDb.addObserver(postsObserver);
 
-        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb);
+        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb, false);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
     }
