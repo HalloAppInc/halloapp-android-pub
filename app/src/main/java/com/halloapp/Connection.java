@@ -339,7 +339,7 @@ public class Connection {
                         null,
                         null);
                 for (Media media : post.media) {
-                    entry.media.add(new PublishedEntry.Media(0, media.url, media.width, media.height));
+                    entry.media.add(new PublishedEntry.Media(PublishedEntry.Media.MEDIA_TYPE_IMAGE, media.url, media.width, media.height));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);

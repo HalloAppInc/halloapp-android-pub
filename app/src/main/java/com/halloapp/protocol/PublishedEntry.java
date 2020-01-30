@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringDef;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.util.Log;
@@ -60,26 +61,35 @@ public class PublishedEntry {
 
     public static class Media {
 
-        public int type;
+        @Retention(RetentionPolicy.SOURCE)
+        @StringDef({
+                MEDIA_TYPE_IMAGE,
+                MEDIA_TYPE_VIDEO
+        })
+        public @interface MediaType {}
+        public static final String MEDIA_TYPE_IMAGE = "image";
+        public static final String MEDIA_TYPE_VIDEO = "video";
+
+        public String type;
         public String url;
         public int width;
         public int height;
 
-        public Media(int type, String url, int width, int height) {
+        public Media(@MediaType String type, String url, int width, int height) {
             this.type = type;
             this.url = url;
             this.width = width;
             this.height = height;
         }
 
-        Media(String type, String widthText, String heightText, String url) {
+        Media(@MediaType String type, String widthText, String heightText, String url) {
             if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
                 this.url = "https://cdn.image4.io/hallo" + url; // TODO (ds): remove
             } else {
                 this.url = url;
             }
 
-            this.type = Integer.parseInt(type);
+            this.type = type;
 
             if (widthText != null) {
                 try {
@@ -189,7 +199,7 @@ public class PublishedEntry {
                 serializer.startTag(NAMESPACE, ELEMENT_MEDIA);
                 for (Media mediaItem : media) {
                     serializer.startTag(NAMESPACE, ELEMENT_URL);
-                    serializer.attribute(null, ATTRIBUTE_TYPE, Integer.toString(mediaItem.type));
+                    serializer.attribute(null, ATTRIBUTE_TYPE, mediaItem.type);
                     if (mediaItem.width != 0) {
                         serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(mediaItem.width));
                     }
@@ -252,7 +262,7 @@ public class PublishedEntry {
                 builder.user(Xml.readText(parser));
             } else if (ELEMENT_IMAGE_URL.equals(name)) { // TODO (ds): remove
                 if (media.isEmpty()) {
-                    final Media mediaItem = new Media("0",
+                    final Media mediaItem = new Media(Media.MEDIA_TYPE_IMAGE,
                             parser.getAttributeValue(null, ATTRIBUTE_WIDTH),
                             parser.getAttributeValue(null, ATTRIBUTE_HEIGHT),
                             Xml.readText(parser));
