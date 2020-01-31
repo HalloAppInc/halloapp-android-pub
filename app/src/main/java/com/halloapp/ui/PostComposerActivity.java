@@ -30,7 +30,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.posts.PostsImageLoader;
+import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
@@ -48,7 +48,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class PostComposerActivity extends AppCompatActivity {
 
     private PostComposerViewModel viewModel;
-    private PostsImageLoader postsImageLoader;
+    private MediaThumbnailLoader mediaThumbnailLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class PostComposerActivity extends AppCompatActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        postsImageLoader = new PostsImageLoader(this);
+        mediaThumbnailLoader = new MediaThumbnailLoader(this);
 
         final PostEditText editText = findViewById(R.id.entry);
 
@@ -121,7 +121,7 @@ public class PostComposerActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("PostComposerActivity: onDestroy");
-        postsImageLoader.destroy();
+        mediaThumbnailLoader.destroy();
         final List<File> tmpFiles = viewModel.getFiles();
         if (tmpFiles != null) {
             new CleanupTmpFilesTask(tmpFiles).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -148,7 +148,7 @@ public class PostComposerActivity extends AppCompatActivity {
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             final View view = getLayoutInflater().inflate(R.layout.media_pager_item, container, false);
             final ImageView imageView = view.findViewById(R.id.image);
-            postsImageLoader.load(imageView, media.get(position));
+            mediaThumbnailLoader.load(imageView, media.get(position));
             container.addView(view);
             return view;
         }

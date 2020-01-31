@@ -36,7 +36,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.posts.PostsImageLoader;
+import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeUtils;
@@ -52,12 +52,13 @@ public class CommentsActivity extends AppCompatActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
+    public static final String EXTRA_SHOW_KEYBOARD = "show_keyboard";
 
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
     private static final String KEY_REPLY_USER_ID = "reply_user_id";
 
     private final CommentsAdapter adapter = new CommentsAdapter();
-    private PostsImageLoader postsImageLoader;
+    private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactNameLoader contactNameLoader;
 
     private CommentsViewModel viewModel;
@@ -151,9 +152,11 @@ public class CommentsActivity extends AppCompatActivity {
             resetReplyIndicator();
         });
 
-        editText.requestFocus();
+        if (getIntent().getBooleanExtra(EXTRA_SHOW_KEYBOARD, true)) {
+            editText.requestFocus();
+        }
 
-        postsImageLoader = new PostsImageLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
+        mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactNameLoader = new ContactNameLoader(this);
 
         if (savedInstanceState != null) {
@@ -169,7 +172,7 @@ public class CommentsActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("CommentsActivity: onDestroy");
-        postsImageLoader.destroy();
+        mediaThumbnailLoader.destroy();
         contactNameLoader.destroy();
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
@@ -314,7 +317,7 @@ public class CommentsActivity extends AppCompatActivity {
                 final ImageView imageView = (ImageView)holder.itemView;
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 imageView.setAdjustViewBounds(true);
-                postsImageLoader.load(imageView, media.get(position));
+                mediaThumbnailLoader.load(imageView, media.get(position));
             }
 
             @Override

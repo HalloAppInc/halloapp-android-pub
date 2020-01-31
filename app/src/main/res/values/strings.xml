@@ -9,7 +9,7 @@
     <string name="add_post">Add post</string>
     <string name="notifications">Notifications</string>
     <string name="notification_channel_name">HalloApp Notifications</string>
-    <string name="notification_channel_description">All notifications for halloapp</string>
+    <string name="notification_channel_description">All notifications for HalloApp</string>
     <string name="me">Me</string>
     <string name="camera_post">Camera</string>
     <string name="gallery_post">Gallery</string>
@@ -56,5 +56,24 @@
     <string name="close">Close</string>
     <string name="reply_to_self">Reply to myself</string>
     <string name="reply_to_contact">Reply to %s</string>
-
+    <string name="commented_on_your_post_1">&lt;b>%s&lt;/b> commented on your post</string>
+    <string name="commented_on_your_post_2">&lt;b>%1s&lt;/b> and &lt;b>%2s&lt;/b> commented on your post</string>
+    <string name="commented_on_your_post_3">&lt;b>%1s&lt;/b>, &lt;b>%2s&lt;/b>, and &lt;b>%3s&lt;/b> commented on your post</string>
+    <plurals name="commented_on_your_post_4">
+        <item quantity="one">&lt;b>%1s&lt;/b>, &lt;b>%2s&lt;/b>, and %d other commented on your post</item>
+        <item quantity="other">&lt;b>%1s&lt;/b>, &lt;b>%2s&lt;/b>, and %d others commented on your post</item>
+    </plurals>
+    <string name="commented_on_someones_post_1">&lt;b>%1$s&lt;/b> commented on &lt;b>%2$s&lt;/b>\'s post</string>
+    <string name="commented_on_someones_post_2">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> commented on &lt;b>%3$s&lt;/b>\'s post</string>
+    <string name="commented_on_someones_post_3">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and &lt;b>%3$s&lt;/b> commented on &lt;b>%4$s&lt;/b>\'s post</string>
+    <plurals name="commented_on_someones_post_4">
+        <item quantity="one">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d other commented on &lt;b>%4$s&lt;/b>\'s post</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d others commented on &lt;b>%4$s&lt;/b>\'s post</item>
+    </plurals>
+    <string name="commented_on_own_post">&lt;b>%1s&lt;/b> commented on their post</string>
+    <string name="list_of_two">%s and %s</string>
+    <string name="list_of_many_start">%s</string>
+    <string name="list_of_many_middle">, %s</string>
+    <string name="list_of_many_end">, and %s</string>
+    <string name="no_activity">No activity</string>
 </resources>

@@ -34,4 +34,9 @@
         <item name="android:drawablePadding">6dp</item>
     </style>
 
+    <style name="comments_history_animation">
+        <item name="android:windowEnterAnimation">@anim/comments_history_in</item>
+        <item name="android:windowExitAnimation">@anim/comments_history_out</item>
+    </style>
+
 </resources>

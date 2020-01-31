@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
@@ -28,9 +29,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.R;
 import com.halloapp.contacts.ContactNameLoader;
+import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsImageLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 
@@ -46,7 +47,7 @@ public class PostsFragment extends Fragment {
 
     protected final PostsAdapter adapter = new PostsAdapter();
 
-    private PostsImageLoader postsImageLoader;
+    private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactNameLoader contactNameLoader;
 
     private LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
@@ -59,17 +60,19 @@ public class PostsFragment extends Fragment {
     };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    @CallSuper
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postsImageLoader = new PostsImageLoader(Preconditions.checkNotNull(getContext()));
+        mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
         contactNameLoader = new ContactNameLoader(Preconditions.checkNotNull(getContext()));
     }
 
+    @CallSuper
     @Override
     public void onDestroy() {
         super.onDestroy();
-        postsImageLoader.destroy();
+        mediaThumbnailLoader.destroy();
         contactNameLoader.destroy();
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
@@ -176,7 +179,7 @@ public class PostsFragment extends Fragment {
                     }
                 });
                 final Integer selPos = mediaPagerPositionMap.get(post.rowId);
-                mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos);
+                mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
             }
 
             textView.setText(post.text);
@@ -227,7 +230,7 @@ public class PostsFragment extends Fragment {
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
-                postsImageLoader.load(imageView, mediaItem);
+                mediaThumbnailLoader.load(imageView, mediaItem);
                 container.addView(view);
                 return view;
             }

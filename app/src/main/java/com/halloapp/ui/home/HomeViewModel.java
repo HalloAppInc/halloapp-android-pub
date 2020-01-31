@@ -1,28 +1,40 @@
 package com.halloapp.ui.home;
 
 import android.app.Application;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDataSource;
 import com.halloapp.posts.PostsDb;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
+    final MutableLiveData<CommentsHistory> commentsHistory;
+
     private final PostsDb postsDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
@@ -37,7 +49,7 @@ public class HomeViewModel extends AndroidViewModel {
             } else {
                 pendingIncoming.set(true);
             }
-            invalidateDataSource();
+            invalidatePosts();
         }
 
         @Override
@@ -47,18 +59,19 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onPostDeleted(@NonNull Post post) {
-            invalidateDataSource();
+            invalidatePosts();
         }
 
         @Override
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
-            invalidateDataSource();
+            invalidatePosts();
         }
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (comment.isIncoming()) {
-                invalidateDataSource();
+                invalidatePosts();
+                loadCommentHistory();
             }
         }
 
@@ -72,15 +85,16 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
-            invalidateDataSource();
+            invalidatePosts();
+            loadCommentHistory();
         }
 
         @Override
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-            invalidateDataSource();
+            invalidatePosts();
         }
 
-        private void invalidateDataSource() {
+        private void invalidatePosts() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }
     };
@@ -94,6 +108,8 @@ public class HomeViewModel extends AndroidViewModel {
         final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb, false);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
+        commentsHistory = new MutableLiveData<>();
+        loadCommentHistory();
     }
 
     @Override
@@ -108,4 +124,113 @@ public class HomeViewModel extends AndroidViewModel {
     boolean checkPendingIncoming() {
         return pendingIncoming.compareAndSet(true, false);
     }
+
+    private void loadCommentHistory() {
+        new LoadCommentHistoryData(getApplication(), commentsHistory).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    static class LoadCommentHistoryData extends AsyncTask<Void, Void, CommentsHistory> {
+
+        private final Application application;
+        private final MutableLiveData<CommentsHistory> commentsHistory;
+
+        LoadCommentHistoryData(@NonNull Application application, @NonNull MutableLiveData<CommentsHistory> commentsHistory) {
+            this.application = application;
+            this.commentsHistory = commentsHistory;
+        }
+
+        @Override
+        protected CommentsHistory doInBackground(Void... voids) {
+            final List<Comment> comments = PostsDb.getInstance(application).getIncomingCommentsHistory(250);
+
+            final Map<Pair<UserId, String>, CommentsGroup> unseenComments = new HashMap<>();
+            final List<CommentsGroup> seenComments = new ArrayList<>();
+            CommentsGroup lastSeenCommentGroup = null;
+            for (Comment comment : comments) {
+                if (comment.seen) {
+                    if (lastSeenCommentGroup == null || !lastSeenCommentGroup.postId.equals(comment.postId) || !lastSeenCommentGroup.postSenderUserId.equals(comment.postSenderUserId)) {
+                        if (lastSeenCommentGroup != null) {
+                            seenComments.add(lastSeenCommentGroup);
+                        }
+                        lastSeenCommentGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
+                    }
+                    lastSeenCommentGroup.comments.add(comment);
+                } else {
+                    final Pair<UserId, String> postKey = Pair.create(comment.postSenderUserId, comment.postId);
+                    CommentsGroup commentsGroup = unseenComments.get(postKey);
+                    if (commentsGroup == null) {
+                        commentsGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
+                        unseenComments.put(postKey, commentsGroup);
+                    }
+                    commentsGroup.comments.add(comment);
+                    if (commentsGroup.timestamp < comment.timestamp) {
+                        commentsGroup.timestamp = comment.timestamp;
+                    }
+                }
+            }
+            if (lastSeenCommentGroup != null) {
+                seenComments.add(lastSeenCommentGroup);
+            }
+
+            final ArrayList<CommentsGroup> commentGroups = new ArrayList<>(unseenComments.values());
+            Collections.sort(commentGroups, ((o1, o2) -> -Long.compare(o1.timestamp, o2.timestamp)));
+            commentGroups.addAll(seenComments);
+
+            final Map<UserId, Contact> contacts = new HashMap<>();
+            for (Comment comment : comments) {
+                if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
+                    final Contact contact = ContactsDb.getInstance(application).getContact(comment.commentSenderUserId);
+                    if (contact == null) {
+                        contacts.put(comment.commentSenderUserId, new Contact(0, 0, null, null, comment.commentSenderUserId, true));
+                    } else {
+                        contacts.put(comment.commentSenderUserId, contact);
+                    }
+                }
+                if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
+                    final Contact contact = ContactsDb.getInstance(application).getContact(comment.postSenderUserId);
+                    if (contact == null) {
+                        contacts.put(comment.postSenderUserId, new Contact(0, 0, null, null, comment.postSenderUserId, true));
+                    } else {
+                        contacts.put(comment.postSenderUserId, contact);
+                    }
+                }
+            }
+            return new CommentsHistory(commentGroups, unseenComments.size(), contacts);
+        }
+
+        @Override
+        protected void onPostExecute(final CommentsHistory commentsHistory) {
+            this.commentsHistory.postValue(commentsHistory);
+        }
+    }
+
+    public static class CommentsGroup {
+
+        public UserId postSenderUserId;
+        public String postId;
+
+        public long timestamp;
+
+        public final List<Comment> comments = new ArrayList<>();
+
+
+        public CommentsGroup(@NonNull UserId postSenderUserId, @NonNull String postId) {
+            this.postSenderUserId = postSenderUserId;
+            this.postId = postId;
+        }
+    }
+
+    public static class CommentsHistory {
+
+        public final List<CommentsGroup> commentGroups;
+        public final Map<UserId, Contact> contacts;
+        public final int unseenCount;
+
+        CommentsHistory(@NonNull List<CommentsGroup> commentGroups, int unseenCount, @NonNull Map<UserId, Contact> contacts) {
+            this.commentGroups = commentGroups;
+            this.unseenCount = unseenCount;
+            this.contacts = contacts;
+        }
+    }
+
 }

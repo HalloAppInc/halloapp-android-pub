@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,25 +16,25 @@ import androidx.core.content.ContextCompat;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.media.MediaUtils;
+import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.concurrent.Callable;
 
-public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> {
+public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private final LruCache<String, Bitmap> cache;
     private final int placeholderColor;
     private final int dimensionLimit;
 
     @MainThread
-    public PostsImageLoader(@NonNull Context context) {
+    public MediaThumbnailLoader(@NonNull Context context) {
         this(context, Constants.MAX_IMAGE_DIMENSION);
     }
 
     @MainThread
-    public PostsImageLoader(@NonNull Context context, int dimensionLimit) {
+    public MediaThumbnailLoader(@NonNull Context context, int dimensionLimit) {
 
         this.dimensionLimit = dimensionLimit;
         placeholderColor = ContextCompat.getColor(context, R.color.media_placeholder);
@@ -42,7 +42,7 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        Log.i("PostsImageLoader: create " + cacheSize + "KB cache for post images");
+        Log.i("MediaThumbnailLoader: create " + cacheSize + "KB cache for post images");
         cache = new LruCache<String, Bitmap>(cacheSize) {
 
             @Override
@@ -61,11 +61,11 @@ public class PostsImageLoader extends ViewDataLoader<ImageView, Bitmap, String> 
                 if (media.file.exists()) {
                     bitmap = MediaUtils.decode(media.file, dimensionLimit);
                 } else {
-                    Log.i("PostsImageLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
+                    Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
                 }
             }
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                Log.i("PostsImageLoader:load cannot decode " + media.file);
+                Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
                 return null;
             } else {
                 return bitmap;

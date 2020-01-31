@@ -13,5 +13,5 @@
     <color name="media_placeholder">#f6f6f6</color>
     <color name="card_background">@color/cardview_light_background</color>
     <color name="reply_indicator_background">#cccccc</color>
-
+    <color name="text_post_thumbnail_color">#ff000000</color>
 </resources>

@@ -500,6 +500,56 @@ public class PostsDb {
         return comments;
     }
 
+    /*
+    * returns "important" comments only
+    * */
+    @WorkerThread
+    public List<Comment> getIncomingCommentsHistory(int limit) {
+        final List<Comment> comments = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        final String sql =
+                "SELECT " +
+                    CommentsTable._ID + ", " +
+                    CommentsTable.COLUMN_POST_SENDER_USER_ID + ", " +
+                    CommentsTable.COLUMN_POST_ID + ", " +
+                    CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", " +
+                    CommentsTable.COLUMN_COMMENT_ID + ", " +
+                    CommentsTable.COLUMN_PARENT_ID + ", " +
+                    CommentsTable.COLUMN_TIMESTAMP + ", " +
+                    CommentsTable.COLUMN_TRANSFERRED + ", " +
+                    CommentsTable.COLUMN_TEXT + ", " +
+                    CommentsTable.COLUMN_SEEN + " " +
+                "FROM " + CommentsTable.TABLE_NAME + " " +
+                "WHERE comments.comment_sender_user_id<>'' " +
+                    "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" +
+                    "AND (" +
+                        "comments.post_sender_user_id='' " +
+                        "OR " +
+                        "EXISTS(SELECT post_id FROM comments AS c WHERE comments.post_id==c.post_id AND c.comment_sender_user_id='') " +
+                    ")" +
+                "ORDER BY " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TIMESTAMP + " DESC " +
+                "LIMIT " + limit;
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                final Comment comment = new Comment(
+                        cursor.getLong(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        new UserId(cursor.getString(3)),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getLong(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getString(8));
+                comment.seen = cursor.getInt(9) == 1;
+                comments.add(comment);
+            }
+        }
+        Log.i("PostsDb.getIncomingCommentsHistory: comments.size=" + comments.size());
+        return comments;
+    }
+
     @WorkerThread
     public List<Post> getPendingPosts() {
 
