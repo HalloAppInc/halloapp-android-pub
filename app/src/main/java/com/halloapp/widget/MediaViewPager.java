@@ -44,6 +44,17 @@ public class MediaViewPager extends ViewPager {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        requestLayout(); // to workaround bug in ViewPager;
+        // ViewPager.onAttachedToWindow sets mFirstLayout to true, but layout is never called to be recalculated
+        // in case view pager is inside recycler view and the view just detaches and attaches back during
+        // recycler view scrolling; it will recalculate when user swipes
+        // the view pager; due to this the first swipe would not have an animation; this, most likely
+        // is resolved in ViewPager2
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         try {
             return super.onInterceptTouchEvent(ev);
