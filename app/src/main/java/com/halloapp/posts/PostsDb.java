@@ -250,19 +250,21 @@ public class PostsDb {
     }
 
     public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        setCommentsSeen(postSenderUserId, postId, true);
+    }
+
+    public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, boolean seen) {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setCommentsSeen: postSenderUserId=" + postSenderUserId+ " postId=" + postId);
             final ContentValues values = new ContentValues();
-            values.put(CommentsTable.COLUMN_SEEN, true);
+            values.put(CommentsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
                         new String [] {postSenderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                if (updatedCount > 0) {
-                    notifyCommentsSeen(postSenderUserId, postId);
-                }
+                notifyCommentsSeen(postSenderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentsSeen: failed");
                 throw ex;

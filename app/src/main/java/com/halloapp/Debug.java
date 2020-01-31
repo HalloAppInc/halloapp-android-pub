@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.contacts.UserId;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 
@@ -20,6 +21,7 @@ public class Debug {
     private static final String DEBUG_MENU_DELETE_POSTS_DB = "Delete posts DB";
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
+    private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
     public static void showDebugMenu(@NonNull Context context, View anchor) {
         PopupMenu menu = new PopupMenu(context, anchor);
@@ -52,6 +54,22 @@ public class Debug {
                 }
                 case DEBUG_MENU_SYNC_CONTACTS: {
                     ContactsSync.getInstance(context).startContactSync();
+                    break;
+                }
+            }
+            return false;
+        });
+        menu.show();
+    }
+
+    public static void showDebugMenu(@NonNull Context context, View anchor, UserId userId, String postId) {
+        PopupMenu menu = new PopupMenu(context, anchor);
+        menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
+        menu.setOnMenuItemClickListener(item -> {
+            Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
+            switch (item.getTitle().toString()) {
+                case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
+                    PostsDb.getInstance(context).setCommentsSeen(userId, postId, false);
                     break;
                 }
             }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.BuildConfig;
+import com.halloapp.Debug;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactNameLoader;
@@ -188,6 +191,18 @@ public class CommentsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
+            final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
+            final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);
+            final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+            Debug.showDebugMenu(this, editText, userId, postId);
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
     }
 
     private void updateReplyIndicator(@NonNull UserId userId, @NonNull String commentId) {
