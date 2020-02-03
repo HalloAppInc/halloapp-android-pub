@@ -13,7 +13,6 @@ import com.halloapp.R;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class ListFormatter {
 

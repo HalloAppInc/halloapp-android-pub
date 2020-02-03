@@ -27,11 +27,11 @@ public class Media {
 
     public boolean transferred;
 
-    public static final Media createFromFile(@MediaType int type, File file) {
+    public static Media createFromFile(@MediaType int type, File file) {
         return new Media(0, RandomId.create(), type, null, file, 0, 0, false);
     }
 
-    public static final Media createFromUrl(@MediaType int type, String url, int width, int height) {
+    public static Media createFromUrl(@MediaType int type, String url, int width, int height) {
         return new Media(0, RandomId.create(), type, url, null, width, height, false);
     }
 

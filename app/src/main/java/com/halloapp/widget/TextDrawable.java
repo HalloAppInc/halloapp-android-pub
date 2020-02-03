@@ -49,7 +49,7 @@ public class TextDrawable extends Drawable {
         layout.draw(canvas);
     }
 
-    void updateLayout(int width, int height) {
+    private void updateLayout(int width, int height) {
         textPaint.setTextSize(textSize);
         do {
             layout = new StaticLayout(text, textPaint, width - padding * 2, Layout.Alignment.ALIGN_CENTER, 1, 0, false);

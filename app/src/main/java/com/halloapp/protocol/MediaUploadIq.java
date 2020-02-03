@@ -25,7 +25,7 @@ public class MediaUploadIq extends IQ {
         setTo(to);
     }
 
-    MediaUploadIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
+    private MediaUploadIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);
 
         while (parser.next() != XmlPullParser.END_TAG) {

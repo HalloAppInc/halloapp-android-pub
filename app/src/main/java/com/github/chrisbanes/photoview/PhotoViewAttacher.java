@@ -635,6 +635,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             RectF mTempSrc = new RectF(0, 0, drawableWidth, drawableHeight);
             RectF mTempDst = new RectF(0, 0, viewWidth, viewHeight);
             if ((int) mBaseRotation % 180 != 0) {
+                //noinspection SuspiciousNameCombination
                 mTempSrc = new RectF(0, 0, drawableHeight, drawableWidth);
             }
             switch (mScaleType) {
@@ -736,8 +737,8 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         private final long mStartTime;
         private final float mZoomStart, mZoomEnd;
 
-        public AnimatedZoomRunnable(final float currentZoom, final float targetZoom,
-            final float focalX, final float focalY) {
+        AnimatedZoomRunnable(final float currentZoom, final float targetZoom,
+                             final float focalX, final float focalY) {
             mFocalX = focalX;
             mFocalY = focalY;
             mStartTime = System.currentTimeMillis();
@@ -770,16 +771,16 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         private final OverScroller mScroller;
         private int mCurrentX, mCurrentY;
 
-        public FlingRunnable(Context context) {
+        FlingRunnable(Context context) {
             mScroller = new OverScroller(context);
         }
 
-        public void cancelFling() {
+        void cancelFling() {
             mScroller.forceFinished(true);
         }
 
-        public void fling(int viewWidth, int viewHeight, int velocityX,
-            int velocityY) {
+        void fling(int viewWidth, int viewHeight, int velocityX,
+                   int velocityY) {
             final RectF rect = getDisplayRect();
             if (rect == null) {
                 return;

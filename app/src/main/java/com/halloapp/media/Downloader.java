@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Downloader {
+class Downloader {
 
     public interface DownloadListener {
         boolean onProgress(int percent);
@@ -30,7 +30,7 @@ public class Downloader {
     }
 
     @WorkerThread
-    public static void run(@NonNull String remotePath, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+    static void run(@NonNull String remotePath, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
         InputStream inStream = null;
         BufferedOutputStream outStream = null;
         HttpURLConnection connection = null;

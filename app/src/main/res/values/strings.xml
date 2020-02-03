@@ -49,7 +49,6 @@
     <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
     <string name="failed_to_initialize">Failed to initialize</string>
-    <string name="add_comment">Add comment</string>
     <string name="type_a_comment_hint">Add a comment</string>
     <string name="comments">Comments</string>
     <string name="reply">Reply</string>

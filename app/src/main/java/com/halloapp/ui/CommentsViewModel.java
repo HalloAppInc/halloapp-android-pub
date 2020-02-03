@@ -25,7 +25,7 @@ import com.halloapp.posts.PostsDb;
 
 import java.util.Collection;
 
-public class CommentsViewModel extends AndroidViewModel {
+class CommentsViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Comment>> commentList;
     final MutableLiveData<Post> post = new MutableLiveData<>();

@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class ContactsDiff {
+class ContactsDiff {
 
     final Collection<AddressBookContacts.AddressBookContact> added = new ArrayList<>();
     final Collection<Long> removed = new ArrayList<>();

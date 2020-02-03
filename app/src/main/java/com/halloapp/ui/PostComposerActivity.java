@@ -18,7 +18,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -26,11 +25,11 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
+import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
@@ -98,7 +97,7 @@ public class PostComposerActivity extends AppCompatActivity {
         final CircleIndicator mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
         mediaPagerIndicator.setVisibility(View.GONE);
 
-        viewModel = ViewModelProviders.of(this,
+        viewModel = new ViewModelProvider(this,
                 new PostComposerViewModelFactory(getApplication(), uris)).get(PostComposerViewModel.class);
         viewModel.files.observe(this, files -> {
             viewPager.setAdapter(new PostMediaPagerAdapter(files));

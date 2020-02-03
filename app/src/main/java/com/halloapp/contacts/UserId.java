@@ -1,9 +1,6 @@
 package com.halloapp.contacts;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Objects;
 

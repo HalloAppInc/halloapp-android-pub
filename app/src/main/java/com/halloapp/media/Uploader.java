@@ -5,10 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,7 +15,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Uploader {
+class Uploader {
 
     public interface UploadListener {
         boolean onProgress(int percent);
@@ -32,7 +30,7 @@ public class Uploader {
     }
 
     @WorkerThread
-    public static void run(@NonNull File file, @NonNull String url, @Nullable UploadListener listener) throws IOException {
+    static void run(@NonNull File file, @NonNull String url, @Nullable UploadListener listener) throws IOException {
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 

@@ -214,7 +214,7 @@ public class HomeViewModel extends AndroidViewModel {
         public final List<Comment> comments = new ArrayList<>();
 
 
-        public CommentsGroup(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        CommentsGroup(@NonNull UserId postSenderUserId, @NonNull String postId) {
             this.postSenderUserId = postSenderUserId;
             this.postId = postId;
         }

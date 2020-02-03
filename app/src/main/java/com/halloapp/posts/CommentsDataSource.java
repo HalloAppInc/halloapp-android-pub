@@ -3,11 +3,9 @@ package com.halloapp.posts;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
-import androidx.paging.ItemKeyedDataSource;
 import androidx.paging.PositionalDataSource;
 
 import com.halloapp.contacts.UserId;
-import com.halloapp.util.Log;
 
 import java.util.List;
 

@@ -24,7 +24,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Connection;
-import com.halloapp.HalloApp;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
