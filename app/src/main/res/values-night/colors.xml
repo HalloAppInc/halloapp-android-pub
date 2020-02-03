@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="light_status_bar">false</bool>
+    <bool name="light_system_bars">false</bool>
     <color name="color_primary_dark">#303030</color>
     <color name="color_action_bar">#303030</color>
     <color name="window_background">#303030</color>

@@ -55,6 +55,8 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
             if (drawDelegateView != null) {
                 if (getScale() > 1) {
                     drawDelegateView.setDelegateView(this);
+                    final float dim = Math.min(.3f, getScale() - 1);
+                    drawDelegateView.setDecoration(this, dim, dim >= .3f);
                 } else {
                     drawDelegateView.resetDelegateView(this);
                 }
@@ -100,7 +102,7 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         final int width = getMeasuredWidth();
         final Drawable drawable = getDrawable();
-        if (drawable != null) {
+        if (drawable != null && drawable.getIntrinsicWidth() > 0) {
             final int height = (int) (width * Math.min(maxAspectRatio, 1f * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth()));
             setMeasuredDimension(width, height);
         }
