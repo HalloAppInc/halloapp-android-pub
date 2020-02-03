@@ -40,7 +40,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);
             } catch (IOException e) {
-                Log.e("upload", e);
+                Log.e("DownloadPostTask", e);
                 return null;
             }
         }

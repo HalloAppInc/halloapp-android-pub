@@ -37,7 +37,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
             try {
                 urls = connection.requestMediaUpload().get();
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("upload", e);
+                Log.e("UploadPostTask", e);
                 return null;
             }
 
@@ -48,7 +48,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);
             } catch (IOException e) {
-                Log.e("upload", e);
+                Log.e("UploadPostTask", e);
                 return null;
             }
         }
