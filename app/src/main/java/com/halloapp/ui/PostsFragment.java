@@ -113,6 +113,7 @@ public class PostsFragment extends Fragment {
         final View commentButton;
         final View messageButton;
         final View commentsIndicator;
+        final View postActionsSeparator;
 
         PostViewHolder(final @NonNull View v) {
             super(v);
@@ -126,6 +127,8 @@ public class PostsFragment extends Fragment {
             commentButton = v.findViewById(R.id.comment);
             messageButton = v.findViewById(R.id.message);
             commentsIndicator = v.findViewById(R.id.comments_indicator);
+            postActionsSeparator = v.findViewById(R.id.post_actions_separator);
+
         }
 
         void bindTo(final @NonNull Post post) {
@@ -148,6 +151,8 @@ public class PostsFragment extends Fragment {
             if (post.media.isEmpty()) {
                 mediaPagerView.setVisibility(View.GONE);
                 mediaPagerIndicator.setVisibility(View.GONE);
+                textView.setPadding(textView.getPaddingLeft(), getResources().getDimensionPixelSize(R.dimen.text_post_padding_top),
+                        textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.text_post_padding_bottom));
             } else {
                 mediaPagerView.setVisibility(View.VISIBLE);
                 final PostMediaPagerAdapter mediaPagerAdapter = new PostMediaPagerAdapter(post.media);
@@ -180,13 +185,17 @@ public class PostsFragment extends Fragment {
                 });
                 final Integer selPos = mediaPagerPositionMap.get(post.rowId);
                 mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
+                textView.setPadding(textView.getPaddingLeft(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_top),
+                        textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_bottom));
             }
 
             textView.setText(post.text);
             if (TextUtils.isEmpty(post.text)) {
                 textView.setVisibility(View.GONE);
+                postActionsSeparator.setVisibility(View.GONE);
             } else {
                 textView.setVisibility(View.VISIBLE);
+                postActionsSeparator.setVisibility(View.VISIBLE);
             }
 
             if (post.unseenCommentCount > 0) {
@@ -203,6 +212,7 @@ public class PostsFragment extends Fragment {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);
                 intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
                 intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+                intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
                 startActivity(intent);
 
             });
