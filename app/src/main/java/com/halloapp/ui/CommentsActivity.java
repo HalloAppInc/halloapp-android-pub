@@ -44,7 +44,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.PostEditText;
-import com.halloapp.widget.ActionBarShadowProvider;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,7 +94,7 @@ public class CommentsActivity extends AppCompatActivity {
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         commentsView.setLayoutManager(layoutManager);
 
-        commentsView.addOnScrollListener(new ActionBarShadowProvider(this));
+        commentsView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
         final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);

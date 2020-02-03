@@ -35,7 +35,7 @@ import com.halloapp.ui.CommentsHistoryPopup;
 import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Log;
-import com.halloapp.widget.ActionBarShadowProvider;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ public class HomeFragment extends PostsFragment {
             }
         });
 
-        postsView.addOnScrollListener(new ActionBarShadowProvider((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -224,9 +224,6 @@ public class HomeFragment extends PostsFragment {
     private void getImageFromGallery() {
         final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        if (Build.VERSION.SDK_INT >= 26) {
-            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toURI()); // TODO (ds): doesn't seem to work properly, need to investigate
-        }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);

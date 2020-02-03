@@ -20,7 +20,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Log;
-import com.halloapp.widget.ActionBarShadowProvider;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 public class ProfileFragment extends PostsFragment {
 
@@ -50,7 +50,7 @@ public class ProfileFragment extends PostsFragment {
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
 
-        postsView.addOnScrollListener(new ActionBarShadowProvider((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 

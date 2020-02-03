@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 
-public class ActionBarShadowProvider extends RecyclerView.OnScrollListener {
+public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListener {
 
     private final float scrolledElevation;
     private final ActionBar actionBar;
 
-    public ActionBarShadowProvider(@NonNull AppCompatActivity activity) {
+    public ActionBarShadowOnScrollListener(@NonNull AppCompatActivity activity) {
         scrolledElevation = activity.getResources().getDimension(R.dimen.action_bar_elevation);
         actionBar = activity.getSupportActionBar();
     }

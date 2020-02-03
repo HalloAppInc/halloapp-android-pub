@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.widget.ActionBarShadowProvider;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class MessagesFragment extends Fragment {
             emptyView.setVisibility(contacts.size() == 0 ? View.VISIBLE : View.GONE);
         });
 
-        chatsView.addOnScrollListener(new ActionBarShadowProvider((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
+        chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
         return root;
     }
