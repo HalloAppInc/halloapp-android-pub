@@ -34,6 +34,8 @@ import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
+import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.PostImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ public class PostsFragment extends Fragment {
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactNameLoader contactNameLoader;
+
+    private DrawDelegateView drawDelegateView;
 
     private LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
@@ -66,6 +70,7 @@ public class PostsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
         contactNameLoader = new ContactNameLoader(Preconditions.checkNotNull(getContext()));
+        drawDelegateView = Preconditions.checkNotNull(getActivity()).findViewById(R.id.draw_delegate);
     }
 
     @CallSuper
@@ -80,7 +85,7 @@ public class PostsFragment extends Fragment {
     private void scheduleTimestampRefresh(long postTimestamp) {
         long refreshTime = TimeUtils.getRefreshTime(postTimestamp);
         if (refreshTime < refreshTimestampsTime) {
-            refreshTimestampsTime = refreshTime;
+            refreshTimestampsTime = System.currentTimeMillis() + refreshTime;
             Log.v("HomeFragment: will refresh timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(refreshTimestampsTime)));
             mainHandler.removeCallbacks(refreshTimestampsRunnable);
             mainHandler.postDelayed(refreshTimestampsRunnable, refreshTimestampsTime - System.currentTimeMillis());
@@ -114,6 +119,9 @@ public class PostsFragment extends Fragment {
         final View messageButton;
         final View commentsIndicator;
         final View postActionsSeparator;
+        final PostMediaPagerAdapter mediaPagerAdapter;
+
+        Post post;
 
         PostViewHolder(final @NonNull View v) {
             super(v);
@@ -129,9 +137,36 @@ public class PostsFragment extends Fragment {
             commentsIndicator = v.findViewById(R.id.comments_indicator);
             postActionsSeparator = v.findViewById(R.id.post_actions_separator);
 
+            mediaPagerAdapter = new PostMediaPagerAdapter();
+            mediaPagerView.setAdapter(mediaPagerAdapter);
+            mediaPagerView.setPageMargin(Preconditions.checkNotNull(getContext()).getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
+
+            mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    if (post == null) {
+                        return;
+                    }
+                    if (position == 0) {
+                        mediaPagerPositionMap.remove(post.rowId);
+                    } else {
+                        mediaPagerPositionMap.put(post.rowId, position);
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
         }
 
         void bindTo(final @NonNull Post post) {
+
+            this.post = post;
 
             avatarView.setImageResource(R.drawable.avatar_person); // testing-only
             if (post.isOutgoing()) {
@@ -155,34 +190,13 @@ public class PostsFragment extends Fragment {
                         textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.text_post_padding_bottom));
             } else {
                 mediaPagerView.setVisibility(View.VISIBLE);
-                final PostMediaPagerAdapter mediaPagerAdapter = new PostMediaPagerAdapter(post.media);
-                mediaPagerView.setAdapter(mediaPagerAdapter);
-                mediaPagerView.setPageMargin(Preconditions.checkNotNull(getContext()).getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
-                mediaPagerView.clearOnPageChangeListeners();
+                mediaPagerAdapter.setMedia(post.media);
                 if (post.media.size() > 1) {
                     mediaPagerIndicator.setVisibility(View.VISIBLE);
                     mediaPagerIndicator.setViewPager(mediaPagerView);
                 } else {
                     mediaPagerIndicator.setVisibility(View.GONE);
                 }
-                mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-                        if (position == 0) {
-                            mediaPagerPositionMap.remove(post.rowId);
-                        } else {
-                            mediaPagerPositionMap.put(post.rowId, position);
-                        }
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-                    }
-                });
                 final Integer selPos = mediaPagerPositionMap.get(post.rowId);
                 mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
                 textView.setPadding(textView.getPaddingLeft(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_top),
@@ -224,17 +238,29 @@ public class PostsFragment extends Fragment {
 
         private class PostMediaPagerAdapter extends PagerAdapter {
 
-            final List<Media> media;
+            List<Media> media;
 
-            PostMediaPagerAdapter(@NonNull List<Media> media) {
+            PostMediaPagerAdapter() {
+            }
+
+            void setMedia(@NonNull List<Media> media) {
                 this.media = media;
+                notifyDataSetChanged();
+            }
+
+            public int getItemPosition(@NonNull Object object) {
+                @SuppressWarnings("SuspiciousMethodCalls")
+                int index = media.indexOf(((View)object).getTag());
+                return index >= 0 ? index : POSITION_NONE;
             }
 
             @Override
             public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
                 final View view = getLayoutInflater().inflate(R.layout.media_pager_item, container, false);
-                final ImageView imageView = view.findViewById(R.id.image);
+                final PostImageView imageView = view.findViewById(R.id.image);
+                imageView.setDrawDelegate(drawDelegateView);
                 final Media mediaItem = media.get(position);
+                view.setTag(mediaItem);
                 if (mediaItem.height > mediaItem.width) {
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } else {
@@ -250,13 +276,14 @@ public class PostsFragment extends Fragment {
                 container.removeView((View) view);
             }
 
+            @Override
             public void finishUpdate(@NonNull ViewGroup container) {
                 container.requestLayout();
             }
 
             @Override
             public int getCount() {
-                return media.size();
+                return media == null ? 0 : media.size();
             }
 
             @Override

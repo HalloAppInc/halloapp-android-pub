@@ -25,6 +25,8 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
     private float cornerRadius;
     private Path cornerPath = new Path();
 
+    private DrawDelegateView drawDelegateView;
+
     public PostImageView(Context context) {
         super(context);
         init(null, 0);
@@ -48,8 +50,31 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
         maxAspectRatio = a.getDimension(R.styleable.PostImageView_pivMaxAspectRatio, maxAspectRatio);
 
         a.recycle();
+
+        setOnScaleChangeListener((scaleFactor, focusX, focusY) -> {
+            if (drawDelegateView != null) {
+                if (getScale() > 1) {
+                    drawDelegateView.setDelegateView(this);
+                } else {
+                    drawDelegateView.resetDelegateView(this);
+                }
+            }
+        });
     }
 
+    public void setDrawDelegate(DrawDelegateView drawDelegateView) {
+        this.drawDelegateView = drawDelegateView;
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (drawDelegateView != null) {
+            drawDelegateView.invalidateDelegateView(this);
+        }
+    }
+
+    @Override
     public void setImageBitmap(Bitmap bitmap) {
         if (bitmap == null) {
             super.setImageBitmap(null);
@@ -63,12 +88,20 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (drawDelegateView != null) {
+            drawDelegateView.resetDelegateView(this);
+        }
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = getMeasuredWidth();
-        Drawable drawable = getDrawable();
+        final int width = getMeasuredWidth();
+        final Drawable drawable = getDrawable();
         if (drawable != null) {
-            int height = (int) (width * Math.min(maxAspectRatio, 1f * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth()));
+            final int height = (int) (width * Math.min(maxAspectRatio, 1f * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth()));
             setMeasuredDimension(width, height);
         }
     }
@@ -76,13 +109,15 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (cornerRadius != 0 && cornerColor != 0) {
-            // TODO (ds): think about doing it with Outline, like CardView does, there seems to be some issues with ViewPager during scroll
-            cornerPath.reset();
-            cornerPath.addRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius, Path.Direction.CW);
-            cornerPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-            canvas.clipPath(cornerPath);
-            canvas.drawColor(cornerColor);
+        if (getScale() <= 1) {
+            if (cornerRadius != 0 && cornerColor != 0) {
+                // TODO (ds): think about doing it with Outline, like CardView does, there seems to be some issues with ViewPager during scroll
+                cornerPath.reset();
+                cornerPath.addRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius, Path.Direction.CW);
+                cornerPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+                canvas.clipPath(cornerPath);
+                canvas.drawColor(cornerColor);
+            }
         }
     }
 

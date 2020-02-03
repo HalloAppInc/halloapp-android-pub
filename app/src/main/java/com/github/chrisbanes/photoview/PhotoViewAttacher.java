@@ -100,9 +100,6 @@ public class PhotoViewAttacher implements View.OnTouchListener,
     private OnGestureListener onGestureListener = new OnGestureListener() {
         @Override
         public void onDrag(float dx, float dy) {
-            if (mScaleDragDetector.isScaling()) {
-                return; // Do not drag if we are already scaling
-            }
             if (mOnViewDragListener != null) {
                 mOnViewDragListener.onDrag(dx, dy);
             }
@@ -147,11 +144,11 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         @Override
         public void onScale(float scaleFactor, float focusX, float focusY) {
             if (getScale() < mMaxScale || scaleFactor < 1f) {
+                mSuppMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY);
+                checkAndDisplayMatrix();
                 if (mScaleChangeListener != null) {
                     mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
                 }
-                mSuppMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY);
-                checkAndDisplayMatrix();
             }
         }
     };

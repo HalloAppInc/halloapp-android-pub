@@ -18,6 +18,7 @@ import com.halloapp.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -63,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         setContentView(R.layout.activity_main);
+
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         final BottomNavigationView navView = findViewById(R.id.nav_view);
         final AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
