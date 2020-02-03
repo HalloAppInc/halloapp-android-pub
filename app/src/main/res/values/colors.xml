@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <bool name="light_status_bar">true</bool>
     <color name="color_primary">#75A5E7</color>
     <color name="color_primary_dark">#757575</color>
     <color name="color_accent">#75A5E7</color>
