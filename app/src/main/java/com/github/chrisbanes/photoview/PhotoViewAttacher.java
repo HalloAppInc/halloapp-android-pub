@@ -116,7 +116,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
              * the edge, aka 'overscrolling', let the parent take over).
              */
             ViewParent parent = mImageView.getParent();
-            if (mAllowParentInterceptOnEdge && !mScaleDragDetector.isScaling() && !mBlockParentIntercept) {
+            if (mAllowParentInterceptOnEdge && getScale() == 1 && !mBlockParentIntercept) {
                 if (mHorizontalScrollEdge == HORIZONTAL_EDGE_BOTH
                         || (mHorizontalScrollEdge == HORIZONTAL_EDGE_LEFT && dx >= 1f)
                         || (mHorizontalScrollEdge == HORIZONTAL_EDGE_RIGHT && dx <= -1f)
