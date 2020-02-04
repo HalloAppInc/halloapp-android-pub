@@ -100,14 +100,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.i("MainActivity.onNewIntent");
         processIntent(intent);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ContactsDb.getInstance(this).removeObserver(contactsObserver);
         Log.i("MainActivity.onDestroy");
+        ContactsDb.getInstance(this).removeObserver(contactsObserver);
     }
 
     @Override
