@@ -12,12 +12,12 @@ import com.halloapp.util.ViewDataLoader;
 
 import java.util.concurrent.Callable;
 
-public class ContactNameLoader extends ViewDataLoader<TextView, Contact, UserId> {
+public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
     private final LruCache<UserId, Contact> cache = new LruCache<>(512);
     private final ContactsDb contactsDb;
 
-    public ContactNameLoader(@NonNull Context context) {
+    public ContactLoader(@NonNull Context context) {
         contactsDb = ContactsDb.getInstance(context);
     }
 
@@ -42,5 +42,4 @@ public class ContactNameLoader extends ViewDataLoader<TextView, Contact, UserId>
         };
         load(view, loader, displayer, userId, cache);
     }
-
 }

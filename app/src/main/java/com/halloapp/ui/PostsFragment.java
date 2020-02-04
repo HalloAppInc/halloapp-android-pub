@@ -28,7 +28,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.R;
-import com.halloapp.contacts.ContactNameLoader;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
@@ -51,7 +51,7 @@ public class PostsFragment extends Fragment {
     protected final PostsAdapter adapter = new PostsAdapter();
 
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ContactNameLoader contactNameLoader;
+    private ContactLoader contactLoader;
 
     private DrawDelegateView drawDelegateView;
 
@@ -82,7 +82,7 @@ public class PostsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
-        contactNameLoader = new ContactNameLoader(Preconditions.checkNotNull(getContext()));
+        contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
     }
 
@@ -91,7 +91,7 @@ public class PostsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
-        contactNameLoader.destroy();
+        contactLoader.destroy();
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).removeObserver(contactsObserver);
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
@@ -193,7 +193,7 @@ public class PostsFragment extends Fragment {
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
-                contactNameLoader.load(nameView, post.senderUserId);
+                contactLoader.load(nameView, post.senderUserId);
             }
             if (!post.transferred) {
                 progressView.setVisibility(View.VISIBLE);

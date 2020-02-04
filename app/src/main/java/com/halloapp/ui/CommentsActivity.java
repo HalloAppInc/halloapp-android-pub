@@ -33,7 +33,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.contacts.ContactNameLoader;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
@@ -62,7 +62,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ContactNameLoader contactNameLoader;
+    private ContactLoader contactLoader;
 
     private CommentsViewModel viewModel;
 
@@ -160,7 +160,7 @@ public class CommentsActivity extends AppCompatActivity {
         }
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
-        contactNameLoader = new ContactNameLoader(this);
+        contactLoader = new ContactLoader(this);
 
         if (savedInstanceState != null) {
             final String replyUser = savedInstanceState.getString(KEY_REPLY_USER_ID);
@@ -176,7 +176,7 @@ public class CommentsActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("CommentsActivity: onDestroy");
         mediaThumbnailLoader.destroy();
-        contactNameLoader.destroy();
+        contactLoader.destroy();
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
 
@@ -255,7 +255,7 @@ public class CommentsActivity extends AppCompatActivity {
             if (comment.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
-                contactNameLoader.load(nameView, comment.commentSenderUserId);
+                contactLoader.load(nameView, comment.commentSenderUserId);
             }
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - comment.timestamp));
@@ -280,7 +280,7 @@ public class CommentsActivity extends AppCompatActivity {
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
-                contactNameLoader.load(nameView, post.senderUserId);
+                contactLoader.load(nameView, post.senderUserId);
             }
             progressView.setVisibility(post.transferred ? View.GONE : View.VISIBLE);
             timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
