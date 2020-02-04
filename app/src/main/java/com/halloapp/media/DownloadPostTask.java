@@ -28,6 +28,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+        Log.i("DownloadPostTask " + post);
         for (Media media : post.media) {
             if (media.transferred) {
                 continue;
