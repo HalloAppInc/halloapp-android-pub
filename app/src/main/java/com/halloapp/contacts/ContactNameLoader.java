@@ -37,7 +37,7 @@ public class ContactNameLoader extends ViewDataLoader<TextView, Contact, UserId>
 
             @Override
             public void showLoading(@NonNull TextView view) {
-                view.setText("");
+                view.setText(PhoneNumberUtils.formatNumber("+" + userId.rawId(), null));
             }
         };
         load(view, loader, displayer, userId, cache);
