@@ -298,11 +298,14 @@ public class PublishedEntry {
             }
             final String name = Preconditions.checkNotNull(parser.getName());
             if (ELEMENT_URL.equals(name)) {
-                media.add(new Media(
+                final Media mediaItem = new Media(
                         parser.getAttributeValue(null, ATTRIBUTE_TYPE),
                         parser.getAttributeValue(null, ATTRIBUTE_WIDTH),
                         parser.getAttributeValue(null, ATTRIBUTE_HEIGHT),
-                        Xml.readText(parser)));
+                        Xml.readText(parser));
+                if (!TextUtils.isEmpty(mediaItem.url)) {
+                    media.add(mediaItem);
+                }
             } else {
                 Xml.skip(parser);
             }
