@@ -1,6 +1,7 @@
 package com.halloapp.contacts;
 
 import android.telephony.PhoneNumberUtils;
+import android.text.BidiFormatter;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
@@ -32,10 +33,12 @@ public class Contact {
     }
 
     public String getInternationalPhone() {
+        final String internationalPhone;
         if (userId != null) {
-            return PhoneNumberUtils.formatNumber("+" + userId.rawId(), null);
+            internationalPhone = PhoneNumberUtils.formatNumber("+" + userId.rawId(), null);
         } else {
-            return phone;
+            internationalPhone = phone;
         }
+        return BidiFormatter.getInstance().unicodeWrap(internationalPhone, false);
     }
 }
