@@ -69,6 +69,7 @@ public class PostsFragment extends Fragment {
 
         @Override
         public void onContactsChanged() {
+            contactLoader.resetCache();
             mainHandler.post(adapter::notifyDataSetChanged);
         }
 

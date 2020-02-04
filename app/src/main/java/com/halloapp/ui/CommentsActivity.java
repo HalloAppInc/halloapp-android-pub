@@ -34,6 +34,7 @@ import com.halloapp.Debug;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
@@ -78,6 +79,20 @@ public class CommentsActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+
+        @Override
+        public void onContactsChanged() {
+            contactLoader.resetCache();
+            mainHandler.post(adapter::notifyDataSetChanged);
+        }
+
+        @Override
+        public void onContactsReset() {
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +177,8 @@ public class CommentsActivity extends AppCompatActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
 
+        ContactsDb.getInstance(this).addObserver(contactsObserver);
+
         if (savedInstanceState != null) {
             final String replyUser = savedInstanceState.getString(KEY_REPLY_USER_ID);
             final String replyCommentId = savedInstanceState.getString(KEY_REPLY_COMMENT_ID);
@@ -175,6 +192,7 @@ public class CommentsActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("CommentsActivity: onDestroy");
+        ContactsDb.getInstance(this).removeObserver(contactsObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
