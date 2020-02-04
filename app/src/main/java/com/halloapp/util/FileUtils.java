@@ -101,4 +101,18 @@ public class FileUtils {
             }
         }
     }
+
+    public static void deleteRecursive(@NonNull File file) {
+        if (file.isDirectory()) {
+            final File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursive(child);
+                }
+            }
+        }
+        if (!file.delete()) {
+            Log.e("Unable to delete file " + file.getAbsolutePath());
+        }
+    }
 }

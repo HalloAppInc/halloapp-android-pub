@@ -14,8 +14,10 @@ import androidx.annotation.NonNull;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
+import com.halloapp.media.MediaStore;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
+import com.halloapp.util.FileUtils;
 
 public class Debug {
 
@@ -118,6 +120,8 @@ public class Debug {
         @Override
         protected Void doInBackground(Void... voids) {
             PostsDb.getInstance(application).deleteDb();
+            FileUtils.deleteRecursive(MediaStore.getInstance(application).getMediaDir());
+            FileUtils.deleteRecursive(MediaStore.getInstance(application).getTmpDir());
             restart(application);
             return null;
         }
