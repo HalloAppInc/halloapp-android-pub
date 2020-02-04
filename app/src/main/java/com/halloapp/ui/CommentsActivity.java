@@ -250,7 +250,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         void bindTo(final @NonNull Comment comment) {
 
-            avatarView.setImageResource(R.drawable.avatar_person); // testing-only
+            avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
 
             if (comment.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
@@ -275,7 +275,7 @@ public class CommentsActivity extends AppCompatActivity {
             if (post == null) {
                 return;
             }
-            avatarView.setImageResource(R.drawable.avatar_person); // testing-only
+            avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
 
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
