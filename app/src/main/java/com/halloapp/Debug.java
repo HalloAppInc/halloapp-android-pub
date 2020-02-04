@@ -21,6 +21,7 @@ public class Debug {
     private static final String DEBUG_MENU_DELETE_POSTS_DB = "Delete posts DB";
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
+    private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
     public static void showDebugMenu(@NonNull Context context, View anchor) {
@@ -30,6 +31,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_DELETE_POSTS_DB);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
+        menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -55,6 +57,9 @@ public class Debug {
                 case DEBUG_MENU_SYNC_CONTACTS: {
                     ContactsSync.getInstance(context).startContactSync();
                     break;
+                }
+                case DEBUG_MENU_SET_COMMENTS_SEEN: {
+                    PostsDb.getInstance(context).setCommentsSeen(true);
                 }
             }
             return false;

@@ -249,6 +249,25 @@ public class PostsDb {
         });
     }
 
+    public void setCommentsSeen(boolean seen) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setCommentsSeen: seen=" + seen);
+            final ContentValues values = new ContentValues();
+            values.put(CommentsTable.COLUMN_SEEN, seen);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                        CommentsTable.COLUMN_SEEN + "=?",
+                        new String [] {seen ? "0" : "1"},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                notifyCommentsSeen(UserId.ME, "");
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setCommentsSeen: failed");
+                throw ex;
+            }
+        });
+    }
+
     public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
         setCommentsSeen(postSenderUserId, postId, true);
     }
