@@ -1,7 +1,10 @@
 package com.halloapp;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -24,8 +27,8 @@ public class Debug {
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
-    public static void showDebugMenu(@NonNull Context context, View anchor) {
-        PopupMenu menu = new PopupMenu(context, anchor);
+    public static void showDebugMenu(@NonNull Activity activity, View anchor) {
+        PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_RESET_REGISTRATION);
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
         menu.getMenu().add(DEBUG_MENU_DELETE_POSTS_DB);
@@ -33,11 +36,10 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
         menu.setOnMenuItemClickListener(item -> {
-            Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_RESET_REGISTRATION: {
-                    Preferences.getInstance(context).resetRegistration();
-                    restart(context);
+                    new ResetRegistrationTask(activity.getApplication()).execute();
                     break;
                 }
                 case DEBUG_MENU_LOGOUT: {
@@ -45,21 +47,19 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_DELETE_POSTS_DB: {
-                    PostsDb.getInstance(context).deleteDb();
-                    restart(context);
+                    new DeletePostsDbTask(activity.getApplication()).execute();
                     break;
                 }
                 case DEBUG_MENU_DELETE_CONTACTS_DB: {
-                    ContactsDb.getInstance(context).deleteDb();
-                    restart(context);
+                    new DeleteContactsDbTask(activity.getApplication()).execute();
                     break;
                 }
                 case DEBUG_MENU_SYNC_CONTACTS: {
-                    ContactsSync.getInstance(context).startContactSync();
+                    ContactsSync.getInstance(activity).startContactSync();
                     break;
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {
-                    PostsDb.getInstance(context).setCommentsSeen(true);
+                    PostsDb.getInstance(activity).setCommentsSeen(true);
                 }
             }
             return false;
@@ -89,5 +89,53 @@ public class Debug {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
         Runtime.getRuntime().exit(0);
+    }
+
+    static class DeleteContactsDbTask extends AsyncTask<Void, Void, Void> {
+
+        private final Application application;
+
+        DeleteContactsDbTask(@NonNull Application application) {
+            this.application = application;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ContactsDb.getInstance(application).deleteDb();
+            restart(application);
+            return null;
+        }
+    }
+
+    static class DeletePostsDbTask extends AsyncTask<Void, Void, Void> {
+
+        private final Application application;
+
+        DeletePostsDbTask(@NonNull Application application) {
+            this.application = application;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            PostsDb.getInstance(application).deleteDb();
+            restart(application);
+            return null;
+        }
+    }
+
+    static class ResetRegistrationTask extends AsyncTask<Void, Void, Void> {
+
+        private final Application application;
+
+        ResetRegistrationTask(@NonNull Application application) {
+            this.application = application;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Preferences.getInstance(application).resetRegistration();
+            restart(application);
+            return null;
+        }
     }
 }
