@@ -70,7 +70,6 @@ public class PostsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
         contactNameLoader = new ContactNameLoader(Preconditions.checkNotNull(getContext()));
-        drawDelegateView = Preconditions.checkNotNull(getActivity()).findViewById(R.id.draw_delegate);
     }
 
     @CallSuper
@@ -80,6 +79,13 @@ public class PostsFragment extends Fragment {
         mediaThumbnailLoader.destroy();
         contactNameLoader.destroy();
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
+    }
+
+    @CallSuper
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        drawDelegateView = Preconditions.checkNotNull(getActivity()).findViewById(R.id.draw_delegate);
     }
 
     private void scheduleTimestampRefresh(long postTimestamp) {
