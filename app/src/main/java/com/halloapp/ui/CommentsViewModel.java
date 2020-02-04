@@ -146,7 +146,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         protected void onPostExecute(final Contact contact) {
-            this.contact.postValue(contact == null ? new Contact(0, 0, null, null, userId, true) : contact);
+            this.contact.postValue(contact == null ? new Contact(userId) : contact);
         }
     }
 

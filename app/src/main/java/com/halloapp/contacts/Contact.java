@@ -4,6 +4,7 @@ import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Contact {
@@ -22,6 +23,10 @@ public class Contact {
         this.phone = phone;
         this.userId = userId;
         this.member = member;
+    }
+
+    public Contact(@NonNull UserId userId) {
+        this(0, 0, null, null, userId, true);
     }
 
     public @Nullable String getRawUserId() {

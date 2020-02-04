@@ -181,7 +181,7 @@ public class HomeViewModel extends AndroidViewModel {
                 if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
                     final Contact contact = ContactsDb.getInstance(application).getContact(comment.commentSenderUserId);
                     if (contact == null) {
-                        contacts.put(comment.commentSenderUserId, new Contact(0, 0, null, null, comment.commentSenderUserId, true));
+                        contacts.put(comment.commentSenderUserId, new Contact(comment.commentSenderUserId));
                     } else {
                         contacts.put(comment.commentSenderUserId, contact);
                     }
@@ -189,7 +189,7 @@ public class HomeViewModel extends AndroidViewModel {
                 if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
                     final Contact contact = ContactsDb.getInstance(application).getContact(comment.postSenderUserId);
                     if (contact == null) {
-                        contacts.put(comment.postSenderUserId, new Contact(0, 0, null, null, comment.postSenderUserId, true));
+                        contacts.put(comment.postSenderUserId, new Contact(comment.postSenderUserId));
                     } else {
                         contacts.put(comment.postSenderUserId, contact);
                     }

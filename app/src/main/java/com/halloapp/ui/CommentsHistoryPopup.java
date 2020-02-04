@@ -181,7 +181,7 @@ public class CommentsHistoryPopup {
                 if (contact != null) {
                     contacts.put(userId, contact);
                 } else {
-                    contacts.put(userId, new Contact(0, 0, null, null, userId, true));
+                    contacts.put(userId, new Contact(userId));
                 }
             }
             return contacts;
