@@ -35,7 +35,7 @@ public class Contact {
     public String getInternationalPhone() {
         final String internationalPhone;
         if (userId != null) {
-            internationalPhone = PhoneNumberUtils.formatNumber("+" + userId.rawId(), null);
+            internationalPhone = userId.formatPhoneNumber();
         } else {
             internationalPhone = phone;
         }

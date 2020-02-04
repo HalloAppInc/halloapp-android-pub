@@ -31,13 +31,13 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
                 if (contact != null) {
                     view.setText(contact.getDisplayName());
                 } else {
-                    view.setText(PhoneNumberUtils.formatNumber("+" + userId.rawId(), null));
+                    view.setText(userId.formatPhoneNumber());
                 }
             }
 
             @Override
             public void showLoading(@NonNull TextView view) {
-                view.setText(PhoneNumberUtils.formatNumber("+" + userId.rawId(), null));
+                view.setText(userId.formatPhoneNumber());
             }
         };
         load(view, loader, displayer, userId, cache);

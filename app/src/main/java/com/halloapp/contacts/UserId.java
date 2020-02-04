@@ -1,5 +1,7 @@
 package com.halloapp.contacts;
 
+import android.telephony.PhoneNumberUtils;
+
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
@@ -35,6 +37,9 @@ public class UserId {
         return "".equals(id);
     }
 
+    public String formatPhoneNumber() {
+        return PhoneNumberUtils.formatNumber("+" + id, null);
+    }
 
     @Override
     public @NonNull String toString() {
