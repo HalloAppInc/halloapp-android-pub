@@ -201,16 +201,6 @@ public class CommentsHistoryPopup {
                     }
                 }
 
-                List<String> tmp = new ArrayList<>();
-                for (int i = 1; i <= 10; i++) {
-                    tmp.add("Name " + i);
-                    Log.i("xxx" + ListFormatter.format(infoView.getContext(),
-                            R.string.commented_on_someones_post_1,
-                            R.string.commented_on_someones_post_2,
-                            R.string.commented_on_someones_post_3,
-                            R.plurals.commented_on_someones_post_4, tmp, "ContactName"));
-                }
-
                 itemView.setOnClickListener(v -> {
                     if (clickListener != null) {
                         clickListener.onItemClicked(commentsGroup);
