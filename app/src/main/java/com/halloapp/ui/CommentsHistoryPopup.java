@@ -1,6 +1,8 @@
 package com.halloapp.ui;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,22 +21,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.util.ListFormatter;
-import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
+
 public class CommentsHistoryPopup {
 
+    private final Context context;
     private final PopupWindow popupWindow;
     private final View anchorView;
     private final CommentsAdapter adapter = new CommentsAdapter();
@@ -45,12 +52,27 @@ public class CommentsHistoryPopup {
     private OnItemClickListener clickListener;
     private int maxHeight;
 
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+
+        @Override
+        public void onContactsChanged() {
+            mainHandler.post(() -> handleContactsChanged());
+        }
+
+        @Override
+        public void onContactsReset() {
+        }
+    };
+
     public interface OnItemClickListener {
         void onItemClicked(@NonNull HomeViewModel.CommentsGroup commentsGroup);
     }
 
     public CommentsHistoryPopup(Context context, PostThumbnailLoader postThumbnailLoader, View anchorView) {
 
+        this.context = context;
         this.anchorView = anchorView;
         this.postThumbnailLoader = postThumbnailLoader;
 
@@ -79,6 +101,12 @@ public class CommentsHistoryPopup {
         listView.setAdapter(adapter);
 
         popupWindow.setContentView(contentView);
+
+        ContactsDb.getInstance(context).addObserver(contactsObserver);
+    }
+
+    public void destroy() {
+        ContactsDb.getInstance(context).removeObserver(contactsObserver);
     }
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
@@ -86,13 +114,15 @@ public class CommentsHistoryPopup {
     }
 
     public void setCommentHistory(@Nullable HomeViewModel.CommentsHistory commentsHistory) {
-        adapter.setCommentsHistory(commentsHistory);
         if (commentsHistory == null || commentsHistory.commentGroups.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
+            adapter.reset();
         } else {
             emptyView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
+            adapter.setComments(commentsHistory.commentGroups);
+            adapter.setContacts(commentsHistory.contacts);
         }
     }
 
@@ -117,15 +147,81 @@ public class CommentsHistoryPopup {
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.3f;
         wm.updateViewLayout(rootView, layoutParams);
+
+        if (adapter.contactsInvalidated) {
+            new RefreshContactsTask(ContactsDb.getInstance(context), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+    }
+
+    private void handleContactsChanged() {
+        if (isShowing()) {
+            new RefreshContactsTask(ContactsDb.getInstance(context), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            adapter.invalidateContacts();
+        }
+    }
+
+    static class RefreshContactsTask extends AsyncTask<Void, Void, Map<UserId, Contact>> {
+
+        final ContactsDb contactsDb;
+        final Set<UserId> userIds;
+        final WeakReference<CommentsAdapter> adapterRef;
+
+        RefreshContactsTask(ContactsDb contactsDb, CommentsAdapter adapter) {
+            this.contactsDb = contactsDb;
+            this.userIds = new HashSet<>(adapter.contacts.keySet());
+            this.adapterRef = new WeakReference<>(adapter);
+        }
+
+        @Override
+        protected Map<UserId, Contact> doInBackground(Void... voids) {
+            final Map<UserId, Contact> contacts = new HashMap<>();
+            for (UserId userId : userIds) {
+                final Contact contact = contactsDb.getContact(userId);
+                if (contact != null) {
+                    contacts.put(userId, contact);
+                } else {
+                    contacts.put(userId, new Contact(0, 0, null, null, userId, true));
+                }
+            }
+            return contacts;
+        }
+
+        @Override
+        protected void onPostExecute(final Map<UserId, Contact> contacts) {
+            final CommentsAdapter adapter = adapterRef.get();
+            if (adapter != null) {
+                adapter.setContacts(contacts);
+            }
+        }
     }
 
     private class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
 
-        private HomeViewModel.CommentsHistory commentsHistory;
+        private List<HomeViewModel.CommentsGroup> commentGroups;
+        private Map<UserId, Contact> contacts;
+        private boolean contactsInvalidated;
 
-        void setCommentsHistory(@Nullable HomeViewModel.CommentsHistory commentHistoryData) {
-            this.commentsHistory = commentHistoryData;
+        void setComments(@NonNull List<HomeViewModel.CommentsGroup> commentGroups) {
+            this.commentGroups = commentGroups;
             notifyDataSetChanged();
+        }
+
+        void setContacts(@NonNull Map<UserId, Contact> contacts) {
+            this.contacts = contacts;
+            this.contactsInvalidated = false;
+            notifyDataSetChanged();
+        }
+
+        void reset() {
+            this.commentGroups = null;
+            this.contacts = null;
+            this.contactsInvalidated = false;
+            notifyDataSetChanged();
+        }
+
+        void invalidateContacts() {
+            this.contactsInvalidated = true;
         }
 
         @Override
@@ -135,12 +231,12 @@ public class CommentsHistoryPopup {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bind(commentsHistory.commentGroups.get(position), commentsHistory.contacts);
+            holder.bind(commentGroups.get(position), contacts);
         }
 
         @Override
         public int getItemCount() {
-            return commentsHistory == null ? 0 : commentsHistory.commentGroups.size();
+            return commentGroups == null ? 0 : commentGroups.size();
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder {

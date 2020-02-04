@@ -29,6 +29,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.R;
 import com.halloapp.contacts.ContactNameLoader;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
@@ -64,12 +65,25 @@ public class PostsFragment extends Fragment {
     };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+
+        @Override
+        public void onContactsChanged() {
+            mainHandler.post(adapter::notifyDataSetChanged);
+        }
+
+        @Override
+        public void onContactsReset() {
+        }
+    };
+
     @CallSuper
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
         contactNameLoader = new ContactNameLoader(Preconditions.checkNotNull(getContext()));
+        ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
     }
 
     @CallSuper
@@ -78,6 +92,7 @@ public class PostsFragment extends Fragment {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
         contactNameLoader.destroy();
+        ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).removeObserver(contactsObserver);
         mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
 

@@ -62,6 +62,7 @@ public class HomeFragment extends PostsFragment {
         super.onDestroy();
         Log.d("HomeFragment: onDestroy");
         postThumbnailLoader.destroy();
+        commentHistoryPopup.destroy();
     }
 
     @Override
