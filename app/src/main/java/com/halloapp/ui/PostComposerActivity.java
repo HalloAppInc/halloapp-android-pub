@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Size;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -64,15 +66,18 @@ public class PostComposerActivity extends AppCompatActivity {
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
             final String postText = Preconditions.checkNotNull(editText.getText()).toString();
-            if (postText.trim().isEmpty() && viewModel.getFiles() == null) {
+            if (postText.trim().isEmpty() && viewModel.getMedia() == null) {
                 Log.w("PostComposerActivity: cannot post empty");
                 return;
             }
-            viewModel.preparePost(postText.trim(), viewModel.getFiles());
+            viewModel.preparePost(postText.trim(), viewModel.getMedia());
         });
+
+        final View progressView = findViewById(R.id.progress);
 
         final ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (uris != null) {
+            progressView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
                 CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
@@ -80,6 +85,7 @@ public class PostComposerActivity extends AppCompatActivity {
             sendButton.setEnabled(false);
             editText.setHint(R.string.type_a_caption_hint);
         } else {
+            progressView.setVisibility(View.GONE);
             editText.requestFocus();
             editText.setHint(R.string.type_a_post_hint);
             editText.setPreImeListener((keyCode, event) -> {
@@ -99,12 +105,18 @@ public class PostComposerActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this,
                 new PostComposerViewModelFactory(getApplication(), uris)).get(PostComposerViewModel.class);
-        viewModel.files.observe(this, files -> {
-            viewPager.setAdapter(new PostMediaPagerAdapter(files));
-            viewPager.setVisibility(View.VISIBLE);
-            if (files.size() > 1) {
+        viewModel.media.observe(this, media -> {
+            progressView.setVisibility(View.GONE);
+            if (!media.isEmpty()) {
+                viewPager.setAdapter(new PostMediaPagerAdapter(media));
+                viewPager.setVisibility(View.VISIBLE);
+            }
+            if (media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);
                 mediaPagerIndicator.setViewPager(viewPager);
+            }
+            if (uris != null && media.size() != uris.size()) {
+                CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
             }
             sendButton.setEnabled(true);
         });
@@ -121,9 +133,9 @@ public class PostComposerActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("PostComposerActivity: onDestroy");
         mediaThumbnailLoader.destroy();
-        final List<File> tmpFiles = viewModel.getFiles();
-        if (tmpFiles != null) {
-            new CleanupTmpFilesTask(tmpFiles).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        final List<Media> tmpMedia = viewModel.getMedia();
+        if (tmpMedia != null) {
+            new CleanupTmpFilesTask(tmpMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -137,10 +149,9 @@ public class PostComposerActivity extends AppCompatActivity {
 
         final List<Media> media = new ArrayList<>();
 
-        PostMediaPagerAdapter(@NonNull List<File> files) {
-            for (File file : files) {
-                media.add(Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file));
-            }
+        PostMediaPagerAdapter(@NonNull List<Media> media) {
+            this.media.clear();
+            this.media.addAll(media);
         }
 
         @Override
@@ -168,48 +179,66 @@ public class PostComposerActivity extends AppCompatActivity {
         }
     }
 
-    static class LoadPostUrisTask extends AsyncTask<Void, Void, List<File>> {
+    static class LoadPostUrisTask extends AsyncTask<Void, Void, List<Media>> {
 
         private final Collection<Uri> uris;
         private final Application application;
-        private final MutableLiveData<List<File>> files;
+        private final MutableLiveData<List<Media>> media;
 
-        LoadPostUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<File>> files) {
+        LoadPostUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<Media>> media) {
             this.application = application;
             this.uris = uris;
-            this.files = files;
+            this.media = media;
         }
 
         @Override
-        protected List<File> doInBackground(Void... voids) {
-            final List<File> files = new ArrayList<>();
+        protected List<Media> doInBackground(Void... voids) {
+            final List<Media> media = new ArrayList<>();
             for (Uri uri : uris) {
                 final File file = MediaStore.getInstance(application).getTmpFile(RandomId.create() + ".jpg");
                 FileUtils.uriToFile(application, uri, file);
-                files.add(file);
+                final Size size = MediaUtils.getDimensions(file);
+                if (size.getHeight() > 0 && size.getWidth() > 0) {
+                    int orientation = ExifInterface.ORIENTATION_UNDEFINED;
+                    try {
+                        orientation = MediaUtils.getExifOrientation(file);
+                    } catch (IOException ignore) {
+                    }
+                    final Media mediaItem = Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file);
+                    if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                        mediaItem.width = size.getHeight();
+                        mediaItem.height = size.getWidth();
+                    } else {
+                        mediaItem.width = size.getWidth();
+                        mediaItem.height = size.getHeight();
+                    }
+                    media.add(mediaItem);
+                } else {
+                    Log.e("PostComposerActivity: failed to load " + uri);
+                }
             }
-            return files;
+            return media;
         }
 
         @Override
-        protected void onPostExecute(List<File> files) {
-            this.files.postValue(files);
+        protected void onPostExecute(List<Media> media) {
+            this.media.postValue(media);
         }
     }
 
     static class CleanupTmpFilesTask extends AsyncTask<Void, Void, Void> {
 
-        private final List<File> files;
+        private final List<Media> media;
 
-        CleanupTmpFilesTask(@NonNull List<File> files) {
-            this.files = files;
+        CleanupTmpFilesTask(@NonNull List<Media> media) {
+            this.media = media;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            for (File file : files) {
-                if (!file.delete()) {
-                    Log.e("failed to delete temporary file " + file.getAbsolutePath());
+            for (Media mediaItem : media) {
+                if (!mediaItem.file.delete()) {
+                    Log.e("failed to delete temporary file " + mediaItem.file.getAbsolutePath());
                 }
             }
             return null;
@@ -219,14 +248,14 @@ public class PostComposerActivity extends AppCompatActivity {
     static class PreparePostTask extends AsyncTask<Void, Void, Post> {
 
         private final String text;
-        private final List<File> files;
+        private final List<Media> media;
         private final Application application;
         private final MutableLiveData<Post> post;
 
-        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<File> files, @NonNull MutableLiveData<Post> post) {
+        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @NonNull MutableLiveData<Post> post) {
             this.application = application;
             this.text = text;
-            this.files = files;
+            this.media = media;
             this.post = post;
         }
 
@@ -240,12 +269,12 @@ public class PostComposerActivity extends AppCompatActivity {
                     System.currentTimeMillis(),
                     false,
                     text);
-            if (files != null) {
-                for (File file : files) {
+            if (media != null) {
+                for (Media media : media) {
                     try {
                         final File postFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".jpg");
-                        MediaUtils.transcode(file, postFile, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
-                        post.media.add(Media.createFromFile(Media.MEDIA_TYPE_IMAGE, postFile));
+                        MediaUtils.transcode(media.file, postFile, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
+                        post.media.add(Media.createFromFile(media.type, postFile));
                     } catch (IOException e) {
                         Log.e("failed to transcode image", e);
                         return null;
@@ -284,7 +313,7 @@ public class PostComposerActivity extends AppCompatActivity {
 
     public static class PostComposerViewModel extends AndroidViewModel {
 
-        final MutableLiveData<List<File>> files = new MutableLiveData<>();
+        final MutableLiveData<List<Media>> media = new MutableLiveData<>();
         final MutableLiveData<Post> post = new MutableLiveData<>();
 
         PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
@@ -294,16 +323,16 @@ public class PostComposerActivity extends AppCompatActivity {
             }
         }
 
-        List<File> getFiles() {
-            return files.getValue();
+        List<Media> getMedia() {
+            return media.getValue();
         }
 
         private void loadUris(@NonNull Collection<Uri> uris) {
-            new LoadPostUrisTask(getApplication(), uris, files).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new LoadPostUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        void preparePost(@Nullable String text, @Nullable List<File> files) {
-            new PreparePostTask(getApplication(), text, files, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        void preparePost(@Nullable String text, @Nullable List<Media> media) {
+            new PreparePostTask(getApplication(), text, media, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

@@ -75,4 +75,5 @@
     <string name="list_of_many_middle">, %s</string>
     <string name="list_of_many_end">, and %s</string>
     <string name="no_activity">No activity</string>
+    <string name="failed_to_load_media">Failed to load media</string>
 </resources>
