@@ -186,16 +186,14 @@ public class ContactsDb {
 
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
-                if (userIdStr == null || !userIdStr.equals(Preferences.getInstance(context).getUser())) {
-                    final Contact contact = new Contact(
-                            cursor.getLong(0),
-                            cursor.getLong(1),
-                            cursor.getString(2),
-                            cursor.getString(3),
-                            userIdStr == null ? null : new UserId(userIdStr),
-                            cursor.getInt(5) == 1);
-                    contacts.add(contact);
-                }
+                final Contact contact = new Contact(
+                        cursor.getLong(0),
+                        cursor.getLong(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        userIdStr == null ? null : new UserId(userIdStr),
+                        cursor.getInt(5) == 1);
+                contacts.add(contact);
             }
         }
         Log.i("ContactsDb.getAllContacts: " + contacts.size());

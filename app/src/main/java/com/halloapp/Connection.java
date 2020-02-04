@@ -259,7 +259,9 @@ public class Connection {
             try {
                 final Collection<Jid> jids = new ArrayList<>(userIds.size());
                 for (UserId userId : userIds) {
-                    jids.add(userIdToJid(userId));
+                    if (!isMe(userId.rawId())) {
+                        jids.add(userIdToJid(userId));
+                    }
                 }
                 syncAffiliations(jids, getMyContactsNodeId());
                 syncAffiliations(jids, getMyFeedNodeId());
