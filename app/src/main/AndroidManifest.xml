@@ -62,6 +62,10 @@
             android:name=".ui.CommentsActivity"
             android:label="@string/comments"/>
 
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/settings"/>
+
         <receiver
             android:name=".registration.SmsVerificationReceiver"
             android:exported="true">

@@ -14,6 +14,8 @@ public class Preferences {
 
     private static Preferences instance;
 
+    public static final String PREFS_NAME = "prefs";
+
     private static final String PREF_KEY_USER_ID = "user_id";
     private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
@@ -34,7 +36,7 @@ public class Preferences {
     private Preferences(Context context) {
         final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
         try {
-            preferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }

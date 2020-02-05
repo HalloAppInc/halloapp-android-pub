@@ -1,8 +1,12 @@
 package com.halloapp.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.SettingsActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
@@ -37,6 +42,8 @@ public class ProfileFragment extends PostsFragment {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
 
         final View root = inflater.inflate(R.layout.fragment_profile, container, false);
         final RecyclerView postsView = root.findViewById(R.id.posts);
@@ -63,4 +70,25 @@ public class ProfileFragment extends PostsFragment {
 
         return root;
     }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.profile_menu, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (item.getItemId()) {
+            case R.id.settings: {
+                startActivity(new Intent(getContext(), SettingsActivity.class));
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
 }
