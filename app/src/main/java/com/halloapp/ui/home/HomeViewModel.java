@@ -126,15 +126,15 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     private void loadCommentHistory() {
-        new LoadCommentHistoryData(getApplication(), commentsHistory).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadCommentHistoryTask(getApplication(), commentsHistory).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    static class LoadCommentHistoryData extends AsyncTask<Void, Void, CommentsHistory> {
+    static class LoadCommentHistoryTask extends AsyncTask<Void, Void, CommentsHistory> {
 
         private final Application application;
         private final MutableLiveData<CommentsHistory> commentsHistory;
 
-        LoadCommentHistoryData(@NonNull Application application, @NonNull MutableLiveData<CommentsHistory> commentsHistory) {
+        LoadCommentHistoryTask(@NonNull Application application, @NonNull MutableLiveData<CommentsHistory> commentsHistory) {
             this.application = application;
             this.commentsHistory = commentsHistory;
         }
