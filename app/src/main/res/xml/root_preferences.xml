@@ -4,11 +4,13 @@
 
         <SwitchPreferenceCompat
             app:key="notify_posts"
-            app:title="@string/notify_posts" />
+            app:title="@string/notify_posts"
+            app:defaultValue="true"/>
 
         <SwitchPreferenceCompat
             app:key="notify_comments"
-            app:title="@string/notify_comments" />
+            app:title="@string/notify_comments"
+            app:defaultValue="true"/>
 
 
     </PreferenceCategory>
