@@ -2,14 +2,17 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
@@ -30,15 +33,19 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
         Log.i("InitialSyncActivity.onCreate");
         setContentView(R.layout.activity_initial_sync);
 
-        if (!Preferences.getInstance(this).isRegistered()) {
-            startActivity(new Intent(this, RegistrationRequestActivity.class));
-            finish();
-            return;
-        } else if (Preferences.getInstance(this).getLastSyncTime() > 0) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-            return;
-        }
+        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(this), Preferences.getInstance(this));
+        checkRegistrationTask.result.observe(this, checkResult -> {
+            if (!checkResult.registered) {
+                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            } else if (checkResult.lastSyncTime > 0) {
+                startActivity(new Intent(getBaseContext(), MainActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+        checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         final View infoView = findViewById(R.id.info);
         final View loadingView = findViewById(R.id.loading);

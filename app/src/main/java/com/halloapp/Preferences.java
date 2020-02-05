@@ -2,11 +2,9 @@ package com.halloapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.StrictMode;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.halloapp.util.Log;
 
@@ -16,11 +14,10 @@ public class Preferences {
 
     public static final String PREFS_NAME = "prefs";
 
-    private static final String PREF_KEY_USER_ID = "user_id";
-    private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
 
-    private final SharedPreferences preferences;
+    private final Context context;
+    private SharedPreferences preferences;
 
     public static Preferences getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -34,63 +31,26 @@ public class Preferences {
     }
 
     private Preferences(Context context) {
-        final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
-        try {
+        this.context = context.getApplicationContext();
+    }
+
+    @WorkerThread
+    private synchronized SharedPreferences getPreferences() {
+        if (preferences == null) {
             preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        } finally {
-            StrictMode.setThreadPolicy(threadPolicy);
         }
+        return preferences;
     }
 
-    public boolean isRegistered() {
-        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword());
-    }
-
-    public String getUser() {
-        return getString(PREF_KEY_USER_ID, null);
-    }
-
-    public String getPassword() {
-        return getString(PREF_KEY_PASSWORD, null);
-    }
-
-    public void saveRegistration(@NonNull String user, @NonNull String password) {
-        if (!preferences.edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).commit()) {
-            Log.e("preferences: failed to save registration");
-        }
-    }
-
-    public void resetRegistration() {
-        if (!preferences.edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).commit()) {
-            Log.e("preferences: failed to reset registration");
-        }
-    }
-
+    @WorkerThread
     public long getLastSyncTime() {
-        return getLong(PREF_KEY_LAST_SYNC_TIME, 0);
+        return getPreferences().getLong(PREF_KEY_LAST_SYNC_TIME, 0);
     }
 
+    @WorkerThread
     public void setLastSyncTime(long time) {
-        if (!preferences.edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last sync time");
-        }
-    }
-
-    private String getString(@NonNull String key, @Nullable String defValue) {
-        final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
-        try {
-            return preferences.getString(key, defValue);
-        } finally {
-            StrictMode.setThreadPolicy(threadPolicy);
-        }
-    }
-
-    private long getLong(@NonNull String key, long defValue) {
-        final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
-        try {
-            return preferences.getLong(key, defValue);
-        } finally {
-            StrictMode.setThreadPolicy(threadPolicy);
         }
     }
 }

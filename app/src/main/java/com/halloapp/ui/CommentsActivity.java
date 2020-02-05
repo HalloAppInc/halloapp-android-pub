@@ -31,21 +31,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
+import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeUtils;
-import com.halloapp.widget.PostEditText;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.PostEditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -97,7 +96,7 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("CommentsActivity: onCreate");
+        Log.d("CommentsActivity.onCreate");
         setContentView(R.layout.activity_comments);
 
         Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
@@ -111,8 +110,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         commentsView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
-        final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
-        final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);
+        final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         PostsDb.getInstance(this).setCommentsSeen(userId, postId);
@@ -191,7 +189,7 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("CommentsActivity: onDestroy");
+        Log.d("CommentsActivity.onDestroy");
         ContactsDb.getInstance(this).removeObserver(contactsObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
@@ -214,8 +212,7 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
-            final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
-            final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);
+            final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
             final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
             Debug.showDebugMenu(this, editText, userId, postId);
             return true;

@@ -1,6 +1,7 @@
 package com.halloapp.ui.profile;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
@@ -15,12 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.halloapp.Preferences;
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.SettingsActivity;
@@ -63,7 +65,10 @@ public class ProfileFragment extends PostsFragment {
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
-        nameView.setText(PhoneNumberUtils.formatNumber("+" + Preferences.getInstance(Preconditions.checkNotNull(getContext())).getUser(), null));
+        final LoadNameTask loadNameTask = new LoadNameTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
+        loadNameTask.name.observe(this, user -> nameView.setText(PhoneNumberUtils.formatNumber("+" + user, null)));
+        loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
         adapter.addHeader(headerView);
 
         postsView.setAdapter(adapter);
@@ -91,4 +96,19 @@ public class ProfileFragment extends PostsFragment {
         }
     }
 
+    private static class LoadNameTask extends AsyncTask<Void, Void, Void> {
+
+        final Me me;
+        final MutableLiveData<String> name = new MutableLiveData<>() ;
+
+        LoadNameTask(@NonNull Me me) {
+            this.me = me;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            name.postValue(me.getUser());
+            return null;
+        }
+    }
 }

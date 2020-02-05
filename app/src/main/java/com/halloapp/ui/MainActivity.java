@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.WindowManager;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -19,6 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.HalloApp;
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
@@ -54,15 +57,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         Log.i("MainActivity.onCreate");
 
-        if (!Preferences.getInstance(this).isRegistered()) {
-            startActivity(new Intent(this, RegistrationRequestActivity.class));
-            finish();
-            return;
-        } else if (Preferences.getInstance(this).getLastSyncTime() <= 0) {
-            startActivity(new Intent(this, InitialSyncActivity.class));
-            finish();
-            return;
-        }
+        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(this), Preferences.getInstance(this));
+        checkRegistrationTask.result.observe(this, checkResult -> {
+            if (!checkResult.registered) {
+                Log.i("MainActivity.onCreate: not registered");
+                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            } else if (checkResult.lastSyncTime <= 0) {
+                Log.i("MainActivity.onCreate: not synced");
+                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+        checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         setContentView(R.layout.activity_main);
 

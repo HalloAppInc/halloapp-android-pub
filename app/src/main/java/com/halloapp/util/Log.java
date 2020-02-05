@@ -1,6 +1,11 @@
 package com.halloapp.util;
 
+import android.os.AsyncTask;
+
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
+import com.halloapp.Me;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -64,6 +69,27 @@ public class Log {
         Log.e(msg + " (sending error report)");
         if (Fabric.isInitialized()) {
             Crashlytics.logException(new RuntimeException(msg));
+        }
+    }
+
+    public static void setUser(@NonNull Me me) {
+        new SetCrashlyticsUserTask(me).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private static class SetCrashlyticsUserTask extends AsyncTask<Void, Void, Void> {
+
+        final Me me;
+
+        SetCrashlyticsUserTask(@NonNull Me me) {
+            this.me = me;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (Fabric.isInitialized()) {
+                Crashlytics.setString("user", me.getUser());
+            }
+            return null;
         }
     }
 }

@@ -127,8 +127,12 @@ public class Connection {
         this.observer = observer;
     }
 
-    public void connect(final @NonNull String user, final @NonNull String password) {
+    public void connect(final @NonNull Me me) {
         executor.execute(() -> {
+            if (!me.isRegistered()) {
+                Log.i("connection: not registered");
+                return;
+            }
             if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
                 Log.i("connection: already connected");
                 return;
@@ -143,7 +147,7 @@ public class Connection {
 
             try {
                 final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                        .setUsernameAndPassword(user, password)
+                        .setUsernameAndPassword(me.getUser(), me.getPassword())
                         .setResource("android")
                         .setXmppDomain(XMPP_DOMAIN)
                         .setHost(HOST)

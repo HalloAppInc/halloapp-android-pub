@@ -137,7 +137,7 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Preferences.getInstance(application).resetRegistration();
+            Me.getInstance(application).resetRegistration();
             restart(application);
             return null;
         }

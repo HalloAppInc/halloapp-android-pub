@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
 
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
@@ -37,8 +36,7 @@ public class AddCommentActivity extends AppCompatActivity {
                 Log.w("AddCommentActivity: cannot send empty comment");
                 return;
             }
-            final String user = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID));
-            final UserId userId = Preferences.getInstance(this).getUser().equals(user) ? UserId.ME : new UserId(user);
+            final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
             final Comment comment = new Comment(
                     0,
                     userId,

@@ -6,10 +6,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
@@ -96,22 +98,12 @@ public class HalloApp extends Application {
             }
         });
 
-        if (Preferences.getInstance(this).getLastSyncTime() > 0) {
-            ContactsSync.getInstance(this).startAddressBookListener();
-            ContactsSync.getInstance(this).startAddressBookSync();
-        }
+        new StartContactSyncTask(Preferences.getInstance(this), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void connect() {
-        if (!Preferences.getInstance(this).isRegistered()) {
-            Log.i("halloapp: not registered");
-            return;
-        }
-        Connection.getInstance().connect(Preferences.getInstance(this).getUser(), Preferences.getInstance(this).getPassword());
-
-        if (Fabric.isInitialized()) {
-            Crashlytics.setString("user", Preferences.getInstance(this).getUser());
-        }
+        Connection.getInstance().connect(Me.getInstance(this));
+        Log.setUser(Me.getInstance(this));
     }
 
     @Override
@@ -171,5 +163,29 @@ public class HalloApp extends Application {
     public void cancelAllNotifications() {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancelAll();
+    }
+
+    static class StartContactSyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final Preferences preferences;
+        private final ContactsSync contactsSync;
+
+        public StartContactSyncTask(@NonNull Preferences preferences, @NonNull ContactsSync contactsSync) {
+            this.preferences = preferences;
+            this.contactsSync = contactsSync;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return preferences.getLastSyncTime() > 0;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean hadContactSync) {
+            if (hadContactSync) {
+                contactsSync.startAddressBookListener();
+                contactsSync.startAddressBookSync();
+            }
+        }
     }
 }

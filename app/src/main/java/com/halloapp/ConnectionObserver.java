@@ -37,7 +37,7 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onLoginFailed() {
-        Preferences.getInstance(context).resetRegistration();
+        Me.getInstance(context).resetRegistration();
     }
 
     @Override
