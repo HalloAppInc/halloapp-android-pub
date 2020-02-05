@@ -11,4 +11,10 @@
         <attr name="pivCornerColor" format="color" />
         <attr name="pivMaxAspectRatio" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="LimitingTextView">
+        <attr name="ltvReadMore" format="string" />
+        <attr name="ltvLimit" format="integer" />
+        <attr name="ltvStep" format="integer" />
+    </declare-styleable>
 </resources>

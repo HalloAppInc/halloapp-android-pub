@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 import androidx.core.util.Preconditions;
 
+import com.halloapp.Constants;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
@@ -114,7 +115,11 @@ public class PublishedEntry {
         this.id = id;
         this.timestamp = timestamp;
         this.user = user;
-        this.text = text;
+        if (text != null && text.length() > Constants.MAX_TEXT_LENGTH) {
+            this.text = text.substring(0, Constants.MAX_TEXT_LENGTH);
+        } else {
+            this.text = text;
+        }
         this.feedItemId = feedItemId;
         this.parentCommentId = parentCommentId;
     }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Size;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.halloapp.posts.PostsDb;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.PostEditText;
 
@@ -65,8 +67,8 @@ public class PostComposerActivity extends AppCompatActivity {
 
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            final String postText = Preconditions.checkNotNull(editText.getText()).toString();
-            if (postText.trim().isEmpty() && viewModel.getMedia() == null) {
+            final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+            if (TextUtils.isEmpty(postText) && viewModel.getMedia() == null) {
                 Log.w("PostComposerActivity: cannot post empty");
                 return;
             }

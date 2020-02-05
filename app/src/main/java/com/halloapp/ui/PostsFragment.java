@@ -36,6 +36,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.PostImageView;
 
 import java.text.SimpleDateFormat;
@@ -55,7 +56,8 @@ public class PostsFragment extends Fragment {
 
     private DrawDelegateView drawDelegateView;
 
-    private LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+    private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+    private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
@@ -136,7 +138,7 @@ public class PostsFragment extends Fragment {
         final View progressView;
         final ViewPager mediaPagerView;
         final CircleIndicator mediaPagerIndicator;
-        final TextView textView;
+        final LimitingTextView textView;
         final View commentButton;
         final View messageButton;
         final View commentsIndicator;
@@ -225,7 +227,15 @@ public class PostsFragment extends Fragment {
                         textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_bottom));
             }
 
+            final Integer textLimit = textLimits.get(post.rowId);
+            if (textLimit != null) {
+                textView.setLimit(textLimit);
+            } else {
+                textView.resetLimit();
+            }
             textView.setText(post.text);
+            textView.setReadMoreListener((view, limit) -> textLimits.put(post.rowId, limit));
+
             if (TextUtils.isEmpty(post.text)) {
                 textView.setVisibility(View.GONE);
                 postActionsSeparator.setVisibility(View.GONE);

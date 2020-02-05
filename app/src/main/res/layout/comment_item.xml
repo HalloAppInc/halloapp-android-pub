@@ -54,7 +54,7 @@
                 android:textAlignment="gravity"
                 tools:text="Ded Pihtov"/>
 
-            <TextView
+            <com.halloapp.widget.LimitingTextView
                 android:id="@+id/comment_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,6 +62,7 @@
                 android:textAppearance="?textAppearanceListItemSmall"
                 android:textSize="16sp"
                 android:autoLink="web"
+                app:ltvReadMore="@string/read_more"
                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
 
         </LinearLayout>

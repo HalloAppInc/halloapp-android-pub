@@ -42,6 +42,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.PostEditText;
@@ -146,8 +147,8 @@ public class CommentsActivity extends AppCompatActivity {
         editText = findViewById(R.id.entry);
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            final String postText = Preconditions.checkNotNull(editText.getText()).toString();
-            if (postText.trim().isEmpty()) {
+            final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+            if (TextUtils.isEmpty(postText)) {
                 Log.w("CommentsActivity: cannot send empty comment");
                 return;
             }

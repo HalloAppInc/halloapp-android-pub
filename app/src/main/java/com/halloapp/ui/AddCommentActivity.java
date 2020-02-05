@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -13,6 +14,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.widget.PostEditText;
 
 public class AddCommentActivity extends AppCompatActivity {
@@ -31,8 +33,8 @@ public class AddCommentActivity extends AppCompatActivity {
 
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            final String postText = Preconditions.checkNotNull(editText.getText()).toString();
-            if (postText.trim().isEmpty()) {
+            final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+            if (TextUtils.isEmpty(postText)) {
                 Log.w("AddCommentActivity: cannot send empty comment");
                 return;
             }
