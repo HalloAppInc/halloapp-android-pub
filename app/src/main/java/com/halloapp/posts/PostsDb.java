@@ -280,10 +280,14 @@ public class PostsDb {
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
-                        CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
+                        CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " +
+                                CommentsTable.COLUMN_POST_ID + "=? AND " +
+                                CommentsTable.COLUMN_SEEN + "=" + (seen ? 0 : 1),
                         new String [] {postSenderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyCommentsSeen(postSenderUserId, postId);
+                if (updatedCount > 0) {
+                    notifyCommentsSeen(postSenderUserId, postId);
+                }
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentsSeen: failed");
                 throw ex;
