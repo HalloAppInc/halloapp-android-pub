@@ -170,7 +170,7 @@ public class HalloApp extends Application {
         private final Preferences preferences;
         private final ContactsSync contactsSync;
 
-        public StartContactSyncTask(@NonNull Preferences preferences, @NonNull ContactsSync contactsSync) {
+        StartContactSyncTask(@NonNull Preferences preferences, @NonNull ContactsSync contactsSync) {
             this.preferences = preferences;
             this.contactsSync = contactsSync;
         }

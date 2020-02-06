@@ -12,7 +12,6 @@ import androidx.security.crypto.MasterKeys;
 
 import com.halloapp.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 

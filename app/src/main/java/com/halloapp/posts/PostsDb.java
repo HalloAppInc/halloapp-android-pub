@@ -260,7 +260,9 @@ public class PostsDb {
                         CommentsTable.COLUMN_SEEN + "=?",
                         new String [] {seen ? "0" : "1"},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyCommentsSeen(UserId.ME, "");
+                if (updatedCount > 0) {
+                    notifyCommentsSeen(UserId.ME, "");
+                }
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentsSeen: failed");
                 throw ex;
@@ -331,7 +333,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
+    List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where = timestamp == null ? null : PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " < " : " > ") + timestamp;
@@ -495,7 +497,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
+    List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
         final String sql =
                 "WITH RECURSIVE " +
                     "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, text) AS ( " +
@@ -576,7 +578,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Post> getPendingPosts() {
+    List<Post> getPendingPosts() {
 
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -653,7 +655,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Comment> getPendingComments() {
+    List<Comment> getPendingComments() {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,

@@ -7,7 +7,7 @@ import org.jxmpp.jid.Jid;
 
 import java.util.Collection;
 
-public class ContactsSyncRequest extends IQ {
+public class ContactsSyncRequestIq extends IQ {
 
     public final static String ELEMENT = "contact_list";
     public final static String NAMESPACE = "ns:phonenumber:normalization";
@@ -17,7 +17,7 @@ public class ContactsSyncRequest extends IQ {
 
     private final Collection<String> phones;
 
-    public ContactsSyncRequest(@NonNull Jid to, @NonNull Collection<String> phones) {
+    public ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.get);
         setTo(to);

@@ -1,7 +1,6 @@
 package com.halloapp.contacts;
 
 import android.content.Context;
-import android.telephony.PhoneNumberUtils;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;

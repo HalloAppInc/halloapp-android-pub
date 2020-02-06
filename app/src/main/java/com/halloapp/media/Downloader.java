@@ -22,7 +22,7 @@ class Downloader {
     }
 
     public static class DownloadException extends IOException {
-        public final int code;
+        final int code;
 
         DownloadException(int code) {
             this.code = code;

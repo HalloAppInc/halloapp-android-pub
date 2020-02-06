@@ -22,7 +22,7 @@ class Uploader {
     }
 
     public static class UploadException extends IOException {
-        public final int code;
+        final int code;
 
         UploadException(int code) {
             this.code = code;

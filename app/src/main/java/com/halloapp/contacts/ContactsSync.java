@@ -19,7 +19,7 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.Connection;
 import com.halloapp.Preferences;
-import com.halloapp.protocol.ContactsSyncResponse;
+import com.halloapp.protocol.ContactsSyncResponseIq;
 import com.halloapp.util.Log;
 
 import java.util.ArrayList;
@@ -126,13 +126,13 @@ public class ContactsSync {
         }
         Log.i("ContactsSync.performContactSync: " + phones.keySet().size() + " phones to sync");
         final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
-        final List<ContactsSyncResponse.Contact> contactSyncResults = new ArrayList<>(phonesBatch.size());
+        final List<ContactsSyncResponseIq.Contact> contactSyncResults = new ArrayList<>(phonesBatch.size());
         for (String phone : phones.keySet()) {
             phonesBatch.add(phone);
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactsSyncResponse.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
+                    final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
                         phonesBatch.clear();
@@ -149,7 +149,7 @@ public class ContactsSync {
         if (phonesBatch.size() > 0) {
             Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
             try {
-                final List<ContactsSyncResponse.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
+                final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
                 if (contactSyncBatchResults != null) {
                     contactSyncResults.addAll(contactSyncBatchResults);
                     phonesBatch.clear();
@@ -164,7 +164,7 @@ public class ContactsSync {
         }
 
         final Collection<Contact> updatedContacts = new ArrayList<>();
-        for (ContactsSyncResponse.Contact contactsSyncResult : contactSyncResults) {
+        for (ContactsSyncResponseIq.Contact contactsSyncResult : contactSyncResults) {
             final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
             if (phoneContacts == null) {
                 Log.e("ContactsSync.performContactSync: phone " + contactsSyncResult.phone + "returned from server doesn't match to local phones");

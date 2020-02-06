@@ -15,7 +15,7 @@ public class CheckRegistrationTask extends AsyncTask<Void, Void, Void> {
 
     public final MutableLiveData<CheckResult> result = new MutableLiveData<>();
 
-    public CheckRegistrationTask(@NonNull Me me, @NonNull Preferences preferences) {
+    CheckRegistrationTask(@NonNull Me me, @NonNull Preferences preferences) {
         this.me = me;
         this.preferences = preferences;
     }
@@ -30,7 +30,7 @@ public class CheckRegistrationTask extends AsyncTask<Void, Void, Void> {
         final boolean registered;
         final long lastSyncTime;
 
-        public CheckResult(boolean registered, long lastSyncTime) {
+        CheckResult(boolean registered, long lastSyncTime) {
             this.registered = registered;
             this.lastSyncTime = lastSyncTime;
         }

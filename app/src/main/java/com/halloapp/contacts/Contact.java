@@ -1,6 +1,5 @@
 package com.halloapp.contacts;
 
-import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
 import android.text.TextUtils;
 

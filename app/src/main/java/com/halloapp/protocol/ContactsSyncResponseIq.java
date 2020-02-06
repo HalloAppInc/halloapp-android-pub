@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsSyncResponse extends IQ {
+public class ContactsSyncResponseIq extends IQ {
 
     public final static String ELEMENT = "contact_list";
     public final static String NAMESPACE = "ns:phonenumber:normalization";
@@ -24,7 +25,7 @@ public class ContactsSyncResponse extends IQ {
 
     public final List<Contact> contactList = new ArrayList<>();
 
-    ContactsSyncResponse(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
+    private ContactsSyncResponseIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);
 
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -69,5 +70,13 @@ public class ContactsSyncResponse extends IQ {
         public String role;
         public String phone;
         public String normalizedPhone;
+    }
+
+    public static class Provider extends IQProvider<ContactsSyncResponseIq> {
+
+        @Override
+        public ContactsSyncResponseIq parse(XmlPullParser parser, int initialDepth) throws IOException, XmlPullParserException {
+            return new ContactsSyncResponseIq(parser);
+        }
     }
 }

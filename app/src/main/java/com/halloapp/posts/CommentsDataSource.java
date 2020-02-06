@@ -47,14 +47,11 @@ public class CommentsDataSource extends PositionalDataSource<Comment> {
     @Override
     public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull LoadInitialCallback<Comment> callback) {
         final List<Comment> comments = postsDb.getComments(postSenderUserId, postId, params.requestedStartPosition, params.requestedLoadSize);
-        //Log.d("CommentsDataSource.loadInitial: requestedInitialKey=" + params.requestedInitialKey + " requestedLoadSize:" + params.requestedLoadSize + " got " + comments.size() +
-        //        (comments.isEmpty() ? "" : " posts from " + comments.get(0).timestamp + " to " + comments.get(comments.size()-1).timestamp));
         callback.onResult(comments, params.requestedStartPosition);
     }
 
     @Override
     public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull LoadRangeCallback<Comment> callback) {
-        //Log.d("CommentsDataSource.loadAfter: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
         callback.onResult(postsDb.getComments(postSenderUserId, postId, params.startPosition, params.loadSize));
     }
 }
