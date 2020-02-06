@@ -13,7 +13,6 @@
         android:padding="8dp"
         android:layout_gravity="bottom"
         android:background="@android:color/white"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.halloapp.widget.PostEditText
@@ -24,12 +23,13 @@
             android:layout_marginEnd="8dp"
             android:hint="@string/type_a_comment_hint"
             android:importantForAutofill="no"
-            android:inputType="textCapSentences"/>
+            android:inputType="textCapSentences|textMultiLine"/>
 
         <Button
             android:id="@+id/send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:text="@string/send" />
     </LinearLayout>
 
