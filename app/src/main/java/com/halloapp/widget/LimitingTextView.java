@@ -66,8 +66,8 @@ public class LimitingTextView extends AppCompatTextView {
     public void setText(CharSequence text, BufferType type) {
 
         final CharSequence truncatedText;
-        final int truncatePos = getTruncatePos(text, limit + step / 2);
-        if (text != null && truncatePos >= 0) {
+        final int truncatePos = getTruncatePos(text, limit);
+        if (text != null && truncatePos >= 0 && truncatePos + step / 2 < text.length()) {
             final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text.subSequence(0, truncatePos));
             final SpannableString readMore = new SpannableString(readMoreText);
             readMore.setSpan(new ReadMoreSpan(), 0, readMore.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
