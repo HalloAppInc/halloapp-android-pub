@@ -57,7 +57,6 @@ public class PostsFragment extends Fragment {
     private DrawDelegateView drawDelegateView;
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
-    private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
@@ -227,14 +226,19 @@ public class PostsFragment extends Fragment {
                         textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_bottom));
             }
 
-            final Integer textLimit = textLimits.get(post.rowId);
-            if (textLimit != null) {
-                textView.setLimit(textLimit);
-            } else {
-                textView.resetLimit();
-            }
             textView.setText(post.text);
-            textView.setReadMoreListener((view, limit) -> textLimits.put(post.rowId, limit));
+            textView.setOnReadMoreListener(new LimitingTextView.OnReadMoreListener() {
+                @Override
+                public boolean onReadMore(TextView view, int limit) {
+                    final Intent intent = new Intent(getContext(), CommentsActivity.class);
+                    intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
+                    intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+                    intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
+                    intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
+                    startActivity(intent);
+                    return true;
+                }
+            });
 
             if (TextUtils.isEmpty(post.text)) {
                 textView.setVisibility(View.GONE);
@@ -260,7 +264,6 @@ public class PostsFragment extends Fragment {
                 intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
                 intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
                 startActivity(intent);
-
             });
             messageButton.setOnClickListener(v -> {
                 // TODO (ds): start message activity

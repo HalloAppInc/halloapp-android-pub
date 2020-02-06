@@ -25,7 +25,7 @@ public class LimitingTextView extends AppCompatTextView {
     private int step = 768;
     private CharSequence readMoreText;
     private CharSequence originalText;
-    private ReadMoreListener listener;
+    private OnReadMoreListener listener;
 
     public LimitingTextView(Context context) {
         super(context);
@@ -51,7 +51,7 @@ public class LimitingTextView extends AppCompatTextView {
         a.recycle();
     }
 
-    public void setReadMoreListener(@Nullable ReadMoreListener listener) {
+    public void setOnReadMoreListener(@Nullable OnReadMoreListener listener) {
         this.listener = listener;
     }
 
@@ -98,16 +98,16 @@ public class LimitingTextView extends AppCompatTextView {
     }
 
     private void onReadMore() {
+        if (listener != null && listener.onReadMore(this, limit + step)) {
+            return;
+        }
         limit += step;
         setText(originalText);
-        if (listener != null) {
-            listener.onReadMore(this, limit);
-        }
     }
 
-    public interface ReadMoreListener {
+    public interface OnReadMoreListener {
 
-        void onReadMore(TextView view, int limit);
+        boolean onReadMore(TextView view, int limit);
     }
 
     class ReadMoreSpan extends ClickableSpan {

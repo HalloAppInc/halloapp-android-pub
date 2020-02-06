@@ -27,6 +27,9 @@ import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+
 import io.fabric.sdk.android.Fabric;
 
 public class HalloApp extends Application {
@@ -40,6 +43,23 @@ public class HalloApp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.i("halloapp: onCreate");
+
+
+        try {
+            AesCbcWithIntegrity.SecretKeys key = AesCbcWithIntegrity.generateKey();
+            String keyStr = AesCbcWithIntegrity.keyString(key);
+
+            String textToEncrypt = "Testing shows the presence, not the absence of bugs.\n\n  Edsger W. Dijkstra";
+            AesCbcWithIntegrity.CipherTextIvMac civ = AesCbcWithIntegrity.encrypt(textToEncrypt, key);
+            Log.i("Encrypted: " + civ.toString());
+
+            String decryptedText = AesCbcWithIntegrity.decryptString(civ, key);
+            Log.i("Decrypted: " + decryptedText);
+
+        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
 
         instance = this;
 

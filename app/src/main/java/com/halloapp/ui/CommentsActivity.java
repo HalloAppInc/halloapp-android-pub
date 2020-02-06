@@ -16,6 +16,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.ViewModelProvider;
@@ -45,6 +46,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.PostEditText;
 
 import java.text.SimpleDateFormat;
@@ -57,6 +59,7 @@ public class CommentsActivity extends AppCompatActivity {
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
     public static final String EXTRA_SHOW_KEYBOARD = "show_keyboard";
+    public static final String EXTRA_NO_POST_LENGTH_LIMIT = "no_post_length_limit";
 
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
     private static final String KEY_REPLY_USER_ID = "reply_user_id";
@@ -71,6 +74,9 @@ public class CommentsActivity extends AppCompatActivity {
     private UserId replyUserId;
 
     private PostEditText editText;
+
+    private static final long POST_TEXT_LIMITS_ID = -1;
+    private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
@@ -169,6 +175,10 @@ public class CommentsActivity extends AppCompatActivity {
             resetReplyIndicator();
         });
 
+        if (getIntent().getBooleanExtra(EXTRA_NO_POST_LENGTH_LIMIT, false)) {
+            textLimits.put(POST_TEXT_LIMITS_ID, Integer.MAX_VALUE);
+        }
+
         if (getIntent().getBooleanExtra(EXTRA_SHOW_KEYBOARD, true)) {
             editText.requestFocus();
         }
@@ -247,7 +257,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         final ImageView avatarView;
         final TextView nameView;
-        final TextView commentView;
+        final LimitingTextView commentView;
         final TextView timeView;
         final View progressView;
         final View replyButton;
@@ -277,7 +287,17 @@ public class CommentsActivity extends AppCompatActivity {
             timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - comment.timestamp));
             scheduleTimestampRefresh(comment.timestamp);
 
+            final Integer textLimit = textLimits.get(comment.rowId);
+            if (textLimit != null) {
+                commentView.setLimit(textLimit);
+            } else {
+                commentView.resetLimit();
+            }
             commentView.setText(comment.text);
+            commentView.setOnReadMoreListener((view, limit) -> {
+                textLimits.put(comment.rowId, limit);
+                return false;
+            });
 
             replyButton.setOnClickListener(v -> {
                 updateReplyIndicator(comment.commentSenderUserId, comment.commentId);
@@ -315,6 +335,17 @@ public class CommentsActivity extends AppCompatActivity {
                 }
                 mediaGallery.setAdapter(new CommentsAdapter(post.media));
             }
+
+            final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
+            if (textLimit != null) {
+                commentView.setLimit(textLimit);
+            } else {
+                commentView.resetLimit();
+            }
+            commentView.setOnReadMoreListener((view, limit) -> {
+                textLimits.put(POST_TEXT_LIMITS_ID, limit);
+                return false;
+            });
 
             commentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
             commentView.setText(post.text);
