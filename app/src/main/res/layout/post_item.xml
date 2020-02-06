@@ -98,6 +98,7 @@
                 android:textSize="16sp"
                 android:lineSpacingMultiplier="1.1"
                 android:autoLink="web"
+                android:textIsSelectable="true"
                 app:ltvReadMore="@string/read_more"
                 tools:text="This is image caption"/>
 
