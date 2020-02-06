@@ -43,6 +43,7 @@ import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.EventElementType;
+import org.jivesoftware.smackx.pubsub.ItemReply;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.Node;
@@ -445,6 +446,7 @@ public class Connection {
                 configureForm.setNotifyDelete(false);
                 configureForm.setNotifyRetract(false);
                 configureForm.setNotificationType(NotificationType.normal);
+                configureForm.setItemReply(ItemReply.publisher);
                 final FormField field = new FormField("pubsub#send_last_published_item");
                 field.setType(FormField.Type.hidden);
                 configureForm.addField(field);
