@@ -62,7 +62,6 @@
                 android:textAppearance="?textAppearanceListItemSmall"
                 android:textSize="16sp"
                 android:autoLink="web"
-                android:textIsSelectable="true"
                 app:ltvReadMore="@string/read_more"
                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
 
