@@ -15,11 +15,12 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 
 public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
-    private float maxAspectRatio = 1.25f;
+    private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
 
     private int cornerColor;
     private float cornerRadius;

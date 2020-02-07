@@ -38,6 +38,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostEditText;
 
 import java.io.File;
@@ -99,7 +100,7 @@ public class PostComposerActivity extends AppCompatActivity {
             });
         }
 
-        final ViewPager viewPager = findViewById(R.id.media_pager);
+        final MediaViewPager viewPager = findViewById(R.id.media_pager);
         viewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
         viewPager.setVisibility(View.GONE);
         final CircleIndicator mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
@@ -110,6 +111,7 @@ public class PostComposerActivity extends AppCompatActivity {
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
+                viewPager.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
                 viewPager.setAdapter(new PostMediaPagerAdapter(media));
                 viewPager.setVisibility(View.VISIBLE);
             }

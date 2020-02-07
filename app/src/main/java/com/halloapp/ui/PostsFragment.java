@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
@@ -37,6 +38,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.LimitingTextView;
+import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostImageView;
 
 import java.text.SimpleDateFormat;
@@ -135,7 +137,7 @@ public class PostsFragment extends Fragment {
         final TextView nameView;
         final TextView timeView;
         final View progressView;
-        final ViewPager mediaPagerView;
+        final MediaViewPager mediaPagerView;
         final CircleIndicator mediaPagerIndicator;
         final LimitingTextView textView;
         final View commentButton;
@@ -213,6 +215,7 @@ public class PostsFragment extends Fragment {
                         textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.text_post_padding_bottom));
             } else {
                 mediaPagerView.setVisibility(View.VISIBLE);
+                mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
                 mediaPagerAdapter.setMedia(post.media);
                 if (post.media.size() > 1) {
                     mediaPagerIndicator.setVisibility(View.VISIBLE);

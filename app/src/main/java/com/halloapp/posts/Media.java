@@ -7,6 +7,7 @@ import com.halloapp.util.RandomId;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 public class Media {
 
@@ -24,6 +25,7 @@ public class Media {
     public File file;
     public int width;
     public int height;
+    public byte [] mediaKey;
 
     public boolean transferred;
 
@@ -33,6 +35,19 @@ public class Media {
 
     public static Media createFromUrl(@MediaType int type, String url, int width, int height) {
         return new Media(0, RandomId.create(), type, url, null, width, height, false);
+    }
+
+    public static float getMaxAspectRatio(List<Media> media) {
+        float maxAspectRatio = 0;
+        for (Media mediaItem : media) {
+            if (mediaItem.width != 0) {
+                float ratio = 1f * mediaItem.height / mediaItem.width;
+                if (ratio > maxAspectRatio) {
+                    maxAspectRatio = ratio;
+                }
+            }
+        }
+        return maxAspectRatio;
     }
 
     public Media(long rowId, String id, @MediaType int type, String url, File file, int width, int height, boolean transferred) {

@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 
 public class MediaViewPager extends ViewPager {
 
+    float maxAspectRatio;
 
     public MediaViewPager(@NonNull Context context) {
         super(context);
@@ -20,23 +21,24 @@ public class MediaViewPager extends ViewPager {
         super(context, attrs);
     }
 
+    public void setMaxAspectRatio(float maxAspectRatio) {
+        this.maxAspectRatio = maxAspectRatio;
+        requestLayout();
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int measuredHeight = getMeasuredHeight();
-        int height = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            final View child = getChildAt(i);
-            child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-            int childHeight = child.getMeasuredHeight();
-            if (childHeight > height) {
-                height = childHeight;
-            }
+        int childHPadding = 0;
+        int childVPadding = 0;
+        if (getChildCount() > 0) {
+            final View child = getChildAt(0);
+            childHPadding = child.getPaddingLeft() + child.getPaddingRight();
+            childVPadding = child.getPaddingTop() + child.getPaddingBottom();
         }
-        if (height < measuredHeight || measuredHeight == 0) {
-            setMeasuredDimension(getMeasuredWidth(), height);
-        }
+        final int height = (int)((getMeasuredWidth() - childHPadding) * maxAspectRatio) + childVPadding;
+        setMeasuredDimension(getMeasuredWidth(), height);
         for (int i = 0; i < getChildCount(); i++) {
             final View child = getChildAt(i);
             child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
