@@ -310,7 +310,7 @@ public class PostsDb {
                         addedHistoryPosts.add(post);
                         Log.i("PostsDb.addHistory: post added " + post);
                     } catch (SQLiteConstraintException ex) {
-                        Log.i("PostsDb.addHistory: post duplicate " + post);
+                        Log.i("PostsDb.addHistory: post duplicate " + post, ex);
                     }
                 }
                 for (Comment comment : historyComments) {
@@ -319,7 +319,7 @@ public class PostsDb {
                         addedHistoryComments.add(comment);
                         Log.i("PostsDb.addHistory: comment added " + comment);
                     } catch (SQLiteConstraintException ex) {
-                        Log.i("PostsDb.addHistory: post duplicate " + comment);
+                        Log.i("PostsDb.addHistory: comment duplicate " + comment);
                     }
                 }
                 if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
@@ -821,7 +821,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 3;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -881,7 +881,7 @@ public class PostsDb {
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
-            db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
+            db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
                     + PostsTable.COLUMN_TIMESTAMP
                     + ");");
         }

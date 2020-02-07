@@ -16,6 +16,9 @@ import com.halloapp.protocol.ContactsSyncResponseIq;
 import com.halloapp.protocol.MediaUploadIq;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.protocol.PushRegisterRequestIq;
+import com.halloapp.protocol.smack.HalloAffiliationProvider;
+import com.halloapp.protocol.smack.HalloPubsubItem;
+import com.halloapp.protocol.smack.HalloPubsubItemProvider;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -35,7 +38,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.sasl.SASLErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jivesoftware.smack.util.ParserUtils;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.pubsub.AccessModel;
@@ -56,18 +58,15 @@ import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
-import org.jivesoftware.smackx.pubsub.provider.AffiliationProvider;
 import org.jivesoftware.smackx.pubsub.provider.AffiliationsProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
-import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -142,6 +141,7 @@ public class Connection {
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
             ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
+            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new HalloPubsubItemProvider()); // smack doesn't handle affiliation='publish-only' type
             ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
             ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
 
@@ -570,7 +570,7 @@ public class Connection {
         }
 
         // TODO (ds): make server send offline posts, should be no need to pull posts here
-        final Collection<Post> historyPosts = new ArrayList<>();
+        final ArrayList<Post> historyPosts = new ArrayList<>();
         final Collection<Comment> historyComments = new ArrayList<>();
         for (String subscribedFeed : subscribedFeedNodeIds) {
             try {
@@ -589,7 +589,7 @@ public class Connection {
         observer.onFeedHistoryReceived(historyPosts, historyComments);
     }
 
-    private void parsePublishedHistoryItems(UserId feedUserId, List<PayloadItem<SimplePayload>> items, Collection<Post> posts, Collection<Comment> comments) {
+    private void parsePublishedHistoryItems(UserId feedUserId, List<HalloPubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
             if (entry.type == PublishedEntry.ENTRY_FEED) {
@@ -620,7 +620,7 @@ public class Connection {
         }
     }
 
-    private void processPublishedItems(UserId feedUserId, List<PayloadItem<SimplePayload>> items) {
+    private void processPublishedItems(UserId feedUserId, List<HalloPubsubItem> items) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
@@ -713,7 +713,7 @@ public class Connection {
                 if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
 
                     Log.i("connection: got pubsub " + msg);
-                    processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<PayloadItem<SimplePayload>>)(itemsElem.getItems()));
+                    processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<HalloPubsubItem>)(itemsElem.getItems()));
                     handled = true;
                 }
             }
@@ -744,40 +744,5 @@ public class Connection {
         public void connectionClosedOnError(Exception e) {
             Log.w("connection: onConnectedOnError", e);
         }
-    }
-
-    // smack doesn't handle affiliation='publish-only' type
-    public class HalloAffiliationProvider extends AffiliationProvider {
-
-        @Override
-        public Affiliation parse(XmlPullParser parser, int initialDepth) throws Exception {
-
-            String node = parser.getAttributeValue(null, "node");
-            BareJid jid = ParserUtils.getBareJidAttribute(parser);
-            String namespaceString = parser.getNamespace();
-            Affiliation.AffiliationNamespace namespace = Affiliation.AffiliationNamespace.fromXmlns(namespaceString);
-
-            String affiliationString = parser.getAttributeValue(null, "affiliation");
-            Affiliation.Type affiliationType = null;
-            if (affiliationString != null && !"publish-only".equals(affiliationString)) {
-                affiliationType = Affiliation.Type.valueOf(affiliationString);
-            }
-            Affiliation affiliation;
-            if (node != null && jid == null) {
-                // affiliationType may be empty
-                affiliation = new Affiliation(node, affiliationType, namespace);
-            }
-            else if (node == null && jid != null) {
-                affiliation = new Affiliation(jid, affiliationType, namespace);
-            }
-            else {
-                throw new SmackException("Invalid affiliation. Either one of 'node' or 'jid' must be set"
-                        + ". Node: " + node
-                        + ". Jid: " + jid
-                        + '.');
-            }
-            return affiliation;
-        }
-
     }
 }

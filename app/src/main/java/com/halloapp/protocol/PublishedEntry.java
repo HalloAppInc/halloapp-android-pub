@@ -8,11 +8,10 @@ import androidx.annotation.StringDef;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.Constants;
+import com.halloapp.protocol.smack.HalloPubsubItem;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
-import org.jivesoftware.smackx.pubsub.PayloadItem;
-import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -124,9 +123,9 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PayloadItem<SimplePayload>> items) {
+    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<HalloPubsubItem> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
-        for (PayloadItem<SimplePayload> item : items) {
+        for (HalloPubsubItem item : items) {
             final String xml = item.getPayload().toXML(null);
             final XmlPullParser parser = android.util.Xml.newPullParser();
             try {
@@ -141,9 +140,9 @@ public class PublishedEntry {
                     final String name = Preconditions.checkNotNull(parser.getName());
                     PublishedEntry entry = null;
                     if (name.equals(ELEMENT_FEED_POST)) {
-                        entry = readEntry(parser, ENTRY_FEED, item.getId());
+                        entry = readEntry(parser, ENTRY_FEED, item);
                     } else if (name.equals(ELEMENT_COMMENT)) {
-                        entry = readEntry(parser, ENTRY_COMMENT, item.getId());
+                        entry = readEntry(parser, ENTRY_COMMENT, item);
                     } else {
                         Xml.skip(parser);
                     }
@@ -250,20 +249,22 @@ public class PublishedEntry {
     }
 
     private boolean valid() {
-        return user != null && (text != null || !media.isEmpty());
+        return timestamp != 0 && user != null && (text != null || !media.isEmpty());
     }
 
-    private static @NonNull PublishedEntry readEntry(XmlPullParser parser, @EntryType int type, String id) throws XmlPullParserException, IOException {
+    private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull HalloPubsubItem item) throws XmlPullParserException, IOException {
         final PublishedEntry.Builder builder = new PublishedEntry.Builder();
         builder.type(type);
-        builder.id(id);
+        builder.id(item.getId());
+        builder.timestamp(item.getTimestamp());
+        builder.user(item.getPublisher().getLocalpartOrNull().toString());
         final List<Media> media = new ArrayList<>();
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             final String name = Preconditions.checkNotNull(parser.getName());
-            if (ELEMENT_USER.equals(name)) {
+            if (ELEMENT_USER.equals(name)) { // TODO (ds): remove, set by server
                 builder.user(Xml.readText(parser));
             } else if (ELEMENT_IMAGE_URL.equals(name)) { // TODO (ds): remove
                 if (media.isEmpty()) {
@@ -284,7 +285,7 @@ public class PublishedEntry {
                 builder.feedItemId(Xml.readText(parser));
             } else if (ELEMENT_PARENT_COMMENT_ID.equals(name)) {
                 builder.parentCommentId(Xml.readText(parser));
-            } else if (ELEMENT_TIMESTAMP.equals(name)) {
+            } else if (ELEMENT_TIMESTAMP.equals(name)) { // TODO (ds): remove, set by server
                 builder.timestamp(Xml.readText(parser));
             } else {
                 Xml.skip(parser);
@@ -345,6 +346,11 @@ public class PublishedEntry {
 
         Builder text(String text) {
             this.text = text;
+            return this;
+        }
+
+        Builder timestamp(long timestampSeconds) {
+            timestamp = 1000L * timestampSeconds;
             return this;
         }
 

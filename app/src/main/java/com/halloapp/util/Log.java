@@ -33,6 +33,14 @@ public class Log {
         }
     }
 
+    public static void i(String msg, Throwable tr) {
+        if (Fabric.isInitialized()) {
+            Crashlytics.log(android.util.Log.INFO, TAG, msg + '\n' + tr.getMessage());
+        } else {
+            android.util.Log.i(TAG, msg + " " + tr.getMessage());
+        }
+    }
+
     public static void w(String msg) {
         if (Fabric.isInitialized()) {
             Crashlytics.log(android.util.Log.WARN, TAG, msg);
