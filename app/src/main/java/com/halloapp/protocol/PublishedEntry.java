@@ -257,7 +257,9 @@ public class PublishedEntry {
         builder.type(type);
         builder.id(item.getId());
         builder.timestamp(item.getTimestamp());
-        builder.user(item.getPublisher().getLocalpartOrNull().toString());
+        if (item.getPublisher() != null) {
+            builder.user(item.getPublisher().getLocalpartOrNull().toString());
+        }
         final List<Media> media = new ArrayList<>();
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {

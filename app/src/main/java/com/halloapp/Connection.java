@@ -141,7 +141,8 @@ public class Connection {
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
             ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
-            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new HalloPubsubItemProvider()); // smack doesn't handle affiliation='publish-only' type
+            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new HalloPubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new HalloPubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
             ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
             ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
 
