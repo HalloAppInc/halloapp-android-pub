@@ -1,6 +1,7 @@
 package com.halloapp.protocol;
 
 import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -41,6 +42,8 @@ public class PublishedEntry {
     private static final String ATTRIBUTE_TYPE = "type";
     private static final String ATTRIBUTE_WIDTH = "width";
     private static final String ATTRIBUTE_HEIGHT = "height";
+    private static final String ATTRIBUTE_ENC_KEY = "key";
+    private static final String ATTRIBUTE_SHA256_HASH = "sha256hash";
 
     private static final String NAMESPACE = "http://halloapp.com/published-entry";
 
@@ -72,24 +75,31 @@ public class PublishedEntry {
 
         public String type;
         public String url;
+        public byte [] encKey;
+        public byte [] sha256hash;
         public int width;
         public int height;
 
-        public Media(@MediaType String type, String url, int width, int height) {
+        public Media(@MediaType String type, String url, byte [] encKey, byte [] sha256hash, int width, int height) {
             this.type = type;
             this.url = url;
+            this.encKey = encKey;
+            this.sha256hash = sha256hash;
             this.width = width;
             this.height = height;
         }
 
-        Media(@MediaType String type, String widthText, String heightText, String url) {
+        Media(@MediaType String type, String url, String encKey, String sha256hash, String widthText, String heightText) {
+            this.type = type;
+
             if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
                 this.url = "https://cdn.image4.io/hallo" + url; // TODO (ds): remove
             } else {
                 this.url = url;
             }
 
-            this.type = type;
+            this.encKey = encKey == null ? null : Base64.decode(encKey, Base64.NO_WRAP);
+            this.sha256hash = sha256hash == null ? null : Base64.decode(sha256hash, Base64.NO_WRAP);
 
             if (widthText != null) {
                 try {
@@ -195,6 +205,12 @@ public class PublishedEntry {
                     if (mediaItem.height != 0) {
                         serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(mediaItem.height));
                     }
+                    if (mediaItem.encKey != null) {
+                        serializer.attribute(null, ATTRIBUTE_ENC_KEY, Base64.encodeToString(mediaItem.encKey, Base64.NO_WRAP));
+                    }
+                    if (mediaItem.sha256hash != null) {
+                        serializer.attribute(null, ATTRIBUTE_SHA256_HASH, Base64.encodeToString(mediaItem.sha256hash, Base64.NO_WRAP));
+                    }
                     serializer.text(mediaItem.url);
                     serializer.endTag(NAMESPACE, ELEMENT_IMAGE_URL);
                 }
@@ -209,6 +225,12 @@ public class PublishedEntry {
                     }
                     if (mediaItem.height != 0) {
                         serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(mediaItem.height));
+                    }
+                    if (mediaItem.encKey != null) {
+                        serializer.attribute(null, ATTRIBUTE_ENC_KEY, Base64.encodeToString(mediaItem.encKey, Base64.NO_WRAP));
+                    }
+                    if (mediaItem.sha256hash != null) {
+                        serializer.attribute(null, ATTRIBUTE_SHA256_HASH, Base64.encodeToString(mediaItem.sha256hash, Base64.NO_WRAP));
                     }
                     serializer.text(mediaItem.url);
                     serializer.endTag(NAMESPACE, ELEMENT_URL);
@@ -270,10 +292,12 @@ public class PublishedEntry {
                 builder.user(Xml.readText(parser));
             } else if (ELEMENT_IMAGE_URL.equals(name)) { // TODO (ds): remove
                 if (media.isEmpty()) {
-                    final Media mediaItem = new Media(Media.MEDIA_TYPE_IMAGE,
-                            parser.getAttributeValue(null, ATTRIBUTE_WIDTH),
-                            parser.getAttributeValue(null, ATTRIBUTE_HEIGHT),
-                            Xml.readText(parser));
+                    final String widthStr = parser.getAttributeValue(null, ATTRIBUTE_WIDTH);
+                    final String heightStr = parser.getAttributeValue(null, ATTRIBUTE_HEIGHT);
+                    final String key = parser.getAttributeValue(null, ATTRIBUTE_ENC_KEY);
+                    final String sha256hash = parser.getAttributeValue(null, ATTRIBUTE_SHA256_HASH);
+                    final Media mediaItem = new Media(Media.MEDIA_TYPE_IMAGE, Xml.readText(parser),
+                            key, sha256hash, widthStr, heightStr);
                     if (!TextUtils.isEmpty(mediaItem.url)) {
                         media.add(mediaItem);
                     }
@@ -306,11 +330,13 @@ public class PublishedEntry {
             }
             final String name = Preconditions.checkNotNull(parser.getName());
             if (ELEMENT_URL.equals(name)) {
-                final Media mediaItem = new Media(
-                        parser.getAttributeValue(null, ATTRIBUTE_TYPE),
-                        parser.getAttributeValue(null, ATTRIBUTE_WIDTH),
-                        parser.getAttributeValue(null, ATTRIBUTE_HEIGHT),
-                        Xml.readText(parser));
+                final String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE);
+                final String widthStr = parser.getAttributeValue(null, ATTRIBUTE_WIDTH);
+                final String heightStr = parser.getAttributeValue(null, ATTRIBUTE_HEIGHT);
+                final String key = parser.getAttributeValue(null, ATTRIBUTE_ENC_KEY);
+                final String sha256hash = parser.getAttributeValue(null, ATTRIBUTE_SHA256_HASH);
+                final Media mediaItem = new Media(type, Xml.readText(parser),
+                        key, sha256hash, widthStr, heightStr);
                 if (!TextUtils.isEmpty(mediaItem.url)) {
                     media.add(mediaItem);
                 }

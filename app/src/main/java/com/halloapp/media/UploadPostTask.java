@@ -44,7 +44,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
             final Uploader.UploadListener uploadListener = percent -> true;
             try {
-                Uploader.run(media.file, urls.putUrl, uploadListener);
+                media.sha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
                 media.url = urls.getUrl;
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);

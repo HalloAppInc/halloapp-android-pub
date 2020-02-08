@@ -22,7 +22,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -278,7 +277,9 @@ public class PostComposerActivity extends AppCompatActivity {
                     try {
                         final File postFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".jpg");
                         MediaUtils.transcode(media.file, postFile, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
-                        post.media.add(Media.createFromFile(media.type, postFile));
+                        final Media sendMedia = Media.createFromFile(media.type, postFile);
+                        sendMedia.generateEncKey();
+                        post.media.add(sendMedia);
                     } catch (IOException e) {
                         Log.e("failed to transcode image", e);
                         return null;

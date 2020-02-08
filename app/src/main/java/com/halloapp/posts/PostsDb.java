@@ -130,6 +130,12 @@ public class PostsDb {
                 mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
                 mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
             }
+            if (mediaItem.encKey != null) {
+                mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+            }
+            if (mediaItem.sha256hash != null) {
+                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+            }
             db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
@@ -167,6 +173,12 @@ public class PostsDb {
             final ContentValues values = new ContentValues();
             values.put(MediaTable.COLUMN_FILE, media.file.getName());
             values.put(MediaTable.COLUMN_URL, media.url);
+            if (media.encKey != null) {
+                values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
+            }
+            if (media.sha256hash != null) {
+                values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
+            }
             if (media.width == 0 || media.height == 0) {
                 final Size dimensions = MediaUtils.getDimensions(media.file);
                 if (dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
@@ -417,6 +429,8 @@ public class PostsDb {
                             cursor.getInt(8),
                             cursor.getString(9),
                             mediaStore.getMediaFile(cursor.getString(10)),
+                            null,
+                            null,
                             cursor.getInt(11),
                             cursor.getInt(12),
                             cursor.getInt(13) == 1));
@@ -486,6 +500,8 @@ public class PostsDb {
                             cursor.getInt(8),
                             cursor.getString(9),
                             mediaStore.getMediaFile(cursor.getString(10)),
+                            null,
+                            null,
                             cursor.getInt(11),
                             cursor.getInt(12),
                             cursor.getInt(13) == 1));
@@ -595,6 +611,8 @@ public class PostsDb {
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
+                    "m." + MediaTable.COLUMN_ENC_KEY + "," +
+                    "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + " " +
@@ -607,6 +625,8 @@ public class PostsDb {
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_KEY + "," +
+                        MediaTable.COLUMN_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ") " +
@@ -641,9 +661,11 @@ public class PostsDb {
                             cursor.getInt(8),
                             cursor.getString(9),
                             mediaStore.getMediaFile(cursor.getString(10)),
-                            cursor.getInt(11),
-                            cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getBlob(11),
+                            cursor.getBlob(12),
+                            cursor.getInt(13),
+                            cursor.getInt(14),
+                            cursor.getInt(15) == 1));
                 }
             }
             if (post != null) {
@@ -795,6 +817,8 @@ public class PostsDb {
         static final String COLUMN_TRANSFERRED = "transferred";
         static final String COLUMN_URL = "url";
         static final String COLUMN_FILE = "file";
+        static final String COLUMN_ENC_KEY = "enckey";
+        static final String COLUMN_SHA256_HASH = "sha256hash";
         static final String COLUMN_WIDTH = "width";
         static final String COLUMN_HEIGHT = "height";
     }
@@ -821,7 +845,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 3;
+        private static final int DATABASE_VERSION = 4;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -850,6 +874,8 @@ public class PostsDb {
                     + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
                     + MediaTable.COLUMN_URL + " TEXT,"
                     + MediaTable.COLUMN_FILE + " FILE,"
+                    + MediaTable.COLUMN_ENC_KEY + " BLOB,"
+                    + MediaTable.COLUMN_SHA256_HASH + " BLOB,"
                     + MediaTable.COLUMN_WIDTH + " INTEGER,"
                     + MediaTable.COLUMN_HEIGHT + " INTEGER"
                     + ");");

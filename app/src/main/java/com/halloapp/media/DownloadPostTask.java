@@ -36,7 +36,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
             final Downloader.DownloadListener downloadListener = percent -> true;
             try {
                 final File file = mediaStore.getMediaFile(RandomId.create() + ".jpg");
-                Downloader.run(media.url, file, downloadListener);
+                Downloader.run(media.url, media.encKey, media.sha256hash, media.type, file, downloadListener);
                 media.file = file;
                 media.transferred = true;
                 postsDb.setMediaTransferred(post, media);

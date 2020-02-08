@@ -346,7 +346,7 @@ public class Connection {
                         null,
                         null);
                 for (Media media : post.media) {
-                    entry.media.add(new PublishedEntry.Media(PublishedEntry.Media.MEDIA_TYPE_IMAGE, media.url, media.width, media.height));
+                    entry.media.add(new PublishedEntry.Media(PublishedEntry.Media.MEDIA_TYPE_IMAGE, media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
@@ -602,7 +602,9 @@ public class Connection {
                         entry.text
                 );
                 for (PublishedEntry.Media entryMedia : entry.media) {
-                    post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url, entryMedia.width, entryMedia.height));
+                    post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE,
+                            entryMedia.url, entryMedia.encKey, entryMedia.sha256hash,
+                            entryMedia.width, entryMedia.height));
                 }
                 posts.add(post);
             } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
@@ -641,7 +643,9 @@ public class Connection {
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
-                        post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url, entryMedia.width, entryMedia.height));
+                        post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url,
+                                entryMedia.encKey, entryMedia.sha256hash,
+                                entryMedia.width, entryMedia.height));
                     }
                     observer.onIncomingPostReceived(post);
                 } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
