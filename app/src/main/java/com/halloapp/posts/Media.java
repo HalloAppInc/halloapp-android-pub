@@ -66,9 +66,13 @@ public class Media {
     }
 
     public void generateEncKey() {
+        /*
+        * TODO (ds): uncomment when other platforms implement media encryption
+        *  
         final SecureRandom random = new SecureRandom();
         encKey = new byte[32];
         random.nextBytes(encKey);
+         */
     }
 
 }
