@@ -22,9 +22,9 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
     private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
 
-    private int cornerColor;
     private float cornerRadius;
-    private Path cornerPath = new Path();
+    private final Path cornerPath = new Path();
+    private final Paint cornerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private DrawDelegateView drawDelegateView;
 
@@ -46,7 +46,7 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
     private void init(AttributeSet attrs, int defStyle) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PostImageView, defStyle, 0);
 
-        cornerColor = a.getColor(R.styleable.PostImageView_pivCornerColor, 0);
+        cornerPaint.setColor(a.getColor(R.styleable.PostImageView_pivCornerColor, 0));
         cornerRadius = a.getDimension(R.styleable.PostImageView_pivCornerRadius, 0);
         maxAspectRatio = a.getDimension(R.styleable.PostImageView_pivMaxAspectRatio, maxAspectRatio);
 
@@ -113,13 +113,12 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (getScale() <= 1) {
-            if (cornerRadius != 0 && cornerColor != 0) {
+            if (cornerRadius != 0 && cornerPaint.getColor() != 0) {
                 // TODO (ds): think about doing it with Outline, like CardView does, there seems to be some issues with ViewPager during scroll
                 cornerPath.reset();
                 cornerPath.addRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius, Path.Direction.CW);
                 cornerPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-                canvas.clipPath(cornerPath);
-                canvas.drawColor(cornerColor);
+                canvas.drawPath(cornerPath, cornerPaint);
             }
         }
     }
