@@ -111,13 +111,7 @@ public class MediaUtils {
     }
 
     public static Uri getImageCaptureUri(@NonNull Context context) {
-        final File captureFolder = new File(context.getCacheDir(), "camera");
-        if (!captureFolder.exists()) {
-            if (!captureFolder.mkdirs()) {
-                Log.e("failed to create " + captureFolder.getAbsolutePath());
-            }
-        }
-        final File captureFile = new File(captureFolder, "tmp.jpg");
-        return FileProvider.getUriForFile(context, "com.halloapp.fileprovider", captureFile);
+        return FileProvider.getUriForFile(context, "com.halloapp.fileprovider",
+                MediaStore.getInstance(context).getImageCaptureFile());
     }
 }

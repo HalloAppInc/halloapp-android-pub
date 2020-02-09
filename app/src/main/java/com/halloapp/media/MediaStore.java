@@ -16,6 +16,7 @@ public class MediaStore {
 
     private final File mediaDir;
     private final File tmpDir;
+    private final File cameraDir;
 
     public static MediaStore getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -35,6 +36,7 @@ public class MediaStore {
         try {
             mediaDir = prepareDir(new File(context.getFilesDir(), "media"));
             tmpDir = prepareDir(new File(context.getCacheDir(), "media"));
+            cameraDir = prepareDir(new File(context.getCacheDir(), "camera"));
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -65,4 +67,7 @@ public class MediaStore {
         return new File(getTmpDir(), name);
     }
 
+    public File getImageCaptureFile() {
+        return new File(cameraDir, "capture.jpg");
+    }
 }
