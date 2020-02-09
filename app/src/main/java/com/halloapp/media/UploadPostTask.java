@@ -41,6 +41,10 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
                 Log.e("UploadPostTask", e);
                 return null;
             }
+            if (urls == null) {
+                Log.e("UploadPostTask: failed to get urls");
+                return null;
+            }
 
             final Uploader.UploadListener uploadListener = percent -> true;
             try {
