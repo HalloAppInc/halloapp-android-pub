@@ -110,7 +110,7 @@ public class PostsFragment extends Fragment {
     private void scheduleTimestampRefresh(long postTimestamp) {
         long refreshTime = TimeUtils.getRefreshTime(postTimestamp);
         if (refreshTime < refreshTimestampsTime) {
-            refreshTimestampsTime = System.currentTimeMillis() + refreshTime;
+            refreshTimestampsTime = refreshTime;
             Log.v("HomeFragment: will refresh timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(refreshTimestampsTime)));
             mainHandler.removeCallbacks(refreshTimestampsRunnable);
             mainHandler.postDelayed(refreshTimestampsRunnable, refreshTimestampsTime - System.currentTimeMillis());
