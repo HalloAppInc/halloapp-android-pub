@@ -28,7 +28,8 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
     private final int dimensionLimit;
 
     private final int textColor;
-    private final int textSize;
+    private final int textSizeMax;
+    private final int textSizeMin;
     private final int textPadding;
 
     @MainThread
@@ -38,7 +39,8 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
         this.context = context.getApplicationContext();
         postsDb = PostsDb.getInstance(context);
 
-        textSize = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_text_size);
+        textSizeMax = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_max_text_size);
+        textSizeMin = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_min_text_size);
         textPadding = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_padding);
         textColor = context.getResources().getColor(R.color.text_post_thumbnail_color);
 
@@ -69,7 +71,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
                 return null;
             }
             if (post.media.isEmpty()) {
-                return new TextDrawable(post.text, textSize, textPadding, textColor);
+                return new TextDrawable(post.text, textSizeMax, textSizeMin, textPadding, textColor);
             } else {
                 Media media = post.media.get(0);
                 Bitmap bitmap = null;

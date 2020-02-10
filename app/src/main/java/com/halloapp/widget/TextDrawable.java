@@ -16,15 +16,19 @@ import androidx.annotation.Nullable;
 public class TextDrawable extends Drawable {
 
     private final String text;
-    private final int textSize;
+    private final int textSizeMax;
+    private final int textSizeMin;
     private final int padding;
 
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private StaticLayout layout;
+    private int width;
+    private int height;
 
-    public TextDrawable(String text, int textSize, int padding, int color) {
+    public TextDrawable(String text, int textSizeMax, int textSizeMin, int padding, int color) {
         this.text = text;
-        this.textSize = textSize;
+        this.textSizeMax = textSizeMax;
+        this.textSizeMin = textSizeMin;
         this.padding = padding;
         textPaint.setColor(color);
     }
@@ -50,12 +54,23 @@ public class TextDrawable extends Drawable {
     }
 
     private void updateLayout(int width, int height) {
-        textPaint.setTextSize(textSize);
-        do {
-            layout = new StaticLayout(text, textPaint, width - padding * 2, Layout.Alignment.ALIGN_CENTER, 1, 0, false);
-            textPaint.setTextSize(textPaint.getTextSize() - 1);
-        } while (textPaint.getTextSize() > 4 &&
-                (layout.getHeight() > height - padding * 2 || getLayoutWidth(layout) > width - padding * 2));
+        if (this.width != width || this.height != height) {
+            this.width = width;
+            this.height = height;
+            if (height - padding * 2 <= 0 || width - padding * 2 <= 0 || text == null) {
+                layout = null;
+                return;
+            }
+            final int textLimit = (height - padding * 2) * (width - padding * 2) / (textSizeMin * textSizeMin);
+            final String truncatedText = textLimit < text.length() ? text.substring(0, textLimit) : text;
+            final float textSizeStep = Math.max((textSizeMax - textSizeMin) / 16, 1);
+            textPaint.setTextSize(textSizeMax);
+            do {
+                layout = new StaticLayout(truncatedText, textPaint, width - padding * 2, Layout.Alignment.ALIGN_CENTER, 1, 0, false);
+                textPaint.setTextSize(textPaint.getTextSize() - textSizeStep);
+            } while (textPaint.getTextSize() > textSizeMin &&
+                    (layout.getHeight() > height - padding * 2 || getLayoutWidth(layout) > width - padding * 2));
+        }
 
     }
 

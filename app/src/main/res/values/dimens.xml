@@ -5,7 +5,8 @@
     <dimen name="media_pager_margin">8dp</dimen>
     <dimen name="comment_media_list_spacing">4dp</dimen>
     <dimen name="comment_media_list_height">72dp</dimen>
-    <dimen name="text_post_thumbnail_text_size">14dp</dimen>
+    <dimen name="text_post_thumbnail_max_text_size">14dp</dimen>
+    <dimen name="text_post_thumbnail_min_text_size">4dp</dimen>
     <dimen name="text_post_thumbnail_padding">2dp</dimen>
     <dimen name="comment_history_thumbnail_size">48dp</dimen>
     <dimen name="text_post_padding_top">14dp</dimen>
