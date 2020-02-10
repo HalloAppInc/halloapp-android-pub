@@ -63,7 +63,7 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onPostDeleted(@NonNull Post post) {
+    public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
     }
 
     @Override

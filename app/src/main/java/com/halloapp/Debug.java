@@ -28,6 +28,7 @@ public class Debug {
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
+    private static final String DEBUG_MENU_DELETE_POST = "Delete post";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
@@ -69,14 +70,20 @@ public class Debug {
         menu.show();
     }
 
-    public static void showDebugMenu(@NonNull Context context, View anchor, UserId userId, String postId) {
-        PopupMenu menu = new PopupMenu(context, anchor);
+    public static void showDebugMenu(@NonNull Activity activity, View anchor, UserId userId, String postId) {
+        PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
+        menu.getMenu().add(DEBUG_MENU_DELETE_POST);
         menu.setOnMenuItemClickListener(item -> {
-            Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
-                    PostsDb.getInstance(context).setCommentsSeen(userId, postId, false);
+                    PostsDb.getInstance(activity).setCommentsSeen(userId, postId, false);
+                    break;
+                }
+                case DEBUG_MENU_DELETE_POST: {
+                    PostsDb.getInstance(activity).deletePost(userId, postId);
+                    activity.finish();
                     break;
                 }
             }

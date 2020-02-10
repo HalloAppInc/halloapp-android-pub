@@ -58,8 +58,9 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDeleted(@NonNull Post post) {
+        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidatePosts();
+            loadCommentHistory();
         }
 
         @Override
@@ -92,6 +93,7 @@ public class HomeViewModel extends AndroidViewModel {
         @Override
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
             invalidatePosts();
+            loadCommentHistory();
         }
 
         private void invalidatePosts() {

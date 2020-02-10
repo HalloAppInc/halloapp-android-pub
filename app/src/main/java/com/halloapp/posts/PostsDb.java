@@ -43,7 +43,7 @@ public class PostsDb {
     public interface Observer {
         void onPostAdded(@NonNull Post post);
         void onPostDuplicate(@NonNull Post post);
-        void onPostDeleted(@NonNull Post post);
+        void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
         void onCommentDuplicate(@NonNull Comment comment);
@@ -140,11 +140,15 @@ public class PostsDb {
         }
     }
 
-    public void deletePost(@NonNull Post post) {
+    public void deletePost(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-            db.delete(PostsTable.TABLE_NAME, PostsTable._ID + "=?", new String[] {Long.toString(post.rowId)});
-            notifyPostDeleted(post);
+            final int deleteCount = db.delete(PostsTable.TABLE_NAME,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {senderUserId.rawId(), postId});
+            if (deleteCount > 0) {
+                notifyPostDeleted(senderUserId, postId);
+            }
         });
     }
 
@@ -727,10 +731,10 @@ public class PostsDb {
         }
     }
 
-    private void notifyPostDeleted(@NonNull Post post) {
+    private void notifyPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Observer observer : observers) {
-                observer.onPostDeleted(post);
+                observer.onPostDeleted(senderUserId, postId);
             }
         }
     }
@@ -797,6 +801,8 @@ public class PostsDb {
         static final String INDEX_POST_KEY = "post_key";
         static final String INDEX_TIMESTAMP = "timestamp";
 
+        static final String TRIGGER_DELETE = "on_post_delete";
+
         static final String COLUMN_SENDER_USER_ID = "sender_user_id";
         static final String COLUMN_POST_ID = "post_id";
         static final String COLUMN_TIMESTAMP = "timestamp";
@@ -845,7 +851,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 4;
+        private static final int DATABASE_VERSION = 5;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -910,12 +916,25 @@ public class PostsDb {
             db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
                     + PostsTable.COLUMN_TIMESTAMP
                     + ");");
+
+
+            db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
+            db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
+                    + "BEGIN "
+                    +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
+                    + "END;");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             //noinspection SwitchStatementWithTooFewBranches
             switch (oldVersion) {
+                case 4:
+                    db.execSQL("CREATE TRIGGER IF NOT EXISTS " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
+                            + "BEGIN "
+                            +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
+                            + "END;");
+                    break;
                 default: {
                     onCreate(db);
                     break;

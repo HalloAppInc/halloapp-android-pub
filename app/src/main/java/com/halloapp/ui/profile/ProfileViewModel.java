@@ -41,8 +41,8 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDeleted(@NonNull Post post) {
-            if (post.isOutgoing()) {
+        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
+            if (senderUserId.isMe()) {
                 invalidateDataSource();
             }
         }

@@ -50,7 +50,7 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDeleted(@NonNull Post post) {
+        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
         }
 
         @Override
