@@ -27,7 +27,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.util.ListFormatter;
-import com.halloapp.util.TimeUtils;
+import com.halloapp.util.TimeFormatter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -276,7 +276,7 @@ public class CommentsHistoryPopup {
                         timestamp = comment.timestamp;
                     }
                 }
-                timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - timestamp));
+                timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - timestamp));
 
                 if (commentsGroup.postSenderUserId.isMe()) {
                     infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),

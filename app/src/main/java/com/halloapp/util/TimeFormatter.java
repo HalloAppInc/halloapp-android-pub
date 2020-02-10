@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.R;
 
-public class TimeUtils {
+public class TimeFormatter {
 
     public static String formatTimeDiff(@NonNull Context context, long timeDiff) {
         final long seconds = timeDiff / 1000L;

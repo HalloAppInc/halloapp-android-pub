@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -36,18 +35,14 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
-import com.halloapp.util.Log;
-import com.halloapp.util.TimeUtils;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostImageView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -194,7 +189,7 @@ public class PostsFragment extends Fragment {
             } else {
                 progressView.setVisibility(View.GONE);
                 timeView.setVisibility(View.VISIBLE);
-                timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
+                timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
                 timestampRefresher.scheduleTimestampRefresh(post.timestamp);
             }
             if (post.media.isEmpty()) {

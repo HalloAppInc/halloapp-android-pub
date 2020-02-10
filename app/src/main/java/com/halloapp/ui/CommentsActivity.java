@@ -44,15 +44,12 @@ import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
-import com.halloapp.util.TimeUtils;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.PostEditText;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class CommentsActivity extends AppCompatActivity {
 
@@ -271,7 +268,7 @@ public class CommentsActivity extends AppCompatActivity {
                 contactLoader.load(nameView, comment.commentSenderUserId);
             }
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
-            timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - comment.timestamp));
+            timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - comment.timestamp));
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             final Integer textLimit = textLimits.get(comment.rowId);
@@ -306,7 +303,7 @@ public class CommentsActivity extends AppCompatActivity {
                 contactLoader.load(nameView, post.senderUserId);
             }
             progressView.setVisibility(post.transferred ? View.GONE : View.VISIBLE);
-            timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
+            timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 
             if (post.media.isEmpty()) {
