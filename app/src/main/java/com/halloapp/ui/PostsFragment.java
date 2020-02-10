@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
@@ -60,12 +62,6 @@ public class PostsFragment extends Fragment {
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
-    private long refreshTimestampsTime = Long.MAX_VALUE;
-    private final Runnable refreshTimestampsRunnable = () -> {
-        Log.v("HomeFragment: refreshing timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(System.currentTimeMillis())));
-        refreshTimestampsTime = Long.MAX_VALUE;
-        adapter.notifyDataSetChanged();
-    };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
@@ -81,6 +77,8 @@ public class PostsFragment extends Fragment {
         }
     };
 
+    private TimestampRefresher timestampRefresher;
+
     @CallSuper
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +86,8 @@ public class PostsFragment extends Fragment {
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
         contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
+        timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
+        timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
     }
 
     @CallSuper
@@ -97,7 +97,6 @@ public class PostsFragment extends Fragment {
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).removeObserver(contactsObserver);
-        mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
 
     @CallSuper
@@ -105,16 +104,6 @@ public class PostsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         drawDelegateView = Preconditions.checkNotNull(getActivity()).findViewById(R.id.draw_delegate);
-    }
-
-    private void scheduleTimestampRefresh(long postTimestamp) {
-        long refreshTime = TimeUtils.getRefreshTime(postTimestamp);
-        if (refreshTime < refreshTimestampsTime) {
-            refreshTimestampsTime = refreshTime;
-            Log.v("HomeFragment: will refresh timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(refreshTimestampsTime)));
-            mainHandler.removeCallbacks(refreshTimestampsRunnable);
-            mainHandler.postDelayed(refreshTimestampsRunnable, refreshTimestampsTime - System.currentTimeMillis());
-        }
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -206,7 +195,7 @@ public class PostsFragment extends Fragment {
                 progressView.setVisibility(View.GONE);
                 timeView.setVisibility(View.VISIBLE);
                 timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
-                scheduleTimestampRefresh(post.timestamp);
+                timestampRefresher.scheduleTimestampRefresh(post.timestamp);
             }
             if (post.media.isEmpty()) {
                 mediaPagerView.setVisibility(View.GONE);

@@ -78,12 +78,6 @@ public class CommentsActivity extends AppCompatActivity {
     private static final long POST_TEXT_LIMITS_ID = -1;
     private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
-    private long refreshTimestampsTime = Long.MAX_VALUE;
-    private final Runnable refreshTimestampsRunnable = () -> {
-        Log.v("CommentsActivity: refreshing timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(System.currentTimeMillis())));
-        refreshTimestampsTime = Long.MAX_VALUE;
-        adapter.notifyDataSetChanged();
-    };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
@@ -99,6 +93,7 @@ public class CommentsActivity extends AppCompatActivity {
         }
     };
 
+    private TimestampRefresher timestampRefresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +181,9 @@ public class CommentsActivity extends AppCompatActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
 
+        timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
+        timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
+
         ContactsDb.getInstance(this).addObserver(contactsObserver);
 
         if (savedInstanceState != null) {
@@ -204,7 +202,6 @@ public class CommentsActivity extends AppCompatActivity {
         ContactsDb.getInstance(this).removeObserver(contactsObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
-        mainHandler.removeCallbacks(refreshTimestampsRunnable);
     }
 
     @Override
@@ -243,16 +240,6 @@ public class CommentsActivity extends AppCompatActivity {
         viewModel.resetReplyUser();
     }
 
-    private void scheduleTimestampRefresh(long postTimestamp) {
-        long refreshTime = TimeUtils.getRefreshTime(postTimestamp);
-        if (refreshTime < refreshTimestampsTime) {
-            refreshTimestampsTime = refreshTime;
-            Log.v("CommentsActivity: will refresh timestamps at " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date(refreshTimestampsTime)));
-            mainHandler.removeCallbacks(refreshTimestampsRunnable);
-            mainHandler.postDelayed(refreshTimestampsRunnable, refreshTimestampsTime - System.currentTimeMillis());
-        }
-    }
-
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView avatarView;
@@ -285,7 +272,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - comment.timestamp));
-            scheduleTimestampRefresh(comment.timestamp);
+            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             final Integer textLimit = textLimits.get(comment.rowId);
             if (textLimit != null) {
@@ -320,7 +307,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
             progressView.setVisibility(post.transferred ? View.GONE : View.VISIBLE);
             timeView.setText(TimeUtils.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
-            scheduleTimestampRefresh(post.timestamp);
+            timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 
             if (post.media.isEmpty()) {
                 mediaGallery.setVisibility(View.GONE);

@@ -25,18 +25,4 @@ public class TimeUtils {
         final long days = hours / 24L;
         return context.getResources().getQuantityString(R.plurals.time_diff_days, (int)days, (int)days);
     }
-
-    public static long getRefreshTime(long time) {
-        long now = System.currentTimeMillis();
-        long timeDiff = now - time;
-        long refreshResolution;
-        if (timeDiff < DateUtils.HOUR_IN_MILLIS) {
-            refreshResolution = DateUtils.MINUTE_IN_MILLIS;
-        } else if (timeDiff < DateUtils.DAY_IN_MILLIS) {
-            refreshResolution = DateUtils.HOUR_IN_MILLIS;
-        } else {
-            refreshResolution = DateUtils.DAY_IN_MILLIS;
-        }
-        return time + refreshResolution * ((timeDiff + refreshResolution - 1) / refreshResolution) + 1000L;
-    }
 }
