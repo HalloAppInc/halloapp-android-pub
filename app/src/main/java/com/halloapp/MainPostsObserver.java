@@ -99,4 +99,8 @@ public class MainPostsObserver implements PostsDb.Observer {
             }
         }
     }
+
+    @Override
+    public void onPostsCleanup() {
+    }
 }

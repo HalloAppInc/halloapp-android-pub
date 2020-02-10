@@ -27,6 +27,7 @@ public class Debug {
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
+    private static final String DEBUG_MENU_CLEANUP_POSTS = "Cleanup posts";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_DELETE_POST = "Delete post";
 
@@ -38,6 +39,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
+        menu.getMenu().add(DEBUG_MENU_CLEANUP_POSTS);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -63,6 +65,9 @@ public class Debug {
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {
                     PostsDb.getInstance(activity).setCommentsSeen(true);
+                }
+                case DEBUG_MENU_CLEANUP_POSTS: {
+                    new CleanupPostsTask(activity.getApplication()).execute();
                 }
             }
             return false;
@@ -146,6 +151,22 @@ public class Debug {
         protected Void doInBackground(Void... voids) {
             Me.getInstance(application).resetRegistration();
             restart(application);
+            return null;
+        }
+    }
+
+    static class CleanupPostsTask extends AsyncTask<Void, Void, Void> {
+
+        private final Application application;
+
+        CleanupPostsTask(@NonNull Application application) {
+            this.application = application;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            PostsDb.getInstance(application).cleanup();
+            MediaStore.getInstance(application).cleanup();
             return null;
         }
     }

@@ -31,7 +31,7 @@ public class ProfileViewModel extends AndroidViewModel {
         @Override
         public void onPostAdded(@NonNull Post post) {
             if (post.isOutgoing()) {
-                invalidateDataSource();
+                invalidatePosts();
             }
         }
 
@@ -43,21 +43,21 @@ public class ProfileViewModel extends AndroidViewModel {
         @Override
         public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
             if (senderUserId.isMe()) {
-                invalidateDataSource();
+                invalidatePosts();
             }
         }
 
         @Override
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
             if (senderUserId.isMe()) {
-                invalidateDataSource();
+                invalidatePosts();
             }
         }
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (comment.isIncoming()) {
-                invalidateDataSource();
+                invalidatePosts();
             }
         }
 
@@ -72,16 +72,21 @@ public class ProfileViewModel extends AndroidViewModel {
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
             if (postSenderUserId.isMe()) {
-                invalidateDataSource();
+                invalidatePosts();
             }
         }
 
         @Override
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-            invalidateDataSource();
+            invalidatePosts();
         }
 
-        private void invalidateDataSource() {
+        @Override
+        public void onPostsCleanup() {
+            invalidatePosts();
+        }
+
+        private void invalidatePosts() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }
     };

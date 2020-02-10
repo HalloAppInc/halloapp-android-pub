@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
+import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
@@ -50,6 +51,7 @@ public class PostsDb {
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
+        void onPostsCleanup();
     }
 
     public static PostsDb getInstance(final @NonNull Context context) {
@@ -715,6 +717,28 @@ public class PostsDb {
         return comments;
     }
 
+    @WorkerThread
+    public void cleanup() {
+        Log.i("PostsDb.cleanup");
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
+                PostsTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - Constants.POSTS_EXPIRATION),
+                null);
+        Log.i("PostsDb.cleanup: " + deletedPostsCount + " posts deleted");
+
+        // comments are deleted using trigger, but in case there are orphaned comments delete them here
+        final int deletedCommentsCount = db.delete(CommentsTable.TABLE_NAME,
+                CommentsTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - Constants.POSTS_EXPIRATION),
+                null);
+        Log.i("PostsDb.cleanup: " + deletedCommentsCount + " comments deleted");
+
+        if (deletedPostsCount > 0 || deletedCommentsCount > 0) {
+            db.execSQL("VACUUM");
+            Log.i("PostsDb.cleanup: vacuum");
+            notifyPostsCleanup();
+        }
+    }
+
     private void notifyPostAdded(@NonNull Post post) {
         synchronized (observers) {
             for (Observer observer : observers) {
@@ -779,11 +803,18 @@ public class PostsDb {
         }
     }
 
-
     private void notifyHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         synchronized (observers) {
             for (Observer observer : observers) {
                 observer.onHistoryAdded(historyPosts, historyComments);
+            }
+        }
+    }
+
+    private void notifyPostsCleanup() {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onPostsCleanup();
             }
         }
     }

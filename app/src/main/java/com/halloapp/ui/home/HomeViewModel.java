@@ -96,6 +96,12 @@ public class HomeViewModel extends AndroidViewModel {
             loadCommentHistory();
         }
 
+        @Override
+        public void onPostsCleanup() {
+            invalidatePosts();
+            loadCommentHistory();
+        }
+
         private void invalidatePosts() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }

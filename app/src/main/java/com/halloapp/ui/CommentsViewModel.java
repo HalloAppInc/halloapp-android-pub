@@ -84,6 +84,11 @@ class CommentsViewModel extends AndroidViewModel {
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         }
 
+        @Override
+        public void onPostsCleanup() {
+            invalidateDataSource();
+        }
+
         private void invalidateDataSource() {
             mainHandler.post(() -> Preconditions.checkNotNull(commentList.getValue()).getDataSource().invalidate());
         }

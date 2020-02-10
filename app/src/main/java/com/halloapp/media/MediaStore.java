@@ -5,7 +5,9 @@ import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
+import com.halloapp.Constants;
 import com.halloapp.util.Log;
 
 import java.io.File;
@@ -69,5 +71,31 @@ public class MediaStore {
 
     public File getImageCaptureFile() {
         return new File(cameraDir, "capture.jpg");
+    }
+
+    @WorkerThread
+    public void cleanup() {
+        cleanupDir(mediaDir);
+        cleanupDir(tmpDir);
+        cleanupDir(cameraDir);
+    }
+
+    private void cleanupDir(@NonNull File dir) {
+        final File [] files = dir.listFiles();
+        if (files == null) {
+            Log.w("MediaStore.cleanupDir: no files in " + dir.getAbsolutePath());
+            return;
+        }
+        int deleteCount = 0;
+        for (File file : files) {
+            if (file.lastModified() < System.currentTimeMillis() - Constants.POSTS_EXPIRATION) {
+                if (!file.delete()) {
+                    Log.e("MediaStore.cleanupDir: cannot delete " + file.getAbsolutePath());
+                } else {
+                    deleteCount++;
+                }
+            }
+        }
+        Log.i("MediaStore.cleanupDir: " + deleteCount + " file(s) deleted from " + dir.getAbsolutePath());
     }
 }

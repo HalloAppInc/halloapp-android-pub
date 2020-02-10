@@ -98,6 +98,8 @@ public class HalloApp extends Application {
             }
         });
 
+        DailyWorker.schedule(this);
+
         new StartContactSyncTask(Preferences.getInstance(this), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

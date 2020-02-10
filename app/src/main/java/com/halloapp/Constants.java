@@ -8,4 +8,5 @@ public class Constants {
     public static final int MAX_POST_MEDIA_ITEMS = 12;
     public static final int MAX_TEXT_LENGTH = 32000;
     public static final float MAX_IMAGE_ASPECT_RATIO = 1.25f;
+    public static final long POSTS_EXPIRATION = 30 * 24 * 60 * 60 * 1000L;
 }
