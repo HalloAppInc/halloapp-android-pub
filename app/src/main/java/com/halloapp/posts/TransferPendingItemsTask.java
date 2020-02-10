@@ -16,13 +16,13 @@ import java.util.List;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
-public class SendPendingItemsTask extends AsyncTask<Void, Void, Void> {
+public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
 
     private final Connection connection;
     private final MediaStore mediaStore;
     private final PostsDb postsDb;
 
-    public SendPendingItemsTask(@NonNull Context context) {
+    public TransferPendingItemsTask(@NonNull Context context) {
         this.connection = Connection.getInstance();
         this.mediaStore = MediaStore.getInstance(context);
         this.postsDb = PostsDb.getInstance(context);
@@ -32,7 +32,7 @@ public class SendPendingItemsTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         final List<Post> posts = postsDb.getPendingPosts();
-        Log.i("SendPendingItemsTask: " + posts.size() + " posts");
+        Log.i("TransferPendingItemsTask: " + posts.size() + " posts");
         for (Post post : posts) {
             if (post.isIncoming()) {
                 if (!post.media.isEmpty()) {
@@ -48,7 +48,7 @@ public class SendPendingItemsTask extends AsyncTask<Void, Void, Void> {
         }
 
         final List<Comment> comments = postsDb.getPendingComments();
-        Log.i("SendPendingItemsTask: " + comments.size() + " comments");
+        Log.i("TransferPendingItemsTask: " + comments.size() + " comments");
         for (Comment comment : comments) {
             Preconditions.checkArgument(comment.isOutgoing());
             Preconditions.checkArgument(!comment.transferred);
