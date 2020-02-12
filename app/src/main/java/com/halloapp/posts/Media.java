@@ -25,7 +25,7 @@ public class Media {
     public File file;
     public int width;
     public int height;
-    public byte [] encKey;
+    public final byte [] encKey;
     public byte [] sha256hash;
 
     public boolean transferred;

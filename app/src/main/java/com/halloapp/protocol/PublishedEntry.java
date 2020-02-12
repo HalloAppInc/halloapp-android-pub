@@ -73,10 +73,10 @@ public class PublishedEntry {
         public static final String MEDIA_TYPE_IMAGE = "image";
         public static final String MEDIA_TYPE_VIDEO = "video";
 
-        public String type;
-        public String url;
-        public byte [] encKey;
-        public byte [] sha256hash;
+        public final String type;
+        public final String url;
+        public final byte [] encKey;
+        public final byte [] sha256hash;
         public int width;
         public int height;
 

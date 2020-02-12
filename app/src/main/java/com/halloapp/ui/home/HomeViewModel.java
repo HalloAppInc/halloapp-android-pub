@@ -214,8 +214,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     public static class CommentsGroup {
 
-        public UserId postSenderUserId;
-        public String postId;
+        public final UserId postSenderUserId;
+        public final String postId;
 
         public long timestamp;
 

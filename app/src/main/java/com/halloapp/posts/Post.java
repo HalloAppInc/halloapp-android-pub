@@ -16,7 +16,7 @@ public class Post {
     public final String postId;
     public final long timestamp;
 
-    public boolean transferred;
+    public final boolean transferred;
     public boolean seen;
 
     public final String text;

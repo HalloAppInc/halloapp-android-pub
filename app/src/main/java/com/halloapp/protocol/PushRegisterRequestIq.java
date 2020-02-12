@@ -12,7 +12,7 @@ public class PushRegisterRequestIq extends IQ {
 
     private static final String ELEMENT_TOKEN = "push_token";
 
-    private String token;
+    private final String token;
 
     public PushRegisterRequestIq(@NonNull Jid to, @NonNull String token) {
         super(ELEMENT, NAMESPACE);

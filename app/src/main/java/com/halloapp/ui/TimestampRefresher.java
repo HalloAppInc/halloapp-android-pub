@@ -15,7 +15,7 @@ import java.util.Locale;
 
 public class TimestampRefresher extends ViewModel {
 
-    public MutableLiveData<Long> refresh = new MutableLiveData<>();
+    public final MutableLiveData<Long> refresh = new MutableLiveData<>();
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {

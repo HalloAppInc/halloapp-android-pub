@@ -34,7 +34,7 @@ public class HalloApp extends Application {
     public static HalloApp instance;
     public boolean appActiveStatus;
 
-    private static String NEW_POST_NOTIFICATION_CHANNEL_ID = "new_post_notification";
+    private static final String NEW_POST_NOTIFICATION_CHANNEL_ID = "new_post_notification";
 
     @Override
     public void onCreate() {
@@ -73,12 +73,13 @@ public class HalloApp extends Application {
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new LifecycleObserver() {
 
-            NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
+            final NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
                 public void onConnected(int type) {
                     connect();
                 }
 
                 public void onDisconnected() {
+                    // do nothing
                 }
             };
 

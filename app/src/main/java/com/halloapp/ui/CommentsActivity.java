@@ -393,7 +393,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private class CommentsAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-        AsyncPagedListDiffer<Comment> differ;
+        final AsyncPagedListDiffer<Comment> differ;
 
         CommentsAdapter() {
             setHasStableIds(true);

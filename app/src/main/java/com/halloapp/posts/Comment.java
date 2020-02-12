@@ -17,7 +17,7 @@ public class Comment {
     public final String parentCommentId;
     public final long timestamp;
 
-    public boolean transferred;
+    public final boolean transferred;
     public boolean seen;
 
     public final String text;

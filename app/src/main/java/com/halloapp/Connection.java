@@ -749,7 +749,8 @@ public class Connection {
                 if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
 
                     Log.i("connection: got pubsub " + msg);
-                    processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<HalloPubsubItem>)(itemsElem.getItems()));
+                    //noinspection unchecked
+                    processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<HalloPubsubItem>) itemsElem.getItems());
                     handled = true;
                 }
             }

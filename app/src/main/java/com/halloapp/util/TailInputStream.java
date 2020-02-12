@@ -15,7 +15,7 @@ public class TailInputStream extends FilterInputStream {
     private byte[] buffer = new byte[1024];
     private int offset = 0;
 
-    private byte[] tail;
+    private final byte[] tail;
 
     private boolean done = false;
 
@@ -78,10 +78,6 @@ public class TailInputStream extends FilterInputStream {
 
     public int available() throws IOException {
         return super.available() - tail.length;
-    }
-
-    public void close() throws IOException {
-        super.close();
     }
 
     public boolean markSupported() {

@@ -120,7 +120,7 @@ public class MediaUtils {
     }
 
     @WorkerThread
-    public static @Nullable Bitmap decodeVideo(@NonNull File file, int maxDimension) throws IOException {
+    public static @Nullable Bitmap decodeVideo(@NonNull File file, int maxDimension) {
         final MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         try {
             mediaMetadataRetriever.setDataSource(file.getAbsolutePath());
@@ -217,7 +217,7 @@ public class MediaUtils {
     }
 
     @WorkerThread
-    public static @Nullable void transcodeImage(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {
+    public static void transcodeImage(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {
         final Bitmap bitmap = decode(fileFrom, Media.MEDIA_TYPE_IMAGE, maxDimension);
         if (bitmap != null) {
             try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
