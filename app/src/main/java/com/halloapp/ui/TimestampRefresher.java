@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.format.DateUtils;
 
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 

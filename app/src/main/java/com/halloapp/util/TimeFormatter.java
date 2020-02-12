@@ -1,7 +1,6 @@
 package com.halloapp.util;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
 
