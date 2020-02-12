@@ -149,7 +149,7 @@ public class HalloApp extends Application {
     public void showNotification(String title, String body) {
         if (Build.VERSION.SDK_INT >= 26) {
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NEW_POST_NOTIFICATION_CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_notifications)
+                    .setSmallIcon(R.drawable.ic_feed_activity)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);

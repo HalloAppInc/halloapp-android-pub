@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/comment"
-                        android:drawableStart="@drawable/ic_comment"/>
+                        android:drawableStart="@drawable/ic_feed_comment"/>
 
                     <View
                         android:id="@+id/comments_indicator"
@@ -152,7 +152,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/message"
-                        android:drawableStart="@drawable/ic_message"/>
+                        android:drawableStart="@drawable/ic_feed_message"/>
 
                 </FrameLayout>
             </LinearLayout>
