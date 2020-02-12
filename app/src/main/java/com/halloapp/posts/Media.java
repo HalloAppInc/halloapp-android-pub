@@ -7,7 +7,6 @@ import com.halloapp.util.RandomId;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.security.SecureRandom;
 import java.util.List;
 
 public class Media {
@@ -52,6 +51,33 @@ public class Media {
         return maxAspectRatio;
     }
 
+    public static @MediaType int getMediaType(String mime) {
+        if (mime == null) {
+            return MEDIA_TYPE_UNKNOWN;
+        } if (mime.startsWith("image/")) {
+            return MEDIA_TYPE_IMAGE;
+        } else if (mime.startsWith("video/")) {
+            return MEDIA_TYPE_VIDEO;
+        } else {
+            return MEDIA_TYPE_UNKNOWN;
+        }
+    }
+
+    public static String getFileExt(@MediaType int type) {
+        switch (type) {
+            case MEDIA_TYPE_IMAGE: {
+                return "jpg";
+            }
+            case MEDIA_TYPE_VIDEO: {
+                return "mp4";
+            }
+            case MEDIA_TYPE_UNKNOWN:
+            default: {
+                return "";
+            }
+        }
+    }
+
     public Media(long rowId, String id, @MediaType int type, String url, File file, byte[] encKey, byte [] sha256hash, int width, int height, boolean transferred) {
         this.rowId = rowId;
         this.id = id;
@@ -68,7 +94,7 @@ public class Media {
     public void generateEncKey() {
         /*
         * TODO (ds): uncomment when other platforms implement media encryption
-        *  
+        *
         final SecureRandom random = new SecureRandom();
         encKey = new byte[32];
         random.nextBytes(encKey);

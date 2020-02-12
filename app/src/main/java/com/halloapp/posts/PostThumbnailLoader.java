@@ -77,7 +77,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
                 Bitmap bitmap = null;
                 if (media.file != null) {
                     if (media.file.exists()) {
-                        bitmap = MediaUtils.decode(media.file, dimensionLimit);
+                        bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
                     } else {
                         Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
                     }

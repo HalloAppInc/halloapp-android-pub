@@ -19,6 +19,7 @@ import com.halloapp.R;
 import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.widget.PostImageView;
 
 import java.util.concurrent.Callable;
 
@@ -59,7 +60,7 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
             Bitmap bitmap = null;
             if (media.file != null) {
                 if (media.file.exists()) {
-                    bitmap = MediaUtils.decode(media.file, dimensionLimit);
+                    bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
                 } else {
                     Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
                 }
@@ -79,7 +80,12 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
                 if (result == null && media.width != 0 && media.height != 0) {
                     view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
                 } else {
+                    final Drawable oldDrawable = view.getDrawable();
                     view.setImageBitmap(result);
+                    if (oldDrawable instanceof PlaceholderDrawable && view instanceof PostImageView) {
+                        view.setBackgroundColor(placeholderColor);
+                        ((PostImageView)view).playTransition(150);
+                    }
                 }
             }
 

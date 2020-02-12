@@ -24,6 +24,7 @@ import com.halloapp.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -120,15 +121,18 @@ public class PostsDb {
             final ContentValues mediaItemValues = new ContentValues();
             mediaItemValues.put(MediaTable.COLUMN_MEDIA_ID, mediaItem.id);
             mediaItemValues.put(MediaTable.COLUMN_POST_ROW_ID, post.rowId);
+            mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
             if (mediaItem.url != null) {
                 mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
             }
             if (mediaItem.file != null) {
                 mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
                 if (mediaItem.width == 0 || mediaItem.height == 0) {
-                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file);
-                    mediaItem.width = dimensions.getWidth();
-                    mediaItem.height = dimensions.getHeight();
+                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
+                    if (dimensions != null) {
+                        mediaItem.width = dimensions.getWidth();
+                        mediaItem.height = dimensions.getHeight();
+                    }
                 }
             }
             if (mediaItem.width > 0 && mediaItem.height > 0) {
@@ -189,8 +193,8 @@ public class PostsDb {
                 values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
             }
             if (media.width == 0 || media.height == 0) {
-                final Size dimensions = MediaUtils.getDimensions(media.file);
-                if (dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
+                final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
+                if (dimensions != null && dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
                     values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
                     values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
                 }
@@ -326,7 +330,7 @@ public class PostsDb {
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             db.beginTransaction();
             try {
-                final Collection<Post> addedHistoryPosts = new ArrayList<>();
+                final List<Post> addedHistoryPosts = new ArrayList<>();
                 final Collection<Comment> addedHistoryComments = new ArrayList<>();
                 for (Post post : historyPosts) {
                     try {
@@ -347,6 +351,7 @@ public class PostsDb {
                     }
                 }
                 if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
+                    Collections.sort(addedHistoryPosts, (o1, o2) -> Long.compare(o2.timestamp, o1.timestamp)); // sort, so download would happen in reverse order
                     notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
                 }
                 db.setTransactionSuccessful();
@@ -899,7 +904,7 @@ public class PostsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 5;
+        private static final int DATABASE_VERSION = 6;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);

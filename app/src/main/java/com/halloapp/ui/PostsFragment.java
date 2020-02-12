@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -214,17 +215,14 @@ public class PostsFragment extends Fragment {
             }
 
             textView.setText(post.text);
-            textView.setOnReadMoreListener(new LimitingTextView.OnReadMoreListener() {
-                @Override
-                public boolean onReadMore(TextView view, int limit) {
-                    final Intent intent = new Intent(getContext(), CommentsActivity.class);
-                    intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-                    intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
-                    intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
-                    intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
-                    startActivity(intent);
-                    return true;
-                }
+            textView.setOnReadMoreListener((view, limit) -> {
+                final Intent intent = new Intent(getContext(), CommentsActivity.class);
+                intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
+                intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+                intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
+                intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
+                startActivity(intent);
+                return true;
             });
 
             if (TextUtils.isEmpty(post.text)) {
@@ -282,13 +280,19 @@ public class PostsFragment extends Fragment {
                 final PostImageView imageView = view.findViewById(R.id.image);
                 imageView.setDrawDelegate(drawDelegateView);
                 final Media mediaItem = media.get(position);
-                view.setTag(mediaItem);
-                if (mediaItem.height > mediaItem.width) {
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                } else {
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                }
                 mediaThumbnailLoader.load(imageView, mediaItem);
+                final View playButton = view.findViewById(R.id.play);
+                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                    playButton.setVisibility(View.VISIBLE);
+                    playButton.setOnClickListener(v -> {
+                        final Intent intent = new Intent(getContext(), VideoPlaybackActivity.class);
+                        intent.setData(Uri.fromFile(mediaItem.file));
+                        startActivity(intent);
+                    });
+                } else {
+                    playButton.setVisibility(View.GONE);
+                }
+
                 container.addView(view);
                 return view;
             }

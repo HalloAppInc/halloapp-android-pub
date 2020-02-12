@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Preconditions;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -161,7 +161,19 @@ public class PostComposerActivity extends AppCompatActivity {
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             final View view = getLayoutInflater().inflate(R.layout.media_pager_item, container, false);
             final ImageView imageView = view.findViewById(R.id.image);
-            mediaThumbnailLoader.load(imageView, media.get(position));
+            final View playButton = view.findViewById(R.id.play);
+            final Media mediaItem = media.get(position);
+            mediaThumbnailLoader.load(imageView, mediaItem);
+            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                playButton.setVisibility(View.VISIBLE);
+                playButton.setOnClickListener(v -> {
+                    final Intent intent = new Intent(getBaseContext(), VideoPlaybackActivity.class);
+                    intent.setData(Uri.fromFile(mediaItem.file));
+                    startActivity(intent);
+                });
+            } else {
+                playButton.setVisibility(View.GONE);
+            }
             container.addView(view);
             return view;
         }
@@ -197,24 +209,16 @@ public class PostComposerActivity extends AppCompatActivity {
         @Override
         protected List<Media> doInBackground(Void... voids) {
             final List<Media> media = new ArrayList<>();
+            final ContentResolver contentResolver = application.getContentResolver();
             for (Uri uri : uris) {
-                final File file = MediaStore.getInstance(application).getTmpFile(RandomId.create() + ".jpg");
+                @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
+                final File file = MediaStore.getInstance(application).getTmpFile(RandomId.create());
                 FileUtils.uriToFile(application, uri, file);
-                final Size size = MediaUtils.getDimensions(file);
-                if (size.getHeight() > 0 && size.getWidth() > 0) {
-                    int orientation = ExifInterface.ORIENTATION_UNDEFINED;
-                    try {
-                        orientation = MediaUtils.getExifOrientation(file);
-                    } catch (IOException ignore) {
-                    }
-                    final Media mediaItem = Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file);
-                    if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-                        mediaItem.width = size.getHeight();
-                        mediaItem.height = size.getWidth();
-                    } else {
-                        mediaItem.width = size.getWidth();
-                        mediaItem.height = size.getHeight();
-                    }
+                final Size size = MediaUtils.getDimensions(file, mediaType);
+                if (size != null) {
+                    final Media mediaItem = Media.createFromFile(mediaType, file);
+                    mediaItem.width = size.getWidth();
+                    mediaItem.height = size.getHeight();
                     media.add(mediaItem);
                 } else {
                     Log.e("PostComposerActivity: failed to load " + uri);
@@ -274,16 +278,33 @@ public class PostComposerActivity extends AppCompatActivity {
                     text);
             if (media != null) {
                 for (Media media : media) {
-                    try {
-                        final File postFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".jpg");
-                        MediaUtils.transcode(media.file, postFile, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
-                        final Media sendMedia = Media.createFromFile(media.type, postFile);
-                        sendMedia.generateEncKey();
-                        post.media.add(sendMedia);
-                    } catch (IOException e) {
-                        Log.e("failed to transcode image", e);
-                        return null;
+                    final File postFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
+                    switch (media.type) {
+                        case Media.MEDIA_TYPE_IMAGE: {
+                            try {
+                                MediaUtils.transcodeImage(media.file, postFile, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
+                            } catch (IOException e) {
+                                Log.e("failed to transcode image", e);
+                                return null;
+                            }
+                            break;
+                        }
+                        case Media.MEDIA_TYPE_VIDEO: {
+                            if (!media.file.renameTo(postFile)) {
+                                Log.e("failed to rename " + media.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
+                                return null;
+                            }
+                            break;
+                        }
+                        case Media.MEDIA_TYPE_UNKNOWN:
+                        default: {
+                            Log.e("unknown media type " + media.file.getAbsolutePath());
+                            return null;
+                        }
                     }
+                    final Media sendMedia = Media.createFromFile(media.type, postFile);
+                    sendMedia.generateEncKey();
+                    post.media.add(sendMedia);
                 }
             }
             return post;

@@ -346,7 +346,7 @@ public class Connection {
                         null,
                         null);
                 for (Media media : post.media) {
-                    entry.media.add(new PublishedEntry.Media(PublishedEntry.Media.MEDIA_TYPE_IMAGE, media.url, media.encKey, media.sha256hash, media.width, media.height));
+                    entry.media.add(new PublishedEntry.Media(getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
@@ -601,8 +601,9 @@ public class Connection {
                         isMe(entry.user) || entry.media.isEmpty(),
                         entry.text
                 );
+                post.seen = true;
                 for (PublishedEntry.Media entryMedia : entry.media) {
-                    post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE,
+                    post.media.add(Media.createFromUrl(getMediaType(entryMedia.type),
                             entryMedia.url, entryMedia.encKey, entryMedia.sha256hash,
                             entryMedia.width, entryMedia.height));
                 }
@@ -618,6 +619,7 @@ public class Connection {
                         true,
                         entry.text
                 );
+                comment.seen = true;
                 comments.add(comment);
             }
         }
@@ -643,7 +645,7 @@ public class Connection {
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
-                        post.media.add(Media.createFromUrl(Media.MEDIA_TYPE_IMAGE, entryMedia.url,
+                        post.media.add(Media.createFromUrl(getMediaType(entryMedia.type), entryMedia.url,
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
@@ -704,6 +706,35 @@ public class Connection {
 
     private static Jid userIdToJid(@NonNull UserId userId) {
         return JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(userId.rawId()), Domainpart.fromOrNull(XMPP_DOMAIN));
+    }
+
+    private static @Media.MediaType int getMediaType(@PublishedEntry.Media.MediaType String protocolMediaType) {
+        switch (protocolMediaType) {
+            case PublishedEntry.Media.MEDIA_TYPE_IMAGE: {
+                return Media.MEDIA_TYPE_IMAGE;
+            }
+            case PublishedEntry.Media.MEDIA_TYPE_VIDEO: {
+                return Media.MEDIA_TYPE_VIDEO;
+            }
+            default: {
+                return Media.MEDIA_TYPE_UNKNOWN;
+            }
+        }
+    }
+
+    private static @PublishedEntry.Media.MediaType String getMediaType(@Media.MediaType int mediaType) {
+        switch (mediaType) {
+            case Media.MEDIA_TYPE_IMAGE: {
+                return PublishedEntry.Media.MEDIA_TYPE_IMAGE;
+            }
+            case Media.MEDIA_TYPE_VIDEO: {
+                return PublishedEntry.Media.MEDIA_TYPE_VIDEO;
+            }
+            case Media.MEDIA_TYPE_UNKNOWN:
+            default: {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     class MessagePacketListener implements StanzaListener {

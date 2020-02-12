@@ -1,5 +1,7 @@
 package com.halloapp.widget;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -90,6 +92,17 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
         }
     }
 
+    public void playTransition(int duration) {
+        Drawable drawable = getDrawable();
+        if (drawable != null) {
+            drawable.setAlpha(0);
+            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(drawable, PropertyValuesHolder.ofInt("alpha", 255));
+            animator.setTarget(drawable);
+            animator.setDuration(duration);
+            animator.start();
+        }
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -141,6 +154,12 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
         @Override
         public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+            invalidateSelf();
+        }
+
+        public int getAlpha() {
+            return paint.getAlpha();
         }
 
         @Override

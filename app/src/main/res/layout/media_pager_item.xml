@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
-    >
+    android:padding="8dp">
 
     <com.halloapp.widget.PostImageView
         android:id="@+id/image"
@@ -16,5 +15,15 @@
         app:pivCornerColor="@color/card_background"
         app:pivCornerRadius="8dp"
         tools:src="@mipmap/ic_launcher" />
+
+    <ImageView
+        android:id="@+id/play"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:tint="@android:color/white"
+        android:alpha="0.5"
+        android:src="@drawable/ic_play"
+        android:visibility="gone"/>
 
 </FrameLayout>

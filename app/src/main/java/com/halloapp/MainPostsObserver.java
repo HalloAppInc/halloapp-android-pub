@@ -46,7 +46,7 @@ public class MainPostsObserver implements PostsDb.Observer {
             if (post.media.isEmpty()) {
                 connection.sendPost(post);
             } else {
-                new UploadPostTask(post, connection, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new UploadPostTask(post, mediaStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
             connection.sendDeliveryReceipt(post);

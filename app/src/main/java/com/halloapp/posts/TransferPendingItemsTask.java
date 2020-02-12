@@ -42,7 +42,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                 if (post.media.isEmpty()) {
                     connection.sendPost(post);
                 } else {
-                    new UploadPostTask(post, connection, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                    new UploadPostTask(post, mediaStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
                 }
             }
         }
