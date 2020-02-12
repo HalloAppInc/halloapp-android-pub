@@ -982,12 +982,6 @@ public class PostsDb {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             //noinspection SwitchStatementWithTooFewBranches
             switch (oldVersion) {
-                case 4:
-                    db.execSQL("CREATE TRIGGER IF NOT EXISTS " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
-                            + "BEGIN "
-                            +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
-                            + "END;");
-                    break;
                 default: {
                     onCreate(db);
                     break;
