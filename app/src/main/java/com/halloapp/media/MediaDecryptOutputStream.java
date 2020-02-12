@@ -31,7 +31,7 @@ public class MediaDecryptOutputStream extends FilterOutputStream {
 
     private boolean closed;
 
-    public MediaDecryptOutputStream(byte[] mediaKey, @Media.MediaType int type, OutputStream os) throws IOException {
+    public MediaDecryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, @NonNull OutputStream os) throws IOException {
         super(os);
 
         final MediaKeys keys = new MediaKeys(mediaKey, type);

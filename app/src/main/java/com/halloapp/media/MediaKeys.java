@@ -1,5 +1,7 @@
 package com.halloapp.media;
 
+import androidx.annotation.NonNull;
+
 import com.halloapp.posts.Media;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +16,7 @@ class MediaKeys {
     final byte[] aesKey = new byte[32];
     final byte[] hmacKey = new byte[32];
 
-    MediaKeys(byte[] mediaKey, @Media.MediaType int type) {
+    MediaKeys(@NonNull byte[] mediaKey, @Media.MediaType int type) {
         final HKDF hkdf = HKDF.fromHmacSha256();
         final byte[] pseudoRandomKey = hkdf.extract((SecretKey) null, mediaKey);
         final byte[] expandedKey = hkdf.expand(pseudoRandomKey, getHkdfInfo(type).getBytes(StandardCharsets.UTF_8), 80);

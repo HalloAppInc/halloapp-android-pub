@@ -76,7 +76,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private void prepareMedia(Media media) throws IOException, MediaConversionException {
+    private void prepareMedia(@NonNull Media media) throws IOException, MediaConversionException {
         if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file)) {
             final File file = mediaStore.getTmpFile(RandomId.create());
             final MediaConverter mediaConverter = new MediaConverter();

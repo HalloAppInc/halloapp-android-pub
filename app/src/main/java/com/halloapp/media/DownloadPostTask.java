@@ -20,7 +20,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
     private final MediaStore mediaStore;
     private final PostsDb postsDb;
 
-    public DownloadPostTask(@NonNull Post post, MediaStore mediaStore, PostsDb postsDb) {
+    public DownloadPostTask(@NonNull Post post, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
         this.post = post;
         this.mediaStore = mediaStore;
         this.postsDb = postsDb;

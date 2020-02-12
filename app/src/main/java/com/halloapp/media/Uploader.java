@@ -34,7 +34,7 @@ class Uploader {
     }
 
     @WorkerThread
-    static byte [] run(@NonNull File file, byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener) throws IOException {
+    static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener) throws IOException {
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 

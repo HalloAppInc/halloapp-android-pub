@@ -37,7 +37,7 @@ class Downloader {
     }
 
     @WorkerThread
-    static void run(@NonNull String remotePath, byte [] mediaKey, byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+    static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
         InputStream inStream = null;
         OutputStream outStream = null;
         HttpURLConnection connection = null;
