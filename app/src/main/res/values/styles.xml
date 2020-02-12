@@ -50,6 +50,7 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:drawablePadding">6dp</item>
+        <item name="android:paddingBottom">1dp</item>
     </style>
 
     <style name="comments_history_animation">
