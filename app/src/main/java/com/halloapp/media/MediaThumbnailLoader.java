@@ -2,15 +2,11 @@ package com.halloapp.media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
 
@@ -19,6 +15,7 @@ import com.halloapp.R;
 import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.PostImageView;
 
 import java.util.concurrent.Callable;
@@ -28,6 +25,8 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
     private final LruCache<String, Bitmap> cache;
     private final int placeholderColor;
     private final int dimensionLimit;
+
+    private static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 
     @MainThread
     public MediaThumbnailLoader(@NonNull Context context) {
@@ -67,7 +66,7 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
             }
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
                 Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
-                return null;
+                return INVALID_BITMAP;
             } else {
                 return bitmap;
             }
@@ -77,7 +76,7 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                if (result == null && media.width != 0 && media.height != 0) {
+                if (result == INVALID_BITMAP && media.width != 0 && media.height != 0) {
                     view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
                 } else {
                     final Drawable oldDrawable = view.getDrawable();
@@ -101,44 +100,4 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
         load(view, loader, displayer, media.id, cache);
     }
 
-    static class PlaceholderDrawable extends Drawable {
-
-        final int width;
-        final int height;
-        final int color;
-
-        PlaceholderDrawable(int width, int height, int color) {
-            this.width = width;
-            this.height = height;
-            this.color = color;
-        }
-
-        public int getIntrinsicWidth() {
-            return width;
-        }
-
-        public int getIntrinsicHeight() {
-            return height;
-        }
-
-        @Override
-        public void draw(@NonNull Canvas canvas) {
-            canvas.drawColor(color);
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-
-        }
-
-        @Override
-        public void setColorFilter(@Nullable ColorFilter colorFilter) {
-
-        }
-
-        @Override
-        public int getOpacity() {
-            return PixelFormat.OPAQUE;
-        }
-    }
 }

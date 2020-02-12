@@ -15,6 +15,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.TextDrawable;
 
 import java.util.concurrent.Callable;
@@ -31,6 +32,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
     private final int textSizeMax;
     private final int textSizeMin;
     private final int textPadding;
+    private final int placeholderColor;
 
     @MainThread
     public PostThumbnailLoader(@NonNull Context context, int dimensionLimit) {
@@ -43,6 +45,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
         textSizeMin = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_min_text_size);
         textPadding = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_padding);
         textColor = context.getResources().getColor(R.color.text_post_thumbnail_color);
+        placeholderColor = context.getResources().getColor(R.color.media_placeholder);
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -73,7 +76,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
             if (post.media.isEmpty()) {
                 return new TextDrawable(post.text, textSizeMax, textSizeMin, textPadding, textColor);
             } else {
-                Media media = post.media.get(0);
+                final Media media = post.media.get(0);
                 Bitmap bitmap = null;
                 if (media.file != null) {
                     if (media.file.exists()) {
@@ -84,7 +87,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
                 }
                 if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
                     Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
-                    return null;
+                    return new PlaceholderDrawable(media.width, media.height, placeholderColor);
                 } else {
                     return new BitmapDrawable(context.getResources(), bitmap);
                 }
