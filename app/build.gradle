@@ -9,13 +9,13 @@ android {
         applicationId "com.halloapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 12
-        versionName "0.12"
+        versionCode 14
+        versionName "0.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
