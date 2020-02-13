@@ -55,6 +55,10 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media) {
+        if (media.file == null) {
+            view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
+            return;
+        }
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
             if (media.file != null) {
@@ -99,5 +103,4 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
         };
         load(view, loader, displayer, media.id, cache);
     }
-
 }
