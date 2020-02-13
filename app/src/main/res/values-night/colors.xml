@@ -6,6 +6,7 @@
     <color name="window_background">#303030</color>
     <color name="tab_active">#dddddd</color>
     <color name="media_placeholder">#303030</color>
+    <color name="gallery_placeholder">#404040</color>
     <color name="card_background">@color/cardview_dark_background</color>
     <color name="reply_indicator_background">#606060</color>
     <color name="text_post_thumbnail_color">#ffffffff</color>

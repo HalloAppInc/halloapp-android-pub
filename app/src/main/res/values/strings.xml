@@ -46,6 +46,8 @@
     </plurals>
     <string name="contacts_permission_rationale">To connect with your friends and family we need a permission to access contacts on your device</string>
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need a permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="storage_permission_rationale">Pick media we need a permission to access your device storage</string>
+    <string name="storage_permission_rationale_denied">Pick media we need a permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
     <string name="failed_to_initialize">Failed to initialize</string>
@@ -82,4 +84,8 @@
     <string name="notify_posts">Posts</string>
     <string name="notify_comments">Comments</string>
     <string name="read_more">Read more</string>
+    <string name="no_photos_or_videos_found">No photos or videos found</string>
+    <string name="gallery">Gallery</string>
+    <string name="select">OK</string>
+    <string name="other_media">Other media</string>
 </resources>

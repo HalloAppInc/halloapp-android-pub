@@ -13,4 +13,7 @@
     <dimen name="text_post_padding_bottom">18dp</dimen>
     <dimen name="media_post_padding_top">0dp</dimen>
     <dimen name="media_post_padding_bottom">12dp</dimen>
+    <dimen name="media_gallery_grid_size">84dp</dimen>
+    <dimen name="media_gallery_grid_spacing">4dp</dimen>
+    <dimen name="media_gallery_selection_padding">6dp</dimen>
 </resources>

@@ -13,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,9 +30,11 @@ import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.CommentsHistoryPopup;
 import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
+import com.halloapp.widget.CenterToast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +42,7 @@ import java.util.Locale;
 
 public class HomeFragment extends PostsFragment {
 
-    private static final int REQUEST_CODE_PICK_IMAGE = 1;
+    private static final int REQUEST_CODE_PICK_MEDIA = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
 
     private HomeViewModel viewModel;
@@ -146,7 +147,7 @@ public class HomeFragment extends PostsFragment {
                 return true;
             }
             case R.id.add_post_gallery: {
-                getImageFromGallery();
+                getMediaFromGallery();
                 return true;
             }
             case R.id.add_post_camera: {
@@ -163,22 +164,28 @@ public class HomeFragment extends PostsFragment {
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
         switch (request) {
-            case REQUEST_CODE_PICK_IMAGE: {
+            case REQUEST_CODE_PICK_MEDIA: {
                 if (result == Activity.RESULT_OK) {
                     if (data == null) {
                         Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no data");
-                        Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
+                        CenterToast.show(Preconditions.checkNotNull(getContext()), R.string.bad_image);
                     } else {
                         final ArrayList<Uri> uris = new ArrayList<>();
-                        final ClipData clipData = data.getClipData();
-                        if (clipData != null) {
-                            for (int i = 0; i < clipData.getItemCount(); i++) {
-                                uris.add(clipData.getItemAt(i).getUri());
-                            }
-                        } else {
-                            final Uri uri = data.getData();
-                            if (uri != null) {
-                                uris.add(uri);
+                        final ArrayList<Uri> extraStreamUris = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                        if (extraStreamUris != null && !extraStreamUris.isEmpty()) {
+                            uris.addAll(extraStreamUris);
+                        }
+                        if (uris.isEmpty()) {
+                            final ClipData clipData = data.getClipData();
+                            if (clipData != null) {
+                                for (int i = 0; i < clipData.getItemCount(); i++) {
+                                    uris.add(clipData.getItemAt(i).getUri());
+                                }
+                            } else {
+                                final Uri uri = data.getData();
+                                if (uri != null) {
+                                    uris.add(uri);
+                                }
                             }
                         }
                         if (!uris.isEmpty()) {
@@ -186,8 +193,8 @@ public class HomeFragment extends PostsFragment {
                             intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
                             startActivity(intent);
                         } else {
-                            Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no uri");
-                            Toast.makeText(getContext(), R.string.bad_image, Toast.LENGTH_SHORT).show();
+                            Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_MEDIA: no uri");
+                            CenterToast.show(Preconditions.checkNotNull(getContext()), R.string.bad_image);
                         }
                     }
                 }
@@ -219,14 +226,10 @@ public class HomeFragment extends PostsFragment {
 
     }
 
-    private void getImageFromGallery() {
-        final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        final String[] mimeTypes = {"image/*", "video/*"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+    private void getMediaFromGallery() {
+        final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
+
     }
 
     private void getImageFromCamera() {
