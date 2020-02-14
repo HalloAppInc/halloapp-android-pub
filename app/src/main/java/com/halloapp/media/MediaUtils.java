@@ -234,6 +234,7 @@ public class MediaUtils {
         final MediaExtractor extractor = new MediaExtractor();
         long fileLength = file.length();
         long bitrate = 0;
+        long duration = 0;
         try {
             extractor.setDataSource(file.getAbsolutePath());
             for (int index = 0; index < extractor.getTrackCount(); index++) {
@@ -242,13 +243,14 @@ public class MediaUtils {
                 if (!MediaFormat.MIMETYPE_VIDEO_AVC.equals(trackMime) &&
                         !MediaFormat.MIMETYPE_VIDEO_HEVC.equals(trackMime) &&
                         !MediaFormat.MIMETYPE_AUDIO_AAC.equals(trackMime)) {
-                    Log.i("MediaUtils.shouldConvertVideo track " + index + " is " + trackMime + " will convert");
+                    Log.i("MediaUtils.shouldConvertVideo track " + index + " is " + trackMime + ", will convert");
                     return true;
                 }
                 if (mediaFormat.containsKey(MediaFormat.KEY_DURATION)) {
                     final long trackDuration = mediaFormat.getLong(MediaFormat.KEY_DURATION);
                     if (trackDuration != 0) {
                         bitrate = Math.max(bitrate, 8000000L * fileLength / trackDuration);
+                        duration = Math.max(duration, trackDuration / 1000L);
                     }
                 }
             }
@@ -256,7 +258,11 @@ public class MediaUtils {
             extractor.release();
         }
         if (bitrate > Constants.MAX_VIDEO_BITRATE) {
-            Log.i("MediaUtils.shouldConvertVideo bitrate is " + bitrate + " will convert");
+            Log.i("MediaUtils.shouldConvertVideo bitrate is " + bitrate + ", will convert");
+            return true;
+        }
+        if (duration > Constants.MAX_VIDEO_DURATION) {
+            Log.i("MediaUtils.shouldConvertVideo duration is " + duration + ", will convert");
             return true;
         }
         Log.i("MediaUtils.shouldConvertVideo: OK to send as is " + file.getAbsolutePath());
