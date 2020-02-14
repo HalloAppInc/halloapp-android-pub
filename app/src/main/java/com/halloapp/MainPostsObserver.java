@@ -49,7 +49,7 @@ public class MainPostsObserver implements PostsDb.Observer {
                 new UploadPostTask(post, mediaStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
-            connection.sendDeliveryReceipt(post);
+            connection.sendAck(post.postId);
 
             if (!post.media.isEmpty()) {
                 new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
@@ -59,7 +59,7 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     @Override
     public void onPostDuplicate(@NonNull Post post) {
-        //connection.sendDeliveryReceipt(post);
+        connection.sendAck(post.postId);
     }
 
     @Override
@@ -74,13 +74,14 @@ public class MainPostsObserver implements PostsDb.Observer {
     public void onCommentAdded(@NonNull Comment comment) {
         if (comment.isOutgoing()) {
             connection.sendComment(comment);
-        } else { // if (post.isIncoming())
-            connection.sendDeliveryReceipt(comment);
+        } else { // if (comment.isIncoming())
+            connection.sendAck(comment.commentId);
         }
     }
 
     @Override
     public void onCommentDuplicate(@NonNull Comment comment) {
+        connection.sendAck(comment.commentId);
     }
 
     @Override
