@@ -124,6 +124,15 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        final Drawable drawable = getDrawable();
+        if (drawable instanceof ClippedBitmapDrawable) {
+            final ClippedBitmapDrawable clippedBitmapDrawable = ((ClippedBitmapDrawable) drawable);
+            if (getScale() <= 1) {
+                clippedBitmapDrawable.allowOverdraw(1 - getScale());
+            } else {
+                clippedBitmapDrawable.allowOverdraw(0);
+            }
+        }
         super.onDraw(canvas);
         if (getScale() <= 1) {
             if (cornerRadius != 0 && cornerPaint.getColor() != 0) {
@@ -141,6 +150,9 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
         final Bitmap bitmap;
         final Rect clipRect;
         final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+        float allowedOverdraw;
+        final Rect overdrawSrcRect = new Rect();
+        final Rect overdrawDstRect = new Rect();
 
         ClippedBitmapDrawable(@NonNull Bitmap bitmap, @NonNull Rect clipRect) {
             this.bitmap = bitmap;
@@ -149,7 +161,24 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
         @Override
         public void draw(@NonNull Canvas canvas) {
-            canvas.drawBitmap(bitmap, clipRect, getBounds(), paint);
+            if (allowedOverdraw == 0) {
+                canvas.drawBitmap(bitmap, clipRect, getBounds(), paint);
+            } else {
+                overdrawSrcRect.set(clipRect);
+                final Rect bounds = getBounds();
+                overdrawDstRect.set(bounds);
+
+                overdrawSrcRect.left -= clipRect.width() * allowedOverdraw;
+                overdrawSrcRect.right += clipRect.width() * allowedOverdraw;
+                overdrawSrcRect.top -= clipRect.height() * allowedOverdraw;
+                overdrawSrcRect.bottom += clipRect.height() * allowedOverdraw;
+
+                overdrawDstRect.left -= bounds.width() * allowedOverdraw;
+                overdrawDstRect.right += bounds.width() * allowedOverdraw;
+                overdrawDstRect.top -= bounds.height() * allowedOverdraw;
+                overdrawDstRect.bottom += bounds.height() * allowedOverdraw;
+                canvas.drawBitmap(bitmap, overdrawSrcRect, overdrawDstRect, paint);
+            }
         }
 
         @Override
@@ -179,6 +208,10 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
         @Override
         public int getIntrinsicHeight() {
             return clipRect.height();
+        }
+
+        public void allowOverdraw(float allowedOverdraw) {
+            this.allowedOverdraw = allowedOverdraw;
         }
     }
 }
