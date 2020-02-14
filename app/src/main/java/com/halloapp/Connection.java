@@ -11,6 +11,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
+import com.halloapp.protocol.AckStanza;
 import com.halloapp.protocol.ContactsSyncRequestIq;
 import com.halloapp.protocol.ContactsSyncResponseIq;
 import com.halloapp.protocol.MediaUploadIq;
@@ -384,7 +385,24 @@ public class Connection {
         });
     }
 
-    public void sendDeliveryReceipt(final @NonNull Post post) {
+    public void sendAck(final @NonNull String id) {
+        executor.execute(() -> {
+            if (connection == null) {
+                Log.e("connection: cannot send ack, no connection");
+                return;
+            }
+            try {
+                final AckStanza ack = new AckStanza(connection.getXMPPServiceDomain(), id);
+                Log.i("connection: sending ack for " + id);
+                connection.sendStanza(ack);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send ack", e);
+            }
+
+        });
+    }
+
+    public void sendReadReceipt(final @NonNull Post post) {
         executor.execute(() -> {
             if (connection == null) {
                 Log.e("connection: cannot send message, no connection");
@@ -399,26 +417,6 @@ public class Connection {
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
                 Log.e("connection: cannot send post delivery receipt", e);
-            }
-
-        });
-    }
-
-    public void sendDeliveryReceipt(final @NonNull Comment comment) {
-        executor.execute(() -> {
-            if (connection == null) {
-                Log.e("connection: cannot send message, no connection");
-                return;
-            }
-            try {
-                final Jid recipientJid = userIdToJid(comment.commentSenderUserId);
-                final Message message = new Message(recipientJid);
-                message.setStanzaId(comment.commentId);
-                message.addExtension(new DeliveryReceipt(comment.commentId));
-                Log.i("connection: sending comment delivery receipt " + comment.commentId + " to " + recipientJid);
-                connection.sendStanza(message);
-            } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send comment delivery receipt", e);
             }
 
         });
