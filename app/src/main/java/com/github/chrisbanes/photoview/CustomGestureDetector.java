@@ -35,6 +35,7 @@ class CustomGestureDetector {
     private final float mTouchSlop;
     private final float mMinimumVelocity;
     private final OnGestureListener mListener;
+    private int mDraggingMaxPointerCount; // maximum number of pointers during drag
 
     CustomGestureDetector(Context context, OnGestureListener listener) {
         final ViewConfiguration configuration = ViewConfiguration
@@ -151,6 +152,7 @@ class CustomGestureDetector {
                 mLastTouchX = getActiveX(ev);
                 mLastTouchY = getActiveY(ev);
                 mIsDragging = false;
+                mDraggingMaxPointerCount = ev.getPointerCount();
                 break;
             case MotionEvent.ACTION_MOVE:
                 final float x = getActiveX(ev);
@@ -164,7 +166,8 @@ class CustomGestureDetector {
                 }
 
                 if (mIsDragging || isScaling()) {
-                    mListener.onDrag(dx, dy);
+                    mDraggingMaxPointerCount = Math.max(mDraggingMaxPointerCount, ev.getPointerCount());
+                    mListener.onDrag(dx, dy, mDraggingMaxPointerCount);
                     mLastTouchX = x;
                     mLastTouchY = y;
 
@@ -200,8 +203,8 @@ class CustomGestureDetector {
                                     -vY);
                         }
                     }
+                    mIsDragging = false;
                 }
-
                 // Recycle Velocity Tracker
                 if (null != mVelocityTracker) {
                     mVelocityTracker.recycle();

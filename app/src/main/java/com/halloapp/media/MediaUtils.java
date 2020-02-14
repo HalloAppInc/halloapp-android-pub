@@ -3,7 +3,10 @@ package com.halloapp.media;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
@@ -72,6 +75,14 @@ public class MediaUtils {
         return matrix;
     }
 
+    static boolean swapsWidthAnHeight(int exifOrientation) {
+        return
+                exifOrientation == ExifInterface.ORIENTATION_ROTATE_90 ||
+                exifOrientation == ExifInterface.ORIENTATION_ROTATE_270 ||
+                exifOrientation == ExifInterface.ORIENTATION_TRANSPOSE ||
+                exifOrientation == ExifInterface.ORIENTATION_TRANSVERSE;
+    }
+
     @WorkerThread
     public static @Nullable Bitmap decode(@NonNull File file, @Media.MediaType int mediaType, int maxDimension) throws IOException {
         switch (mediaType) {
@@ -90,16 +101,30 @@ public class MediaUtils {
 
     @WorkerThread
     public static @Nullable Bitmap decodeImage(@NonNull File file, int maxDimension) throws IOException {
+        return decodeImage(file, maxDimension, maxDimension);
+    }
+
+    @WorkerThread
+    public static @Nullable Bitmap decodeImage(@NonNull File file, int maxWidth, int maxHeight) throws IOException {
+        final int exifOrientation = getExifOrientation(file);
+        if (swapsWidthAnHeight(exifOrientation)) {
+            final int tmp = maxWidth;
+            //noinspection SuspiciousNameCombination
+            maxWidth = maxHeight;
+            maxHeight = tmp;
+        }
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        int dimension = Math.max(options.outWidth, options.outHeight);
-        if (dimension <= 0) {
+        int width = options.outWidth;
+        int height = options.outHeight;
+        if (width <= 0 || height <= 0) {
             return null;
         }
         options.inSampleSize = 1;
-        while (dimension > maxDimension) {
-            dimension /= 2;
+        while (width > maxWidth || height > maxHeight) {
+            width /= 2;
+            height /= 2;
             options.inSampleSize *= 2;
         }
         options.inJustDecodeBounds = false;
@@ -107,7 +132,7 @@ public class MediaUtils {
         if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
             return null;
         }
-        final Matrix matrix = fromOrientation(getExifOrientation(file));
+        final Matrix matrix = fromOrientation(exifOrientation);
         if (matrix.isIdentity()) {
             return bitmap;
         } else {
@@ -174,7 +199,7 @@ public class MediaUtils {
                 orientation = MediaUtils.getExifOrientation(file);
             } catch (IOException ignore) {
             }
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            if (swapsWidthAnHeight(orientation)) {
                 //noinspection SuspiciousNameCombination
                 size = new Size(options.outHeight, options.outWidth);
             } else {
@@ -217,13 +242,33 @@ public class MediaUtils {
     }
 
     @WorkerThread
-    public static void transcodeImage(@NonNull File fileFrom, @NonNull File fileTo, int maxDimension, int quality) throws IOException {
-        final Bitmap bitmap = decode(fileFrom, Media.MEDIA_TYPE_IMAGE, maxDimension);
+    public static void transcodeImage(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException {
+        final int maxWidth;
+        final int maxHeight;
+        if (cropRect != null) {
+            maxWidth = (int)(maxDimension / cropRect.width());
+            maxHeight =(int)(maxDimension / cropRect.height());
+        } else {
+            maxWidth = maxDimension;
+            maxHeight = maxDimension;
+        }
+        final Bitmap bitmap = decodeImage(fileFrom, maxWidth, maxHeight);
         if (bitmap != null) {
-            try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, streamTo);
+            final Bitmap croppedBitmap;
+            if (cropRect != null) {
+                final Rect bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
+                        (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
+                croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), Bitmap.Config.ARGB_8888);
+                final Canvas canvas = new Canvas(croppedBitmap);
+                canvas.drawBitmap(bitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
+                bitmap.recycle();
+            } else {
+                croppedBitmap = bitmap;
             }
-            bitmap.recycle();
+            try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
+                croppedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, streamTo);
+            }
+            croppedBitmap.recycle();
         } else {
             throw new IOException("cannot decode image");
         }

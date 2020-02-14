@@ -60,6 +60,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
     private float mMidScale = DEFAULT_MID_SCALE;
     private float mMaxScale = DEFAULT_MAX_SCALE;
 
+    private boolean mSinglePointerDragStartDisabled = false;
     private boolean mReturnToMinScaleOnUp = true;
     private boolean mAlwaysInterceptOnScale = true;
     private boolean mAllowParentInterceptOnEdge = true;
@@ -99,13 +100,14 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
     private OnGestureListener onGestureListener = new OnGestureListener() {
         @Override
-        public void onDrag(float dx, float dy) {
-            if (mOnViewDragListener != null) {
-                mOnViewDragListener.onDrag(dx, dy);
+        public void onDrag(float dx, float dy, int dragPointerCount) {
+            if (dragPointerCount > 1 || !mSinglePointerDragStartDisabled) {
+                if (mOnViewDragListener != null) {
+                    mOnViewDragListener.onDrag(dx, dy);
+                }
+                mSuppMatrix.postTranslate(dx, dy);
+                checkAndDisplayMatrix();
             }
-            mSuppMatrix.postTranslate(dx, dy);
-            checkAndDisplayMatrix();
-
             /*
              * Here we decide whether to let the ImageView's parent to start taking
              * over the touch event.
@@ -116,8 +118,12 @@ public class PhotoViewAttacher implements View.OnTouchListener,
              * the edge, aka 'overscrolling', let the parent take over).
              */
             ViewParent parent = mImageView.getParent();
-            if (mAllowParentInterceptOnEdge && getScale() == 1 && !mBlockParentIntercept) {
-                if (mHorizontalScrollEdge == HORIZONTAL_EDGE_BOTH
+            if (mAllowParentInterceptOnEdge && !mScaleDragDetector.isScaling() && dragPointerCount == 1 && !mBlockParentIntercept) {
+                if (mSinglePointerDragStartDisabled) {
+                    if (parent != null) {
+                        parent.requestDisallowInterceptTouchEvent(false);
+                    }
+                } else if (mHorizontalScrollEdge == HORIZONTAL_EDGE_BOTH
                         || (mHorizontalScrollEdge == HORIZONTAL_EDGE_LEFT && dx >= 1f)
                         || (mHorizontalScrollEdge == HORIZONTAL_EDGE_RIGHT && dx <= -1f)
                         || (mVerticalScrollEdge == VERTICAL_EDGE_TOP && dy >= 1f)
@@ -135,6 +141,9 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
         @Override
         public void onFling(float startX, float startY, float velocityX, float velocityY) {
+            if (mSinglePointerDragStartDisabled) {
+                return;
+            }
             mCurrentFlingRunnable = new FlingRunnable(mImageView.getContext());
             mCurrentFlingRunnable.fling(getImageViewWidth(mImageView),
                 getImageViewHeight(mImageView), (int) velocityX, (int) velocityY);
@@ -382,9 +391,12 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             if (mGestureDetector != null && mGestureDetector.onTouchEvent(ev)) {
                 handled = true;
             }
-
         }
         return handled;
+    }
+
+    public void setSinglePointerDragStartDisabled(boolean disabled) {
+        mSinglePointerDragStartDisabled = disabled;
     }
 
     public void setReturnToMinScaleOnUp(boolean returnToMinScaleOnUp) {

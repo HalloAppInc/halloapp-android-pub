@@ -12,6 +12,13 @@
         <attr name="pivMaxAspectRatio" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="CropImageView">
+        <attr name="civCornerRadius" format="dimension" />
+        <attr name="civCornerColor" format="color" />
+        <attr name="civGridSize" format="dimension" />
+        <attr name="civGridColor" format="color" />
+    </declare-styleable>
+
     <declare-styleable name="LimitingTextView">
         <attr name="ltvReadMore" format="string" />
         <attr name="ltvLimit" format="integer" />

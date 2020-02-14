@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -39,6 +40,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.CropImageView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostEditText;
 
@@ -46,7 +48,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -77,7 +81,7 @@ public class PostComposerActivity extends AppCompatActivity {
                 Log.w("PostComposerActivity: cannot post empty");
                 return;
             }
-            viewModel.preparePost(postText.trim(), viewModel.getMedia());
+            viewModel.preparePost(postText.trim());
         });
 
         final View progressView = findViewById(R.id.progress);
@@ -115,7 +119,7 @@ public class PostComposerActivity extends AppCompatActivity {
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
-                viewPager.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+                viewPager.setMaxAspectRatio(Constants.MAX_IMAGE_ASPECT_RATIO/*Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media))*/);
                 viewPager.setAdapter(new PostMediaPagerAdapter(media));
                 viewPager.setVisibility(View.VISIBLE);
             }
@@ -172,10 +176,24 @@ public class PostComposerActivity extends AppCompatActivity {
 
         @Override
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
-            final View view = getLayoutInflater().inflate(R.layout.media_pager_item, container, false);
-            final ImageView imageView = view.findViewById(R.id.image);
+            final View view = getLayoutInflater().inflate(R.layout.post_composer_media_pager_item, container, false);
+            final CropImageView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
             final Media mediaItem = media.get(position);
+            if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
+                imageView.setSinglePointerDragStartDisabled(media.size() > 1);
+                imageView.setReturnToMinScaleOnUp(false);
+                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } else {
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                }
+                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.id, rect));
+                imageView.setGridEnabled(true);
+            } else {
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                imageView.setGridEnabled(false);
+            }
             mediaThumbnailLoader.load(imageView, mediaItem);
             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                 playButton.setVisibility(View.VISIBLE);
@@ -269,13 +287,15 @@ public class PostComposerActivity extends AppCompatActivity {
 
         private final String text;
         private final List<Media> media;
+        private final Map<String, RectF> cropRects;
         private final Application application;
         private final MutableLiveData<Post> post;
 
-        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @NonNull MutableLiveData<Post> post) {
+        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @Nullable Map<String, RectF> cropRects, @NonNull MutableLiveData<Post> post) {
             this.application = application;
             this.text = text;
             this.media = media;
+            this.cropRects = cropRects;
             this.post = post;
         }
 
@@ -295,7 +315,7 @@ public class PostComposerActivity extends AppCompatActivity {
                     switch (media.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {
-                                MediaUtils.transcodeImage(media.file, postFile, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
+                                MediaUtils.transcodeImage(media.file, postFile, cropRects == null ? null : cropRects.get(media.id), Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
                             } catch (IOException e) {
                                 Log.e("failed to transcode image", e);
                                 return null;
@@ -355,6 +375,8 @@ public class PostComposerActivity extends AppCompatActivity {
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
         final MutableLiveData<Post> post = new MutableLiveData<>();
 
+        final Map<String, RectF> cropRects = new HashMap<>();
+
         PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
             super(application);
             if (uris != null) {
@@ -370,8 +392,8 @@ public class PostComposerActivity extends AppCompatActivity {
             new LoadPostUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        void preparePost(@Nullable String text, @Nullable List<Media> media) {
-            new PreparePostTask(getApplication(), text, media, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        void preparePost(@Nullable String text) {
+            new PreparePostTask(getApplication(), text, getMedia(), cropRects, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

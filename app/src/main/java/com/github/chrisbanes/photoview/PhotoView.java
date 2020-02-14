@@ -186,6 +186,10 @@ public class PhotoView extends AppCompatImageView {
         return attacher.getScale();
     }
 
+    public void setSinglePointerDragStartDisabled(boolean disabled) {
+        attacher.setSinglePointerDragStartDisabled(disabled);
+    }
+
     public void setReturnToMinScaleOnUp(boolean returnToMinScaleOnUp) {
         attacher.setReturnToMinScaleOnUp(returnToMinScaleOnUp);
     }
