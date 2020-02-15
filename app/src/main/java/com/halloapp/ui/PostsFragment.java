@@ -198,6 +198,7 @@ public class PostsFragment extends Fragment {
                 mediaPagerIndicator.setVisibility(View.GONE);
                 textView.setPadding(textView.getPaddingLeft(), getResources().getDimensionPixelSize(R.dimen.text_post_padding_top),
                         textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.text_post_padding_bottom));
+                textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
             } else {
                 mediaPagerView.setVisibility(View.VISIBLE);
                 mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
@@ -212,8 +213,9 @@ public class PostsFragment extends Fragment {
                 mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
                 textView.setPadding(textView.getPaddingLeft(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_top),
                         textView.getPaddingRight(), getResources().getDimensionPixelSize(R.dimen.media_post_padding_bottom));
+                textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
             }
-
+            textView.setLineStep(0);
             textView.setText(post.text);
             textView.setOnReadMoreListener((view, limit) -> {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);

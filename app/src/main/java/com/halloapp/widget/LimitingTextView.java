@@ -2,6 +2,7 @@ package com.halloapp.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -20,12 +21,15 @@ import com.halloapp.R;
 
 public class LimitingTextView extends AppCompatTextView {
 
-    private int initialLimit = 512;
-    private int limit = initialLimit;
-    private int step = 768;
-    private CharSequence readMoreText;
+    private int lineLimit = 12;
+    private int lineStep = 12;
+    private SpannableString readMoreText;
+    private SpannableStringBuilder truncatedText = new SpannableStringBuilder();
     private CharSequence originalText;
     private OnReadMoreListener listener;
+    private int lastMeasureWidth;
+    private int lastMeasureHeight;
+    private boolean truncated;
 
     public LimitingTextView(Context context) {
         super(context);
@@ -44,64 +48,76 @@ public class LimitingTextView extends AppCompatTextView {
 
     private void init(AttributeSet attrs, int defStyle) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.LimitingTextView, defStyle, 0);
-        readMoreText = a.getText(R.styleable.LimitingTextView_ltvReadMore);
-        limit = a.getInt(R.styleable.LimitingTextView_ltvLimit, limit);
-        initialLimit = limit;
-        step = a.getInt(R.styleable.LimitingTextView_ltvStep, step);
+        lineLimit = a.getInt(R.styleable.LimitingTextView_ltvLimit, lineLimit);
+        lineStep = a.getInt(R.styleable.LimitingTextView_ltvStep, lineStep);
+        readMoreText = new SpannableString("… " + a.getText(R.styleable.LimitingTextView_ltvReadMore));
+        readMoreText.setSpan(new ReadMoreSpan(), 2, readMoreText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         a.recycle();
+
+        setMovementMethod(LinkMovementMethod.getInstance());
     }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (truncated && (lastMeasureWidth != widthMeasureSpec || lastMeasureHeight != heightMeasureSpec)) {
+            super.setText(originalText, BufferType.NORMAL);
+        }
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        final Layout layout = getLayout();
+        if (lineLimit != Integer.MAX_VALUE && layout.getLineCount() > lineLimit + lineStep / 2 && (lastMeasureWidth != widthMeasureSpec || lastMeasureHeight != heightMeasureSpec)) {
+            truncated = true;
+            lastMeasureWidth = widthMeasureSpec;
+            lastMeasureHeight = heightMeasureSpec;
+
+            final int lineBottom = layout.getLineBottom(lineLimit - 1);
+            final float readMoreTextSize = layout.getPaint().measureText(readMoreText.toString());
+            final float lastLineRight = layout.getLineRight(lineLimit - 1);
+            final int truncatePos = layout.getOffsetForHorizontal(lineLimit - 1, Math.max(lastLineRight - readMoreTextSize, 0));
+
+            truncatedText.clear();
+            truncatedText.clearSpans();
+            truncatedText.append(originalText.subSequence(0, truncatePos));
+            truncatedText.append(readMoreText);
+
+            super.setText(truncatedText, BufferType.NORMAL);
+            setMeasuredDimension(getMeasuredWidth(), lineBottom + getPaddingTop() + getPaddingBottom());
+        }
+    }
+
 
     public void setOnReadMoreListener(@Nullable OnReadMoreListener listener) {
         this.listener = listener;
     }
 
-    public void setLimit(int limit) {
-        this.limit = limit;
+    /*
+     * call this before setting text
+     * */
+    public void setLineStep(int lineStep) {
+        this.lineStep = lineStep;
     }
 
-    public void resetLimit() {
-        this.limit = initialLimit;
+    /*
+     * call this before setting text
+     * */
+    public void setLineLimit(int lineLimit) {
+        this.lineLimit = lineLimit;
     }
 
     public void setText(CharSequence text, BufferType type) {
-
-        final CharSequence truncatedText;
-        final int truncatePos = getTruncatePos(text, limit);
-        if (text != null && truncatePos >= 0 && truncatePos + step / 2 < text.length()) {
-            final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text.subSequence(0, truncatePos));
-            final SpannableString readMore = new SpannableString(readMoreText);
-            readMore.setSpan(new ReadMoreSpan(), 0, readMore.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            stringBuilder.append("… ");
-            stringBuilder.append(readMore);
-            truncatedText = stringBuilder;
-            setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            truncatedText = text;
-        }
         originalText = text;
-        super.setText(truncatedText, type);
-    }
-
-    private int getTruncatePos(CharSequence text, int limit) {
-        if (text == null) {
-            return -1;
-        }
-        int weightedLength = 0;
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            weightedLength += c == '\n' ? 40 : 1;
-            if (weightedLength >= limit) {
-                return i;
-            }
-        }
-        return -1;
+        truncated = false;
+        lastMeasureWidth = 0;
+        lastMeasureHeight = 0;
+        super.setText(text, type);
     }
 
     private void onReadMore() {
-        if (listener != null && listener.onReadMore(this, limit + step)) {
+        if (listener != null && listener.onReadMore(this, lineLimit + lineStep)) {
             return;
         }
-        limit += step;
+        lineLimit += lineStep;
         setText(originalText);
     }
 

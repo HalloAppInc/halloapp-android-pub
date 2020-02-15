@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
@@ -272,11 +273,7 @@ public class CommentsActivity extends AppCompatActivity {
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             final Integer textLimit = textLimits.get(comment.rowId);
-            if (textLimit != null) {
-                commentView.setLimit(textLimit);
-            } else {
-                commentView.resetLimit();
-            }
+            commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
             commentView.setText(comment.text);
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(comment.rowId, limit);
@@ -321,11 +318,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
 
             final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
-            if (textLimit != null) {
-                commentView.setLimit(textLimit);
-            } else {
-                commentView.resetLimit();
-            }
+            commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(POST_TEXT_LIMITS_ID, limit);
                 return false;
