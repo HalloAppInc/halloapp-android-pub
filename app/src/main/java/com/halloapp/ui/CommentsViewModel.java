@@ -58,6 +58,14 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        }
+
+        @Override
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        }
+
+        @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (CommentsViewModel.this.postSenderUserId.equals(comment.postSenderUserId) && CommentsViewModel.this.postId.equals(comment.postId)) {
                 postsDb.setCommentsSeen(comment.postSenderUserId, comment.postId);

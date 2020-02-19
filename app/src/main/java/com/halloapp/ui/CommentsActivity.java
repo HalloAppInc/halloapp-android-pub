@@ -160,6 +160,7 @@ public class CommentsActivity extends AppCompatActivity {
                     replyCommentId,
                     System.currentTimeMillis(),
                     false,
+                    true,
                     postText);
             PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addComment(comment);
             editText.setText(null);

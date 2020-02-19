@@ -17,6 +17,7 @@ import com.halloapp.protocol.ContactsSyncResponseIq;
 import com.halloapp.protocol.MediaUploadIq;
 import com.halloapp.protocol.PublishedEntry;
 import com.halloapp.protocol.PushRegisterRequestIq;
+import com.halloapp.protocol.SeenReceipt;
 import com.halloapp.protocol.smack.HalloAffiliationProvider;
 import com.halloapp.protocol.smack.HalloPubsubItem;
 import com.halloapp.protocol.smack.HalloPubsubItemProvider;
@@ -30,6 +31,7 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -111,9 +113,10 @@ public class Connection {
         void onLoginFailed();
         void onOutgoingPostAcked(@NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
+        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp);
         void onOutgoingCommentAcked(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onIncomingCommentReceived(@NonNull Comment comment);
-        void onFeedHistoryReceived(Collection<Post> historyPosts, Collection<Comment> historyComments);
+        void onFeedHistoryReceived(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onSubscribersChanged();
     }
 
@@ -144,6 +147,7 @@ public class Connection {
             ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
             ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new HalloPubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
             ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new HalloPubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+            ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
             ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
             ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
 
@@ -402,21 +406,21 @@ public class Connection {
         });
     }
 
-    public void sendReadReceipt(final @NonNull Post post) {
+    public void sendSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
         executor.execute(() -> {
             if (connection == null) {
-                Log.e("connection: cannot send message, no connection");
+                Log.e("connection: cannot send seen receipt, no connection");
                 return;
             }
             try {
-                final Jid recipientJid = userIdToJid(post.senderUserId);
+                final Jid recipientJid = userIdToJid(senderUserId);
                 final Message message = new Message(recipientJid);
-                message.setStanzaId(post.postId);
-                message.addExtension(new DeliveryReceipt(post.postId));
-                Log.i("connection: sending post delivery receipt " + post.postId + " to " + recipientJid);
+                message.setStanzaId(postId);
+                message.addExtension(new SeenReceipt(postId));
+                Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send post delivery receipt", e);
+                Log.e("connection: cannot send post seen receipt", e);
             }
 
         });
@@ -597,9 +601,9 @@ public class Connection {
                         entry.id,
                         entry.timestamp,
                         isMe(entry.user) || entry.media.isEmpty(),
+                        true,
                         entry.text
                 );
-                post.seen = true;
                 for (PublishedEntry.Media entryMedia : entry.media) {
                     post.media.add(Media.createFromUrl(getMediaType(entryMedia.type),
                             entryMedia.url, entryMedia.encKey, entryMedia.sha256hash,
@@ -614,6 +618,7 @@ public class Connection {
                         entry.id,
                         entry.parentCommentId,
                         entry.timestamp,
+                        true,
                         true,
                         entry.text
                 );
@@ -640,6 +645,7 @@ public class Connection {
                             entry.id,
                             entry.timestamp,
                             entry.media.isEmpty(),
+                            false,
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
@@ -657,6 +663,7 @@ public class Connection {
                             entry.parentCommentId,
                             entry.timestamp,
                             true,
+                            false,
                             entry.text
                     );
                     observer.onIncomingCommentReceived(comment);
@@ -667,6 +674,10 @@ public class Connection {
 
     private UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
+    }
+
+    private UserId getUserId(@NonNull Jid jid) {
+        return getUserId(jid.getLocalpartOrNull().toString());
     }
 
     private boolean isMe(@NonNull String user) {
@@ -739,21 +750,37 @@ public class Connection {
 
         @Override
         public void processStanza(final Stanza packet) {
-            final Message msg = (Message) packet;
+            if (!(packet instanceof Message)) {
+                Log.w("connection: got packet instead of message " + packet);
+                return;
+            }
             boolean handled = false;
-            final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
-            if (event != null && EventElementType.items.equals(event.getEventType())) {
-                final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
-                if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
-
-                    Log.i("connection: got pubsub " + msg);
-                    //noinspection unchecked
-                    processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<HalloPubsubItem>) itemsElem.getItems());
-                    handled = true;
+            final Message msg = (Message) packet;
+            if (msg.getType() == Message.Type.error) {
+                Log.w("connection: got error message " + msg);
+            } else {
+                final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
+                if (event != null && EventElementType.items.equals(event.getEventType())) {
+                    final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
+                    if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
+                        Log.i("connection: got pubsub " + msg);
+                        //noinspection unchecked
+                        processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<HalloPubsubItem>) itemsElem.getItems());
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final SeenReceipt seenReceipt = packet.getExtension(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE);
+                    if (seenReceipt != null) {
+                        Log.i("connection: got seen receipt " + msg);
+                        observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), System.currentTimeMillis()/*TODO (ds): server shall provide timestamp*/);
+                        handled = true;
+                    }
                 }
             }
             if (!handled) {
                 Log.i("connection: got unknown message " + msg);
+                sendAck(msg.getStanzaId());
             }
         }
     }

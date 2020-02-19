@@ -55,6 +55,15 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        }
+
+        @Override
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+            invalidatePosts();
+        }
+
+        @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (comment.isIncoming()) {
                 invalidatePosts();

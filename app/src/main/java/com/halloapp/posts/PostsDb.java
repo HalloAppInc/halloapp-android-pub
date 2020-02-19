@@ -47,6 +47,8 @@ public class PostsDb {
         void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
+        void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
+        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
         void onCommentDuplicate(@NonNull Comment comment);
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
@@ -157,6 +159,46 @@ public class PostsDb {
                     new String [] {senderUserId.rawId(), postId});
             if (deleteCount > 0) {
                 notifyPostDeleted(senderUserId, postId);
+            }
+        });
+    }
+
+    public void setIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setIncomingPostSeen: senderUserId=" + senderUserId + " postId=" + postId);
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_SEEN, true);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {senderUserId.rawId(), postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                notifyIncomingPostSeen(senderUserId, postId);
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setIncomingPostSeen: failed");
+                throw ex;
+            }
+        });
+    }
+
+    public void setOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId);
+            final ContentValues values = new ContentValues();
+            values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, seenByUserId.rawId());
+            values.put(SeenTable.COLUMN_POST_ID, postId);
+            values.put(SeenTable.COLUMN_TIMESTAMP, timestamp);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.insertWithOnConflict(SeenTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+                notifyOutgoingPostSeen(seenByUserId, postId);
+            } catch (SQLiteConstraintException ex) {
+                Log.i("PostsDb.setOutgoingPostSeen: seen duplicate", ex);
+                notifyOutgoingPostSeen(seenByUserId, postId);
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setOutgoingPostSeen: failed");
+                throw ex;
             }
         });
     }
@@ -386,6 +428,7 @@ public class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_MEDIA_ID + "," +
@@ -396,7 +439,8 @@ public class PostsDb {
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "c.comment_count" + ", " +
-                "c.seen_comment_count" + " " +
+                "c.seen_comment_count" + ", " +
+                "s.seen_by_count" + " " +
             "FROM " + PostsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -418,6 +462,12 @@ public class PostsDb {
                     "sum(" + CommentsTable.COLUMN_SEEN + ") AS seen_comment_count" + " " +
                     "FROM " + CommentsTable.TABLE_NAME + " GROUP BY " + CommentsTable.COLUMN_POST_SENDER_USER_ID+ ", " + CommentsTable.COLUMN_POST_ID + ") " +
                 "AS c ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=c." + CommentsTable.COLUMN_POST_SENDER_USER_ID + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=c." + CommentsTable.COLUMN_POST_ID + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    SeenTable.COLUMN_POST_ID + "," +
+                    "count(*) AS seen_by_count " +
+                    "FROM " + SeenTable.TABLE_NAME + " GROUP BY " + SeenTable.COLUMN_POST_ID + ") " +
+                "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC " +
             "LIMIT " + count;
@@ -439,23 +489,25 @@ public class PostsDb {
                             cursor.getString(2),
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
-                            cursor.getString(5));
-                    post.commentCount = cursor.getInt(14);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(15);
+                            cursor.getInt(5) == 1,
+                            cursor.getString(6));
+                    post.commentCount = cursor.getInt(15);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(16);
+                    post.seenByCount = cursor.getInt(17);
                 }
                 final String mediaId = cursor.getString(7);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(6),
+                            cursor.getLong(7),
                             mediaId,
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            mediaStore.getMediaFile(cursor.getString(10)),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            mediaStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13),
+                            cursor.getInt(14) == 1));
                 }
             }
             if (post != null && cursor.getCount() < count) {
@@ -477,6 +529,7 @@ public class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_MEDIA_ID + "," +
@@ -512,21 +565,22 @@ public class PostsDb {
                             cursor.getString(2),
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
-                            cursor.getString(5));
+                            cursor.getInt(5) == 1,
+                            cursor.getString(6));
                 }
-                final String mediaId = cursor.getString(7);
+                final String mediaId = cursor.getString(8);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(6),
+                            cursor.getLong(7),
                             mediaId,
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            mediaStore.getMediaFile(cursor.getString(10)),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            mediaStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13),
+                            cursor.getInt(14) == 1));
                 }
             }
         }
@@ -538,10 +592,10 @@ public class PostsDb {
     List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
         final String sql =
                 "WITH RECURSIVE " +
-                    "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, text) AS ( " +
-                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, text FROM comments WHERE post_sender_user_id=? AND post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
+                    "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text) AS ( " +
+                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text FROM comments WHERE post_sender_user_id=? AND post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
                         "UNION ALL " +
-                        "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.text " +
+                        "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.seen, comments.text " +
                             "FROM comments, comments_tree WHERE comments.parent_id=comments_tree.comment_id ORDER BY 1 DESC) " +
                 "SELECT * FROM comments_tree LIMIT " + count + " OFFSET " + start;
         final List<Comment> comments = new ArrayList<>();
@@ -557,7 +611,8 @@ public class PostsDb {
                         cursor.getString(3),
                         cursor.getLong(2),
                         cursor.getInt(6) == 1,
-                        cursor.getString(7));
+                        cursor.getInt(7) == 1,
+                        cursor.getString(8));
                 comments.add(comment);
             }
         }
@@ -607,8 +662,8 @@ public class PostsDb {
                         cursor.getString(5),
                         cursor.getLong(6),
                         cursor.getInt(7) == 1,
+                        cursor.getInt(9) == 1,
                         cursor.getString(8));
-                comment.seen = cursor.getInt(9) == 1;
                 comments.add(comment);
             }
         }
@@ -628,6 +683,7 @@ public class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_MEDIA_ID + "," +
@@ -675,21 +731,22 @@ public class PostsDb {
                             cursor.getString(2),
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
-                            cursor.getString(5));
+                            cursor.getInt(5) == 1,
+                            cursor.getString(6));
                 }
-                final String mediaId = cursor.getString(7);
+                final String mediaId = cursor.getString(8);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(6),
+                            cursor.getLong(7),
                             mediaId,
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            mediaStore.getMediaFile(cursor.getString(10)),
-                            cursor.getBlob(11),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            mediaStore.getMediaFile(cursor.getString(11)),
                             cursor.getBlob(12),
-                            cursor.getInt(13),
+                            cursor.getBlob(13),
                             cursor.getInt(14),
-                            cursor.getInt(15) == 1));
+                            cursor.getInt(15),
+                            cursor.getInt(16) == 1));
                 }
             }
             if (post != null) {
@@ -714,6 +771,7 @@ public class PostsDb {
                         CommentsTable.COLUMN_PARENT_ID,
                         CommentsTable.COLUMN_TIMESTAMP,
                         CommentsTable.COLUMN_TRANSFERRED,
+                        CommentsTable.COLUMN_SEEN,
                         CommentsTable.COLUMN_TEXT},
                 CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "='' AND " + CommentsTable.COLUMN_TRANSFERRED + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
                 null, null, null, null)) {
@@ -727,12 +785,30 @@ public class PostsDb {
                         cursor.getString(5),
                         cursor.getLong(6),
                         cursor.getInt(7) == 1,
-                        cursor.getString(8));
+                        cursor.getInt(8) == 1,
+                        cursor.getString(9));
                 comments.add(comment);
             }
         }
         Log.i("PostsDb.getPendingComments: comments.size=" + comments.size());
         return comments;
+    }
+
+    @WorkerThread
+    List<UserId> getSeenBy(@NonNull String postId) {
+        final List<UserId> users = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(SeenTable.TABLE_NAME,
+                new String [] {
+                        SeenTable.COLUMN_SEEN_BY_USER_ID},
+                SeenTable.COLUMN_POST_ID + "='?'",
+                new String [] {postId}, null, null, null)) {
+            while (cursor.moveToNext()) {
+                users.add(new UserId(cursor.getString(0)));
+            }
+        }
+        Log.i("PostsDb.getSeenBy: users.size=" + users.size());
+        return users;
     }
 
     @WorkerThread
@@ -750,7 +826,13 @@ public class PostsDb {
                 null);
         Log.i("PostsDb.cleanup: " + deletedCommentsCount + " comments deleted");
 
-        if (deletedPostsCount > 0 || deletedCommentsCount > 0) {
+        // seen receipts are deleted using trigger, but in case there are orphaned comments delete them here
+        final int deletedSeenCount = db.delete(SeenTable.TABLE_NAME,
+                SeenTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
+                null);
+        Log.i("PostsDb.cleanup: " + deletedSeenCount + " seen receipts deleted");
+
+        if (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0) {
             db.execSQL("VACUUM");
             Log.i("PostsDb.cleanup: vacuum");
             notifyPostsCleanup();
@@ -789,6 +871,22 @@ public class PostsDb {
         synchronized (observers) {
             for (Observer observer : observers) {
                 observer.onPostUpdated(senderUserId, postId);
+            }
+        }
+    }
+
+    private void notifyIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onIncomingPostSeen(senderUserId, postId);
+            }
+        }
+    }
+
+    private void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onOutgoingPostSeen(seenByUserId, postId);
             }
         }
     }
@@ -901,10 +999,23 @@ public class PostsDb {
         static final String COLUMN_TEXT = "text";
     }
 
+    private static final class SeenTable implements BaseColumns {
+
+        private SeenTable() { }
+
+        static final String TABLE_NAME = "seen";
+
+        static final String INDEX_SEEN_KEY = "seen_key";
+
+        static final String COLUMN_SEEN_BY_USER_ID = "user_id";
+        static final String COLUMN_POST_ID = "post_id";
+        static final String COLUMN_TIMESTAMP = "timestamp";
+    }
+
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 6;
+        private static final int DATABASE_VERSION = 7;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -953,6 +1064,14 @@ public class PostsDb {
                     + CommentsTable.COLUMN_TEXT + " TEXT"
                     + ");");
 
+            db.execSQL("DROP TABLE IF EXISTS " + SeenTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + SeenTable.TABLE_NAME + " ("
+                    + SeenTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + SeenTable.COLUMN_POST_ID + " TEXT NOT NULL REFERENCES " + PostsTable.TABLE_NAME + "(" + PostsTable.COLUMN_POST_ID + ") ON DELETE CASCADE,"
+                    + SeenTable.COLUMN_SEEN_BY_USER_ID + " TEXT NOT NULL,"
+                    + SeenTable.COLUMN_TIMESTAMP
+                    + ");");
+
             db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
             db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
                     + PostsTable.COLUMN_SENDER_USER_ID + ", "
@@ -970,6 +1089,11 @@ public class PostsDb {
                     + PostsTable.COLUMN_TIMESTAMP
                     + ");");
 
+            db.execSQL("DROP INDEX IF EXISTS " + SeenTable.INDEX_SEEN_KEY);
+            db.execSQL("CREATE UNIQUE INDEX " + SeenTable.INDEX_SEEN_KEY + " ON " + SeenTable.TABLE_NAME + "("
+                    + SeenTable.COLUMN_POST_ID + ", "
+                    + SeenTable.COLUMN_SEEN_BY_USER_ID
+                    + ");");
 
             db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
             db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/media_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.halloapp.widget.MediaViewPager
+            android:id="@+id/media_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.halloapp.widget.AvatarsLayout
+            android:id="@+id/seen_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            app:alPaddingColor="@android:color/white"
+            app:alPaddingSize="1dp"
+            app:alElevation="2dp"
+            app:alAvatarSize="36dp"/>
+
+    </FrameLayout>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/media_pager_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="8dp"
+        android:layout_gravity="center_horizontal"
+        app:ci_width="5dp"
+        app:ci_height="5dp"
+        app:ci_margin="4dp"
+        app:ci_drawable="@drawable/pager_item_indicator_selected"
+        app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+        app:ci_animator="@animator/pager_indicator"
+        android:layout_marginBottom="8dp"/>
+
+    <com.halloapp.widget.LimitingTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="@dimen/media_post_padding_top"
+        android:paddingBottom="@dimen/media_post_padding_bottom"
+        android:textAppearance="?textAppearanceListItemSmall"
+        android:textSize="16sp"
+        android:lineSpacingMultiplier="1.1"
+        android:autoLink="web"
+        app:ltvReadMore="@string/read_more"
+        tools:text="This is image caption"/>
+
+</merge>

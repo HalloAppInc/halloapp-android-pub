@@ -88,4 +88,8 @@
     <string name="gallery">Gallery</string>
     <string name="select">OK</string>
     <string name="other_media">Other media</string>
+    <plurals name="seen_by">
+        <item quantity="one">Seen by %d person</item>
+        <item quantity="other">Seen by %d people</item>
+    </plurals>
 </resources>

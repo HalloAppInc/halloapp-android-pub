@@ -33,7 +33,6 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onDisconnected() {
-
     }
 
     @Override
@@ -55,6 +54,11 @@ public class ConnectionObserver implements Connection.Observer {
             final String body = TextUtils.isEmpty(post.text) ? "Media" : post.text;
             HalloApp.instance.showNotification(title, body);
         }
+    }
+
+    @Override
+    public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
+        PostsDb.getInstance(context).setOutgoingPostSeen(seenByUserId, postId, timestamp);
     }
 
     @Override

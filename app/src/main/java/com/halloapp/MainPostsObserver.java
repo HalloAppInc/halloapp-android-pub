@@ -71,6 +71,15 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
+    public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        connection.sendSeenReceipt(senderUserId, postId);
+    }
+
+    @Override
+    public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+    }
+
+    @Override
     public void onCommentAdded(@NonNull Comment comment) {
         if (comment.isOutgoing()) {
             connection.sendComment(comment);

@@ -24,6 +24,7 @@ public class Post {
 
     public int commentCount;
     public int unseenCommentCount;
+    public int seenByCount;
 
     public Post(
             long rowId,
@@ -31,12 +32,14 @@ public class Post {
             String postId,
             long timestamp,
             boolean transferred,
+            boolean seen,
             String text) {
         this.rowId = rowId;
         this.senderUserId = senderUserId;
         this.postId = postId;
         this.timestamp = timestamp;
         this.transferred = transferred;
+        this.seen = senderUserId.isMe() || seen;
         this.text = text;
     }
 
@@ -73,6 +76,7 @@ public class Post {
                 transferred == post.transferred &&
                 commentCount == post.commentCount &&
                 unseenCommentCount == post.unseenCommentCount &&
+                seenByCount == post.seenByCount &&
                 seen == post.seen;
     }
 }

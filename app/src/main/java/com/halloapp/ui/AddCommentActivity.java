@@ -48,6 +48,7 @@ public class AddCommentActivity extends AppCompatActivity {
                     null,
                     System.currentTimeMillis(),
                     false,
+                    true,
                     postText);
             PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addComment(comment);
             finish();

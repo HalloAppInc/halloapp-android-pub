@@ -82,11 +82,11 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
                     if (media.file.exists()) {
                         bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
                     } else {
-                        Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
+                        Log.i("MediaThumbnailLoader.load: file " + media.file.getAbsolutePath() + " doesn't exist");
                     }
                 }
                 if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                    Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
+                    Log.i("MediaThumbnailLoader.load: cannot decode " + media.file);
                     return new PlaceholderDrawable(media.width, media.height, placeholderColor);
                 } else {
                     return new BitmapDrawable(context.getResources(), bitmap);

@@ -31,6 +31,7 @@ public class Comment {
             String parentCommentId,
             long timestamp,
             boolean transferred,
+            boolean seen,
             String text) {
         this.rowId = rowId;
         this.postSenderUserId = postSenderUserId;
@@ -40,8 +41,8 @@ public class Comment {
         this.parentCommentId = parentCommentId;
         this.timestamp = timestamp;
         this.transferred = transferred;
+        this.seen = commentSenderUserId.isMe() || seen;
         this.text = text;
-        this.seen = commentSenderUserId.isMe();
     }
 
     @Override

@@ -24,4 +24,12 @@
         <attr name="ltvLimit" format="integer" />
         <attr name="ltvStep" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="AvatarsLayout">
+        <attr name="alPaddingSize" format="dimension" />
+        <attr name="alPaddingColor" format="color" />
+        <attr name="alElevation" format="dimension" />
+        <attr name="alAvatarSize" format="dimension" />
+    </declare-styleable>
+
 </resources>
