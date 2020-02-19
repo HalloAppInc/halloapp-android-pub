@@ -99,7 +99,6 @@ public class CommentsActivity extends AppCompatActivity {
         Log.d("CommentsActivity.onCreate");
         setContentView(R.layout.activity_comments);
 
-        Preconditions.checkNotNull(getSupportActionBar()).setElevation(0);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final RecyclerView commentsView = findViewById(R.id.comments);
