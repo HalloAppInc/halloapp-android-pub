@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.ComputableLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.Contact;
@@ -17,14 +18,14 @@ import java.util.Locale;
 
 public class MessagesViewModel extends AndroidViewModel {
 
-    final MutableLiveData<List<Contact>> contactsList;
+    final ComputableLiveData<List<Contact>> contactsList;
     private final ContactsDb contactsDb;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
 
         @Override
         public void onContactsChanged() {
-            loadData();
+            contactsList.invalidate();
         }
 
         @Override
@@ -38,41 +39,19 @@ public class MessagesViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance(application);
         contactsDb.addObserver(contactsObserver);
 
-        contactsList = new MutableLiveData<>();
-        loadData();
+        contactsList = new ComputableLiveData<List<Contact>>() {
+            @Override
+            protected List<Contact> compute() {
+                final List<Contact> contacts = ContactsDb.getInstance(application).getMemberContacts();
+                final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
+                Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
+                return contacts;
+            }
+        };
     }
 
     @Override
     protected void onCleared() {
         contactsDb.removeObserver(contactsObserver);
-    }
-
-    private void loadData() {
-        new LoadContactsTask(getApplication(), contactsList).execute();
-    }
-
-
-    static class LoadContactsTask extends AsyncTask<Void, Void, List<Contact>> {
-
-        private final Application application;
-        private final MutableLiveData<List<Contact>> data;
-
-        LoadContactsTask(@NonNull Application application, @NonNull MutableLiveData<List<Contact>> data) {
-            this.application = application;
-            this.data = data;
-        }
-
-        @Override
-        protected List<Contact> doInBackground(Void... voids) {
-            List<Contact> contacts = ContactsDb.getInstance(application).getMemberContacts();
-            final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
-            Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
-            return contacts;
-        }
-
-        @Override
-        protected void onPostExecute(final List<Contact> contacts) {
-            data.postValue(contacts);
-        }
     }
 }
