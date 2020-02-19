@@ -22,11 +22,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
-            app:alPaddingColor="@android:color/white"
+            android:layout_margin="8dp"
+            android:padding="12dp"
+            app:alPaddingColor="@color/card_background"
             app:alPaddingSize="1dp"
             app:alElevation="2dp"
-            app:alAvatarSize="36dp"/>
+            app:alAvatarSize="28dp"/>
 
     </FrameLayout>
 
@@ -49,8 +50,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="@dimen/media_post_padding_top"
-        android:paddingBottom="@dimen/media_post_padding_bottom"
+        android:paddingTop="0dp"
+        android:paddingBottom="12dp"
         android:textAppearance="?textAppearanceListItemSmall"
         android:textSize="16sp"
         android:lineSpacingMultiplier="1.1"

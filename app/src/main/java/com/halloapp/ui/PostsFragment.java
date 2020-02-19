@@ -37,6 +37,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
+import com.halloapp.posts.PostsDb;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.DrawDelegateView;
@@ -187,12 +188,10 @@ public class PostsFragment extends Fragment {
             }
 
             postContentLayout.setOnSeenListener(() -> {
-                /* TODO (ds): uncomment
                 if (!post.seen && post.isIncoming()) {
                     post.seen = true;
                     PostsDb.getInstance(Preconditions.checkNotNull(getContext())).setIncomingPostSeen(post.senderUserId, post.postId);
-                    Log.i("PostsFragment: seen " + post.senderUserId + " " + post.postId);
-                }*/
+                }
             });
         }
 
@@ -265,7 +264,7 @@ public class PostsFragment extends Fragment {
                 seenIndicator.setContentDescription(getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
                 seenIndicator.setAvatarCount(post.seenByCount);
             } else {
-                seenIndicator.setVisibility(View.GONE);
+                seenIndicator.setVisibility(View.INVISIBLE);
             }
 
             commentButton.setOnClickListener(v -> {
@@ -279,7 +278,6 @@ public class PostsFragment extends Fragment {
                 // TODO (ds): start message activity
             });
         }
-
 
         private class PostMediaPagerAdapter extends PagerAdapter {
 

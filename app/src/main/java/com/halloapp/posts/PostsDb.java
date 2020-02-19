@@ -182,6 +182,24 @@ public class PostsDb {
         });
     }
 
+    public void setIncomingPostsSeen(boolean seen) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setIncomingPostsUnseen");
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_SEEN, seen);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_SENDER_USER_ID + "!=''",
+                        null,
+                        SQLiteDatabase.CONFLICT_ABORT);
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setIncomingPostsUnseen: failed");
+                throw ex;
+            }
+        });
+    }
+
     public void setOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId);

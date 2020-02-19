@@ -28,6 +28,7 @@ public class Debug {
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
+    private static final String DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN = "Set incoming posts unseen";
     private static final String DEBUG_MENU_CLEANUP_POSTS = "Cleanup posts";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_DELETE_POST = "Delete post";
@@ -39,6 +40,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_DELETE_POSTS_DB);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
+        menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
         menu.getMenu().add(DEBUG_MENU_CLEANUP_POSTS);
         menu.setOnMenuItemClickListener(item -> {
@@ -66,6 +68,9 @@ public class Debug {
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {
                     PostsDb.getInstance(activity).setCommentsSeen(true);
+                }
+                case DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN: {
+                    PostsDb.getInstance(activity).setIncomingPostsSeen(false);
                 }
                 case DEBUG_MENU_CLEANUP_POSTS: {
                     new CleanupPostsTask(activity.getApplication()).execute();
