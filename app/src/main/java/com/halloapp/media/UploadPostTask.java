@@ -7,14 +7,14 @@ import androidx.annotation.NonNull;
 import com.dstukalov.videoconverter.BadMediaException;
 import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
-import com.halloapp.Connection;
 import com.halloapp.Constants;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.protocol.MediaUploadIq;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.MediaUploadIq;
 
 import java.io.File;
 import java.io.FileNotFoundException;

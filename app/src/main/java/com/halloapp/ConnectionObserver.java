@@ -11,6 +11,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.TransferPendingItemsTask;
+import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
 

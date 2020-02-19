@@ -17,10 +17,10 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.halloapp.Connection;
 import com.halloapp.Preferences;
-import com.halloapp.protocol.ContactsSyncResponseIq;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.ContactsSyncResponseIq;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package com.halloapp.protocol.smack;
+package com.halloapp.xmpp;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.util.ParserUtils;

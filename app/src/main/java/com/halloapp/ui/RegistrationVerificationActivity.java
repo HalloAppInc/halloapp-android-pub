@@ -23,13 +23,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.Connection;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.xmpp.Connection;
 
 import org.json.JSONException;
 

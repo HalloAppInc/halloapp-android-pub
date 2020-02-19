@@ -1,4 +1,4 @@
-package com.halloapp;
+package com.halloapp.xmpp;
 
 import android.os.HandlerThread;
 
@@ -7,20 +7,12 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
+import com.halloapp.BuildConfig;
+import com.halloapp.Me;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
-import com.halloapp.protocol.AckStanza;
-import com.halloapp.protocol.ContactsSyncRequestIq;
-import com.halloapp.protocol.ContactsSyncResponseIq;
-import com.halloapp.protocol.MediaUploadIq;
-import com.halloapp.protocol.PublishedEntry;
-import com.halloapp.protocol.PushRegisterRequestIq;
-import com.halloapp.protocol.SeenReceipt;
-import com.halloapp.protocol.smack.HalloAffiliationProvider;
-import com.halloapp.protocol.smack.HalloPubsubItem;
-import com.halloapp.protocol.smack.HalloPubsubItemProvider;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -31,7 +23,6 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -145,8 +136,8 @@ public class Connection {
 
             ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
             ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
-            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new HalloPubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new HalloPubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
             ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
             ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
             ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
@@ -592,7 +583,7 @@ public class Connection {
         observer.onFeedHistoryReceived(historyPosts, historyComments);
     }
 
-    private void parsePublishedHistoryItems(UserId feedUserId, List<HalloPubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
+    private void parsePublishedHistoryItems(UserId feedUserId, List<PubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
             if (entry.type == PublishedEntry.ENTRY_FEED) {
@@ -628,7 +619,7 @@ public class Connection {
         }
     }
 
-    private void processPublishedItems(UserId feedUserId, List<HalloPubsubItem> items) {
+    private void processPublishedItems(UserId feedUserId, List<PubsubItem> items) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
@@ -765,7 +756,7 @@ public class Connection {
                     if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
                         Log.i("connection: got pubsub " + msg);
                         //noinspection unchecked
-                        processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<HalloPubsubItem>) itemsElem.getItems());
+                        processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<PubsubItem>) itemsElem.getItems());
                         handled = true;
                     }
                 }

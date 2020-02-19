@@ -1,4 +1,4 @@
-package com.halloapp.protocol.smack;
+package com.halloapp.xmpp;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
@@ -10,7 +10,8 @@ import org.jivesoftware.smackx.pubsub.provider.ItemProvider;
 import org.jxmpp.jid.impl.JidCreate;
 import org.xmlpull.v1.XmlPullParser;
 
-public class HalloPubsubItemProvider extends ItemProvider {
+// org.jivesoftware.smackx.pubsub.provider.ItemProvider doesn't handle 'publisher' and 'timestamp' attributes
+public class PubsubItemProvider extends ItemProvider {
 
     @Override
     public Item parse(XmlPullParser parser, int initialDepth) throws Exception {
@@ -32,14 +33,14 @@ public class HalloPubsubItemProvider extends ItemProvider {
             String payloadNS = parser.getNamespace();
 
             final ExtensionElementProvider<ExtensionElement> extensionProvider = ProviderManager.getExtensionProvider(payloadElemName, payloadNS);
-            final HalloPubsubItem item;
+            final PubsubItem item;
             if (extensionProvider == null) {
                 // TODO: Should we use StandardExtensionElement in this case? And probably remove SimplePayload all together.
                 CharSequence payloadText = PacketParserUtils.parseElement(parser, true);
-                item = new HalloPubsubItem(itemNamespace, id, node, new SimplePayload(payloadText.toString()));
+                item = new PubsubItem(itemNamespace, id, node, new SimplePayload(payloadText.toString()));
             }
             else {
-                item = new HalloPubsubItem(itemNamespace, id, node, (SimplePayload)extensionProvider.parse(parser));
+                item = new PubsubItem(itemNamespace, id, node, (SimplePayload)extensionProvider.parse(parser));
             }
             if (publisher != null) {
                 item.publisher = JidCreate.bareFrom(publisher);

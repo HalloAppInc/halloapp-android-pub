@@ -1,4 +1,4 @@
-package com.halloapp.protocol;
+package com.halloapp.xmpp;
 
 import android.text.TextUtils;
 import android.util.Base64;
@@ -9,7 +9,6 @@ import androidx.annotation.StringDef;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.Constants;
-import com.halloapp.protocol.smack.HalloPubsubItem;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
@@ -133,9 +132,9 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<HalloPubsubItem> items) {
+    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PubsubItem> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
-        for (HalloPubsubItem item : items) {
+        for (PubsubItem item : items) {
             final String xml = item.getPayload().toXML(null);
             final XmlPullParser parser = android.util.Xml.newPullParser();
             try {
@@ -274,7 +273,7 @@ public class PublishedEntry {
         return timestamp != 0 && user != null && (text != null || !media.isEmpty());
     }
 
-    private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull HalloPubsubItem item) throws XmlPullParserException, IOException {
+    private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull PubsubItem item) throws XmlPullParserException, IOException {
         final PublishedEntry.Builder builder = new PublishedEntry.Builder();
         builder.type(type);
         builder.id(item.getId());

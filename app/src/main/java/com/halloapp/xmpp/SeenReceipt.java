@@ -1,4 +1,4 @@
-package com.halloapp.protocol;
+package com.halloapp.xmpp;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;

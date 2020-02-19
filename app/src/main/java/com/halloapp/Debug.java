@@ -18,6 +18,7 @@ import com.halloapp.media.MediaStore;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.FileUtils;
+import com.halloapp.xmpp.Connection;
 
 public class Debug {
 

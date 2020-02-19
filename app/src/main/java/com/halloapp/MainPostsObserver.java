@@ -12,6 +12,7 @@ import com.halloapp.media.UploadPostTask;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
 
@@ -77,6 +78,7 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     @Override
     public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        connection.sendAck(postId);
     }
 
     @Override

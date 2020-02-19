@@ -26,6 +26,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.Connection;
 
 import io.fabric.sdk.android.Fabric;
 

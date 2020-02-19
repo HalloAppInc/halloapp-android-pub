@@ -1,4 +1,4 @@
-package com.halloapp.protocol;
+package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 

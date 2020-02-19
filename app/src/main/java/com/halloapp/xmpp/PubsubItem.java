@@ -1,27 +1,27 @@
-package com.halloapp.protocol.smack;
+package com.halloapp.xmpp;
 
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jxmpp.jid.Jid;
 
-public class HalloPubsubItem extends PayloadItem<SimplePayload> {
+public class PubsubItem extends PayloadItem<SimplePayload> {
 
     long timestamp;
     Jid publisher;
 
-    public HalloPubsubItem(SimplePayload payloadExt) {
+    public PubsubItem(SimplePayload payloadExt) {
         super(payloadExt);
     }
 
-    public HalloPubsubItem(String itemId, SimplePayload payloadExt) {
+    public PubsubItem(String itemId, SimplePayload payloadExt) {
         super(itemId, payloadExt);
     }
 
-    public HalloPubsubItem(String itemId, String nodeId, SimplePayload payloadExt) {
+    public PubsubItem(String itemId, String nodeId, SimplePayload payloadExt) {
         super(itemId, nodeId, payloadExt);
     }
 
-    public HalloPubsubItem(ItemNamespace itemNamespace, String itemId, String nodeId, SimplePayload payloadExt) {
+    public PubsubItem(ItemNamespace itemNamespace, String itemId, String nodeId, SimplePayload payloadExt) {
         super(itemNamespace, itemId, nodeId, payloadExt);
     }
 
