@@ -136,6 +136,7 @@ public class PostsFragment extends Fragment {
         final PostMediaPagerAdapter mediaPagerAdapter;
         final SeenDetectorLayout postContentLayout;
         final AvatarsLayout seenIndicator;
+        final View seenIndicatorSpace;
 
         Post post;
 
@@ -154,6 +155,7 @@ public class PostsFragment extends Fragment {
             postActionsSeparator = v.findViewById(R.id.post_actions_separator);
             postContentLayout = v.findViewById(R.id.post_content);
             seenIndicator = v.findViewById(R.id.seen_indicator);
+            seenIndicatorSpace = v.findViewById(R.id.seen_indicator_space);
 
             if (mediaPagerView != null) {
                 mediaPagerAdapter = new PostMediaPagerAdapter();
@@ -266,11 +268,12 @@ public class PostsFragment extends Fragment {
 
             if (post.seenByCount > 0) {
                 seenIndicator.setVisibility(View.VISIBLE);
+                seenIndicatorSpace.setVisibility(View.GONE);
                 seenIndicator.setContentDescription(getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
                 seenIndicator.setAvatarCount(post.seenByCount);
-
             } else {
-                seenIndicator.setVisibility(post.media.isEmpty() ? View.INVISIBLE : View.GONE);
+                seenIndicator.setVisibility(View.GONE);
+                seenIndicatorSpace.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
             }
 
             commentButton.setOnClickListener(v -> {

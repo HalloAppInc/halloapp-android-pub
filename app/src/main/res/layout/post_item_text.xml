@@ -12,13 +12,18 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="20dp"
+        android:paddingTop="14dp"
         android:textAppearance="?textAppearanceListItemSmall"
         android:textSize="16sp"
         android:lineSpacingMultiplier="1.1"
         android:autoLink="web"
         app:ltvReadMore="@string/read_more"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
+
+    <Space
+        android:id="@+id/seen_indicator_space"
+        android:layout_width="0dp"
+        android:layout_height="18dp"/>
 
     <com.halloapp.widget.AvatarsLayout
         android:id="@+id/seen_indicator"
