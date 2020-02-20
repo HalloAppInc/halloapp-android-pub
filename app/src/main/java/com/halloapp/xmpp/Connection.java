@@ -85,6 +85,7 @@ public class Connection {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
+    private Me me;
     private Observer observer;
 
     public static Connection getInstance() {
@@ -123,114 +124,124 @@ public class Connection {
 
     public void connect(final @NonNull Me me) {
         executor.execute(() -> {
-            if (!me.isRegistered()) {
-                Log.i("connection: not registered");
-                return;
-            }
-            if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-                Log.i("connection: already connected");
-                return;
-            }
-
-            Log.i("connection: connecting...");
-
-            ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
-            ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
-            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-            ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-            ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
-            ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
-            ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
-
-            try {
-                final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                        .setUsernameAndPassword(me.getUser(), me.getPassword())
-                        .setResource("android")
-                        .setXmppDomain(XMPP_DOMAIN)
-                        .setHost(HOST)
-                        .setConnectTimeout(CONNECTION_TIMEOUT)
-                        .setSendPresence(false)
-                        .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
-                        .setPort(PORT)
-                        .setDebuggerFactory(connection -> new AndroidDebugger(connection) {
-                            @Override
-                            protected void log(String logMessage) {
-                                Log.d("connection: " + logMessage);
-                            }
-
-                            @Override
-                            protected void log(String logMessage, Throwable throwable) {
-                                Log.w("connection: " + logMessage, throwable);
-                            }
-                        })
-                        .build();
-                connection = new XMPPTCPConnection(config);
-                connection.setReplyTimeout(REPLY_TIMEOUT);
-                connection.setUseStreamManagement(false);
-                connection.addConnectionListener(new HalloConnectionListener());
-            } catch (XmppStringprepException e) {
-                Log.e("connection: cannot create connection", e);
-                connection = null;
-                return;
-            }
-
-            connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
-
-            final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
-            if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
-                sdm.addFeature(DeliveryReceipt.NAMESPACE);
-            }
-
-            Log.i("connection: connecting...");
-            try {
-                connection.connect();
-            } catch (XMPPException | SmackException | IOException | InterruptedException e) {
-                Log.e("connection: cannot connect", e);
-                disconnectInBackground();
-                return;
-            }
-
-            Log.i("connection: logging in...");
-            try {
-                connection.login();
-            } catch (SASLErrorException e) {
-                Log.e("connection: cannot login", e);
-                disconnectInBackground();
-                if ("not-authorized".equals(e.getSASLFailure().getSASLErrorString())) {
-                    observer.onLoginFailed();
-                }
-                return;
-            } catch (XMPPException | SmackException | IOException | InterruptedException e) {
-                Log.e("connection: cannot login", e);
-                disconnectInBackground();
-                return;
-            }
-
-            Log.i("connection: configuring my nodes...");
-            try {
-                configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
-                    Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
-                    observer.onSubscribersChanged();
-                });
-                configureNode(getMyFeedNodeId(), null);
-            } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
-                Log.e("connection: cannot subscribe to pubsub", e);
-                disconnectInBackground();
-                return;
-            }
-
-            try {
-                connection.sendStanza(new Presence(Presence.Type.available));
-            } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send presence", e);
-                disconnectInBackground();
-                return;
-            }
-
-            observer.onConnected();
-
-            Log.i("connection: connected");
+            this.me = me;
+            connectInBackground();
         });
+    }
+
+    @WorkerThread
+    private void connectInBackground() {
+        if (me == null) {
+            Log.i("connection: me is null");
+            return;
+        }
+        if (!me.isRegistered()) {
+            Log.i("connection: not registered");
+            return;
+        }
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            Log.i("connection: already connected");
+            return;
+        }
+
+        Log.i("connection: connecting...");
+
+        ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
+        ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
+        ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+        ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+        ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
+        ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
+        ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
+
+        try {
+            final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
+                    .setUsernameAndPassword(me.getUser(), me.getPassword())
+                    .setResource("android")
+                    .setXmppDomain(XMPP_DOMAIN)
+                    .setHost(HOST)
+                    .setConnectTimeout(CONNECTION_TIMEOUT)
+                    .setSendPresence(false)
+                    .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
+                    .setPort(PORT)
+                    .setDebuggerFactory(connection -> new AndroidDebugger(connection) {
+                        @Override
+                        protected void log(String logMessage) {
+                            Log.d("connection: " + logMessage);
+                        }
+
+                        @Override
+                        protected void log(String logMessage, Throwable throwable) {
+                            Log.w("connection: " + logMessage, throwable);
+                        }
+                    })
+                    .build();
+            connection = new XMPPTCPConnection(config);
+            connection.setReplyTimeout(REPLY_TIMEOUT);
+            connection.setUseStreamManagement(false);
+            connection.addConnectionListener(new HalloConnectionListener());
+        } catch (XmppStringprepException e) {
+            Log.e("connection: cannot create connection", e);
+            connection = null;
+            return;
+        }
+
+        connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
+
+        final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
+        if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
+            sdm.addFeature(DeliveryReceipt.NAMESPACE);
+        }
+
+        Log.i("connection: connecting...");
+        try {
+            connection.connect();
+        } catch (XMPPException | SmackException | IOException | InterruptedException e) {
+            Log.e("connection: cannot connect", e);
+            disconnectInBackground();
+            return;
+        }
+
+        Log.i("connection: logging in...");
+        try {
+            connection.login();
+        } catch (SASLErrorException e) {
+            Log.e("connection: cannot login", e);
+            disconnectInBackground();
+            if ("not-authorized".equals(e.getSASLFailure().getSASLErrorString())) {
+                observer.onLoginFailed();
+            }
+            return;
+        } catch (XMPPException | SmackException | IOException | InterruptedException e) {
+            Log.e("connection: cannot login", e);
+            disconnectInBackground();
+            return;
+        }
+
+        Log.i("connection: configuring my nodes...");
+        try {
+            configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
+                Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
+                observer.onSubscribersChanged();
+            });
+            configureNode(getMyFeedNodeId(), null);
+        } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
+            Log.e("connection: cannot subscribe to pubsub", e);
+            disconnectInBackground();
+            return;
+        }
+
+        try {
+            connection.sendStanza(new Presence(Presence.Type.available));
+        } catch (SmackException.NotConnectedException | InterruptedException e) {
+            Log.e("connection: cannot send presence", e);
+            disconnectInBackground();
+            return;
+        }
+
+        observer.onConnected();
+
+        Log.i("connection: connected");
     }
 
     public void disconnect() {
@@ -251,9 +262,23 @@ public class Connection {
         observer.onDisconnected();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    @WorkerThread
+    private boolean reconnectIfNeeded() {
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            return true;
+        }
+        if (me == null) {
+            Log.e("connection: cannot reconnect, me is null");
+            return false;
+        }
+        connectInBackground();
+        return connection != null && connection.isConnected() && connection.isAuthenticated();
+    }
+
     public Future<Boolean> syncPubSub(@NonNull final Collection<UserId> userIds) {
         return executor.submit(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: sync pubsub: no connection");
                 return false;
             }
@@ -277,7 +302,7 @@ public class Connection {
 
     public Future<MediaUploadIq.Urls> requestMediaUpload() {
         return executor.submit(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: request media upload: no connection");
                 return null;
             }
@@ -294,7 +319,7 @@ public class Connection {
 
     public Future<List<ContactsSyncResponseIq.Contact>> syncContacts(@NonNull final Collection<String> phones) {
         return executor.submit(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: sync contacts: no connection");
                 return null;
             }
@@ -311,8 +336,9 @@ public class Connection {
 
     public void sendPushToken(@NonNull final String pushToken) {
         executor.execute(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: send push token: no connection");
+                return;
             }
             final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(connection.getXMPPServiceDomain(), pushToken);
             try {
@@ -326,7 +352,7 @@ public class Connection {
 
     public void sendPost(final @NonNull Post post) {
         executor.execute(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send post, no connection");
                 return;
             }
@@ -355,7 +381,7 @@ public class Connection {
 
     public void sendComment(final @NonNull Comment comment) {
         executor.execute(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send comment, no connection");
                 return;
             }
@@ -382,7 +408,7 @@ public class Connection {
 
     public void sendAck(final @NonNull String id) {
         executor.execute(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send ack, no connection");
                 return;
             }
@@ -399,7 +425,7 @@ public class Connection {
 
     public void sendSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
         executor.execute(() -> {
-            if (connection == null) {
+            if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send seen receipt, no connection");
                 return;
             }
