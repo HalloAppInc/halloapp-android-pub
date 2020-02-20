@@ -314,7 +314,7 @@ public class CommentsActivity extends AppCompatActivity {
                     dividerItemDecoration.setDrawable(Preconditions.checkNotNull(ContextCompat.getDrawable(mediaGallery.getContext(), R.drawable.comment_media_list_spacing)));
                     mediaGallery.addItemDecoration(dividerItemDecoration);
                 }
-                mediaGallery.setAdapter(new CommentsAdapter(post.media));
+                mediaGallery.setAdapter(new MediaAdapter(post.media));
             }
 
             final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
@@ -335,11 +335,11 @@ public class CommentsActivity extends AppCompatActivity {
             }
         }
 
-        private class CommentsAdapter extends RecyclerView.Adapter<PostMediaItemViewHolder> {
+        private class MediaAdapter extends RecyclerView.Adapter<PostMediaItemViewHolder> {
 
             final List<Media> media;
 
-            CommentsAdapter(List<Media> media) {
+            MediaAdapter(List<Media> media) {
                 this.media = media;
             }
 
