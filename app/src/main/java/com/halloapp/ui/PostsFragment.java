@@ -126,7 +126,6 @@ public class PostsFragment extends Fragment {
         final TextView nameView;
         final TextView timeView;
         final View progressView;
-        final View mediaContainer;
         final MediaViewPager mediaPagerView;
         final CircleIndicator mediaPagerIndicator;
         final LimitingTextView textView;
@@ -146,7 +145,6 @@ public class PostsFragment extends Fragment {
             nameView = v.findViewById(R.id.name);
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
-            mediaContainer = v.findViewById(R.id. media_container);
             mediaPagerView = v.findViewById(R.id.media_pager);
             mediaPagerIndicator = v.findViewById(R.id.media_pager_indicator);
             textView = v.findViewById(R.id.text);
@@ -193,6 +191,25 @@ public class PostsFragment extends Fragment {
                     PostsDb.getInstance(Preconditions.checkNotNull(getContext())).setIncomingPostSeen(post.senderUserId, post.postId);
                 }
             });
+
+            seenIndicator.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Intent intent = new Intent(getContext(), PostDetailsActivity.class);
+                    intent.putExtra(PostDetailsActivity.EXTRA_POST_ID, post.postId);
+                    startActivity(intent);
+                }
+            });
+
+            textView.setOnReadMoreListener((view, limit) -> {
+                final Intent intent = new Intent(getContext(), CommentsActivity.class);
+                intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
+                intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+                intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
+                intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
+                startActivity(intent);
+                return true;
+            });
         }
 
         void bindTo(final @NonNull Post post) {
@@ -231,19 +248,10 @@ public class PostsFragment extends Fragment {
             }
             textView.setLineStep(0);
             textView.setText(post.text);
-            textView.setOnReadMoreListener((view, limit) -> {
-                final Intent intent = new Intent(getContext(), CommentsActivity.class);
-                intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-                intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
-                intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
-                intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
-                startActivity(intent);
-                return true;
-            });
 
             if (TextUtils.isEmpty(post.text)) {
                 textView.setVisibility(View.GONE);
-                postActionsSeparator.setVisibility(View.GONE);
+                postActionsSeparator.setVisibility(post.seenByCount == 0 ? View.GONE : View.VISIBLE);
             } else {
                 textView.setVisibility(View.VISIBLE);
                 postActionsSeparator.setVisibility(View.VISIBLE);
@@ -263,8 +271,9 @@ public class PostsFragment extends Fragment {
                 seenIndicator.setVisibility(View.VISIBLE);
                 seenIndicator.setContentDescription(getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
                 seenIndicator.setAvatarCount(post.seenByCount);
+
             } else {
-                seenIndicator.setVisibility(View.INVISIBLE);
+                seenIndicator.setVisibility(post.media.isEmpty() ? View.INVISIBLE : View.GONE);
             }
 
             commentButton.setOnClickListener(v -> {
@@ -307,11 +316,15 @@ public class PostsFragment extends Fragment {
                 final View playButton = view.findViewById(R.id.play);
                 if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                     playButton.setVisibility(View.VISIBLE);
-                    playButton.setOnClickListener(v -> {
-                        final Intent intent = new Intent(getContext(), VideoPlaybackActivity.class);
-                        intent.setData(Uri.fromFile(mediaItem.file));
-                        startActivity(intent);
-                    });
+                    if (mediaItem.file != null) {
+                        playButton.setOnClickListener(v -> {
+                            final Intent intent = new Intent(getContext(), VideoPlaybackActivity.class);
+                            intent.setData(Uri.fromFile(mediaItem.file));
+                            startActivity(intent);
+                        });
+                    } else {
+                        playButton.setOnClickListener(null);
+                    }
                 } else {
                     playButton.setVisibility(View.GONE);
                 }

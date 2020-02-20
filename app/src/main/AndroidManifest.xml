@@ -87,6 +87,10 @@
             android:name=".ui.mediapicker.MediaPickerActivity"
             android:label="@string/gallery"/>
 
+        <activity
+            android:name=".ui.PostDetailsActivity"
+            android:label=""/>
+
         <receiver
             android:name=".registration.SmsVerificationReceiver"
             android:exported="true">

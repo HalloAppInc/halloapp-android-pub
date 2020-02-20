@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,29 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/media_container"
+    <com.halloapp.widget.MediaViewPager
+        android:id="@+id/media_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.halloapp.widget.MediaViewPager
-            android:id="@+id/media_pager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <com.halloapp.widget.AvatarsLayout
-            android:id="@+id/seen_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="8dp"
-            android:padding="12dp"
-            app:alPaddingColor="@color/card_background"
-            app:alPaddingSize="1dp"
-            app:alElevation="2dp"
-            app:alAvatarSize="28dp"/>
-
-    </FrameLayout>
+        android:layout_height="wrap_content"/>
 
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/media_pager_indicator"
@@ -51,7 +32,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="0dp"
-        android:paddingBottom="12dp"
+        android:paddingBottom="0dp"
         android:textAppearance="?textAppearanceListItemSmall"
         android:textSize="16sp"
         android:lineSpacingMultiplier="1.1"
@@ -59,4 +40,18 @@
         app:ltvReadMore="@string/read_more"
         tools:text="This is image caption"/>
 
-</merge>
+    <com.halloapp.widget.AvatarsLayout
+        android:id="@+id/seen_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:paddingTop="2dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="20dp"
+        app:alPaddingColor="@color/card_background"
+        app:alPaddingSize="1dp"
+        app:alElevation="2dp"
+        app:alAvatarSize="28dp"/>
+
+</LinearLayout>

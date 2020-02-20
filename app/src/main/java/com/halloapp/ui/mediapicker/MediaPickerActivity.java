@@ -183,7 +183,6 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_ASK_STORAGE_PERMISSION: {
-                //startSync();
                 viewModel.invalidate();
                 break;
             }
