@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
 
+import com.halloapp.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +63,8 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
                     galleryItems.add(new GalleryItem(cursor.getLong(0), cursor.getInt(1)));
                 }
             }
+        } catch (SecurityException ex) {
+            Log.w("GalleryDataSource.load", ex);
         }
         return galleryItems;
     }
