@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
-import androidx.core.content.ContextCompat;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -27,7 +26,6 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,6 +48,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
+import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.PostEditText;
 
 import java.util.List;
@@ -259,6 +258,11 @@ public class CommentsActivity extends AppCompatActivity {
             progressView = v.findViewById(R.id.progress);
             replyButton = v.findViewById(R.id.reply);
             mediaGallery = v.findViewById(R.id.media);
+            if (mediaGallery != null) {
+                final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
+                mediaGallery.setLayoutManager(layoutManager);
+                mediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing)));
+            }
         }
 
         void bindTo(final @NonNull Comment comment) {
@@ -309,13 +313,6 @@ public class CommentsActivity extends AppCompatActivity {
                 mediaGallery.setVisibility(View.GONE);
             } else {
                 mediaGallery.setVisibility(View.VISIBLE);
-                final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
-                mediaGallery.setLayoutManager(layoutManager);
-                if (mediaGallery.getItemDecorationCount() == 0) {
-                    final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mediaGallery.getContext(), layoutManager.getOrientation());
-                    dividerItemDecoration.setDrawable(Preconditions.checkNotNull(ContextCompat.getDrawable(mediaGallery.getContext(), R.drawable.comment_media_list_spacing)));
-                    mediaGallery.addItemDecoration(dividerItemDecoration);
-                }
                 mediaGallery.setAdapter(new MediaAdapter(post.media));
             }
 
