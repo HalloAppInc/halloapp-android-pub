@@ -1,12 +1,10 @@
 package com.halloapp.ui.messages;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
