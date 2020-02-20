@@ -39,31 +39,7 @@ class CommentsViewModel extends AndroidViewModel {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
-
-        @Override
-        public void onPostAdded(@NonNull Post post) {
-        }
-
-        @Override
-        public void onPostDuplicate(@NonNull Post post) {
-        }
-
-        @Override
-        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
-        }
-
-        @Override
-        public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
-        }
-
-        @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-        }
-
-        @Override
-        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-        }
+    private final PostsDb.Observer postsObserver = new PostsDb.DefaultObserver() {
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
@@ -74,22 +50,10 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onCommentDuplicate(@NonNull Comment comment) {
-        }
-
-        @Override
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
             if (CommentsViewModel.this.postSenderUserId.equals(postSenderUserId) && CommentsViewModel.this.postId.equals(postId)) {
                 invalidateDataSource();
             }
-        }
-
-        @Override
-        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
-        }
-
-        @Override
-        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         }
 
         @Override

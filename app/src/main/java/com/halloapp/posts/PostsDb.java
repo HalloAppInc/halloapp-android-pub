@@ -57,6 +57,21 @@ public class PostsDb {
         void onPostsCleanup();
     }
 
+    public static class DefaultObserver implements Observer {
+        public void onPostAdded(@NonNull Post post) {};
+        public void onPostDuplicate(@NonNull Post post) {};
+        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {};
+        public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {};
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {};
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {};
+        public void onCommentAdded(@NonNull Comment comment) {};
+        public void onCommentDuplicate(@NonNull Comment comment) {};
+        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {};
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {};
+        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {};
+        public void onPostsCleanup() {};
+    }
+
     public static PostsDb getInstance(final @NonNull Context context) {
         if (instance == null) {
             synchronized(PostsDb.class) {
