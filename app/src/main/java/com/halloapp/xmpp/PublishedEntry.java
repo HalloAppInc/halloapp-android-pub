@@ -29,10 +29,7 @@ public class PublishedEntry {
     private static final String ELEMENT_ENTRY = "entry";
     private static final String ELEMENT_FEED_POST = "feedpost";
     private static final String ELEMENT_COMMENT = "comment";
-    private static final String ELEMENT_USER = "username";
-    private static final String ELEMENT_IMAGE_URL = "imageUrl";
     private static final String ELEMENT_TEXT = "text";
-    private static final String ELEMENT_TIMESTAMP = "timestamp";
     private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
     private static final String ELEMENT_PARENT_COMMENT_ID = "parentCommentId";
     private static final String ELEMENT_URL = "url";
@@ -49,17 +46,17 @@ public class PublishedEntry {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ENTRY_FEED, ENTRY_COMMENT})
     @interface EntryType {}
-    public static final int ENTRY_FEED = 0;
-    public static final int ENTRY_COMMENT = 1;
+    static final int ENTRY_FEED = 0;
+    static final int ENTRY_COMMENT = 1;
 
-    public final @EntryType int type;
-    public final String id;
-    public final long timestamp;
-    public final String user;
-    public final String text;
-    public final String feedItemId;
-    public final String parentCommentId;
-    public final List<Media> media = new ArrayList<>();
+    final @EntryType int type;
+    final String id;
+    final long timestamp;
+    final String user;
+    final String text;
+    final String feedItemId;
+    final String parentCommentId;
+    final List<Media> media = new ArrayList<>();
 
     public static class Media {
 
@@ -68,16 +65,16 @@ public class PublishedEntry {
                 MEDIA_TYPE_IMAGE,
                 MEDIA_TYPE_VIDEO
         })
-        public @interface MediaType {}
-        public static final String MEDIA_TYPE_IMAGE = "image";
-        public static final String MEDIA_TYPE_VIDEO = "video";
+        @interface MediaType {}
+        static final String MEDIA_TYPE_IMAGE = "image";
+        static final String MEDIA_TYPE_VIDEO = "video";
 
-        public final String type;
-        public final String url;
-        public final byte [] encKey;
-        public final byte [] sha256hash;
-        public int width;
-        public int height;
+        final String type;
+        final String url;
+        final byte [] encKey;
+        final byte [] sha256hash;
+        int width;
+        int height;
 
         public Media(@MediaType String type, String url, byte [] encKey, byte [] sha256hash, int width, int height) {
             this.type = type;
@@ -90,12 +87,7 @@ public class PublishedEntry {
 
         Media(@MediaType String type, String url, String encKey, String sha256hash, String widthText, String heightText) {
             this.type = type;
-
-            if (!TextUtils.isEmpty(url) && !url.startsWith("http")) {
-                this.url = "https://cdn.image4.io/hallo" + url; // TODO (ds): remove
-            } else {
-                this.url = url;
-            }
+            this.url = url;
 
             this.encKey = encKey == null ? null : Base64.decode(encKey, Base64.NO_WRAP);
             this.sha256hash = sha256hash == null ? null : Base64.decode(sha256hash, Base64.NO_WRAP);
@@ -118,7 +110,7 @@ public class PublishedEntry {
         }
     }
 
-    public PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
+    PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
         this.type = type;
         this.id = id;
         this.timestamp = timestamp;
@@ -132,7 +124,7 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    public static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PubsubItem> items) {
+    static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PubsubItem> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
         for (PubsubItem item : items) {
             final String xml = item.getPayload().toXML(null);
@@ -166,7 +158,7 @@ public class PublishedEntry {
         return entries;
     }
 
-    public @NonNull String toXml() {
+    @NonNull String toXml() {
         final XmlSerializer serializer = android.util.Xml.newSerializer();
         final StringWriter writer = new StringWriter();
 
@@ -175,9 +167,6 @@ public class PublishedEntry {
             serializer.setPrefix("", NAMESPACE);
             serializer.startTag(NAMESPACE, ELEMENT_ENTRY);
             serializer.startTag(NAMESPACE, getTag());
-            serializer.startTag(NAMESPACE, ELEMENT_USER);
-            serializer.text(user);
-            serializer.endTag(NAMESPACE, ELEMENT_USER);
             if (text != null) {
                 serializer.startTag(NAMESPACE, ELEMENT_TEXT);
                 serializer.text(text);
@@ -194,27 +183,6 @@ public class PublishedEntry {
                 serializer.endTag(NAMESPACE, ELEMENT_PARENT_COMMENT_ID);
             }
             if (!media.isEmpty()) {
-                // TODO (ds): begin remove
-                {
-                    Media mediaItem = media.get(0);
-                    serializer.startTag(NAMESPACE, ELEMENT_IMAGE_URL);
-                    if (mediaItem.width != 0) {
-                        serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(mediaItem.width));
-                    }
-                    if (mediaItem.height != 0) {
-                        serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(mediaItem.height));
-                    }
-                    if (mediaItem.encKey != null) {
-                        serializer.attribute(null, ATTRIBUTE_ENC_KEY, Base64.encodeToString(mediaItem.encKey, Base64.NO_WRAP));
-                    }
-                    if (mediaItem.sha256hash != null) {
-                        serializer.attribute(null, ATTRIBUTE_SHA256_HASH, Base64.encodeToString(mediaItem.sha256hash, Base64.NO_WRAP));
-                    }
-                    serializer.text(mediaItem.url);
-                    serializer.endTag(NAMESPACE, ELEMENT_IMAGE_URL);
-                }
-                // TODO (ds): end remove
-
                 serializer.startTag(NAMESPACE, ELEMENT_MEDIA);
                 for (Media mediaItem : media) {
                     serializer.startTag(NAMESPACE, ELEMENT_URL);
@@ -237,9 +205,6 @@ public class PublishedEntry {
                 serializer.endTag(NAMESPACE, ELEMENT_MEDIA);
 
             }
-            serializer.startTag(NAMESPACE, ELEMENT_TIMESTAMP); // TODO (ds): remove; should be set on server
-            serializer.text(Long.toString(timestamp / 1000));
-            serializer.endTag(NAMESPACE, ELEMENT_TIMESTAMP);
             serializer.endTag(NAMESPACE, getTag());
             serializer.endTag(NAMESPACE, ELEMENT_ENTRY);
             serializer.flush();
@@ -287,21 +252,7 @@ public class PublishedEntry {
                 continue;
             }
             final String name = Preconditions.checkNotNull(parser.getName());
-            if (ELEMENT_USER.equals(name)) { // TODO (ds): remove, set by server
-                builder.user(Xml.readText(parser));
-            } else if (ELEMENT_IMAGE_URL.equals(name)) { // TODO (ds): remove
-                if (media.isEmpty()) {
-                    final String widthStr = parser.getAttributeValue(null, ATTRIBUTE_WIDTH);
-                    final String heightStr = parser.getAttributeValue(null, ATTRIBUTE_HEIGHT);
-                    final String key = parser.getAttributeValue(null, ATTRIBUTE_ENC_KEY);
-                    final String sha256hash = parser.getAttributeValue(null, ATTRIBUTE_SHA256_HASH);
-                    final Media mediaItem = new Media(Media.MEDIA_TYPE_IMAGE, Xml.readText(parser),
-                            key, sha256hash, widthStr, heightStr);
-                    if (!TextUtils.isEmpty(mediaItem.url)) {
-                        media.add(mediaItem);
-                    }
-                }
-            } else if (ELEMENT_MEDIA.equals(name)) {
+            if (ELEMENT_MEDIA.equals(name)) {
                 media.clear();
                 media.addAll(readMedia(parser));
             } else if (ELEMENT_TEXT.equals(name)) {
@@ -310,8 +261,6 @@ public class PublishedEntry {
                 builder.feedItemId(Xml.readText(parser));
             } else if (ELEMENT_PARENT_COMMENT_ID.equals(name)) {
                 builder.parentCommentId(Xml.readText(parser));
-            } else if (ELEMENT_TIMESTAMP.equals(name)) { // TODO (ds): remove, set by server
-                builder.timestamp(Xml.readText(parser));
             } else {
                 Xml.skip(parser);
             }
@@ -378,20 +327,6 @@ public class PublishedEntry {
 
         Builder timestamp(long timestampSeconds) {
             timestamp = 1000L * timestampSeconds;
-            return this;
-        }
-
-        Builder timestamp(String timestampText) {
-            try {
-                this.timestamp = 1000L * Long.parseLong(timestampText);
-            } catch (NumberFormatException e) {
-                try {
-                    this.timestamp = 1000L * (long)Double.parseDouble(timestampText);
-                } catch (NumberFormatException ex) {
-                    Log.e("PublishedEntry: failed reading timestamp", ex);
-                    this.timestamp = System.currentTimeMillis() / 1000;
-                }
-            }
             return this;
         }
 
