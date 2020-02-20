@@ -813,13 +813,12 @@ public class PostsDb {
     }
 
     @WorkerThread
-    List<UserId> getSeenBy(@NonNull String postId) {
+    public List<UserId> getSeenBy(@NonNull String postId) {
         final List<UserId> users = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(SeenTable.TABLE_NAME,
-                new String [] {
-                        SeenTable.COLUMN_SEEN_BY_USER_ID},
-                SeenTable.COLUMN_POST_ID + "='?'",
+                new String [] {SeenTable.COLUMN_SEEN_BY_USER_ID},
+                SeenTable.COLUMN_POST_ID + "=?",
                 new String [] {postId}, null, null, null)) {
             while (cursor.moveToNext()) {
                 users.add(new UserId(cursor.getString(0)));
