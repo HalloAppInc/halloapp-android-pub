@@ -32,6 +32,7 @@ class Downloader {
         final int code;
 
         DownloadException(int code) {
+            super("http error code " + code);
             this.code = code;
         }
     }
