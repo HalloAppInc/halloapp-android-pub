@@ -89,7 +89,7 @@ public class HomeFragment extends PostsFragment {
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
-        viewModel.commentsHistory.observe(this, commentHistoryData -> {
+        viewModel.commentsHistory.getLiveData().observe(this, commentHistoryData -> {
             if (notificationDrawable != null) {
                 updateCommentHistory(commentHistoryData);
             }
@@ -104,7 +104,7 @@ public class HomeFragment extends PostsFragment {
         commentHistoryPopup = new CommentsHistoryPopup(Preconditions.checkNotNull(getContext()), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
         commentHistoryPopup.setOnItemClickListener(commentsGroup -> {
             commentHistoryPopup.dismiss();
-            final HomeViewModel.CommentsHistory commentHistoryData = viewModel.commentsHistory.getValue();
+            final HomeViewModel.CommentsHistory commentHistoryData = viewModel.commentsHistory.getLiveData().getValue();
             if (commentHistoryData != null) {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);
                 intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, commentsGroup.postSenderUserId.rawId());
@@ -128,7 +128,7 @@ public class HomeFragment extends PostsFragment {
                 getResources().getColor(R.color.badge_background),
                 getResources().getColor(R.color.window_background),
                 getResources().getDimension(R.dimen.badge));
-        updateCommentHistory(viewModel.commentsHistory.getValue());
+        updateCommentHistory(viewModel.commentsHistory.getLiveData().getValue());
         notificationsMenuItem.setIcon(notificationDrawable);
         super.onCreateOptionsMenu(menu,inflater);
     }

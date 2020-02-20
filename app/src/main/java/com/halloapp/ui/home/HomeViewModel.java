@@ -1,16 +1,16 @@
 package com.halloapp.ui.home;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.ComputableLiveData;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
-    final MutableLiveData<CommentsHistory> commentsHistory;
+    final ComputableLiveData<CommentsHistory> commentsHistory;
 
     private final PostsDb postsDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
@@ -60,7 +60,7 @@ public class HomeViewModel extends AndroidViewModel {
         @Override
         public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidatePosts();
-            loadCommentHistory();
+            invalidateCommentHistory();
         }
 
         @Override
@@ -81,7 +81,7 @@ public class HomeViewModel extends AndroidViewModel {
         public void onCommentAdded(@NonNull Comment comment) {
             if (comment.isIncoming()) {
                 invalidatePosts();
-                loadCommentHistory();
+                invalidateCommentHistory();
             }
         }
 
@@ -96,23 +96,27 @@ public class HomeViewModel extends AndroidViewModel {
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
             invalidatePosts();
-            loadCommentHistory();
+            invalidateCommentHistory();
         }
 
         @Override
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
             invalidatePosts();
-            loadCommentHistory();
+            invalidateCommentHistory();
         }
 
         @Override
         public void onPostsCleanup() {
             invalidatePosts();
-            loadCommentHistory();
+            invalidateCommentHistory();
         }
 
         private void invalidatePosts() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
+        }
+
+        private void invalidateCommentHistory() {
+            mainHandler.post(commentsHistory::invalidate);
         }
     };
 
@@ -125,8 +129,12 @@ public class HomeViewModel extends AndroidViewModel {
         final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb, false);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
-        commentsHistory = new MutableLiveData<>();
-        loadCommentHistory();
+        commentsHistory = new ComputableLiveData<CommentsHistory>() {
+            @Override
+            protected CommentsHistory compute() {
+                return loadCommentHistory();
+            }
+        };
     }
 
     @Override
@@ -142,83 +150,64 @@ public class HomeViewModel extends AndroidViewModel {
         return pendingIncoming.compareAndSet(true, false);
     }
 
-    private void loadCommentHistory() {
-        new LoadCommentHistoryTask(getApplication(), commentsHistory).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
+    @WorkerThread
+    private CommentsHistory loadCommentHistory() {
 
-    static class LoadCommentHistoryTask extends AsyncTask<Void, Void, CommentsHistory> {
+        final List<Comment> comments = PostsDb.getInstance(getApplication()).getIncomingCommentsHistory(250);
 
-        private final Application application;
-        private final MutableLiveData<CommentsHistory> commentsHistory;
-
-        LoadCommentHistoryTask(@NonNull Application application, @NonNull MutableLiveData<CommentsHistory> commentsHistory) {
-            this.application = application;
-            this.commentsHistory = commentsHistory;
+        final Map<Pair<UserId, String>, CommentsGroup> unseenComments = new HashMap<>();
+        final List<CommentsGroup> seenComments = new ArrayList<>();
+        CommentsGroup lastSeenCommentGroup = null;
+        for (Comment comment : comments) {
+            if (comment.seen) {
+                if (lastSeenCommentGroup == null || !lastSeenCommentGroup.postId.equals(comment.postId) || !lastSeenCommentGroup.postSenderUserId.equals(comment.postSenderUserId)) {
+                    if (lastSeenCommentGroup != null) {
+                        seenComments.add(lastSeenCommentGroup);
+                    }
+                    lastSeenCommentGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
+                }
+                lastSeenCommentGroup.comments.add(comment);
+            } else {
+                final Pair<UserId, String> postKey = Pair.create(comment.postSenderUserId, comment.postId);
+                CommentsGroup commentsGroup = unseenComments.get(postKey);
+                if (commentsGroup == null) {
+                    commentsGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
+                    unseenComments.put(postKey, commentsGroup);
+                }
+                commentsGroup.comments.add(comment);
+                if (commentsGroup.timestamp < comment.timestamp) {
+                    commentsGroup.timestamp = comment.timestamp;
+                }
+            }
+        }
+        if (lastSeenCommentGroup != null) {
+            seenComments.add(lastSeenCommentGroup);
         }
 
-        @Override
-        protected CommentsHistory doInBackground(Void... voids) {
-            final List<Comment> comments = PostsDb.getInstance(application).getIncomingCommentsHistory(250);
+        final ArrayList<CommentsGroup> commentGroups = new ArrayList<>(unseenComments.values());
+        Collections.sort(commentGroups, ((o1, o2) -> -Long.compare(o1.timestamp, o2.timestamp)));
+        commentGroups.addAll(seenComments);
 
-            final Map<Pair<UserId, String>, CommentsGroup> unseenComments = new HashMap<>();
-            final List<CommentsGroup> seenComments = new ArrayList<>();
-            CommentsGroup lastSeenCommentGroup = null;
-            for (Comment comment : comments) {
-                if (comment.seen) {
-                    if (lastSeenCommentGroup == null || !lastSeenCommentGroup.postId.equals(comment.postId) || !lastSeenCommentGroup.postSenderUserId.equals(comment.postSenderUserId)) {
-                        if (lastSeenCommentGroup != null) {
-                            seenComments.add(lastSeenCommentGroup);
-                        }
-                        lastSeenCommentGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
-                    }
-                    lastSeenCommentGroup.comments.add(comment);
+        final Map<UserId, Contact> contacts = new HashMap<>();
+        for (Comment comment : comments) {
+            if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
+                final Contact contact = ContactsDb.getInstance(getApplication()).getContact(comment.commentSenderUserId);
+                if (contact == null) {
+                    contacts.put(comment.commentSenderUserId, new Contact(comment.commentSenderUserId));
                 } else {
-                    final Pair<UserId, String> postKey = Pair.create(comment.postSenderUserId, comment.postId);
-                    CommentsGroup commentsGroup = unseenComments.get(postKey);
-                    if (commentsGroup == null) {
-                        commentsGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
-                        unseenComments.put(postKey, commentsGroup);
-                    }
-                    commentsGroup.comments.add(comment);
-                    if (commentsGroup.timestamp < comment.timestamp) {
-                        commentsGroup.timestamp = comment.timestamp;
-                    }
+                    contacts.put(comment.commentSenderUserId, contact);
                 }
             }
-            if (lastSeenCommentGroup != null) {
-                seenComments.add(lastSeenCommentGroup);
-            }
-
-            final ArrayList<CommentsGroup> commentGroups = new ArrayList<>(unseenComments.values());
-            Collections.sort(commentGroups, ((o1, o2) -> -Long.compare(o1.timestamp, o2.timestamp)));
-            commentGroups.addAll(seenComments);
-
-            final Map<UserId, Contact> contacts = new HashMap<>();
-            for (Comment comment : comments) {
-                if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
-                    final Contact contact = ContactsDb.getInstance(application).getContact(comment.commentSenderUserId);
-                    if (contact == null) {
-                        contacts.put(comment.commentSenderUserId, new Contact(comment.commentSenderUserId));
-                    } else {
-                        contacts.put(comment.commentSenderUserId, contact);
-                    }
-                }
-                if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
-                    final Contact contact = ContactsDb.getInstance(application).getContact(comment.postSenderUserId);
-                    if (contact == null) {
-                        contacts.put(comment.postSenderUserId, new Contact(comment.postSenderUserId));
-                    } else {
-                        contacts.put(comment.postSenderUserId, contact);
-                    }
+            if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
+                final Contact contact = ContactsDb.getInstance(getApplication()).getContact(comment.postSenderUserId);
+                if (contact == null) {
+                    contacts.put(comment.postSenderUserId, new Contact(comment.postSenderUserId));
+                } else {
+                    contacts.put(comment.postSenderUserId, contact);
                 }
             }
-            return new CommentsHistory(commentGroups, unseenComments.size(), contacts);
         }
-
-        @Override
-        protected void onPostExecute(final CommentsHistory commentsHistory) {
-            this.commentsHistory.postValue(commentsHistory);
-        }
+        return new CommentsHistory(commentGroups, unseenComments.size(), contacts);
     }
 
     public static class CommentsGroup {
