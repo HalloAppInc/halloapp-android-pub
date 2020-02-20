@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
-import com.github.chrisbanes.photoview.OnScaleChangedListener;
 import com.github.chrisbanes.photoview.OnViewDragListener;
 import com.halloapp.R;
 
@@ -67,12 +66,9 @@ public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {
             }
         });
 
-        setOnViewDragListener(new OnViewDragListener() {
-            @Override
-            public void onDrag(float dx, float dy) {
-                if (gridEnabled) {
-                    drawGrid = true;
-                }
+        setOnViewDragListener((dx, dy) -> {
+            if (gridEnabled) {
+                drawGrid = true;
             }
         });
     }

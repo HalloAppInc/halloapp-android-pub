@@ -45,7 +45,7 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
     @MainThread
     public void load(@NonNull ImageView view, @NonNull GalleryItem galleryItem) {
         final Callable<Bitmap> loader = () -> {
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
                 bitmap = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Images.Thumbnails.MINI_KIND, null);
             } else {
@@ -58,7 +58,7 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
                 final float scale = Math.min(1f * dimensionLimit / bitmap.getWidth(), 1f * dimensionLimit / bitmap.getHeight());
                 final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scale), (int) (bitmap.getHeight() * scale), true);
                 if (scaledBitmap != bitmap) {
-                    bitmap.recycle();;
+                    bitmap.recycle();
                     bitmap = scaledBitmap;
                 }
                 return bitmap;

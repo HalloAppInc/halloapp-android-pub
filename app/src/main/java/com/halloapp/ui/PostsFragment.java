@@ -192,13 +192,10 @@ public class PostsFragment extends Fragment {
                 }
             });
 
-            seenIndicator.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Intent intent = new Intent(getContext(), PostDetailsActivity.class);
-                    intent.putExtra(PostDetailsActivity.EXTRA_POST_ID, post.postId);
-                    startActivity(intent);
-                }
+            seenIndicator.setOnClickListener(v1 -> {
+                final Intent intent = new Intent(getContext(), PostDetailsActivity.class);
+                intent.putExtra(PostDetailsActivity.EXTRA_POST_ID, post.postId);
+                startActivity(intent);
             });
 
             textView.setOnReadMoreListener((view, limit) -> {
