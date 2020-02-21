@@ -255,6 +255,7 @@ public class Connection {
             return;
         }
         if (connection.isConnected()) {
+            Log.i("connection: disconnecting");
             connection.setReplyTimeout(1_000);
             connection.disconnect();
         }
@@ -373,6 +374,8 @@ public class Connection {
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                 myFeedNode.publish(item);
+                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+                observer.onOutgoingPostAcked(post.postId);
             } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
             }
@@ -400,6 +403,8 @@ public class Connection {
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(comment.commentId, payload);
                 feedNode.publish(item);
+                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+                observer.onOutgoingCommentAcked(comment.postSenderUserId, comment.postId, comment.commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send comment", e);
             }
@@ -483,7 +488,6 @@ public class Connection {
         }
 
         node.subscribe(connection.getUser().asBareJid().toString());
-
     }
 
     @WorkerThread
@@ -650,11 +654,7 @@ public class Connection {
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
         for (PublishedEntry entry : entries) {
             if (isMe(entry.user)) {
-                if (entry.type == PublishedEntry.ENTRY_FEED) {
-                    observer.onOutgoingPostAcked(entry.id);
-                } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
-                    observer.onOutgoingCommentAcked(feedUserId, entry.feedItemId, entry.id);
-                }
+                sendAck(entry.id);
             } else {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     final Post post = new Post(0,
