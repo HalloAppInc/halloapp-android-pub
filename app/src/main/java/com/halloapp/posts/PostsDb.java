@@ -103,18 +103,24 @@ public class PostsDb {
 
     public void addPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
+            boolean duplicate = false;
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             db.beginTransaction();
             try {
                 insertPost(post);
-                notifyPostAdded(post);
                 Log.i("PostsDb.addPost: added " + post);
                 db.setTransactionSuccessful();
             } catch (SQLiteConstraintException ex) {
                 Log.w("PostsDb.addPost: duplicate " + post);
-                notifyPostDuplicate(post);
+                duplicate = true;
             } finally {
                 db.endTransaction();
+            }
+            // important to notify outside of transaction
+            if (duplicate) {
+                notifyPostDuplicate(post);
+            } else {
+                notifyPostAdded(post);
             }
         });
     }
@@ -129,6 +135,7 @@ public class PostsDb {
         values.put(PostsTable.COLUMN_POST_ID, post.postId);
         values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
         values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
+        values.put(PostsTable.COLUMN_SEEN, post.seen);
         if (post.text != null) {
             values.put(PostsTable.COLUMN_TEXT, post.text);
         }
@@ -259,7 +266,7 @@ public class PostsDb {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setMediaTransferred: post=" + post + " media=" + media);
             final ContentValues values = new ContentValues();
-            values.put(MediaTable.COLUMN_FILE, media.file.getName());
+            values.put(MediaTable.COLUMN_FILE, media.file == null ? null : media.file.getName());
             values.put(MediaTable.COLUMN_URL, media.url);
             if (media.encKey != null) {
                 values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
@@ -402,11 +409,11 @@ public class PostsDb {
 
     public void addHistory(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         databaseWriteExecutor.execute(() -> {
+            final List<Post> addedHistoryPosts = new ArrayList<>();
+            final Collection<Comment> addedHistoryComments = new ArrayList<>();
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             db.beginTransaction();
             try {
-                final List<Post> addedHistoryPosts = new ArrayList<>();
-                final Collection<Comment> addedHistoryComments = new ArrayList<>();
                 for (Post post : historyPosts) {
                     try {
                         insertPost(post);
@@ -425,13 +432,14 @@ public class PostsDb {
                         Log.i("PostsDb.addHistory: comment duplicate " + comment);
                     }
                 }
-                if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
-                    Collections.sort(addedHistoryPosts, (o1, o2) -> Long.compare(o2.timestamp, o1.timestamp)); // sort, so download would happen in reverse order
-                    notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
-                }
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
+            }
+            // important to notify outside of transaction
+            if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
+                Collections.sort(addedHistoryPosts, (o1, o2) -> Long.compare(o2.timestamp, o1.timestamp)); // sort, so download would happen in reverse order
+                notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
             }
         });
     }
