@@ -9,15 +9,15 @@ import java.util.Collection;
 
 public class ContactsSyncRequestIq extends IQ {
 
-    public final static String ELEMENT = "contact_list";
-    public final static String NAMESPACE = "ns:phonenumber:normalization";
+    private final static String ELEMENT = "contact_list";
+    private final static String NAMESPACE = "ns:phonenumber:normalization";
 
     private static final String ELEMENT_CONTACT = "contact";
     private static final String ELEMENT_RAW = "raw";
 
     private final Collection<String> phones;
 
-    public ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones) {
+    ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.get);
         setTo(to);

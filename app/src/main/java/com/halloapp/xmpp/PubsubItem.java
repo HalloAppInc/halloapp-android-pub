@@ -9,19 +9,7 @@ public class PubsubItem extends PayloadItem<SimplePayload> {
     long timestamp;
     Jid publisher;
 
-    public PubsubItem(SimplePayload payloadExt) {
-        super(payloadExt);
-    }
-
-    public PubsubItem(String itemId, SimplePayload payloadExt) {
-        super(itemId, payloadExt);
-    }
-
-    public PubsubItem(String itemId, String nodeId, SimplePayload payloadExt) {
-        super(itemId, nodeId, payloadExt);
-    }
-
-    public PubsubItem(ItemNamespace itemNamespace, String itemId, String nodeId, SimplePayload payloadExt) {
+    PubsubItem(ItemNamespace itemNamespace, String itemId, String nodeId, SimplePayload payloadExt) {
         super(itemNamespace, itemId, nodeId, payloadExt);
     }
 
@@ -29,7 +17,7 @@ public class PubsubItem extends PayloadItem<SimplePayload> {
         return timestamp;
     }
 
-    public Jid getPublisher() {
+    Jid getPublisher() {
         return publisher;
     }
 }

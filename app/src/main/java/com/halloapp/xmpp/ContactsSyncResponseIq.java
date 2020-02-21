@@ -15,15 +15,15 @@ import java.util.List;
 
 public class ContactsSyncResponseIq extends IQ {
 
-    public final static String ELEMENT = "contact_list";
-    public final static String NAMESPACE = "ns:phonenumber:normalization";
+    final static String ELEMENT = "contact_list";
+    final static String NAMESPACE = "ns:phonenumber:normalization";
 
     private static final String ELEMENT_CONTACT = "contact";
     private static final String ELEMENT_RAW = "raw";
     private static final String ELEMENT_NORMALIZED = "normalized";
     private static final String ELEMENT_ROLE = "role";
 
-    public final List<Contact> contactList = new ArrayList<>();
+    final List<Contact> contactList = new ArrayList<>();
 
     private ContactsSyncResponseIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);

@@ -14,7 +14,7 @@ public class PushRegisterRequestIq extends IQ {
 
     private final String token;
 
-    public PushRegisterRequestIq(@NonNull Jid to, @NonNull String token) {
+    PushRegisterRequestIq(@NonNull Jid to, @NonNull String token) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.set);
         setTo(to);

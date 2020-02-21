@@ -14,12 +14,12 @@ import java.io.IOException;
 
 public class MediaUploadIq extends IQ {
 
-    public final static String ELEMENT = "upload_media";
-    public final static String NAMESPACE = "ns:upload_media";
+    final static String ELEMENT = "upload_media";
+    final static String NAMESPACE = "ns:upload_media";
 
-    public final Urls urls = new Urls();
+    final Urls urls = new Urls();
 
-    public MediaUploadIq(@NonNull Jid to) {
+    MediaUploadIq(@NonNull Jid to) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.get);
         setTo(to);

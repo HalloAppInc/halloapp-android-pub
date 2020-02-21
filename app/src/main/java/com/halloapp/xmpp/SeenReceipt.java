@@ -10,15 +10,15 @@ import java.util.Map;
 
 public class SeenReceipt implements ExtensionElement {
 
-    public static final String NAMESPACE = "urn:xmpp:receipts";
-    public static final String ELEMENT = "seen";
+    static final String NAMESPACE = "urn:xmpp:receipts";
+    static final String ELEMENT = "seen";
 
     /**
      * original ID of the delivered message
      */
     private final String id;
 
-    public SeenReceipt(String id) {
+    SeenReceipt(String id) {
         this.id = id;
     }
 

@@ -15,7 +15,7 @@ import java.util.Locale;
 
 public class TimestampRefresher extends ViewModel {
 
-    public final MutableLiveData<Long> refresh = new MutableLiveData<>();
+    final MutableLiveData<Long> refresh = new MutableLiveData<>();
 
     private long refreshTimestampsTime = Long.MAX_VALUE;
     private final Runnable refreshTimestampsRunnable = () -> {
@@ -25,7 +25,7 @@ public class TimestampRefresher extends ViewModel {
     };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public void scheduleTimestampRefresh(long postTimestamp) {
+    void scheduleTimestampRefresh(long postTimestamp) {
         long refreshTime = getRefreshTime(postTimestamp);
         if (refreshTime < refreshTimestampsTime) {
             refreshTimestampsTime = refreshTime;

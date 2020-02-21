@@ -8,9 +8,9 @@ import org.jxmpp.jid.Jid;
 
 public class AckStanza extends Stanza {
 
-    public static final String ELEMENT = "ack";
+    private static final String ELEMENT = "ack";
 
-    public AckStanza(@NonNull Jid to, @NonNull String id) {
+    AckStanza(@NonNull Jid to, @NonNull String id) {
         setTo(to);
         setStanzaId(id);
     }
