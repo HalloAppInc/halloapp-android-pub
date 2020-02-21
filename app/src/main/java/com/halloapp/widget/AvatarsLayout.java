@@ -140,7 +140,7 @@ public class AvatarsLayout extends FrameLayout {
 
     public static class AvatarImageView extends AppCompatImageView {
 
-        public Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         public AvatarImageView(Context context) {
             super(context);

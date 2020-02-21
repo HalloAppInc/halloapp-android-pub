@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class LinearSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
-    private LinearLayoutManager layoutManager;
-    private int spacing;
+    private final LinearLayoutManager layoutManager;
+    private final int spacing;
 
     public LinearSpacingItemDecoration(@NonNull LinearLayoutManager layoutManager, int spacing) {
         this.layoutManager = layoutManager;

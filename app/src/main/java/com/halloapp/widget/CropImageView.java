@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
-import com.github.chrisbanes.photoview.OnViewDragListener;
 import com.halloapp.R;
 
 public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {

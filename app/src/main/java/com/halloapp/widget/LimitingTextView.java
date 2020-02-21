@@ -24,7 +24,7 @@ public class LimitingTextView extends AppCompatTextView {
     private int lineLimit = 12;
     private int lineStep = 12;
     private SpannableString readMoreText;
-    private SpannableStringBuilder truncatedText = new SpannableStringBuilder();
+    private final SpannableStringBuilder truncatedText = new SpannableStringBuilder();
     private CharSequence originalText;
     private OnReadMoreListener listener;
     private int lastMeasureWidth;

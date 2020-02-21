@@ -23,8 +23,6 @@ import com.halloapp.posts.CommentsDataSource;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 
-import java.util.Collection;
-
 class CommentsViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Comment>> commentList;

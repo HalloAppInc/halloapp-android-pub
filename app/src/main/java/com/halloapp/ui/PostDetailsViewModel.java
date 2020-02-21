@@ -15,12 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class PostDetailsViewModel extends AndroidViewModel {
