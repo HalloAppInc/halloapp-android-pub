@@ -99,6 +99,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name = ".Notifications$DeleteNotificationReceiver"
+            android:enabled = "true"
+            android:exported = "true" >
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.halloapp.fileprovider"

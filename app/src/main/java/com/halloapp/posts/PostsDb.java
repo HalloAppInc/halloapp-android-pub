@@ -445,7 +445,17 @@ public class PostsDb {
     }
 
     @WorkerThread
+    public List<Post> getUnseenPosts(long timestamp, int count) {
+        return getPosts(timestamp, count, false, false, true);
+    }
+
+    @WorkerThread
     List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
+        return getPosts(timestamp, count, after, outgoingOnly, false);
+    }
+
+    @WorkerThread
+    List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
@@ -461,6 +471,9 @@ public class PostsDb {
 
         if (outgoingOnly) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''";
+        }
+        if (unseenOnly) {
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0";
         }
         String sql =
             "SELECT " +

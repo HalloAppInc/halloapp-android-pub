@@ -1,7 +1,6 @@
 package com.halloapp;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -49,12 +48,6 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onIncomingPostReceived(@NonNull Post post) {
         PostsDb.getInstance(context).addPost(post);
-        // Show push notifications if necessary.
-        if (!HalloApp.instance.appActiveStatus) {
-            final String title = post.senderUserId.rawId();
-            final String body = TextUtils.isEmpty(post.text) ? "Media" : post.text;
-            HalloApp.instance.showNotification(title, body);
-        }
     }
 
     @Override

@@ -15,6 +15,7 @@ public class Preferences {
     public static final String PREFS_NAME = "prefs";
 
     private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
+    private static final String PREF_KEY_LAST_POST_NOTIFICATION_TIME = "last_post_notification_time";
 
     private final Context context;
     private SharedPreferences preferences;
@@ -51,6 +52,18 @@ public class Preferences {
     public void setLastSyncTime(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last sync time");
+        }
+    }
+
+    @WorkerThread
+    public long getLastPostNotificationTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_POST_NOTIFICATION_TIME, 0);
+    }
+
+    @WorkerThread
+    public void setLastPostNotificationTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_POST_NOTIFICATION_TIME, time).commit()) {
+            Log.e("preferences: failed to set last post notification time");
         }
     }
 }

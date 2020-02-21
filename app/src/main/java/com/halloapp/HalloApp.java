@@ -1,19 +1,12 @@
 package com.halloapp;
 
 import android.app.Application;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -24,7 +17,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.ui.MainActivity;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -34,8 +26,6 @@ public class HalloApp extends Application {
 
     public static HalloApp instance;
     public boolean appActiveStatus;
-
-    private static final String NEW_POST_NOTIFICATION_CHANNEL_ID = "new_post_notification";
 
     @Override
     public void onCreate() {
@@ -68,7 +58,7 @@ public class HalloApp extends Application {
             }
         });
 
-        createNotificationChannel();
+        Notifications.getInstance(this).init();
 
         connect();
 
@@ -132,41 +122,6 @@ public class HalloApp extends Application {
                         Connection.getInstance().sendPushToken(pushToken);
                     }
                 });
-    }
-
-    public void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            final CharSequence name = getString(R.string.notification_channel_name);
-            final String description = getString(R.string.notification_channel_description);
-            final int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            final NotificationChannel channel = new NotificationChannel(NEW_POST_NOTIFICATION_CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    public void showNotification(String title, String body) {
-        if (Build.VERSION.SDK_INT >= 26) {
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NEW_POST_NOTIFICATION_CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_feed_activity)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            final Intent intent = new Intent(this, MainActivity.class);
-            final PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pi);
-            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            // Using the same notification-id to always show the latest notification for now.
-            notificationManager.notify(0, builder.build());
-        }
-    }
-
-    public void cancelAllNotifications() {
-        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.cancelAll();
     }
 
     static class StartContactSyncTask extends AsyncTask<Void, Void, Boolean> {

@@ -1,6 +1,7 @@
 package com.halloapp;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -23,22 +24,24 @@ public class MainPostsObserver implements PostsDb.Observer {
     private final Connection connection;
     private final MediaStore mediaStore;
     private final PostsDb postsDb;
+    private final Notifications notifications;
 
     public static MainPostsObserver getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized(MainPostsObserver.class) {
                 if (instance == null) {
-                    instance = new MainPostsObserver(Connection.getInstance(), MediaStore.getInstance(context), PostsDb.getInstance(context));
+                    instance = new MainPostsObserver(context);
                 }
             }
         }
         return instance;
     }
 
-    private MainPostsObserver(@NonNull Connection connection, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
-        this.connection = connection;
-        this.mediaStore = mediaStore;
-        this.postsDb = postsDb;
+    private MainPostsObserver(@NonNull Context context) {
+        this.connection = Connection.getInstance();
+        this.mediaStore = MediaStore.getInstance(context);
+        this.postsDb = PostsDb.getInstance(context);
+        this.notifications = Notifications.getInstance(context);
     }
 
     @Override
@@ -54,6 +57,10 @@ public class MainPostsObserver implements PostsDb.Observer {
 
             if (!post.media.isEmpty()) {
                 new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+            }
+
+            if (!HalloApp.instance.appActiveStatus) {
+                notifications.update();
             }
         }
     }

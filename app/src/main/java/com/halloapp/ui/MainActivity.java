@@ -20,8 +20,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
-import com.halloapp.HalloApp;
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
@@ -101,13 +101,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
         }
 
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 && savedInstanceState == null) {
             // The activity was not launched from history
             processIntent(getIntent());
         }
 
         ContactsDb.getInstance(this).addObserver(contactsObserver);
-        HalloApp.instance.cancelAllNotifications();
     }
 
     @Override
@@ -122,6 +121,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onDestroy();
         Log.i("MainActivity.onDestroy");
         ContactsDb.getInstance(this).removeObserver(contactsObserver);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("MainActivity.onStart");
+        Notifications.getInstance(this).clear();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("MainActivity.onStop");
     }
 
     @Override

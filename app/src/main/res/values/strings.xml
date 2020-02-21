@@ -92,6 +92,11 @@
     <string name="options">Options</string>
     <string name="block">Block</string>
     <string name="play">Play</string>
+    <string name="new_post_notification">New post from %s</string>
+    <plurals name="new_posts_notification">
+        <item quantity="one">%d new post from %s</item>
+        <item quantity="other">%d new posts from %s</item>
+    </plurals>
     <plurals name="seen_by">
         <item quantity="one">Seen by %d person</item>
         <item quantity="other">Seen by %d people</item>
