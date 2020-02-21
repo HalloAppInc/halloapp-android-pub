@@ -91,6 +91,7 @@
     <string name="seen_by">Seen by</string>
     <string name="options">Options</string>
     <string name="block">Block</string>
+    <string name="play">Play</string>
     <plurals name="seen_by">
         <item quantity="one">Seen by %d person</item>
         <item quantity="other">Seen by %d people</item>

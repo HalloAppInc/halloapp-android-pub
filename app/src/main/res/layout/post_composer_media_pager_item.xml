@@ -26,6 +26,7 @@
         android:tint="@android:color/white"
         android:alpha="0.5"
         android:src="@drawable/ic_play"
+        android:contentDescription="@string/play"
         android:visibility="gone"/>
 
 </FrameLayout>
