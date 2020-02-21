@@ -310,6 +310,7 @@ public class PostsFragment extends Fragment {
             public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
                 final View view = getLayoutInflater().inflate(R.layout.post_feed_media_pager_item, container, false);
                 final PostImageView imageView = view.findViewById(R.id.image);
+                imageView.setSinglePointerDragStartDisabled(true);
                 imageView.setDrawDelegate(drawDelegateView);
                 final Media mediaItem = media.get(position);
                 mediaThumbnailLoader.load(imageView, mediaItem);
