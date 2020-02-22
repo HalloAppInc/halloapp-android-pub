@@ -15,6 +15,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
+import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.FileUtils;
@@ -41,7 +42,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
-        menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
+        menu.getMenu().add(DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN);
         menu.getMenu().add(DEBUG_MENU_CLEANUP_POSTS);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
@@ -70,7 +71,7 @@ public class Debug {
                     PostsDb.getInstance(activity).setCommentsSeen(true);
                 }
                 case DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN: {
-                    PostsDb.getInstance(activity).setIncomingPostsSeen(false);
+                    PostsDb.getInstance(activity).setIncomingPostsSeen(Post.POST_SEEN_NO);
                 }
                 case DEBUG_MENU_CLEANUP_POSTS: {
                     new CleanupPostsTask(activity.getApplication()).execute();

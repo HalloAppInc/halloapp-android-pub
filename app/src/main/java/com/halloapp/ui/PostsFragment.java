@@ -188,8 +188,8 @@ public class PostsFragment extends Fragment {
             }
 
             postContentLayout.setOnSeenListener(() -> {
-                if (!post.seen && post.isIncoming()) {
-                    post.seen = true;
+                if (post.seen == Post.POST_SEEN_NO && post.isIncoming()) {
+                    post.seen = Post.POST_SEEN_YES_PENDING;
                     PostsDb.getInstance(Preconditions.checkNotNull(getContext())).setIncomingPostSeen(post.senderUserId, post.postId);
                 }
             });

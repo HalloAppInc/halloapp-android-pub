@@ -1,10 +1,13 @@
 package com.halloapp.posts;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.contacts.UserId;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +20,7 @@ public class Post {
     public final long timestamp;
 
     public final boolean transferred;
-    public boolean seen;
+    public int seen;
 
     public final String text;
     public final List<Media> media = new ArrayList<>();
@@ -26,20 +29,27 @@ public class Post {
     public int unseenCommentCount;
     public int seenByCount;
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({POST_SEEN_NO, POST_SEEN_YES_PENDING, POST_SEEN_YES})
+    public @interface SeenState {}
+    public static final int POST_SEEN_NO = 0;
+    public static final int POST_SEEN_YES_PENDING = 1;
+    public static final int POST_SEEN_YES = 2;
+
     public Post(
             long rowId,
             UserId senderUserId,
             String postId,
             long timestamp,
             boolean transferred,
-            boolean seen,
+            @SeenState int seen,
             String text) {
         this.rowId = rowId;
         this.senderUserId = senderUserId;
         this.postId = postId;
         this.timestamp = timestamp;
         this.transferred = transferred;
-        this.seen = senderUserId.isMe() || seen;
+        this.seen = seen;
         this.text = text;
     }
 

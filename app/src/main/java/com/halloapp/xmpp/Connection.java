@@ -30,7 +30,6 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.sasl.SASLErrorException;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -67,7 +66,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -87,6 +88,7 @@ public class Connection {
     private @Nullable XMPPTCPConnection connection;
     private Me me;
     private Observer observer;
+    private Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
 
     public static Connection getInstance() {
         if (instance == null) {
@@ -103,11 +105,12 @@ public class Connection {
         void onConnected();
         void onDisconnected();
         void onLoginFailed();
-        void onOutgoingPostAcked(@NonNull String postId);
+        void onOutgoingPostSent(@NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp);
-        void onOutgoingCommentAcked(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
+        void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onIncomingCommentReceived(@NonNull Comment comment);
+        void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
         void onFeedHistoryReceived(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onSubscribersChanged();
     }
@@ -143,6 +146,10 @@ public class Connection {
             Log.i("connection: already connected");
             return;
         }
+        if (!ackHandlers.isEmpty()) {
+            Log.i("connection: " + ackHandlers.size() + " ack handlers cleared");
+        }
+        ackHandlers.clear();
 
         Log.i("connection: connecting...");
 
@@ -186,7 +193,8 @@ public class Connection {
             return;
         }
 
-        connection.addSyncStanzaListener(new MessagePacketListener(), new StanzaTypeFilter(Message.class));
+        connection.addSyncStanzaListener(new MessageStanzaListener(), new StanzaTypeFilter(Message.class));
+        connection.addSyncStanzaListener(new AckStanzaListener(), new StanzaTypeFilter(AckStanza.class));
 
         final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
         if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
@@ -375,7 +383,7 @@ public class Connection {
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
                 myFeedNode.publish(item);
                 // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
-                observer.onOutgoingPostAcked(post.postId);
+                observer.onOutgoingPostSent(post.postId);
             } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
             }
@@ -404,7 +412,7 @@ public class Connection {
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(comment.commentId, payload);
                 feedNode.publish(item);
                 // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
-                observer.onOutgoingCommentAcked(comment.postSenderUserId, comment.postId, comment.commentId);
+                observer.onOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send comment", e);
             }
@@ -439,12 +447,12 @@ public class Connection {
                 final Message message = new Message(recipientJid);
                 message.setStanzaId(postId);
                 message.addExtension(new SeenReceipt(postId));
+                ackHandlers.put(postId, () -> observer.onSeenReceiptSent(senderUserId, postId));
                 Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
                 Log.e("connection: cannot send post seen receipt", e);
             }
-
         });
     }
 
@@ -622,7 +630,7 @@ public class Connection {
                         entry.id,
                         entry.timestamp,
                         isMe(entry.user) || entry.media.isEmpty(),
-                        true,
+                        Post.POST_SEEN_YES,
                         entry.text
                 );
                 for (PublishedEntry.Media entryMedia : entry.media) {
@@ -662,7 +670,7 @@ public class Connection {
                             entry.id,
                             entry.timestamp,
                             entry.media.isEmpty(),
-                            false,
+                            Post.POST_SEEN_NO,
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
@@ -763,7 +771,26 @@ public class Connection {
         }
     }
 
-    class MessagePacketListener implements StanzaListener {
+    class AckStanzaListener implements StanzaListener {
+
+        @Override
+        public void processStanza(final Stanza packet) {
+            if (!(packet instanceof AckStanza)) {
+                Log.w("connection: got packet instead of ack " + packet);
+                return;
+            }
+            final AckStanza ack = (AckStanza) packet;
+            Log.i("connection: got ack " + ack);
+            final Runnable handler = ackHandlers.remove(ack.getStanzaId());
+            if (handler != null) {
+                handler.run();
+            } else {
+                Log.w("connection: ack doesn't match any pedning message " + ack);
+            }
+        }
+    }
+
+    class MessageStanzaListener implements StanzaListener {
 
         @Override
         public void processStanza(final Stanza packet) {
@@ -790,7 +817,7 @@ public class Connection {
                     final SeenReceipt seenReceipt = packet.getExtension(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE);
                     if (seenReceipt != null) {
                         Log.i("connection: got seen receipt " + msg);
-                        observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), System.currentTimeMillis()/*TODO (ds): server shall provide timestamp*/);
+                        observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp());
                         handled = true;
                     }
                 }

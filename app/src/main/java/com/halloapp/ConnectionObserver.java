@@ -41,7 +41,7 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onOutgoingPostAcked(@NonNull String postId) {
+    public void onOutgoingPostSent(@NonNull String postId) {
         PostsDb.getInstance(context).setPostTransferred(UserId.ME, postId);
     }
 
@@ -56,13 +56,18 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onOutgoingCommentAcked(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+    public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         PostsDb.getInstance(context).setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
     }
 
     @Override
     public void onIncomingCommentReceived(@NonNull Comment comment) {
         PostsDb.getInstance(context).addComment(comment);
+    }
+
+    @Override
+    public void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+        PostsDb.getInstance(context).setSeenReceiptSent(senderUserId, postId);
     }
 
     @Override

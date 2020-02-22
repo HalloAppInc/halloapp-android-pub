@@ -17,9 +17,15 @@ public class SeenReceipt implements ExtensionElement {
      * original ID of the delivered message
      */
     private final String id;
+    private final long timestamp;
 
     SeenReceipt(String id) {
+        this(id, 0);
+    }
+
+    SeenReceipt(String id, long timestamp) {
         this.id = id;
+        this.timestamp = timestamp;
     }
 
     /**
@@ -29,6 +35,10 @@ public class SeenReceipt implements ExtensionElement {
      */
     public String getId() {
         return id;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     @Override
@@ -79,7 +89,12 @@ public class SeenReceipt implements ExtensionElement {
         @Override
         protected SeenReceipt createReturnExtension(String currentElement, String currentNamespace,
                 Map<String, String> attributeMap, List<? extends ExtensionElement> content) {
-            return new SeenReceipt(attributeMap.get("id"));
+            final String timestampStr = attributeMap.get("timestamp");
+            long timestamp = 0;
+            if (timestampStr != null) {
+                timestamp = Long.parseLong(timestampStr);
+            }
+            return new SeenReceipt(attributeMap.get("id"), timestamp * 1000L);
         }
 
     }

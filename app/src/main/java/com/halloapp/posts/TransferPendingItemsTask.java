@@ -54,6 +54,12 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
             Preconditions.checkArgument(!comment.transferred);
             connection.sendComment(comment);
         }
+
+        final List<Receipt> seenReceipts = postsDb.getPendingSeenReceipts();
+        Log.i("TransferPendingItemsTask: " + seenReceipts.size() + " seen receipts");
+        for (Receipt receipt : seenReceipts) {
+            connection.sendSeenReceipt(receipt.senderUserId, receipt.postId);
+        }
         return null;
     }
 }

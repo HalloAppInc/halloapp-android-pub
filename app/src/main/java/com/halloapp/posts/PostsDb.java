@@ -189,7 +189,7 @@ public class PostsDb {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setIncomingPostSeen: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_SEEN, true);
+            values.put(PostsTable.COLUMN_SEEN, Post.POST_SEEN_YES_PENDING);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
@@ -204,7 +204,7 @@ public class PostsDb {
         });
     }
 
-    public void setIncomingPostsSeen(boolean seen) {
+    public void setIncomingPostsSeen(@Post.SeenState int seen) {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setIncomingPostsUnseen");
             final ContentValues values = new ContentValues();
@@ -222,9 +222,27 @@ public class PostsDb {
         });
     }
 
+    public void setSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("PostsDb.setSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_SEEN, Post.POST_SEEN_YES);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            try {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String [] {senderUserId.rawId(), postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+            } catch (SQLException ex) {
+                Log.e("PostsDb.setSeenReceiptSent: failed");
+                throw ex;
+            }
+        });
+    }
+
     public void setOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId);
+            Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId + " timestamp=" + timestamp);
             final ContentValues values = new ContentValues();
             values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, seenByUserId.rawId());
             values.put(SeenTable.COLUMN_POST_ID, postId);
@@ -455,7 +473,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
+    private List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
@@ -543,7 +561,7 @@ public class PostsDb {
                             cursor.getString(2),
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
-                            cursor.getInt(5) == 1,
+                            cursor.getInt(5),
                             cursor.getString(6));
                     post.commentCount = cursor.getInt(15);
                     post.unseenCommentCount = post.commentCount - cursor.getInt(16);
@@ -619,7 +637,7 @@ public class PostsDb {
                             cursor.getString(2),
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
-                            cursor.getInt(5) == 1,
+                            cursor.getInt(5),
                             cursor.getString(6));
                 }
                 final String mediaId = cursor.getString(8);
@@ -785,7 +803,7 @@ public class PostsDb {
                             cursor.getString(2),
                             cursor.getLong(3),
                             cursor.getInt(4) == 1,
-                            cursor.getInt(5) == 1,
+                            cursor.getInt(5),
                             cursor.getString(6));
                 }
                 final String mediaId = cursor.getString(8);
@@ -846,6 +864,27 @@ public class PostsDb {
         }
         Log.i("PostsDb.getPendingComments: comments.size=" + comments.size());
         return comments;
+    }
+
+    @WorkerThread
+    List<Receipt> getPendingSeenReceipts() {
+        final List<Receipt> receipts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
+                new String [] {
+                        PostsTable.COLUMN_SENDER_USER_ID,
+                        PostsTable.COLUMN_POST_ID},
+                PostsTable.COLUMN_SEEN + "=" + Post.POST_SEEN_YES_PENDING + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "<>''",
+                null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final Receipt receipt = new Receipt(
+                        new UserId(cursor.getString(0)),
+                        cursor.getString(1));
+                receipts.add(receipt);
+            }
+        }
+        Log.i("PostsDb.getPendingSeenReceipts: receipts.size=" + receipts.size());
+        return receipts;
     }
 
     @WorkerThread

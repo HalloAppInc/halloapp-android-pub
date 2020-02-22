@@ -308,7 +308,7 @@ public class PostComposerActivity extends AppCompatActivity {
                     RandomId.create(),
                     System.currentTimeMillis(),
                     false,
-                    true,
+                    Post.POST_SEEN_YES,
                     text);
             if (media != null) {
                 for (Media media : media) {
