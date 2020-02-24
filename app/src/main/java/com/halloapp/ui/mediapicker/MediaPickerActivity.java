@@ -136,7 +136,6 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
-        //noinspection SwitchStatementWithTooFewBranches
         switch (request) {
             case REQUEST_CODE_PICK_MEDIA: {
                 if (result == RESULT_OK) {

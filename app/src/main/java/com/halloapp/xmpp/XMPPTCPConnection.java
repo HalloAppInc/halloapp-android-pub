@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import androidx.core.util.Preconditions;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -190,7 +192,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
     /**
      * The default bundle and defer callback, used for new connections.
      *
-     * @see bundleAndDeferCallback
+     * @see #bundleAndDeferCallback
      */
     private static BundleAndDeferCallback defaultBundleAndDeferCallback;
 
@@ -561,7 +563,9 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
             int port = hostAddress.getPort();
             if (proxyInfo == null) {
                 inetAddresses = hostAddress.getInetAddresses().iterator();
-                assert (inetAddresses.hasNext());
+                /* begin halloapp modified */
+                Preconditions.checkState(inetAddresses.hasNext());
+                /* end halloapp modified */
 
                 innerloop:
                 while (inetAddresses.hasNext()) {
@@ -1051,7 +1055,9 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                     if ("jabber:client".equals(parser.getNamespace(null))) {
                                         streamId = parser.getAttributeValue("", "id");
                                         String reportedServerDomain = parser.getAttributeValue("", "from");
-                                        assert (config.getXMPPServiceDomain().equals(reportedServerDomain));
+                                        /* begin halloapp modified */
+                                        Preconditions.checkState(config.getXMPPServiceDomain().equals(reportedServerDomain));
+                                        /* end halloapp modified */
                                     }
                                     break;
                                 case "error":
@@ -1281,7 +1287,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
          * True if some preconditions are given to start the bundle and defer mechanism.
          * <p>
          * This will likely get set to true right after the start of the writer thread, because
-         * {@link #nextStreamElement()} will check if {@link queue} is empty, which is probably the case, and then set
+         * {@link #nextStreamElement()} will check if {@link #queue} is empty, which is probably the case, and then set
          * this field to true.
          * </p>
          */
