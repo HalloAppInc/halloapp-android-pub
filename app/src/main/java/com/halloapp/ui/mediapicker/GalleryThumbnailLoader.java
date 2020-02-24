@@ -1,22 +1,29 @@
 package com.halloapp.ui.mediapicker;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.util.Size;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.R;
 import com.halloapp.util.ViewDataLoader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.Callable;
 
-public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Long>  {
+public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Long> {
 
     private final LruCache<Long, Bitmap> cache;
     private final int placeholderColor;
@@ -33,7 +40,7 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
         placeholderColor = ContextCompat.getColor(context, R.color.gallery_placeholder);
 
         final long cacheSize = Runtime.getRuntime().maxMemory() / 8;
-        cache = new LruCache<Long, Bitmap>((int)cacheSize) {
+        cache = new LruCache<Long, Bitmap>((int) cacheSize) {
 
             @Override
             protected int sizeOf(@NonNull Long key, @NonNull Bitmap bitmap) {
@@ -46,20 +53,55 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
     public void load(@NonNull ImageView view, @NonNull GalleryItem galleryItem) {
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap;
-            if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
-                bitmap = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+            int rotation = 0;
+            if (Build.VERSION.SDK_INT >= 29) {
+                // ContentResolver.loadThumbnail takes care of orientation
+                if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
+                    bitmap = contentResolver.loadThumbnail(ContentUris.withAppendedId(MediaStore.Images.Media.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id), new Size(dimensionLimit, dimensionLimit), null);
+                } else {
+                    bitmap = contentResolver.loadThumbnail(ContentUris.withAppendedId(MediaStore.Video.Media.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id), new Size(dimensionLimit, dimensionLimit), null);
+                }
             } else {
-                bitmap = MediaStore.Video.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Video.Thumbnails.MINI_KIND, null);
+                if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
+                    bitmap = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+                    try (InputStream inputStream = contentResolver.openInputStream(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id))) {
+                        if (inputStream != null) {
+                            final ExifInterface exifInterface = new ExifInterface(inputStream);
+                            final int exifRotation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+                            if (exifRotation != ExifInterface.ORIENTATION_UNDEFINED) {
+                                switch (exifRotation) {
+                                    case ExifInterface.ORIENTATION_ROTATE_180:
+                                        rotation = 180;
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_270:
+                                        rotation = 270;
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_90:
+                                        rotation = 90;
+                                        break;
+                                }
+                            }
+                        }
+                    } catch (IOException ignore) { }
+                } else {
+                    bitmap = MediaStore.Video.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Video.Thumbnails.MINI_KIND, null);
+                }
             }
-
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
                 return INVALID_BITMAP;
             } else {
-                final float scale = Math.min(1f * dimensionLimit / bitmap.getWidth(), 1f * dimensionLimit / bitmap.getHeight());
-                final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scale), (int) (bitmap.getHeight() * scale), true);
-                if (scaledBitmap != bitmap) {
-                    bitmap.recycle();
-                    bitmap = scaledBitmap;
+                final float scale = Math.max(1f * dimensionLimit / bitmap.getWidth(), 1f * dimensionLimit / bitmap.getHeight());
+                if (scale < .5f || rotation != 0) {
+                    final Matrix matrix = new Matrix();
+                    if (scale < 1f) {
+                        matrix.setScale(scale, scale);
+                    }
+                    matrix.setRotate(rotation);
+                    final Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                    if (scaledBitmap != bitmap) {
+                        bitmap.recycle();
+                        bitmap = scaledBitmap;
+                    }
                 }
                 return bitmap;
             }
