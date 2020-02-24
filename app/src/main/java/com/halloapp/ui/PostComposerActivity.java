@@ -135,6 +135,7 @@ public class PostComposerActivity extends AppCompatActivity {
         viewModel.post.observe(this, post -> {
             if (post != null) {
                 PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addPost(post);
+                setResult(RESULT_OK);
                 finish();
             }
         });

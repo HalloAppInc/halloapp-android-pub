@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.CenterToast;
@@ -45,7 +46,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MediaPickerActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
-    private static final int REQUEST_CODE_PICK_MEDIA = 2;
+    private static final int REQUEST_CODE_COMPOSE_POST = 2;
+    private static final int REQUEST_CODE_PICK_MEDIA = 3;
 
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;
@@ -157,10 +159,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                             }
                         }
                         if (!uris.isEmpty()) {
-                            final Intent intent = new Intent();
-                            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                            setResult(RESULT_OK, intent);
-                            finish();
+                            startPostComposer(uris);
                         } else {
                             Log.e("MediaPackerActivity.onActivityResult.REQUEST_CODE_PICK_MEDIA: no uri");
                             CenterToast.show(this, R.string.bad_image);
@@ -168,6 +167,12 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                     }
                 }
                 break;
+            }
+            case REQUEST_CODE_COMPOSE_POST: {
+                if (result == RESULT_OK) {
+                    overridePendingTransition(0, 0);
+                    finish();
+                }
             }
         }
     }
@@ -230,15 +235,18 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         }
     }
 
+    private void startPostComposer(@NonNull ArrayList<Uri> uris) {
+        final Intent intent = new Intent(this, PostComposerActivity.class);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        startActivityForResult(intent, REQUEST_CODE_COMPOSE_POST);
+
+    }
 
     private void onItemClicked(@NonNull GalleryItem galleryItem, View view) {
         if (selectedItems.isEmpty()) {
-            final Intent intent = new Intent();
-            ArrayList<Uri> results = new ArrayList<>(1);
-            results.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, results);
-            setResult(RESULT_OK, intent);
-            finish();
+            final ArrayList<Uri> uris = new ArrayList<>(1);
+            uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
+            startPostComposer(uris);
         } else {
             handleMultiSelection(galleryItem, view);
         }
@@ -272,14 +280,11 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     }
 
     private void onItemsSelected() {
-        final Intent intent = new Intent();
-        ArrayList<Uri> results = new ArrayList<>(selectedItems.size());
+        final ArrayList<Uri> uris = new ArrayList<>(selectedItems.size());
         for (Long item : selectedItems) {
-            results.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), item));
+            uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), item));
         }
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, results);
-        setResult(RESULT_OK, intent);
-        finish();
+        startPostComposer(uris);
     }
 
     private void updateActionMode() {

@@ -42,7 +42,6 @@ import java.util.Locale;
 
 public class HomeFragment extends PostsFragment {
 
-    private static final int REQUEST_CODE_PICK_MEDIA = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
 
     private HomeViewModel viewModel;
@@ -163,43 +162,8 @@ public class HomeFragment extends PostsFragment {
     @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (request) {
-            case REQUEST_CODE_PICK_MEDIA: {
-                if (result == Activity.RESULT_OK) {
-                    if (data == null) {
-                        Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_IMAGE: no data");
-                        CenterToast.show(Preconditions.checkNotNull(getContext()), R.string.bad_image);
-                    } else {
-                        final ArrayList<Uri> uris = new ArrayList<>();
-                        final ArrayList<Uri> extraStreamUris = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-                        if (extraStreamUris != null && !extraStreamUris.isEmpty()) {
-                            uris.addAll(extraStreamUris);
-                        }
-                        if (uris.isEmpty()) {
-                            final ClipData clipData = data.getClipData();
-                            if (clipData != null) {
-                                for (int i = 0; i < clipData.getItemCount(); i++) {
-                                    uris.add(clipData.getItemAt(i).getUri());
-                                }
-                            } else {
-                                final Uri uri = data.getData();
-                                if (uri != null) {
-                                    uris.add(uri);
-                                }
-                            }
-                        }
-                        if (!uris.isEmpty()) {
-                            final Intent intent = new Intent(getContext(), PostComposerActivity.class);
-                            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                            startActivity(intent);
-                        } else {
-                            Log.e("HomeFragment.onActivityResult.REQUEST_CODE_PICK_MEDIA: no uri");
-                            CenterToast.show(Preconditions.checkNotNull(getContext()), R.string.bad_image);
-                        }
-                    }
-                }
-                break;
-            }
             case REQUEST_CODE_CAPTURE_IMAGE: {
                 if (result == Activity.RESULT_OK) {
                     final Intent intent = new Intent(getContext(), PostComposerActivity.class);
@@ -228,7 +192,7 @@ public class HomeFragment extends PostsFragment {
 
     private void getMediaFromGallery() {
         final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
+        startActivity(intent);
 
     }
 
