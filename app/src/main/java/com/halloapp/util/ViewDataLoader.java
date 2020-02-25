@@ -18,13 +18,21 @@ import java.util.concurrent.Future;
 
 public class ViewDataLoader<V extends View, R, K> {
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor;
     private final Map<View, Future> queue = new HashMap<>();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public interface Displayer<V, R> {
         void showResult(@NonNull V view, @Nullable R result);
         void showLoading(@NonNull V view);
+    }
+
+    protected ViewDataLoader(ExecutorService executor) {
+        this.executor = executor;
+    }
+
+    protected ViewDataLoader() {
+        this(Executors.newSingleThreadExecutor());
     }
 
     @MainThread
