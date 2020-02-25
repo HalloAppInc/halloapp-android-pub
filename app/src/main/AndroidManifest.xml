@@ -91,6 +91,9 @@
             android:name=".ui.PostDetailsActivity"
             android:label=""/>
 
+        <activity android:name=".ui.ExpiredAppActivity"
+            android:label="" />
+
         <receiver
             android:name=".registration.SmsVerificationReceiver"
             android:exported="true">

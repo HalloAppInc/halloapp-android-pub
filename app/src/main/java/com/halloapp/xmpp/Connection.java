@@ -309,6 +309,27 @@ public class Connection {
         });
     }
 
+    public Future<Integer> requestDaysToExpiration() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: request days to expiration: no connection");
+                return null;
+            }
+            final DaysToExpirationIq daysToExpirationIq = new DaysToExpirationIq(connection.getXMPPServiceDomain());
+            // TODO(jack): Remove this short-circuiting once implemented on server
+            if (true) {
+                return 20;
+            }
+            try {
+                final DaysToExpirationIq response = connection.createStanzaCollectorAndSend(daysToExpirationIq).nextResultOrThrow();
+                return response.daysLeft;
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: request days to expiration", e);
+            }
+            return null;
+        });
+    }
+
     public Future<MediaUploadIq.Urls> requestMediaUpload() {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
