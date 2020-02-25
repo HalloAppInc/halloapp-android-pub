@@ -107,6 +107,7 @@ public class HomeFragment extends PostsFragment {
 
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())) {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
                 final View childView = layoutManager.getChildAt(0);
                 if (childView != null && layoutManager.getPosition(childView) == 0) {

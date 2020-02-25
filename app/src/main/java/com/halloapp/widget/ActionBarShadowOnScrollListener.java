@@ -2,6 +2,7 @@ package com.halloapp.widget;
 
 import android.view.View;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
         actionBar = activity.getSupportActionBar();
     }
 
+    @CallSuper
     @Override
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
