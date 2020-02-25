@@ -541,7 +541,7 @@ public class PostsDb {
                     "FROM " + SeenTable.TABLE_NAME + " GROUP BY " + SeenTable.COLUMN_POST_ID + ") " +
                 "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
             "WHERE " + where + " " +
-            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC " +
+            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
             "LIMIT " + count;
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -586,7 +586,11 @@ public class PostsDb {
                 posts.add(post);
             }
         }
-        Log.i("PostsDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).rowId + " to " + posts.get(posts.size()-1).rowId)));
+        if (!after) {
+            Collections.reverse(posts);
+        }
+        Log.i("PostsDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp)));
+
         return posts;
     }
 
