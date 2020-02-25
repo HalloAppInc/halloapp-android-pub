@@ -94,6 +94,10 @@ public class MainPostsObserver implements PostsDb.Observer {
             connection.sendComment(comment);
         } else { // if (comment.isIncoming())
             connection.sendAck(comment.commentId);
+
+            if (!HalloApp.instance.appActiveStatus && comment.postSenderUserId.isMe()) {
+                notifications.update();
+            }
         }
     }
 

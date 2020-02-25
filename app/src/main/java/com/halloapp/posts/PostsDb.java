@@ -748,6 +748,43 @@ public class PostsDb {
     }
 
     @WorkerThread
+    public List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
+        final List<Comment> comments = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
+                new String [] {
+                        CommentsTable._ID,
+                        CommentsTable.COLUMN_POST_SENDER_USER_ID,
+                        CommentsTable.COLUMN_POST_ID,
+                        CommentsTable.COLUMN_COMMENT_SENDER_USER_ID,
+                        CommentsTable.COLUMN_COMMENT_ID,
+                        CommentsTable.COLUMN_PARENT_ID,
+                        CommentsTable.COLUMN_TIMESTAMP,
+                        CommentsTable.COLUMN_TRANSFERRED,
+                        CommentsTable.COLUMN_SEEN,
+                        CommentsTable.COLUMN_TEXT},
+                CommentsTable.COLUMN_POST_SENDER_USER_ID + "='' AND " + CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + Math.max(timestamp, getPostExpirationTime()),
+                null, null, null, CommentsTable.COLUMN_TIMESTAMP + " ASC LIMIT " + count)) {
+            while (cursor.moveToNext()) {
+                final Comment comment = new Comment(
+                        cursor.getLong(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        new UserId(cursor.getString(3)),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getLong(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getInt(8) == 1,
+                        cursor.getString(9));
+                comments.add(comment);
+            }
+        }
+        Log.i("PostsDb.getPendingComments: comments.size=" + comments.size());
+        return comments;
+    }
+
+    @WorkerThread
     List<Post> getPendingPosts() {
 
         final List<Post> posts = new ArrayList<>();
