@@ -206,7 +206,7 @@ public class PostsDb {
 
     public void setIncomingPostsSeen(@Post.SeenState int seen) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setIncomingPostsUnseen");
+            Log.i("PostsDb.setIncomingPostsSeen: seen=" + seen);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -216,7 +216,7 @@ public class PostsDb {
                         null,
                         SQLiteDatabase.CONFLICT_ABORT);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setIncomingPostsUnseen: failed");
+                Log.e("PostsDb.setIncomingPostsSeen: failed");
                 throw ex;
             }
         });
