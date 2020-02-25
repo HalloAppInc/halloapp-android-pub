@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.ui.ExpiredAppActivity;
 import com.halloapp.util.Log;
@@ -35,19 +36,18 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
     }
 
     @Override
-    protected void onPostExecute(Integer result) {
-        Log.d("RequestExpirationInfoTask onPostExecute result=" + result);
-        if (result == null) {
-            return;
-        }
-        if (result <= 0) {
+    protected void onPostExecute(@Nullable Integer daysLeft) {
+        Log.d("RequestExpirationInfoTask onPostExecute daysLeft=" + daysLeft);
+        if (daysLeft != null && daysLeft <= EXPIRES_SOON_THRESHOLD_DAYS) {
             Intent expiredAppIntent = new Intent(context, ExpiredAppActivity.class);
-            expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            expiredAppIntent.putExtra(ExpiredAppActivity.EXTRA_DAYS_LEFT, daysLeft);
+            if (daysLeft <= 0) {
+                expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                connection.disconnect();
+            } else {
+                expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
             context.startActivity(expiredAppIntent);
-            connection.disconnect();
-        } else if (result <= EXPIRES_SOON_THRESHOLD_DAYS) {
-            Log.d("RequestExpirationInfoTask app soon expires");
-            // TODO(jack): Different message when expiring soon
         }
     }
 }
