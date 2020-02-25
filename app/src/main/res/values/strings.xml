@@ -105,7 +105,7 @@
         <item quantity="one">Seen by %d person</item>
         <item quantity="other">Seen by %d people</item>
     </plurals>
-    <string name="app_expired_download_button">Download Update</string>
+    <string name="app_expired_download_button">Download update</string>
     <string name="app_expired_explanation">This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>
     <string name="app_expired_no_play_store">Google Play not installed</string>
 </resources>
