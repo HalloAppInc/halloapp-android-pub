@@ -93,6 +93,7 @@
     <string name="block">Block</string>
     <string name="play">Play</string>
     <string name="new_post_notification">New post from %s</string>
+    <string name="new_posts">New posts</string>
     <plurals name="new_posts_notification">
         <item quantity="one">%d new post from %s</item>
         <item quantity="other">%d new posts from %s</item>

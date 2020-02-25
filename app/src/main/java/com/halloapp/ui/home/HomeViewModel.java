@@ -46,10 +46,11 @@ public class HomeViewModel extends AndroidViewModel {
         public void onPostAdded(@NonNull Post post) {
             if (post.isOutgoing()) {
                 pendingOutgoing.set(true);
+                mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
             } else {
                 pendingIncoming.set(true);
+                invalidatePosts();
             }
-            invalidatePosts();
         }
 
         @Override
@@ -148,6 +149,13 @@ public class HomeViewModel extends AndroidViewModel {
 
     boolean checkPendingIncoming() {
         return pendingIncoming.compareAndSet(true, false);
+    }
+
+    void reloadPostsAt(long timestamp) {
+        final PagedList pagedList = postList.getValue();
+        if (pagedList != null) {
+            ((PostsDataSource)pagedList.getDataSource()).reloadAt(timestamp);
+        }
     }
 
     @WorkerThread

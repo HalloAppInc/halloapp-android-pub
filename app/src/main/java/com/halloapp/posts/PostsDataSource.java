@@ -13,6 +13,7 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
     private final PostsDb postsDb;
     private final boolean outgoingOnly;
+    private Long keyTimestamp;
 
     public static class Factory extends DataSource.Factory<Long, Post> {
 
@@ -41,13 +42,23 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
     @Override
     public @NonNull Long getKey(@NonNull Post item) {
+        if (keyTimestamp  != null) {
+            return keyTimestamp;
+        }
         return item.timestamp;
+    }
+
+    public void reloadAt(long timestamp) {
+        // next call to getKey on this data source will be used by framework to find load point of next data source after current one is invalidated;
+        // this ensures that next call to getKey returns timestamp regardless of what actual post item is
+        keyTimestamp = timestamp;
+        invalidate();
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Post> callback) {
         final List<Post> posts;
-        if (params.requestedInitialKey == null) {
+        if (params.requestedInitialKey == null || params.requestedInitialKey == Long.MAX_VALUE) {
             posts = postsDb.getPosts(null, params.requestedLoadSize, true, outgoingOnly);
         } else {
             // load around params.requestedInitialKey, otherwise the view that represents this data may jump

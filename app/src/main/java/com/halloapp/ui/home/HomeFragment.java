@@ -1,10 +1,8 @@
 package com.halloapp.ui.home;
 
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -34,7 +32,6 @@ import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
-import com.halloapp.widget.CenterToast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +45,8 @@ public class HomeFragment extends PostsFragment {
     private BadgedDrawable notificationDrawable;
     private CommentsHistoryPopup commentHistoryPopup;
     private PostThumbnailLoader postThumbnailLoader;
+
+    private boolean scrollUpOnDataLoaded;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +72,12 @@ public class HomeFragment extends PostsFragment {
         final View root = inflater.inflate(R.layout.fragment_home, container, false);
         final RecyclerView postsView = root.findViewById(R.id.posts);
         final View emptyView = root.findViewById(android.R.id.empty);
+        final View newPostsView = root.findViewById(R.id.new_posts);
+
+        newPostsView.setOnClickListener(v -> {
+            scrollUpOnDataLoaded = true;
+            viewModel.reloadPostsAt(Long.MAX_VALUE);
+        });
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
@@ -80,11 +85,17 @@ public class HomeFragment extends PostsFragment {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
             final View childView = layoutManager.getChildAt(0);
-            final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
-            if (viewModel.checkPendingOutgoing() || !scrolled) {
+            final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
+            if (viewModel.checkPendingOutgoing() || !scrolled || scrollUpOnDataLoaded) {
+                scrollUpOnDataLoaded = false;
                 postsView.scrollToPosition(0);
+                newPostsView.setVisibility(View.GONE);
             } else if (viewModel.checkPendingIncoming()) {
-                postsView.smoothScrollBy(0, -getResources().getDimensionPixelSize(R.dimen.incoming_post_scroll_up));
+                if (newPostsView.getVisibility() != View.VISIBLE) {
+                    newPostsView.setVisibility(View.VISIBLE);
+                    newPostsView.setTranslationY(-getResources().getDimension(R.dimen.details_media_list_height));
+                    newPostsView.animate().setDuration(200).translationY(0).start();
+                }
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
@@ -94,7 +105,15 @@ public class HomeFragment extends PostsFragment {
             }
         });
 
-        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
+                final View childView = layoutManager.getChildAt(0);
+                if (childView != null && layoutManager.getPosition(childView) == 0) {
+                    newPostsView.setVisibility(View.GONE);
+                }
+            }
+        });
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
