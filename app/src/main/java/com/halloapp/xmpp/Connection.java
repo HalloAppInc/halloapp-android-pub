@@ -89,6 +89,7 @@ public class Connection {
     private Me me;
     private Observer observer;
     private Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
+    public boolean clientExpired = false;
 
     public static Connection getInstance() {
         if (instance == null) {
@@ -144,6 +145,10 @@ public class Connection {
         }
         if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
             Log.i("connection: already connected");
+            return;
+        }
+        if (clientExpired) {
+            Log.i("connection: expired client");
             return;
         }
         if (!ackHandlers.isEmpty()) {
@@ -251,6 +256,11 @@ public class Connection {
         observer.onConnected();
 
         Log.i("connection: connected");
+    }
+
+    public void clientExpired() {
+        clientExpired = true;
+        disconnect();
     }
 
     public void disconnect() {

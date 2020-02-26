@@ -39,15 +39,10 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
     protected void onPostExecute(@Nullable Integer daysLeft) {
         Log.d("RequestExpirationInfoTask onPostExecute daysLeft=" + daysLeft);
         if (daysLeft != null && daysLeft <= EXPIRES_SOON_THRESHOLD_DAYS) {
-            Intent expiredAppIntent = new Intent(context, ExpiredAppActivity.class);
-            expiredAppIntent.putExtra(ExpiredAppActivity.EXTRA_DAYS_LEFT, daysLeft);
             if (daysLeft <= 0) {
-                expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                connection.disconnect();
-            } else {
-                expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                connection.clientExpired();
             }
-            context.startActivity(expiredAppIntent);
+            ExpiredAppActivity.open(context, daysLeft);
         }
     }
 }

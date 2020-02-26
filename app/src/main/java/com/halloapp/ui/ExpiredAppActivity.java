@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,5 +55,16 @@ public class ExpiredAppActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public static void open(Context context, int daysLeft) {
+        Intent expiredAppIntent = new Intent(context, ExpiredAppActivity.class);
+        expiredAppIntent.putExtra(ExpiredAppActivity.EXTRA_DAYS_LEFT, daysLeft);
+        if (daysLeft <= 0) {
+            expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        } else {
+            expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        context.startActivity(expiredAppIntent);
     }
 }

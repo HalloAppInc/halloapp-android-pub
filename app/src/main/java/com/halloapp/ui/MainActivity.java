@@ -27,6 +27,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         });
         checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        if (Connection.getInstance().clientExpired) {
+            ExpiredAppActivity.open(this, 0);
+        }
 
         setContentView(R.layout.activity_main);
 
