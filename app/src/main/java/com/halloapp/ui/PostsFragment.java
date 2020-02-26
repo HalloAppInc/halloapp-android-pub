@@ -348,7 +348,18 @@ public class PostsFragment extends Fragment {
 
             @Override
             public void finishUpdate(@NonNull ViewGroup container) {
-                container.requestLayout();
+                final int childCount = container.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    final View child = container.getChildAt(i);
+                    final Object tag = child.getTag();
+                    final PostImageView imageView = child.findViewById(R.id.image);
+                    for (Media mediaItem : media) {
+                        if (mediaItem.id.equals(tag)) {
+                            mediaThumbnailLoader.load(imageView, mediaItem);
+                            break;
+                        }
+                    }
+                }
             }
 
             @Override
