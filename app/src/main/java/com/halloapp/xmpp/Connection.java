@@ -160,6 +160,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
+        ProviderManager.addIQProvider(DaysToExpirationIq.ELEMENT, DaysToExpirationIq.NAMESPACE, new DaysToExpirationIq.Provider());
 
         try {
             final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
@@ -316,7 +317,7 @@ public class Connection {
                 return null;
             }
             final DaysToExpirationIq daysToExpirationIq = new DaysToExpirationIq(connection.getXMPPServiceDomain());
-            // TODO(jack): Remove this short-circuiting once implemented on server
+            // TODO(jack): Remove this short-circuiting once server released to prod
             if (true) {
                 return 20;
             }

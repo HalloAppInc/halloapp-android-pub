@@ -19,8 +19,8 @@ public class DaysToExpirationIq extends IQ {
     final static String ELEMENT = "client_version";
     final static String NAMESPACE = "halloapp:client:version";
 
-    final static String ELEMENT_VERSION = "version";
-    final static String ELEMENT_DAYS_LEFT = "days_left";
+    private final static String ELEMENT_VERSION = "version";
+    private final static String ELEMENT_DAYS_LEFT = "days_left";
 
     Integer daysLeft = null;
 
@@ -38,9 +38,9 @@ public class DaysToExpirationIq extends IQ {
                 continue;
             }
             final String name = parser.getName();
-            if ("client_version".equals(name)) {
+            if (ELEMENT_DAYS_LEFT.equals(name)) {
                 try {
-                    daysLeft = Integer.parseInt(parser.getAttributeValue(null, ELEMENT_DAYS_LEFT));
+                    daysLeft = Integer.parseInt(Xml.readText(parser));
                 } catch (NumberFormatException e) {
                     Log.e("days to expiration", e);
                 }
