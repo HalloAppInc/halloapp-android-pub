@@ -104,7 +104,7 @@ public class PostsDb {
     public void addPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             boolean duplicate = false;
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             try {
                 insertPost(post);
@@ -139,7 +139,7 @@ public class PostsDb {
         if (post.text != null) {
             values.put(PostsTable.COLUMN_TEXT, post.text);
         }
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
         for (Media mediaItem : post.media) {
             final ContentValues mediaItemValues = new ContentValues();
@@ -175,7 +175,7 @@ public class PostsDb {
 
     public void deletePost(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             final int deleteCount = db.delete(PostsTable.TABLE_NAME,
                     PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
                     new String [] {senderUserId.rawId(), postId});
@@ -190,7 +190,7 @@ public class PostsDb {
             Log.i("PostsDb.setIncomingPostSeen: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_SEEN, Post.POST_SEEN_YES_PENDING);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                         PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
@@ -209,7 +209,7 @@ public class PostsDb {
             Log.i("PostsDb.setIncomingPostsSeen: seen=" + seen);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_SEEN, seen);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                         PostsTable.COLUMN_SENDER_USER_ID + "!=''",
@@ -227,7 +227,7 @@ public class PostsDb {
             Log.i("PostsDb.setSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_SEEN, Post.POST_SEEN_YES);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                         PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
@@ -247,7 +247,7 @@ public class PostsDb {
             values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, seenByUserId.rawId());
             values.put(SeenTable.COLUMN_POST_ID, postId);
             values.put(SeenTable.COLUMN_TIMESTAMP, timestamp);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.insertWithOnConflict(SeenTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 notifyOutgoingPostSeen(seenByUserId, postId);
@@ -266,7 +266,7 @@ public class PostsDb {
             Log.i("PostsDb.setPostTransferred: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_TRANSFERRED, true);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                         PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
@@ -300,7 +300,7 @@ public class PostsDb {
                 }
             }
             values.put(MediaTable.COLUMN_TRANSFERRED, true);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
                         MediaTable.COLUMN_MEDIA_ID + "=?",
@@ -354,7 +354,7 @@ public class PostsDb {
         values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
         values.put(CommentsTable.COLUMN_SEEN, comment.seen);
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
     }
 
@@ -363,7 +363,7 @@ public class PostsDb {
             Log.i("PostsDb.setCommentTransferred: senderUserId=" + commentSenderUserId + " commentId=" + commentId);
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_TRANSFERRED, true);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                         CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
@@ -382,7 +382,7 @@ public class PostsDb {
             Log.i("PostsDb.setCommentsSeen: seen=" + seen);
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_SEEN, seen);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                         CommentsTable.COLUMN_SEEN + "=?",
@@ -407,7 +407,7 @@ public class PostsDb {
             Log.i("PostsDb.setCommentsSeen: postSenderUserId=" + postSenderUserId+ " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_SEEN, seen);
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " +
@@ -429,7 +429,7 @@ public class PostsDb {
         databaseWriteExecutor.execute(() -> {
             final List<Post> addedHistoryPosts = new ArrayList<>();
             final Collection<Comment> addedHistoryComments = new ArrayList<>();
-            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             try {
                 for (Post post : historyPosts) {
@@ -463,17 +463,17 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Post> getUnseenPosts(long timestamp, int count) {
+    public @NonNull List<Post> getUnseenPosts(long timestamp, int count) {
         return getPosts(timestamp, count, false, false, true);
     }
 
     @WorkerThread
-    List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
         return getPosts(timestamp, count, after, outgoingOnly, false);
     }
 
     @WorkerThread
-    private List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
+    private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
@@ -665,7 +665,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
+    @NonNull List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
         final String sql =
                 "WITH RECURSIVE " +
                     "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text) AS ( " +
@@ -700,7 +700,7 @@ public class PostsDb {
     * returns "important" comments only
     * */
     @WorkerThread
-    public List<Comment> getIncomingCommentsHistory(int limit) {
+    public @NonNull List<Comment> getIncomingCommentsHistory(int limit) {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
@@ -748,7 +748,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
+    public @NonNull List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
@@ -785,7 +785,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    List<Post> getPendingPosts() {
+    @NonNull List<Post> getPendingPosts() {
 
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -871,7 +871,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    List<Comment> getPendingComments() {
+    @NonNull List<Comment> getPendingComments() {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
@@ -908,7 +908,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    List<Receipt> getPendingSeenReceipts() {
+    @NonNull List<Receipt> getPendingSeenReceipts() {
         final List<Receipt> receipts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
@@ -929,7 +929,7 @@ public class PostsDb {
     }
 
     @WorkerThread
-    public List<UserId> getSeenBy(@NonNull String postId) {
+    public @NonNull List<UserId> getSeenBy(@NonNull String postId) {
         final List<UserId> users = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(SeenTable.TABLE_NAME,
@@ -947,7 +947,7 @@ public class PostsDb {
     @WorkerThread
     public void cleanup() {
         Log.i("PostsDb.cleanup");
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
                 PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
