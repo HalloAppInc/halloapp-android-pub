@@ -16,14 +16,14 @@ import com.halloapp.R;
 import com.halloapp.util.Log;
 import com.halloapp.widget.CenterToast;
 
-public class ExpiredAppActivity extends AppCompatActivity {
+public class AppExpirationActivity extends AppCompatActivity {
 
     public static final String EXTRA_DAYS_LEFT = "days_left";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_app_expired);
+        setContentView(R.layout.activity_app_expiration);
 
         String text;
         int daysLeft = getIntent().getIntExtra(EXTRA_DAYS_LEFT, 10);
@@ -45,8 +45,8 @@ public class ExpiredAppActivity extends AppCompatActivity {
                 intent.setPackage("com.android.vending");
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
-                Log.i("ExpiredAppActivity Play Store Not Installed", e);
-                CenterToast.show(ExpiredAppActivity.this, R.string.app_expiration_no_play_store);
+                Log.i("AppExpirationActivity Play Store Not Installed", e);
+                CenterToast.show(AppExpirationActivity.this, R.string.app_expiration_no_play_store);
             }
         });
     }
@@ -58,13 +58,13 @@ public class ExpiredAppActivity extends AppCompatActivity {
     }
 
     public static void open(Context context, int daysLeft) {
-        Intent expiredAppIntent = new Intent(context, ExpiredAppActivity.class);
-        expiredAppIntent.putExtra(ExpiredAppActivity.EXTRA_DAYS_LEFT, daysLeft);
+        Intent appExpirationIntent = new Intent(context, AppExpirationActivity.class);
+        appExpirationIntent.putExtra(AppExpirationActivity.EXTRA_DAYS_LEFT, daysLeft);
         if (daysLeft <= 0) {
-            expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            appExpirationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         } else {
-            expiredAppIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            appExpirationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        context.startActivity(expiredAppIntent);
+        context.startActivity(appExpirationIntent);
     }
 }

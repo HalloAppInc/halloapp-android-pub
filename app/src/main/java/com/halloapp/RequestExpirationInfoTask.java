@@ -1,13 +1,12 @@
 package com.halloapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.ui.ExpiredAppActivity;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -42,7 +41,7 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
             if (daysLeft <= 0) {
                 connection.clientExpired();
             }
-            ExpiredAppActivity.open(context, daysLeft);
+            AppExpirationActivity.open(context, daysLeft);
         }
     }
 }

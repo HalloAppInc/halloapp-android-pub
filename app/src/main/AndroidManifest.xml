@@ -91,7 +91,7 @@
             android:name=".ui.PostDetailsActivity"
             android:label=""/>
 
-        <activity android:name=".ui.ExpiredAppActivity"
+        <activity android:name=".ui.AppExpirationActivity"
             android:label="" />
 
         <receiver

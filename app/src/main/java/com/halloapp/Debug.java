@@ -17,7 +17,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
-import com.halloapp.ui.ExpiredAppActivity;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.xmpp.Connection;
@@ -32,7 +32,7 @@ public class Debug {
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
     private static final String DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN = "Set incoming posts unseen";
     private static final String DEBUG_MENU_CLEANUP_POSTS = "Cleanup posts";
-    private static final String DEBUG_MENU_VISIT_EXPIRED_ACTIVITY = "Visit expired activity";
+    private static final String DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY = "Visit expiration activity";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_DELETE_POST = "Delete post";
 
@@ -46,7 +46,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
         menu.getMenu().add(DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN);
         menu.getMenu().add(DEBUG_MENU_CLEANUP_POSTS);
-        menu.getMenu().add(DEBUG_MENU_VISIT_EXPIRED_ACTIVITY);
+        menu.getMenu().add(DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -80,8 +80,8 @@ public class Debug {
                     new CleanupPostsTask(activity.getApplication()).execute();
                     break;
                 }
-                case DEBUG_MENU_VISIT_EXPIRED_ACTIVITY: {
-                    activity.startActivity(new Intent(activity.getApplicationContext(), ExpiredAppActivity.class));
+                case DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY: {
+                    activity.startActivity(new Intent(activity.getApplicationContext(), AppExpirationActivity.class));
                 }
             }
             return false;

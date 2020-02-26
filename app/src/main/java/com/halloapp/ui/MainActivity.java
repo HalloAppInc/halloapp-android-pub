@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         if (Connection.getInstance().clientExpired) {
-            ExpiredAppActivity.open(this, 0);
+            AppExpirationActivity.open(this, 0);
         }
 
         setContentView(R.layout.activity_main);
