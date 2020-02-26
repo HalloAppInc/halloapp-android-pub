@@ -55,7 +55,7 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media) {
-        if (media.id.equals(view.getTag())) {
+        if (media.id.equals(view.getTag()) && view.getDrawable() != null) {
             return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
         }
         if (media.file == null) {

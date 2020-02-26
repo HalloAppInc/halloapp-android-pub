@@ -343,6 +343,8 @@ public class PostsFragment extends Fragment {
 
             @Override
             public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object view) {
+                final PostImageView imageView = ((View) view).findViewById(R.id.image);
+                imageView.setImageDrawable(null);
                 container.removeView((View) view);
             }
 
