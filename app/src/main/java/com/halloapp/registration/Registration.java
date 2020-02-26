@@ -8,6 +8,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.Connection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +41,7 @@ public class Registration {
         InputStream inStream = null;
         HttpURLConnection connection = null;
         try {
-            final URL url = new URL("https://s.halloapp.net/cgi-bin/request.sh?user=" + phone);
+            final URL url = new URL("https://" + Connection.HOST + "/cgi-bin/request.sh?user=" + phone);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setUseCaches(false);
@@ -73,7 +74,7 @@ public class Registration {
         InputStream inStream = null;
         HttpURLConnection connection = null;
         try {
-            final URL url = new URL("https://s.halloapp.net/cgi-bin/register.sh?user=" + phone + "&code=" + code);
+            final URL url = new URL("https://" + Connection.HOST + "/cgi-bin/register.sh?user=" + phone + "&code=" + code);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setUseCaches(false);

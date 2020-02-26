@@ -79,7 +79,7 @@ public class Connection {
     private static Connection instance;
 
     public static final String XMPP_DOMAIN = "s.halloapp.net";
-    private static final String HOST = "s.halloapp.net";
+    public static final String HOST = "s.halloapp.net";
     private static final int PORT = 5222;
     private static final int CONNECTION_TIMEOUT = 20_000;
     private static final int REPLY_TIMEOUT = 20_000;
