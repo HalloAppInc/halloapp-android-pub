@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.Connection;
 
 public class PushMessagingService extends FirebaseMessagingService {
 
@@ -22,5 +23,7 @@ public class PushMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Log.d("PushMessagingService: Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
+
+        Connection.getInstance().connect(Me.getInstance(getApplicationContext()));
     }
 }
