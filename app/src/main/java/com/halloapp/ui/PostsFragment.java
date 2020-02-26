@@ -301,18 +301,25 @@ public class PostsFragment extends Fragment {
             }
 
             public int getItemPosition(@NonNull Object object) {
-                @SuppressWarnings("SuspiciousMethodCalls")
-                int index = media.indexOf(((View)object).getTag());
-                return index >= 0 ? index : POSITION_NONE;
+                int index = 0;
+                final Object tag = ((View)object).getTag();
+                for (Media mediaItem : media) {
+                    if (mediaItem.id.equals(tag)) {
+                        return index;
+                    }
+                    index++;
+                }
+                return POSITION_NONE;
             }
 
             @Override
             public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
                 final View view = getLayoutInflater().inflate(R.layout.post_feed_media_pager_item, container, false);
+                final Media mediaItem = media.get(position);
+                view.setTag(mediaItem.id);
                 final PostImageView imageView = view.findViewById(R.id.image);
                 imageView.setSinglePointerDragStartDisabled(true);
                 imageView.setDrawDelegate(drawDelegateView);
-                final Media mediaItem = media.get(position);
                 mediaThumbnailLoader.load(imageView, mediaItem);
                 final View playButton = view.findViewById(R.id.play);
                 if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
