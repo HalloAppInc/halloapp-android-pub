@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,7 +86,9 @@ public class PostsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()));
+        final Point point = new Point();
+        Preconditions.checkNotNull(getActivity()).getWindowManager().getDefaultDisplay().getSize(point);
+        mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

@@ -29,11 +29,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
     private static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 
     @MainThread
-    public MediaThumbnailLoader(@NonNull Context context) {
-        this(context, Constants.MAX_IMAGE_DIMENSION);
-    }
-
-    @MainThread
     public MediaThumbnailLoader(@NonNull Context context, int dimensionLimit) {
 
         this.dimensionLimit = dimensionLimit;

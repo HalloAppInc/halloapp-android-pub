@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -70,7 +71,9 @@ public class PostComposerActivity extends AppCompatActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        mediaThumbnailLoader = new MediaThumbnailLoader(this);
+        final Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         final PostEditText editText = findViewById(R.id.entry);
 
