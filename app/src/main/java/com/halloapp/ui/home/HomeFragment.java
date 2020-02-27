@@ -83,17 +83,23 @@ public class HomeFragment extends PostsFragment {
 
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
-            final View childView = layoutManager.getChildAt(0);
-            final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
-            if (viewModel.checkPendingOutgoing() || !scrolled || scrollUpOnDataLoaded) {
+            if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
                 postsView.scrollToPosition(0);
                 newPostsView.setVisibility(View.GONE);
             } else if (viewModel.checkPendingIncoming()) {
-                if (newPostsView.getVisibility() != View.VISIBLE) {
-                    newPostsView.setVisibility(View.VISIBLE);
-                    newPostsView.setTranslationY(-getResources().getDimension(R.dimen.details_media_list_height));
-                    newPostsView.animate().setDuration(200).translationY(0).start();
+                final View childView = layoutManager.getChildAt(0);
+                final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
+                if (scrolled) {
+                    if (newPostsView.getVisibility() != View.VISIBLE) {
+                        newPostsView.setVisibility(View.VISIBLE);
+                        newPostsView.setTranslationY(-getResources().getDimension(R.dimen.details_media_list_height));
+                        newPostsView.animate().setDuration(200).translationY(0).start();
+                    }
+                } else {
+                    scrollUpOnDataLoaded = false;
+                    postsView.scrollToPosition(0);
+                    newPostsView.setVisibility(View.GONE);
                 }
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
