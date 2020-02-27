@@ -55,6 +55,8 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class PostsFragment extends Fragment {
 
+    private static final int MAX_SEEN_BY_AVATARS = 4;
+
     protected final PostsAdapter adapter = new PostsAdapter();
 
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -275,7 +277,10 @@ public class PostsFragment extends Fragment {
                 seenIndicator.setVisibility(View.VISIBLE);
                 seenIndicatorSpace.setVisibility(View.GONE);
                 seenIndicator.setContentDescription(getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
-                seenIndicator.setAvatarCount(post.seenByCount);
+                seenIndicator.setAvatarCount(Math.min(post.seenByCount, MAX_SEEN_BY_AVATARS));
+                if (seenIndicator.getChildCount() == MAX_SEEN_BY_AVATARS) {
+                    seenIndicator.getChildAt(0).setAlpha(.5f);
+                }
             } else {
                 seenIndicator.setVisibility(View.GONE);
                 seenIndicatorSpace.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
