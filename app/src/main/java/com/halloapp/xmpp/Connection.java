@@ -15,6 +15,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.util.Log;
+import com.halloapp.util.RandomId;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -478,9 +479,9 @@ public class Connection {
             try {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final Message message = new Message(recipientJid);
-                message.setStanzaId(postId);
+                message.setStanzaId(RandomId.create());
                 message.addExtension(new SeenReceipt(postId));
-                ackHandlers.put(postId, () -> observer.onSeenReceiptSent(senderUserId, postId));
+                ackHandlers.put(message.getStanzaId(), () -> observer.onSeenReceiptSent(senderUserId, postId));
                 Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
