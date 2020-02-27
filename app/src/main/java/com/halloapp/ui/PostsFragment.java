@@ -48,6 +48,7 @@ import com.halloapp.widget.SeenDetectorLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -59,6 +60,7 @@ public class PostsFragment extends Fragment {
     private ContactLoader contactLoader;
 
     private DrawDelegateView drawDelegateView;
+    private final Stack<View> recycledMediaViews = new Stack<>();
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
@@ -314,7 +316,12 @@ public class PostsFragment extends Fragment {
 
             @Override
             public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
-                final View view = getLayoutInflater().inflate(R.layout.post_feed_media_pager_item, container, false);
+                final View view;
+                if (recycledMediaViews.empty()) {
+                    view = getLayoutInflater().inflate(R.layout.post_feed_media_pager_item, container, false);
+                } else {
+                    view = recycledMediaViews.pop();
+                }
                 final Media mediaItem = media.get(position);
                 view.setTag(mediaItem.id);
                 final PostImageView imageView = view.findViewById(R.id.image);
@@ -342,10 +349,12 @@ public class PostsFragment extends Fragment {
             }
 
             @Override
-            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object view) {
-                final PostImageView imageView = ((View) view).findViewById(R.id.image);
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                final View view = (View) object;
+                final PostImageView imageView = view.findViewById(R.id.image);
                 imageView.setImageDrawable(null);
-                container.removeView((View) view);
+                container.removeView(view);
+                recycledMediaViews.push(view);
             }
 
             @Override
