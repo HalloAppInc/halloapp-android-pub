@@ -72,11 +72,6 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onFeedHistoryReceived(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-        PostsDb.getInstance(context).addHistory(historyPosts, historyComments);
-    }
-
-    @Override
     public void onSubscribersChanged() {
         ContactsSync.getInstance(context).startContactSync();
     }

@@ -10,6 +10,8 @@ import android.provider.ContactsContract;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import androidx.core.util.Pair;
+import androidx.core.util.Preconditions;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
@@ -18,6 +20,9 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
+import com.halloapp.posts.Comment;
+import com.halloapp.posts.Post;
+import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactsSyncResponseIq;
@@ -207,12 +212,26 @@ public class ContactsSync {
         Log.i("ContactsSync.performContactSync: " + memberUserIds.size() + " to pubsub");
 
         try {
-            boolean result = Connection.getInstance().syncPubSub(memberUserIds).get();
+            final boolean result = Connection.getInstance().syncPubSub(memberUserIds).get();
             if (!result) {
                 Log.e("ContactsSync.performContactSync: failed to sync pubsub");
+                return ListenableWorker.Result.failure();
             }
         } catch (ExecutionException | InterruptedException e) {
             Log.e("ContactsSync.performContactSync: failed to sync pubsub", e);
+            return ListenableWorker.Result.failure();
+        }
+
+        // TODO (ds): remove
+        try {
+            final Pair<Collection<Post>, Collection<Comment>> result = Connection.getInstance().getFeedHistory().get();
+            if (result == null) {
+                Log.e("ContactsSync.performContactSync: failed retrieve feed history");
+                return ListenableWorker.Result.failure();
+            }
+            PostsDb.getInstance(context).addHistory(Preconditions.checkNotNull(result.first), Preconditions.checkNotNull(result.second));
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e("ContactsSync.performContactSync: failed retrieve feed history", e);
             return ListenableWorker.Result.failure();
         }
 

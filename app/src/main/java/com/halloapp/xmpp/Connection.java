@@ -5,6 +5,7 @@ import android.os.HandlerThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.core.util.Pair;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.BuildConfig;
@@ -68,6 +69,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -112,7 +114,6 @@ public class Connection {
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onIncomingCommentReceived(@NonNull Comment comment);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
-        void onFeedHistoryReceived(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onSubscribersChanged();
     }
 
@@ -488,6 +489,51 @@ public class Connection {
         });
     }
 
+    // TODO (ds): remove
+    public Future<Pair<Collection<Post>, Collection<Comment>>> getFeedHistory() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot retrieve feed history, no connection");
+                return null;
+            }
+            try {
+                final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+                final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
+
+                final ArrayList<Post> historyPosts = new ArrayList<>();
+                final Collection<Comment> historyComments = new ArrayList<>();
+                for (Subscription subscription : subscriptions) {
+                    if (subscription.getJid() == null) {
+                        continue;
+                    }
+                    final String feedNodeId = subscription.getNode();
+                    if (!isFeedNodeId(feedNodeId)) {
+                        continue;
+                    }
+                    if (feedNodeId.equals(getMyFeedNodeId())) {
+                        continue;
+                    }
+                    try {
+                        final LeafNode node = pubSubManager.getNode(feedNodeId);
+                        parsePublishedHistoryItems(getFeedUserId(feedNodeId), node.getItems(), historyPosts, historyComments);
+                    } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
+                        Log.e("connection: retrieve feed history: no such node", e);
+                    }
+                }
+                try {
+                    final LeafNode node = pubSubManager.getNode(getMyFeedNodeId());
+                    parsePublishedHistoryItems(UserId.ME, node.getItems(), historyPosts, historyComments);
+                } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
+                    Log.e("connection: retrieve feed history: no such node", e);
+                }
+                return Pair.create(historyPosts, historyComments);
+            } catch (SmackException.NotConnectedException | SmackException.NoResponseException | InterruptedException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: cannot retrieve feed history", e);
+                return null;
+            }
+        });
+    }
+
     private class ConfigureNodeException extends PubSubException {
 
         protected ConfigureNodeException(String nodeId) {
@@ -591,7 +637,6 @@ public class Connection {
 
         final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
         final List<String> addFeedNodeIds = new ArrayList<>(jids.size());
-        final List<String> subscribedFeedNodeIds = new ArrayList<>(jids.size());
         for (Jid jid : jids) {
             final String feedNodeId = getFeedNodeId(jid);
             if (affiliatedFeedNodeIds.contains(feedNodeId)) {
@@ -616,41 +661,16 @@ public class Connection {
                 } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
                     Log.e("connection: sync pubsub: cannot unsubscribe, no such node", e);
                 }
-            } else {
-                subscribedFeedNodeIds.add(feedNodeId);
             }
         }
         for (String addFeedNodeId : addFeedNodeIds) {
             try {
                 final Node node = pubSubManager.getNode(addFeedNodeId);
                 node.subscribe(selfJid.asBareJid().toString());
-                if (!addFeedNodeId.equals(getMyFeedNodeId())){
-                    subscribedFeedNodeIds.add(addFeedNodeId);
-                }
             } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: sync pubsub: cannot subscribe, no such node", e);
-                subscribedFeedNodeIds.remove(addFeedNodeId);
             }
         }
-
-        // TODO (ds): make server send offline posts, should be no need to pull posts here
-        final ArrayList<Post> historyPosts = new ArrayList<>();
-        final Collection<Comment> historyComments = new ArrayList<>();
-        for (String subscribedFeed : subscribedFeedNodeIds) {
-            try {
-                final LeafNode node = pubSubManager.getNode(subscribedFeed);
-                parsePublishedHistoryItems(getFeedUserId(subscribedFeed), node.getItems(), historyPosts, historyComments);
-            } catch (PubSubException.NotAPubSubNodeException e) {
-                Log.e("connection: sync pubsub: no such node", e);
-            }
-        }
-        try {
-            final LeafNode node = pubSubManager.getNode(getMyFeedNodeId());
-            parsePublishedHistoryItems(UserId.ME, node.getItems(), historyPosts, historyComments);
-        } catch (PubSubException.NotAPubSubNodeException e) {
-            Log.e("connection: sync pubsub: no such node", e);
-        }
-        observer.onFeedHistoryReceived(historyPosts, historyComments);
     }
 
     private void parsePublishedHistoryItems(UserId feedUserId, List<PubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
