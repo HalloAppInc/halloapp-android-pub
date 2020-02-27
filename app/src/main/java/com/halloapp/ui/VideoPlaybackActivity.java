@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.halloapp.R;
+import com.halloapp.util.Log;
 
 public class VideoPlaybackActivity extends AppCompatActivity {
 
@@ -36,6 +37,8 @@ public class VideoPlaybackActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("VideoPlaybackActivity.onCreate");
+
         setContentView(R.layout.activity_video_playback);
 
         if (Build.VERSION.SDK_INT >= 28) {
@@ -63,13 +66,16 @@ public class VideoPlaybackActivity extends AppCompatActivity {
             }
         });
 
-        final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, "hallo");
-        mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(getIntent().getData());
-
         if (savedInstanceState != null) {
             startWindow = savedInstanceState.getInt(KEY_WINDOW);
             startPosition = savedInstanceState.getLong(KEY_POSITION);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("VideoPlaybackActivity.onDestroy");
     }
 
     @Override
@@ -131,6 +137,9 @@ public class VideoPlaybackActivity extends AppCompatActivity {
 
     private void initializePlayer() {
         if (player == null) {
+            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, "hallo");
+            mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(getIntent().getData());
+
             player = new SimpleExoPlayer.Builder(this).build();
             player.setPlayWhenReady(true);
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
