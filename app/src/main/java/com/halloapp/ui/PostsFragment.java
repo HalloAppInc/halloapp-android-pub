@@ -22,6 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.util.Preconditions;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -42,6 +45,8 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.Log;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.DrawDelegateView;
@@ -49,6 +54,7 @@ import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostImageView;
 import com.halloapp.widget.SeenDetectorLayout;
+import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +70,7 @@ public class PostsFragment extends Fragment {
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
+    private AvatarLoader avatarLoader;
 
     private DrawDelegateView drawDelegateView;
     private final Stack<View> recycledMediaViews = new Stack<>();
@@ -95,6 +102,7 @@ public class PostsFragment extends Fragment {
         Preconditions.checkNotNull(getActivity()).getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
+        avatarLoader = AvatarLoader.getInstance(Connection.getInstance());
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -116,7 +124,7 @@ public class PostsFragment extends Fragment {
         drawDelegateView = Preconditions.checkNotNull(getActivity()).findViewById(R.id.draw_delegate);
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends ViewHolderWithLifecycle {
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -152,6 +160,7 @@ public class PostsFragment extends Fragment {
 
         PostViewHolder(final @NonNull View v) {
             super(v);
+
             avatarView = v.findViewById(R.id.avatar);
             nameView = v.findViewById(R.id.name);
             timeView = v.findViewById(R.id.time);
@@ -226,6 +235,7 @@ public class PostsFragment extends Fragment {
             this.post = post;
 
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
+            avatarLoader.loadAvatarFor(post.senderUserId, this, avatarView::setImageBitmap);
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
@@ -419,7 +429,7 @@ public class PostsFragment extends Fragment {
         }
     };
 
-    protected class PostsAdapter extends RecyclerView.Adapter<ViewHolder> {
+    protected class PostsAdapter extends AdapterWithLifecycle<ViewHolder> {
 
         final List<View> headers = new ArrayList<>();
         final AsyncPagedListDiffer<Post> differ;

@@ -40,6 +40,7 @@ import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.EventElementType;
+import org.jivesoftware.smackx.pubsub.Item;
 import org.jivesoftware.smackx.pubsub.ItemReply;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
@@ -66,11 +67,11 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -241,6 +242,8 @@ public class Connection {
                 observer.onSubscribersChanged();
             });
             configureNode(getMyFeedNodeId(), null);
+            configureNode(getMyAvatarMetadataNodeId(), null);
+            configureNode(getMyAvatarDataNodeId(), null);
         } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
             Log.e("connection: cannot subscribe to pubsub", e);
             disconnectInBackground();
@@ -390,6 +393,120 @@ public class Connection {
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot send push token", e);
             }
+        });
+    }
+
+    public void publishAvatarData(String id, String base64Data) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot update avatar data, no connection");
+                return;
+            }
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                final LeafNode myAvatarDataNode = pubSubManager.getNode(getMyAvatarDataNodeId());
+                final PublishedAvatarData data = new PublishedAvatarData(base64Data);
+                final SimplePayload payload = new SimplePayload(data.toXml());
+                final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
+                myAvatarDataNode.publish(item);
+                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+
+                // TODO(jack): Observer avatar update? (For all)
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot publish avatar data", e);
+            }
+        });
+    }
+
+    public Future<PubsubItem> getMyMostRecentAvatarData() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get avatar metadata, no connection");
+                return null;
+            }
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                final LeafNode myAvatarDataNode = pubSubManager.getNode(getMyAvatarDataNodeId());
+                List<PubsubItem> items = myAvatarDataNode.getItems(1);
+                if (items.size() > 0) {
+                    return items.get(0);
+                }
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot get my avatar data", e);
+            }
+            return null;
+        });
+    }
+
+    public Future<PubsubItem> getAvatarData(UserId userId, String itemId) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get avatar metadata, no connection");
+                return null;
+            }
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                // TODO(jack): Possible to make this me handling cleaner?
+                final LeafNode avatarDataNode = pubSubManager.getNode(userId.isMe() ? getMyAvatarDataNodeId() : getAvatarDataNodeId(userIdToJid(userId)));
+                List<String> itemIds = new ArrayList<>();
+                itemIds.add(itemId);
+                List<PubsubItem> items = avatarDataNode.getItems(itemIds);
+                if (items.size() > 0) {
+                    return items.get(0);
+                }
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot get avatar metadata", e);
+            }
+            return null;
+        });
+    }
+
+    public void publishAvatarMetadata(String id) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot update avatar metadata, no connection");
+                return;
+            }
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                final LeafNode myAvatarMetadataNode = pubSubManager.getNode(getMyAvatarMetadataNodeId());
+                final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(
+                        id,
+                        3000,
+                        64, 64);
+                final SimplePayload payload = new SimplePayload(metadata.toXml());
+                final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
+                myAvatarMetadataNode.publish(item);
+                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+
+                //observer.onOutgoingPostSent(post.postId);
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot update avatar metadata", e);
+            }
+        });
+    }
+
+    public Future<PubsubItem> getMyMostRecentAvatarMetadata() {
+        return getMostRecentAvatarMetadata(UserId.ME);
+    }
+
+    public Future<PubsubItem> getMostRecentAvatarMetadata(UserId userId) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get avatar metadata, no connection");
+                return null;
+            }
+            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+            try {
+                final LeafNode myAvatarMetadataNode = pubSubManager.getNode(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)));
+                List<PubsubItem> items = myAvatarMetadataNode.getItems(1);
+                if (items.size() > 0) {
+                    return items.get(0);
+                }
+            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot get avatar metadata", e);
+            }
+            return null;
         });
     }
 
@@ -762,12 +879,28 @@ public class Connection {
         return user.equals(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
     }
 
+    private String getMyAvatarMetadataNodeId() {
+        return getAvatarMetadataNodeId(Preconditions.checkNotNull(connection).getUser());
+    }
+
+    private String getMyAvatarDataNodeId() {
+        return getAvatarDataNodeId(Preconditions.checkNotNull(connection).getUser());
+    }
+
     private String getMyFeedNodeId() {
         return getFeedNodeId(Preconditions.checkNotNull(connection).getUser());
     }
 
     private String getMyContactsNodeId() {
         return getContactsNodeId(Preconditions.checkNotNull(connection).getUser());
+    }
+
+    private static String getAvatarMetadataNodeId(@NonNull Jid jid) {
+        return getNodeId("avatar-metadata", jid);
+    }
+
+    private static String getAvatarDataNodeId(@NonNull Jid jid) {
+        return getNodeId("avatar-data", jid);
     }
 
     private static String getFeedNodeId(@NonNull Jid jid) {

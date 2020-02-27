@@ -1,9 +1,12 @@
 package com.halloapp.ui.profile;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,10 +27,20 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.SettingsActivity;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.PublishedAvatarData;
+import com.halloapp.xmpp.PubsubItem;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends PostsFragment {
 
@@ -68,6 +81,9 @@ public class ProfileFragment extends PostsFragment {
         final LoadNameTask loadNameTask = new LoadNameTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
         loadNameTask.name.observe(this, user -> nameView.setText(PhoneNumberUtils.formatNumber("+" + user, null)));
         loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        final CircleImageView avatarView = headerView.findViewById(R.id.avatar);
+        AvatarLoader.getInstance(Connection.getInstance()).loadAvatarFor(UserId.ME, this, bitmap -> avatarView.setImageBitmap(bitmap));
 
         adapter.addHeader(headerView);
 
@@ -111,4 +127,5 @@ public class ProfileFragment extends PostsFragment {
             return null;
         }
     }
+
 }
