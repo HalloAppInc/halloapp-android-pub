@@ -9,8 +9,8 @@ android {
         applicationId "com.halloapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 19
-        versionName "0.19"
+        versionCode 20
+        versionName "0.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -48,13 +48,13 @@ dependencies {
     implementation 'androidx.paging:paging-runtime:2.1.1'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.security:security-crypto:1.0.0-alpha02'
-    implementation 'androidx.work:work-runtime:2.3.1'
+    implementation 'androidx.work:work-runtime:2.3.2'
     implementation 'at.favre.lib:hkdf:1.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.dstukalov:videoconverter:1.6'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.3.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha04'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
     implementation 'com.hbb20:ccp:2.3.5'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
