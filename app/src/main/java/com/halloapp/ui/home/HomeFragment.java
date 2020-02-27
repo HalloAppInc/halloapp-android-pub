@@ -61,7 +61,6 @@ public class HomeFragment extends PostsFragment {
         super.onDestroy();
         Log.d("HomeFragment: onDestroy");
         postThumbnailLoader.destroy();
-        commentHistoryPopup.destroy();
     }
 
     @Override
@@ -134,6 +133,12 @@ public class HomeFragment extends PostsFragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        commentHistoryPopup.destroy();
     }
 
     @Override
