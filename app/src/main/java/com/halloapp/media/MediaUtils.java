@@ -122,7 +122,9 @@ public class MediaUtils {
             return null;
         }
         options.inSampleSize = 1;
-        while (width > maxWidth || height > maxHeight) {
+        // allow image to be scaled to 10% less than max size requested, if this can be done by simple downsampling;
+        // this saves memory, increases speed, and would not reduce quality much, because no further bi-linear scaling would be needed
+        while (1.1f * width > 2 * maxWidth || 1.1f * height > 2 * maxHeight) {
             width /= 2;
             height /= 2;
             options.inSampleSize *= 2;
@@ -132,7 +134,11 @@ public class MediaUtils {
         if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
             return null;
         }
+        float scale = Math.min(1f * maxWidth / bitmap.getWidth(), 1f * maxHeight / bitmap.getHeight());
         final Matrix matrix = fromOrientation(exifOrientation);
+        if (scale < 1) {
+            matrix.preScale(scale, scale);
+        }
         if (matrix.isIdentity()) {
             return bitmap;
         } else {
