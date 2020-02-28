@@ -42,6 +42,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
@@ -50,6 +51,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.PostEditText;
+import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
@@ -66,6 +68,7 @@ public class CommentsActivity extends AppCompatActivity {
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
+    private AvatarLoader avatarLoader;
 
     private CommentsViewModel viewModel;
 
@@ -179,6 +182,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
+        avatarLoader = AvatarLoader.getInstance(Connection.getInstance());
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -239,7 +243,7 @@ public class CommentsActivity extends AppCompatActivity {
         viewModel.resetReplyUser();
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends ViewHolderWithLifecycle {
 
         final ImageView avatarView;
         final TextView nameView;
@@ -268,7 +272,7 @@ public class CommentsActivity extends AppCompatActivity {
         void bindTo(final @NonNull Comment comment) {
 
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-
+            avatarLoader.loadAvatarFor(comment.commentSenderUserId, this, avatarView::setImageBitmap);
             if (comment.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
@@ -299,7 +303,7 @@ public class CommentsActivity extends AppCompatActivity {
                 return;
             }
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-
+            avatarLoader.loadAvatarFor(post.senderUserId, this, avatarView::setImageBitmap);
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
@@ -390,7 +394,7 @@ public class CommentsActivity extends AppCompatActivity {
     private static final int ITEM_TYPE_COMMENT = 1;
     private static final int ITEM_TYPE_REPLY = 2;
 
-    private class CommentsAdapter extends RecyclerView.Adapter<ViewHolder> {
+    private class CommentsAdapter extends AdapterWithLifecycle<ViewHolder> {
 
         final AsyncPagedListDiffer<Comment> differ;
 
