@@ -17,13 +17,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.ui.AdapterWithLifecycle;
+import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
 public class MessagesFragment extends Fragment {
 
     private final ContactsAdapter adapter = new ContactsAdapter();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance());
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -47,7 +52,7 @@ public class MessagesFragment extends Fragment {
         return root;
     }
 
-    class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
+    class ContactsAdapter extends AdapterWithLifecycle<ContactsAdapter.ViewHolder> {
 
         private List<Contact> contacts;
 
@@ -71,7 +76,7 @@ public class MessagesFragment extends Fragment {
             return contacts == null ? 0 : contacts.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends ViewHolderWithLifecycle {
 
             final ImageView avatarView;
             final TextView nameView;
@@ -86,6 +91,7 @@ public class MessagesFragment extends Fragment {
 
             void bindTo(Contact contact) {
                 avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
+                avatarLoader.loadAvatarFor(contact.userId, this, avatarView::setImageBitmap);
                 nameView.setText(contact.getDisplayName());
                 infoView.setText(contact.getInternationalPhone());
             }
