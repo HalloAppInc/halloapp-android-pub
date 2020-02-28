@@ -95,7 +95,7 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
                         view.setBackgroundColor(placeholderColor);
                         ((PostImageView)view).playTransition(150);
                     }
-                    if (BuildConfig.DEBUG_MEDIA) {
+                    if (BuildConfig.DEBUG_MEDIA && view.getParent() != null) {
                         final TextView infoView = (((View)view.getParent()).findViewById(R.id.comment));
                         if (infoView != null) {
                             infoView.setText(debugInfos.get(media.rowId));
