@@ -51,6 +51,7 @@
             android:layout_height="@dimen/comment_media_list_height"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/comment_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/avatar"
