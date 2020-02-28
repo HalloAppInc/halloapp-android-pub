@@ -2,8 +2,10 @@ package com.halloapp.widget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 
@@ -22,17 +24,30 @@ public class DrawDelegateView extends View {
     private int backgroundColor;
     private boolean systemUiHidden;
     private int defaultSystemUiColor;
+    private int windowColor;
 
     public DrawDelegateView(Context context) {
         super(context);
+        init(context);
     }
 
     public DrawDelegateView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public DrawDelegateView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(Context context) {
+        final TypedValue typedValue = new TypedValue();
+        final TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorPrimaryDark });
+        defaultSystemUiColor = a.getColor(0, 0);
+        a.recycle();
+
+        windowColor = getContext().getResources().getColor(R.color.window_background);
     }
 
     public void setDelegateView(@NonNull View delegateView) {
@@ -46,8 +61,6 @@ public class DrawDelegateView extends View {
         delegateView.getLocationInWindow(childLocation);
         this.x = childLocation[0] - thisLocation[0];
         this.y = childLocation[1] - thisLocation[1];
-
-        defaultSystemUiColor = getContext().getResources().getColor(R.color.window_background);
     }
 
     public void resetDelegateView(@NonNull View delegateView) {
@@ -65,12 +78,13 @@ public class DrawDelegateView extends View {
         setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(getContext()));
     }
 
-    public void setDecoration(PostImageView delegateView, float dim, boolean hideSystemUi) {
+    public void setDecoration(PostImageView delegateView, float decorationFactor, boolean hideSystemUi) {
         if (this.delegateView != delegateView) {
             return;
         }
-        backgroundColor = ((int)(255 * dim)) << 24;
-        final int systemBarColor = ColorUtils.compositeColors(backgroundColor, defaultSystemUiColor);
+        backgroundColor = ((int)(255 * decorationFactor * .3f)) << 24;
+        final int systemBarColor = ColorUtils.compositeColors(backgroundColor,
+                defaultSystemUiColor == windowColor ? windowColor : ColorUtils.blendARGB(defaultSystemUiColor, windowColor, decorationFactor));
         final Window window = ((Activity)getContext()).getWindow();
         window.setStatusBarColor(systemBarColor);
         window.setNavigationBarColor(systemBarColor);

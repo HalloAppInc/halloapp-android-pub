@@ -58,8 +58,8 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
             if (drawDelegateView != null) {
                 if (getScale() > 1) {
                     drawDelegateView.setDelegateView(this);
-                    final float dim = Math.min(.3f, getScale() - 1);
-                    drawDelegateView.setDecoration(this, dim, dim >= .3f);
+                    final float decorationFactor = Math.min(.25f, getScale() - 1);
+                    drawDelegateView.setDecoration(this, decorationFactor / .25f, decorationFactor >= .25f);
                 } else {
                     drawDelegateView.resetDelegateView(this);
                 }
