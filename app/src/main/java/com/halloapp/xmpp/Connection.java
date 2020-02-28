@@ -242,8 +242,8 @@ public class Connection {
                 observer.onSubscribersChanged();
             });
             configureNode(getMyFeedNodeId(), null);
-            configureNode(getMyAvatarMetadataNodeId(), null);
-            configureNode(getMyAvatarDataNodeId(), null);
+            configureOpenNode(getMyAvatarMetadataNodeId(), null);
+            configureOpenNode(getMyAvatarDataNodeId(), null);
         } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
             Log.e("connection: cannot subscribe to pubsub", e);
             disconnectInBackground();
@@ -670,6 +670,54 @@ public class Connection {
             if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
                 final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
                 configureForm.setAccessModel(AccessModel.whitelist);
+                configureForm.setPublishModel(PublishModel.open);
+                configureForm.setMaxItems(10);
+                configureForm.setNotifyDelete(false);
+                configureForm.setNotifyRetract(false);
+                configureForm.setNotificationType(NotificationType.normal);
+                configureForm.setItemReply(ItemReply.publisher);
+                final FormField field = new FormField("pubsub#send_last_published_item");
+                field.setType(FormField.Type.hidden);
+                configureForm.addField(field);
+                configureForm.setAnswer("pubsub#send_last_published_item", "never");
+                node = pubSubManager.createNode(nodeId, configureForm);
+            }
+        }
+        if (node == null) {
+            Log.e("connection: cannot create node");
+            throw new ConfigureNodeException(nodeId);
+        }
+        if (listener != null) {
+            node.addItemEventListener(listener);
+        }
+
+        node.subscribe(connection.getUser().asBareJid().toString());
+    }
+
+    @WorkerThread
+    private void configureOpenNode(@NonNull String nodeId, @Nullable ItemEventListener listener) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, PubSubException.NotAPubSubNodeException, ConfigureNodeException {
+        Preconditions.checkNotNull(connection);
+        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
+        Node node = null;
+        try {
+            node = pubSubManager.getNode(nodeId);
+            final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
+            configureForm.setAccessModel(AccessModel.open); // For testing
+            configureForm.setPublishModel(PublishModel.open);
+            configureForm.setMaxItems(10);
+            configureForm.setNotifyDelete(false);
+            configureForm.setNotifyRetract(false);
+            configureForm.setNotificationType(NotificationType.normal);
+            configureForm.setItemReply(ItemReply.publisher);
+            final FormField field = new FormField("pubsub#send_last_published_item");
+            field.setType(FormField.Type.hidden);
+            configureForm.addField(field);
+            configureForm.setAnswer("pubsub#send_last_published_item", "never");
+            node.sendConfigurationForm(configureForm);
+        } catch (XMPPException.XMPPErrorException e) {
+            if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
+                final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
+                configureForm.setAccessModel(AccessModel.open); // For testing
                 configureForm.setPublishModel(PublishModel.open);
                 configureForm.setMaxItems(10);
                 configureForm.setNotifyDelete(false);
