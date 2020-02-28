@@ -1,6 +1,8 @@
 package com.halloapp.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
@@ -81,7 +83,7 @@ public class CommentsHistoryPopup {
         popupWindow.setFocusable(true);
         popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setBackgroundDrawable(null);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null)); // to workaround popup doesn't dismiss on api 21 devices
         popupWindow.setAnimationStyle(R.style.comments_history_animation);
 
         final FrameLayout contentView = new FrameLayout(context) {
