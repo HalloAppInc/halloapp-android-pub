@@ -34,7 +34,7 @@ public class PostDetailsViewModel extends AndroidViewModel {
     private final PostsDb.Observer postsObserver = new PostsDb.DefaultObserver() {
 
         @Override
-        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
             invalidateContacts();
         }
 

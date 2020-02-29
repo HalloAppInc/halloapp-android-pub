@@ -84,8 +84,8 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-        connection.sendAck(postId);
+    public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
+        connection.sendAck(ackId);
     }
 
     @Override

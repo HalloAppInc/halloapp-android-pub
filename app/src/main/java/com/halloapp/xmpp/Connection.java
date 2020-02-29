@@ -98,7 +98,7 @@ public class Connection {
         void onLoginFailed();
         void onOutgoingPostSent(@NonNull String postId);
         void onIncomingPostReceived(@NonNull Post post);
-        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp);
+        void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId, long timestamp);
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onIncomingCommentReceived(@NonNull Comment comment);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
@@ -796,7 +796,7 @@ public class Connection {
                     final SeenReceipt seenReceipt = packet.getExtension(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE);
                     if (seenReceipt != null) {
                         Log.i("connection: got seen receipt " + msg);
-                        observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp());
+                        observer.onOutgoingPostSeen(packet.getStanzaId(), getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp());
                         handled = true;
                     }
                 }

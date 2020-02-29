@@ -74,7 +74,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
             invalidatePosts();
         }
 

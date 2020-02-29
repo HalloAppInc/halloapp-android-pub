@@ -48,7 +48,7 @@ public class PostsDb {
         void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
-        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
+        void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
         void onCommentDuplicate(@NonNull Comment comment);
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
@@ -63,7 +63,7 @@ public class PostsDb {
         public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
+        public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
         public void onCommentDuplicate(@NonNull Comment comment) {}
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
@@ -240,7 +240,7 @@ public class PostsDb {
         });
     }
 
-    public void setOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
+    public void setOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId + " timestamp=" + timestamp);
             final ContentValues values = new ContentValues();
@@ -250,10 +250,10 @@ public class PostsDb {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.insertWithOnConflict(SeenTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-                notifyOutgoingPostSeen(seenByUserId, postId);
+                notifyOutgoingPostSeen(ackId, seenByUserId, postId);
             } catch (SQLiteConstraintException ex) {
                 Log.i("PostsDb.setOutgoingPostSeen: seen duplicate", ex);
-                notifyOutgoingPostSeen(seenByUserId, postId);
+                notifyOutgoingPostSeen(ackId, seenByUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setOutgoingPostSeen: failed");
                 throw ex;
@@ -1016,10 +1016,10 @@ public class PostsDb {
         }
     }
 
-    private void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+    private void notifyOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Observer observer : observers) {
-                observer.onOutgoingPostSeen(seenByUserId, postId);
+                observer.onOutgoingPostSeen(ackId, seenByUserId, postId);
             }
         }
     }

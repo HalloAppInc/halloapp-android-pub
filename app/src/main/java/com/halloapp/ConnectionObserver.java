@@ -51,8 +51,8 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
-        PostsDb.getInstance(context).setOutgoingPostSeen(seenByUserId, postId, timestamp);
+    public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
+        PostsDb.getInstance(context).setOutgoingPostSeen(ackId, seenByUserId, postId, timestamp);
     }
 
     @Override
