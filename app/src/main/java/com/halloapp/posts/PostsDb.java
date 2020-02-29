@@ -44,13 +44,11 @@ public class PostsDb {
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
-        void onPostDuplicate(@NonNull Post post);
         void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
-        void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId);
+        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
-        void onCommentDuplicate(@NonNull Comment comment);
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
@@ -59,13 +57,11 @@ public class PostsDb {
 
     public static class DefaultObserver implements Observer {
         public void onPostAdded(@NonNull Post post) {}
-        public void onPostDuplicate(@NonNull Post post) {}
         public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {}
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
-        public void onCommentDuplicate(@NonNull Comment comment) {}
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
@@ -102,25 +98,33 @@ public class PostsDb {
     }
 
     public void addPost(@NonNull Post post) {
+        addPosts(Collections.singletonList(post), null);
+    }
+
+    public void addPosts(@NonNull List<Post> posts, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            boolean duplicate = false;
-            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.beginTransaction();
-            try {
-                insertPost(post);
-                Log.i("PostsDb.addPost: added " + post);
-                db.setTransactionSuccessful();
-            } catch (SQLiteConstraintException ex) {
-                Log.w("PostsDb.addPost: duplicate " + post);
-                duplicate = true;
-            } finally {
-                db.endTransaction();
+
+            for (Post post : posts) {
+                boolean duplicate = false;
+                final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+                db.beginTransaction();
+                try {
+                    insertPost(post);
+                    Log.i("PostsDb.addPost: added " + post);
+                    db.setTransactionSuccessful();
+                } catch (SQLiteConstraintException ex) {
+                    Log.w("PostsDb.addPost: duplicate " + post);
+                    duplicate = true;
+                } finally {
+                    db.endTransaction();
+                }
+                // important to notify outside of transaction
+                if (!duplicate) {
+                    notifyPostAdded(post);
+                }
             }
-            // important to notify outside of transaction
-            if (duplicate) {
-                notifyPostDuplicate(post);
-            } else {
-                notifyPostAdded(post);
+            if (completionRunnable != null) {
+                completionRunnable.run();
             }
         });
     }
@@ -240,7 +244,7 @@ public class PostsDb {
         });
     }
 
-    public void setOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
+    public void setOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId + " timestamp=" + timestamp);
             final ContentValues values = new ContentValues();
@@ -250,14 +254,14 @@ public class PostsDb {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.insertWithOnConflict(SeenTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-                notifyOutgoingPostSeen(ackId, seenByUserId, postId);
+                notifyOutgoingPostSeen(seenByUserId, postId);
             } catch (SQLiteConstraintException ex) {
                 Log.i("PostsDb.setOutgoingPostSeen: seen duplicate", ex);
-                notifyOutgoingPostSeen(ackId, seenByUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setOutgoingPostSeen: failed");
                 throw ex;
             }
+            completionRunnable.run();
         });
     }
 
@@ -327,14 +331,22 @@ public class PostsDb {
     }
 
     public void addComment(@NonNull Comment comment) {
+        addComments(Collections.singletonList(comment), null);
+    }
+
+    public void addComments(@NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            try {
-                insertComment(comment);
-                notifyCommentAdded(comment);
-                Log.i("PostsDb.addComment: added " + comment);
-            } catch (SQLiteConstraintException ex) {
-                Log.w("PostsDb.addComment: duplicate " + ex.getMessage() + " " + comment);
-                notifyCommentDuplicate(comment);
+            for (Comment comment : comments) {
+                try {
+                    insertComment(comment);
+                    notifyCommentAdded(comment);
+                    Log.i("PostsDb.addComment: added " + comment);
+                } catch (SQLiteConstraintException ex) {
+                    Log.w("PostsDb.addComment: duplicate " + ex.getMessage() + " " + comment);
+                }
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
             }
         });
     }
@@ -984,14 +996,6 @@ public class PostsDb {
         }
     }
 
-    private void notifyPostDuplicate(@NonNull Post post) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostDuplicate(post);
-            }
-        }
-    }
-
     private void notifyPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Observer observer : observers) {
@@ -1016,10 +1020,10 @@ public class PostsDb {
         }
     }
 
-    private void notifyOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
+    private void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Observer observer : observers) {
-                observer.onOutgoingPostSeen(ackId, seenByUserId, postId);
+                observer.onOutgoingPostSeen(seenByUserId, postId);
             }
         }
     }
@@ -1028,14 +1032,6 @@ public class PostsDb {
         synchronized (observers) {
             for (Observer observer : observers) {
                 observer.onCommentAdded(comment);
-            }
-        }
-    }
-
-    private void notifyCommentDuplicate(@NonNull Comment comment) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onCommentDuplicate(comment);
             }
         }
     }

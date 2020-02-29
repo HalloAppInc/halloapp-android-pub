@@ -13,6 +13,7 @@ import com.halloapp.posts.TransferPendingItemsTask;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
+import java.util.List;
 
 public class ConnectionObserver implements Connection.Observer {
 
@@ -46,13 +47,13 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onIncomingPostReceived(@NonNull Post post) {
-        PostsDb.getInstance(context).addPost(post);
+    public void onIncomingPostsReceived(@NonNull List<Post> posts, @NonNull String ackId) {
+        PostsDb.getInstance(context).addPosts(posts, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override
-    public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
-        PostsDb.getInstance(context).setOutgoingPostSeen(ackId, seenByUserId, postId, timestamp);
+    public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {
+        PostsDb.getInstance(context).setOutgoingPostSeen(seenByUserId, postId, timestamp, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override
@@ -61,8 +62,8 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onIncomingCommentReceived(@NonNull Comment comment) {
-        PostsDb.getInstance(context).addComment(comment);
+    public void onIncomingCommentsReceived(@NonNull List<Comment> comments, @NonNull String ackId) {
+        PostsDb.getInstance(context).addComments(comments, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override

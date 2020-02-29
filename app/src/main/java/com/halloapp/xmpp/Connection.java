@@ -97,10 +97,10 @@ public class Connection {
         void onDisconnected();
         void onLoginFailed();
         void onOutgoingPostSent(@NonNull String postId);
-        void onIncomingPostReceived(@NonNull Post post);
-        void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId, long timestamp);
+        void onIncomingPostsReceived(@NonNull List<Post> posts, @NonNull String ackId);
+        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId);
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
-        void onIncomingCommentReceived(@NonNull Comment comment);
+        void onIncomingCommentsReceived(@NonNull List<Comment> comments, @NonNull String ackId);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
         void onSubscribersChanged();
     }
@@ -628,13 +628,13 @@ public class Connection {
         }
     }
 
-    private void processPublishedItems(UserId feedUserId, List<PubsubItem> items) {
+    private boolean processPublishedItems(@NonNull UserId feedUserId, @NonNull List<PubsubItem> items, @NonNull String ackId) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getPublishedItems(items);
+        final List<Post> posts = new ArrayList<>();
+        final List<Comment> comments = new ArrayList<>();
         for (PublishedEntry entry : entries) {
-            if (isMe(entry.user)) {
-                sendAck(entry.id);
-            } else {
+            if (!isMe(entry.user)) {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     final Post post = new Post(0,
                             getUserId(entry.user),
@@ -649,7 +649,7 @@ public class Connection {
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
-                    observer.onIncomingPostReceived(post);
+                    posts.add(post);
                 } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
                     final Comment comment = new Comment(0,
                             feedUserId,
@@ -662,10 +662,17 @@ public class Connection {
                             false,
                             entry.text
                     );
-                    observer.onIncomingCommentReceived(comment);
+                    comments.add(comment);
                 }
             }
         }
+        if (!posts.isEmpty()) {
+            observer.onIncomingPostsReceived(posts, ackId);
+        }
+        if (!comments.isEmpty()) {
+            observer.onIncomingCommentsReceived(comments, ackId);
+        }
+        return !posts.isEmpty() || !comments.isEmpty();
     }
 
     private UserId getUserId(@NonNull String user) {
@@ -788,15 +795,14 @@ public class Connection {
                     if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
                         Log.i("connection: got pubsub " + msg);
                         //noinspection unchecked
-                        processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<PubsubItem>) itemsElem.getItems());
-                        handled = true;
+                        handled = processPublishedItems(getFeedUserId(itemsElem.getNode()), (List<PubsubItem>) itemsElem.getItems(), msg.getStanzaId());
                     }
                 }
                 if (!handled) {
                     final SeenReceipt seenReceipt = packet.getExtension(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE);
                     if (seenReceipt != null) {
                         Log.i("connection: got seen receipt " + msg);
-                        observer.onOutgoingPostSeen(packet.getStanzaId(), getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp());
+                        observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         handled = true;
                     }
                 }

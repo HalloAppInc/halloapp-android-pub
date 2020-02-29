@@ -53,8 +53,6 @@ public class MainPostsObserver implements PostsDb.Observer {
                 new UploadPostTask(post, mediaStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
-            connection.sendAck(post.postId);
-
             if (!post.media.isEmpty()) {
                 new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
@@ -63,11 +61,6 @@ public class MainPostsObserver implements PostsDb.Observer {
                 notifications.update();
             }
         }
-    }
-
-    @Override
-    public void onPostDuplicate(@NonNull Post post) {
-        connection.sendAck(post.postId);
     }
 
     @Override
@@ -84,8 +77,7 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
-        connection.sendAck(ackId);
+    public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
     }
 
     @Override
@@ -93,17 +85,10 @@ public class MainPostsObserver implements PostsDb.Observer {
         if (comment.isOutgoing()) {
             connection.sendComment(comment);
         } else { // if (comment.isIncoming())
-            connection.sendAck(comment.commentId);
-
             if (!HalloApp.instance.appActiveStatus && comment.postSenderUserId.isMe()) {
                 notifications.update();
             }
         }
-    }
-
-    @Override
-    public void onCommentDuplicate(@NonNull Comment comment) {
-        connection.sendAck(comment.commentId);
     }
 
     @Override

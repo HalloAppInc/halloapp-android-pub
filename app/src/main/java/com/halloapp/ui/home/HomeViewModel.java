@@ -54,11 +54,6 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDuplicate(@NonNull Post post) {
-            // do not update model on duplicate post
-        }
-
-        @Override
         public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidatePosts();
             invalidateCommentHistory();
@@ -74,7 +69,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
             invalidatePosts();
         }
 
@@ -84,10 +79,6 @@ public class HomeViewModel extends AndroidViewModel {
                 invalidatePosts();
                 invalidateCommentHistory();
             }
-        }
-
-        @Override
-        public void onCommentDuplicate(@NonNull Comment comment) {
         }
 
         @Override

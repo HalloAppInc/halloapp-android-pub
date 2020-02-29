@@ -36,11 +36,6 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDuplicate(@NonNull Post post) {
-            // do not update model on duplicate post
-        }
-
-        @Override
         public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
             if (senderUserId.isMe()) {
                 invalidatePosts();
@@ -59,7 +54,7 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onOutgoingPostSeen(@NonNull String ackId, @NonNull UserId seenByUserId, @NonNull String postId) {
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
             invalidatePosts();
         }
 
@@ -68,10 +63,6 @@ public class ProfileViewModel extends AndroidViewModel {
             if (comment.isIncoming()) {
                 invalidatePosts();
             }
-        }
-
-        @Override
-        public void onCommentDuplicate(@NonNull Comment comment) {
         }
 
         @Override
