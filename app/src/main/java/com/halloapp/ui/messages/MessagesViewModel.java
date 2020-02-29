@@ -40,10 +40,10 @@ public class MessagesViewModel extends AndroidViewModel {
         contactsList = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
-                final List<Contact> contacts = ContactsDb.getInstance(application).getMemberContacts();
+                final List<Contact> friends = ContactsDb.getInstance(application).getFriends();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
-                Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
-                return contacts;
+                Collections.sort(friends, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
+                return friends;
             }
         };
     }

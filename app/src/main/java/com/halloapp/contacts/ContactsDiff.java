@@ -31,7 +31,7 @@ class ContactsDiff {
                     contact.phone = addressBookContact.phone;
                     contact.name = addressBookContact.name;
                     contact.userId = null;
-                    contact.member = false;
+                    contact.friend = false;
                     updated.add(contact);
                 } else if (!Objects.equals(contact.name, addressBookContact.name)) {
                     contact.name = addressBookContact.name;

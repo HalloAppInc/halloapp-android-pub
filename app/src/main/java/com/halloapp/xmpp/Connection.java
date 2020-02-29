@@ -29,35 +29,23 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.sasl.SASLErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.pubsub.AccessModel;
-import org.jivesoftware.smackx.pubsub.Affiliation;
-import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.EventElementType;
-import org.jivesoftware.smackx.pubsub.Item;
-import org.jivesoftware.smackx.pubsub.ItemReply;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
-import org.jivesoftware.smackx.pubsub.Node;
-import org.jivesoftware.smackx.pubsub.NotificationType;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubException;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
-import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
-import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
-import org.jivesoftware.smackx.pubsub.provider.AffiliationsProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
-import org.jivesoftware.smackx.xdata.FormField;
-import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
@@ -67,11 +55,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,6 +75,7 @@ public class Connection {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
+    private PubSubManager pubSubManager;
     private Me me;
     private Observer observer;
     private Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
@@ -123,6 +109,7 @@ public class Connection {
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
         SmackConfiguration.DEBUG = BuildConfig.DEBUG;
+        Roster.setRosterLoadedAtLoginDefault(false);
     }
 
     public void setObserver(@NonNull Observer observer) {
@@ -161,8 +148,6 @@ public class Connection {
 
         Log.i("connection: connecting...");
 
-        ProviderManager.addExtensionProvider("affiliations", "http://jabber.org/protocol/pubsub#owner", new AffiliationsProvider()); // looks like a bug in smack -- this provider is not registered by default, so getAffiliationsAsOwner crashes with ClassCastException
-        ProviderManager.addExtensionProvider("affiliation", "http://jabber.org/protocol/pubsub", new HalloAffiliationProvider()); // smack doesn't handle affiliation='publish-only' type
         ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
@@ -235,20 +220,7 @@ public class Connection {
             return;
         }
 
-        Log.i("connection: configuring my nodes...");
-        try {
-            configureNode(getMyContactsNodeId(), (ItemEventListener<PayloadItem<SimplePayload>>) items -> {
-                Log.i("connection: got " + items.getItems().size() + " items on my contacts node, " + items.getPublishedDate());
-                observer.onSubscribersChanged();
-            });
-            configureNode(getMyFeedNodeId(), null);
-            configureOpenNode(getMyAvatarMetadataNodeId(), null);
-            configureOpenNode(getMyAvatarDataNodeId(), null);
-        } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | ConfigureNodeException e) {
-            Log.e("connection: cannot subscribe to pubsub", e);
-            disconnectInBackground();
-            return;
-        }
+        pubSubManager = PubSubManager.getInstance(connection/*, JidCreate.bareFromOrThrowUnchecked("pubsub")*/);
 
         try {
             connection.sendStanza(new Presence(Presence.Type.available));
@@ -301,30 +273,6 @@ public class Connection {
         return connection != null && connection.isConnected() && connection.isAuthenticated();
     }
 
-    public Future<Boolean> syncPubSub(@NonNull final Collection<UserId> userIds) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: sync pubsub: no connection");
-                return false;
-            }
-            try {
-                final Collection<Jid> jids = new ArrayList<>(userIds.size());
-                for (UserId userId : userIds) {
-                    if (!isMe(userId.rawId())) {
-                        jids.add(userIdToJid(userId));
-                    }
-                }
-                syncAffiliations(jids, getMyContactsNodeId());
-                syncAffiliations(jids, getMyFeedNodeId());
-                syncSubscriptions(jids);
-            } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException e) {
-                Log.e("connection: sync pubsub", e);
-                return false;
-            }
-            return true;
-        });
-    }
-
     public Future<Integer> requestDaysToExpiration() {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
@@ -363,13 +311,13 @@ public class Connection {
         });
     }
 
-    public Future<List<ContactsSyncResponseIq.Contact>> syncContacts(@NonNull final Collection<String> phones) {
+    public Future<List<ContactsSyncResponseIq.Contact>> syncContacts(@NonNull Collection<String> phones, boolean firstBatch) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: sync contacts: no connection");
                 return null;
             }
-            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(connection.getXMPPServiceDomain(), phones);
+            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(connection.getXMPPServiceDomain(), phones, firstBatch ? "set" : "add");
             try {
                 final ContactsSyncResponseIq response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
                 return response.contactList;
@@ -402,7 +350,6 @@ public class Connection {
                 Log.e("connection: cannot update avatar data, no connection");
                 return;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 final LeafNode myAvatarDataNode = pubSubManager.getNode(getMyAvatarDataNodeId());
                 final PublishedAvatarData data = new PublishedAvatarData(base64Data);
@@ -424,7 +371,6 @@ public class Connection {
                 Log.e("connection: cannot get avatar metadata, no connection");
                 return null;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 final LeafNode myAvatarDataNode = pubSubManager.getNode(getMyAvatarDataNodeId());
                 List<PubsubItem> items = myAvatarDataNode.getItems(1);
@@ -444,7 +390,6 @@ public class Connection {
                 Log.e("connection: cannot get avatar metadata, no connection");
                 return null;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 // TODO(jack): Possible to make this me handling cleaner?
                 final LeafNode avatarDataNode = pubSubManager.getNode(userId.isMe() ? getMyAvatarDataNodeId() : getAvatarDataNodeId(userIdToJid(userId)));
@@ -467,7 +412,6 @@ public class Connection {
                 Log.e("connection: cannot update avatar metadata, no connection");
                 return;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 final LeafNode myAvatarMetadataNode = pubSubManager.getNode(getMyAvatarMetadataNodeId());
                 final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(
@@ -496,7 +440,6 @@ public class Connection {
                 Log.e("connection: cannot get avatar metadata, no connection");
                 return null;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 final LeafNode myAvatarMetadataNode = pubSubManager.getNode(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)));
                 List<PubsubItem> items = myAvatarMetadataNode.getItems(1);
@@ -516,7 +459,6 @@ public class Connection {
                 Log.e("connection: cannot send post, no connection");
                 return;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
                 final PublishedEntry entry = new PublishedEntry(
@@ -547,7 +489,6 @@ public class Connection {
                 Log.e("connection: cannot send comment, no connection");
                 return;
             }
-            final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
             try {
                 final LeafNode feedNode = pubSubManager.getNode(
                         comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)));
@@ -615,7 +556,6 @@ public class Connection {
                 return null;
             }
             try {
-                final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
                 final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
 
                 final ArrayList<Post> historyPosts = new ArrayList<>();
@@ -650,193 +590,6 @@ public class Connection {
                 return null;
             }
         });
-    }
-
-    private class ConfigureNodeException extends PubSubException {
-
-        protected ConfigureNodeException(String nodeId) {
-            super(nodeId);
-        }
-    }
-
-    @WorkerThread
-    private void configureNode(@NonNull String nodeId, @Nullable ItemEventListener listener) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, PubSubException.NotAPubSubNodeException, ConfigureNodeException {
-        Preconditions.checkNotNull(connection);
-        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-        Node node = null;
-        try {
-            node = pubSubManager.getNode(nodeId);
-        } catch (XMPPException.XMPPErrorException e) {
-            if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
-                final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
-                configureForm.setAccessModel(AccessModel.whitelist);
-                configureForm.setPublishModel(PublishModel.open);
-                configureForm.setMaxItems(10);
-                configureForm.setNotifyDelete(false);
-                configureForm.setNotifyRetract(false);
-                configureForm.setNotificationType(NotificationType.normal);
-                configureForm.setItemReply(ItemReply.publisher);
-                final FormField field = new FormField("pubsub#send_last_published_item");
-                field.setType(FormField.Type.hidden);
-                configureForm.addField(field);
-                configureForm.setAnswer("pubsub#send_last_published_item", "never");
-                node = pubSubManager.createNode(nodeId, configureForm);
-            }
-        }
-        if (node == null) {
-            Log.e("connection: cannot create node");
-            throw new ConfigureNodeException(nodeId);
-        }
-        if (listener != null) {
-            node.addItemEventListener(listener);
-        }
-
-        node.subscribe(connection.getUser().asBareJid().toString());
-    }
-
-    @WorkerThread
-    private void configureOpenNode(@NonNull String nodeId, @Nullable ItemEventListener listener) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, PubSubException.NotAPubSubNodeException, ConfigureNodeException {
-        Preconditions.checkNotNull(connection);
-        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-        Node node = null;
-        try {
-            node = pubSubManager.getNode(nodeId);
-            final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
-            configureForm.setAccessModel(AccessModel.open); // For testing
-            configureForm.setPublishModel(PublishModel.open);
-            configureForm.setMaxItems(10);
-            configureForm.setNotifyDelete(false);
-            configureForm.setNotifyRetract(false);
-            configureForm.setNotificationType(NotificationType.normal);
-            configureForm.setItemReply(ItemReply.publisher);
-            final FormField field = new FormField("pubsub#send_last_published_item");
-            field.setType(FormField.Type.hidden);
-            configureForm.addField(field);
-            configureForm.setAnswer("pubsub#send_last_published_item", "never");
-            node.sendConfigurationForm(configureForm);
-        } catch (XMPPException.XMPPErrorException e) {
-            if (e.getStanzaError().getCondition() == StanzaError.Condition.item_not_found) {
-                final ConfigureForm configureForm = new ConfigureForm(DataForm.Type.submit);
-                configureForm.setAccessModel(AccessModel.open); // For testing
-                configureForm.setPublishModel(PublishModel.open);
-                configureForm.setMaxItems(10);
-                configureForm.setNotifyDelete(false);
-                configureForm.setNotifyRetract(false);
-                configureForm.setNotificationType(NotificationType.normal);
-                configureForm.setItemReply(ItemReply.publisher);
-                final FormField field = new FormField("pubsub#send_last_published_item");
-                field.setType(FormField.Type.hidden);
-                configureForm.addField(field);
-                configureForm.setAnswer("pubsub#send_last_published_item", "never");
-                node = pubSubManager.createNode(nodeId, configureForm);
-            }
-        }
-        if (node == null) {
-            Log.e("connection: cannot create node");
-            throw new ConfigureNodeException(nodeId);
-        }
-        if (listener != null) {
-            node.addItemEventListener(listener);
-        }
-
-        node.subscribe(connection.getUser().asBareJid().toString());
-    }
-
-    @WorkerThread
-    private void syncAffiliations(@NonNull Collection<Jid> jids, @NonNull String nodeId) throws XMPPException.XMPPErrorException, PubSubException.NotAPubSubNodeException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
-        Preconditions.checkNotNull(connection);
-        final Jid selfJid = connection.getUser().asEntityBareJid();
-        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-
-        final Node node = pubSubManager.getNode(nodeId);
-        final List<Affiliation> currentAffiliations = node.getAffiliationsAsOwner();
-        final List<Jid> currentJids  = new ArrayList<>();
-        for (Affiliation affiliation : currentAffiliations) {
-            if (affiliation.getJid() == null) {
-                continue;
-            }
-            Jid jid = affiliation.getJid();
-            if (jid.equals(selfJid)) {
-                continue;
-            }
-            if (affiliation.getAffiliation() == Affiliation.Type.member) {
-                currentJids.add(jid);
-            }
-        }
-
-        final List<Jid> removeJids = new ArrayList<>(currentJids);
-        removeJids.removeAll(jids);
-
-        final List<Jid> addJids = new ArrayList<>(jids);
-        addJids.removeAll(currentJids);
-
-        final List<Affiliation> modifyAffiliations = new ArrayList<>();
-        for (Jid jid : removeJids) {
-            if (!jid.equals(selfJid)) {
-                modifyAffiliations.add(new Affiliation(jid.asBareJid(), Affiliation.Type.none));
-            }
-        }
-        for (Jid jid : addJids) {
-            if (!jid.equals(selfJid)) {
-                modifyAffiliations.add(new Affiliation(jid.asBareJid(), Affiliation.Type.member));
-            }
-        }
-        if (!modifyAffiliations.isEmpty()) {
-            node.modifyAffiliationAsOwner(modifyAffiliations);
-        }
-    }
-
-    @WorkerThread
-    private void syncSubscriptions(@NonNull Collection<Jid> jids) throws XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException {
-        Preconditions.checkNotNull(connection);
-        final Jid selfJid = connection.getUser().asEntityBareJid();
-        final PubSubManager pubSubManager = PubSubManager.getInstance(connection);
-
-        final List<Affiliation> allAffiliations = pubSubManager.getAffiliations();
-        final Set<String> affiliatedFeedNodeIds = new HashSet<>();
-        for (Affiliation affiliation : allAffiliations) {
-            final String nodeId = affiliation.getNode();
-            if (isFeedNodeId(nodeId)) {
-                affiliatedFeedNodeIds.add(nodeId);
-            }
-        }
-
-        final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
-        final List<String> addFeedNodeIds = new ArrayList<>(jids.size());
-        for (Jid jid : jids) {
-            final String feedNodeId = getFeedNodeId(jid);
-            if (affiliatedFeedNodeIds.contains(feedNodeId)) {
-                addFeedNodeIds.add(feedNodeId);
-            }
-        }
-        for (Subscription subscription : subscriptions) {
-            if (subscription.getJid() == null) {
-                continue;
-            }
-            final String feedNodeId = subscription.getNode();
-            if (!isFeedNodeId(feedNodeId)) {
-                continue;
-            }
-            if (feedNodeId.equals(getMyFeedNodeId())) {
-                continue;
-            }
-            if (!addFeedNodeIds.remove(feedNodeId)) {
-                try {
-                    final Node node = pubSubManager.getNode(feedNodeId);
-                    node.unsubscribe(subscription.getJid().toString());
-                } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
-                    Log.e("connection: sync pubsub: cannot unsubscribe, no such node", e);
-                }
-            }
-        }
-        for (String addFeedNodeId : addFeedNodeIds) {
-            try {
-                final Node node = pubSubManager.getNode(addFeedNodeId);
-                node.subscribe(selfJid.asBareJid().toString());
-            } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
-                Log.e("connection: sync pubsub: cannot subscribe, no such node", e);
-            }
-        }
     }
 
     private void parsePublishedHistoryItems(UserId feedUserId, List<PubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
@@ -939,10 +692,6 @@ public class Connection {
         return getFeedNodeId(Preconditions.checkNotNull(connection).getUser());
     }
 
-    private String getMyContactsNodeId() {
-        return getContactsNodeId(Preconditions.checkNotNull(connection).getUser());
-    }
-
     private static String getAvatarMetadataNodeId(@NonNull Jid jid) {
         return getNodeId("avatar-metadata", jid);
     }
@@ -953,10 +702,6 @@ public class Connection {
 
     private static String getFeedNodeId(@NonNull Jid jid) {
         return getNodeId("feed", jid);
-    }
-
-    private static String getContactsNodeId(@NonNull Jid jid) {
-        return getNodeId("contacts", jid);
     }
 
     private static boolean isFeedNodeId(@NonNull String nodeId) {

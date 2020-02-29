@@ -16,12 +16,13 @@ import java.util.List;
 public class ContactsSyncResponseIq extends IQ {
 
     final static String ELEMENT = "contact_list";
-    final static String NAMESPACE = "ns:phonenumber:normalization";
+    final static String NAMESPACE = "halloapp:user:contacts";
 
     private static final String ELEMENT_CONTACT = "contact";
+    private static final String ELEMENT_USER_ID = "userid";
+    private static final String ELEMENT_ROLE = "role";
     private static final String ELEMENT_RAW = "raw";
     private static final String ELEMENT_NORMALIZED = "normalized";
-    private static final String ELEMENT_ROLE = "role";
 
     final List<Contact> contactList = new ArrayList<>();
 
@@ -54,6 +55,8 @@ public class ContactsSyncResponseIq extends IQ {
                 contact.normalizedPhone = Xml.readText(parser);
             } else if (ELEMENT_ROLE.equals(name)) {
                 contact.role = Xml.readText(parser);
+            } else if (ELEMENT_USER_ID.equals(name)) {
+                contact.userId = Xml.readText(parser);
             } else {
                 Xml.skip(parser);
             }
@@ -67,6 +70,7 @@ public class ContactsSyncResponseIq extends IQ {
     }
 
     public static class Contact {
+        public String userId;
         public String role;
         public String phone;
         public String normalizedPhone;

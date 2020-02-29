@@ -10,23 +10,26 @@ import java.util.Collection;
 public class ContactsSyncRequestIq extends IQ {
 
     private final static String ELEMENT = "contact_list";
-    private final static String NAMESPACE = "ns:phonenumber:normalization";
+    private final static String NAMESPACE = "halloapp:user:contacts";
 
     private static final String ELEMENT_CONTACT = "contact";
     private static final String ELEMENT_RAW = "raw";
 
+    private final String type;
     private final Collection<String> phones;
 
-    ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones) {
+    ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones, String type) {
         super(ELEMENT, NAMESPACE);
-        setType(IQ.Type.get);
+        setType(IQ.Type.set);
         setTo(to);
+        this.type = type;
         this.phones = phones;
     }
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
 
+        xml.attribute("type", type);
         xml.rightAngleBracket();
         for (String phone : phones) {
             xml.openElement(ELEMENT_CONTACT);

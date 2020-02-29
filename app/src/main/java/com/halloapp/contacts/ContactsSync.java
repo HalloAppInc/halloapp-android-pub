@@ -39,7 +39,6 @@ public class ContactsSync {
 
     public static final String ADDRESS_BOOK_SYNC_WORK_ID = "address-book-sync";
     public static final String CONTACT_SYNC_WORK_ID = "contact-sync";
-    public static final String PUBSUB_SYNC_WORK_ID = "pubsub-sync";
 
     private static final int CONTACT_SYNC_BATCH_SIZE = 128;
 
@@ -98,11 +97,6 @@ public class ContactsSync {
         WorkManager.getInstance(context).enqueueUniqueWork(CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
-    @MainThread
-    public void startPubSubSync() {
-        WorkManager.getInstance(context).enqueueUniqueWork(PUBSUB_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, new OneTimeWorkRequest.Builder(PubSubSyncWorker.class).build());
-    }
-
     @WorkerThread
     private ListenableWorker.Result performContactSync() {
 
@@ -132,12 +126,14 @@ public class ContactsSync {
         Log.i("ContactsSync.performContactSync: " + phones.keySet().size() + " phones to sync");
         final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
         final List<ContactsSyncResponseIq.Contact> contactSyncResults = new ArrayList<>(phonesBatch.size());
+        boolean firstBatch = true;
         for (String phone : phones.keySet()) {
             phonesBatch.add(phone);
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
+                    final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
+                    firstBatch = false;
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
                         phonesBatch.clear();
@@ -146,7 +142,7 @@ public class ContactsSync {
                         return ListenableWorker.Result.failure();
                     }
                 } catch (ExecutionException | InterruptedException e) {
-                    Log.e("ContactsSync.performContactSync: failed to sync batch");
+                    Log.e("ContactsSync.performContactSync: failed to sync batch", e);
                     return ListenableWorker.Result.failure();
                 }
             }
@@ -154,7 +150,7 @@ public class ContactsSync {
         if (phonesBatch.size() > 0) {
             Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
             try {
-                final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch).get();
+                final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
                 if (contactSyncBatchResults != null) {
                     contactSyncResults.addAll(contactSyncBatchResults);
                     phonesBatch.clear();
@@ -163,7 +159,7 @@ public class ContactsSync {
                     return ListenableWorker.Result.failure();
                 }
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.performContactSync: failed to sync last batch");
+                Log.e("ContactsSync.performContactSync: failed to sync last batch", e);
                 return ListenableWorker.Result.failure();
             }
         }
@@ -177,10 +173,10 @@ public class ContactsSync {
             }
             for (Contact contact : phoneContacts) {
                 boolean contactUpdated = false;
-                if (contact.member != ("member".equals(contactsSyncResult.role))) {
-                    contact.member = !contact.member;
+                if (contact.friend != ("friends".equals(contactsSyncResult.role))) {
+                    contact.friend = !contact.friend;
                     contactUpdated = true;
-                    Log.i("ContactsSync.performContactSync: update membership for " + contact.name + " to " + contact.member);
+                    Log.i("ContactsSync.performContactSync: update friendship for " + contact.name + " to " + contact.friend);
                 }
                 if (!Objects.equals(contact.userId == null ? null : contact.userId.rawId(), contactsSyncResult.normalizedPhone)) {
                     if (contactsSyncResult.normalizedPhone == null) {
@@ -199,28 +195,14 @@ public class ContactsSync {
 
         if (!updatedContacts.isEmpty()) {
             try {
-                contactsDb.updateContactsMembership(updatedContacts).get();
+                contactsDb.updateContactsFriendship(updatedContacts).get();
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.performContactSync: failed to update membership", e);
+                Log.e("ContactsSync.performContactSync: failed to update friendship", e);
                 return ListenableWorker.Result.failure();
             }
         }
 
         Log.i("ContactsSync.performContactSync: " + updatedContacts.size() + " contacts updated");
-
-        final Collection<UserId> memberUserIds = contactsDb.getMemberUserIds();
-        Log.i("ContactsSync.performContactSync: " + memberUserIds.size() + " to pubsub");
-
-        try {
-            final boolean result = Connection.getInstance().syncPubSub(memberUserIds).get();
-            if (!result) {
-                Log.e("ContactsSync.performContactSync: failed to sync pubsub");
-                return ListenableWorker.Result.failure();
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("ContactsSync.performContactSync: failed to sync pubsub", e);
-            return ListenableWorker.Result.failure();
-        }
 
         // TODO (ds): remove
         try {
@@ -282,28 +264,6 @@ public class ContactsSync {
                 return ListenableWorker.Result.success();
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.AddressBookSyncWorker", e);
-                return ListenableWorker.Result.failure();
-            }
-        }
-    }
-
-    public static class PubSubSyncWorker extends Worker {
-
-        public PubSubSyncWorker(
-                @NonNull Context context,
-                @NonNull WorkerParameters params) {
-            super(context, params);
-        }
-
-        @Override
-        public @NonNull Result doWork() {
-            try {
-                final Collection<UserId> memberUserIds = ContactsDb.getInstance(getApplicationContext()).getMemberUserIds();
-                Log.i("PubSubSyncWorker: " + memberUserIds.size() + " to pubsub");
-                Connection.getInstance().syncPubSub(memberUserIds).get();
-                return ListenableWorker.Result.success();
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("PubSubSyncWorker", e);
                 return ListenableWorker.Result.failure();
             }
         }

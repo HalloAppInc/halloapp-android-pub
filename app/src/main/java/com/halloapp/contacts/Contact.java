@@ -13,15 +13,15 @@ public class Contact {
     public @Nullable String name;
     public @Nullable String phone;
     public @Nullable UserId userId;
-    public boolean member;
+    public boolean friend;
 
-    public Contact(long id, long addressBookId, @Nullable String name, @Nullable String phone, @Nullable UserId userId, boolean member) {
+    public Contact(long id, long addressBookId, @Nullable String name, @Nullable String phone, @Nullable UserId userId, boolean friend) {
         this.id = id;
         this.addressBookId = addressBookId;
         this.name = name;
         this.phone = phone;
         this.userId = userId;
-        this.member = member;
+        this.friend = friend;
     }
 
     public Contact(@NonNull UserId userId) {
