@@ -108,6 +108,8 @@
     <string name="app_expiration_download_button">Download update</string>
     <string name="app_expired_explanation">This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>
     <string name="app_expiration_no_play_store">Google Play not installed</string>
+    <string name="see_all_comments">See all comments</string>
+    <string name="add_comment">Add comment</string>
     <plurals name="app_expiration_days_left">
         <item quantity="one">This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release.</item>
         <item quantity="other">This version of HalloApp will expire in %d days. Please go to the Google Play Store and download the latest release.</item>

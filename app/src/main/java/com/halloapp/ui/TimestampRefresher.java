@@ -25,7 +25,7 @@ public class TimestampRefresher extends ViewModel {
     };
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    void scheduleTimestampRefresh(long postTimestamp) {
+    public void scheduleTimestampRefresh(long postTimestamp) {
         long refreshTime = getRefreshTime(postTimestamp);
         if (refreshTime < refreshTimestampsTime) {
             refreshTimestampsTime = refreshTime;

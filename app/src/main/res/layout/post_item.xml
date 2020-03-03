@@ -80,55 +80,11 @@
                 android:layout_height="0.5dp"
                 android:background="@color/post_actions_separator"/>
 
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/post_footer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
+                android:layout_height="wrap_content"/>
 
-                <LinearLayout
-                    style="?actionButtonStyle"
-                    android:id="@+id/comment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/PostButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/comment"
-                        android:drawableStart="@drawable/ic_feed_comment"/>
-
-                    <View
-                        android:id="@+id/comments_indicator"
-                        android:layout_width="6dp"
-                        android:layout_height="6dp"
-                        android:layout_margin="6dp"
-                        android:background="@drawable/new_comments_indicator"/>
-                </LinearLayout>
-
-                <FrameLayout
-                    style="?actionButtonStyle"
-                    android:id="@+id/message"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="?selectableItemBackground">
-
-                    <TextView
-                        style="@style/PostButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/message"
-                        android:drawableStart="@drawable/ic_feed_message"/>
-
-                </FrameLayout>
-            </LinearLayout>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

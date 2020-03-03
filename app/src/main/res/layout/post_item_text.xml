@@ -23,7 +23,8 @@
     <Space
         android:id="@+id/seen_indicator_space"
         android:layout_width="0dp"
-        android:layout_height="18dp"/>
+        android:layout_height="18dp"
+        android:visibility="visible"/>
 
     <com.halloapp.widget.AvatarsLayout
         android:id="@+id/seen_indicator"
@@ -34,6 +35,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingBottom="12dp"
+        android:visibility="gone"
         app:alPaddingColor="@color/card_background"
         app:alPaddingSize="1dp"
         app:alElevation="2dp"
