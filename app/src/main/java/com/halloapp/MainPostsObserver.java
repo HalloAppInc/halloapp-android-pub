@@ -56,10 +56,7 @@ public class MainPostsObserver implements PostsDb.Observer {
             if (!post.media.isEmpty()) {
                 new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
-
-            if (!HalloApp.instance.appActiveStatus) {
-                notifications.update();
-            }
+            notifications.update();
         }
     }
 
@@ -85,7 +82,7 @@ public class MainPostsObserver implements PostsDb.Observer {
         if (comment.isOutgoing()) {
             connection.sendComment(comment);
         } else { // if (comment.isIncoming())
-            if (!HalloApp.instance.appActiveStatus && comment.postSenderUserId.isMe()) {
+            if (comment.postSenderUserId.isMe()) {
                 notifications.update();
             }
         }

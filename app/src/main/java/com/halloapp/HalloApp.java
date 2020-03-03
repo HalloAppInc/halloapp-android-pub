@@ -24,15 +24,10 @@ import io.fabric.sdk.android.Fabric;
 
 public class HalloApp extends Application {
 
-    public static HalloApp instance;
-    public boolean appActiveStatus;
-
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i("halloapp: onCreate");
-
-        instance = this;
 
         if (!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics());
@@ -62,6 +57,7 @@ public class HalloApp extends Application {
 
         connect();
 
+        //noinspection unused
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new LifecycleObserver() {
 
             final NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
@@ -78,13 +74,13 @@ public class HalloApp extends Application {
             void onBackground() {
                 Log.i("halloapp: onBackground");
                 unregisterReceiver(receiver);
-                appActiveStatus = false;
+                Notifications.getInstance(HalloApp.this).setEnabled(true);
             }
 
             @OnLifecycleEvent(Lifecycle.Event.ON_START)
             void onForeground() {
                 Log.i("halloapp: onForeground");
-                appActiveStatus = true;
+                Notifications.getInstance(HalloApp.this).setEnabled(false);
                 connect();
                 registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             }
@@ -106,7 +102,7 @@ public class HalloApp extends Application {
         Log.w("halloapp: low memory");
     }
 
-    public void sendPushTokenFromFirebase() {
+    public static void sendPushTokenFromFirebase() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {

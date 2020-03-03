@@ -48,6 +48,8 @@ public class Notifications {
 
     private long feedNotificationTimeCutoff;
 
+    private boolean enabled = true;
+
     public static Notifications getInstance(final @NonNull Context context) {
         if (instance == null) {
             synchronized(Notifications.class) {
@@ -80,6 +82,10 @@ public class Notifications {
         }
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void clear() {
         executor.execute(() -> {
             if (feedNotificationTimeCutoff != 0) {
@@ -91,6 +97,9 @@ public class Notifications {
     }
 
     public void update() {
+        if (!enabled) {
+            return;
+        }
         executor.execute(() -> {
             final String newPostsNotificationText = getNewPostsNotificationText();
             final String newCommentsNotificationText = getNewCommentsNotificationText();

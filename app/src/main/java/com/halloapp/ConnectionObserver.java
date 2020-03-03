@@ -28,7 +28,7 @@ public class ConnectionObserver implements Connection.Observer {
         if (Preferences.getInstance(context).getLastSyncTime() > 0) { // initial sync done in InitialSyncActivity
             new TransferPendingItemsTask(context).execute();
         }
-        HalloApp.instance.sendPushTokenFromFirebase();
+        HalloApp.sendPushTokenFromFirebase();
         new RequestExpirationInfoTask(Connection.getInstance(), context).execute();
     }
 
