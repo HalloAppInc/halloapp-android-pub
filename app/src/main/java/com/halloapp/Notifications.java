@@ -34,6 +34,8 @@ public class Notifications {
 
     private static Notifications instance;
 
+    public static final String ACTION_NOTIFY_FEED = "halloapp.intent.action.NOTIFY_FEED";
+
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
     private static final int FEED_NOTIFICATION_ID = 0;
 
@@ -190,6 +192,7 @@ public class Notifications {
                 .setContentText(body)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         final Intent contentIntent = new Intent(context, MainActivity.class);
+        contentIntent.setAction(ACTION_NOTIFY_FEED);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;

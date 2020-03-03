@@ -200,6 +200,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
                 startActivity(composerIntent);
             }
+        } else if (Notifications.ACTION_NOTIFY_FEED.equals(intent.getAction())) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_home);
         }
     }
 }
