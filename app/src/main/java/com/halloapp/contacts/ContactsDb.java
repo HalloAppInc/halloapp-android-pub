@@ -118,26 +118,53 @@ public class ContactsDb {
         });
     }
 
-    Future<Void> updateContactsFriendship(Collection<Contact> updatedContacts) {
+    public Future<Void> updateContactsServerData(Collection<Contact> updatedContacts) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
+            int updatedRows = 0;
             try {
                 for (Contact updateContact : updatedContacts) {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
-                    db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                    updatedRows += db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.id)},
                             SQLiteDatabase.CONFLICT_ABORT);
                 }
-                Log.i("ContactsDb.updateContactsFriendship: " + updatedContacts.size() + " updated");
+                Log.i("ContactsDb.updateContactsFriendship: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
             }
-            if (!updatedContacts.isEmpty()) {
+            if (updatedRows > 0) {
+                notifyContactsChanged();
+            }
+            return null;
+        });
+    }
+
+    public Future<Void> updateContactsFriendship(@NonNull List<ContactFriendship> contactsFriendship) {
+        return databaseWriteExecutor.submit(() -> {
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            int updatedRows = 0;
+            try {
+                for (ContactFriendship contactFriendship : contactsFriendship) {
+                    final ContentValues values = new ContentValues();
+                    values.put(ContactsTable.COLUMN_FRIEND, contactFriendship.friend);
+                    updatedRows += db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                            ContactsTable.COLUMN_USER_ID + "=? ",
+                            new String [] {contactFriendship.userId.rawId()},
+                            SQLiteDatabase.CONFLICT_ABORT);
+                }
+                Log.i("ContactsDb.updateContactsFriendship: " + updatedRows + " rows updated for " + contactsFriendship.size() + " contacts");
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updatedRows > 0) {
                 notifyContactsChanged();
             }
             return null;
@@ -330,6 +357,17 @@ public class ContactsDb {
             if (shmFile.exists() && !shmFile.delete()) {
                 Log.e("ContactsDb: cannot delete " + shmFile.getAbsolutePath());
             }
+        }
+    }
+
+
+    public static class ContactFriendship {
+        public final UserId userId;
+        public final boolean friend;
+
+        public ContactFriendship(@NonNull UserId userId, boolean friend) {
+            this.userId = userId;
+            this.friend = friend;
         }
     }
 }

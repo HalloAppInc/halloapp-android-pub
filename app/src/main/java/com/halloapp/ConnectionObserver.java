@@ -1,19 +1,23 @@
 package com.halloapp;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.ContactsSync;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.TransferPendingItemsTask;
+import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.ContactInfo;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ConnectionObserver implements Connection.Observer {
 
@@ -72,7 +76,18 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onSubscribersChanged() {
-        ContactsSync.getInstance(context).startContactSync();
+    public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId) {
+        final List<ContactsDb.ContactFriendship> contactsFriendship = new ArrayList<>(protocolContacts.size());
+        for (ContactInfo contact : protocolContacts) {
+            contactsFriendship.add(new ContactsDb.ContactFriendship(new UserId(contact.normalizedPhone), "friends".equals(contact.role)));
+        }
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+            try {
+                ContactsDb.getInstance(context).updateContactsFriendship(contactsFriendship).get();
+                Connection.getInstance().sendAck(ackId);
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("ConnectionObserver.onContactsChanged", e);
+            }
+        });
     }
 }

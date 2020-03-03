@@ -102,7 +102,7 @@ public class Connection {
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onIncomingCommentsReceived(@NonNull List<Comment> comments, @NonNull String ackId);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
-        void onSubscribersChanged();
+        void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
     }
 
     private Connection() {
@@ -151,6 +151,7 @@ public class Connection {
         ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
+        ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(DaysToExpirationIq.ELEMENT, DaysToExpirationIq.NAMESPACE, new DaysToExpirationIq.Provider());
@@ -311,7 +312,7 @@ public class Connection {
         });
     }
 
-    public Future<List<ContactsSyncResponseIq.Contact>> syncContacts(@NonNull Collection<String> phones, boolean firstBatch) {
+    public Future<List<ContactInfo>> syncContacts(@NonNull Collection<String> phones, boolean firstBatch) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: sync contacts: no connection");
@@ -320,7 +321,7 @@ public class Connection {
             final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(connection.getXMPPServiceDomain(), phones, firstBatch ? "set" : "add");
             try {
                 final ContactsSyncResponseIq response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
-                return response.contactList;
+                return response.contactList.contacts;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot sync contacts", e);
             }
@@ -803,6 +804,14 @@ public class Connection {
                     if (seenReceipt != null) {
                         Log.i("connection: got seen receipt " + msg);
                         observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final ContactList contactList = packet.getExtension(ContactList.ELEMENT, ContactList.NAMESPACE);
+                    if (contactList != null) {
+                        Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
+                        observer.onContactsChanged(contactList.contacts, packet.getStanzaId());
                         handled = true;
                     }
                 }

@@ -25,7 +25,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ContactsSyncResponseIq;
+import com.halloapp.xmpp.ContactInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -125,14 +125,14 @@ public class ContactsSync {
         }
         Log.i("ContactsSync.performContactSync: " + phones.keySet().size() + " phones to sync");
         final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
-        final List<ContactsSyncResponseIq.Contact> contactSyncResults = new ArrayList<>(phonesBatch.size());
+        final List<ContactInfo> contactSyncResults = new ArrayList<>(phonesBatch.size());
         boolean firstBatch = true;
         for (String phone : phones.keySet()) {
             phonesBatch.add(phone);
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
+                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
                     firstBatch = false;
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
@@ -150,7 +150,7 @@ public class ContactsSync {
         if (phonesBatch.size() > 0) {
             Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
             try {
-                final List<ContactsSyncResponseIq.Contact> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
+                final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
                 if (contactSyncBatchResults != null) {
                     contactSyncResults.addAll(contactSyncBatchResults);
                     phonesBatch.clear();
@@ -165,7 +165,7 @@ public class ContactsSync {
         }
 
         final Collection<Contact> updatedContacts = new ArrayList<>();
-        for (ContactsSyncResponseIq.Contact contactsSyncResult : contactSyncResults) {
+        for (ContactInfo contactsSyncResult : contactSyncResults) {
             final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
             if (phoneContacts == null) {
                 Log.e("ContactsSync.performContactSync: phone " + contactsSyncResult.phone + "returned from server doesn't match to local phones");
@@ -195,9 +195,9 @@ public class ContactsSync {
 
         if (!updatedContacts.isEmpty()) {
             try {
-                contactsDb.updateContactsFriendship(updatedContacts).get();
+                contactsDb.updateContactsServerData(updatedContacts).get();
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.performContactSync: failed to update friendship", e);
+                Log.e("ContactsSync.performContactSync: failed to update server data", e);
                 return ListenableWorker.Result.failure();
             }
         }
