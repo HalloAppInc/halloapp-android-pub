@@ -23,11 +23,9 @@ import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.CommentsActivity;
-import com.halloapp.ui.PostDetailsActivity;
 import com.halloapp.ui.VideoPlaybackActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.TimeFormatter;
-import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostImageView;
@@ -48,6 +46,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final LimitingTextView textView;
     private final View postActionsSeparator;
     private final PostMediaPagerAdapter mediaPagerAdapter;
+    final View footerSpacing;
 
     private final PostViewHolderParent parent;
     Post post;
@@ -65,6 +64,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         textView = itemView.findViewById(R.id.text);
         postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
+        footerSpacing = itemView.findViewById(R.id.footer_spacing);
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new PostMediaPagerAdapter();

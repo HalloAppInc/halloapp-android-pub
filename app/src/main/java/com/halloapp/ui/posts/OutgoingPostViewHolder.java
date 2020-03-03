@@ -22,7 +22,6 @@ public class OutgoingPostViewHolder extends PostViewHolder {
     private final View addCommentButton;
     private final View viewCommentsButton;
     private final AvatarsLayout seenIndicator;
-    private final View seenIndicatorSpace;
 
     public OutgoingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
@@ -30,9 +29,8 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         addCommentButton = itemView.findViewById(R.id.add_comment);
         viewCommentsButton = itemView.findViewById(R.id.view_comments);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
-        seenIndicatorSpace = itemView.findViewById(R.id.seen_indicator_space);
 
-        View.OnClickListener commentsClickListener = v -> {
+        final View.OnClickListener commentsClickListener = v -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
             intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
@@ -67,7 +65,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);
-            seenIndicatorSpace.setVisibility(View.GONE);
+            footerSpacing.setVisibility(View.GONE);
             seenIndicator.setContentDescription(itemView.getContext().getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
             seenIndicator.setAvatarCount(Math.min(post.seenByCount, MAX_SEEN_BY_AVATARS));
             if (seenIndicator.getChildCount() == MAX_SEEN_BY_AVATARS) {
@@ -75,7 +73,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             }
         } else {
             seenIndicator.setVisibility(View.GONE);
-            seenIndicatorSpace.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
+            footerSpacing.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
         }
     }
 }

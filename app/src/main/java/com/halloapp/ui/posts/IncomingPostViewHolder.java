@@ -1,6 +1,7 @@
 package com.halloapp.ui.posts;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.CallSuper;
@@ -48,6 +49,8 @@ public class IncomingPostViewHolder extends PostViewHolder {
         } else {
             commentsIndicator.setVisibility(View.GONE);
         }
+
+        footerSpacing.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
     }
 }
 

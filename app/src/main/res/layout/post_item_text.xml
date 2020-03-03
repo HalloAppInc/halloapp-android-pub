@@ -21,7 +21,7 @@
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
 
     <Space
-        android:id="@+id/seen_indicator_space"
+        android:id="@+id/footer_spacing"
         android:layout_width="0dp"
         android:layout_height="18dp"
         android:visibility="visible"/>

@@ -41,7 +41,7 @@
         tools:text="This is image caption"/>
 
     <Space
-        android:id="@+id/seen_indicator_space"
+        android:id="@+id/footer_spacing"
         android:layout_width="0dp"
         android:layout_height="12dp"
         android:visibility="visible"/>
