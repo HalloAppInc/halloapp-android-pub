@@ -220,7 +220,7 @@ public class Connection {
             return;
         }
 
-        pubSubManager = PubSubManager.getInstance(connection/*, JidCreate.bareFromOrThrowUnchecked("pubsub")*/);
+        pubSubManager = PubSubManager.getInstance(connection, JidCreate.bareFromOrThrowUnchecked("pubsub." + connection.getXMPPServiceDomain()));
 
         try {
             connection.sendStanza(new Presence(Presence.Type.available));
