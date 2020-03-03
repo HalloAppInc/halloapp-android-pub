@@ -3,6 +3,8 @@ package com.halloapp;
 import android.app.Application;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.text.TextUtils;
 
@@ -57,34 +59,7 @@ public class HalloApp extends Application {
 
         connect();
 
-        //noinspection unused
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new LifecycleObserver() {
-
-            final NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
-                public void onConnected(int type) {
-                    connect();
-                }
-
-                public void onDisconnected() {
-                    // do nothing
-                }
-            };
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-            void onBackground() {
-                Log.i("halloapp: onBackground");
-                unregisterReceiver(receiver);
-                Notifications.getInstance(HalloApp.this).setEnabled(true);
-            }
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_START)
-            void onForeground() {
-                Log.i("halloapp: onForeground");
-                Notifications.getInstance(HalloApp.this).setEnabled(false);
-                connect();
-                registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-            }
-        });
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new AppLifecycleObserver());
 
         DailyWorker.schedule(this);
 
@@ -118,6 +93,45 @@ public class HalloApp extends Application {
                         Connection.getInstance().sendPushToken(pushToken);
                     }
                 });
+    }
+
+    class AppLifecycleObserver implements LifecycleObserver {
+
+        private final Runnable disconnectOnBackgroundedRunnable = () -> Connection.getInstance().disconnect();
+        private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        private final NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
+
+            @Override
+            public void onConnected(int type) {
+                Log.i("halloapp: network connected, type=" + type);
+                connect();
+            }
+
+            @Override
+            public void onDisconnected() {
+                Log.i("halloapp: network disconnected");
+            }
+        };
+
+        @SuppressWarnings("unused")
+        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+        void onBackground() {
+            Log.i("halloapp: onBackground");
+            unregisterReceiver(receiver);
+            Notifications.getInstance(HalloApp.this).setEnabled(true);
+            mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
+        }
+
+        @SuppressWarnings("unused")
+        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+        void onForeground() {
+            Log.i("halloapp: onForeground");
+            Notifications.getInstance(HalloApp.this).setEnabled(false);
+            connect();
+            registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+            mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
+        }
     }
 
     static class StartContactSyncTask extends AsyncTask<Void, Void, Boolean> {
