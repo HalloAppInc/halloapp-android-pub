@@ -60,9 +60,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
-            if (comment.isIncoming()) {
-                invalidatePosts();
-            }
+            invalidatePosts();
         }
 
         @Override

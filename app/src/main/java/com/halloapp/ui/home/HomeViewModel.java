@@ -75,8 +75,8 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
+            invalidatePosts();
             if (comment.isIncoming()) {
-                invalidatePosts();
                 invalidateCommentHistory();
             }
         }
