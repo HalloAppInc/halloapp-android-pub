@@ -48,7 +48,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final PostMediaPagerAdapter mediaPagerAdapter;
     final View footerSpacing;
 
-    private final PostViewHolderParent parent;
+    final PostViewHolderParent parent;
     Post post;
 
     PostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {

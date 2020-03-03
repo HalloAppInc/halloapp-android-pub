@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,17 +10,123 @@
         android:id="@+id/comment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/comment_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingStart="0dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/comment"
+                tools:src="@color/color_primary_dark" />
+
+            <LinearLayout
+                android:id="@+id/comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="4dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/comment_footer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/comment_avatar"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/comment_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:singleLine="true"
+                    android:textAlignment="gravity"
+                    android:textDirection="locale"
+                    tools:text="Ded Pihtov" />
+
+                <com.halloapp.widget.LimitingTextView
+                    android:id="@+id/comment_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:gravity="center_vertical"
+                    android:lineSpacingMultiplier="1.1"
+                    android:textAppearance="?textAppearanceListItemSmall"
+                    android:textSize="16sp"
+                    app:ltvReadMore="@string/read_more"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/comment_footer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintStart_toStartOf="@+id/comment"
+                app:layout_constraintTop_toBottomOf="@id/comment">
+
+                <TextView
+                    android:id="@+id/comment_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="4dp"
+                    android:singleLine="true"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="1h" />
+
+                <ProgressBar
+                    android:id="@+id/comment_progress"
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/comment_reply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackground"
+                    android:paddingStart="16dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="4dp"
+                    android:singleLine="true"
+                    android:text="@string/reply"
+                    android:textColor="?android:attr/textColorSecondary" />
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/add_comment"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
         android:background="?selectableItemBackground"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/my_avatar"
@@ -29,33 +134,45 @@
             android:layout_height="28dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/comment"
-            tools:src="@color/color_primary_dark"/>
+            tools:src="@color/color_primary_dark" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:fontFamily="sans-serif-medium"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-medium"
+            android:singleLine="true"
+            android:text="@string/add_comment"
             android:textColor="?android:attr/textColorHint"
-            android:text="@string/add_comment"/>
+            android:textSize="16sp" />
 
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/view_comments"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:gravity="center_vertical"
         android:background="?selectableItemBackground"
-        android:singleLine="true"
-        android:textSize="16sp"
-        android:paddingStart="12dp"
+        android:paddingStart="60dp"
         android:paddingEnd="12dp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="?android:attr/textColorPrimary"
-        android:text="@string/see_all_comments"/>
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/PostButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="sans-serif-medium"
+            android:singleLine="true"
+            android:text="@string/see_all_comments"/>
+
+        <!-- use separate view instead of compound drawable for better vertical alignment -->
+        <View
+            style="@style/CommentsIndicator"
+            android:id="@+id/comments_indicator" />
+
+    </LinearLayout>
 
 </LinearLayout>

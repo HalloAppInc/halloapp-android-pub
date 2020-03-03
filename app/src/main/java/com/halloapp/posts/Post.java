@@ -28,6 +28,7 @@ public class Post {
     public int commentCount;
     public int unseenCommentCount;
     public int seenByCount;
+    public Comment firstComment;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({POST_SEEN_NO, POST_SEEN_YES_PENDING, POST_SEEN_YES})

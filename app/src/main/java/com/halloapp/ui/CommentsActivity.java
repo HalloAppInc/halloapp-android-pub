@@ -59,6 +59,8 @@ public class CommentsActivity extends AppCompatActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
+    public static final String EXTRA_REPLY_USER_ID = "reply_user_id";
+    public static final String EXTRA_REPLY_COMMENT_ID = "reply_comment_id";
     public static final String EXTRA_SHOW_KEYBOARD = "show_keyboard";
     public static final String EXTRA_NO_POST_LENGTH_LIMIT = "no_post_length_limit";
 
@@ -189,12 +191,17 @@ public class CommentsActivity extends AppCompatActivity {
 
         ContactsDb.getInstance(this).addObserver(contactsObserver);
 
+        final String replyUser;
+        final String replyCommentId;
         if (savedInstanceState != null) {
-            final String replyUser = savedInstanceState.getString(KEY_REPLY_USER_ID);
-            final String replyCommentId = savedInstanceState.getString(KEY_REPLY_COMMENT_ID);
-            if (replyUser != null && replyCommentId != null) {
-                updateReplyIndicator(new UserId(replyUser), replyCommentId);
-            }
+            replyUser = savedInstanceState.getString(KEY_REPLY_USER_ID);
+            replyCommentId = savedInstanceState.getString(KEY_REPLY_COMMENT_ID);
+        } else {
+            replyUser = getIntent().getStringExtra(EXTRA_REPLY_USER_ID);
+            replyCommentId = getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID);
+        }
+        if (replyUser != null && replyCommentId != null) {
+            updateReplyIndicator(new UserId(replyUser), replyCommentId);
         }
     }
 

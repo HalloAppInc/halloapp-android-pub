@@ -23,11 +23,8 @@
             android:text="@string/comment" />
 
         <View
-            android:id="@+id/comments_indicator"
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/new_comments_indicator" />
+            style="@style/CommentsIndicator"
+            android:id="@+id/comments_indicator" />
     </LinearLayout>
 
     <FrameLayout

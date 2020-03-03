@@ -54,6 +54,16 @@
         <item name="android:paddingBottom">1dp</item>
     </style>
 
+    <style name="CommentsIndicator">
+        <item name="android:layout_width">6dp</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:layout_marginTop">7.5dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:background">@drawable/new_comments_indicator</item>
+    </style>
+
     <style name="comments_history_animation">
         <item name="android:windowEnterAnimation">@anim/comments_history_in</item>
         <item name="android:windowExitAnimation">@anim/comments_history_out</item>

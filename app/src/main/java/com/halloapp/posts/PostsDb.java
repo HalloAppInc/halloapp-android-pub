@@ -524,6 +524,10 @@ public class PostsDb {
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "c.comment_count" + ", " +
                 "c.seen_comment_count" + ", " +
+                "fc.first_comment_id" + ", " +
+                "fc.first_comment_user_id" + ", " +
+                "fc.first_comment_text" + ", " +
+                "fc.first_comment_timestamp" + ", " +
                 "s.seen_by_count" + " " +
             "FROM " + PostsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
@@ -542,10 +546,21 @@ public class PostsDb {
                 "SELECT " +
                     CommentsTable.COLUMN_POST_SENDER_USER_ID + "," +
                     CommentsTable.COLUMN_POST_ID + "," +
+                    "min(timestamp) as min_timestamp" + "," +
                     "count(*) AS comment_count" + ", " +
                     "sum(" + CommentsTable.COLUMN_SEEN + ") AS seen_comment_count" + " " +
                     "FROM " + CommentsTable.TABLE_NAME + " GROUP BY " + CommentsTable.COLUMN_POST_SENDER_USER_ID+ ", " + CommentsTable.COLUMN_POST_ID + ") " +
                 "AS c ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=c." + CommentsTable.COLUMN_POST_SENDER_USER_ID + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=c." + CommentsTable.COLUMN_POST_ID + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    CommentsTable.COLUMN_POST_SENDER_USER_ID + "," +
+                    CommentsTable.COLUMN_POST_ID + "," +
+                    CommentsTable.COLUMN_TIMESTAMP + " AS first_comment_timestamp," +
+                    CommentsTable.COLUMN_COMMENT_ID + " AS first_comment_id, " +
+                    CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " AS first_comment_user_id, " +
+                    CommentsTable.COLUMN_TEXT + " AS first_comment_text " +
+                    "FROM " + CommentsTable.TABLE_NAME + " ) " +
+                "AS fc ON " + "fc.first_comment_timestamp=c.min_timestamp AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=fc." + CommentsTable.COLUMN_POST_SENDER_USER_ID + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=fc." + CommentsTable.COLUMN_POST_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
                     SeenTable.COLUMN_POST_ID + "," +
@@ -577,7 +592,20 @@ public class PostsDb {
                             cursor.getString(6));
                     post.commentCount = cursor.getInt(15);
                     post.unseenCommentCount = post.commentCount - cursor.getInt(16);
-                    post.seenByCount = cursor.getInt(17);
+                    final String firstCommentId = cursor.getString(17);
+                    if (firstCommentId != null) {
+                        post.firstComment = new Comment(0,
+                                post.senderUserId,
+                                post.postId,
+                                new UserId(cursor.getString(18)),
+                                firstCommentId,
+                                null,
+                                cursor.getLong(20),
+                                true,
+                                true,
+                                cursor.getString(19));
+                    }
+                    post.seenByCount = cursor.getInt(21);
                 }
                 final String mediaId = cursor.getString(7);
                 if (mediaId != null) {
