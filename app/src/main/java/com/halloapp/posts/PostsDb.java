@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -19,15 +17,16 @@ import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.posts.tables.CommentsTable;
+import com.halloapp.posts.tables.MediaTable;
+import com.halloapp.posts.tables.PostsTable;
+import com.halloapp.posts.tables.SeenTable;
 import com.halloapp.util.Log;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -37,10 +36,9 @@ public class PostsDb {
 
     private final Executor databaseWriteExecutor = Executors.newSingleThreadExecutor();
 
-    private final Context context;
-    private final DatabaseHelper databaseHelper;
+    private final PostsDbObservers observers = new PostsDbObservers();
+    private final PostsDbHelper databaseHelper;
     private final MediaStore mediaStore;
-    private final Set<Observer> observers = new HashSet<>();
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -80,21 +78,16 @@ public class PostsDb {
     }
 
     private PostsDb(final @NonNull Context context) {
-        this.context = context.getApplicationContext();
-        databaseHelper = new DatabaseHelper(context.getApplicationContext());
+        databaseHelper = new PostsDbHelper(context.getApplicationContext());
         mediaStore = MediaStore.getInstance(context);
     }
 
     public void addObserver(@NonNull Observer observer) {
-        synchronized (observers) {
-            observers.add(observer);
-        }
+        observers.addObserver(observer);
     }
 
     public void removeObserver(@NonNull Observer observer) {
-        synchronized (observers) {
-            observers.remove(observer);
-        }
+        observers.removeObserver(observer);
     }
 
     public void addPost(@NonNull Post post) {
@@ -120,7 +113,7 @@ public class PostsDb {
                 }
                 // important to notify outside of transaction
                 if (!duplicate) {
-                    notifyPostAdded(post);
+                    observers.notifyPostAdded(post);
                 }
             }
             if (completionRunnable != null) {
@@ -184,7 +177,7 @@ public class PostsDb {
                     PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
                     new String [] {senderUserId.rawId(), postId});
             if (deleteCount > 0) {
-                notifyPostDeleted(senderUserId, postId);
+                observers.notifyPostDeleted(senderUserId, postId);
             }
         });
     }
@@ -200,7 +193,7 @@ public class PostsDb {
                         PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
                         new String [] {senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyIncomingPostSeen(senderUserId, postId);
+                observers.notifyIncomingPostSeen(senderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setIncomingPostSeen: failed");
                 throw ex;
@@ -254,7 +247,7 @@ public class PostsDb {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.insertWithOnConflict(SeenTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-                notifyOutgoingPostSeen(seenByUserId, postId);
+                observers.notifyOutgoingPostSeen(seenByUserId, postId);
             } catch (SQLiteConstraintException ex) {
                 Log.i("PostsDb.setOutgoingPostSeen: seen duplicate", ex);
             } catch (SQLException ex) {
@@ -276,7 +269,7 @@ public class PostsDb {
                         PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
                         new String [] {senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostUpdated(senderUserId, postId);
+                observers.notifyPostUpdated(senderUserId, postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setPostTransferred: failed");
                 throw ex;
@@ -310,7 +303,7 @@ public class PostsDb {
                         MediaTable.COLUMN_MEDIA_ID + "=?",
                         new String [] {media.id},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyPostUpdated(post.senderUserId, post.postId);
+                observers.notifyPostUpdated(post.senderUserId, post.postId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setMediaTransferred: failed", ex);
                 throw ex;
@@ -339,7 +332,7 @@ public class PostsDb {
             for (Comment comment : comments) {
                 try {
                     insertComment(comment);
-                    notifyCommentAdded(comment);
+                    observers.notifyCommentAdded(comment);
                     Log.i("PostsDb.addComment: added " + comment);
                 } catch (SQLiteConstraintException ex) {
                     Log.w("PostsDb.addComment: duplicate " + ex.getMessage() + " " + comment);
@@ -381,7 +374,7 @@ public class PostsDb {
                         CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
                         new String [] {commentSenderUserId.rawId(), commentId},
                         SQLiteDatabase.CONFLICT_ABORT);
-                notifyCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
+                observers.notifyCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentTransferred: failed");
                 throw ex;
@@ -396,12 +389,12 @@ public class PostsDb {
             values.put(CommentsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
-                int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                         CommentsTable.COLUMN_SEEN + "=?",
                         new String [] {seen ? "0" : "1"},
                         SQLiteDatabase.CONFLICT_ABORT);
                 if (updatedCount > 0) {
-                    notifyCommentsSeen(UserId.ME, "");
+                    observers.notifyCommentsSeen(UserId.ME, "");
                 }
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentsSeen: failed");
@@ -421,14 +414,14 @@ public class PostsDb {
             values.put(CommentsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
-                int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " +
                                 CommentsTable.COLUMN_POST_ID + "=? AND " +
                                 CommentsTable.COLUMN_SEEN + "=" + (seen ? 0 : 1),
                         new String [] {postSenderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
                 if (updatedCount > 0) {
-                    notifyCommentsSeen(postSenderUserId, postId);
+                    observers.notifyCommentsSeen(postSenderUserId, postId);
                 }
             } catch (SQLException ex) {
                 Log.e("PostsDb.setCommentsSeen: failed");
@@ -469,7 +462,7 @@ public class PostsDb {
             // important to notify outside of transaction
             if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
                 Collections.sort(addedHistoryPosts, (o1, o2) -> Long.compare(o2.timestamp, o1.timestamp)); // sort, so download would happen in reverse order
-                notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
+                observers.notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
             }
         });
     }
@@ -1008,7 +1001,7 @@ public class PostsDb {
         if (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0) {
             db.execSQL("VACUUM");
             Log.i("PostsDb.cleanup: vacuum");
-            notifyPostsCleanup();
+            observers.notifyPostsCleanup();
         }
     }
 
@@ -1016,279 +1009,7 @@ public class PostsDb {
         return System.currentTimeMillis() - Constants.POSTS_EXPIRATION;
     }
 
-    private void notifyPostAdded(@NonNull Post post) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostAdded(post);
-            }
-        }
-    }
-
-    private void notifyPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostDeleted(senderUserId, postId);
-            }
-        }
-    }
-
-    private void notifyPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostUpdated(senderUserId, postId);
-            }
-        }
-    }
-
-    private void notifyIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onIncomingPostSeen(senderUserId, postId);
-            }
-        }
-    }
-
-    private void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onOutgoingPostSeen(seenByUserId, postId);
-            }
-        }
-    }
-
-    private void notifyCommentAdded(@NonNull Comment comment) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onCommentAdded(comment);
-            }
-        }
-    }
-
-    private void notifyCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
-            }
-        }
-    }
-
-    private void notifyCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onCommentsSeen(postSenderUserId, postId);
-            }
-        }
-    }
-
-    private void notifyHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onHistoryAdded(historyPosts, historyComments);
-            }
-        }
-    }
-
-    private void notifyPostsCleanup() {
-        synchronized (observers) {
-            for (Observer observer : observers) {
-                observer.onPostsCleanup();
-            }
-        }
-    }
-
     public void deleteDb() {
         databaseHelper.deleteDb();
-    }
-
-    private static final class PostsTable implements BaseColumns {
-
-        private PostsTable() { }
-
-        static final String TABLE_NAME = "posts";
-
-        static final String INDEX_POST_KEY = "post_key";
-        static final String INDEX_TIMESTAMP = "timestamp";
-
-        static final String TRIGGER_DELETE = "on_post_delete";
-
-        static final String COLUMN_SENDER_USER_ID = "sender_user_id";
-        static final String COLUMN_POST_ID = "post_id";
-        static final String COLUMN_TIMESTAMP = "timestamp";
-        static final String COLUMN_TRANSFERRED = "transferred";
-        static final String COLUMN_SEEN = "seen";
-        static final String COLUMN_TEXT = "text";
-    }
-
-    private static final class MediaTable implements BaseColumns {
-
-        private MediaTable() { }
-
-        static final String TABLE_NAME = "media";
-
-        static final String COLUMN_MEDIA_ID = "id";
-        static final String COLUMN_POST_ROW_ID = "post_row_id";
-        static final String COLUMN_TYPE = "type";
-        static final String COLUMN_TRANSFERRED = "transferred";
-        static final String COLUMN_URL = "url";
-        static final String COLUMN_FILE = "file";
-        static final String COLUMN_ENC_KEY = "enckey";
-        static final String COLUMN_SHA256_HASH = "sha256hash";
-        static final String COLUMN_WIDTH = "width";
-        static final String COLUMN_HEIGHT = "height";
-    }
-
-    private static final class CommentsTable implements BaseColumns {
-
-        private CommentsTable() { }
-
-        static final String TABLE_NAME = "comments";
-
-        static final String INDEX_COMMENT_KEY = "comment_key";
-
-        static final String COLUMN_POST_SENDER_USER_ID = "post_sender_user_id";
-        static final String COLUMN_POST_ID = "post_id";
-        static final String COLUMN_COMMENT_SENDER_USER_ID = "comment_sender_user_id";
-        static final String COLUMN_COMMENT_ID = "comment_id";
-        static final String COLUMN_PARENT_ID = "parent_id";
-        static final String COLUMN_TIMESTAMP = "timestamp";
-        static final String COLUMN_TRANSFERRED = "transferred";
-        static final String COLUMN_SEEN = "seen";
-        static final String COLUMN_TEXT = "text";
-    }
-
-    private static final class SeenTable implements BaseColumns {
-
-        private SeenTable() { }
-
-        static final String TABLE_NAME = "seen";
-
-        static final String INDEX_SEEN_KEY = "seen_key";
-
-        static final String COLUMN_SEEN_BY_USER_ID = "user_id";
-        static final String COLUMN_POST_ID = "post_id";
-        static final String COLUMN_TIMESTAMP = "timestamp";
-    }
-
-    private class DatabaseHelper extends SQLiteOpenHelper {
-
-        private static final String DATABASE_NAME = "posts.db";
-        private static final int DATABASE_VERSION = 7;
-
-        DatabaseHelper(final @NonNull Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            setWriteAheadLoggingEnabled(true);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("DROP TABLE IF EXISTS " + PostsTable.TABLE_NAME);
-            db.execSQL("CREATE TABLE " + PostsTable.TABLE_NAME + " ("
-                    + PostsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + PostsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
-                    + PostsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
-                    + PostsTable.COLUMN_TIMESTAMP + " INTEGER,"
-                    + PostsTable.COLUMN_TRANSFERRED + " INTEGER,"
-                    + PostsTable.COLUMN_SEEN + " INTEGER,"
-                    + PostsTable.COLUMN_TEXT + " TEXT"
-                    + ");");
-
-            db.execSQL("DROP TABLE IF EXISTS " + MediaTable.TABLE_NAME);
-            db.execSQL("CREATE TABLE " + MediaTable.TABLE_NAME + " ("
-                    + MediaTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + MediaTable.COLUMN_MEDIA_ID + " TEXT NOT NULL,"
-                    + MediaTable.COLUMN_POST_ROW_ID + " INTEGER,"
-                    + MediaTable.COLUMN_TYPE + " INTEGER,"
-                    + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
-                    + MediaTable.COLUMN_URL + " TEXT,"
-                    + MediaTable.COLUMN_FILE + " FILE,"
-                    + MediaTable.COLUMN_ENC_KEY + " BLOB,"
-                    + MediaTable.COLUMN_SHA256_HASH + " BLOB,"
-                    + MediaTable.COLUMN_WIDTH + " INTEGER,"
-                    + MediaTable.COLUMN_HEIGHT + " INTEGER"
-                    + ");");
-
-            db.execSQL("DROP TABLE IF EXISTS " + CommentsTable.TABLE_NAME);
-            db.execSQL("CREATE TABLE " + CommentsTable.TABLE_NAME + " ("
-                    + CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + CommentsTable.COLUMN_POST_SENDER_USER_ID + " TEXT NOT NULL,"
-                    + CommentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
-                    + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " TEXT NOT NULL,"
-                    + CommentsTable.COLUMN_COMMENT_ID + " TEXT NOT NULL,"
-                    + CommentsTable.COLUMN_PARENT_ID + " INTEGER,"
-                    + CommentsTable.COLUMN_TIMESTAMP + " INTEGER,"
-                    + CommentsTable.COLUMN_TRANSFERRED + " INTEGER,"
-                    + CommentsTable.COLUMN_SEEN + " INTEGER,"
-                    + CommentsTable.COLUMN_TEXT + " TEXT"
-                    + ");");
-
-            db.execSQL("DROP TABLE IF EXISTS " + SeenTable.TABLE_NAME);
-            db.execSQL("CREATE TABLE " + SeenTable.TABLE_NAME + " ("
-                    + SeenTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + SeenTable.COLUMN_POST_ID + " TEXT NOT NULL REFERENCES " + PostsTable.TABLE_NAME + "(" + PostsTable.COLUMN_POST_ID + ") ON DELETE CASCADE,"
-                    + SeenTable.COLUMN_SEEN_BY_USER_ID + " TEXT NOT NULL,"
-                    + SeenTable.COLUMN_TIMESTAMP
-                    + ");");
-
-            db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
-            db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
-                    + PostsTable.COLUMN_SENDER_USER_ID + ", "
-                    + PostsTable.COLUMN_POST_ID
-                    + ");");
-
-            db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
-            db.execSQL("CREATE UNIQUE INDEX " + CommentsTable.INDEX_COMMENT_KEY + " ON " + CommentsTable.TABLE_NAME + "("
-                    + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", "
-                    + CommentsTable.COLUMN_COMMENT_ID
-                    + ");");
-
-            db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
-            db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
-                    + PostsTable.COLUMN_TIMESTAMP
-                    + ");");
-
-            db.execSQL("DROP INDEX IF EXISTS " + SeenTable.INDEX_SEEN_KEY);
-            db.execSQL("CREATE UNIQUE INDEX " + SeenTable.INDEX_SEEN_KEY + " ON " + SeenTable.TABLE_NAME + "("
-                    + SeenTable.COLUMN_POST_ID + ", "
-                    + SeenTable.COLUMN_SEEN_BY_USER_ID
-                    + ");");
-
-            db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
-            db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
-                    + "BEGIN "
-                    +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
-                    + "END;");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            //noinspection SwitchStatementWithTooFewBranches
-            switch (oldVersion) {
-                default: {
-                    onCreate(db);
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            onCreate(db);
-        }
-
-        private void deleteDb() {
-            close();
-            final File dbFile = context.getDatabasePath(getDatabaseName());
-            if (!dbFile.delete()) {
-                Log.e("PostsDb: cannot delete " + dbFile.getAbsolutePath());
-            }
-            final File walFile = new File(dbFile.getAbsolutePath() + "-wal");
-            if (walFile.exists() && !walFile.delete()) {
-                Log.e("PostsDb: cannot delete " + walFile.getAbsolutePath());
-            }
-            final File shmFile = new File(dbFile.getAbsolutePath() + "-shm");
-            if (shmFile.exists() && !shmFile.delete()) {
-                Log.e("PostsDb: cannot delete " + shmFile.getAbsolutePath());
-            }
-        }
     }
 }
