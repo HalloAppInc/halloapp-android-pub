@@ -38,10 +38,7 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.EventElementType;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
-import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
-import org.jivesoftware.smackx.pubsub.PubSubException;
-import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
@@ -75,10 +72,10 @@ public class Connection {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
-    private PubSubManager pubSubManager;
+    private PubSubHelper pubSubHelper;
     private Me me;
     private Observer observer;
-    private Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
+    private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
 
     public static Connection getInstance() {
@@ -221,7 +218,7 @@ public class Connection {
             return;
         }
 
-        pubSubManager = PubSubManager.getInstance(connection, JidCreate.bareFromOrThrowUnchecked("pubsub." + connection.getXMPPServiceDomain()));
+        pubSubHelper = new PubSubHelper(connection);
 
         try {
             connection.sendStanza(new Presence(Presence.Type.available));
@@ -352,15 +349,14 @@ public class Connection {
                 return;
             }
             try {
-                final LeafNode myAvatarDataNode = pubSubManager.getNode(getMyAvatarDataNodeId());
                 final PublishedAvatarData data = new PublishedAvatarData(base64Data);
                 final SimplePayload payload = new SimplePayload(data.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
-                myAvatarDataNode.publish(item);
-                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+                pubSubHelper.publishItem(getMyAvatarDataNodeId(), item);
+                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
 
                 // TODO(jack): Observer avatar update? (For all)
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.w("connection: cannot publish avatar data", e);
             }
         });
@@ -373,12 +369,11 @@ public class Connection {
                 return null;
             }
             try {
-                final LeafNode myAvatarDataNode = pubSubManager.getNode(getMyAvatarDataNodeId());
-                List<PubsubItem> items = myAvatarDataNode.getItems(1);
+                final List<PubsubItem> items = pubSubHelper.getItems(getMyAvatarDataNodeId(), 1);
                 if (items.size() > 0) {
                     return items.get(0);
                 }
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.w("connection: cannot get my avatar data", e);
             }
             return null;
@@ -393,14 +388,13 @@ public class Connection {
             }
             try {
                 // TODO(jack): Possible to make this me handling cleaner?
-                final LeafNode avatarDataNode = pubSubManager.getNode(userId.isMe() ? getMyAvatarDataNodeId() : getAvatarDataNodeId(userIdToJid(userId)));
                 List<String> itemIds = new ArrayList<>();
                 itemIds.add(itemId);
-                List<PubsubItem> items = avatarDataNode.getItems(itemIds);
+                List<PubsubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarDataNodeId() : getAvatarDataNodeId(userIdToJid(userId)), itemIds);
                 if (items.size() > 0) {
                     return items.get(0);
                 }
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.w("connection: cannot get avatar metadata", e);
             }
             return null;
@@ -414,18 +408,17 @@ public class Connection {
                 return;
             }
             try {
-                final LeafNode myAvatarMetadataNode = pubSubManager.getNode(getMyAvatarMetadataNodeId());
                 final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(
                         id,
                         3000,
                         64, 64);
                 final SimplePayload payload = new SimplePayload(metadata.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
-                myAvatarMetadataNode.publish(item);
-                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+                pubSubHelper.publishItem(getMyAvatarMetadataNodeId(), item);
+                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
 
                 //observer.onOutgoingPostSent(post.postId);
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.w("connection: cannot update avatar metadata", e);
             }
         });
@@ -442,12 +435,11 @@ public class Connection {
                 return null;
             }
             try {
-                final LeafNode myAvatarMetadataNode = pubSubManager.getNode(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)));
-                List<PubsubItem> items = myAvatarMetadataNode.getItems(1);
+                List<PubsubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)), 1);
                 if (items.size() > 0) {
                     return items.get(0);
                 }
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.w("connection: cannot get avatar metadata", e);
             }
             return null;
@@ -461,7 +453,6 @@ public class Connection {
                 return;
             }
             try {
-                final LeafNode myFeedNode = pubSubManager.getNode(getMyFeedNodeId());
                 final PublishedEntry entry = new PublishedEntry(
                         PublishedEntry.ENTRY_FEED,
                         null,
@@ -475,10 +466,10 @@ public class Connection {
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
-                myFeedNode.publish(item);
-                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+                pubSubHelper.publishItem(getMyFeedNodeId(), item);
+                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 observer.onOutgoingPostSent(post.postId);
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
             }
         });
@@ -491,8 +482,6 @@ public class Connection {
                 return;
             }
             try {
-                final LeafNode feedNode = pubSubManager.getNode(
-                        comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)));
                 final PublishedEntry entry = new PublishedEntry(
                         PublishedEntry.ENTRY_COMMENT,
                         null,
@@ -503,10 +492,10 @@ public class Connection {
                         comment.parentCommentId);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(comment.commentId, payload);
-                feedNode.publish(item);
-                // the LeafNode.publish waits for IQ reply, so we can report the post was acked here
+                pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
+                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 observer.onOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
-            } catch (SmackException.NotConnectedException | InterruptedException | PubSubException.NotAPubSubNodeException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send comment", e);
             }
         });
@@ -557,7 +546,7 @@ public class Connection {
                 return null;
             }
             try {
-                final List<Subscription> subscriptions = pubSubManager.getSubscriptions();
+                final List<Subscription> subscriptions = pubSubHelper.getSubscriptions();
 
                 final ArrayList<Post> historyPosts = new ArrayList<>();
                 final Collection<Comment> historyComments = new ArrayList<>();
@@ -573,16 +562,14 @@ public class Connection {
                         continue;
                     }
                     try {
-                        final LeafNode node = pubSubManager.getNode(feedNodeId);
-                        parsePublishedHistoryItems(getFeedUserId(feedNodeId), node.getItems(), historyPosts, historyComments);
-                    } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
+                        parsePublishedHistoryItems(getFeedUserId(feedNodeId), pubSubHelper.getItems(feedNodeId), historyPosts, historyComments);
+                    } catch (XMPPException.XMPPErrorException e) {
                         Log.e("connection: retrieve feed history: no such node", e);
                     }
                 }
                 try {
-                    final LeafNode node = pubSubManager.getNode(getMyFeedNodeId());
-                    parsePublishedHistoryItems(UserId.ME, node.getItems(), historyPosts, historyComments);
-                } catch (PubSubException.NotAPubSubNodeException | XMPPException.XMPPErrorException e) {
+                    parsePublishedHistoryItems(UserId.ME, pubSubHelper.getItems(getMyFeedNodeId()), historyPosts, historyComments);
+                } catch (XMPPException.XMPPErrorException e) {
                     Log.e("connection: retrieve feed history: no such node", e);
                 }
                 return Pair.create(historyPosts, historyComments);
