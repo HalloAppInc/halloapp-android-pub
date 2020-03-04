@@ -2,29 +2,31 @@ package com.halloapp.ui.avatar;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Base64;
+import android.widget.ImageView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
+import androidx.collection.LruCache;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PublishedAvatarData;
 import com.halloapp.xmpp.PublishedAvatarMetadata;
 import com.halloapp.xmpp.PubsubItem;
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 
-public class AvatarLoader {
+// String will have to be unique...
+public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private static AvatarLoader instance;
 
     private final Connection connection;
     private final AvatarCache avatarCache;
+    private final LruCache<String, Bitmap> cache;
 
     public static AvatarLoader getInstance(Connection connection) {
         if (instance == null) {
@@ -40,61 +42,57 @@ public class AvatarLoader {
     private AvatarLoader(Connection connection, AvatarCache avatarCache) {
         this.connection = connection;
         this.avatarCache = avatarCache;
+
+        // Use 1/8th of the available memory for memory cache
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+        Log.i("PostThumbnailLoader: create " + cacheSize + "KB cache for post images");
+        cache = new LruCache<String, Bitmap>(cacheSize) {
+
+            @Override
+            protected int sizeOf(@NonNull String key, @NonNull Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than number of items
+                return bitmap.getByteCount() / 1024;
+            }
+        };
     }
 
-    private Bitmap getAvatarFor(UserId userId) {
-        try {
+    @MainThread
+    public void load(@NonNull ImageView view, @NonNull UserId userId, @NonNull String uniqueId) {
+        final Callable<Bitmap> loader = () -> {
+
             PubsubItem item = connection.getMostRecentAvatarMetadata(userId).get();
             if (item == null) {
-                // TODO(jack): return the placeholder instead
                 Log.i("No avatar metadata for " + userId);
                 return null;
             }
             PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
             String itemId = avatarMetadata.getId(); // this is hash
 
-            Bitmap cached = avatarCache.getAvatarFor(itemId);
-            if (cached != null) {
-                return cached;
+            PubsubItem avatarData = connection.getAvatarData(userId, itemId).get();
+            if (avatarData == null) {
+                Log.i("No avatar data for " + userId);
+                return null;
             }
 
-            PubsubItem avatarData = connection.getAvatarData(userId, itemId).get();
             PublishedAvatarData data = PublishedAvatarData.getPublishedItem(avatarData);
             byte[] bytes = Base64.decode(data.getBase64Data(), Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("AvatarLoader", e);
-        }
+        };
+        final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 
-        return null;
-    }
-
-    public void loadAvatarFor(UserId userId, @NonNull LifecycleOwner owner, @NonNull Observer<? super Bitmap> observer) {
-        LoadAvatarTask loadAvatarTask = new LoadAvatarTask(userId, this);
-        loadAvatarTask.avatarBitmap.observe(owner, observer);
-        // TODO(jack): Probably ought to have a separate thread pool
-        loadAvatarTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    public static class LoadAvatarTask extends AsyncTask<Void, Void, Void> {
-
-        final MutableLiveData<Bitmap> avatarBitmap = new MutableLiveData<>();
-        final UserId userId;
-        final AvatarLoader avatarLoader;
-
-        LoadAvatarTask(UserId userId, AvatarLoader avatarLoader) {
-            this.userId = userId;
-            this.avatarLoader = avatarLoader;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Bitmap avatar = avatarLoader.getAvatarFor(userId);
-            if (avatar != null) {
-                avatarBitmap.postValue(avatar);
+            @Override
+            public void showResult(@NonNull ImageView view, Bitmap result) {
+                if (result != null) {
+                    view.setImageBitmap(result);
+                }
             }
-            return null;
-        }
-    }
 
+            @Override
+            public void showLoading(@NonNull ImageView view) {
+                //view.setImageDrawable(null);
+            }
+        };
+        load(view, loader, displayer, userId.rawId() + "_" + uniqueId, cache);
+    }
 }

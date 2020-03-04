@@ -91,7 +91,7 @@ public class MessagesFragment extends Fragment {
 
             void bindTo(Contact contact) {
                 avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
-                avatarLoader.loadAvatarFor(contact.userId, this, avatarView::setImageBitmap);
+                avatarLoader.load(avatarView, contact.userId, contact.getRawUserId());
                 nameView.setText(contact.getDisplayName());
                 infoView.setText(contact.getInternationalPhone());
             }

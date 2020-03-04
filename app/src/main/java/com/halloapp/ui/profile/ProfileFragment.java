@@ -83,7 +83,8 @@ public class ProfileFragment extends PostsFragment {
         loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         final CircleImageView avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance(Connection.getInstance()).loadAvatarFor(UserId.ME, this, bitmap -> avatarView.setImageBitmap(bitmap));
+        AvatarLoader.getInstance(Connection.getInstance()).load(avatarView, UserId.ME, "PROFILE");
+                //loadAvatarFor(UserId.ME, this, bitmap -> avatarView.setImageBitmap(bitmap));
 
         adapter.addHeader(headerView);
 

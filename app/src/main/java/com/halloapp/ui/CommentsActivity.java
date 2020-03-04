@@ -279,7 +279,7 @@ public class CommentsActivity extends AppCompatActivity {
         void bindTo(final @NonNull Comment comment) {
 
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-            avatarLoader.loadAvatarFor(comment.commentSenderUserId, this, avatarView::setImageBitmap);
+            avatarLoader.load(avatarView, comment.commentSenderUserId, comment.commentId);
             if (comment.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
@@ -310,7 +310,7 @@ public class CommentsActivity extends AppCompatActivity {
                 return;
             }
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-            avatarLoader.loadAvatarFor(post.senderUserId, this, avatarView::setImageBitmap);
+            avatarLoader.load(avatarView, post.senderUserId, post.postId);
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {

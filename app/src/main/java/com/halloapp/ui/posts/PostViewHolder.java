@@ -121,7 +121,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.post = post;
 
         avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-        parent.getAvatarLoader().loadAvatarFor(post.senderUserId, this, avatarView::setImageBitmap);
+        parent.getAvatarLoader().load(avatarView, post.senderUserId, post.postId);
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {

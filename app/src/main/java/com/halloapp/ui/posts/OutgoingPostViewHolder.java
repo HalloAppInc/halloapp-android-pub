@@ -73,7 +73,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         final ImageView myAvatarView = itemView.findViewById(R.id.my_avatar);
         myAvatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-        parent.getAvatarLoader().loadAvatarFor(UserId.ME, this, myAvatarView::setImageBitmap);
+        parent.getAvatarLoader().load(myAvatarView, UserId.ME, Long.toString(getItemId()));
     }
 
     @CallSuper
@@ -108,7 +108,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             firstCommentContent.setVisibility(View.VISIBLE);
 
             firstCommentAvatar.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-            parent.getAvatarLoader().loadAvatarFor(firstComment.commentSenderUserId, this, firstCommentAvatar::setImageBitmap);
+            parent.getAvatarLoader().load(firstCommentAvatar, firstComment.commentSenderUserId, firstComment.commentId);
 
             firstCommentText.setText(firstComment.text);
 
