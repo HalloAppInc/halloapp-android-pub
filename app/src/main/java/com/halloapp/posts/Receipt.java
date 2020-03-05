@@ -13,5 +13,4 @@ public class Receipt {
         this.senderUserId = senderUserId;
         this.postId = postId;
     }
-
 }
