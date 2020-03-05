@@ -1,12 +1,9 @@
 package com.halloapp.ui.profile;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,11 +31,6 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.PublishedAvatarData;
-import com.halloapp.xmpp.PubsubItem;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -84,7 +76,6 @@ public class ProfileFragment extends PostsFragment {
 
         final CircleImageView avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(Connection.getInstance()).load(avatarView, UserId.ME, "PROFILE");
-                //loadAvatarFor(UserId.ME, this, bitmap -> avatarView.setImageBitmap(bitmap));
 
         adapter.addHeader(headerView);
 
