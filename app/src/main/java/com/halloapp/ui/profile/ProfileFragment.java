@@ -28,6 +28,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.Connection;
@@ -76,6 +77,13 @@ public class ProfileFragment extends PostsFragment {
 
         final CircleImageView avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(Connection.getInstance()).load(avatarView, UserId.ME, "PROFILE");
+
+        final CircleImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
+        changeAvatarView.setOnClickListener(v -> {
+            Log.d("ProfileFragment request change avatar");
+            final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
+            startActivity(intent);
+        });
 
         adapter.addHeader(headerView);
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,15 +13,34 @@
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:src="@drawable/avatar_person"
+        android:layout_marginBottom="4dp"
+        app:civ_border_color="@color/card_background"
         app:civ_border_width="2dp"
-        app:civ_border_color="@color/card_background"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="48dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/change_avatar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/avatar_person"
+        app:layout_constraintBottom_toBottomOf="@+id/avatar"
+        app:layout_constraintEnd_toEndOf="@+id/avatar"
+        app:civ_border_color="@color/card_background"
+        app:civ_border_width="2dp"
+        />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        tools:text="Ded Pihtov"/>
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avatar"
+        tools:text="Ded Pihtov" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
