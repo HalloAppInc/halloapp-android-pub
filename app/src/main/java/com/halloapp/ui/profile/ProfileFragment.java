@@ -82,6 +82,7 @@ public class ProfileFragment extends PostsFragment {
         changeAvatarView.setOnClickListener(v -> {
             Log.d("ProfileFragment request change avatar");
             final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
+            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
             startActivity(intent);
         });
 

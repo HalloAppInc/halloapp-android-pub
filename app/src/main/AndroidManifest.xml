@@ -94,6 +94,9 @@
         <activity android:name=".ui.AppExpirationActivity"
             android:label="" />
 
+        <activity android:name=".ui.avatar.AvatarPreviewActivity"
+            android:label="" />
+
         <receiver
             android:name=".registration.SmsVerificationReceiver"
             android:exported="true">

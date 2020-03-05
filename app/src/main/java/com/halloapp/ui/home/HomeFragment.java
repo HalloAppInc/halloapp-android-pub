@@ -223,6 +223,7 @@ public class HomeFragment extends PostsFragment {
 
     private void getMediaFromGallery() {
         final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
+        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
         startActivity(intent);
 
     }

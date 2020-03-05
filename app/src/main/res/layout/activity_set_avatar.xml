@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    tools:context=".ui.PostComposerActivity">
+
+    <!-- this view is to address initial focus issue on old devices -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/media_pager"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:padding="64dp"/>
+
+            <com.halloapp.widget.MediaViewPager
+                android:id="@+id/media_pager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@+id/progress"
+                app:layout_constraintBottom_toTopOf="@+id/media_pager_indicator"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constrainedHeight="true"/>
+
+            <me.relex.circleindicator.CircleIndicator
+                android:id="@+id/media_pager_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="8dp"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/media_pager"
+                app:layout_constraintBottom_toTopOf="@+id/footer"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:ci_width="5dp"
+                app:ci_height="5dp"
+                app:ci_margin="4dp"
+                app:ci_drawable="@drawable/pager_item_indicator_selected"
+                app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+                app:ci_animator="@animator/pager_indicator" />
+
+            <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/media_pager_indicator"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:padding="8dp"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:text="@string/send" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.ui.PostComposerActivity;
+import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.CenterToast;
@@ -45,9 +46,15 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MediaPickerActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
+    public static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
+
+    public static final int PICKER_PURPOSE_POST = 1;
+    public static final int PICKER_PURPOSE_AVATAR = 2;
+
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE_POST = 2;
     private static final int REQUEST_CODE_PICK_MEDIA = 3;
+    private static final int REQUEST_CODE_SET_AVATAR = 4;
 
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;
@@ -55,6 +62,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
 
     private final Set<Long> selectedItems = new LinkedHashSet<>();
     private ActionMode actionMode;
+    private int pickerPurpose = PICKER_PURPOSE_POST;
 
     private static final String KEY_SELECTED_MEDIA = "selected_media";
 
@@ -64,6 +72,8 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         setContentView(R.layout.activity_media_picker);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_POST);
 
         final RecyclerView mediaView = findViewById(android.R.id.list);
         final View progressView = findViewById(R.id.progress);
@@ -158,7 +168,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                             }
                         }
                         if (!uris.isEmpty()) {
-                            startPostComposer(uris);
+                            handleSelection(uris);
                         } else {
                             Log.e("MediaPackerActivity.onActivityResult.REQUEST_CODE_PICK_MEDIA: no uri");
                             CenterToast.show(this, R.string.bad_image);
@@ -238,14 +248,27 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         final Intent intent = new Intent(this, PostComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_POST);
+    }
 
+    private void startAvatarPreview(@NonNull ArrayList<Uri> uris) {
+        final Intent intent = new Intent(this, AvatarPreviewActivity.class);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
+    }
+
+    private void handleSelection(@NonNull ArrayList<Uri> uris) {
+        if (pickerPurpose == PICKER_PURPOSE_POST) {
+            startPostComposer(uris);
+        } else if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            startAvatarPreview(uris);
+        }
     }
 
     private void onItemClicked(@NonNull GalleryItem galleryItem, View view) {
         if (selectedItems.isEmpty()) {
             final ArrayList<Uri> uris = new ArrayList<>(1);
             uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
-            startPostComposer(uris);
+            handleSelection(uris);
         } else {
             handleMultiSelection(galleryItem, view);
         }
@@ -283,7 +306,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         for (Long item : selectedItems) {
             uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), item));
         }
-        startPostComposer(uris);
+        handleSelection(uris);
     }
 
     private void updateActionMode() {
