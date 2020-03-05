@@ -78,7 +78,6 @@ public class RegistrationRequestActivity extends AppCompatActivity {
 
         findViewById(R.id.phone_number);
         phoneNumberEditText.requestFocus();
-        phoneNumberEditText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         phoneNumberEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 startRegistrationRequest();
