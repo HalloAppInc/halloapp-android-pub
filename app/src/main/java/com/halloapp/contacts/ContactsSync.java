@@ -88,13 +88,11 @@ public class ContactsSync {
         }
     }
 
-    @MainThread
     public void cancelContactsSync() {
         WorkManager.getInstance(context).cancelUniqueWork(INCREMENTAL_CONTACT_SYNC_WORK_ID);
         WorkManager.getInstance(context).cancelUniqueWork(FULL_CONTACT_SYNC_WORK_ID);
     }
 
-    @MainThread
     public void startContactsSync(boolean fullSync) {
         final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
