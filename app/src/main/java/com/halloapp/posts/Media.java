@@ -7,6 +7,7 @@ import com.halloapp.util.RandomId;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.security.SecureRandom;
 import java.util.List;
 
 public class Media {
@@ -31,7 +32,7 @@ public class Media {
     public boolean transferred;
 
     public static Media createFromFile(@MediaType int type, File file) {
-        return new Media(0, RandomId.create(), type, null, file, null, null,0, 0, false);
+        return new Media(0, RandomId.create(), type, null, file, generateEncKey(), null,0, 0, false);
     }
 
     public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] sha256hash, int width, int height) {
@@ -91,14 +92,10 @@ public class Media {
         this.transferred = transferred;
     }
 
-    public void generateEncKey() {
-        /*
-        * TODO (ds): uncomment when other platforms implement media encryption
-        *
+    private static byte [] generateEncKey() {
         final SecureRandom random = new SecureRandom();
-        encKey = new byte[32];
+        final byte [] encKey = new byte[32];
         random.nextBytes(encKey);
-         */
+        return encKey;
     }
-
 }

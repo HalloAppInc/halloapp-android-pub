@@ -341,7 +341,6 @@ public class PostComposerActivity extends AppCompatActivity {
                         }
                     }
                     final Media sendMedia = Media.createFromFile(media.type, postFile);
-                    sendMedia.generateEncKey();
                     post.media.add(sendMedia);
                 }
             }
