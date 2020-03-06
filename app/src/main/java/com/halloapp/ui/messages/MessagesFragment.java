@@ -2,6 +2,9 @@ package com.halloapp.ui.messages;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsSync;
+import com.halloapp.posts.LoadPostsHistoryWorker;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -32,6 +37,7 @@ public class MessagesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        setHasOptionsMenu(true);
 
         final View root = inflater.inflate(R.layout.fragment_messages, container, false);
         final RecyclerView chatsView = root.findViewById(R.id.chats);
@@ -52,7 +58,27 @@ public class MessagesFragment extends Fragment {
         return root;
     }
 
-    class ContactsAdapter extends AdapterWithLifecycle<ContactsAdapter.ViewHolder> {
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.messages_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (item.getItemId()) {
+            case R.id.refresh_contacts: {
+                ContactsSync.getInstance(Preconditions.checkNotNull(getContext())).startContactsSync(true);
+                LoadPostsHistoryWorker.loadPostsHistory(getContext()); // TODO (ds): remove
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    private class ContactsAdapter extends AdapterWithLifecycle<ContactsAdapter.ViewHolder> {
 
         private List<Contact> contacts;
 
