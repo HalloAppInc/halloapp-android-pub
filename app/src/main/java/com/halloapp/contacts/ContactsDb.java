@@ -65,12 +65,13 @@ public class ContactsDb {
         }
     }
 
-    Future<ContactsDiff> syncAddressBook() {
+    Future<AddressBookSyncResult> syncAddressBook() {
         return databaseWriteExecutor.submit(() -> {
             final Collection<AddressBookContacts.AddressBookContact> addressBookContacts = AddressBookContacts.getAddressBookContacts(context);
             if (addressBookContacts == null) {
                 return null;
             }
+            final AddressBookSyncResult result = new AddressBookSyncResult();
             final ContactsDiff diff = new ContactsDiff();
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
@@ -85,7 +86,8 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_ADDRESS_BOOK_ID, addressBookContact.id);
                     values.put(ContactsTable.COLUMN_NAME, addressBookContact.name);
                     values.put(ContactsTable.COLUMN_PHONE, addressBookContact.phone);
-                    db.insert(ContactsTable.TABLE_NAME, null, values);
+                    long rowId = db.insert(ContactsTable.TABLE_NAME, null, values);
+                    result.added.add(new Contact(rowId, addressBookContact.id, addressBookContact.name, addressBookContact.phone, null, false));
                 }
 
                 for (Contact updateContact : diff.updated) {
@@ -98,12 +100,15 @@ public class ContactsDb {
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.id)},
                             SQLiteDatabase.CONFLICT_ABORT);
+                    result.updated.add(updateContact);
                 }
-                for (Long id : diff.removed) {
+                for (Long id : diff.removedRowIds) {
                     db.delete(ContactsTable.TABLE_NAME,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(id)});
                 }
+
+                result.removed.addAll(diff.removedNormalizedPhones);
 
                 Log.i("ContactsDb.syncAddressBook: " + diff);
 
@@ -114,7 +119,7 @@ public class ContactsDb {
             if (!diff.isEmpty()) {
                 notifyContactsChanged();
             }
-            return diff;
+            return result;
         });
     }
 
@@ -368,6 +373,17 @@ public class ContactsDb {
         public ContactFriendship(@NonNull UserId userId, boolean friend) {
             this.userId = userId;
             this.friend = friend;
+        }
+    }
+
+    static class AddressBookSyncResult {
+
+        final Collection<Contact> added = new ArrayList<>();
+        final Collection<Contact> updated = new ArrayList<>();
+        final Collection<String> removed = new HashSet<>();
+
+        public boolean isEmpty() {
+            return added.isEmpty() && updated.isEmpty() && removed.isEmpty();
         }
     }
 }

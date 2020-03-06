@@ -23,14 +23,11 @@ import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
-import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -81,7 +78,7 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_SYNC_CONTACTS: {
-                    ContactsSync.getInstance(activity).startContactSync();
+                    ContactsSync.getInstance(activity).startContactsSync(true);
                     break;
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {

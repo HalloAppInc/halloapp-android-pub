@@ -3,29 +3,26 @@ package com.halloapp.contacts;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.ContactsContract;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import androidx.core.util.Pair;
-import androidx.core.util.Preconditions;
+import androidx.lifecycle.LiveData;
+import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
+import com.halloapp.xmpp.ContactSyncRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,8 +34,10 @@ import java.util.concurrent.ExecutionException;
 
 public class ContactsSync {
 
-    public static final String ADDRESS_BOOK_SYNC_WORK_ID = "address-book-sync";
-    public static final String CONTACT_SYNC_WORK_ID = "contact-sync";
+    private static final String FULL_CONTACT_SYNC_WORK_ID = "contact-sync-full";
+    private static final String INCREMENTAL_CONTACT_SYNC_WORK_ID = "contact-sync-incremental";
+
+    private static final String WORKER_PARAM_FULL_SYNC = "full_sync";
 
     private static final int CONTACT_SYNC_BATCH_SIZE = 128;
 
@@ -63,6 +62,10 @@ public class ContactsSync {
         this.context = context.getApplicationContext();
     }
 
+    public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
+        return WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(ContactsSync.FULL_CONTACT_SYNC_WORK_ID);
+    }
+
     public UUID getLastSyncRequestId() {
         return lastSyncRequestId;
     }
@@ -75,7 +78,7 @@ public class ContactsSync {
 
                     public void onChange(boolean selfChange, Uri uri) {
                         Log.i("ContactsSync: changed " + uri);
-                        startAddressBookSync();
+                        startContactsSync(false);
                     }
                 });
                 initialized = true;
@@ -86,34 +89,82 @@ public class ContactsSync {
     }
 
     @MainThread
-    public void startAddressBookSync() {
-        WorkManager.getInstance(context).enqueueUniqueWork(ADDRESS_BOOK_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, new OneTimeWorkRequest.Builder(AddressBookSyncWorker.class).build());
+    public void cancelContactsSync() {
+        WorkManager.getInstance(context).cancelUniqueWork(INCREMENTAL_CONTACT_SYNC_WORK_ID);
+        WorkManager.getInstance(context).cancelUniqueWork(FULL_CONTACT_SYNC_WORK_ID);
     }
 
     @MainThread
-    public void startContactSync() {
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).build();
+    public void startContactsSync(boolean fullSync) {
+        final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).build();
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
         lastSyncRequestId = workRequest.getId();
-        WorkManager.getInstance(context).enqueueUniqueWork(CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
+        WorkManager.getInstance(context).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
     @WorkerThread
-    private ListenableWorker.Result performContactSync() {
+    private ListenableWorker.Result performContactSync(boolean fullSync) {
 
         Log.i("ContactsSync.performContactSync");
-        if (Preferences.getInstance(context).getLastSyncTime() <= 0) {
-            // initial sync, need to sync address book first
-            Log.i("ContactsSync.performContactSync: initial address book sync");
+        final ContactsDb.AddressBookSyncResult syncResult;
+        try {
+            syncResult = ContactsDb.getInstance(context).syncAddressBook().get();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e("ContactsSync.performContactSync", e);
+            return ListenableWorker.Result.failure();
+        }
+        if (syncResult == null) {
+            Log.e("ContactsSync.performContactSync: address book diff is null");
+            return ListenableWorker.Result.failure();
+        }
+
+        final Preferences preferences = Preferences.getInstance(context);
+        final ListenableWorker.Result result;
+        if (fullSync ||
+                preferences.getRequireFullContactsSync() ||
+                preferences.getLastContactsSyncTime() <= 0) {
+            result = performFullContactSync();
+        } else {
+            result = performIncrementalContactSync(syncResult);
+        }
+
+        if (ListenableWorker.Result.failure().equals(result)) {
+            preferences.setRequireFullContactsSync(true);
+        } else {
+            preferences.setRequireFullContactsSync(false);
+            preferences.setLastContactsSyncTime(System.currentTimeMillis());
+        }
+
+        Log.i("ContactsSync.done: " + Preferences.getInstance(context).getLastContactsSyncTime());
+        return result;
+    }
+
+    @WorkerThread
+    private ListenableWorker.Result performIncrementalContactSync(@NonNull ContactsDb.AddressBookSyncResult addressBookSyncResult) {
+        if (!addressBookSyncResult.removed.isEmpty()) {
             try {
-                ContactsDb.getInstance(context).syncAddressBook().get();
+                Connection.getInstance().syncContacts(addressBookSyncResult.removed, ContactSyncRequest.DELETE).get();
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.performContactSync", e);
+                Log.i("ContactsSync.performContactSync: failed to delete contacts", e);
                 return ListenableWorker.Result.failure();
             }
         }
+        final ArrayList<Contact> contacts = new ArrayList<>();
+        contacts.addAll(addressBookSyncResult.updated);
+        contacts.addAll(addressBookSyncResult.added);
+        if (contacts.isEmpty()) {
+            return ListenableWorker.Result.success();
+        }
+        return updateContactsOnServer(contacts, false);
+    }
 
-        final ContactsDb contactsDb = ContactsDb.getInstance(context);
-        final Collection<Contact> contacts = contactsDb.getAllContacts();
+    @WorkerThread
+    private ListenableWorker.Result performFullContactSync() {
+        return updateContactsOnServer(ContactsDb.getInstance(context).getAllContacts(), true);
+    }
+
+    @WorkerThread
+    private ListenableWorker.Result updateContactsOnServer(Collection<Contact> contacts, boolean fullSync) {
         final HashMap<String, List<Contact>> phones = new HashMap<>();
         for (Contact contact : contacts) {
             List<Contact> phoneContactList = phones.get(contact.phone);
@@ -123,17 +174,18 @@ public class ContactsSync {
             }
             phoneContactList.add(contact);
         }
+
         Log.i("ContactsSync.performContactSync: " + phones.keySet().size() + " phones to sync");
         final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
         final List<ContactInfo> contactSyncResults = new ArrayList<>(phonesBatch.size());
-        boolean firstBatch = true;
+        @ContactSyncRequest.Type String batchType = fullSync ? ContactSyncRequest.SET : ContactSyncRequest.ADD;
         for (String phone : phones.keySet()) {
             phonesBatch.add(phone);
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
-                    firstBatch = false;
+                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, batchType).get();
+                    batchType = ContactSyncRequest.ADD;
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
                         phonesBatch.clear();
@@ -150,7 +202,7 @@ public class ContactsSync {
         if (phonesBatch.size() > 0) {
             Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
             try {
-                final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, firstBatch).get();
+                final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, batchType).get();
                 if (contactSyncBatchResults != null) {
                     contactSyncResults.addAll(contactSyncBatchResults);
                     phonesBatch.clear();
@@ -195,7 +247,7 @@ public class ContactsSync {
 
         if (!updatedContacts.isEmpty()) {
             try {
-                contactsDb.updateContactsServerData(updatedContacts).get();
+                ContactsDb.getInstance(context).updateContactsServerData(updatedContacts).get();
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.performContactSync: failed to update server data", e);
                 return ListenableWorker.Result.failure();
@@ -203,23 +255,6 @@ public class ContactsSync {
         }
 
         Log.i("ContactsSync.performContactSync: " + updatedContacts.size() + " contacts updated");
-
-        // TODO (ds): remove
-        try {
-            final Pair<Collection<Post>, Collection<Comment>> result = Connection.getInstance().getFeedHistory().get();
-            if (result == null) {
-                Log.e("ContactsSync.performContactSync: failed retrieve feed history");
-                return ListenableWorker.Result.failure();
-            }
-            PostsDb.getInstance(context).addHistory(Preconditions.checkNotNull(result.first), Preconditions.checkNotNull(result.second));
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("ContactsSync.performContactSync: failed retrieve feed history", e);
-            return ListenableWorker.Result.failure();
-        }
-
-        Preferences.getInstance(context).setLastSyncTime(System.currentTimeMillis());
-
-        Log.i("ContactsSync.done: " + Preferences.getInstance(context).getLastSyncTime());
 
         return ListenableWorker.Result.success();
     }
@@ -234,38 +269,11 @@ public class ContactsSync {
 
         @Override
         public @NonNull Result doWork() {
-            final Result result = ContactsSync.getInstance(getApplicationContext()).performContactSync();
+            final Result result = ContactsSync.getInstance(getApplicationContext()).performContactSync(getInputData().getBoolean(WORKER_PARAM_FULL_SYNC, true));
             if  (!Result.success().equals(result)) {
                 Log.sendErrorReport("ContactsSync failed");
             }
             return result;
-        }
-    }
-
-    public static class AddressBookSyncWorker extends Worker {
-
-        public AddressBookSyncWorker(
-                @NonNull Context context,
-                @NonNull WorkerParameters params) {
-            super(context, params);
-        }
-
-        @Override
-        public @NonNull Result doWork() {
-            try {
-                final ContactsDiff contactsDiff = ContactsDb.getInstance(getApplicationContext()).syncAddressBook().get();
-                if (contactsDiff == null) {
-                    Log.e("ContactsSync.AddressBookSyncWorker: diff is null");
-                    return ListenableWorker.Result.failure();
-                }
-                if (!contactsDiff.isEmpty()) {
-                    new Handler(Looper.getMainLooper()).post(() -> ContactsSync.getInstance(getApplicationContext()).startContactSync());
-                }
-                return ListenableWorker.Result.success();
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.AddressBookSyncWorker", e);
-                return ListenableWorker.Result.failure();
-            }
         }
     }
 }

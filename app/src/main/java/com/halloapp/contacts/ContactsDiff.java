@@ -13,15 +13,26 @@ import java.util.Set;
 class ContactsDiff {
 
     final Collection<AddressBookContacts.AddressBookContact> added = new ArrayList<>();
-    final Collection<Long> removed = new ArrayList<>();
     final Collection<Contact> updated = new ArrayList<>();
+    final Collection<Long> removedRowIds = new ArrayList<>();
+    final Collection<String> removedNormalizedPhones = new ArrayList<>();
 
     void calculate(Collection<AddressBookContacts.AddressBookContact> addressBookContacts, Collection<Contact> halloContacts) {
+        added.clear();
+        updated.clear();
+        removedRowIds.clear();
+        removedNormalizedPhones.clear();
+
         final LongSparseArray<Contact> halloContactsMap = new LongSparseArray<>();
+        final Set<Long> removedRowIds = new HashSet<>();
+        final Set<String> removedNormalizedPhones = new HashSet<>();
         for (Contact contact : halloContacts) {
             halloContactsMap.append(contact.addressBookId, contact);
+            removedRowIds.add(contact.id);
+            if (contact.userId != null) {
+                removedNormalizedPhones.add(contact.userId.rawId());
+            }
         }
-        final Set<Long> halloContactsInAddressBook = new HashSet<>();
         for (AddressBookContacts.AddressBookContact addressBookContact : addressBookContacts) {
             final Contact contact = halloContactsMap.get(addressBookContact.id);
             if (contact == null) {
@@ -37,22 +48,23 @@ class ContactsDiff {
                     contact.name = addressBookContact.name;
                     updated.add(contact);
                 }
-                halloContactsInAddressBook.add(contact.id);
+                removedRowIds.remove(contact.id);
+                if (contact.userId != null) {
+                    removedNormalizedPhones.remove(contact.userId.rawId());
+                }
             }
         }
-        for (Contact contact : halloContacts) {
-            if (!halloContactsInAddressBook.contains(contact.id)) {
-                removed.add(contact.id);
-            }
-        }
+
+        this.removedRowIds.addAll(removedRowIds);
+        this.removedNormalizedPhones.addAll(removedNormalizedPhones);
     }
 
     @Override
     public @NonNull String toString() {
-        return "ContactsDiff[" + added.size() + " added, " + updated.size() + " updated, " + removed.size() + " removed]";
+        return "ContactsDiff[" + added.size() + " added, " + updated.size() + " updated, " + removedRowIds.size() + " IDs removed]";
     }
 
     boolean isEmpty() {
-        return added.isEmpty() && removed.isEmpty() && updated.isEmpty();
+        return added.isEmpty() && removedRowIds.isEmpty() && removedNormalizedPhones.isEmpty() && updated.isEmpty();
     }
 }

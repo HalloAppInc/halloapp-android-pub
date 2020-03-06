@@ -9,12 +9,12 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.posts.LoadPostsHistoryWorker;
 import com.halloapp.util.Log;
 
 import java.util.List;
@@ -60,22 +60,25 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
 
         });
 
-        WorkManager.getInstance(this).cancelUniqueWork(ContactsSync.CONTACT_SYNC_WORK_ID);
-
-        WorkManager.getInstance(this).getWorkInfosForUniqueWorkLiveData(ContactsSync.CONTACT_SYNC_WORK_ID)
+        final ContactsSync contactsSync = ContactsSync.getInstance(this);
+        contactsSync.cancelContactsSync();
+        contactsSync.getWorkInfoLiveData()
                 .observe(this, workInfos -> {
-                    if (workInfos != null && workInfos.size() > 0) {
-                        final WorkInfo workInfo = workInfos.get(0);
-                        if (workInfo.getId().equals(ContactsSync.getInstance(getBaseContext()).getLastSyncRequestId())) {
-                            if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                                startActivity(new Intent(getBaseContext(), MainActivity.class));
-                                ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
-                                finish();
-                            } else if (workInfo.getState().isFinished()) {
-                                infoView.setVisibility(View.GONE);
-                                loadingView.setVisibility(View.GONE);
-                                errorView.setVisibility(View.VISIBLE);
-                                retryView.setVisibility(View.VISIBLE);
+                    if (workInfos != null) {
+                        for (WorkInfo workInfo : workInfos) {
+                            if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                    startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                    LoadPostsHistoryWorker.loadPostsHistory(this);
+                                    ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
+                                    finish();
+                                } else if (workInfo.getState().isFinished()) {
+                                    infoView.setVisibility(View.GONE);
+                                    loadingView.setVisibility(View.GONE);
+                                    errorView.setVisibility(View.VISIBLE);
+                                    retryView.setVisibility(View.VISIBLE);
+                                }
+                                break;
                             }
                         }
                     }
@@ -133,6 +136,6 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
     }
 
     private void startSync() {
-        ContactsSync.getInstance(this).startContactSync();
+        ContactsSync.getInstance(this).startContactsSync(true);
     }
 }

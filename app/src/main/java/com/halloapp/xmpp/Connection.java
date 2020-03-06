@@ -309,13 +309,13 @@ public class Connection {
         });
     }
 
-    public Future<List<ContactInfo>> syncContacts(@NonNull Collection<String> phones, boolean firstBatch) {
+    public Future<List<ContactInfo>> syncContacts(@NonNull Collection<String> phones, @ContactSyncRequest.Type String type) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: sync contacts: no connection");
                 return null;
             }
-            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(connection.getXMPPServiceDomain(), phones, firstBatch ? "set" : "add");
+            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(connection.getXMPPServiceDomain(), phones, type);
             try {
                 final ContactsSyncResponseIq response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
                 return response.contactList.contacts;

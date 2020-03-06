@@ -51,7 +51,7 @@ public class HalloApp extends Application {
 
             @Override
             public void onContactsReset() {
-                Preferences.getInstance(HalloApp.this).setLastSyncTime(0);
+                Preferences.getInstance(HalloApp.this).setLastContactsSyncTime(0);
             }
         });
 
@@ -146,14 +146,14 @@ public class HalloApp extends Application {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            return preferences.getLastSyncTime() > 0;
+            return preferences.getLastContactsSyncTime() > 0;
         }
 
         @Override
         protected void onPostExecute(Boolean hadContactSync) {
             if (hadContactSync) {
                 contactsSync.startAddressBookListener();
-                contactsSync.startAddressBookSync();
+                contactsSync.startContactsSync(false);
             }
         }
     }

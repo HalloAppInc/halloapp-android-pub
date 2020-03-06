@@ -14,7 +14,8 @@ public class Preferences {
 
     public static final String PREFS_NAME = "prefs";
 
-    private static final String PREF_KEY_LAST_SYNC_TIME = "last_sync_time";
+    private static final String PREF_KEY_LAST_CONTACTS_SYNC_TIME = "last_sync_time";
+    private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
@@ -46,14 +47,26 @@ public class Preferences {
     }
 
     @WorkerThread
-    public long getLastSyncTime() {
-        return getPreferences().getLong(PREF_KEY_LAST_SYNC_TIME, 0);
+    public long getLastContactsSyncTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_CONTACTS_SYNC_TIME, 0);
     }
 
     @WorkerThread
-    public void setLastSyncTime(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_SYNC_TIME, time).commit()) {
-            Log.e("preferences: failed to set last sync time");
+    public void setLastContactsSyncTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_CONTACTS_SYNC_TIME, time).commit()) {
+            Log.e("preferences: failed to set last contacts sync time");
+        }
+    }
+
+    @WorkerThread
+    public boolean getRequireFullContactsSync() {
+        return getPreferences().getBoolean(PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, true);
+    }
+
+    @WorkerThread
+    public void setRequireFullContactsSync(boolean requireFullContactsSync) {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, requireFullContactsSync).commit()) {
+            Log.e("preferences: failed to set required full contacts sync");
         }
     }
 

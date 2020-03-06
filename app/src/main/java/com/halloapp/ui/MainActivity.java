@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
                 ContactsSync.getInstance(this).startAddressBookListener();
-                ContactsSync.getInstance(this).startAddressBookSync();
+                ContactsSync.getInstance(this).startContactsSync(true);
                 break;
             }
         }

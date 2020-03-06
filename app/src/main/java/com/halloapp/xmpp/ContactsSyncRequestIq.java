@@ -14,11 +14,12 @@ public class ContactsSyncRequestIq extends IQ {
 
     private static final String ELEMENT_CONTACT = "contact";
     private static final String ELEMENT_RAW = "raw";
+    private static final String ELEMENT_NORMALIZED = "normalized";
 
-    private final String type;
+    private final @ContactSyncRequest.Type String type;
     private final Collection<String> phones;
 
-    ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones, String type) {
+    ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones, @ContactSyncRequest.Type String type) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.set);
         setTo(to);
@@ -29,13 +30,14 @@ public class ContactsSyncRequestIq extends IQ {
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
 
+        final String phoneElement = ContactSyncRequest.DELETE.equals(type) ? ELEMENT_NORMALIZED : ELEMENT_RAW;
         xml.attribute("type", type);
         xml.rightAngleBracket();
         for (String phone : phones) {
             xml.openElement(ELEMENT_CONTACT);
-            xml.openElement(ELEMENT_RAW);
+            xml.openElement(phoneElement);
             xml.append(phone);
-            xml.closeElement(ELEMENT_RAW);
+            xml.closeElement(phoneElement);
             xml.closeElement(ELEMENT_CONTACT);
         }
         return xml;

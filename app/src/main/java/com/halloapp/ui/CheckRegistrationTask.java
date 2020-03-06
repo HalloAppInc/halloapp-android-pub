@@ -22,7 +22,7 @@ public class CheckRegistrationTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        result.postValue(new CheckResult(me.isRegistered(), preferences.getLastSyncTime()));
+        result.postValue(new CheckResult(me.isRegistered(), preferences.getLastContactsSyncTime()));
         return null;
     }
 
