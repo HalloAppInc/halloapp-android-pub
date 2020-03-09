@@ -108,6 +108,10 @@ public class HomeViewModel extends AndroidViewModel {
             invalidateCommentHistory();
         }
 
+        @Override
+        public void onDbCreated() {
+        }
+
         private void invalidatePosts() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }

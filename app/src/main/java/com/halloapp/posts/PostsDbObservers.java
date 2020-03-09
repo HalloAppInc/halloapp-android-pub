@@ -111,4 +111,12 @@ public class PostsDbObservers {
             }
         }
     }
+
+    void notifyDbCreated() {
+        synchronized (observers) {
+            for (PostsDb.Observer observer : observers) {
+                observer.onDbCreated();
+            }
+        }
+    }
 }

@@ -52,6 +52,7 @@ public class PostsDb {
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onPostsCleanup();
+        void onDbCreated();
     }
 
     public static class DefaultObserver implements Observer {
@@ -66,6 +67,7 @@ public class PostsDb {
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
         public void onPostsCleanup() {}
+        public void onDbCreated() {}
     }
 
     public static PostsDb getInstance(final @NonNull Context context) {
@@ -80,7 +82,7 @@ public class PostsDb {
     }
 
     private PostsDb(final @NonNull Context context) {
-        databaseHelper = new PostsDbHelper(context.getApplicationContext());
+        databaseHelper = new PostsDbHelper(context.getApplicationContext(), observers);
         mediaStore = MediaStore.getInstance(context);
     }
 

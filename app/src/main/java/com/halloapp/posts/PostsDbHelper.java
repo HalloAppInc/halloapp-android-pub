@@ -20,11 +20,13 @@ class PostsDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 7;
 
     private final Context context;
+    private final PostsDbObservers observers;
 
-    PostsDbHelper(final @NonNull Context context) {
+    PostsDbHelper(@NonNull Context context, @NonNull PostsDbObservers observers) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         setWriteAheadLoggingEnabled(true);
         this.context = context.getApplicationContext();
+        this.observers = observers;
     }
 
     @Override
@@ -105,6 +107,8 @@ class PostsDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
                 + "END;");
+
+        observers.notifyDbCreated();
     }
 
     @Override

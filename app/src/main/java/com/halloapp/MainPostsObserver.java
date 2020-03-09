@@ -11,6 +11,7 @@ import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadPostTask;
 import com.halloapp.posts.Comment;
+import com.halloapp.posts.LoadPostsHistoryWorker;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.xmpp.Connection;
@@ -21,6 +22,7 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     private static MainPostsObserver instance;
 
+    private final Context context;
     private final Connection connection;
     private final MediaStore mediaStore;
     private final PostsDb postsDb;
@@ -38,6 +40,7 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     private MainPostsObserver(@NonNull Context context) {
+        this.context = context.getApplicationContext();
         this.connection = Connection.getInstance();
         this.mediaStore = MediaStore.getInstance(context);
         this.postsDb = PostsDb.getInstance(context);
@@ -117,5 +120,11 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     @Override
     public void onPostsCleanup() {
+    }
+
+    @Override
+    public void onDbCreated() {
+        // TODO (ds): restore from backup
+        LoadPostsHistoryWorker.loadPostsHistory(context);
     }
 }

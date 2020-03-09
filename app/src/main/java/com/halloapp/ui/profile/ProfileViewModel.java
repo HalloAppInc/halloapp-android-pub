@@ -86,6 +86,10 @@ public class ProfileViewModel extends AndroidViewModel {
             invalidatePosts();
         }
 
+        @Override
+        public void onDbCreated() {
+        }
+
         private void invalidatePosts() {
             mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
         }
