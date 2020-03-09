@@ -2,6 +2,8 @@ package com.halloapp.xmpp;
 
 import androidx.core.util.Preconditions;
 
+import com.halloapp.util.Log;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -154,6 +156,8 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
      */
     private boolean disconnectedButResumeable = false;
 
+    private StreamOpenFailListener streamOpenFailListener;
+
     private SSLSocket secureSocket;
 
     /**
@@ -297,9 +301,10 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
      *
      * @param config the connection configuration.
      */
-    public XMPPTCPConnection(XMPPTCPConnectionConfiguration config) {
+    public XMPPTCPConnection(XMPPTCPConnectionConfiguration config, StreamOpenFailListener streamOpenFailListener) {
         super(config);
         this.config = config;
+        this.streamOpenFailListener = streamOpenFailListener;
         addConnectionListener(new AbstractConnectionListener() {
             @Override
             public void connectionClosedOnError(Exception e) {
@@ -310,38 +315,8 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         });
     }
 
-    /**
-     * Creates a new XMPP connection over TCP.
-     * <p>
-     * Note that {@code jid} must be the bare JID, e.g. "user@example.org". More fine-grained control over the
-     * connection settings is available using the {@link #XMPPTCPConnection(XMPPTCPConnectionConfiguration)}
-     * constructor.
-     * </p>
-     *
-     * @param jid      the bare JID used by the client.
-     * @param password the password or authentication token.
-     * @throws XmppStringprepException
-     */
-    public XMPPTCPConnection(CharSequence jid, String password) throws XmppStringprepException {
-        this(XmppStringUtils.parseLocalpart(jid.toString()), password, XmppStringUtils.parseDomain(jid.toString()));
-    }
-
-    /**
-     * Creates a new XMPP connection over TCP.
-     * <p>
-     * This is the simplest constructor for connecting to an XMPP server. Alternatively,
-     * you can get fine-grained control over connection settings using the
-     * {@link #XMPPTCPConnection(XMPPTCPConnectionConfiguration)} constructor.
-     * </p>
-     *
-     * @param username
-     * @param password
-     * @param serviceName
-     * @throws XmppStringprepException
-     */
-    public XMPPTCPConnection(CharSequence username, String password, String serviceName) throws XmppStringprepException {
-        this(XMPPTCPConnectionConfiguration.builder().setUsernameAndPassword(username, password).setXmppDomain(
-                JidCreate.domainBareFrom(serviceName)).build());
+    public interface StreamOpenFailListener {
+        void onStreamOpenFail();
     }
 
     @Override
@@ -1060,13 +1035,20 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                     }
                                     break;
                                 case "error":
-                                    StreamError streamError = PacketParserUtils.parseStreamError(parser);
-                                    saslFeatureReceived.reportFailure(new StreamErrorException(streamError));
-                                    // Mark the tlsHandled sync point as success, we will use the saslFeatureReceived sync
-                                    // point to report the error, which is checked immediately after tlsHandled in
-                                    // connectInternal().
-                                    tlsHandled.reportSuccess();
-                                    throw new StreamErrorException(streamError);
+                                    try {
+                                        StreamError streamError = PacketParserUtils.parseStreamError(parser);
+                                        saslFeatureReceived.reportFailure(new StreamErrorException(streamError));
+                                        // Mark the tlsHandled sync point as success, we will use the saslFeatureReceived sync
+                                        // point to report the error, which is checked immediately after tlsHandled in
+                                        // connectInternal().
+                                        tlsHandled.reportSuccess();
+                                        throw new StreamErrorException(streamError);
+                                    } catch (IllegalStateException e) {
+                                        Log.w("JACK got error", e);
+                                        if (e.getMessage().contains("unsupported_client_version")) {
+                                            streamOpenFailListener.onStreamOpenFail();
+                                        }
+                                    }
                                 case "features":
                                     parseFeatures(parser);
                                     break;

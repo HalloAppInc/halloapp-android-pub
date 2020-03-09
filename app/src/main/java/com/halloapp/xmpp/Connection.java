@@ -14,6 +14,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 
@@ -94,6 +95,7 @@ public class Connection {
         void onConnected();
         void onDisconnected();
         void onLoginFailed();
+        void onClientVersionExpired();
         void onOutgoingPostSent(@NonNull String postId);
         void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId);
@@ -177,7 +179,10 @@ public class Connection {
                         }
                     })
                     .build();
-            connection = new XMPPTCPConnection(config);
+            connection = new XMPPTCPConnection(config, () -> {
+                clientExpired();
+                observer.onClientVersionExpired();
+            });
             connection.setReplyTimeout(REPLY_TIMEOUT);
             connection.setUseStreamManagement(false);
             connection.addConnectionListener(new HalloConnectionListener());
