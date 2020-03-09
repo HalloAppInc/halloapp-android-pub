@@ -16,6 +16,8 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
 
     private static final int EXPIRES_SOON_THRESHOLD_DAYS = 7;
 
+    private static final int SECONDS_PER_DAY = 60 * 60 * 24;
+
     private final Connection connection;
     private final Context context;
 
@@ -27,7 +29,7 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
-            return connection.requestDaysToExpiration().get();
+            return connection.requestSecondsToExpiration().get();
         } catch (ExecutionException | InterruptedException e) {
             Log.e("RequestExpirationInfoTask: failed to get days_left", e);
         }
@@ -35,16 +37,19 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
     }
 
     @Override
-    protected void onPostExecute(@Nullable Integer daysLeft) {
-        Log.d("RequestExpirationInfoTask onPostExecute daysLeft=" + daysLeft);
-        if (daysLeft != null && daysLeft <= EXPIRES_SOON_THRESHOLD_DAYS) {
-            if (daysLeft <= 0) {
-                connection.clientExpired();
-            }
-            if (ForegroundObserver.getInstance().isInForeground()) {
-                AppExpirationActivity.open(context, daysLeft);
-            } else {
-                Notifications.getInstance(context).showExpirationNotification(daysLeft);
+    protected void onPostExecute(@Nullable Integer secondsLeft) {
+        if (secondsLeft != null) {
+            Integer daysLeft = (secondsLeft / SECONDS_PER_DAY) + 1;
+            Log.d("RequestExpirationInfoTask onPostExecute daysLeft=" + daysLeft);
+            if (daysLeft <= EXPIRES_SOON_THRESHOLD_DAYS) {
+                if (daysLeft <= 0) {
+                    connection.clientExpired();
+                }
+                if (ForegroundObserver.getInstance().isInForeground()) {
+                    AppExpirationActivity.open(context, daysLeft);
+                } else {
+                    Notifications.getInstance(context).showExpirationNotification(daysLeft);
+                }
             }
         }
     }

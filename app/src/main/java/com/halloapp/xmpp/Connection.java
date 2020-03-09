@@ -153,7 +153,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
-        ProviderManager.addIQProvider(DaysToExpirationIq.ELEMENT, DaysToExpirationIq.NAMESPACE, new DaysToExpirationIq.Provider());
+        ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
 
         try {
             final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
@@ -273,20 +273,21 @@ public class Connection {
         return connection != null && connection.isConnected() && connection.isAuthenticated();
     }
 
-    public Future<Integer> requestDaysToExpiration() {
+    public Future<Integer> requestSecondsToExpiration() {
+        Log.d("JACK requestSecondsToExpiration");
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: request days to expiration: no connection");
                 return null;
             }
-            final DaysToExpirationIq daysToExpirationIq = new DaysToExpirationIq(connection.getXMPPServiceDomain());
+            final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq(connection.getXMPPServiceDomain());
             // TODO(jack): Remove this short-circuiting once server released to prod
             if (true) {
-                return 20;
+                return 20 * 60 * 60 * 24;
             }
             try {
-                final DaysToExpirationIq response = connection.createStanzaCollectorAndSend(daysToExpirationIq).nextResultOrThrow();
-                return response.daysLeft;
+                final SecondsToExpirationIq response = connection.createStanzaCollectorAndSend(secondsToExpirationIq).nextResultOrThrow();
+                return response.secondsLeft;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: request days to expiration", e);
             }

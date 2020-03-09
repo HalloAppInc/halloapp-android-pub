@@ -14,23 +14,23 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public class DaysToExpirationIq extends IQ {
+public class SecondsToExpirationIq extends IQ {
 
     final static String ELEMENT = "client_version";
     final static String NAMESPACE = "halloapp:client:version";
 
     private final static String ELEMENT_VERSION = "version";
-    private final static String ELEMENT_DAYS_LEFT = "days_left";
+    private final static String ELEMENT_SECONDS_LEFT = "seconds_left";
 
-    Integer daysLeft = null;
+    Integer secondsLeft = null;
 
-    DaysToExpirationIq(@NonNull Jid to) {
+    SecondsToExpirationIq(@NonNull Jid to) {
         super(ELEMENT, NAMESPACE);
         setType(Type.get);
         setTo(to);
     }
 
-    private DaysToExpirationIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
+    private SecondsToExpirationIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);
 
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -38,11 +38,11 @@ public class DaysToExpirationIq extends IQ {
                 continue;
             }
             final String name = parser.getName();
-            if (ELEMENT_DAYS_LEFT.equals(name)) {
+            if (ELEMENT_SECONDS_LEFT.equals(name)) {
                 try {
-                    daysLeft = Integer.parseInt(Xml.readText(parser));
+                    secondsLeft = Integer.parseInt(Xml.readText(parser));
                 } catch (NumberFormatException e) {
-                    Log.e("days to expiration", e);
+                    Log.e("seconds to expiration", e);
                 }
             } else {
                 Xml.skip(parser);
@@ -59,11 +59,11 @@ public class DaysToExpirationIq extends IQ {
         return xml;
     }
 
-    public static class Provider extends IQProvider<DaysToExpirationIq> {
+    public static class Provider extends IQProvider<SecondsToExpirationIq> {
 
         @Override
-        public DaysToExpirationIq parse(XmlPullParser parser, int initialDepth) throws IOException, XmlPullParserException {
-            return new DaysToExpirationIq(parser);
+        public SecondsToExpirationIq parse(XmlPullParser parser, int initialDepth) throws IOException, XmlPullParserException {
+            return new SecondsToExpirationIq(parser);
         }
     }
 }
