@@ -84,7 +84,7 @@ public class CommentsHistoryPopup {
         popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null)); // to workaround popup doesn't dismiss on api 21 devices
-        popupWindow.setAnimationStyle(R.style.comments_history_animation);
+        popupWindow.setAnimationStyle(R.style.CommentsHistoryAnimation);
 
         final FrameLayout contentView = new FrameLayout(context) {
             @Override

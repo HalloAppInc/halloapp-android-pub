@@ -76,7 +76,7 @@
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="comments_history_animation">
+    <style name="CommentsHistoryAnimation">
         <item name="android:windowEnterAnimation">@anim/comments_history_in</item>
         <item name="android:windowExitAnimation">@anim/comments_history_out</item>
     </style>
