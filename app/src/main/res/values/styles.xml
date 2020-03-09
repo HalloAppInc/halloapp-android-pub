@@ -8,6 +8,7 @@
         <item name="android:navigationBarColor">@color/color_primary_dark</item>
         <item name="actionBarStyle">@style/ActionBar</item>
         <item name="actionModeCloseDrawable">@drawable/ic_close</item>
+        <item name="actionModeBackground">@color/window_background</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
