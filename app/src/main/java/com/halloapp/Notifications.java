@@ -119,7 +119,7 @@ public class Notifications {
                 } else {
                     text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
                 }
-                showNotification(context.getString(R.string.app_name), text);
+                showFeedNotification(context.getString(R.string.app_name), text);
             }
         });
     }
@@ -187,11 +187,12 @@ public class Notifications {
                 context.getString(R.string.new_comments_on_multiple_posts_notification, ListFormatter.format(context, names));
     }
 
-    private void showNotification(@NonNull String title, @NonNull String body) {
+    private void showFeedNotification(@NonNull String title, @NonNull String body) {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(body)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         final Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.setAction(ACTION_NOTIFY_FEED);
@@ -200,7 +201,6 @@ public class Notifications {
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
         builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        // Using the same notification-id to always show the latest notification for now.
         notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
     }
 
@@ -219,7 +219,6 @@ public class Notifications {
         contentIntent.putExtra(AppExpirationActivity.EXTRA_DAYS_LEFT, daysLeft);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        // Using the same notification-id to always show the latest notification for now.
         notificationManager.notify(EXPIRATION_NOTIFICATION_ID, builder.build());
     }
 
