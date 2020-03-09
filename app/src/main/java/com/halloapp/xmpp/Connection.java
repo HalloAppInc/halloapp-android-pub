@@ -282,7 +282,7 @@ public class Connection {
         Log.d("JACK requestSecondsToExpiration");
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: request days to expiration: no connection");
+                Log.e("connection: request seconds to expiration: no connection");
                 return null;
             }
             final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq(connection.getXMPPServiceDomain());
@@ -294,7 +294,7 @@ public class Connection {
                 final SecondsToExpirationIq response = connection.createStanzaCollectorAndSend(secondsToExpirationIq).nextResultOrThrow();
                 return response.secondsLeft;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
-                Log.e("connection: request days to expiration", e);
+                Log.e("connection: request seconds to expiration", e);
             }
             return null;
         });
