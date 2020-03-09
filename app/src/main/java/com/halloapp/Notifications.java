@@ -19,6 +19,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Log;
@@ -38,6 +39,7 @@ public class Notifications {
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
     private static final int FEED_NOTIFICATION_ID = 0;
+    private static final int EXPIRATION_NOTIFICATION_ID = 1;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
@@ -200,6 +202,25 @@ public class Notifications {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         // Using the same notification-id to always show the latest notification for now.
         notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
+    }
+
+    public void showExpirationNotification(int daysLeft) {
+        String title = context.getString(R.string.notification_app_expired_title);
+        if (daysLeft > 0) {
+            title = context.getResources().getQuantityString(R.plurals.notification_app_expiration_days_left_title, daysLeft, daysLeft);
+        }
+        String body = context.getString(R.string.notification_app_expiration_body);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        final Intent contentIntent = new Intent(context, AppExpirationActivity.class);
+        contentIntent.putExtra(AppExpirationActivity.EXTRA_DAYS_LEFT, daysLeft);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        // Using the same notification-id to always show the latest notification for now.
+        notificationManager.notify(EXPIRATION_NOTIFICATION_ID, builder.build());
     }
 
 

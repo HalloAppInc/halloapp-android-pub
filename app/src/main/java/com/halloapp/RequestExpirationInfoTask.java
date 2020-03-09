@@ -44,7 +44,7 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
             if (ForegroundObserver.getInstance().isInForeground()) {
                 AppExpirationActivity.open(context, daysLeft);
             } else {
-                // TODO(jack): Notification
+                Notifications.getInstance(context).showExpirationNotification(daysLeft);
             }
         }
     }

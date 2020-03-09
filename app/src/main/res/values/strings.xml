@@ -105,6 +105,12 @@
         <item quantity="one">Seen by %d person</item>
         <item quantity="other">Seen by %d people</item>
     </plurals>
+    <string name="notification_app_expired_title">HalloApp has expired</string>
+    <string name="notification_app_expiration_body">Please download the latest release</string>
+    <plurals name="notification_app_expiration_days_left_title">
+        <item quantity="one">HalloApp expires in %d day</item>
+        <item quantity="other">HalloApp expires in %d days</item>
+    </plurals>
     <string name="app_expiration_download_button">Download update</string>
     <string name="app_expired_explanation">This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>
     <string name="app_expiration_no_play_store">Google Play not installed</string>
