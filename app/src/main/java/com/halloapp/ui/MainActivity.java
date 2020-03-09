@@ -133,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onStart();
         Log.i("MainActivity.onStart");
         Notifications.getInstance(this).clear();
+        if (Connection.getInstance().clientExpired) {
+            AppExpirationActivity.open(this, 0);
+        }
     }
 
     @Override
