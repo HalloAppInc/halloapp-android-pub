@@ -46,7 +46,11 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onClientVersionExpired() {
-        AppExpirationActivity.open(context, 0);
+        if (ForegroundObserver.getInstance().isInForeground()) {
+            AppExpirationActivity.open(context, 0);
+        } else {
+            Notifications.getInstance(context).showExpirationNotification(0);
+        }
     }
 
     @Override
