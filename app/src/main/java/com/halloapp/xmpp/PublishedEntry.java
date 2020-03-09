@@ -5,6 +5,7 @@ import android.util.Base64;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.core.util.Preconditions;
 
@@ -12,6 +13,7 @@ import com.halloapp.Constants;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
+import org.jivesoftware.smack.packet.NamedElement;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -124,38 +126,47 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    static @NonNull List<PublishedEntry> getPublishedItems(@NonNull List<PubsubItem> items) {
+    static @NonNull List<PublishedEntry> getFeedEntries(@NonNull List<? extends NamedElement> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
-        for (PubsubItem item : items) {
-            final String xml = item.getPayload().toXML(null);
-            final XmlPullParser parser = android.util.Xml.newPullParser();
-            try {
-                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-                parser.setInput(new StringReader(xml));
-                parser.nextTag();
-                parser.require(XmlPullParser.START_TAG, null, ELEMENT_ENTRY);
-                while (parser.next() != XmlPullParser.END_TAG) {
-                    if (parser.getEventType() != XmlPullParser.START_TAG) {
-                        continue;
-                    }
-                    final String name = Preconditions.checkNotNull(parser.getName());
-                    PublishedEntry entry = null;
-                    if (name.equals(ELEMENT_FEED_POST)) {
-                        entry = readEntry(parser, ENTRY_FEED, item);
-                    } else if (name.equals(ELEMENT_COMMENT)) {
-                        entry = readEntry(parser, ENTRY_COMMENT, item);
-                    } else {
-                        Xml.skip(parser);
-                    }
-                    if (entry != null && entry.valid()) {
-                        entries.add(entry);
-                    }
+        for (NamedElement item : items) {
+            if (item instanceof PubsubItem) {
+                final PublishedEntry entry = getFeedEntry((PubsubItem)item);
+                if (entry != null && entry.valid()) {
+                    entries.add(entry);
                 }
-            } catch (XmlPullParserException | IOException e) {
-                Log.e("PublishedEntry.getPublishedItems", e);
+            } else {
+                Log.e("PublishedEntry.getFeedEntries: unknown feed entry " + item);
             }
         }
         return entries;
+    }
+
+    private static @Nullable PublishedEntry getFeedEntry(@NonNull PubsubItem item) {
+        final String xml = item.getPayload().toXML(null);
+        final XmlPullParser parser = android.util.Xml.newPullParser();
+        PublishedEntry entry = null;
+        try {
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(new StringReader(xml));
+            parser.nextTag();
+            parser.require(XmlPullParser.START_TAG, null, ELEMENT_ENTRY);
+            while (parser.next() != XmlPullParser.END_TAG) {
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    continue;
+                }
+                final String name = Preconditions.checkNotNull(parser.getName());
+                if (name.equals(ELEMENT_FEED_POST)) {
+                    entry = readEntry(parser, ENTRY_FEED, item);
+                } else if (name.equals(ELEMENT_COMMENT)) {
+                    entry = readEntry(parser, ENTRY_COMMENT, item);
+                } else {
+                    Xml.skip(parser);
+                }
+            }
+        } catch (XmlPullParserException | IOException e) {
+            Log.e("PublishedEntry.getFeedEntry", e);
+        }
+        return entry;
     }
 
     @NonNull String toXml() {
@@ -235,7 +246,7 @@ public class PublishedEntry {
     }
 
     private boolean valid() {
-        return timestamp != 0 && user != null && (text != null || !media.isEmpty());
+        return true; // timestamp != 0 && user != null && (text != null || !media.isEmpty());
     }
 
     private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull PubsubItem item) throws XmlPullParserException, IOException {

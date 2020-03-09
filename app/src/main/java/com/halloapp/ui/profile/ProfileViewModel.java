@@ -36,10 +36,8 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
-            if (senderUserId.isMe()) {
-                invalidatePosts();
-            }
+        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+            invalidatePosts();
         }
 
         @Override
@@ -61,6 +59,10 @@ public class ProfileViewModel extends AndroidViewModel {
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
             invalidatePosts();
+        }
+
+        @Override
+        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         }
 
         @Override

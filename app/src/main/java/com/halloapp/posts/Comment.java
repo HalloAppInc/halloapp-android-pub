@@ -1,5 +1,7 @@
 package com.halloapp.posts;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
@@ -56,6 +58,10 @@ public class Comment {
 
     public boolean isIncoming() {
         return !isOutgoing();
+    }
+
+    public boolean isRetracted() {
+        return TextUtils.isEmpty(text);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.halloapp.posts;
 
+import android.text.TextUtils;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
@@ -65,6 +67,10 @@ public class Post {
 
     public boolean isIncoming() {
         return !isOutgoing();
+    }
+
+    public boolean isRetracted() {
+        return TextUtils.isEmpty(text) && media.isEmpty();
     }
 
     @Override

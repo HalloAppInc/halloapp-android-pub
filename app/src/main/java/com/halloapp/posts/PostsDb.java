@@ -42,11 +42,12 @@ public class PostsDb {
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
-        void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId);
+        void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
+        void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
@@ -55,11 +56,12 @@ public class PostsDb {
 
     public static class DefaultObserver implements Observer {
         public void onPostAdded(@NonNull Post post) {}
-        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
+        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
@@ -91,10 +93,10 @@ public class PostsDb {
     }
 
     public void addPost(@NonNull Post post) {
-        addPosts(Collections.singletonList(post), null);
+        addFeedItems(Collections.singletonList(post), new ArrayList<>(), null);
     }
 
-    public void addPosts(@NonNull List<Post> posts, @Nullable Runnable completionRunnable) {
+    public void addFeedItems(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
 
             for (Post post : posts) {
@@ -102,20 +104,44 @@ public class PostsDb {
                 final SQLiteDatabase db = databaseHelper.getWritableDatabase();
                 db.beginTransaction();
                 try {
-                    insertPost(post);
-                    Log.i("PostsDb.addPost: added " + post);
+                    if (post.isRetracted()) {
+                        retractPostInBackground(post.senderUserId, post.postId);
+                    } else {
+                        try {
+                            addPostInBackground(post);
+                        } catch (SQLiteConstraintException ex) {
+                            Log.w("PostsDb.addPost: duplicate " + ex.getMessage() + " " + post);
+                            duplicate = true;
+                        }
+                    }
                     db.setTransactionSuccessful();
-                } catch (SQLiteConstraintException ex) {
-                    Log.w("PostsDb.addPost: duplicate " + post);
-                    duplicate = true;
                 } finally {
                     db.endTransaction();
                 }
                 // important to notify outside of transaction
                 if (!duplicate) {
-                    observers.notifyPostAdded(post);
+                    if (post.isRetracted()) {
+                        observers.notifyPostRetracted(post.senderUserId, post.postId);
+                    } else {
+                        observers.notifyPostAdded(post);
+                    }
                 }
             }
+
+            for (Comment comment : comments) {
+                if (comment.isRetracted()) {
+                    retractCommentInBackground(comment.commentSenderUserId, comment.commentId);
+                    observers.notifyCommentRetracted(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId);
+                } else {
+                    try {
+                        addCommentInBackground(comment);
+                        observers.notifyCommentAdded(comment);
+                    } catch (SQLiteConstraintException ex) {
+                        Log.w("PostsDb.addComment: duplicate " + ex.getMessage() + " " + comment);
+                    }
+                }
+            }
+
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
@@ -123,7 +149,8 @@ public class PostsDb {
     }
 
     @WorkerThread
-    private void insertPost(@NonNull Post post) {
+    private void addPostInBackground(@NonNull Post post) {
+        Log.i("PostsDb.addPost " + post);
         if (post.timestamp < getPostExpirationTime()) {
             throw new SQLiteConstraintException("attempting to add expired post");
         }
@@ -168,18 +195,51 @@ public class PostsDb {
             }
             db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
+        Log.i("PostsDb.addPost: added " + post);
     }
 
-    public void deletePost(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void retractPost(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            final int deleteCount = db.delete(PostsTable.TABLE_NAME,
-                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                    new String [] {senderUserId.rawId(), postId});
-            if (deleteCount > 0) {
-                observers.notifyPostDeleted(senderUserId, postId);
-            }
+            retractPostInBackground(senderUserId, postId);
+            observers.notifyPostRetracted(senderUserId, postId);
         });
+    }
+
+    @WorkerThread
+    private void retractPostInBackground(@NonNull UserId senderUserId, @NonNull String postId) {
+        Log.i("PostsDb.retractPost: postId=" + postId);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_TRANSFERRED, !senderUserId.isMe());
+        values.put(PostsTable.COLUMN_TEXT, (String)null);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final Post post = getPost(senderUserId, postId);
+            if (post != null) {
+                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                        PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                        new String[]{senderUserId.rawId(), postId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                db.delete(CommentsTable.TABLE_NAME,
+                        CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
+                        new String[]{senderUserId.rawId(), postId});
+                db.delete(MediaTable.TABLE_NAME,
+                        MediaTable.COLUMN_POST_ROW_ID + "=?",
+                        new String[]{Long.toString(post.rowId)});
+                for (Media media : post.media) {
+                    if (!media.file.delete()) {
+                        Log.e("PostsDb.retractPost: failed to delete " + media.file.getAbsolutePath());
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+            Log.i("PostsDb.retractPost: retracted postId=" + postId);
+        } catch (SQLException ex) {
+            Log.e("PostsDb.retractPost: failed");
+            throw ex;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public void setIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
@@ -324,28 +384,12 @@ public class PostsDb {
     }
 
     public void addComment(@NonNull Comment comment) {
-        addComments(Collections.singletonList(comment), null);
-    }
-
-    public void addComments(@NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
-        databaseWriteExecutor.execute(() -> {
-            for (Comment comment : comments) {
-                try {
-                    insertComment(comment);
-                    observers.notifyCommentAdded(comment);
-                    Log.i("PostsDb.addComment: added " + comment);
-                } catch (SQLiteConstraintException ex) {
-                    Log.w("PostsDb.addComment: duplicate " + ex.getMessage() + " " + comment);
-                }
-            }
-            if (completionRunnable != null) {
-                completionRunnable.run();
-            }
-        });
+        addFeedItems(new ArrayList<>(), Collections.singletonList(comment), null);
     }
 
     @WorkerThread
-    private void insertComment(@NonNull Comment comment) {
+    private void addCommentInBackground(@NonNull Comment comment) {
+        Log.i("PostsDb.addComment " + comment);
         if (comment.timestamp < getPostExpirationTime()) {
             throw new SQLiteConstraintException("attempting to add expired comment");
         }
@@ -361,6 +405,34 @@ public class PostsDb {
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        Log.i("PostsDb.addComment: added " + comment);
+    }
+
+    public void retractComment(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        databaseWriteExecutor.execute(() -> {
+            retractCommentInBackground(commentSenderUserId, commentId);
+            observers.notifyCommentRetracted(postSenderUserId, postId, commentSenderUserId, commentId);
+        });
+    }
+
+    @WorkerThread
+    private void retractCommentInBackground(@NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        Log.i("PostsDb.retractCommentInBackground: senderUserId=" + commentSenderUserId + " commentId=" + commentId);
+        final ContentValues values = new ContentValues();
+        if (commentSenderUserId.isMe()) {
+            values.put(CommentsTable.COLUMN_TRANSFERRED, false);
+        }
+        values.put(CommentsTable.COLUMN_TEXT, (String)null);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                    CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
+                    new String [] {commentSenderUserId.rawId(), commentId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("PostsDb.retractCommentInBackground: failed");
+            throw ex;
+        }
     }
 
     public void setCommentTransferred(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
@@ -430,7 +502,7 @@ public class PostsDb {
         });
     }
 
-    public void addHistory(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+    void addHistory(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         databaseWriteExecutor.execute(() -> {
             final List<Post> addedHistoryPosts = new ArrayList<>();
             final Collection<Comment> addedHistoryComments = new ArrayList<>();
@@ -439,7 +511,7 @@ public class PostsDb {
             try {
                 for (Post post : historyPosts) {
                     try {
-                        insertPost(post);
+                        addPostInBackground(post);
                         addedHistoryPosts.add(post);
                         Log.i("PostsDb.addHistory: post added " + post);
                     } catch (SQLiteConstraintException ex) {
@@ -448,7 +520,7 @@ public class PostsDb {
                 }
                 for (Comment comment : historyComments) {
                     try {
-                        insertComment(comment);
+                        addCommentInBackground(comment);
                         addedHistoryComments.add(comment);
                         Log.i("PostsDb.addHistory: comment added " + comment);
                     } catch (SQLiteConstraintException ex) {

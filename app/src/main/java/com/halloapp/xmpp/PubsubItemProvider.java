@@ -25,15 +25,15 @@ public class PubsubItemProvider extends ItemProvider {
 
         int tag = parser.next();
 
+        final PubsubItem item;
         if (tag == XmlPullParser.END_TAG)  {
-            return new Item(itemNamespace, id, node);
+            item = new PubsubItem(itemNamespace, id, node, new SimplePayload("<entry xmlns='http://halloapp.com/published-entry'><feedpost/></entry>")); // TODO (ds): come up with better solution
         }
         else {
             String payloadElemName = parser.getName();
             String payloadNS = parser.getNamespace();
 
             final ExtensionElementProvider<ExtensionElement> extensionProvider = ProviderManager.getExtensionProvider(payloadElemName, payloadNS);
-            final PubsubItem item;
             if (extensionProvider == null) {
                 // TODO: Should we use StandardExtensionElement in this case? And probably remove SimplePayload all together.
                 CharSequence payloadText = PacketParserUtils.parseElement(parser, true);
@@ -42,13 +42,13 @@ public class PubsubItemProvider extends ItemProvider {
             else {
                 item = new PubsubItem(itemNamespace, id, node, (SimplePayload)extensionProvider.parse(parser));
             }
-            if (publisher != null) {
-                item.publisher = JidCreate.bareFrom(publisher);
-            }
-            if (timestamp != null) {
-                item.timestamp = Long.parseLong(timestamp);
-            }
-            return item;
         }
+        if (publisher != null) {
+            item.publisher = JidCreate.bareFrom(publisher);
+        }
+        if (timestamp != null) {
+            item.timestamp = Long.parseLong(timestamp);
+        }
+        return item;
     }
 }

@@ -61,7 +61,10 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+        if (senderUserId.isMe()) {
+            connection.retractPost(postId);
+        }
     }
 
     @Override
@@ -85,6 +88,13 @@ public class MainPostsObserver implements PostsDb.Observer {
             if (comment.postSenderUserId.isMe()) {
                 notifications.update();
             }
+        }
+    }
+
+    @Override
+    public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        if (commentSenderUserId.isMe()) {
+            connection.retractComment(postSenderUserId, postId, commentId);
         }
     }
 

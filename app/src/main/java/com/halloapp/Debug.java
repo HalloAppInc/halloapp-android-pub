@@ -44,7 +44,6 @@ public class Debug {
     private static final String DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY = "Visit expiration activity";
     private static final String DEBUG_MENU_SET_AVATAR = "Set avatar";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
-    private static final String DEBUG_MENU_DELETE_POST = "Delete post";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
@@ -139,17 +138,11 @@ public class Debug {
     public static void showDebugMenu(@NonNull Activity activity, View anchor, UserId userId, String postId) {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
-        menu.getMenu().add(DEBUG_MENU_DELETE_POST);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
                     PostsDb.getInstance(activity).setCommentsSeen(userId, postId, false);
-                    break;
-                }
-                case DEBUG_MENU_DELETE_POST: {
-                    PostsDb.getInstance(activity).deletePost(userId, postId);
-                    activity.finish();
                     break;
                 }
             }

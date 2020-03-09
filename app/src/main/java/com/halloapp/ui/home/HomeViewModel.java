@@ -54,7 +54,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
+        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidatePosts();
             invalidateCommentHistory();
         }
@@ -79,6 +79,11 @@ public class HomeViewModel extends AndroidViewModel {
             if (comment.isIncoming()) {
                 invalidateCommentHistory();
             }
+        }
+
+        @Override
+        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+            invalidateCommentHistory();
         }
 
         @Override

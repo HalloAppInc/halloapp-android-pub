@@ -32,18 +32,18 @@ public class PostsDbObservers {
         }
     }
 
-    void notifyPostDeleted(@NonNull UserId senderUserId, @NonNull String postId) {
-        synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
-                observer.onPostDeleted(senderUserId, postId);
-            }
-        }
-    }
-
     void notifyPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (PostsDb.Observer observer : observers) {
                 observer.onPostUpdated(senderUserId, postId);
+            }
+        }
+    }
+
+    public void notifyPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (PostsDb.Observer observer : observers) {
+                observer.onPostRetracted(senderUserId, postId);
             }
         }
     }
@@ -76,6 +76,14 @@ public class PostsDbObservers {
         synchronized (observers) {
             for (PostsDb.Observer observer : observers) {
                 observer.onCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
+            }
+        }
+    }
+
+    void notifyCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        synchronized (observers) {
+            for (PostsDb.Observer observer : observers) {
+                observer.onCommentRetracted(postSenderUserId, postId, commentSenderUserId, commentId);
             }
         }
     }

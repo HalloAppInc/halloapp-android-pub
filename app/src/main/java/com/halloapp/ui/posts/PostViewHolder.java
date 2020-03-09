@@ -46,6 +46,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final LimitingTextView textView;
     private final View postActionsSeparator;
     private final PostMediaPagerAdapter mediaPagerAdapter;
+    private final View footer;
     final View footerSpacing;
 
     final PostViewHolderParent parent;
@@ -65,6 +66,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         textView = itemView.findViewById(R.id.text);
         postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
+        footer = itemView.findViewById(R.id.post_footer);
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new PostMediaPagerAdapter();
@@ -160,6 +162,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         } else {
             textView.setVisibility(View.VISIBLE);
             postActionsSeparator.setVisibility(View.VISIBLE);
+        }
+
+        if (post.isRetracted()) {
+            footer.setVisibility(View.GONE);
+            postActionsSeparator.setVisibility(View.GONE);
+        } else {
+            footer.setVisibility(View.VISIBLE);
         }
     }
 

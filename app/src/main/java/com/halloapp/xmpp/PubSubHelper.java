@@ -38,6 +38,12 @@ public class PubSubHelper {
         connection.createStanzaCollectorAndSend(packet).nextResultOrThrow();
     }
 
+    void retractItem(@NonNull String nodeId, @NonNull Item item) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+        Preconditions.checkNotNull(connection);
+        final PubSub packet = PubSub.createPubsubPacket(pubSubManager.getServiceJid(), IQ.Type.set, new RetractItem<>(nodeId, Collections.singletonList(item)));
+        connection.createStanzaCollectorAndSend(packet).nextResultOrThrow();
+    }
+
     List<PubsubItem> getItems(@NonNull String nodeId) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final PubSub packet = PubSub.createPubsubPacket(pubSubManager.getServiceJid(), IQ.Type.get, new GetItemsRequest(nodeId));
@@ -68,6 +74,4 @@ public class PubSubHelper {
         final ItemsExtension itemsElem = result.getExtension(PubSubElementType.ITEMS);
         return (List<PubsubItem>) itemsElem.getItems();
     }
-
-
 }

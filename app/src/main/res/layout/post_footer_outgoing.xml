@@ -118,61 +118,82 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/add_comment"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/post_actions"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="?selectableItemBackground"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp">
+        android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/my_avatar"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/comment"
-            tools:src="@color/color_primary_dark" />
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/add_comment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
+            android:layout_height="56dp"
+            android:background="?selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:singleLine="true"
-            android:text="@string/add_comment"
-            android:textColor="?android:attr/textColorHint"
-            android:textSize="16sp" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/view_comments">
 
-    </LinearLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/my_avatar"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/comment"
+                tools:src="@color/color_primary_dark" />
 
-    <LinearLayout
-        android:id="@+id/view_comments"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="?selectableItemBackground"
-        android:paddingStart="60dp"
-        android:paddingEnd="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:singleLine="true"
+                android:text="@string/add_comment"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="16sp" />
 
-        <TextView
-            style="@style/PostButton"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/view_comments"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?selectableItemBackground"
+            android:paddingStart="60dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/add_comment"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                style="@style/PostButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@string/see_all_comments"/>
+
+            <!-- use separate view instead of compound drawable for better vertical alignment -->
+            <View
+                style="@style/CommentsIndicator"
+                android:id="@+id/comments_indicator" />
+
+        </LinearLayout>
+
+        <ImageButton
+            style="?actionButtonStyle"
+            android:id="@+id/actions"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:fontFamily="sans-serif-medium"
-            android:singleLine="true"
-            android:text="@string/see_all_comments"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- use separate view instead of compound drawable for better vertical alignment -->
-        <View
-            style="@style/CommentsIndicator"
-            android:id="@+id/comments_indicator" />
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

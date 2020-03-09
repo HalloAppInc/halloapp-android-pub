@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.PostViewHolderParent;
+import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.xmpp.Connection;
 
@@ -129,6 +131,7 @@ public class PostsFragment extends Fragment {
 
         static final int POST_TYPE_TEXT = 0x00;
         static final int POST_TYPE_MEDIA = 0x01;
+        static final int POST_TYPE_RETRACTED = 0x02;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -236,8 +239,8 @@ public class PostsFragment extends Fragment {
                 return -position - 1;
             } else {
                 final Post post = Preconditions.checkNotNull(getItem(position));
-                return (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA) |
-                    (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING) ;
+                return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
+                    (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
 
             }
         }
@@ -263,12 +266,19 @@ public class PostsFragment extends Fragment {
                         contentLayoutRes = R.layout.post_item_media;
                         break;
                     }
+                    case POST_TYPE_RETRACTED: {
+                        contentLayoutRes = R.layout.post_item_retracted;
+                        break;
+                    }
                     default: {
                         throw new IllegalArgumentException();
                     }
                 }
                 final ViewGroup content = layout.findViewById(R.id.post_content);
                 LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
+                if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
+                    return new RetractedPostViewHolder(layout, postViewHolderParent);
+                }
                 final ViewGroup footer = layout.findViewById(R.id.post_footer);
                 switch (viewType & POST_DIRECTION_MASK) {
                     case POST_DIRECTION_INCOMING: {

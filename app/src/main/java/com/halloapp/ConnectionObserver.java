@@ -49,8 +49,8 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onIncomingPostsReceived(@NonNull List<Post> posts, @NonNull String ackId) {
-        PostsDb.getInstance(context).addPosts(posts, () -> Connection.getInstance().sendAck(ackId));
+    public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comments, @NonNull String ackId) {
+        PostsDb.getInstance(context).addFeedItems(posts, comments, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override
@@ -61,11 +61,6 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         PostsDb.getInstance(context).setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
-    }
-
-    @Override
-    public void onIncomingCommentsReceived(@NonNull List<Comment> comments, @NonNull String ackId) {
-        PostsDb.getInstance(context).addComments(comments, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override

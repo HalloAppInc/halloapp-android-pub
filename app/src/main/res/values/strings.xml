@@ -117,6 +117,11 @@
     <string name="see_all_comments">See all comments</string>
     <string name="add_comment">Add a comment</string>
     <string name="refresh_contacts">Refresh contacts</string>
+    <string name="post_retracted_placeholder">This post has been retracted</string>
+    <string name="retract">Retract</string>
+    <string name="retract_post_confirmation">Would you like to retract your post?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <plurals name="app_expiration_days_left">
         <item quantity="one">This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release.</item>
         <item quantity="other">This version of HalloApp will expire in %d days. Please go to the Google Play Store and download the latest release.</item>

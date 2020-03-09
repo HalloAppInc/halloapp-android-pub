@@ -1,18 +1,23 @@
 package com.halloapp.ui.posts;
 
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
+import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.PostDetailsActivity;
 import com.halloapp.util.TimeFormatter;
@@ -24,7 +29,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
     private final View addCommentButton;
     private final View viewCommentsButton;
-    private final View viewCommentsInvicator;
+    private final View viewCommentsIndicator;
     private final AvatarsLayout seenIndicator;
     private final View firstCommentContent;
     private final ImageView firstCommentAvatar;
@@ -37,7 +42,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         addCommentButton = itemView.findViewById(R.id.add_comment);
         viewCommentsButton = itemView.findViewById(R.id.view_comments);
-        viewCommentsInvicator = itemView.findViewById(R.id.comments_indicator);
+        viewCommentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
         firstCommentContent = itemView.findViewById(R.id.comment_content);
         firstCommentAvatar = itemView.findViewById(R.id.comment_avatar);
@@ -74,6 +79,25 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         final ImageView myAvatarView = itemView.findViewById(R.id.my_avatar);
         myAvatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
         parent.getAvatarLoader().load(myAvatarView, UserId.ME, Long.toString(getItemId()));
+
+        itemView.findViewById(R.id.actions).setOnClickListener(v -> {
+            final PopupMenu menu = new PopupMenu(itemView.getContext(), v);
+            final MenuInflater menuInflater = new MenuInflater(itemView.getContext());
+            menuInflater.inflate(R.menu.outgoing_post_menu, menu.getMenu());
+            menu.setOnMenuItemClickListener(item -> {
+                //noinspection SwitchStatementWithTooFewBranches
+                switch (item.getItemId()) {
+                    case R.id.retract: {
+                        onRetractPost();
+                        return true;
+                    }
+                    default: {
+                        return false;
+                    }
+                }
+            });
+            menu.show();
+        });
     }
 
     @CallSuper
@@ -101,7 +125,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             footerSpacing.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
         }
 
-        viewCommentsInvicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.GONE);
+        viewCommentsIndicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.GONE);
 
         final Comment firstComment = post.firstComment;
         if (firstComment != null) {
@@ -123,6 +147,16 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         } else {
             firstCommentContent.setVisibility(View.GONE);
         }
+    }
+
+    private void onRetractPost() {
+        final Context context = itemView.getContext();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getString(R.string.retract_post_confirmation));
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(context).retractPost(post.senderUserId, post.postId));
+        builder.setNegativeButton(R.string.no, null);
+        builder.show();
     }
 }
 
