@@ -7,22 +7,28 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.posts.Media;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.Log;
 import com.halloapp.util.TailInputStream;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-class Downloader {
+public class Downloader {
 
     public interface DownloadListener {
         boolean onProgress(int percent);
@@ -38,7 +44,7 @@ class Downloader {
     }
 
     @WorkerThread
-    static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
         InputStream inStream = null;
         OutputStream outStream = null;
         HttpURLConnection connection = null;

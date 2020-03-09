@@ -3,7 +3,6 @@ package com.halloapp.ui.avatar;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -13,10 +12,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Size;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,10 +32,10 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.media.Uploader;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
@@ -50,18 +47,15 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.CropImageView;
 import com.halloapp.widget.MediaViewPager;
-import com.halloapp.widget.PostEditText;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.MediaUploadIq;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -69,6 +63,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -307,7 +302,8 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 Media img = media.get(0);
                     final File pngFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".png");
                     try {
-                        transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
+                        String hash = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
+                        uploadAvatar(pngFile, Connection.getInstance(), hash);
                     } catch (IOException | NoSuchAlgorithmException e) {
                         Log.e("failed to transcode image", e);
                         return null;
@@ -317,7 +313,8 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         @WorkerThread
-        public static void transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
+        public static String transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
+            String hash = null;
             final int maxWidth;
             final int maxHeight;
             if (cropRect != null) {
@@ -347,7 +344,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                     InputStream is = new FileInputStream(fileTo);
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    MessageDigest md = MessageDigest.getInstance("SHA-1");
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
 
                     byte[] buf = new byte[1000];
                     int count;
@@ -356,25 +353,39 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                         md.update(buf, 0, count);
                     }
 
-                    byte[] sha1hash = md.digest();
-                    StringBuilder hexString = new StringBuilder();
-                    for (int i=0; i<sha1hash.length; i++) {
-                        hexString.append(Integer.toHexString((sha1hash[i] & 0xFF) | 0x100).substring(1,3));
-                    }
-                    String hash = hexString.toString();
+                    byte[] sha256hash = md.digest();
+                    hash = StringUtils.bytesToHexString(sha256hash);
 
                     byte[] file = baos.toByteArray();
                     String base64 = Base64.encodeToString(file, Base64.DEFAULT);
-
-                    Connection connection = Connection.getInstance();
-                    connection.publishAvatarData(hash, base64);
-                    connection.getMyMostRecentAvatarData();
-                    connection.publishAvatarMetadata(hash);
-                    connection.getMyMostRecentAvatarMetadata();
                 }
                 croppedBitmap.recycle();
             } else {
                 throw new IOException("cannot decode image");
+            }
+            return hash;
+        }
+
+        public static void uploadAvatar(File pngFile, Connection connection, String hash) {
+            final MediaUploadIq.Urls urls;
+            try {
+                urls = connection.requestMediaUpload().get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("upload avatar", e);
+                return;
+            }
+            if (urls == null) {
+                Log.e("upload avatar: failed to get urls");
+                return;
+            }
+
+            final Uploader.UploadListener uploadListener = percent -> true;
+            try {
+                Uploader.run(pngFile, null, Media.MEDIA_TYPE_UNKNOWN, urls.putUrl, uploadListener);
+                connection.publishAvatarMetadata(hash, urls.getUrl);
+            } catch (IOException e) {
+                Log.e("upload avatar", e);
+                return;
             }
         }
     }

@@ -94,41 +94,6 @@ public class Debug {
                     activity.startActivity(new Intent(activity.getApplicationContext(), AppExpirationActivity.class));
                     break;
                 }
-                case DEBUG_MENU_SET_AVATAR: {
-                    // TODO(jack): Convert testing code into feature code
-                    try {
-                        Resources res = activity.getResources();
-                        InputStream is = res.openRawResource(R.raw.ic_launcher_round);
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-                        MessageDigest md = MessageDigest.getInstance("SHA-1");
-
-                        byte[] buf = new byte[1000];
-                        int count;
-                        while ((count = is.read(buf)) != -1) {
-                            baos.write(buf, 0, count);
-                            md.update(buf, 0, count);
-                        }
-
-                        byte[] sha1hash = md.digest();
-                        StringBuilder hexString = new StringBuilder();
-                        for (int i=0; i<sha1hash.length; i++) {
-                            hexString.append(Integer.toHexString((sha1hash[i] & 0xFF) | 0x100).substring(1,3));
-                        }
-                        String hash = hexString.toString();
-
-                        byte[] file = baos.toByteArray();
-                        String base64 = Base64.encodeToString(file, Base64.DEFAULT);
-
-                        Connection connection = Connection.getInstance();
-                        connection.publishAvatarData(hash, base64);
-                        connection.getMyMostRecentAvatarData();
-                        connection.publishAvatarMetadata(hash);
-                        connection.getMyMostRecentAvatarMetadata();
-                    } catch (IOException | NoSuchAlgorithmException e) {
-                        Log.e("JACK error", e);
-                    }
-                }
             }
             return false;
         });

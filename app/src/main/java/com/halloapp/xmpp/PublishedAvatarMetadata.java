@@ -24,9 +24,11 @@ public class PublishedAvatarMetadata {
     private static final String ATTRIBUTE_HEIGHT = "height";
     private static final String ATTRIBUTE_BYTES = "bytes";
     private static final String ATTRIBUTE_ID = "id";
+    private static final String ATTRIBUTE_URL = "url";
 
     private static final String NAMESPACE = "urn:xmpp:avatar:metadata";
 
+    final String url;
     final String id;
     final String type = "image/png";
     final long numBytes;
@@ -34,8 +36,9 @@ public class PublishedAvatarMetadata {
     final int width;
 
     // Assume PNG and not URL for now
-    PublishedAvatarMetadata(String id, long numBytes, int height, int width) {
+    PublishedAvatarMetadata(String id, String url, long numBytes, int height, int width) {
         this.id = id;
+        this.url = url;
         this.numBytes = numBytes;
         this.height = height;
         this.width = width;
@@ -52,6 +55,7 @@ public class PublishedAvatarMetadata {
             serializer.startTag(null, ELEMENT_INFO);
             serializer.attribute(null, ATTRIBUTE_BYTES, Long.toString(numBytes));
             serializer.attribute(null, ATTRIBUTE_ID, id);
+            serializer.attribute(null, ATTRIBUTE_URL, url);
             serializer.attribute(null, ATTRIBUTE_TYPE, type);
             serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
             serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
@@ -77,12 +81,13 @@ public class PublishedAvatarMetadata {
             parser.require(XmlPullParser.START_TAG, null, ELEMENT_INFO);
 
             String id = parser.getAttributeValue(null, ATTRIBUTE_ID);
+            String url = parser.getAttributeValue(null, ATTRIBUTE_URL);
             String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE); // TODO(jack): specify type
             long numBytes = Long.parseLong(parser.getAttributeValue(null, ATTRIBUTE_BYTES));
             int height = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
             int width = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
 
-            return new PublishedAvatarMetadata(id, numBytes, height, width);
+            return new PublishedAvatarMetadata(id, url, numBytes, height, width);
         } catch (XmlPullParserException | IOException e) {
             Log.e("PublishedAvatarMetadata.getPublishedItem", e);
         }
@@ -96,5 +101,9 @@ public class PublishedAvatarMetadata {
 
     public String getId() {
         return id;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

@@ -350,44 +350,6 @@ public class Connection {
         });
     }
 
-    public void publishAvatarData(String id, String base64Data) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot update avatar data, no connection");
-                return;
-            }
-            try {
-                final PublishedAvatarData data = new PublishedAvatarData(base64Data);
-                final SimplePayload payload = new SimplePayload(data.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
-                pubSubHelper.publishItem(getMyAvatarDataNodeId(), item);
-                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-
-                // TODO(jack): Observer avatar update? (For all)
-            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                Log.w("connection: cannot publish avatar data", e);
-            }
-        });
-    }
-
-    public Future<PubsubItem> getMyMostRecentAvatarData() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot get avatar metadata, no connection");
-                return null;
-            }
-            try {
-                final List<PubsubItem> items = pubSubHelper.getItems(getMyAvatarDataNodeId(), 1);
-                if (items.size() > 0) {
-                    return items.get(0);
-                }
-            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                Log.w("connection: cannot get my avatar data", e);
-            }
-            return null;
-        });
-    }
-
     public Future<PubsubItem> getAvatarData(UserId userId, String itemId) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
@@ -409,7 +371,7 @@ public class Connection {
         });
     }
 
-    public void publishAvatarMetadata(String id) {
+    public void publishAvatarMetadata(String id, String url) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot update avatar metadata, no connection");
@@ -418,6 +380,7 @@ public class Connection {
             try {
                 final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(
                         id,
+                        url,
                         3000,
                         64, 64);
                 final SimplePayload payload = new SimplePayload(metadata.toXml());
@@ -430,10 +393,6 @@ public class Connection {
                 Log.w("connection: cannot update avatar metadata", e);
             }
         });
-    }
-
-    public Future<PubsubItem> getMyMostRecentAvatarMetadata() {
-        return getMostRecentAvatarMetadata(UserId.ME);
     }
 
     public Future<PubsubItem> getMostRecentAvatarMetadata(UserId userId) {

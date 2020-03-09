@@ -10,13 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
 import com.halloapp.contacts.UserId;
+import com.halloapp.media.Downloader;
+import com.halloapp.media.MediaStore;
+import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
+import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PublishedAvatarData;
 import com.halloapp.xmpp.PublishedAvatarMetadata;
 import com.halloapp.xmpp.PubsubItem;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 // String will have to be unique...
@@ -67,17 +73,16 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 return null;
             }
             PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
-            String itemId = avatarMetadata.getId(); // this is hash
+            String itemId = avatarMetadata.getId();
+            byte[] hash = StringUtils.bytesFromHexString(itemId);
 
-            PubsubItem avatarData = connection.getAvatarData(userId, itemId).get();
-            if (avatarData == null) {
-                Log.i("No avatar data for " + userId);
-                return null;
+            String url = avatarMetadata.getUrl();
+            if (url != null) {
+                File localFile = MediaStore.getInstance(view.getContext()).getMediaFile(RandomId.create() + ".png");
+                Downloader.run(url, null, hash, Media.MEDIA_TYPE_UNKNOWN, localFile, p -> true);
+                return BitmapFactory.decodeFile(localFile.getAbsolutePath());
             }
-
-            PublishedAvatarData data = PublishedAvatarData.getPublishedItem(avatarData);
-            byte[] bytes = Base64.decode(data.getBase64Data(), Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            return null;
         };
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 

@@ -19,7 +19,7 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-class Uploader {
+public class Uploader {
 
     public interface UploadListener {
         boolean onProgress(int percent);
@@ -34,7 +34,7 @@ class Uploader {
     }
 
     @WorkerThread
-    static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener) throws IOException {
+    public static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener) throws IOException {
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
