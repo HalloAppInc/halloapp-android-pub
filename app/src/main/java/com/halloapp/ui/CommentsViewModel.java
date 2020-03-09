@@ -28,6 +28,7 @@ class CommentsViewModel extends AndroidViewModel {
     final LiveData<PagedList<Comment>> commentList;
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
+    final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
     private final PostsDb postsDb;
     private final UserId postSenderUserId;
@@ -40,6 +41,13 @@ class CommentsViewModel extends AndroidViewModel {
     private final PostsDb.Observer postsObserver = new PostsDb.DefaultObserver() {
 
         @Override
+        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+            if (CommentsViewModel.this.postSenderUserId.equals(senderUserId) && CommentsViewModel.this.postId.equals(postId)) {
+                postDeleted.postValue(true);
+            }
+        }
+
+        @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (CommentsViewModel.this.postSenderUserId.equals(comment.postSenderUserId) && CommentsViewModel.this.postId.equals(comment.postId)) {
                 postsDb.setCommentsSeen(comment.postSenderUserId, comment.postId);
@@ -49,6 +57,13 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+            if (CommentsViewModel.this.postSenderUserId.equals(postSenderUserId) && CommentsViewModel.this.postId.equals(postId)) {
+                invalidateDataSource();
+            }
+        }
+
+        @Override
+        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
             if (CommentsViewModel.this.postSenderUserId.equals(postSenderUserId) && CommentsViewModel.this.postId.equals(postId)) {
                 invalidateDataSource();
             }

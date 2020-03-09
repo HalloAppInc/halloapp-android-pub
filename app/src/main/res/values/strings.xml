@@ -117,9 +117,11 @@
     <string name="see_all_comments">See all comments</string>
     <string name="add_comment">Add a comment</string>
     <string name="refresh_contacts">Refresh contacts</string>
-    <string name="post_retracted_placeholder">This post has been retracted</string>
-    <string name="retract">Retract</string>
-    <string name="retract_post_confirmation">Would you like to retract your post?</string>
+    <string name="post_retracted_placeholder">This post has been deleted</string>
+    <string name="comment_retracted_placeholder">This comment has been deleted</string>
+    <string name="retract">Delete</string>
+    <string name="retract_post_confirmation">Would you like to deleted your post?</string>
+    <string name="retract_comment_confirmation">Would you like to deleted your comment?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <plurals name="app_expiration_days_left">

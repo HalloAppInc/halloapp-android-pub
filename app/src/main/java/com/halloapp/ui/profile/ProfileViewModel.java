@@ -63,6 +63,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+            invalidatePosts();
         }
 
         @Override

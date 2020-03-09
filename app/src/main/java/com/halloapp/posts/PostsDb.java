@@ -229,8 +229,10 @@ public class PostsDb {
                         MediaTable.COLUMN_POST_ROW_ID + "=?",
                         new String[]{Long.toString(post.rowId)});
                 for (Media media : post.media) {
-                    if (!media.file.delete()) {
-                        Log.e("PostsDb.retractPost: failed to delete " + media.file.getAbsolutePath());
+                    if (media.file != null) {
+                        if (!media.file.delete()) {
+                            Log.e("PostsDb.retractPost: failed to delete " + media.file.getAbsolutePath());
+                        }
                     }
                 }
             }
@@ -616,7 +618,7 @@ public class PostsDb {
                     "min(timestamp) as min_timestamp" + "," +
                     "count(*) AS comment_count" + ", " +
                     "sum(" + CommentsTable.COLUMN_SEEN + ") AS seen_comment_count" + " " +
-                    "FROM " + CommentsTable.TABLE_NAME + " GROUP BY " + CommentsTable.COLUMN_POST_SENDER_USER_ID+ ", " + CommentsTable.COLUMN_POST_ID + ") " +
+                    "FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_TEXT + " IS NOT NULL" + " GROUP BY " + CommentsTable.COLUMN_POST_SENDER_USER_ID+ ", " + CommentsTable.COLUMN_POST_ID + ") " +
                 "AS c ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=c." + CommentsTable.COLUMN_POST_SENDER_USER_ID + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=c." + CommentsTable.COLUMN_POST_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -826,6 +828,7 @@ public class PostsDb {
                 "FROM " + CommentsTable.TABLE_NAME + " " +
                 "WHERE comments.comment_sender_user_id<>'' " +
                     "AND comments.timestamp>" + getPostExpirationTime() + " " +
+                    "AND comments.text IS NOT NULL " +
                     "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" +
                     "AND (" +
                         "comments.post_sender_user_id='' " +

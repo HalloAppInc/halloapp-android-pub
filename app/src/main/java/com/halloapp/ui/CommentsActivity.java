@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.content.Context;
 import android.graphics.Outline;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
 import androidx.core.util.Preconditions;
@@ -141,6 +143,12 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
+        viewModel.postDeleted.observe(this, deleted -> {
+            if (Boolean.TRUE.equals(deleted)) {
+                finish();
+            }
+        });
+
         viewModel.post.observe(this, post -> adapter.notifyDataSetChanged());
         viewModel.loadPost(userId, postId);
 
@@ -258,6 +266,7 @@ public class CommentsActivity extends AppCompatActivity {
         final TextView timeView;
         final View progressView;
         final View replyButton;
+        final View retractButton;
         final RecyclerView mediaGallery;
 
         ViewHolder(final @NonNull View v) {
@@ -268,6 +277,7 @@ public class CommentsActivity extends AppCompatActivity {
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
             replyButton = v.findViewById(R.id.reply);
+            retractButton = v.findViewById(R.id.retract);
             mediaGallery = v.findViewById(R.id.media);
             if (mediaGallery != null) {
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
@@ -291,7 +301,17 @@ public class CommentsActivity extends AppCompatActivity {
 
             final Integer textLimit = textLimits.get(comment.rowId);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
-            commentView.setText(comment.text);
+            if (TextUtils.isEmpty(comment.text)) {
+                commentView.setText(getString(R.string.comment_retracted_placeholder));
+                commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceRetracted);
+                replyButton.setVisibility(View.GONE);
+                retractButton.setVisibility(View.GONE);
+            } else {
+                commentView.setText(comment.text);
+                commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceNormal);
+                replyButton.setVisibility(View.VISIBLE);
+                retractButton.setVisibility(comment.commentSenderUserId.isMe() ? View.VISIBLE : View.GONE);
+            }
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(comment.rowId, limit);
                 return false;
@@ -302,6 +322,16 @@ public class CommentsActivity extends AppCompatActivity {
                 editText.requestFocus();
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.showSoftInput(editText,0);
+            });
+
+            retractButton.setOnClickListener(v -> {
+                final Context context = itemView.getContext();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(context.getString(R.string.retract_comment_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(getBaseContext()).retractComment(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId));
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
             });
         }
 
