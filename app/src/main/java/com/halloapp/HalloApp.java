@@ -59,7 +59,9 @@ public class HalloApp extends Application {
 
         connect();
 
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new AppLifecycleObserver());
+        Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
+        lifecycle.addObserver(new AppLifecycleObserver());
+        lifecycle.addObserver(ForegroundObserver.getInstance());
 
         DailyWorker.schedule(this);
 
@@ -96,7 +98,6 @@ public class HalloApp extends Application {
     }
 
     class AppLifecycleObserver implements LifecycleObserver {
-
         private final Runnable disconnectOnBackgroundedRunnable = () -> Connection.getInstance().disconnect();
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
 

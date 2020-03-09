@@ -41,7 +41,11 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
             if (daysLeft <= 0) {
                 connection.clientExpired();
             }
-            AppExpirationActivity.open(context, daysLeft);
+            if (ForegroundObserver.getInstance().isInForeground()) {
+                AppExpirationActivity.open(context, daysLeft);
+            } else {
+                // TODO(jack): Notification
+            }
         }
     }
 }
