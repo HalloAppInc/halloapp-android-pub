@@ -350,27 +350,6 @@ public class Connection {
         });
     }
 
-    public Future<PubsubItem> getAvatarData(UserId userId, String itemId) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot get avatar metadata, no connection");
-                return null;
-            }
-            try {
-                // TODO(jack): Possible to make this me handling cleaner?
-                List<String> itemIds = new ArrayList<>();
-                itemIds.add(itemId);
-                List<PubsubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarDataNodeId() : getAvatarDataNodeId(userIdToJid(userId)), itemIds);
-                if (items.size() > 0) {
-                    return items.get(0);
-                }
-            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                Log.w("connection: cannot get avatar metadata", e);
-            }
-            return null;
-        });
-    }
-
     public void publishAvatarMetadata(String id, String url) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
@@ -698,20 +677,12 @@ public class Connection {
         return getAvatarMetadataNodeId(Preconditions.checkNotNull(connection).getUser());
     }
 
-    private String getMyAvatarDataNodeId() {
-        return getAvatarDataNodeId(Preconditions.checkNotNull(connection).getUser());
-    }
-
     private String getMyFeedNodeId() {
         return getFeedNodeId(Preconditions.checkNotNull(connection).getUser());
     }
 
     private static String getAvatarMetadataNodeId(@NonNull Jid jid) {
-        return getNodeId("avatar-metadata", jid);
-    }
-
-    private static String getAvatarDataNodeId(@NonNull Jid jid) {
-        return getNodeId("avatar-data", jid);
+        return getNodeId("metadata", jid);
     }
 
     private static String getFeedNodeId(@NonNull Jid jid) {
