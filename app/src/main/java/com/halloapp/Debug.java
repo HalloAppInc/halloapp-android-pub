@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -25,11 +23,7 @@ import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.io.File;
 
 public class Debug {
 
@@ -42,7 +36,7 @@ public class Debug {
     private static final String DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN = "Set incoming posts unseen";
     private static final String DEBUG_MENU_CLEANUP_POSTS = "Cleanup posts";
     private static final String DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY = "Visit expiration activity";
-    private static final String DEBUG_MENU_SET_AVATAR = "Set avatar";
+    private static final String DEBUG_MENU_CLEAR_AVATAR_CACHE = "Clear avatar disk cache";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
@@ -56,7 +50,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN);
         menu.getMenu().add(DEBUG_MENU_CLEANUP_POSTS);
         menu.getMenu().add(DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY);
-        menu.getMenu().add(DEBUG_MENU_SET_AVATAR);
+        menu.getMenu().add(DEBUG_MENU_CLEAR_AVATAR_CACHE);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -92,6 +86,23 @@ public class Debug {
                 }
                 case DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY: {
                     activity.startActivity(new Intent(activity.getApplicationContext(), AppExpirationActivity.class));
+                    break;
+                }
+                case DEBUG_MENU_CLEAR_AVATAR_CACHE: {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            File dir = new File(activity.getFilesDir(), "avatars");
+                            String[] files = dir.list();
+                            for (String file : files) {
+                                File toDelete = new File(dir, file);
+                                Log.d("DEBUG Deleting " + toDelete.getAbsolutePath());
+                                toDelete.delete();
+                            }
+                            return null;
+                        }
+                    }.execute();
+
                     break;
                 }
             }

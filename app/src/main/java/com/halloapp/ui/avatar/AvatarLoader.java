@@ -66,23 +66,27 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     @MainThread
     public void load(@NonNull ImageView view, @NonNull UserId userId, @NonNull String uniqueId) {
         final Callable<Bitmap> loader = () -> {
+            // Check disk cache here
+            MediaStore mediaStore = MediaStore.getInstance(view.getContext());
+            File avatarFile = mediaStore.getAvatarFile(userId.rawId());
 
-            PubsubItem item = connection.getMostRecentAvatarMetadata(userId).get();
-            if (item == null) {
-                Log.i("No avatar metadata for " + userId);
-                return null;
-            }
-            PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
-            String itemId = avatarMetadata.getId();
-            byte[] hash = StringUtils.bytesFromHexString(itemId);
+            if (!avatarFile.exists()) {
+                PubsubItem item = connection.getMostRecentAvatarMetadata(userId).get();
+                if (item == null) {
+                    Log.i("No avatar metadata for " + userId);
+                    return null;
+                }
+                PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
+                String itemId = avatarMetadata.getId();
+                byte[] hash = StringUtils.bytesFromHexString(itemId);
 
-            String url = avatarMetadata.getUrl();
-            if (url != null) {
-                File localFile = MediaStore.getInstance(view.getContext()).getMediaFile(RandomId.create() + ".png");
-                Downloader.run(url, null, hash, Media.MEDIA_TYPE_UNKNOWN, localFile, p -> true);
-                return BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                String url = avatarMetadata.getUrl();
+                if (url != null) {
+                    Downloader.run(url, null, hash, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+                }
             }
-            return null;
+
+            return BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
         };
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 

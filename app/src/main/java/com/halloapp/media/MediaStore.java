@@ -19,6 +19,7 @@ public class MediaStore {
     private final File mediaDir;
     private final File tmpDir;
     private final File cameraDir;
+    private final File avatarDir;
 
     public static MediaStore getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -39,6 +40,7 @@ public class MediaStore {
             mediaDir = prepareDir(new File(context.getFilesDir(), "media"));
             tmpDir = prepareDir(new File(context.getCacheDir(), "media"));
             cameraDir = prepareDir(new File(context.getCacheDir(), "camera"));
+            avatarDir = prepareDir(new File(context.getFilesDir(), "avatars"));
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -47,7 +49,7 @@ public class MediaStore {
     private File prepareDir(@NonNull File dir) {
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                Log.e("MediaStore: cannot create " + mediaDir.getAbsolutePath());
+                Log.e("MediaStore: cannot create " + dir.getAbsolutePath());
             }
         }
         return dir;
@@ -71,6 +73,10 @@ public class MediaStore {
 
     public File getImageCaptureFile() {
         return new File(cameraDir, "capture.jpg");
+    }
+
+    public File getAvatarFile(String jid) {
+        return new File(avatarDir, jid + ".png");
     }
 
     @WorkerThread
