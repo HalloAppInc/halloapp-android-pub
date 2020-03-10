@@ -181,6 +181,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
             case REQUEST_CODE_SET_AVATAR: {
                 if (result == RESULT_OK) {
                     overridePendingTransition(0, 0);
+                    setResult(RESULT_OK);
                     finish();
                 }
                 break;
