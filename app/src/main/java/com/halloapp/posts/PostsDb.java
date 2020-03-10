@@ -107,7 +107,7 @@ public class PostsDb {
                 db.beginTransaction();
                 try {
                     if (post.isRetracted()) {
-                        retractPostInBackground(post.senderUserId, post.postId);
+                        retractPostInBackground(post);
                     } else {
                         try {
                             addPostInBackground(post);
@@ -132,7 +132,7 @@ public class PostsDb {
 
             for (Comment comment : comments) {
                 if (comment.isRetracted()) {
-                    retractCommentInBackground(comment.commentSenderUserId, comment.commentId);
+                    retractCommentInBackground(comment);
                     observers.notifyCommentRetracted(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId);
                 } else {
                     try {
@@ -200,31 +200,42 @@ public class PostsDb {
         Log.i("PostsDb.addPost: added " + post);
     }
 
-    public void retractPost(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void retractPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
-            retractPostInBackground(senderUserId, postId);
-            observers.notifyPostRetracted(senderUserId, postId);
+            retractPostInBackground(post);
+            observers.notifyPostRetracted(post.senderUserId, post.postId);
         });
     }
 
     @WorkerThread
-    private void retractPostInBackground(@NonNull UserId senderUserId, @NonNull String postId) {
-        Log.i("PostsDb.retractPost: postId=" + postId);
+    private void retractPostInBackground(@NonNull Post post) {
+        Log.i("PostsDb.retractPost: postId=" + post.postId);
         final ContentValues values = new ContentValues();
-        values.put(PostsTable.COLUMN_TRANSFERRED, !senderUserId.isMe());
+        values.put(PostsTable.COLUMN_TRANSFERRED, !post.senderUserId.isMe());
         values.put(PostsTable.COLUMN_TEXT, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            final Post post = getPost(senderUserId, postId);
-            if (post != null) {
-                db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                        PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                        new String[]{senderUserId.rawId(), postId},
-                        SQLiteDatabase.CONFLICT_ABORT);
+            if (post.rowId == 0) {
+                final Post updatePost = getPost(post.senderUserId, post.postId);
+                if (updatePost != null) {
+                    post = updatePost;
+                }
+            }
+            int updatedCount = db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String[]{post.senderUserId.rawId(), post.postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            if (updatedCount == 0) {
+                values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
+                values.put(PostsTable.COLUMN_POST_ID, post.postId);
+                values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
+                values.put(PostsTable.COLUMN_SEEN, false);
+                db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            } else {
                 db.delete(CommentsTable.TABLE_NAME,
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
-                        new String[]{senderUserId.rawId(), postId});
+                        new String[]{post.senderUserId.rawId(), post.postId});
                 db.delete(MediaTable.TABLE_NAME,
                         MediaTable.COLUMN_POST_ROW_ID + "=?",
                         new String[]{Long.toString(post.rowId)});
@@ -237,7 +248,7 @@ public class PostsDb {
                 }
             }
             db.setTransactionSuccessful();
-            Log.i("PostsDb.retractPost: retracted postId=" + postId);
+            Log.i("PostsDb.retractPost: retracted postId=" + post.postId);
         } catch (SQLException ex) {
             Log.e("PostsDb.retractPost: failed");
             throw ex;
@@ -412,30 +423,44 @@ public class PostsDb {
         Log.i("PostsDb.addComment: added " + comment);
     }
 
-    public void retractComment(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    public void retractComment(@NonNull Comment comment) {
         databaseWriteExecutor.execute(() -> {
-            retractCommentInBackground(commentSenderUserId, commentId);
-            observers.notifyCommentRetracted(postSenderUserId, postId, commentSenderUserId, commentId);
+            retractCommentInBackground(comment);
+            observers.notifyCommentRetracted(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId);
         });
     }
 
     @WorkerThread
-    private void retractCommentInBackground(@NonNull UserId commentSenderUserId, @NonNull String commentId) {
-        Log.i("PostsDb.retractCommentInBackground: senderUserId=" + commentSenderUserId + " commentId=" + commentId);
+    private void retractCommentInBackground(@NonNull Comment comment) {
+        Log.i("PostsDb.retractCommentInBackground: senderUserId=" + comment.commentSenderUserId + " commentId=" + comment.commentId);
         final ContentValues values = new ContentValues();
-        if (commentSenderUserId.isMe()) {
+        if (comment.commentSenderUserId.isMe()) {
             values.put(CommentsTable.COLUMN_TRANSFERRED, false);
         }
         values.put(CommentsTable.COLUMN_TEXT, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
         try {
-            db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+            final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                     CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
-                    new String [] {commentSenderUserId.rawId(), commentId},
+                    new String [] {comment.commentSenderUserId.rawId(), comment.commentId},
                     SQLiteDatabase.CONFLICT_ABORT);
+            if (updatedCount == 0) {
+                values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, comment.postSenderUserId.rawId());
+                values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
+                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.commentSenderUserId.rawId());
+                values.put(CommentsTable.COLUMN_COMMENT_ID, comment.commentId);
+                values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
+                values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
+                values.put(CommentsTable.COLUMN_SEEN, comment.seen);
+                db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            }
+            db.setTransactionSuccessful();
         } catch (SQLException ex) {
             Log.e("PostsDb.retractCommentInBackground: failed");
             throw ex;
+        } finally {
+            db.endTransaction();
         }
     }
 

@@ -154,7 +154,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getString(R.string.retract_post_confirmation));
         builder.setCancelable(true);
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(context).retractPost(post.senderUserId, post.postId));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(context).retractPost(post));
         builder.setNegativeButton(R.string.no, null);
         builder.show();
     }

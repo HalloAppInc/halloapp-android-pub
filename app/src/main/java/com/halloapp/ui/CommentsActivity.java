@@ -329,7 +329,7 @@ public class CommentsActivity extends AppCompatActivity {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(context.getString(R.string.retract_comment_confirmation));
                 builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(getBaseContext()).retractComment(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId));
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(getBaseContext()).retractComment(comment));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
             });
