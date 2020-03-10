@@ -113,7 +113,7 @@ public class PublishedAvatarMetadata {
 
     @Override
     public @NonNull String toString() {
-        return "PublishedAvatarMetadata[id=" + id + " type=" + type + " bytes=" + numBytes + " width=" + width + " height=" + height + "]";
+        return "PublishedAvatarMetadata[id=" + id + " type=" + type + " bytes=" + numBytes + " width=" + width + " height=" + height + " url=" + url + "]";
     }
 
     public String getId() {

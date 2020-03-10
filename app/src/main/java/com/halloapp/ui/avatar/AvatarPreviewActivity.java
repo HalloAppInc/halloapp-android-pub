@@ -270,7 +270,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
     }
 
-    class Prepare extends AsyncTask<Void, Void, Void> {
+    class Prepare extends AsyncTask<Void, Void, Boolean> {
 
         private final List<Media> media;
         private final Map<String, RectF> cropRects;
@@ -283,7 +283,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             if (media != null) {
                 Media img = media.get(0);
                 final File pngFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
@@ -294,18 +294,22 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                     avatarLoader.reportMyAvatarChanged();
                 } catch (IOException | NoSuchAlgorithmException e) {
                     Log.e("failed to transcode image", e);
-                    return null;
+                    return false;
                 }
             }
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void v) {
-            super.onPostExecute(v);
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
 
-            setResult(RESULT_OK);
-            finish();
+            if (success != null && success) {
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                CenterToast.show(getApplicationContext(), R.string.could_not_set_avatar);
+            }
         }
 
         private class TranscodeResult {

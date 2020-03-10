@@ -133,4 +133,5 @@
         <item quantity="one">This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release.</item>
         <item quantity="other">This version of HalloApp will expire in %d days. Please go to the Google Play Store and download the latest release.</item>
     </plurals>
+    <string name="could_not_set_avatar">Please try a different image</string>
 </resources>
