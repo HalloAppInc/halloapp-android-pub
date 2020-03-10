@@ -349,18 +349,14 @@ public class Connection {
         });
     }
 
-    public void publishAvatarMetadata(String id, String url) {
+    public void publishAvatarMetadata(String id, String url, int numBytes, int height, int width) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot update avatar metadata, no connection");
                 return;
             }
             try {
-                final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(
-                        id,
-                        url,
-                        3000,
-                        64, 64);
+                final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(id, url, numBytes, height, width);
                 final SimplePayload payload = new SimplePayload(metadata.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
                 pubSubHelper.publishItem(getMyAvatarMetadataNodeId(), item);

@@ -274,7 +274,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
     }
 
-    class Prepare extends AsyncTask<Void, Void, Post> {
+    class Prepare extends AsyncTask<Void, Void, Void> {
 
         private final List<Media> media;
         private final Map<String, RectF> cropRects;
@@ -287,13 +287,13 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Post doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
             if (media != null) {
                 Media img = media.get(0);
                 final File pngFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
-                    String hash = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
-                    uploadAvatar(pngFile, Connection.getInstance(), hash);
+                    TranscodeResult transcodeResult = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
+                    uploadAvatar(pngFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged();
                 } catch (IOException | NoSuchAlgorithmException e) {
@@ -305,16 +305,34 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Post post) {
-            super.onPostExecute(post);
+        protected void onPostExecute(Void v) {
+            super.onPostExecute(v);
 
             setResult(RESULT_OK);
             finish();
         }
 
-        @WorkerThread
-        public String transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
+        private class TranscodeResult {
+            final int byteCount;
+            final int width;
+            final int height;
             final String hash;
+
+            public TranscodeResult(int byteCount, int width, int height, String hash) {
+                this.byteCount = byteCount;
+                this.width = width;
+                this.height = height;
+                this.hash = hash;
+            }
+        }
+
+        @WorkerThread
+        public TranscodeResult transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
+            final String hash;
+            final int croppedHeight;
+            final int croppedWidth;
+            final int fileSize;
+
             final int maxWidth;
             final int maxHeight;
             if (cropRect != null) {
@@ -346,20 +364,27 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                     MessageDigest md = MessageDigest.getInstance("SHA-256");
                     byte[] buf = new byte[1000];
                     int count;
+                    int sum = 0;
                     while ((count = is.read(buf)) != -1) {
                         md.update(buf, 0, count);
+                        sum += count;
                     }
+                    fileSize = sum;
                     byte[] sha256hash = md.digest();
                     hash = StringUtils.bytesToHexString(sha256hash);
                 }
+                croppedHeight = croppedBitmap.getHeight();
+                croppedWidth = croppedBitmap.getWidth();
+
                 croppedBitmap.recycle();
+
+                return new TranscodeResult(fileSize, croppedWidth, croppedHeight, hash);
             } else {
                 throw new IOException("cannot decode image");
             }
-            return hash;
         }
 
-        public void uploadAvatar(File pngFile, Connection connection, String hash) {
+        public void uploadAvatar(File pngFile, Connection connection, final TranscodeResult transcodeResult) {
             final MediaUploadIq.Urls urls;
             try {
                 urls = connection.requestMediaUpload().get();
@@ -375,7 +400,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             final Uploader.UploadListener uploadListener = percent -> true;
             try {
                 Uploader.run(pngFile, null, Media.MEDIA_TYPE_UNKNOWN, urls.putUrl, uploadListener);
-                connection.publishAvatarMetadata(hash, urls.getUrl);
+                connection.publishAvatarMetadata(transcodeResult.hash, urls.getUrl, transcodeResult.byteCount, transcodeResult.height, transcodeResult.width);
             } catch (IOException e) {
                 Log.e("upload avatar", e);
                 return;
