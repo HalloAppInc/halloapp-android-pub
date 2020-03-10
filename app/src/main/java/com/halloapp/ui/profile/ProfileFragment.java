@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,7 +36,13 @@ import com.halloapp.xmpp.Connection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_OK;
+
 public class ProfileFragment extends PostsFragment {
+
+    private static final int CODE_CHANGE_AVATAR = 1;
+
+    private ImageView avatarView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +82,7 @@ public class ProfileFragment extends PostsFragment {
         loadNameTask.name.observe(this, user -> nameView.setText(PhoneNumberUtils.formatNumber("+" + user, null)));
         loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        final CircleImageView avatarView = headerView.findViewById(R.id.avatar);
+        avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
 
         final CircleImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
@@ -83,7 +90,7 @@ public class ProfileFragment extends PostsFragment {
             Log.d("ProfileFragment request change avatar");
             final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
             intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
-            startActivity(intent);
+            startActivityForResult(intent, CODE_CHANGE_AVATAR);
         });
 
         adapter.addHeader(headerView);
@@ -91,6 +98,15 @@ public class ProfileFragment extends PostsFragment {
         postsView.setAdapter(adapter);
 
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CODE_CHANGE_AVATAR && resultCode == RESULT_OK) {
+            AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override

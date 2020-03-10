@@ -36,6 +36,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
     private final TextView firstCommentName;
     private final TextView firstCommentText;
     private final TextView firstCommentTimestamp;
+    private final ImageView myAvatarView;
 
     public OutgoingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
@@ -49,6 +50,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         firstCommentName = itemView.findViewById(R.id.comment_name);
         firstCommentText = itemView.findViewById(R.id.comment_text);
         firstCommentTimestamp = itemView.findViewById(R.id.comment_time);
+        myAvatarView = itemView.findViewById(R.id.my_avatar);
 
         final View.OnClickListener commentsClickListener = v -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
@@ -76,10 +78,6 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             parent.startActivity(intent);
         });
 
-        final ImageView myAvatarView = itemView.findViewById(R.id.my_avatar);
-        myAvatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-        parent.getAvatarLoader().load(myAvatarView, UserId.ME);
-
         itemView.findViewById(R.id.actions).setOnClickListener(v -> {
             final PopupMenu menu = new PopupMenu(itemView.getContext(), v);
             final MenuInflater menuInflater = new MenuInflater(itemView.getContext());
@@ -103,6 +101,9 @@ public class OutgoingPostViewHolder extends PostViewHolder {
     @CallSuper
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
+
+        myAvatarView.setImageResource(R.drawable.avatar_person);
+        parent.getAvatarLoader().load(myAvatarView, UserId.ME);
 
         if (post.commentCount == 0) {
             addCommentButton.setVisibility(View.VISIBLE);
