@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Outline;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +10,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -254,6 +256,13 @@ public class CommentsHistoryPopup {
                 timeView = itemView.findViewById(R.id.time);
                 thumbnailView = itemView.findViewById(R.id.thumbnail);
                 unseenIndicatorView = itemView.findViewById(R.id.unseen_indicator);
+                thumbnailView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), itemView.getContext().getResources().getDimension(R.dimen.comment_media_list_corner_radius));
+                    }
+                });
+                thumbnailView.setClipToOutline(true);
             }
 
             void bind(HomeViewModel.CommentsGroup commentsGroup, Map<UserId, Contact> contacts) {

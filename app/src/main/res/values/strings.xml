@@ -124,6 +124,7 @@
     <string name="retract_comment_confirmation">Would you like to deleted your comment?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="activity">Activity</string>
     <plurals name="app_expiration_days_left">
         <item quantity="one">This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release.</item>
         <item quantity="other">This version of HalloApp will expire in %d days. Please go to the Google Play Store and download the latest release.</item>

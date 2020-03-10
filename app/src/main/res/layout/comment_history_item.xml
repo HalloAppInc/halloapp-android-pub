@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/new_comments_indicator"/>
@@ -25,7 +25,7 @@
         android:id="@+id/info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
+        android:paddingStart="24dp"
         android:paddingEnd="16dp"
         android:textAppearance="?textAppearanceSmallPopupMenu"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,8 +44,7 @@
         android:textColor="?android:attr/textColorSecondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/info"
-        tools:text="1h"
-        />
+        tools:text="1h"/>
 
     <ImageView
         android:id="@+id/thumbnail"
@@ -56,7 +55,6 @@
         app:layout_constraintStart_toEndOf="@id/info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@mipmap/ic_launcher"
-        />
+        tools:src="@mipmap/ic_launcher"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
