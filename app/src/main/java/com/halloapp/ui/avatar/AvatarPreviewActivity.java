@@ -87,9 +87,9 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        final View sendButton = findViewById(R.id.send);
+        final View sendButton = findViewById(R.id.set_avatar);
         sendButton.setOnClickListener(v -> {
-            viewModel.preparePost("");
+            viewModel.preparePost();
         });
 
         final View progressView = findViewById(R.id.progress);
@@ -127,13 +127,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
             }
             sendButton.setEnabled(true);
-        });
-        viewModel.post.observe(this, post -> {
-            if (post != null) {
-                PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addPost(post);
-                setResult(RESULT_OK);
-                finish();
-            }
         });
     }
 
@@ -282,33 +275,29 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
     static class Prepare extends AsyncTask<Void, Void, Post> {
 
-        private final String text;
         private final List<Media> media;
         private final Map<String, RectF> cropRects;
         private final Application application;
-        private final MutableLiveData<Post> post;
 
-        Prepare(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @Nullable Map<String, RectF> cropRects, @NonNull MutableLiveData<Post> post) {
+        Prepare(@NonNull Application application, @Nullable List<Media> media, @Nullable Map<String, RectF> cropRects) {
             this.application = application;
-            this.text = text;
             this.media = media;
             this.cropRects = cropRects;
-            this.post = post;
         }
 
         @Override
         protected Post doInBackground(Void... voids) {
             if (media != null) {
                 Media img = media.get(0);
-                    final File pngFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".png");
-                    try {
-                        String hash = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
-                        uploadAvatar(pngFile, Connection.getInstance(), hash);
-                    } catch (IOException | NoSuchAlgorithmException e) {
-                        Log.e("failed to transcode image", e);
-                        return null;
-                    }
+                final File pngFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".png");
+                try {
+                    String hash = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
+                    uploadAvatar(pngFile, Connection.getInstance(), hash);
+                } catch (IOException | NoSuchAlgorithmException e) {
+                    Log.e("failed to transcode image", e);
+                    return null;
                 }
+            }
             return null;
         }
 
@@ -340,24 +329,17 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
                 try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
                     croppedBitmap.compress(Bitmap.CompressFormat.PNG, quality, streamTo);
-
                     InputStream is = new FileInputStream(fileTo);
 
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    // TODO(jack): Compute hash without re-reading the file
                     MessageDigest md = MessageDigest.getInstance("SHA-256");
-
                     byte[] buf = new byte[1000];
                     int count;
                     while ((count = is.read(buf)) != -1) {
-                        baos.write(buf, 0, count);
                         md.update(buf, 0, count);
                     }
-
                     byte[] sha256hash = md.digest();
                     hash = StringUtils.bytesToHexString(sha256hash);
-
-                    byte[] file = baos.toByteArray();
-                    String base64 = Base64.encodeToString(file, Base64.DEFAULT);
                 }
                 croppedBitmap.recycle();
             } else {
@@ -414,7 +396,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     public static class PostComposerViewModel extends AndroidViewModel {
 
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
-        final MutableLiveData<Post> post = new MutableLiveData<>();
 
         final Map<String, RectF> cropRects = new HashMap<>();
 
@@ -433,8 +414,8 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             new LoadPostUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        void preparePost(@Nullable String text) {
-            new Prepare(getApplication(), text, getMedia(), cropRects, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        void preparePost() {
+            new Prepare(getApplication(), getMedia(), cropRects).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

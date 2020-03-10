@@ -2,7 +2,6 @@ package com.halloapp.ui.avatar;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
@@ -14,18 +13,15 @@ import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaStore;
 import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.PublishedAvatarData;
 import com.halloapp.xmpp.PublishedAvatarMetadata;
 import com.halloapp.xmpp.PubsubItem;
 
 import java.io.File;
 import java.util.concurrent.Callable;
 
-// String will have to be unique...
 public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private static AvatarLoader instance;
@@ -64,7 +60,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     @MainThread
     public void load(@NonNull ImageView view, @NonNull UserId userId, @NonNull String uniqueId) {
         final Callable<Bitmap> loader = () -> {
-            // Check disk cache here
             MediaStore mediaStore = MediaStore.getInstance(view.getContext());
             File avatarFile = mediaStore.getAvatarFile(userId.rawId());
 
@@ -97,7 +92,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                //view.setImageDrawable(null);
             }
         };
         load(view, loader, displayer, userId.rawId() + "_" + uniqueId, cache);
