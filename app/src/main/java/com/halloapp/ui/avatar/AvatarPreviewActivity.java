@@ -12,7 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Size;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +37,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
 import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.VideoPlaybackActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
@@ -51,7 +48,6 @@ import com.halloapp.widget.MediaViewPager;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -292,7 +288,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 Media img = media.get(0);
                 final File pngFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
-                    TranscodeResult transcodeResult = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
+                    TranscodeResult transcodeResult = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), Constants.MAX_AVATAR_DIMENSION);
                     uploadAvatar(pngFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged();
@@ -327,7 +323,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         @WorkerThread
-        public TranscodeResult transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
+        public TranscodeResult transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension) throws IOException, NoSuchAlgorithmException {
             final String hash;
             final int croppedHeight;
             final int croppedWidth;
@@ -357,7 +353,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 }
 
                 try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
-                    croppedBitmap.compress(Bitmap.CompressFormat.PNG, quality, streamTo);
+                    croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100 /* ignored for png */, streamTo);
                     InputStream is = new FileInputStream(fileTo);
 
                     // TODO(jack): Compute hash without re-reading the file
