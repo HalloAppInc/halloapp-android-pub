@@ -32,6 +32,7 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
@@ -289,10 +290,12 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         protected Post doInBackground(Void... voids) {
             if (media != null) {
                 Media img = media.get(0);
-                final File pngFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + ".png");
+                final File pngFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
                     String hash = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), 100, Constants.JPEG_QUALITY);
                     uploadAvatar(pngFile, Connection.getInstance(), hash);
+                    AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
+                    avatarLoader.reportMyAvatarChanged();
                 } catch (IOException | NoSuchAlgorithmException e) {
                     Log.e("failed to transcode image", e);
                     return null;

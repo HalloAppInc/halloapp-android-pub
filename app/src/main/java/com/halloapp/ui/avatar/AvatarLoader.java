@@ -101,6 +101,10 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         load(view, loader, displayer, userId.rawId(), cache);
     }
 
+    public void reportMyAvatarChanged() {
+        cache.remove(UserId.ME.rawId());
+    }
+
     public void reportAvatarMetadataUpdate(@NonNull UserId userId, @NonNull String hash, @NonNull String url) {
         MediaStore mediaStore = MediaStore.getInstance(context);
         File avatarFile = mediaStore.getAvatarFile(userId.rawId());
