@@ -45,7 +45,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private AvatarLoader(Connection connection, Context context) {
         this.connection = connection;
-        this.context = context;
+        this.context = context.getApplicationContext();
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
