@@ -177,11 +177,13 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                 }
                 break;
             }
-            case REQUEST_CODE_COMPOSE_POST: {
+            case REQUEST_CODE_COMPOSE_POST:
+            case REQUEST_CODE_SET_AVATAR: {
                 if (result == RESULT_OK) {
                     overridePendingTransition(0, 0);
                     finish();
                 }
+                break;
             }
         }
     }

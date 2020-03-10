@@ -273,7 +273,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
     }
 
-    static class Prepare extends AsyncTask<Void, Void, Post> {
+    class Prepare extends AsyncTask<Void, Void, Post> {
 
         private final List<Media> media;
         private final Map<String, RectF> cropRects;
@@ -301,8 +301,16 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Post post) {
+            super.onPostExecute(post);
+
+            setResult(RESULT_OK);
+            finish();
+        }
+
         @WorkerThread
-        public static String transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
+        public String transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
             String hash = null;
             final int maxWidth;
             final int maxHeight;
@@ -348,7 +356,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             return hash;
         }
 
-        public static void uploadAvatar(File pngFile, Connection connection, String hash) {
+        public void uploadAvatar(File pngFile, Connection connection, String hash) {
             final MediaUploadIq.Urls urls;
             try {
                 urls = connection.requestMediaUpload().get();
@@ -372,7 +380,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
     }
 
-    public static class PostComposerViewModelFactory implements ViewModelProvider.Factory {
+    public class PostComposerViewModelFactory implements ViewModelProvider.Factory {
 
         private final Application application;
         private final Collection<Uri> uris;
@@ -393,7 +401,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
     }
 
-    public static class PostComposerViewModel extends AndroidViewModel {
+    public class PostComposerViewModel extends AndroidViewModel {
 
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
 
