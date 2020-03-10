@@ -31,23 +31,21 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private static AvatarLoader instance;
 
     private final Connection connection;
-    private final AvatarCache avatarCache;
     private final LruCache<String, Bitmap> cache;
 
     public static AvatarLoader getInstance(Connection connection) {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(connection, AvatarCache.getInstance());
+                    instance = new AvatarLoader(connection);
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(Connection connection, AvatarCache avatarCache) {
+    private AvatarLoader(Connection connection) {
         this.connection = connection;
-        this.avatarCache = avatarCache;
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
