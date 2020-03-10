@@ -13,9 +13,11 @@ import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.TransferPendingItemsTask;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
+import com.halloapp.xmpp.PublishedAvatarMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,5 +100,13 @@ public class ConnectionObserver implements Connection.Observer {
                 Log.e("ConnectionObserver.onContactsChanged", e);
             }
         });
+    }
+
+    @Override
+    public void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams) {
+        AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
+        for (PublishedAvatarMetadata pam : pams) {
+            avatarLoader.reportAvatarMetadataUpdate(metadataUserId, pam.getId(), pam.getUrl());
+        }
     }
 }

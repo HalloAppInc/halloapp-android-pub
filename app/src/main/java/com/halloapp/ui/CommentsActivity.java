@@ -192,7 +192,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance());
+        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -289,7 +289,7 @@ public class CommentsActivity extends AppCompatActivity {
         void bindTo(final @NonNull Comment comment) {
 
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-            avatarLoader.load(avatarView, comment.commentSenderUserId, comment.commentId);
+            avatarLoader.load(avatarView, comment.commentSenderUserId);
             if (comment.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {
@@ -340,7 +340,7 @@ public class CommentsActivity extends AppCompatActivity {
                 return;
             }
             avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-            avatarLoader.load(avatarView, post.senderUserId, post.postId);
+            avatarLoader.load(avatarView, post.senderUserId);
             if (post.isOutgoing()) {
                 nameView.setText(nameView.getContext().getString(R.string.me));
             } else {

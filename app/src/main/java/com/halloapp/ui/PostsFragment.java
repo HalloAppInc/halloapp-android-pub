@@ -80,7 +80,7 @@ public class PostsFragment extends Fragment {
         Preconditions.checkNotNull(getActivity()).getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance());
+        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());

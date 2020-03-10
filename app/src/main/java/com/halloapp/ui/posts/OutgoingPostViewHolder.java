@@ -78,7 +78,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         final ImageView myAvatarView = itemView.findViewById(R.id.my_avatar);
         myAvatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-        parent.getAvatarLoader().load(myAvatarView, UserId.ME, Long.toString(getItemId()));
+        parent.getAvatarLoader().load(myAvatarView, UserId.ME);
 
         itemView.findViewById(R.id.actions).setOnClickListener(v -> {
             final PopupMenu menu = new PopupMenu(itemView.getContext(), v);
@@ -132,7 +132,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             firstCommentContent.setVisibility(View.VISIBLE);
 
             firstCommentAvatar.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
-            parent.getAvatarLoader().load(firstCommentAvatar, firstComment.commentSenderUserId, firstComment.commentId);
+            parent.getAvatarLoader().load(firstCommentAvatar, firstComment.commentSenderUserId);
 
             firstCommentText.setText(firstComment.text);
 

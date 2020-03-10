@@ -1,5 +1,6 @@
 package com.halloapp.ui.avatar;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.halloapp.xmpp.PublishedAvatarMetadata;
 import com.halloapp.xmpp.PubsubItem;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
@@ -27,21 +29,23 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private static AvatarLoader instance;
 
     private final Connection connection;
+    private final Context context;
     private final LruCache<String, Bitmap> cache;
 
-    public static AvatarLoader getInstance(Connection connection) {
+    public static AvatarLoader getInstance(Connection connection, Context context) {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(connection);
+                    instance = new AvatarLoader(connection, context);
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(Connection connection) {
+    private AvatarLoader(Connection connection, Context context) {
         this.connection = connection;
+        this.context = context;
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -58,9 +62,9 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @MainThread
-    public void load(@NonNull ImageView view, @NonNull UserId userId, @NonNull String uniqueId) {
+    public void load(@NonNull ImageView view, @NonNull UserId userId) {
         final Callable<Bitmap> loader = () -> {
-            MediaStore mediaStore = MediaStore.getInstance(view.getContext());
+            MediaStore mediaStore = MediaStore.getInstance(context);
             File avatarFile = mediaStore.getAvatarFile(userId.rawId());
 
             if (!avatarFile.exists()) {
@@ -94,6 +98,17 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             public void showLoading(@NonNull ImageView view) {
             }
         };
-        load(view, loader, displayer, userId.rawId() + "_" + uniqueId, cache);
+        load(view, loader, displayer, userId.rawId(), cache);
+    }
+
+    public void reportAvatarMetadataUpdate(@NonNull UserId userId, @NonNull String hash, @NonNull String url) {
+        MediaStore mediaStore = MediaStore.getInstance(context);
+        File avatarFile = mediaStore.getAvatarFile(userId.rawId());
+        try {
+            Downloader.run(url, null, StringUtils.bytesFromHexString(hash), Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+            cache.remove(userId.rawId());
+        } catch (IOException e) {
+            Log.w("avatar metadata update", e);
+        }
     }
 }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.util.Log;
 
+import org.jivesoftware.smack.packet.NamedElement;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -11,6 +12,8 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PublishedAvatarMetadata {
 
@@ -65,6 +68,22 @@ public class PublishedAvatarMetadata {
         }
 
         return writer.toString();
+    }
+
+    static @NonNull
+    List<PublishedAvatarMetadata> getAvatarMetadatas(@NonNull List<? extends NamedElement> items) {
+        final List<PublishedAvatarMetadata> pams = new ArrayList<>();
+        for (NamedElement item : items) {
+            if (item instanceof PubsubItem) {
+                final PublishedAvatarMetadata pam = getPublishedItem((PubsubItem)item);
+                if (pam != null) {
+                    pams.add(pam);
+                }
+            } else {
+                Log.e("PublishedAvatarMetadata.getAvatarMetadatas: unknown metadata " + item);
+            }
+        }
+        return pams;
     }
 
     public static PublishedAvatarMetadata getPublishedItem(@NonNull PubsubItem item) {

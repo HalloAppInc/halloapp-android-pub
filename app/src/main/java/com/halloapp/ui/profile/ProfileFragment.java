@@ -76,7 +76,7 @@ public class ProfileFragment extends PostsFragment {
         loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         final CircleImageView avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance(Connection.getInstance()).load(avatarView, UserId.ME, "PROFILE");
+        AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
 
         final CircleImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
         changeAvatarView.setOnClickListener(v -> {

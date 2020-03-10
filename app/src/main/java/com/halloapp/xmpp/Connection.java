@@ -25,6 +25,7 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.NamedElement;
@@ -101,6 +102,7 @@ public class Connection {
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
+        void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams);
     }
 
     private Connection() {
@@ -278,7 +280,6 @@ public class Connection {
     }
 
     public Future<Integer> requestSecondsToExpiration() {
-        Log.d("JACK requestSecondsToExpiration");
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: request seconds to expiration: no connection");
@@ -622,6 +623,15 @@ public class Connection {
         return !posts.isEmpty() || !comments.isEmpty();
     }
 
+    private boolean processMetadataPubSubItems(@NonNull UserId metadataUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
+        Preconditions.checkNotNull(connection);
+        final List<PublishedAvatarMetadata> pams = PublishedAvatarMetadata.getAvatarMetadatas(items);
+        for (PublishedAvatarMetadata pam : pams) {
+            observer.onAvatarMetadatasReceived(metadataUserId, pams);
+        }
+        return false;
+    }
+
     private void parseFeedHistoryItems(UserId feedUserId, List<PubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
         final List<PublishedEntry> entries = PublishedEntry.getFeedEntries(items);
         for (PublishedEntry entry : entries) {
@@ -690,9 +700,18 @@ public class Connection {
         return nodeId.startsWith("feed-");
     }
 
+    private static boolean isMetadataNodeId(@NonNull String nodeId) {
+        return nodeId.startsWith("metadata-");
+    }
+
     private UserId getFeedUserId(@NonNull String nodeId) {
         Preconditions.checkArgument(isFeedNodeId(nodeId));
         return getUserId(nodeId.substring("feed-".length()));
+    }
+
+    private UserId getMetadataUserId(@NonNull String nodeId) {
+        Preconditions.checkArgument(isMetadataNodeId(nodeId));
+        return getUserId(nodeId.substring("metadata-".length()));
     }
 
     private static String getNodeId(@NonNull String prefix, @NonNull Jid jid) {
@@ -767,9 +786,15 @@ public class Connection {
                 final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
                 if (event != null && EventElementType.items.equals(event.getEventType())) {
                     final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
-                    if (itemsElem != null && isFeedNodeId(itemsElem.getNode())) {
-                        Log.i("connection: got pubsub " + msg);
-                        handled = processFeedPubSubItems(getFeedUserId(itemsElem.getNode()), itemsElem.getItems(), msg.getStanzaId());
+                    if (itemsElem != null) {
+                        String node = itemsElem.getNode();
+                        if (isFeedNodeId(node)) {
+                            Log.i("connection: got feed pubsub " + msg);
+                            handled = processFeedPubSubItems(getFeedUserId(node), itemsElem.getItems(), msg.getStanzaId());
+                        } else if (isMetadataNodeId(node)) {
+                            Log.i("connection: got metadata pubsub " + msg);
+                            handled = processMetadataPubSubItems(getMetadataUserId(node), itemsElem.getItems(), msg.getStanzaId());
+                        }
                     }
                 }
                 if (!handled) {

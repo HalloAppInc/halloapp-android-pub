@@ -33,7 +33,7 @@ import java.util.List;
 public class MessagesFragment extends Fragment {
 
     private final ContactsAdapter adapter = new ContactsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance());
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -117,7 +117,7 @@ public class MessagesFragment extends Fragment {
 
             void bindTo(Contact contact) {
                 avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
-                avatarLoader.load(avatarView, contact.userId, contact.getRawUserId());
+                avatarLoader.load(avatarView, contact.userId);
                 nameView.setText(contact.getDisplayName());
                 infoView.setText(contact.getInternationalPhone());
             }
