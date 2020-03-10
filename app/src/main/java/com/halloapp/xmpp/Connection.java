@@ -438,7 +438,6 @@ public class Connection {
                         null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(postId, payload);
-                // TODO (ds): uncomment when server implements 'retract'
                 pubSubHelper.retractItem(getMyFeedNodeId(), item);
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 observer.onOutgoingPostSent(postId);
@@ -491,7 +490,6 @@ public class Connection {
                         null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(commentId, payload);
-                // TODO (ds): uncomment when server implements 'retract'
                 pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
                 observer.onOutgoingCommentSent(postSenderUserId, postId, commentId);
