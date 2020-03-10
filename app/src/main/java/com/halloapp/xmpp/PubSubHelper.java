@@ -45,13 +45,13 @@ public class PubSubHelper {
         //connection.createStanzaCollectorAndSend(packet).nextResultOrThrow();
     }
 
-    List<PubsubItem> getItems(@NonNull String nodeId) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    List<PubSubItem> getItems(@NonNull String nodeId) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final PubSub packet = PubSub.createPubsubPacket(pubSubManager.getServiceJid(), IQ.Type.get, new GetItemsRequest(nodeId));
         return getPubsubItems(connection.createStanzaCollectorAndSend(packet).nextResultOrThrow());
     }
 
-    List<PubsubItem> getItems(@NonNull String nodeId, Collection<String> ids) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    List<PubSubItem> getItems(@NonNull String nodeId, Collection<String> ids) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final List<Item> itemList = new ArrayList<>(ids.size());
         for (String id : ids) {
@@ -61,7 +61,7 @@ public class PubSubHelper {
         return getPubsubItems(connection.createStanzaCollectorAndSend(packet).nextResultOrThrow());
     }
 
-    List<PubsubItem> getItems(@NonNull String nodeId, int maxItems) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    List<PubSubItem> getItems(@NonNull String nodeId, int maxItems) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final PubSub packet = PubSub.createPubsubPacket(pubSubManager.getServiceJid(), IQ.Type.get, new GetItemsRequest(nodeId, maxItems));
         return getPubsubItems(connection.createStanzaCollectorAndSend(packet).nextResultOrThrow());
@@ -71,8 +71,8 @@ public class PubSubHelper {
         return pubSubManager.getSubscriptions();
     }
 
-    private List<PubsubItem> getPubsubItems(PubSub result) {
+    private List<PubSubItem> getPubsubItems(PubSub result) {
         final ItemsExtension itemsElem = result.getExtension(PubSubElementType.ITEMS);
-        return (List<PubsubItem>) itemsElem.getItems();
+        return (List<PubSubItem>) itemsElem.getItems();
     }
 }

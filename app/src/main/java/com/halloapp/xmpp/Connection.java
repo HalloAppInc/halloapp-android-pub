@@ -25,7 +25,6 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.NamedElement;
@@ -148,10 +147,10 @@ public class Connection {
 
         Log.i("connection: connecting...");
 
-        ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-        ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-        ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-        ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub#event", new PubsubItemProvider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+        ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+        ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+        ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
+        ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub#event", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
@@ -374,14 +373,14 @@ public class Connection {
         });
     }
 
-    public Future<PubsubItem> getMostRecentAvatarMetadata(UserId userId) {
+    public Future<PubSubItem> getMostRecentAvatarMetadata(UserId userId) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot get avatar metadata, no connection");
                 return null;
             }
             try {
-                List<PubsubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)), 1);
+                List<PubSubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)), 1);
                 if (items.size() > 0) {
                     return items.get(0);
                 }
@@ -632,7 +631,7 @@ public class Connection {
         return false;
     }
 
-    private void parseFeedHistoryItems(UserId feedUserId, List<PubsubItem> items, Collection<Post> posts, Collection<Comment> comments) {
+    private void parseFeedHistoryItems(UserId feedUserId, List<PubSubItem> items, Collection<Post> posts, Collection<Comment> comments) {
         final List<PublishedEntry> entries = PublishedEntry.getFeedEntries(items);
         for (PublishedEntry entry : entries) {
             if (entry.type == PublishedEntry.ENTRY_FEED) {

@@ -74,8 +74,8 @@ public class PublishedAvatarMetadata {
     List<PublishedAvatarMetadata> getAvatarMetadatas(@NonNull List<? extends NamedElement> items) {
         final List<PublishedAvatarMetadata> pams = new ArrayList<>();
         for (NamedElement item : items) {
-            if (item instanceof PubsubItem) {
-                final PublishedAvatarMetadata pam = getPublishedItem((PubsubItem)item);
+            if (item instanceof PubSubItem) {
+                final PublishedAvatarMetadata pam = getPublishedItem((PubSubItem)item);
                 if (pam != null) {
                     pams.add(pam);
                 }
@@ -86,7 +86,7 @@ public class PublishedAvatarMetadata {
         return pams;
     }
 
-    public static PublishedAvatarMetadata getPublishedItem(@NonNull PubsubItem item) {
+    public static PublishedAvatarMetadata getPublishedItem(@NonNull PubSubItem item) {
         final String xml = item.getPayload().toXML(null);
         final XmlPullParser parser = android.util.Xml.newPullParser();
         try {

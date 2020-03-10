@@ -18,7 +18,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PublishedAvatarMetadata;
-import com.halloapp.xmpp.PubsubItem;
+import com.halloapp.xmpp.PubSubItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             File avatarFile = mediaStore.getAvatarFile(userId.rawId());
 
             if (!avatarFile.exists()) {
-                PubsubItem item = connection.getMostRecentAvatarMetadata(userId).get();
+                PubSubItem item = connection.getMostRecentAvatarMetadata(userId).get();
                 if (item == null) {
                     Log.i("No avatar metadata for " + userId);
                     return null;

@@ -129,8 +129,8 @@ public class PublishedEntry {
     static @NonNull List<PublishedEntry> getFeedEntries(@NonNull List<? extends NamedElement> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
         for (NamedElement item : items) {
-            if (item instanceof PubsubItem) {
-                final PublishedEntry entry = getFeedEntry((PubsubItem)item);
+            if (item instanceof PubSubItem) {
+                final PublishedEntry entry = getFeedEntry((PubSubItem)item);
                 if (entry != null && entry.valid()) {
                     entries.add(entry);
                 }
@@ -141,7 +141,7 @@ public class PublishedEntry {
         return entries;
     }
 
-    private static @Nullable PublishedEntry getFeedEntry(@NonNull PubsubItem item) {
+    private static @Nullable PublishedEntry getFeedEntry(@NonNull PubSubItem item) {
         final String xml = item.getPayload().toXML(null);
         final XmlPullParser parser = android.util.Xml.newPullParser();
         PublishedEntry entry = null;
@@ -249,7 +249,7 @@ public class PublishedEntry {
         return true; // timestamp != 0 && user != null && (text != null || !media.isEmpty());
     }
 
-    private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull PubsubItem item) throws XmlPullParserException, IOException {
+    private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull PubSubItem item) throws XmlPullParserException, IOException {
         final PublishedEntry.Builder builder = new PublishedEntry.Builder();
         builder.type(type);
         builder.id(item.getId());
