@@ -99,7 +99,8 @@
 
         <receiver
             android:name=".registration.SmsVerificationReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:permission="com.google.android.gms.auth.api.phone.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
