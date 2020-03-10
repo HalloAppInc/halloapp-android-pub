@@ -1,14 +1,17 @@
 package com.halloapp.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.Me;
@@ -26,8 +30,12 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.media.MediaUtils;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +47,9 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
+
+    private SpeedDialView fabView;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
 
@@ -99,6 +110,36 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        fabView = findViewById(R.id.speed_dial);
+        fabView.addActionItem(
+                new SpeedDialActionItem.Builder(R.id.add_post_gallery, R.drawable.ic_media_collection)
+                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabImageTintColor(getResources().getColor(android.R.color.white))
+                        .create());
+        fabView.addActionItem(
+                new SpeedDialActionItem.Builder(R.id.add_post_camera, R.drawable.ic_camera)
+                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabImageTintColor(getResources().getColor(android.R.color.white))
+                        .create());
+        fabView.addActionItem(
+                new SpeedDialActionItem.Builder(R.id.add_post_text, R.drawable.ic_text)
+                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabImageTintColor(getResources().getColor(android.R.color.white))
+                        .create());
+        fabView.setOnActionSelectedListener(actionItem -> {
+            onFabActionSelected(actionItem.getId());
+            return true;
+        });
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (fabView.isOpen()) {
+                fabView.close();
+            }
+            if (destination.getId() == R.id.navigation_messages) {
+                fabView.hide();
+            } else {
+                fabView.show();
+            }
+        });
 
         final String[] perms = {Manifest.permission.READ_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
@@ -112,6 +153,28 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         ContactsDb.getInstance(this).addObserver(contactsObserver);
+    }
+
+    private void onFabActionSelected(@IdRes int id) {
+        switch (id) {
+            case R.id.add_post_text: {
+                startActivity(new Intent(this, PostComposerActivity.class));
+                break;
+            }
+            case R.id.add_post_gallery: {
+                final Intent intent = new Intent(this, MediaPickerActivity.class);
+                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
+                startActivity(intent);
+                break;
+            }
+            case R.id.add_post_camera: {
+                final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(this));
+                startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+                break;
+            }
+        }
+        fabView.close(false);
     }
 
     @Override
@@ -145,6 +208,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     @Override
+    public void onBackPressed() {
+        if (fabView.isOpen()) {
+            fabView.close();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
@@ -175,6 +247,23 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             .build().show();
                     break;
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(final int request, final int result, final Intent data) {
+        super.onActivityResult(request, result, data);
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (request) {
+            case REQUEST_CODE_CAPTURE_IMAGE: {
+                if (result == Activity.RESULT_OK) {
+                    final Intent intent = new Intent(this, PostComposerActivity.class);
+                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                            new ArrayList<>(Collections.singleton(MediaUtils.getImageCaptureUri(this))));
+                    startActivity(intent);
+                }
+                break;
             }
         }
     }

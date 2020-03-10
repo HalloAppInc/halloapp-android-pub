@@ -1,10 +1,8 @@
 package com.halloapp.ui.home;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,24 +20,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
-import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.CommentsHistoryPopup;
-import com.halloapp.ui.PostComposerActivity;
 import com.halloapp.ui.PostsFragment;
-import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 public class HomeFragment extends PostsFragment {
-
-    private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
 
     private HomeViewModel viewModel;
     private BadgedDrawable notificationDrawable;
@@ -165,6 +156,7 @@ public class HomeFragment extends PostsFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.notifications: {
                 if (!commentHistoryPopup.isShowing() && getView() != null) {
@@ -172,37 +164,8 @@ public class HomeFragment extends PostsFragment {
                 }
                 return true;
             }
-            case R.id.add_post_text: {
-                startActivity(new Intent(getContext(), PostComposerActivity.class));
-                return true;
-            }
-            case R.id.add_post_gallery: {
-                getMediaFromGallery();
-                return true;
-            }
-            case R.id.add_post_camera: {
-                getImageFromCamera();
-                return true;
-            }
             default: {
                 return super.onOptionsItemSelected(item);
-            }
-        }
-    }
-
-    @Override
-    public void onActivityResult(final int request, final int result, final Intent data) {
-        super.onActivityResult(request, result, data);
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (request) {
-            case REQUEST_CODE_CAPTURE_IMAGE: {
-                if (result == Activity.RESULT_OK) {
-                    final Intent intent = new Intent(getContext(), PostComposerActivity.class);
-                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-                            new ArrayList<>(Collections.singleton(MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())))));
-                    startActivity(intent);
-                }
-                break;
             }
         }
     }
@@ -219,18 +182,5 @@ public class HomeFragment extends PostsFragment {
         notificationDrawable.setBadge(badgeValue);
         commentHistoryPopup.setCommentHistory(commentsHistory);
 
-    }
-
-    private void getMediaFromGallery() {
-        final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
-        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
-        startActivity(intent);
-
-    }
-
-    private void getImageFromCamera() {
-        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(Preconditions.checkNotNull(getContext())));
-        startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
     }
 }
