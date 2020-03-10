@@ -17,4 +17,5 @@
     <color name="card_background">@color/cardview_light_background</color>
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
+    <color name="fab_background">#CD7C72</color>
 </resources>

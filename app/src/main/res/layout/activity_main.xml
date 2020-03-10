@@ -71,6 +71,7 @@
             app:sdMainFabClosedIconColor="@android:color/white"
             app:sdMainFabOpenedIconColor="@android:color/black"
             app:sdMainFabOpenedBackgroundColor="@color/window_background"
+            app:sdMainFabClosedBackgroundColor="@color/fab_background"
             app:sdUseReverseAnimationOnClose="true"
             app:sdMainFabClosedSrc="@drawable/ic_add"
             app:sdOverlayLayout="@+id/overlay"/>

@@ -114,16 +114,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         fabView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.add_post_gallery, R.drawable.ic_media_collection)
                         .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabBackgroundColor(getResources().getColor(R.color.fab_background))
                         .setFabImageTintColor(getResources().getColor(android.R.color.white))
                         .create());
         fabView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.add_post_camera, R.drawable.ic_camera)
                         .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabBackgroundColor(getResources().getColor(R.color.fab_background))
                         .setFabImageTintColor(getResources().getColor(android.R.color.white))
                         .create());
         fabView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.add_post_text, R.drawable.ic_text)
                         .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabBackgroundColor(getResources().getColor(R.color.fab_background))
                         .setFabImageTintColor(getResources().getColor(android.R.color.white))
                         .create());
         fabView.setOnActionSelectedListener(actionItem -> {
