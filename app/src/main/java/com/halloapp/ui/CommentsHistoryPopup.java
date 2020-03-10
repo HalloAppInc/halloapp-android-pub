@@ -52,6 +52,7 @@ public class CommentsHistoryPopup {
     private final PostThumbnailLoader postThumbnailLoader;
     private final RecyclerView listView;
     private final View emptyView;
+    private final View titleView;
 
     private OnItemClickListener clickListener;
     private int maxHeight;
@@ -99,6 +100,7 @@ public class CommentsHistoryPopup {
 
         listView = contentView.findViewById(android.R.id.list);
         emptyView = contentView.findViewById(android.R.id.empty);
+        titleView = contentView.findViewById(android.R.id.title);
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         listView.setLayoutManager(layoutManager);
@@ -120,10 +122,12 @@ public class CommentsHistoryPopup {
     public void setCommentHistory(@Nullable HomeViewModel.CommentsHistory commentsHistory) {
         if (commentsHistory == null || commentsHistory.commentGroups.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
+            titleView.setVisibility(View.GONE);
             listView.setVisibility(View.GONE);
             adapter.reset();
         } else {
             emptyView.setVisibility(View.GONE);
+            titleView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.VISIBLE);
             adapter.setComments(commentsHistory.commentGroups);
             adapter.setContacts(commentsHistory.contacts);
