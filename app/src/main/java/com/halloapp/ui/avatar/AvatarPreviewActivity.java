@@ -87,8 +87,8 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        final View sendButton = findViewById(R.id.set_avatar);
-        sendButton.setOnClickListener(v -> {
+        final View setButton = findViewById(R.id.set_avatar);
+        setButton.setOnClickListener(v -> {
             viewModel.preparePost();
         });
 
@@ -101,7 +101,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
-            sendButton.setEnabled(false);
+            setButton.setEnabled(false);
         }
 
         final MediaViewPager viewPager = findViewById(R.id.media_pager);
@@ -115,7 +115,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
-                viewPager.setMaxAspectRatio(Constants.MAX_IMAGE_ASPECT_RATIO/*Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media))*/);
+                viewPager.setMaxAspectRatio(1);
                 viewPager.setAdapter(new PostMediaPagerAdapter(media));
                 viewPager.setVisibility(View.VISIBLE);
             }
@@ -126,7 +126,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             if (uris != null && media.size() != uris.size()) {
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
             }
-            sendButton.setEnabled(true);
+            setButton.setEnabled(true);
         });
     }
 
