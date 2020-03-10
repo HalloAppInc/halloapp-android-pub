@@ -73,26 +73,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
 
-        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(this), Preferences.getInstance(this));
-        checkRegistrationTask.result.observe(this, checkResult -> {
-            if (!checkResult.registered) {
-                Log.i("MainActivity.onCreate: not registered");
-                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-            } else if (checkResult.lastSyncTime <= 0) {
-                Log.i("MainActivity.onCreate: not synced");
-                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-            }
-        });
-        checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        if (Connection.getInstance().clientExpired) {
-            AppExpirationActivity.open(this, 0);
-        }
-
         setContentView(R.layout.activity_main);
 
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
@@ -202,6 +182,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (Connection.getInstance().clientExpired) {
             AppExpirationActivity.open(this, 0);
         }
+        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(this), Preferences.getInstance(this));
+        checkRegistrationTask.result.observe(this, checkResult -> {
+            if (!checkResult.registered) {
+                Log.i("MainActivity.onStart: not registered");
+                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            } else if (checkResult.lastSyncTime <= 0) {
+                Log.i("MainActivity.onStart: not synced");
+                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+        checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override

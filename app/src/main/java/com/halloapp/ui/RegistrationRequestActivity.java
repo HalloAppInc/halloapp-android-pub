@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
@@ -32,6 +35,8 @@ import java.lang.annotation.RetentionPolicy;
 
 public class RegistrationRequestActivity extends AppCompatActivity {
 
+    public static final String EXTRA_RE_VERIFY = "reverify";
+
     private static final int REQUEST_CODE_VERIFICATION = 1;
 
     private RegistrationRequestViewModel registrationRequestViewModel;
@@ -40,6 +45,12 @@ public class RegistrationRequestActivity extends AppCompatActivity {
     private EditText phoneNumberEditText;
     private View nextButton;
     private View loadingProgressBar;
+
+    public static void reVerify(final Context context) {
+        context.startActivity(new Intent(context, RegistrationRequestActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra(RegistrationRequestActivity.EXTRA_RE_VERIFY, true));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +64,12 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         countryCodePicker.useFlagEmoji(Build.VERSION.SDK_INT >= 28);
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
+
+        if (getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false)) {
+            final TextView titleView = findViewById(R.id.title);
+            titleView.setText(R.string.reverify_registration_title);
+        }
+        Notifications.getInstance(this).clearLoginFailedNotification();
 
         phoneNumberEditText.setTextColor(phoneNumberEditText.getCurrentTextColor()); // so phoneNumberEditText.setEnabled(false) doesn't change color
 

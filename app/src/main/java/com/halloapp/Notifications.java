@@ -21,6 +21,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
+import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Log;
 
@@ -38,8 +39,11 @@ public class Notifications {
     public static final String ACTION_NOTIFY_FEED = "halloapp.intent.action.NOTIFY_FEED";
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
+    private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
+
     private static final int FEED_NOTIFICATION_ID = 0;
     private static final int EXPIRATION_NOTIFICATION_ID = 1;
+    private static final int LOGIN_FAILED_NOTIFICATION_ID = 2;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
@@ -74,13 +78,12 @@ public class Notifications {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= 26) {
-            final CharSequence name = context.getString(R.string.notification_channel_name);
-            final String description = context.getString(R.string.notification_channel_description);
-            final int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            final NotificationChannel channel = new NotificationChannel(FEED_NOTIFICATION_CHANNEL_ID, name, importance);
-            channel.setDescription(description);
+            final NotificationChannel feedNotificationsChannel = new NotificationChannel(FEED_NOTIFICATION_CHANNEL_ID, context.getString(R.string.feed_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            final NotificationChannel criticalNotificationsChannel = new NotificationChannel(CRITICAL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.critical_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.createNotificationChannel(channel);
+            notificationManager.createNotificationChannel(feedNotificationsChannel);
+            notificationManager.createNotificationChannel(criticalNotificationsChannel);
 
             notificationManager.deleteNotificationChannel("new_post_notification"); // TODO (ds): remove
         }
@@ -205,16 +208,17 @@ public class Notifications {
     }
 
     public void showExpirationNotification(int daysLeft) {
-        String title = context.getString(R.string.notification_app_expired_title);
+        final String title;
         if (daysLeft > 0) {
             title = context.getResources().getQuantityString(R.plurals.notification_app_expiration_days_left_title, daysLeft, daysLeft);
+        } else {
+            title = context.getString(R.string.notification_app_expired_title);
         }
-        String body = context.getString(R.string.notification_app_expiration_body);
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
-                .setContentText(body)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setContentText(context.getString(R.string.notification_app_expiration_body))
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
         final Intent contentIntent = new Intent(context, AppExpirationActivity.class);
         contentIntent.putExtra(AppExpirationActivity.EXTRA_DAYS_LEFT, daysLeft);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
@@ -222,6 +226,23 @@ public class Notifications {
         notificationManager.notify(EXPIRATION_NOTIFICATION_ID, builder.build());
     }
 
+    public void showLoginFailedNotification() {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(context.getString(R.string.login_failed))
+                .setContentText(context.getString(R.string.login_failed_explanation))
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+        final Intent contentIntent = new Intent(context, RegistrationRequestActivity.class);
+        contentIntent.putExtra(RegistrationRequestActivity.EXTRA_RE_VERIFY, true);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(LOGIN_FAILED_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearLoginFailedNotification() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(LOGIN_FAILED_NOTIFICATION_ID);
+    }
 
     static public class DeleteNotificationReceiver extends BroadcastReceiver {
         @Override

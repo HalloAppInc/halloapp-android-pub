@@ -12,6 +12,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.posts.TransferPendingItemsTask;
 import com.halloapp.ui.AppExpirationActivity;
+import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -42,6 +43,11 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onLoginFailed() {
         Me.getInstance(context).resetRegistration();
+        if (ForegroundObserver.getInstance().isInForeground()) {
+            RegistrationRequestActivity.reVerify(context);
+        } else {
+            Notifications.getInstance(context).showLoginFailedNotification();
+        }
     }
 
     @Override
