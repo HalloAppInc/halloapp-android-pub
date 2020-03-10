@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 
 import com.halloapp.util.Log;

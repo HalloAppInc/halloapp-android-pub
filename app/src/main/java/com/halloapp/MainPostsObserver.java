@@ -1,7 +1,6 @@
 package com.halloapp;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 

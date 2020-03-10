@@ -311,7 +311,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
         @WorkerThread
         public String transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException, NoSuchAlgorithmException {
-            String hash = null;
+            final String hash;
             final int maxWidth;
             final int maxHeight;
             if (cropRect != null) {

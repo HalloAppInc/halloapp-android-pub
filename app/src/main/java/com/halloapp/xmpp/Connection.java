@@ -14,7 +14,6 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
-import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 

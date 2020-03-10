@@ -23,7 +23,7 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
 
     public RequestExpirationInfoTask(@NonNull Connection connection, @NonNull Context context) {
         this.connection = connection;
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPostExecute(@Nullable Integer secondsLeft) {
         if (secondsLeft != null) {
-            Integer daysLeft = (secondsLeft / SECONDS_PER_DAY) + 1;
+            int daysLeft = (secondsLeft / SECONDS_PER_DAY) + 1;
             Log.d("RequestExpirationInfoTask onPostExecute daysLeft=" + daysLeft);
             if (daysLeft <= EXPIRES_SOON_THRESHOLD_DAYS) {
                 if (daysLeft <= 0) {

@@ -7,9 +7,9 @@ def getLocalProperty(String propName) {
     if (propsFile.exists()) {
         def props = new Properties()
         props.load(new FileInputStream(propsFile))
-        return props[propName];
+        return props[propName]
     } else {
-        return "";
+        return ""
     }
 }
 

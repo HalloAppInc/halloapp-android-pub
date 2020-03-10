@@ -1,10 +1,8 @@
 package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.util.Log;
-import com.halloapp.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
