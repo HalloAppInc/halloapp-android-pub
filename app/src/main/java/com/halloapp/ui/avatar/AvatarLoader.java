@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaStore;
@@ -82,6 +84,13 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
                 String itemId = avatarMetadata.getId();
                 byte[] hash = StringUtils.bytesFromHexString(itemId);
+
+                // Do not permanently save avatars if we won't get updates
+                ContactsDb contactsDb = ContactsDb.getInstance(context);
+                Contact contact = contactsDb.getContact(userId);
+                if (contact == null) {
+                    avatarFile = mediaStore.getTmpFile(userId.rawId());
+                }
 
                 String url = avatarMetadata.getUrl();
                 if (url != null) {
