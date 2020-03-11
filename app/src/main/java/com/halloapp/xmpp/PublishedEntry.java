@@ -28,9 +28,12 @@ import java.util.List;
 
 public class PublishedEntry {
 
-    private static final String ELEMENT_ENTRY = "entry";
+    static final String ELEMENT = "entry";
+    static final String NAMESPACE = "http://halloapp.com/published-entry";
+
     private static final String ELEMENT_FEED_POST = "feedpost";
     private static final String ELEMENT_COMMENT = "comment";
+    private static final String ELEMENT_CHAT_MESSAGE = "chatmessage";
     private static final String ELEMENT_TEXT = "text";
     private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
     private static final String ELEMENT_PARENT_COMMENT_ID = "parentCommentId";
@@ -43,13 +46,12 @@ public class PublishedEntry {
     private static final String ATTRIBUTE_ENC_KEY = "key";
     private static final String ATTRIBUTE_SHA256_HASH = "sha256hash";
 
-    private static final String NAMESPACE = "http://halloapp.com/published-entry";
-
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ENTRY_FEED, ENTRY_COMMENT})
+    @IntDef({ENTRY_FEED, ENTRY_COMMENT, ENTRY_CHAT})
     @interface EntryType {}
     static final int ENTRY_FEED = 0;
     static final int ENTRY_COMMENT = 1;
+    static final int ENTRY_CHAT = 2;
 
     final @EntryType int type;
     final String id;
@@ -112,6 +114,147 @@ public class PublishedEntry {
         }
     }
 
+    static @com.halloapp.posts.Media.MediaType int getMediaType(@PublishedEntry.Media.MediaType String protocolMediaType) {
+        switch (protocolMediaType) {
+            case PublishedEntry.Media.MEDIA_TYPE_IMAGE: {
+                return com.halloapp.posts.Media.MEDIA_TYPE_IMAGE;
+            }
+            case PublishedEntry.Media.MEDIA_TYPE_VIDEO: {
+                return com.halloapp.posts.Media.MEDIA_TYPE_VIDEO;
+            }
+            default: {
+                return com.halloapp.posts.Media.MEDIA_TYPE_UNKNOWN;
+            }
+        }
+    }
+
+    static @PublishedEntry.Media.MediaType String getMediaType(@com.halloapp.posts.Media.MediaType int mediaType) {
+        switch (mediaType) {
+            case com.halloapp.posts.Media.MEDIA_TYPE_IMAGE: {
+                return PublishedEntry.Media.MEDIA_TYPE_IMAGE;
+            }
+            case com.halloapp.posts.Media.MEDIA_TYPE_VIDEO: {
+                return PublishedEntry.Media.MEDIA_TYPE_VIDEO;
+            }
+            case com.halloapp.posts.Media.MEDIA_TYPE_UNKNOWN:
+            default: {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    static @NonNull List<PublishedEntry> getEntries(@NonNull List<? extends NamedElement> items) {
+        final List<PublishedEntry> entries = new ArrayList<>();
+        for (NamedElement item : items) {
+            if (item instanceof PubSubItem) {
+                final PublishedEntry entry = getEntry((PubSubItem)item);
+                if (entry != null && entry.valid()) {
+                    entries.add(entry);
+                }
+            } else {
+                Log.e("PublishedEntry.getEntries: unknown feed entry " + item);
+            }
+        }
+        return entries;
+    }
+
+    private static @Nullable PublishedEntry getEntry(@NonNull PubSubItem item) {
+        final String xml = item.getPayload().toXML(null);
+        final XmlPullParser parser = android.util.Xml.newPullParser();
+        PublishedEntry.Builder entryBuilder = null;
+        try {
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(new StringReader(xml));
+            parser.nextTag();
+            entryBuilder = readEntry(parser);
+        } catch (XmlPullParserException | IOException e) {
+            Log.e("PublishedEntry.getEntry", e);
+        }
+        if (entryBuilder != null) {
+            entryBuilder.id(item.getId());
+            entryBuilder.timestamp(item.getTimestamp());
+            if (item.getPublisher() != null) {
+                entryBuilder.user(item.getPublisher().getLocalpartOrNull().toString());
+            }
+        }
+        return entryBuilder == null ? null : entryBuilder.build();
+    }
+
+    public static @NonNull PublishedEntry.Builder readEntry(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
+        parser.require(XmlPullParser.START_TAG, null, ELEMENT);
+        PublishedEntry.Builder entryBuilder = null;
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            final String name = Preconditions.checkNotNull(parser.getName());
+            if (name.equals(ELEMENT_FEED_POST)) {
+                entryBuilder = readEntryContent(parser);
+                entryBuilder.type(ENTRY_FEED);
+            } else if (name.equals(ELEMENT_COMMENT)) {
+                entryBuilder = readEntryContent(parser);
+                entryBuilder.type(ENTRY_COMMENT);
+            } else if (name.equals(ELEMENT_CHAT_MESSAGE)) {
+                entryBuilder = readEntryContent(parser);
+                entryBuilder.type(ENTRY_CHAT);
+            } else {
+                Xml.skip(parser);
+            }
+        }
+        return Preconditions.checkNotNull(entryBuilder);
+    }
+
+    private static @NonNull PublishedEntry.Builder readEntryContent(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
+        final PublishedEntry.Builder builder = new PublishedEntry.Builder();
+        final List<Media> media = new ArrayList<>();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            final String name = Preconditions.checkNotNull(parser.getName());
+            if (ELEMENT_MEDIA.equals(name)) {
+                media.clear();
+                media.addAll(readMedia(parser));
+            } else if (ELEMENT_TEXT.equals(name)) {
+                builder.text(Xml.readText(parser));
+            } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
+                builder.feedItemId(Xml.readText(parser));
+            } else if (ELEMENT_PARENT_COMMENT_ID.equals(name)) {
+                builder.parentCommentId(Xml.readText(parser));
+            } else {
+                Xml.skip(parser);
+            }
+        }
+        builder.media(media);
+        return builder;
+    }
+
+    private static List<Media> readMedia(XmlPullParser parser) throws IOException, XmlPullParserException {
+        final List<Media> media = new ArrayList<>();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            final String name = Preconditions.checkNotNull(parser.getName());
+            if (ELEMENT_URL.equals(name)) {
+                final String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE);
+                final String widthStr = parser.getAttributeValue(null, ATTRIBUTE_WIDTH);
+                final String heightStr = parser.getAttributeValue(null, ATTRIBUTE_HEIGHT);
+                final String key = parser.getAttributeValue(null, ATTRIBUTE_ENC_KEY);
+                final String sha256hash = parser.getAttributeValue(null, ATTRIBUTE_SHA256_HASH);
+                final Media mediaItem = new Media(type, Xml.readText(parser),
+                        key, sha256hash, widthStr, heightStr);
+                if (!TextUtils.isEmpty(mediaItem.url)) {
+                    media.add(mediaItem);
+                }
+            } else {
+                Xml.skip(parser);
+            }
+        }
+        return media;
+    }
+
+
     PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
         this.type = type;
         this.id = id;
@@ -126,49 +269,6 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    static @NonNull List<PublishedEntry> getFeedEntries(@NonNull List<? extends NamedElement> items) {
-        final List<PublishedEntry> entries = new ArrayList<>();
-        for (NamedElement item : items) {
-            if (item instanceof PubSubItem) {
-                final PublishedEntry entry = getFeedEntry((PubSubItem)item);
-                if (entry != null && entry.valid()) {
-                    entries.add(entry);
-                }
-            } else {
-                Log.e("PublishedEntry.getFeedEntries: unknown feed entry " + item);
-            }
-        }
-        return entries;
-    }
-
-    private static @Nullable PublishedEntry getFeedEntry(@NonNull PubSubItem item) {
-        final String xml = item.getPayload().toXML(null);
-        final XmlPullParser parser = android.util.Xml.newPullParser();
-        PublishedEntry entry = null;
-        try {
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(new StringReader(xml));
-            parser.nextTag();
-            parser.require(XmlPullParser.START_TAG, null, ELEMENT_ENTRY);
-            while (parser.next() != XmlPullParser.END_TAG) {
-                if (parser.getEventType() != XmlPullParser.START_TAG) {
-                    continue;
-                }
-                final String name = Preconditions.checkNotNull(parser.getName());
-                if (name.equals(ELEMENT_FEED_POST)) {
-                    entry = readEntry(parser, ENTRY_FEED, item);
-                } else if (name.equals(ELEMENT_COMMENT)) {
-                    entry = readEntry(parser, ENTRY_COMMENT, item);
-                } else {
-                    Xml.skip(parser);
-                }
-            }
-        } catch (XmlPullParserException | IOException e) {
-            Log.e("PublishedEntry.getFeedEntry", e);
-        }
-        return entry;
-    }
-
     @NonNull String toXml() {
         final XmlSerializer serializer = android.util.Xml.newSerializer();
         final StringWriter writer = new StringWriter();
@@ -176,7 +276,7 @@ public class PublishedEntry {
         try {
             serializer.setOutput(writer);
             serializer.setPrefix("", NAMESPACE);
-            serializer.startTag(NAMESPACE, ELEMENT_ENTRY);
+            serializer.startTag(NAMESPACE, ELEMENT);
             serializer.startTag(NAMESPACE, getTag());
             if (text != null) {
                 serializer.startTag(NAMESPACE, ELEMENT_TEXT);
@@ -217,7 +317,7 @@ public class PublishedEntry {
 
             }
             serializer.endTag(NAMESPACE, getTag());
-            serializer.endTag(NAMESPACE, ELEMENT_ENTRY);
+            serializer.endTag(NAMESPACE, ELEMENT);
             serializer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -239,6 +339,9 @@ public class PublishedEntry {
             case ENTRY_COMMENT: {
                 return ELEMENT_COMMENT;
             }
+            case ENTRY_CHAT: {
+                return ELEMENT_CHAT_MESSAGE;
+            }
             default: {
                 throw new IllegalStateException("Unknown type " + type);
             }
@@ -249,65 +352,8 @@ public class PublishedEntry {
         return true; // timestamp != 0 && user != null && (text != null || !media.isEmpty());
     }
 
-    private static @NonNull PublishedEntry readEntry(@NonNull XmlPullParser parser, @EntryType int type, @NonNull PubSubItem item) throws XmlPullParserException, IOException {
-        final PublishedEntry.Builder builder = new PublishedEntry.Builder();
-        builder.type(type);
-        builder.id(item.getId());
-        builder.timestamp(item.getTimestamp());
-        if (item.getPublisher() != null) {
-            builder.user(item.getPublisher().getLocalpartOrNull().toString());
-        }
-        final List<Media> media = new ArrayList<>();
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            final String name = Preconditions.checkNotNull(parser.getName());
-            if (ELEMENT_MEDIA.equals(name)) {
-                media.clear();
-                media.addAll(readMedia(parser));
-            } else if (ELEMENT_TEXT.equals(name)) {
-                builder.text(Xml.readText(parser));
-            } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
-                builder.feedItemId(Xml.readText(parser));
-            } else if (ELEMENT_PARENT_COMMENT_ID.equals(name)) {
-                builder.parentCommentId(Xml.readText(parser));
-            } else {
-                Xml.skip(parser);
-            }
-        }
-        PublishedEntry entry = builder.build();
-        entry.media.addAll(media);
-        return entry;
-    }
-
-    private static List<Media> readMedia(XmlPullParser parser) throws IOException, XmlPullParserException {
-        final List<Media> media = new ArrayList<>();
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            final String name = Preconditions.checkNotNull(parser.getName());
-            if (ELEMENT_URL.equals(name)) {
-                final String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE);
-                final String widthStr = parser.getAttributeValue(null, ATTRIBUTE_WIDTH);
-                final String heightStr = parser.getAttributeValue(null, ATTRIBUTE_HEIGHT);
-                final String key = parser.getAttributeValue(null, ATTRIBUTE_ENC_KEY);
-                final String sha256hash = parser.getAttributeValue(null, ATTRIBUTE_SHA256_HASH);
-                final Media mediaItem = new Media(type, Xml.readText(parser),
-                        key, sha256hash, widthStr, heightStr);
-                if (!TextUtils.isEmpty(mediaItem.url)) {
-                    media.add(mediaItem);
-                }
-            } else {
-                Xml.skip(parser);
-            }
-        }
-        return media;
-    }
-
     @SuppressWarnings("UnusedReturnValue")
-    private static class Builder {
+    public static class Builder {
         @EntryType int type;
         String id;
         long timestamp;
@@ -315,6 +361,7 @@ public class PublishedEntry {
         String text;
         String feedItemId;
         String parentCommentId;
+        List<Media> media;
 
         Builder type(@EntryType int type) {
             this.type = type;
@@ -351,8 +398,17 @@ public class PublishedEntry {
             return this;
         }
 
+        Builder media(List<Media> media) {
+            this.media = media;
+            return this;
+        }
+
         PublishedEntry build() {
-            return new PublishedEntry(type, id, timestamp, user, text, feedItemId, parentCommentId);
+            final PublishedEntry entry = new PublishedEntry(type, id, timestamp, user, text, feedItemId, parentCommentId);
+            if (media != null) {
+                entry.media.addAll(media);
+            }
+            return entry;
         }
     }
 }

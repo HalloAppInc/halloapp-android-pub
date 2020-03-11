@@ -11,6 +11,7 @@ import androidx.core.util.Preconditions;
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
 import com.halloapp.contacts.UserId;
+import com.halloapp.posts.ChatMessage;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
@@ -100,6 +101,8 @@ public class Connection {
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId);
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
+        void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId);
+        void onIncomingMessageReceived(@NonNull ChatMessage message);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
         void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId);
     }
@@ -151,7 +154,8 @@ public class Connection {
         ProviderManager.addExtensionProvider("item", "http://jabber.org/protocol/pubsub#event", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub#event", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
-        ProviderManager.addExtensionProvider(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE, new SeenReceipt.Provider());
+        ProviderManager.addExtensionProvider(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE, new ChatMessageElement.Provider());
+        ProviderManager.addExtensionProvider(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE, new SeenReceiptElement.Provider());
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
@@ -403,7 +407,7 @@ public class Connection {
                         null,
                         null);
                 for (Media media : post.media) {
-                    entry.media.add(new PublishedEntry.Media(getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+                    entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
@@ -494,6 +498,39 @@ public class Connection {
         });
     }
 
+    public void sendMessage(final @NonNull ChatMessage chatMessage) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send post, no connection");
+                return;
+            }
+            try {
+                final PublishedEntry entry = new PublishedEntry(
+                        PublishedEntry.ENTRY_CHAT,
+                        null,
+                        chatMessage.timestamp,
+                        connection.getUser().getLocalpart().toString(),
+                        chatMessage.text,
+                        null,
+                        null);
+                for (Media media : chatMessage.media) {
+                    entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+                }
+
+                final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(chatMessage.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
+                final Message message = new Message(recipientJid);
+                message.setStanzaId(chatMessage.messageId);
+                message.addExtension(new ChatMessageElement(entry));
+                ackHandlers.put(message.getStanzaId(), () -> observer.onOutgoingMessageSent(chatMessage.chatId, chatMessage.messageId));
+                Log.i("connection: sending message " + chatMessage.messageId + " to " + recipientJid);
+                connection.sendStanza(message);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send message", e);
+            }
+        });
+    }
+
+
     public void sendAck(final @NonNull String id) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
@@ -521,7 +558,7 @@ public class Connection {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final Message message = new Message(recipientJid);
                 message.setStanzaId(RandomId.create());
-                message.addExtension(new SeenReceipt(postId));
+                message.addExtension(new SeenReceiptElement(postId));
                 ackHandlers.put(message.getStanzaId(), () -> observer.onSeenReceiptSent(senderUserId, postId));
                 Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
@@ -575,7 +612,7 @@ public class Connection {
 
     private boolean processFeedPubSubItems(@NonNull UserId feedUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
         Preconditions.checkNotNull(connection);
-        final List<PublishedEntry> entries = PublishedEntry.getFeedEntries(items);
+        final List<PublishedEntry> entries = PublishedEntry.getEntries(items);
         final List<Post> posts = new ArrayList<>();
         final List<Comment> comments = new ArrayList<>();
         for (PublishedEntry entry : entries) {
@@ -591,7 +628,7 @@ public class Connection {
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
-                        post.media.add(Media.createFromUrl(getMediaType(entryMedia.type), entryMedia.url,
+                        post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
@@ -626,7 +663,7 @@ public class Connection {
     }
 
     private void parseFeedHistoryItems(UserId feedUserId, List<PubSubItem> items, Collection<Post> posts, Collection<Comment> comments) {
-        final List<PublishedEntry> entries = PublishedEntry.getFeedEntries(items);
+        final List<PublishedEntry> entries = PublishedEntry.getEntries(items);
         for (PublishedEntry entry : entries) {
             if (entry.type == PublishedEntry.ENTRY_FEED) {
                 final Post post = new Post(0,
@@ -638,7 +675,7 @@ public class Connection {
                         entry.text
                 );
                 for (PublishedEntry.Media entryMedia : entry.media) {
-                    post.media.add(Media.createFromUrl(getMediaType(entryMedia.type),
+                    post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type),
                             entryMedia.url, entryMedia.encKey, entryMedia.sha256hash,
                             entryMedia.width, entryMedia.height));
                 }
@@ -715,35 +752,6 @@ public class Connection {
         return JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(userId.rawId()), Domainpart.fromOrNull(XMPP_DOMAIN));
     }
 
-    private static @Media.MediaType int getMediaType(@PublishedEntry.Media.MediaType String protocolMediaType) {
-        switch (protocolMediaType) {
-            case PublishedEntry.Media.MEDIA_TYPE_IMAGE: {
-                return Media.MEDIA_TYPE_IMAGE;
-            }
-            case PublishedEntry.Media.MEDIA_TYPE_VIDEO: {
-                return Media.MEDIA_TYPE_VIDEO;
-            }
-            default: {
-                return Media.MEDIA_TYPE_UNKNOWN;
-            }
-        }
-    }
-
-    private static @PublishedEntry.Media.MediaType String getMediaType(@Media.MediaType int mediaType) {
-        switch (mediaType) {
-            case Media.MEDIA_TYPE_IMAGE: {
-                return PublishedEntry.Media.MEDIA_TYPE_IMAGE;
-            }
-            case Media.MEDIA_TYPE_VIDEO: {
-                return PublishedEntry.Media.MEDIA_TYPE_VIDEO;
-            }
-            case Media.MEDIA_TYPE_UNKNOWN:
-            default: {
-                throw new IllegalArgumentException();
-            }
-        }
-    }
-
     class AckStanzaListener implements StanzaListener {
 
         @Override
@@ -776,7 +784,7 @@ public class Connection {
             if (msg.getType() == Message.Type.error) {
                 Log.w("connection: got error message " + msg);
             } else {
-                final EventElement event = packet.getExtension("event", PubSubNamespace.event.getXmlns());
+                final EventElement event = packet.getExtension(PubSubNamespace.event.name(), PubSubNamespace.event.getXmlns());
                 if (event != null && EventElementType.items.equals(event.getEventType())) {
                     final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
                     if (itemsElem != null) {
@@ -791,7 +799,15 @@ public class Connection {
                     }
                 }
                 if (!handled) {
-                    final SeenReceipt seenReceipt = packet.getExtension(SeenReceipt.ELEMENT, SeenReceipt.NAMESPACE);
+                    final ChatMessageElement chatMessage = packet.getExtension(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE);
+                    if (chatMessage != null) {
+                        Log.i("connection: got chat message " + msg);
+                        observer.onIncomingMessageReceived(chatMessage.getMessage(packet.getFrom(), packet.getStanzaId()));
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final SeenReceiptElement seenReceipt = packet.getExtension(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE);
                     if (seenReceipt != null) {
                         Log.i("connection: got seen receipt " + msg);
                         observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
+import com.halloapp.posts.ChatMessage;
 import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
@@ -84,6 +85,18 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
         PostsDb.getInstance(context).setSeenReceiptSent(senderUserId, postId);
+    }
+
+    @Override
+    public void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {
+        // TODO (ds): implement
+        Log.i("ConnectionObserver.onOutgoingMessageSent chatId=" + chatId + " messageId=" + messageId);
+    }
+
+    @Override
+    public void onIncomingMessageReceived(@NonNull ChatMessage message) {
+        // TODO (ds): implement
+        Log.i("ConnectionObserver.onIncomingMessageReceived chatId=" + message.chatId + " messageId=" + message.messageId);
     }
 
     @Override
