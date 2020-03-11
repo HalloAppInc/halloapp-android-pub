@@ -21,6 +21,11 @@
             app:key="send_logs"
             app:title="@string/send_logs" />
 
+        <Preference
+            app:key="debug"
+            app:title="DEBUG"
+            app:isPreferenceVisible="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

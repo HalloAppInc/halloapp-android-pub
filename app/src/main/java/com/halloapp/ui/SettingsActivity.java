@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import androidx.core.util.Preconditions;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.halloapp.BuildConfig;
+import com.halloapp.Debug;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.util.Log;
@@ -65,6 +68,13 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             });
 
+            Preference debugPreference = Preconditions.checkNotNull(findPreference("debug"));
+            debugPreference.setVisible(BuildConfig.DEBUG);
+            debugPreference.setOnPreferenceClickListener(preference -> {
+                View prefView = getListView().getChildAt(preference.getOrder());
+                Debug.showDebugMenu(getActivity(), prefView);
+                return false;
+            });
         }
     }
 }
