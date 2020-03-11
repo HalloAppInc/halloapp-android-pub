@@ -101,7 +101,7 @@ public class Connection {
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
-        void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams);
+        void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId);
     }
 
     private Connection() {
@@ -621,10 +621,8 @@ public class Connection {
     private boolean processMetadataPubSubItems(@NonNull UserId metadataUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
         Preconditions.checkNotNull(connection);
         final List<PublishedAvatarMetadata> pams = PublishedAvatarMetadata.getAvatarMetadatas(items);
-        for (PublishedAvatarMetadata pam : pams) {
-            observer.onAvatarMetadatasReceived(metadataUserId, pams);
-        }
-        return false;
+        observer.onAvatarMetadatasReceived(metadataUserId, pams, ackId);
+        return !pams.isEmpty();
     }
 
     private void parseFeedHistoryItems(UserId feedUserId, List<PubSubItem> items, Collection<Post> posts, Collection<Comment> comments) {

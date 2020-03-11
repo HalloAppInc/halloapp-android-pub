@@ -103,10 +103,11 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams) {
+    public void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId) {
         AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
         for (PublishedAvatarMetadata pam : pams) {
             avatarLoader.reportAvatarMetadataUpdate(metadataUserId, pam.getId(), pam.getUrl());
         }
+        Connection.getInstance().sendAck(ackId);
     }
 }
