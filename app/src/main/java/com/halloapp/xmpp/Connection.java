@@ -659,7 +659,7 @@ public class Connection {
         Preconditions.checkNotNull(connection);
         final List<PublishedAvatarMetadata> pams = PublishedAvatarMetadata.getAvatarMetadatas(items);
         observer.onAvatarMetadatasReceived(metadataUserId, pams, ackId);
-        return !pams.isEmpty();
+        return true;
     }
 
     private void parseFeedHistoryItems(UserId feedUserId, List<PubSubItem> items, Collection<Post> posts, Collection<Comment> comments) {

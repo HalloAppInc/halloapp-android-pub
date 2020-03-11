@@ -80,10 +80,15 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             if (!avatarFile.exists()) {
                 PubSubItem item = connection.getMostRecentAvatarMetadata(userId).get();
                 if (item == null) {
-                    Log.i("No avatar metadata for " + userId);
+                    Log.i("No avatar metadata item for " + userId);
                     return getDefaultAvatar();
                 }
                 PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
+                if (avatarMetadata == null) {
+                    Log.i("Empty avatar metadata item for " + userId);
+                    return getDefaultAvatar();
+                }
+
                 String itemId = avatarMetadata.getId();
                 byte[] hash = StringUtils.bytesFromHexString(itemId);
 

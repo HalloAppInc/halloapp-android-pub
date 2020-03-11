@@ -54,16 +54,16 @@ public class PublishedAvatarMetadata {
             serializer.setOutput(writer);
             serializer.setPrefix("", NAMESPACE);
             serializer.startTag(NAMESPACE, ELEMENT_METADATA);
-            serializer.startTag(null, ELEMENT_INFO);
-            serializer.attribute(null, ATTRIBUTE_BYTES, Long.toString(numBytes));
-            serializer.attribute(null, ATTRIBUTE_ID, id);
             if (url != null) {
+                serializer.startTag(null, ELEMENT_INFO);
+                serializer.attribute(null, ATTRIBUTE_BYTES, Long.toString(numBytes));
+                serializer.attribute(null, ATTRIBUTE_ID, id);
                 serializer.attribute(null, ATTRIBUTE_URL, url);
+                serializer.attribute(null, ATTRIBUTE_TYPE, type);
+                serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
+                serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
+                serializer.endTag(null, ELEMENT_INFO);
             }
-            serializer.attribute(null, ATTRIBUTE_TYPE, type);
-            serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
-            serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
-            serializer.endTag(null, ELEMENT_INFO);
             serializer.endTag(NAMESPACE, ELEMENT_METADATA);
             serializer.flush();
         } catch (IOException e) {
@@ -89,6 +89,7 @@ public class PublishedAvatarMetadata {
         return pams;
     }
 
+    @Nullable
     public static PublishedAvatarMetadata getPublishedItem(@NonNull PubSubItem item) {
         final String xml = item.getPayload().toXML(null);
         final XmlPullParser parser = android.util.Xml.newPullParser();
@@ -97,17 +98,21 @@ public class PublishedAvatarMetadata {
             parser.setInput(new StringReader(xml));
             parser.nextTag();
             parser.require(XmlPullParser.START_TAG, null, ELEMENT_METADATA);
-            parser.nextTag();
-            parser.require(XmlPullParser.START_TAG, null, ELEMENT_INFO);
+            int next = parser.nextTag();
+            if (next == XmlPullParser.START_TAG) {
+                parser.require(XmlPullParser.START_TAG, null, ELEMENT_INFO);
 
-            String id = parser.getAttributeValue(null, ATTRIBUTE_ID);
-            String url = parser.getAttributeValue(null, ATTRIBUTE_URL);
-            String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE); // TODO(jack): specify type
-            long numBytes = Long.parseLong(parser.getAttributeValue(null, ATTRIBUTE_BYTES));
-            int height = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
-            int width = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
+                String id = parser.getAttributeValue(null, ATTRIBUTE_ID);
+                String url = parser.getAttributeValue(null, ATTRIBUTE_URL);
+                String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE); // TODO(jack): specify type
+                long numBytes = Long.parseLong(parser.getAttributeValue(null, ATTRIBUTE_BYTES));
+                int height = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
+                int width = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
 
-            return new PublishedAvatarMetadata(id, url, numBytes, height, width);
+                return new PublishedAvatarMetadata(id, url, numBytes, height, width);
+            } else {
+                Log.i("PublishedAvatarMetadata.getPublishedItem returning null due to empty metadata tag");
+            }
         } catch (XmlPullParserException | IOException e) {
             Log.e("PublishedAvatarMetadata.getPublishedItem", e);
         }

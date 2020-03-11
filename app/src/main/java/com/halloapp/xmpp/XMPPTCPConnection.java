@@ -1037,7 +1037,6 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                         tlsHandled.reportSuccess();
                                         throw new StreamErrorException(streamError);
                                     } catch (IllegalStateException e) {
-                                        Log.w("JACK got error", e);
                                         if (e.getMessage().contains("unsupported_client_version")) {
                                             streamOpenFailListener.onStreamOpenFail();
                                         }
