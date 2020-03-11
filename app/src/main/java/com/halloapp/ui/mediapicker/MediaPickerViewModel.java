@@ -13,10 +13,10 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<GalleryItem>> mediaList;
 
-    public MediaPickerViewModel(@NonNull Application application) {
+    public MediaPickerViewModel(@NonNull Application application, boolean includeVideos) {
         super(application);
 
-        final GalleryDataSource.Factory dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver());
+        final GalleryDataSource.Factory dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), includeVideos);
         mediaList = new LivePagedListBuilder<>(dataSourceFactory, 250).build();
     }
 
@@ -24,3 +24,4 @@ public class MediaPickerViewModel extends AndroidViewModel {
         Preconditions.checkNotNull(mediaList.getValue()).getDataSource().invalidate();
     }
 }
+

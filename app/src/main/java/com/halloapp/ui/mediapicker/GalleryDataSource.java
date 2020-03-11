@@ -20,18 +20,22 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
     public static final String MEDIA_VOLUME = MediaStore.VOLUME_EXTERNAL;
 
     final private ContentResolver contentResolver;
+    final private boolean includeVideos;
 
-    private final static String MEDIA_TYPE_SELECTION = MediaStore.Files.FileColumns.MEDIA_TYPE + " IN ('" +
+    private static final String MEDIA_TYPE_SELECTION = MediaStore.Files.FileColumns.MEDIA_TYPE + " IN ('" +
             MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + "', '" +
             MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "')";
+    private static final String MEDIA_TYPE_IMAGES_ONLY = MediaStore.Files.FileColumns.MEDIA_TYPE + " IN ('" +
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + "')";
     private static final String[] MEDIA_PROJECTION = new String[] {
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
             //MediaStore.Files.FileColumns.DURATION
     };
 
-    private GalleryDataSource(ContentResolver contentResolver) {
+    private GalleryDataSource(ContentResolver contentResolver, boolean includeVideos) {
         this.contentResolver = contentResolver;
+        this.includeVideos = includeVideos;
     }
 
     @Override
@@ -54,7 +58,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
         try (final Cursor cursor = contentResolver.query(
                 MediaStore.Files.getContentUri(MEDIA_VOLUME),
                 MEDIA_PROJECTION,
-                MEDIA_TYPE_SELECTION + (start == null ? "" : ((after ? " AND _id<" : " AND _id>") + start)),
+                (includeVideos ? MEDIA_TYPE_SELECTION : MEDIA_TYPE_IMAGES_ONLY) + (start == null ? "" : ((after ? " AND _id<" : " AND _id>") + start)),
                 null,
                 "_id DESC LIMIT " + size,
                 null)) {
@@ -78,14 +82,16 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
     public static class Factory extends DataSource.Factory<Long, GalleryItem> {
 
         final ContentResolver contentResolver;
+        final boolean includeVideos;
 
-        Factory(ContentResolver contentResolver) {
+        Factory(ContentResolver contentResolver, boolean includeVideos) {
             this.contentResolver = contentResolver;
+            this.includeVideos = includeVideos;
         }
 
         @Override
         public @NonNull DataSource<Long, GalleryItem> create() {
-            return new GalleryDataSource(contentResolver);
+            return new GalleryDataSource(contentResolver, includeVideos);
         }
     }
 }

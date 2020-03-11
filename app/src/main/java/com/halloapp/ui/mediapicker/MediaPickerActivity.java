@@ -92,7 +92,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         adapter = new MediaItemsAdapter();
         mediaView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(MediaPickerViewModel.class);
+        viewModel = new ViewModelProvider(this, new MediaPickerViewModelFactory(getApplication(), pickerPurpose != PICKER_PURPOSE_AVATAR)).get(MediaPickerViewModel.class);
         viewModel.mediaList.observe(this, mediaItems -> {
             adapter.submitList(mediaItems);
             progressView.setVisibility(View.GONE);
