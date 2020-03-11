@@ -76,7 +76,7 @@ public class MediaStore {
     }
 
     public File getAvatarFile(String jid) {
-        return new File(avatarDir, jid + ".png");
+        return new File(avatarDir, jid + ".jpg");
     }
 
     @WorkerThread

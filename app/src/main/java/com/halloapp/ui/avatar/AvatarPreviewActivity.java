@@ -286,10 +286,10 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (media != null) {
                 Media img = media.get(0);
-                final File pngFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
+                final File outFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
-                    TranscodeResult transcodeResult = transcodeToPng(img.file, pngFile, cropRects == null ? null : cropRects.get(img.id), Constants.MAX_AVATAR_DIMENSION);
-                    uploadAvatar(pngFile, Connection.getInstance(), transcodeResult);
+                    TranscodeResult transcodeResult = transcode(img.file, outFile, cropRects == null ? null : cropRects.get(img.id), Constants.MAX_AVATAR_DIMENSION);
+                    uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged();
                 } catch (IOException | NoSuchAlgorithmException e) {
@@ -327,7 +327,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         @WorkerThread
-        public TranscodeResult transcodeToPng(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension) throws IOException, NoSuchAlgorithmException {
+        public TranscodeResult transcode(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension) throws IOException, NoSuchAlgorithmException {
             final String hash;
             final int croppedHeight;
             final int croppedWidth;
@@ -357,7 +357,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 }
 
                 try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
-                    croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100 /* ignored for png */, streamTo);
+                    croppedBitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, streamTo);
                     InputStream is = new FileInputStream(fileTo);
 
                     // TODO(jack): Compute hash without re-reading the file
