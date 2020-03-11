@@ -1,6 +1,7 @@
 package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.util.Log;
 
@@ -29,15 +30,15 @@ public class PublishedAvatarMetadata {
 
     private static final String NAMESPACE = "urn:xmpp:avatar:metadata";
 
-    final String url;
+    @Nullable final String url;
     final String id;
-    final String type = "image/png";
+    final String type = "image/jpeg";
     final long numBytes;
     final int height;
     final int width;
 
     // Assume PNG and not URL for now
-    PublishedAvatarMetadata(String id, String url, long numBytes, int height, int width) {
+    PublishedAvatarMetadata(String id, @Nullable String url, long numBytes, int height, int width) {
         this.id = id;
         this.url = url;
         this.numBytes = numBytes;
@@ -56,7 +57,9 @@ public class PublishedAvatarMetadata {
             serializer.startTag(null, ELEMENT_INFO);
             serializer.attribute(null, ATTRIBUTE_BYTES, Long.toString(numBytes));
             serializer.attribute(null, ATTRIBUTE_ID, id);
-            serializer.attribute(null, ATTRIBUTE_URL, url);
+            if (url != null) {
+                serializer.attribute(null, ATTRIBUTE_URL, url);
+            }
             serializer.attribute(null, ATTRIBUTE_TYPE, type);
             serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
             serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
@@ -120,6 +123,7 @@ public class PublishedAvatarMetadata {
         return id;
     }
 
+    @Nullable
     public String getUrl() {
         return url;
     }

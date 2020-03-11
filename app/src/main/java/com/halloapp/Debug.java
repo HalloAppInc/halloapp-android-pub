@@ -19,6 +19,7 @@ import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
@@ -37,6 +38,7 @@ public class Debug {
     private static final String DEBUG_MENU_CLEANUP_POSTS = "Cleanup posts";
     private static final String DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY = "Visit expiration activity";
     private static final String DEBUG_MENU_CLEAR_AVATAR_CACHE = "Clear avatar disk cache";
+    private static final String DEBUG_MENU_REMOVE_AVATAR = "Remove avatar";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
@@ -51,6 +53,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CLEANUP_POSTS);
         menu.getMenu().add(DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY);
         menu.getMenu().add(DEBUG_MENU_CLEAR_AVATAR_CACHE);
+        menu.getMenu().add(DEBUG_MENU_REMOVE_AVATAR);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -99,6 +102,18 @@ public class Debug {
                                 Log.d("DEBUG Deleting " + toDelete.getAbsolutePath());
                                 toDelete.delete();
                             }
+                            return null;
+                        }
+                    }.execute();
+
+                    break;
+                }
+                case DEBUG_MENU_REMOVE_AVATAR: {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), activity);
+                            avatarLoader.removeMyAvatar();
                             return null;
                         }
                     }.execute();

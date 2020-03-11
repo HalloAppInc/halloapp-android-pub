@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
@@ -20,11 +21,12 @@ import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaStore;
 import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.PublishedAvatarMetadata;
 import com.halloapp.xmpp.PubSubItem;
+import com.halloapp.xmpp.PublishedAvatarMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,18 +143,35 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return bitmap;
     }
 
+    public void removeMyAvatar() {
+        Connection connection = Connection.getInstance();
+        connection.publishAvatarMetadata(RandomId.create(), null, 0, 0, 0);
+
+        MediaStore mediaStore = MediaStore.getInstance(context);
+        File avatarFile = mediaStore.getAvatarFile(UserId.ME.rawId());
+        if (avatarFile.exists()) {
+            avatarFile.delete();
+        }
+
+        reportMyAvatarChanged();
+    }
+
     public void reportMyAvatarChanged() {
         cache.remove(UserId.ME.rawId());
     }
 
-    public void reportAvatarMetadataUpdate(@NonNull UserId userId, @NonNull String hash, @NonNull String url) {
+    public void reportAvatarMetadataUpdate(@NonNull UserId userId, @NonNull String hash, @Nullable String url) {
         MediaStore mediaStore = MediaStore.getInstance(context);
         File avatarFile = mediaStore.getAvatarFile(userId.rawId());
-        try {
-            Downloader.run(url, null, StringUtils.bytesFromHexString(hash), Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
-            cache.remove(userId.rawId());
-        } catch (IOException e) {
-            Log.w("avatar metadata update", e);
+        if (url != null) {
+            try {
+                Downloader.run(url, null, StringUtils.bytesFromHexString(hash), Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+            } catch (IOException e) {
+                Log.w("avatar metadata update", e);
+            }
+        } else if (avatarFile.exists()) {
+            avatarFile.delete();
         }
+        cache.remove(userId.rawId());
     }
 }
