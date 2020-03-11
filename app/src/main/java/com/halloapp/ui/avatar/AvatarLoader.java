@@ -86,10 +86,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 byte[] hash = StringUtils.bytesFromHexString(itemId);
 
                 // Do not permanently save avatars if we won't get updates
-                ContactsDb contactsDb = ContactsDb.getInstance(context);
-                Contact contact = contactsDb.getContact(userId);
-                if (contact == null) {
-                    avatarFile = mediaStore.getTmpFile(userId.rawId());
+                if (!userId.isMe()) {
+                    ContactsDb contactsDb = ContactsDb.getInstance(context);
+                    Contact contact = contactsDb.getContact(userId);
+                    if (contact == null || !contact.friend) {
+                        avatarFile = mediaStore.getTmpFile(userId.rawId());
+                    }
                 }
 
                 String url = avatarMetadata.getUrl();
