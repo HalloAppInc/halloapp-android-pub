@@ -3,12 +3,16 @@ package com.halloapp.ui.avatar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
+import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaStore;
@@ -31,6 +35,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private final Connection connection;
     private final Context context;
     private final LruCache<String, Bitmap> cache;
+
+    private Bitmap defaultAvatar;
 
     public static AvatarLoader getInstance(Connection connection, Context context) {
         if (instance == null) {
@@ -71,7 +77,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 PubSubItem item = connection.getMostRecentAvatarMetadata(userId).get();
                 if (item == null) {
                     Log.i("No avatar metadata for " + userId);
-                    return null;
+                    return getDefaultAvatar();
                 }
                 PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
                 String itemId = avatarMetadata.getId();
@@ -80,6 +86,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 String url = avatarMetadata.getUrl();
                 if (url != null) {
                     Downloader.run(url, null, hash, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+                } else {
+                    return getDefaultAvatar();
                 }
             }
 
@@ -99,6 +107,27 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             }
         };
         load(view, loader, displayer, userId.rawId(), cache);
+    }
+
+    private Bitmap getDefaultAvatar() {
+        if (defaultAvatar == null) {
+            Drawable drawable = context.getDrawable(R.drawable.avatar_person);
+            defaultAvatar = drawableToBitmap(drawable);
+        }
+        return defaultAvatar;
+    }
+
+    // From https://stackoverflow.com/a/24389104/11817085
+    private static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 
     public void reportMyAvatarChanged() {
