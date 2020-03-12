@@ -89,8 +89,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     return getDefaultAvatar();
                 }
 
-                String itemId = avatarMetadata.getId();
-                byte[] hash = StringUtils.bytesFromHexString(itemId);
+                byte[] hash = StringUtils.bytesFromHexString(avatarMetadata.getHash());
 
                 // Do not permanently save avatars if we won't get updates
                 if (!userId.isMe()) {

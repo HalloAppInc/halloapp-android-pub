@@ -27,21 +27,21 @@ public class PublishedAvatarMetadata {
     private static final String ATTRIBUTE_WIDTH = "width";
     private static final String ATTRIBUTE_HEIGHT = "height";
     private static final String ATTRIBUTE_BYTES = "bytes";
-    private static final String ATTRIBUTE_ID = "id";
+    private static final String ATTRIBUTE_HASH = "hash";
     private static final String ATTRIBUTE_URL = "url";
 
     private static final String NAMESPACE = "urn:xmpp:avatar:metadata";
 
     @Nullable final String url;
-    final String id;
+    final String hash;
     final String type = "image/jpeg";
     final long numBytes;
     final int height;
     final int width;
 
     // Assume PNG and not URL for now
-    PublishedAvatarMetadata(String id, @Nullable String url, long numBytes, int height, int width) {
-        this.id = id;
+    PublishedAvatarMetadata(String hash, @Nullable String url, long numBytes, int height, int width) {
+        this.hash = hash;
         this.url = url;
         this.numBytes = numBytes;
         this.height = height;
@@ -59,7 +59,7 @@ public class PublishedAvatarMetadata {
             if (url != null) {
                 serializer.startTag(null, ELEMENT_INFO);
                 serializer.attribute(null, ATTRIBUTE_BYTES, Long.toString(numBytes));
-                serializer.attribute(null, ATTRIBUTE_ID, id);
+                serializer.attribute(null, ATTRIBUTE_HASH, hash);
                 serializer.attribute(null, ATTRIBUTE_URL, url);
                 serializer.attribute(null, ATTRIBUTE_TYPE, type);
                 serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
@@ -104,14 +104,14 @@ public class PublishedAvatarMetadata {
             if (next == XmlPullParser.START_TAG) {
                 parser.require(XmlPullParser.START_TAG, null, ELEMENT_INFO);
 
-                String id = parser.getAttributeValue(null, ATTRIBUTE_ID);
+                String hash = parser.getAttributeValue(null, ATTRIBUTE_HASH);
                 String url = parser.getAttributeValue(null, ATTRIBUTE_URL);
                 String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE); // TODO(jack): specify type
                 long numBytes = Long.parseLong(parser.getAttributeValue(null, ATTRIBUTE_BYTES));
                 int height = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
                 int width = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
 
-                return new PublishedAvatarMetadata(id, url, numBytes, height, width);
+                return new PublishedAvatarMetadata(hash, url, numBytes, height, width);
             } else {
                 Log.i("PublishedAvatarMetadata.getPublishedItem returning null due to empty metadata tag");
             }
@@ -123,11 +123,11 @@ public class PublishedAvatarMetadata {
 
     @Override
     public @NonNull String toString() {
-        return "PublishedAvatarMetadata[id=" + id + " type=" + type + " bytes=" + numBytes + " width=" + width + " height=" + height + " url=" + url + "]";
+        return "PublishedAvatarMetadata[hash=" + hash + " type=" + type + " bytes=" + numBytes + " width=" + width + " height=" + height + " url=" + url + "]";
     }
 
-    public String getId() {
-        return id;
+    public String getHash() {
+        return hash;
     }
 
     @Nullable

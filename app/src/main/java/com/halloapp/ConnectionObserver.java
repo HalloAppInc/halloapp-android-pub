@@ -119,7 +119,7 @@ public class ConnectionObserver implements Connection.Observer {
     public void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId) {
         AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
         for (PublishedAvatarMetadata pam : pams) {
-            avatarLoader.reportAvatarMetadataUpdate(metadataUserId, pam.getId(), pam.getUrl());
+            avatarLoader.reportAvatarMetadataUpdate(metadataUserId, pam.getHash(), pam.getUrl());
         }
         Connection.getInstance().sendAck(ackId);
     }
