@@ -54,6 +54,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -362,7 +363,7 @@ public class Connection {
             try {
                 final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(id, url, numBytes, height, width);
                 final SimplePayload payload = new SimplePayload(metadata.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(id, payload);
+                final PayloadItem<SimplePayload> item = new PayloadItem<>(PublishedAvatarMetadata.AVATAR_ID, payload);
                 pubSubHelper.publishItem(getMyAvatarMetadataNodeId(), item);
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
 
@@ -380,7 +381,7 @@ public class Connection {
                 return null;
             }
             try {
-                List<PubSubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)), 1);
+                List<PubSubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)), Collections.singleton(PublishedAvatarMetadata.AVATAR_ID));
                 if (items.size() > 0) {
                     return items.get(0);
                 }

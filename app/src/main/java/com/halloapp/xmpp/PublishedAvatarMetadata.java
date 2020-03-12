@@ -18,6 +18,8 @@ import java.util.List;
 
 public class PublishedAvatarMetadata {
 
+    public static final String AVATAR_ID = "avatar";
+
     private static final String ELEMENT_METADATA = "metadata";
     private static final String ELEMENT_INFO = "info";
 
