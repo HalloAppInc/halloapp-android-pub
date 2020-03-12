@@ -1,9 +1,12 @@
 package com.halloapp.xmpp;
 
+import androidx.annotation.StringDef;
+
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.PacketParserUtils;
+import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jivesoftware.smackx.pubsub.Item;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
@@ -12,22 +15,51 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.xmlpull.v1.XmlPullParser;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 // org.jivesoftware.smackx.pubsub.provider.ItemProvider doesn't handle 'publisher' and 'timestamp' attributes
 public class PubSubItem extends PayloadItem<SimplePayload> {
 
     private long timestamp;
     private Jid publisher;
+    private @ItemType String type;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({
+            PUB_SUB_ITEM_TYPE_FEED_POST,
+            PUB_SUB_ITEM_TYPE_COMMENT
+    })
+    @interface ItemType {}
+    static final String PUB_SUB_ITEM_TYPE_FEED_POST = "feedpost";
+    static final String PUB_SUB_ITEM_TYPE_COMMENT = "comment";
+
+    PubSubItem(@ItemType String type, String itemId, SimplePayload payloadExt) {
+        super(itemId, payloadExt);
+        this.type = type;
+    }
 
     private PubSubItem(ItemNamespace itemNamespace, String itemId, String nodeId, SimplePayload payloadExt) {
         super(itemNamespace, itemId, nodeId, payloadExt);
     }
 
-    public long getTimestamp() {
+    long getTimestamp() {
         return timestamp;
     }
 
     Jid getPublisher() {
         return publisher;
+    }
+
+    @Override
+    public XmlStringBuilder toXML(String enclosingNamespace) {
+        XmlStringBuilder xml = getCommonXml();
+        xml.optAttribute("type", type);
+        xml.rightAngleBracket();
+        xml.append(getPayload().toXML(null));
+        xml.closeElement(this);
+
+        return xml;
     }
 
     public static class Provider extends ItemProvider {

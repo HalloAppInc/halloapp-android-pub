@@ -410,7 +410,7 @@ public class Connection {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(post.postId, payload);
+                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.postId, payload);
                 pubSubHelper.publishItem(getMyFeedNodeId(), item);
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 observer.onOutgoingPostSent(post.postId);
@@ -436,7 +436,7 @@ public class Connection {
                         null,
                         null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(postId, payload);
+                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
                 pubSubHelper.retractItem(getMyFeedNodeId(), item);
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 observer.onOutgoingPostSent(postId);
@@ -462,7 +462,7 @@ public class Connection {
                         comment.postId,
                         comment.parentCommentId);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(comment.commentId, payload);
+                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
                 pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
                 observer.onOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
@@ -488,7 +488,7 @@ public class Connection {
                         postId,
                         null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(commentId, payload);
+                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
                 pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
                 observer.onOutgoingCommentSent(postSenderUserId, postId, commentId);
