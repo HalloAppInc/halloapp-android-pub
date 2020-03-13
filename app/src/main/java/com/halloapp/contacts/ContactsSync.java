@@ -20,6 +20,7 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
 import com.halloapp.util.Log;
+import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.ContactSyncRequest;
@@ -141,7 +142,8 @@ public class ContactsSync {
     private ListenableWorker.Result performIncrementalContactSync(@NonNull ContactsDb.AddressBookSyncResult addressBookSyncResult) {
         if (!addressBookSyncResult.removed.isEmpty()) {
             try {
-                Connection.getInstance().syncContacts(addressBookSyncResult.removed, ContactSyncRequest.DELETE).get();
+                Connection.getInstance().syncContacts(addressBookSyncResult.removed,
+                        ContactSyncRequest.DELETE, null, true).get();
             } catch (ExecutionException | InterruptedException e) {
                 Log.i("ContactsSync.performContactSync: failed to delete contacts", e);
                 return ListenableWorker.Result.failure();
@@ -162,7 +164,7 @@ public class ContactsSync {
     }
 
     @WorkerThread
-    private ListenableWorker.Result updateContactsOnServer(Collection<Contact> contacts, boolean fullSync) {
+    private ListenableWorker.Result updateContactsOnServer(@NonNull Collection<Contact> contacts, boolean fullSync) {
         final HashMap<String, List<Contact>> phones = new HashMap<>();
         for (Contact contact : contacts) {
             List<Contact> phoneContactList = phones.get(contact.phone);
@@ -177,12 +179,16 @@ public class ContactsSync {
         final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
         final List<ContactInfo> contactSyncResults = new ArrayList<>(phonesBatch.size());
         @ContactSyncRequest.Type String batchType = fullSync ? ContactSyncRequest.SET : ContactSyncRequest.ADD;
+        final String syncId = fullSync ? RandomId.create() : null;
+        int phonesSyncedCount = 0;
         for (String phone : phones.keySet()) {
             phonesBatch.add(phone);
-            if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE) {
+            phonesSyncedCount++;
+            final boolean lastBatch = phonesSyncedCount == phones.size();
+            if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE || lastBatch) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, batchType).get();
+                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, batchType, syncId, lastBatch).get();
                     batchType = ContactSyncRequest.ADD;
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
@@ -195,22 +201,6 @@ public class ContactsSync {
                     Log.e("ContactsSync.performContactSync: failed to sync batch", e);
                     return ListenableWorker.Result.failure();
                 }
-            }
-        }
-        if (phonesBatch.size() > 0) {
-            Log.i("ContactsSync.performContactSync: last batch " + phonesBatch.size() + " phones to sync");
-            try {
-                final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, batchType).get();
-                if (contactSyncBatchResults != null) {
-                    contactSyncResults.addAll(contactSyncBatchResults);
-                    phonesBatch.clear();
-                } else {
-                    Log.e("ContactsSync.performContactSync: failed to sync last batch");
-                    return ListenableWorker.Result.failure();
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("ContactsSync.performContactSync: failed to sync last batch", e);
-                return ListenableWorker.Result.failure();
             }
         }
 
