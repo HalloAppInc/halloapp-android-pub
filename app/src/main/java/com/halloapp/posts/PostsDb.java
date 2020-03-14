@@ -701,7 +701,7 @@ public class PostsDb {
                     }
                     post.seenByCount = cursor.getInt(21);
                 }
-                final String mediaId = cursor.getString(7);
+                final String mediaId = cursor.getString(8);
                 if (mediaId != null) {
                     Preconditions.checkNotNull(post).media.add(new Media(
                             cursor.getLong(7),
@@ -918,6 +918,105 @@ public class PostsDb {
         Log.i("PostsDb.getPendingComments: comments.size=" + comments.size());
         return comments;
     }
+
+    // TODO (ds): implement getting messages from DB; the current code is a placeholder only, it gets posts and converts them to messages
+    @WorkerThread
+    @NonNull List<ChatMessage> getMessages(@NonNull String chatId, @Nullable Long timestamp, int count, boolean after) {
+        final List<ChatMessage> messages = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        String where;
+        if (timestamp == null) {
+            where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime();
+        } else {
+            if (after) {
+                where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "<" + timestamp;
+            } else {
+                where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + Math.max(getPostExpirationTime(), timestamp);
+            }
+        }
+
+        String sql =
+            "SELECT " +
+                PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                "m." + MediaTable._ID + "," +
+                "m." + MediaTable.COLUMN_MEDIA_ID + "," +
+                "m." + MediaTable.COLUMN_TYPE + "," +
+                "m." + MediaTable.COLUMN_URL + "," +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_WIDTH + "," +
+                "m." + MediaTable.COLUMN_HEIGHT + "," +
+                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+            "FROM " + PostsTable.TABLE_NAME + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    MediaTable._ID + "," +
+                    MediaTable.COLUMN_POST_ROW_ID + "," +
+                    MediaTable.COLUMN_MEDIA_ID + "," +
+                    MediaTable.COLUMN_TYPE + "," +
+                    MediaTable.COLUMN_URL + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_WIDTH + "," +
+                    MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+            "WHERE " + where + " " +
+            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
+            "LIMIT " + count;
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            ChatMessage message = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (message != null) {
+                        messages.add(message);
+                    }
+                    message = new ChatMessage(
+                            rowId,
+                            "",
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4) == 1,
+                            cursor.getInt(5),
+                            cursor.getString(6));
+                }
+                final String mediaId = cursor.getString(8);
+                if (mediaId != null) {
+                    Preconditions.checkNotNull(message).media.add(new Media(
+                            cursor.getLong(7),
+                            mediaId,
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            mediaStore.getMediaFile(cursor.getString(11)),
+                            null,
+                            null,
+                            cursor.getInt(12),
+                            cursor.getInt(13),
+                            cursor.getInt(14) == 1));
+                }
+            }
+            if (message != null && cursor.getCount() < count) {
+                messages.add(message);
+            }
+        }
+        if (!after) {
+            Collections.reverse(messages);
+        }
+        Log.i("PostsDb.getMessages: start=" + timestamp + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
+
+        return messages;
+    }
+
 
     @WorkerThread
     @NonNull List<Post> getPendingPosts() {

@@ -65,6 +65,10 @@
         <activity android:name=".ui.InitialSyncActivity"
             android:label=""/>
 
+        <activity android:name=".ui.chat.ChatActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""/>
+
         <activity
             android:name=".ui.PostComposerActivity"
             android:label="@string/new_post"

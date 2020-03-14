@@ -1,5 +1,6 @@
 package com.halloapp.ui.messages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import com.halloapp.posts.LoadPostsHistoryWorker;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.Connection;
 
@@ -89,7 +91,7 @@ public class MessagesFragment extends Fragment {
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false));
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
         }
 
         @Override
@@ -108,14 +110,22 @@ public class MessagesFragment extends Fragment {
             final TextView nameView;
             final TextView infoView;
 
+            Contact contact;
+
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 avatarView = itemView.findViewById(R.id.avatar);
                 nameView = itemView.findViewById(R.id.name);
                 infoView = itemView.findViewById(R.id.info);
+                itemView.setOnClickListener(v -> {
+                    if (contact.userId != null) {
+                        startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, contact.userId.rawId()));
+                    }
+                });
             }
 
             void bindTo(Contact contact) {
+                this.contact = contact;
                 avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
                 avatarLoader.load(avatarView, contact.userId);
                 nameView.setText(contact.getDisplayName());

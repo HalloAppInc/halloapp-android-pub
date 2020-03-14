@@ -7,12 +7,15 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewOutlineProvider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,6 +68,14 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
                 }
             }
         });
+
+        setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cornerRadius);
+            }
+        });
+        setClipToOutline(true);
     }
 
     public void setDrawDelegate(DrawDelegateView drawDelegateView) {
@@ -134,15 +145,6 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
             }
         }
         super.onDraw(canvas);
-        if (getScale() <= 1) {
-            if (cornerRadius != 0 && cornerPaint.getColor() != 0) {
-                // TODO (ds): think about doing it with Outline, like CardView does, there seems to be some issues with ViewPager during scroll
-                cornerPath.reset();
-                cornerPath.addRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius, Path.Direction.CW);
-                cornerPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-                canvas.drawPath(cornerPath, cornerPaint);
-            }
-        }
     }
 
     private static class ClippedBitmapDrawable extends Drawable {

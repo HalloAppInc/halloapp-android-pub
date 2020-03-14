@@ -34,7 +34,6 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
-import com.halloapp.ui.posts.PostViewHolderParent;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.xmpp.Connection;
@@ -137,7 +136,7 @@ public class PostsFragment extends Fragment {
         static final int POST_DIRECTION_INCOMING = 0x0100;
         static final int POST_DIRECTION_MASK = 0xFF00;
 
-        private final PostViewHolderParent postViewHolderParent = new PostViewHolderParent() {
+        private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
             @Override
             public AvatarLoader getAvatarLoader() {

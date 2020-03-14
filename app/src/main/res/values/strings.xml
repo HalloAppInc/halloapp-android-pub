@@ -25,6 +25,7 @@
     <string name="registration_failed">Failed to register phone number, try again</string>
     <string name="type_a_post_hint">Type a post</string>
     <string name="type_a_caption_hint">Type a caption</string>
+    <string name="type_a_message_hint">Type a message</string>
     <string name="send">Send</string>
     <string name="set_avatar">Set Avatar</string>
     <string name="new_post">New post</string>
@@ -120,6 +121,7 @@
     <string name="add_comment">Add a comment</string>
     <string name="refresh_contacts">Refresh contacts</string>
     <string name="post_retracted_placeholder">This post has been deleted</string>
+    <string name="message_retracted_placeholder">This message has been deleted</string>
     <string name="comment_retracted_placeholder">This comment has been deleted</string>
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to deleted your post?</string>
@@ -134,4 +136,5 @@
         <item quantity="other">This version of HalloApp will expire in %d days. Please go to the Google Play Store and download the latest release.</item>
     </plurals>
     <string name="could_not_set_avatar">Please try a different image</string>
+    <string name="pick_media">Pick media</string>
 </resources>

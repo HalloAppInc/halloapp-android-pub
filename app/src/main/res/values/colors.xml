@@ -18,4 +18,6 @@
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#CD7C72</color>
+    <color name="message_background_incoming">#ffffffff</color>
+    <color name="message_background_outgoing">#EBFFCA</color>
 </resources>

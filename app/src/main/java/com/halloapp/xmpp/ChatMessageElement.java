@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.UserId;
@@ -11,14 +9,10 @@ import com.halloapp.posts.Post;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.provider.EmbeddedExtensionProvider;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
-
-import java.util.List;
-import java.util.Map;
 
 public class ChatMessageElement implements ExtensionElement {
 
