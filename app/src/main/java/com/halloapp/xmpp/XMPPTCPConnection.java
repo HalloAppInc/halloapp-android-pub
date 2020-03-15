@@ -2,8 +2,6 @@ package com.halloapp.xmpp;
 
 import androidx.core.util.Preconditions;
 
-import com.halloapp.util.Log;
-
 import org.jivesoftware.smack.AbstractConnectionListener;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;

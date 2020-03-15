@@ -98,6 +98,6 @@ public class StreamOpen implements Nonza {
 
     public enum StreamContentNamespace {
         client,
-        server;
+        server
     }
 }
