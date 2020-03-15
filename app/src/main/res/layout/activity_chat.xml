@@ -66,10 +66,10 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_media_collection"
                 android:contentDescription="@string/pick_media"
+                app:layout_constraintTop_toBottomOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/send"
-                app:layout_constraintStart_toEndOf="@+id/entry"
-                app:layout_constraintTop_toBottomOf="parent" />
+                app:layout_constraintEnd_toStartOf="@+id/send"
+                app:layout_constraintStart_toEndOf="@+id/entry"/>
 
             <ImageButton
                 android:id="@+id/send"
