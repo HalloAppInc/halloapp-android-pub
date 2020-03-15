@@ -67,6 +67,7 @@ public class ProfileFragment extends PostsFragment {
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
+        postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         final ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {

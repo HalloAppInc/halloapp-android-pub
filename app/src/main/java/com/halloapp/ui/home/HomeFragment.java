@@ -71,6 +71,7 @@ public class HomeFragment extends PostsFragment {
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
+        postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
