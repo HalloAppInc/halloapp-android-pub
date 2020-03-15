@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.text.BidiFormatter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,7 +80,8 @@ public class ProfileFragment extends PostsFragment {
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
         final LoadNameTask loadNameTask = new LoadNameTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
-        loadNameTask.name.observe(this, user -> nameView.setText(PhoneNumberUtils.formatNumber("+" + user, null)));
+        loadNameTask.name.observe(this, user -> nameView.setText(
+                BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + user, null))));
         loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         avatarView = headerView.findViewById(R.id.avatar);

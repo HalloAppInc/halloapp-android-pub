@@ -150,6 +150,8 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:singleLine="true"
+                android:textAlignment="gravity"
+                android:textDirection="locale"
                 android:text="@string/add_comment"
                 android:textColor="?android:attr/textColorHint"
                 android:textSize="16sp" />
