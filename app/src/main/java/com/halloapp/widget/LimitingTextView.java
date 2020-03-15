@@ -86,7 +86,6 @@ public class LimitingTextView extends AppCompatTextView {
         }
     }
 
-
     public void setOnReadMoreListener(@Nullable OnReadMoreListener listener) {
         this.listener = listener;
     }
