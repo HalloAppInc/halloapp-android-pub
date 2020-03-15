@@ -13,6 +13,7 @@ import com.halloapp.posts.Media;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ContentViewHolderParent;
+import com.halloapp.util.Rtl;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
 
@@ -86,7 +87,7 @@ class ChatMessageViewHolder extends ViewHolderWithLifecycle {
                 mediaPagerIndicator.setVisibility(View.GONE);
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
-            mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
+            mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
             textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
         }
         textView.setLineStep(0);

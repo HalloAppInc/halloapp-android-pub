@@ -16,6 +16,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.posts.Media;
+import com.halloapp.util.Rtl;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.PostImageView;
 
@@ -73,7 +74,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         } else {
             view = parent.getRecycledMediaViews().pop();
         }
-        final Media mediaItem = media.get(position);
+        final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
         view.setTag(mediaItem.id);
         final PostImageView imageView = view.findViewById(R.id.image);
         imageView.setSinglePointerDragStartDisabled(true);

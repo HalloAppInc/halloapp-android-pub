@@ -19,6 +19,7 @@ import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
@@ -144,7 +145,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 mediaPagerIndicator.setVisibility(View.GONE);
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
-            mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
+            mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
             textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
         }
         textView.setLineStep(0);
