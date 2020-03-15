@@ -9,12 +9,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.util.Preconditions;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -72,11 +77,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
-
-        setContentView(R.layout.activity_main);
-
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        setContentView(R.layout.activity_main);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -91,24 +95,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         NavigationUI.setupWithNavController(navView, navController);
 
         fabView = findViewById(R.id.speed_dial);
-        fabView.addActionItem(
-                new SpeedDialActionItem.Builder(R.id.add_post_gallery, R.drawable.ic_media_collection)
-                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
-                        .setFabBackgroundColor(getResources().getColor(R.color.fab_background))
-                        .setFabImageTintColor(getResources().getColor(android.R.color.white))
-                        .create());
-        fabView.addActionItem(
-                new SpeedDialActionItem.Builder(R.id.add_post_camera, R.drawable.ic_camera)
-                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
-                        .setFabBackgroundColor(getResources().getColor(R.color.fab_background))
-                        .setFabImageTintColor(getResources().getColor(android.R.color.white))
-                        .create());
-        fabView.addActionItem(
-                new SpeedDialActionItem.Builder(R.id.add_post_text, R.drawable.ic_text)
-                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
-                        .setFabBackgroundColor(getResources().getColor(R.color.fab_background))
-                        .setFabImageTintColor(getResources().getColor(android.R.color.white))
-                        .create());
+        fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
+        addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_media_collection, R.string.gallery_post);
+        addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+        addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
         fabView.setOnActionSelectedListener(actionItem -> {
             onFabActionSelected(actionItem.getId());
             return true;
@@ -136,6 +126,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         ContactsDb.getInstance(this).addObserver(contactsObserver);
+    }
+
+    private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
+        final View itemView = fabView.addActionItem(
+                new SpeedDialActionItem.Builder(id, icon)
+                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
+                        .setFabBackgroundColor(ContextCompat.getColor(fabView.getContext(), R.color.fab_background))
+                        .setFabImageTintColor(ContextCompat.getColor(fabView.getContext(), android.R.color.white))
+                        .create());
+        Preconditions.checkNotNull(itemView).findViewById(R.id.sd_fab).setContentDescription(fabView.getContext().getString(label));
     }
 
     private void onFabActionSelected(@IdRes int id) {

@@ -129,7 +129,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         } else {
             progressView.setVisibility(View.GONE);
             timeView.setVisibility(View.VISIBLE);
-            timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
+            TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
             parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
         }
         if (post.media.isEmpty()) {

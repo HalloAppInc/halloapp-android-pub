@@ -291,7 +291,7 @@ public class CommentsHistoryPopup {
                         timestamp = comment.timestamp;
                     }
                 }
-                timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - timestamp));
+                TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - timestamp);
 
                 if (commentsGroup.postSenderUserId.isMe()) {
                     infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),

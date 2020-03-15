@@ -296,7 +296,7 @@ public class CommentsActivity extends AppCompatActivity {
                 contactLoader.load(nameView, comment.commentSenderUserId);
             }
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
-            timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - comment.timestamp));
+            TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             final Integer textLimit = textLimits.get(comment.rowId);
@@ -347,7 +347,7 @@ public class CommentsActivity extends AppCompatActivity {
                 contactLoader.load(nameView, post.senderUserId);
             }
             progressView.setVisibility(post.transferred ? View.GONE : View.VISIBLE);
-            timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
+            TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 
             if (post.media.isEmpty()) {

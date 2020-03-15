@@ -417,21 +417,26 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
             if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
                 typeIndicator.setImageResource(R.drawable.ic_video);
                 typeIndicator.setVisibility(View.VISIBLE);
+                thumbnailView.setContentDescription(getString(R.string.video));
             } else {
                 typeIndicator.setVisibility(View.GONE);
+                thumbnailView.setContentDescription(getString(R.string.photo));
             }
             if (selectedItems.isEmpty()) {
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
+                thumbnailView.setSelected(false);
             } else {
                 selectionIndicator.setVisibility(View.VISIBLE);
                 if (selectedItems.contains(galleryItem.id)) {
                     selectionIndicator.setImageResource(R.drawable.ic_item_selected);
                     int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
                     thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
+                    thumbnailView.setSelected(true);
                 } else {
                     selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
                     thumbnailFrame.setPadding(0, 0, 0, 0);
+                    thumbnailView.setSelected(false);
                 }
             }
 

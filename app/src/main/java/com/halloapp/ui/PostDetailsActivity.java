@@ -102,7 +102,7 @@ public class PostDetailsActivity extends AppCompatActivity {
         }
 
         final TextView timeView = findViewById(R.id.time);
-        timeView.setText(TimeFormatter.formatTimeDiff(timeView.getContext(), System.currentTimeMillis() - post.timestamp));
+        TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
     }
 
     private class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
