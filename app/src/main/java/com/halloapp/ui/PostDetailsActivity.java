@@ -43,14 +43,6 @@ public class PostDetailsActivity extends AppCompatActivity {
         Log.d("PostDetailsActivity.onCreate");
         setContentView(R.layout.activity_post_details);
 
-        /*
-        if (Build.VERSION.SDK_INT >= 28) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        */
-
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final RecyclerView seenByView = findViewById(R.id.seen_by_list);
