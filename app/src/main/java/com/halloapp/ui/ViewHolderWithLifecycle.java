@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class ViewHolderWithLifecycle extends RecyclerView.ViewHolder implements LifecycleOwner {
 
-    private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     public ViewHolderWithLifecycle(@NonNull View itemView) {
         super(itemView);

@@ -65,6 +65,7 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
                 }
             } else {
                 if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
+                    //noinspection deprecation
                     bitmap = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Images.Thumbnails.MINI_KIND, null);
                     try (InputStream inputStream = contentResolver.openInputStream(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id))) {
                         if (inputStream != null) {
@@ -86,6 +87,7 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
                         }
                     } catch (IOException ignore) { }
                 } else {
+                    //noinspection deprecation
                     bitmap = MediaStore.Video.Thumbnails.getThumbnail(contentResolver, galleryItem.id, MediaStore.Video.Thumbnails.MINI_KIND, null);
                 }
             }

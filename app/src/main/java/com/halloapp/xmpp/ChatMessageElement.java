@@ -19,14 +19,14 @@ public class ChatMessageElement implements ExtensionElement {
     static final String NAMESPACE = "halloapp:chat:messages";
     static final String ELEMENT = "chat";
 
-    private PublishedEntry entry;
-    private long timestamp;
+    private final PublishedEntry entry;
+    private final long timestamp;
 
     ChatMessageElement(@NonNull PublishedEntry entry) {
         this(entry, 0);
     }
 
-    ChatMessageElement(@NonNull PublishedEntry entry, long timestamp) {
+    private ChatMessageElement(@NonNull PublishedEntry entry, long timestamp) {
         this.entry = entry;
         this.timestamp = timestamp;
     }

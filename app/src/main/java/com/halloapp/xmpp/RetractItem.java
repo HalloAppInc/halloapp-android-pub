@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class RetractItem<T extends Item> extends NodeExtension {
-    protected Collection<T> items;
+
+    protected final Collection<T> items;
 
     /**
      * Construct a request to publish an item to a node.

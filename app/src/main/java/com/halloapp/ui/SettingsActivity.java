@@ -72,7 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
             debugPreference.setVisible(BuildConfig.DEBUG);
             debugPreference.setOnPreferenceClickListener(preference -> {
                 View prefView = getListView().getChildAt(preference.getOrder());
-                Debug.showDebugMenu(getActivity(), prefView);
+                Debug.showDebugMenu(Preconditions.checkNotNull(getActivity()), prefView);
                 return false;
             });
         }
