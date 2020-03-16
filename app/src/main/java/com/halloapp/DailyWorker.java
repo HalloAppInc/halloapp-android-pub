@@ -11,7 +11,6 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.media.MediaStore;
 import com.halloapp.posts.PostsDb;
 import com.halloapp.util.Log;
 
@@ -48,7 +47,7 @@ public class DailyWorker extends Worker {
     public @NonNull Result doWork() {
         Log.i("DailyWorker.doWork");
         PostsDb.getInstance(getApplicationContext()).cleanup();
-        MediaStore.getInstance(getApplicationContext()).cleanup();
+        FileStore.getInstance(getApplicationContext()).cleanup();
         ContactsSync.getInstance(getApplicationContext()).startContactsSync(true);
         schedule(getApplicationContext());
         return Result.success();

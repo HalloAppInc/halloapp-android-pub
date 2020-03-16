@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.FileStore;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
@@ -17,12 +18,12 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
 
     private final Post post;
 
-    private final MediaStore mediaStore;
+    private final FileStore fileStore;
     private final PostsDb postsDb;
 
-    public DownloadPostTask(@NonNull Post post, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb) {
+    public DownloadPostTask(@NonNull Post post, @NonNull FileStore fileStore, @NonNull PostsDb postsDb) {
         this.post = post;
-        this.mediaStore = mediaStore;
+        this.fileStore = fileStore;
         this.postsDb = postsDb;
     }
 
@@ -35,7 +36,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
             }
             final Downloader.DownloadListener downloadListener = percent -> true;
             try {
-                final File file = mediaStore.getMediaFile(RandomId.create() + ".jpg");
+                final File file = fileStore.getMediaFile(RandomId.create() + ".jpg");
                 Downloader.run(media.url, media.encKey, media.sha256hash, media.type, file, downloadListener);
                 if (!file.setLastModified(post.timestamp)) {
                     Log.w("DownloadPostTask: failed to set last modified to " + file.getAbsolutePath());

@@ -1,4 +1,4 @@
-package com.halloapp.media;
+package com.halloapp;
 
 import android.content.Context;
 import android.os.StrictMode;
@@ -7,32 +7,31 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import com.halloapp.Constants;
 import com.halloapp.util.Log;
 
 import java.io.File;
 
-public class MediaStore {
+public class FileStore {
 
-    private static MediaStore instance;
+    private static FileStore instance;
 
     private final File mediaDir;
     private final File tmpDir;
     private final File cameraDir;
     private final File avatarDir;
 
-    public static MediaStore getInstance(final @NonNull Context context) {
+    public static FileStore getInstance(final @NonNull Context context) {
         if (instance == null) {
-            synchronized(MediaStore.class) {
+            synchronized(FileStore.class) {
                 if (instance == null) {
-                    instance = new MediaStore(context);
+                    instance = new FileStore(context);
                 }
             }
         }
         return instance;
     }
 
-    private MediaStore(@NonNull Context context) {
+    private FileStore(@NonNull Context context) {
         final StrictMode.ThreadPolicy threadPolicy = StrictMode.getThreadPolicy();
         StrictMode.allowThreadDiskReads();
         StrictMode.allowThreadDiskWrites();
@@ -49,7 +48,7 @@ public class MediaStore {
     private File prepareDir(@NonNull File dir) {
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                Log.e("MediaStore: cannot create " + dir.getAbsolutePath());
+                Log.e("FileStore: cannot create " + dir.getAbsolutePath());
             }
         }
         return dir;
@@ -89,19 +88,19 @@ public class MediaStore {
     private void cleanupDir(@NonNull File dir) {
         final File [] files = dir.listFiles();
         if (files == null) {
-            Log.w("MediaStore.cleanupDir: no files in " + dir.getAbsolutePath());
+            Log.w("FileStore.cleanupDir: no files in " + dir.getAbsolutePath());
             return;
         }
         int deleteCount = 0;
         for (File file : files) {
             if (file.lastModified() < System.currentTimeMillis() - Constants.POSTS_EXPIRATION) {
                 if (!file.delete()) {
-                    Log.e("MediaStore.cleanupDir: cannot delete " + file.getAbsolutePath());
+                    Log.e("FileStore.cleanupDir: cannot delete " + file.getAbsolutePath());
                 } else {
                     deleteCount++;
                 }
             }
         }
-        Log.i("MediaStore.cleanupDir: " + deleteCount + " file(s) deleted from " + dir.getAbsolutePath());
+        Log.i("FileStore.cleanupDir: " + deleteCount + " file(s) deleted from " + dir.getAbsolutePath());
     }
 }

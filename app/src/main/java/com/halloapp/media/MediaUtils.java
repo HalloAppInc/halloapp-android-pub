@@ -21,6 +21,7 @@ import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
 
@@ -322,6 +323,6 @@ public class MediaUtils {
 
     public static Uri getImageCaptureUri(@NonNull Context context) {
         return FileProvider.getUriForFile(context, "com.halloapp.fileprovider",
-                MediaStore.getInstance(context).getImageCaptureFile());
+                FileStore.getInstance(context).getImageCaptureFile());
     }
 }

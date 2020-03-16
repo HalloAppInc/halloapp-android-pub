@@ -5,8 +5,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.core.util.Preconditions;
 
+import com.halloapp.FileStore;
 import com.halloapp.media.DownloadPostTask;
-import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadPostTask;
 import com.halloapp.util.Log;
@@ -19,12 +19,12 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
 public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
 
     private final Connection connection;
-    private final MediaStore mediaStore;
+    private final FileStore fileStore;
     private final PostsDb postsDb;
 
     public TransferPendingItemsTask(@NonNull Context context) {
         this.connection = Connection.getInstance();
-        this.mediaStore = MediaStore.getInstance(context);
+        this.fileStore = FileStore.getInstance(context);
         this.postsDb = PostsDb.getInstance(context);
     }
 
@@ -36,13 +36,13 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         for (Post post : posts) {
             if (post.isIncoming()) {
                 if (!post.media.isEmpty()) {
-                    new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                    new DownloadPostTask(post, fileStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
                 }
             } else /*post.isOutgoing()*/ {
                 if (post.media.isEmpty()) {
                     connection.sendPost(post);
                 } else {
-                    new UploadPostTask(post, mediaStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                    new UploadPostTask(post, fileStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
                 }
             }
         }

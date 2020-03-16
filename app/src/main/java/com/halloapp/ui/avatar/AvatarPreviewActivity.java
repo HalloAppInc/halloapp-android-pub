@@ -32,7 +32,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
-import com.halloapp.media.MediaStore;
+import com.halloapp.FileStore;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
@@ -230,7 +230,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             final ContentResolver contentResolver = application.getContentResolver();
             for (Uri uri : uris) {
                 @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
-                final File file = MediaStore.getInstance(application).getTmpFile(RandomId.create());
+                final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
                 FileUtils.uriToFile(application, uri, file);
                 final Size size = MediaUtils.getDimensions(file, mediaType);
                 if (size != null) {
@@ -286,7 +286,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
             if (media != null) {
                 Media img = media.get(0);
-                final File outFile = MediaStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
+                final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
                     TranscodeResult transcodeResult = transcode(img.file, outFile, cropRects == null ? null : cropRects.get(img.id), Constants.MAX_AVATAR_DIMENSION);
                     uploadAvatar(outFile, Connection.getInstance(), transcodeResult);

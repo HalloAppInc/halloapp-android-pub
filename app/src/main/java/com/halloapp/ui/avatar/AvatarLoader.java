@@ -13,12 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.Downloader;
-import com.halloapp.media.MediaStore;
 import com.halloapp.posts.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
@@ -74,8 +74,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     @MainThread
     public void load(@NonNull ImageView view, @NonNull UserId userId) {
         final Callable<Bitmap> loader = () -> {
-            MediaStore mediaStore = MediaStore.getInstance(context);
-            File avatarFile = mediaStore.getAvatarFile(userId.rawId());
+            FileStore fileStore = FileStore.getInstance(context);
+            File avatarFile = fileStore.getAvatarFile(userId.rawId());
 
             if (!avatarFile.exists()) {
                 PubSubItem item = connection.getMostRecentAvatarMetadata(userId).get();
@@ -96,7 +96,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     ContactsDb contactsDb = ContactsDb.getInstance(context);
                     Contact contact = contactsDb.getContact(userId);
                     if (contact == null || !contact.friend) {
-                        avatarFile = mediaStore.getTmpFile(userId.rawId());
+                        avatarFile = fileStore.getTmpFile(userId.rawId());
                     }
                 }
 
@@ -151,8 +151,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         Connection connection = Connection.getInstance();
         connection.publishAvatarMetadata(RandomId.create(), null, 0, 0, 0);
 
-        MediaStore mediaStore = MediaStore.getInstance(context);
-        File avatarFile = mediaStore.getAvatarFile(UserId.ME.rawId());
+        FileStore fileStore = FileStore.getInstance(context);
+        File avatarFile = fileStore.getAvatarFile(UserId.ME.rawId());
         if (avatarFile.exists()) {
             avatarFile.delete();
         }
@@ -165,8 +165,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportAvatarMetadataUpdate(@NonNull UserId userId, @NonNull String hash, @Nullable String url) {
-        MediaStore mediaStore = MediaStore.getInstance(context);
-        File avatarFile = mediaStore.getAvatarFile(userId.rawId());
+        FileStore fileStore = FileStore.getInstance(context);
+        File avatarFile = fileStore.getAvatarFile(userId.rawId());
         if (url != null) {
             try {
                 Downloader.run(url, null, StringUtils.bytesFromHexString(hash), Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);

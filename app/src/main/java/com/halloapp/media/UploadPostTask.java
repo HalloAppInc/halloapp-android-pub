@@ -8,6 +8,7 @@ import com.dstukalov.videoconverter.BadMediaException;
 import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
@@ -25,13 +26,13 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
     private final Post post;
 
-    private final MediaStore mediaStore;
+    private final FileStore fileStore;
     private final PostsDb postsDb;
     private final Connection connection;
 
-    public UploadPostTask(@NonNull Post post, @NonNull MediaStore mediaStore, @NonNull PostsDb postsDb, @NonNull Connection connection) {
+    public UploadPostTask(@NonNull Post post, @NonNull FileStore fileStore, @NonNull PostsDb postsDb, @NonNull Connection connection) {
         this.post = post;
-        this.mediaStore = mediaStore;
+        this.fileStore = fileStore;
         this.postsDb = postsDb;
         this.connection = connection;
     }
@@ -78,7 +79,7 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
 
     private void prepareMedia(@NonNull Media media) throws IOException, MediaConversionException {
         if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file)) {
-            final File file = mediaStore.getTmpFile(RandomId.create());
+            final File file = fileStore.getTmpFile(RandomId.create());
             final MediaConverter mediaConverter = new MediaConverter();
             mediaConverter.setInput(media.file);
             mediaConverter.setOutput(file);

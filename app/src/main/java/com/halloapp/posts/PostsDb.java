@@ -14,8 +14,8 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Preconditions;
 
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.contacts.UserId;
-import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.tables.CommentsTable;
 import com.halloapp.posts.tables.MediaTable;
@@ -38,7 +38,7 @@ public class PostsDb {
 
     private final PostsDbObservers observers = new PostsDbObservers();
     private final PostsDbHelper databaseHelper;
-    private final MediaStore mediaStore;
+    private final FileStore fileStore;
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -83,7 +83,7 @@ public class PostsDb {
 
     private PostsDb(final @NonNull Context context) {
         databaseHelper = new PostsDbHelper(context.getApplicationContext(), observers);
-        mediaStore = MediaStore.getInstance(context);
+        fileStore = FileStore.getInstance(context);
     }
 
     public void addObserver(@NonNull Observer observer) {
@@ -708,7 +708,7 @@ public class PostsDb {
                             mediaId,
                             cursor.getInt(9),
                             cursor.getString(10),
-                            mediaStore.getMediaFile(cursor.getString(11)),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
                             cursor.getInt(12),
@@ -785,7 +785,7 @@ public class PostsDb {
                             mediaId,
                             cursor.getInt(9),
                             cursor.getString(10),
-                            mediaStore.getMediaFile(cursor.getString(11)),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
                             cursor.getInt(12),
@@ -997,7 +997,7 @@ public class PostsDb {
                             mediaId,
                             cursor.getInt(9),
                             cursor.getString(10),
-                            mediaStore.getMediaFile(cursor.getString(11)),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
                             cursor.getInt(12),
@@ -1088,7 +1088,7 @@ public class PostsDb {
                             mediaId,
                             cursor.getInt(9),
                             cursor.getString(10),
-                            mediaStore.getMediaFile(cursor.getString(11)),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             cursor.getBlob(12),
                             cursor.getBlob(13),
                             cursor.getInt(14),

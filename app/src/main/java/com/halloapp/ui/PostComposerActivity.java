@@ -28,9 +28,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
-import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.posts.Media;
@@ -247,7 +247,7 @@ public class PostComposerActivity extends AppCompatActivity {
             final ContentResolver contentResolver = application.getContentResolver();
             for (Uri uri : uris) {
                 @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
-                final File file = MediaStore.getInstance(application).getTmpFile(RandomId.create());
+                final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
                 FileUtils.uriToFile(application, uri, file);
                 final Size size = MediaUtils.getDimensions(file, mediaType);
                 if (size != null) {
@@ -316,7 +316,7 @@ public class PostComposerActivity extends AppCompatActivity {
                     text);
             if (media != null) {
                 for (Media media : media) {
-                    final File postFile = MediaStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
+                    final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
                     switch (media.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {

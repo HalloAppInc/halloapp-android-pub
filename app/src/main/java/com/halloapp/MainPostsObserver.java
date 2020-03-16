@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.DownloadPostTask;
-import com.halloapp.media.MediaStore;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadPostTask;
 import com.halloapp.posts.Comment;
@@ -23,7 +22,7 @@ public class MainPostsObserver implements PostsDb.Observer {
 
     private final Context context;
     private final Connection connection;
-    private final MediaStore mediaStore;
+    private final FileStore fileStore;
     private final PostsDb postsDb;
     private final Notifications notifications;
 
@@ -41,7 +40,7 @@ public class MainPostsObserver implements PostsDb.Observer {
     private MainPostsObserver(@NonNull Context context) {
         this.context = context.getApplicationContext();
         this.connection = Connection.getInstance();
-        this.mediaStore = MediaStore.getInstance(context);
+        this.fileStore = FileStore.getInstance(context);
         this.postsDb = PostsDb.getInstance(context);
         this.notifications = Notifications.getInstance(context);
     }
@@ -52,11 +51,11 @@ public class MainPostsObserver implements PostsDb.Observer {
             if (post.media.isEmpty()) {
                 connection.sendPost(post);
             } else {
-                new UploadPostTask(post, mediaStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new UploadPostTask(post, fileStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
             if (!post.media.isEmpty()) {
-                new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new DownloadPostTask(post, fileStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
             notifications.update();
         }
@@ -112,7 +111,7 @@ public class MainPostsObserver implements PostsDb.Observer {
     public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         for (Post post : historyPosts) {
             if (!post.media.isEmpty()) {
-                new DownloadPostTask(post, mediaStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new DownloadPostTask(post, fileStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         }
     }
