@@ -40,7 +40,7 @@ public class ContactsSyncRequestIq extends IQ {
         xml.attribute("type", type);
         if (syncId != null) {
             xml.attribute("syncid", syncId);
-            xml.attribute("cont", !lastBatch);
+            xml.attribute("last", lastBatch);
         }
         xml.rightAngleBracket();
         for (String phone : phones) {
