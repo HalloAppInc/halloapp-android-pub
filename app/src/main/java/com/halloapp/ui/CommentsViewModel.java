@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -22,6 +21,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.CommentsDataSource;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.util.Preconditions;
 
 class CommentsViewModel extends AndroidViewModel {
 

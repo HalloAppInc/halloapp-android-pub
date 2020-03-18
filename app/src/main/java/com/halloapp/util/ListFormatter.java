@@ -6,7 +6,6 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.PluralsRes;
 import androidx.annotation.StringRes;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.R;
 

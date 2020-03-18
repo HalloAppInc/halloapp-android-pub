@@ -11,7 +11,6 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -22,6 +21,7 @@ import com.halloapp.posts.tables.MediaTable;
 import com.halloapp.posts.tables.PostsTable;
 import com.halloapp.posts.tables.SeenTable;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collection;

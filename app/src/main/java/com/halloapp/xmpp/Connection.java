@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
@@ -16,6 +15,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.Media;
 import com.halloapp.posts.Post;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 
 import org.jivesoftware.smack.ConnectionConfiguration;

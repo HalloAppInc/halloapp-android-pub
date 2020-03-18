@@ -7,7 +7,6 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
-import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
 import androidx.lifecycle.LiveData;
@@ -21,6 +20,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.Post;
 import com.halloapp.posts.PostsDataSource;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collection;

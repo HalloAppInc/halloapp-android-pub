@@ -7,10 +7,10 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.Constants;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.NamedElement;

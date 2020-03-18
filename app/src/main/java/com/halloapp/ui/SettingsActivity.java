@@ -6,7 +6,6 @@ import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -15,6 +14,7 @@ import com.halloapp.Debug;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -68,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             });
 
-            Preference debugPreference = Preconditions.checkNotNull(findPreference("debug"));
+            final Preference debugPreference = Preconditions.checkNotNull(findPreference("debug"));
             debugPreference.setVisible(BuildConfig.DEBUG);
             debugPreference.setOnPreferenceClickListener(preference -> {
                 View prefView = getListView().getChildAt(preference.getOrder());

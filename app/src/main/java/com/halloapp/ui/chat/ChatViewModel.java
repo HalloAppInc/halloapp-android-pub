@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
 import androidx.lifecycle.LiveData;
@@ -20,6 +19,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.posts.ChatMessage;
 import com.halloapp.posts.MessagesDataSource;
 import com.halloapp.posts.PostsDb;
+import com.halloapp.util.Preconditions;
 
 public class ChatViewModel extends AndroidViewModel {
 

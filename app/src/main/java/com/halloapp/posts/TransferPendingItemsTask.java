@@ -3,13 +3,13 @@ package com.halloapp.posts;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.FileStore;
 import com.halloapp.media.DownloadPostTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadPostTask;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
 import java.util.List;

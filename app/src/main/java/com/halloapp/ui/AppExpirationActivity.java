@@ -9,11 +9,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 
 public class AppExpirationActivity extends AppCompatActivity {

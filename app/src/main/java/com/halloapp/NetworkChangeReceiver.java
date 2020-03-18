@@ -6,9 +6,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import androidx.core.util.Preconditions;
-
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 

@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Preconditions;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +30,7 @@ import com.halloapp.posts.Comment;
 import com.halloapp.posts.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.util.ListFormatter;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 
 import java.lang.ref.WeakReference;

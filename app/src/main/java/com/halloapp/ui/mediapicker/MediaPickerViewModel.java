@@ -3,11 +3,12 @@ package com.halloapp.ui.mediapicker;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
+
+import com.halloapp.util.Preconditions;
 
 public class MediaPickerViewModel extends AndroidViewModel {
 

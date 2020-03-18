@@ -1,7 +1,8 @@
 package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Preconditions;
+
+import com.halloapp.util.Preconditions;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;

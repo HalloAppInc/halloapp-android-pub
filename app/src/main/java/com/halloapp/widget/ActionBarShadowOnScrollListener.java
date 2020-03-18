@@ -6,10 +6,10 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Preconditions;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
+import com.halloapp.util.Preconditions;
 
 public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListener {
 

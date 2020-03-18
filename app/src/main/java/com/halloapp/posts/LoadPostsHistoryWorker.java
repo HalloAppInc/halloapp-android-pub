@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
-import androidx.core.util.Preconditions;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
@@ -13,6 +12,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
