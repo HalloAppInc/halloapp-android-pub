@@ -165,17 +165,19 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportAvatarMetadataUpdate(@NonNull UserId userId, @NonNull String hash, @Nullable String url) {
-        FileStore fileStore = FileStore.getInstance(context);
-        File avatarFile = fileStore.getAvatarFile(userId.rawId());
-        if (url != null) {
-            try {
-                Downloader.run(url, null, StringUtils.bytesFromHexString(hash), Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
-            } catch (IOException e) {
-                Log.w("avatar metadata update", e);
+        if (!userId.isMe()) {
+            FileStore fileStore = FileStore.getInstance(context);
+            File avatarFile = fileStore.getAvatarFile(userId.rawId());
+            if (url != null) {
+                try {
+                    Downloader.run(url, null, StringUtils.bytesFromHexString(hash), Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+                } catch (IOException e) {
+                    Log.w("avatar metadata update", e);
+                }
+            } else if (avatarFile.exists()) {
+                avatarFile.delete();
             }
-        } else if (avatarFile.exists()) {
-            avatarFile.delete();
+            cache.remove(userId.rawId());
         }
-        cache.remove(userId.rawId());
     }
 }
