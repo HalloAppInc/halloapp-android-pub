@@ -36,7 +36,7 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
             }
             final Downloader.DownloadListener downloadListener = percent -> true;
             try {
-                final File file = fileStore.getMediaFile(RandomId.create() + ".jpg");
+                final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
                 Downloader.run(media.url, media.encKey, media.sha256hash, media.type, file, downloadListener);
                 if (!file.setLastModified(post.timestamp)) {
                     Log.w("DownloadPostTask: failed to set last modified to " + file.getAbsolutePath());
