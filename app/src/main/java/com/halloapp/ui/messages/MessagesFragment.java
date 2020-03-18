@@ -50,7 +50,7 @@ public class MessagesFragment extends Fragment {
         chatsView.setAdapter(adapter);
 
         final MessagesViewModel viewModel = new ViewModelProvider(this).get(MessagesViewModel.class);
-        viewModel.contactsList.getLiveData().observe(this, contacts -> {
+        viewModel.contactsList.getLiveData().observe(getViewLifecycleOwner(), contacts -> {
             adapter.setContacts(contacts);
             emptyView.setVisibility(contacts.size() == 0 ? View.VISIBLE : View.GONE);
         });

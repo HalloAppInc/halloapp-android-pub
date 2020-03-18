@@ -74,7 +74,7 @@ public class HomeFragment extends PostsFragment {
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
                 postsView.scrollToPosition(0);
@@ -96,7 +96,7 @@ public class HomeFragment extends PostsFragment {
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
-        viewModel.commentsHistory.getLiveData().observe(this, commentHistoryData -> {
+        viewModel.commentsHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
                 updateCommentHistory(commentHistoryData);
             }

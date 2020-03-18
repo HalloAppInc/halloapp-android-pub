@@ -70,7 +70,7 @@ public class ProfileFragment extends PostsFragment {
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         final ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        viewModel.postList.observe(this, posts -> adapter.submitList(posts, () -> {
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
 
@@ -81,7 +81,7 @@ public class ProfileFragment extends PostsFragment {
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
         final LoadNameTask loadNameTask = new LoadNameTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
-        loadNameTask.name.observe(this, user -> nameView.setText(
+        loadNameTask.name.observe(getViewLifecycleOwner(), user -> nameView.setText(
                 BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + user, null))));
         loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
