@@ -29,9 +29,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
-import com.halloapp.FileStore;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
@@ -49,10 +49,10 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -356,22 +356,11 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                     croppedBitmap = bitmap;
                 }
 
-                try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                try (final FileOutputStream fos = new FileOutputStream(fileTo); final OutputStream streamTo = new DigestOutputStream(fos, md)) {
                     croppedBitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, streamTo);
-                    InputStream is = new FileInputStream(fileTo);
-
-                    // TODO(jack): Compute hash without re-reading the file
-                    MessageDigest md = MessageDigest.getInstance("SHA-256");
-                    byte[] buf = new byte[1000];
-                    int count;
-                    int sum = 0;
-                    while ((count = is.read(buf)) != -1) {
-                        md.update(buf, 0, count);
-                        sum += count;
-                    }
-                    fileSize = sum;
-                    byte[] sha256hash = md.digest();
-                    hash = StringUtils.bytesToHexString(sha256hash);
+                    fileSize = (int)fileTo.length();
+                    hash = StringUtils.bytesToHexString(md.digest());
                 }
                 croppedHeight = croppedBitmap.getHeight();
                 croppedWidth = croppedBitmap.getWidth();
