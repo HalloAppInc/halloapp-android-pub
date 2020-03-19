@@ -12,6 +12,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
+import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -34,6 +35,14 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onConnected() {
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+            try {
+                KeyManager.getInstance().ensureKeysUploaded(Connection.getInstance());
+            } catch (Exception e) {
+                Log.e("Failed to ensure keys uploaded", e);
+            }
+        });
+
         new TransferPendingItemsTask(context).execute();
         HalloApp.sendPushTokenFromFirebase();
         new RequestExpirationInfoTask(Connection.getInstance(), context).execute();

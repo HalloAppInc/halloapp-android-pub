@@ -19,6 +19,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -54,6 +55,8 @@ public class HalloApp extends Application {
                 Preferences.getInstance(HalloApp.this).setLastContactsSyncTime(0);
             }
         });
+
+        EncryptedKeyStore.getInstance().init(this);
 
         Notifications.getInstance(this).init();
 

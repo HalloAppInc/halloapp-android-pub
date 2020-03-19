@@ -14,6 +14,8 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.SessionManager;
+import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -489,7 +491,9 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         post.text,
                         null,
-                        null);
+                        null,
+                        null,
+                        post.senderUserId);
                 for (Media media : post.media) {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
@@ -518,6 +522,8 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         null,
                         null,
+                        null,
+                        null,
                         null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
@@ -544,7 +550,9 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         comment.text,
                         comment.postId,
-                        comment.parentCommentId);
+                        comment.parentCommentId,
+                        null,
+                        comment.commentSenderUserId);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
                 pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
@@ -570,7 +578,9 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         null,
                         postId,
-                        null);
+                        null,
+                        null,
+                        postSenderUserId);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
                 pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
@@ -583,35 +593,50 @@ public class Connection {
     }
 
     public void sendMessage(final @NonNull Message message) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot send post, no connection");
-                return;
-            }
-            try {
-                final PublishedEntry entry = new PublishedEntry(
-                        PublishedEntry.ENTRY_CHAT,
-                        null,
-                        message.timestamp,
-                        connection.getUser().getLocalpart().toString(),
-                        message.text,
-                        null,
-                        null);
-                for (Media media : message.media) {
-                    entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+        final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
+        final UserId recipientUserId = new UserId(recipientJid.toString());
+        try {
+            SessionSetupInfo sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
+            executor.execute(() -> {
+                if (!reconnectIfNeeded() || connection == null) {
+                    Log.e("connection: cannot send message, no connection");
+                    return;
                 }
+                try {
+                    // TODO(jack): keys should be stored for use until the message send is successful
+                    final PublishedEntry entry = new PublishedEntry(
+                            PublishedEntry.ENTRY_CHAT,
+                            null,
+                            message.timestamp,
+                            connection.getUser().getLocalpart().toString(),
+                            message.text,
+                            null,
+                            null,
+                            recipientUserId,
+                            message.senderUserId,
+                            sessionSetupInfo.ephemeralKey,
+                            sessionSetupInfo.ephemeralKeyId,
+                            sessionSetupInfo.identityKey,
+                            sessionSetupInfo.oneTimePreKeyId);
+                    for (Media media : message.media) {
+                        entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+                    }
 
-                final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
-                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
-                xmppMessage.setStanzaId(message.id);
-                xmppMessage.addExtension(new ChatMessageElement(entry));
-                ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
-                Log.i("connection: sending message " + message.id + " to " + recipientJid);
-                connection.sendStanza(xmppMessage);
-            } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send message", e);
-            }
-        });
+
+                    final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
+                    xmppMessage.setStanzaId(message.id);
+                    xmppMessage.addExtension(new ChatMessageElement(entry));
+                    ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
+                    Log.i("connection: sending message " + message.id + " to " + recipientJid);
+                    connection.sendStanza(xmppMessage);
+                } catch (SmackException.NotConnectedException | InterruptedException e) {
+                    Log.e("connection: cannot send message", e);
+                }
+            });
+        } catch (Exception e) {
+            Log.e("Failed to set up encryption session", e);
+        }
+
     }
 
 

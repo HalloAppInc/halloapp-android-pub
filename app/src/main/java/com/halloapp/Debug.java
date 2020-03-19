@@ -16,6 +16,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -42,6 +43,7 @@ public class Debug {
     private static final String DEBUG_MENU_CLEAR_AVATAR_CACHE = "Clear avatar disk cache";
     private static final String DEBUG_MENU_REMOVE_AVATAR = "Remove avatar";
     private static final String DEBUG_MENU_TEST_KEYS = "Test keys";
+    private static final String DEBUG_MENU_CLEAR_KEY_STORE = "Clear key store";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
@@ -58,6 +60,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CLEAR_AVATAR_CACHE);
         menu.getMenu().add(DEBUG_MENU_REMOVE_AVATAR);
         menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
+        menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -136,6 +139,17 @@ public class Debug {
                     } catch (Exception e) {
                         Log.w("DEBUG key failure", e);
                     }
+                    break;
+                }
+                case DEBUG_MENU_CLEAR_KEY_STORE: {
+                    AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+                        try {
+                            EncryptedKeyStore.getInstance().clearAll();
+                        } catch (Exception e) {
+                            Log.w("DEBUG failed to clear key store");
+                        }
+                    });
+                    break;
                 }
             }
             return false;
