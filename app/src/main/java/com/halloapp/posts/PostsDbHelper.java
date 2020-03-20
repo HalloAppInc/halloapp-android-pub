@@ -17,7 +17,7 @@ import java.io.File;
 class PostsDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "posts.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private final Context context;
     private final PostsDbObservers observers;
@@ -45,7 +45,6 @@ class PostsDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + MediaTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + MediaTable.TABLE_NAME + " ("
                 + MediaTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + MediaTable.COLUMN_MEDIA_ID + " TEXT NOT NULL,"
                 + MediaTable.COLUMN_POST_ROW_ID + " INTEGER,"
                 + MediaTable.COLUMN_TYPE + " INTEGER,"
                 + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
@@ -115,6 +114,10 @@ class PostsDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //noinspection SwitchStatementWithTooFewBranches
         switch (oldVersion) {
+            case 7: {
+                upgradeFromVersion7(db);
+                break;
+            }
             default: {
                 onCreate(db);
                 break;
@@ -125,6 +128,42 @@ class PostsDbHelper extends SQLiteOpenHelper {
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onCreate(db);
+    }
+
+    private void upgradeFromVersion7(SQLiteDatabase db) {
+        Log.i("PostsDb.upgradeFromVersion7 started");
+        db.beginTransaction();
+
+        db.execSQL("CREATE TABLE tmp ("
+                + MediaTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + MediaTable.COLUMN_POST_ROW_ID + " INTEGER,"
+                + MediaTable.COLUMN_TYPE + " INTEGER,"
+                + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
+                + MediaTable.COLUMN_URL + " TEXT,"
+                + MediaTable.COLUMN_FILE + " FILE,"
+                + MediaTable.COLUMN_ENC_KEY + " BLOB,"
+                + MediaTable.COLUMN_SHA256_HASH + " BLOB,"
+                + MediaTable.COLUMN_WIDTH + " INTEGER,"
+                + MediaTable.COLUMN_HEIGHT + " INTEGER"
+                + ");");
+        db.execSQL("INSERT INTO tmp SELECT "
+                + MediaTable._ID + " ,"
+                + MediaTable.COLUMN_POST_ROW_ID + " ,"
+                + MediaTable.COLUMN_TYPE + " ,"
+                + MediaTable.COLUMN_TRANSFERRED + " ,"
+                + MediaTable.COLUMN_URL + " ,"
+                + MediaTable.COLUMN_FILE + " ,"
+                + MediaTable.COLUMN_ENC_KEY + " ,"
+                + MediaTable.COLUMN_SHA256_HASH + " ,"
+                + MediaTable.COLUMN_WIDTH + " ,"
+                + MediaTable.COLUMN_HEIGHT + " "
+                + "FROM " + MediaTable.TABLE_NAME);
+        db.execSQL("DROP TABLE " + MediaTable.TABLE_NAME);
+        db.execSQL("ALTER TABLE tmp RENAME TO " + MediaTable.TABLE_NAME);
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        Log.i("PostsDb.upgradeFromVersion7 finished");
     }
 
     void deleteDb() {

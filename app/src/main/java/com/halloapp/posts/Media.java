@@ -2,8 +2,6 @@ package com.halloapp.posts;
 
 import androidx.annotation.IntDef;
 
-import com.halloapp.util.RandomId;
-
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,8 +17,7 @@ public class Media {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-    public final long rowId;
-    public final String id;
+    public long rowId;
     public final @MediaType int type;
     public String url;
     public File file;
@@ -32,11 +29,11 @@ public class Media {
     public boolean transferred;
 
     public static Media createFromFile(@MediaType int type, File file) {
-        return new Media(0, RandomId.create(), type, null, file, generateEncKey(), null,0, 0, false);
+        return new Media(0, type, null, file, generateEncKey(), null,0, 0, false);
     }
 
     public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] sha256hash, int width, int height) {
-        return new Media(0, RandomId.create(), type, url, null, encKey, sha256hash, width, height, false);
+        return new Media(0, type, url, null, encKey, sha256hash, width, height, false);
     }
 
     public static float getMaxAspectRatio(List<Media> media) {
@@ -79,9 +76,8 @@ public class Media {
         }
     }
 
-    public Media(long rowId, String id, @MediaType int type, String url, File file, byte[] encKey, byte [] sha256hash, int width, int height, boolean transferred) {
+    public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] sha256hash, int width, int height, boolean transferred) {
         this.rowId = rowId;
-        this.id = id;
         this.type = type;
         this.url = url;
         this.file = file;

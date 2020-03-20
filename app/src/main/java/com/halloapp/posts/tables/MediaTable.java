@@ -8,7 +8,6 @@ public final class MediaTable implements BaseColumns {
 
     public static final String TABLE_NAME = "media";
 
-    public static final String COLUMN_MEDIA_ID = "id";
     public static final String COLUMN_POST_ROW_ID = "post_row_id";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_TRANSFERRED = "transferred";

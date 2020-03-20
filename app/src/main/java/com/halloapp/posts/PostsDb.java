@@ -169,7 +169,6 @@ public class PostsDb {
         post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
         for (Media mediaItem : post.media) {
             final ContentValues mediaItemValues = new ContentValues();
-            mediaItemValues.put(MediaTable.COLUMN_MEDIA_ID, mediaItem.id);
             mediaItemValues.put(MediaTable.COLUMN_POST_ROW_ID, post.rowId);
             mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
             if (mediaItem.url != null) {
@@ -195,7 +194,7 @@ public class PostsDb {
             if (mediaItem.sha256hash != null) {
                 mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
             }
-            db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+            mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
         Log.i("PostsDb.addPost: added " + post);
     }
@@ -231,7 +230,7 @@ public class PostsDb {
                 values.put(PostsTable.COLUMN_POST_ID, post.postId);
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
                 values.put(PostsTable.COLUMN_SEEN, false);
-                db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+                post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 db.delete(CommentsTable.TABLE_NAME,
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
@@ -375,8 +374,8 @@ public class PostsDb {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
-                        MediaTable.COLUMN_MEDIA_ID + "=?",
-                        new String [] {media.id},
+                        MediaTable._ID + "=?",
+                        new String [] {Long.toString(media.rowId)},
                         SQLiteDatabase.CONFLICT_ABORT);
                 observers.notifyPostUpdated(post.senderUserId, post.postId);
             } catch (SQLException ex) {
@@ -453,7 +452,7 @@ public class PostsDb {
                 values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
                 values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
                 values.put(CommentsTable.COLUMN_SEEN, comment.seen);
-                db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+                comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
             db.setTransactionSuccessful();
         } catch (SQLException ex) {
@@ -609,7 +608,6 @@ public class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
-                "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
@@ -628,7 +626,6 @@ public class PostsDb {
                 "SELECT " +
                     MediaTable._ID + "," +
                     MediaTable.COLUMN_POST_ROW_ID + "," +
-                    MediaTable.COLUMN_MEDIA_ID + "," +
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
@@ -684,36 +681,34 @@ public class PostsDb {
                             cursor.getInt(4) == 1,
                             cursor.getInt(5),
                             cursor.getString(6));
-                    post.commentCount = cursor.getInt(15);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(16);
-                    final String firstCommentId = cursor.getString(17);
+                    post.commentCount = cursor.getInt(14);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(15);
+                    final String firstCommentId = cursor.getString(16);
                     if (firstCommentId != null) {
                         post.firstComment = new Comment(0,
                                 post.senderUserId,
                                 post.postId,
-                                new UserId(cursor.getString(18)),
+                                new UserId(cursor.getString(17)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(20),
+                                cursor.getLong(19),
                                 true,
                                 true,
-                                cursor.getString(19));
+                                cursor.getString(18));
                     }
-                    post.seenByCount = cursor.getInt(21);
+                    post.seenByCount = cursor.getInt(20);
                 }
-                final String mediaId = cursor.getString(8);
-                if (mediaId != null) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
                             cursor.getLong(7),
-                            mediaId,
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
                             null,
                             null,
+                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14) == 1));
+                            cursor.getInt(13) == 1));
                 }
             }
             if (post != null && cursor.getCount() < count) {
@@ -742,7 +737,6 @@ public class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                     "m." + MediaTable._ID + "," +
-                    "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
@@ -754,7 +748,6 @@ public class PostsDb {
                     "SELECT " +
                         MediaTable._ID + "," +
                         MediaTable.COLUMN_POST_ROW_ID + "," +
-                        MediaTable.COLUMN_MEDIA_ID + "," +
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
@@ -778,19 +771,17 @@ public class PostsDb {
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
-                final String mediaId = cursor.getString(8);
-                if (mediaId != null) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
                             cursor.getLong(7),
-                            mediaId,
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
                             null,
                             null,
+                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14) == 1));
+                            cursor.getInt(13) == 1));
                 }
             }
         }
@@ -945,7 +936,6 @@ public class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
-                "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
@@ -957,7 +947,6 @@ public class PostsDb {
                 "SELECT " +
                     MediaTable._ID + "," +
                     MediaTable.COLUMN_POST_ROW_ID + "," +
-                    MediaTable.COLUMN_MEDIA_ID + "," +
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
@@ -990,19 +979,17 @@ public class PostsDb {
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
-                final String mediaId = cursor.getString(8);
-                if (mediaId != null) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
                             cursor.getLong(7),
-                            mediaId,
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
                             null,
                             null,
+                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14) == 1));
+                            cursor.getInt(13) == 1));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -1033,7 +1020,6 @@ public class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                     "m." + MediaTable._ID + "," +
-                    "m." + MediaTable.COLUMN_MEDIA_ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
@@ -1047,7 +1033,6 @@ public class PostsDb {
                     "SELECT " +
                         MediaTable._ID + "," +
                         MediaTable.COLUMN_POST_ROW_ID + "," +
-                        MediaTable.COLUMN_MEDIA_ID + "," +
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
@@ -1081,19 +1066,17 @@ public class PostsDb {
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
-                final String mediaId = cursor.getString(8);
-                if (mediaId != null) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
                             cursor.getLong(7),
-                            mediaId,
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getBlob(11),
                             cursor.getBlob(12),
-                            cursor.getBlob(13),
+                            cursor.getInt(13),
                             cursor.getInt(14),
-                            cursor.getInt(15),
-                            cursor.getInt(16) == 1));
+                            cursor.getInt(15) == 1));
                 }
             }
             if (post != null) {

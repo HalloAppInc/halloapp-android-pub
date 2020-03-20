@@ -192,7 +192,7 @@ public class PostComposerActivity extends AppCompatActivity {
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
-                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.id, rect));
+                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
                 imageView.setGridEnabled(true);
             } else {
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -291,11 +291,11 @@ public class PostComposerActivity extends AppCompatActivity {
 
         private final String text;
         private final List<Media> media;
-        private final Map<String, RectF> cropRects;
+        private final Map<File, RectF> cropRects;
         private final Application application;
         private final MutableLiveData<Post> post;
 
-        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @Nullable Map<String, RectF> cropRects, @NonNull MutableLiveData<Post> post) {
+        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects, @NonNull MutableLiveData<Post> post) {
             this.application = application;
             this.text = text;
             this.media = media;
@@ -320,7 +320,7 @@ public class PostComposerActivity extends AppCompatActivity {
                     switch (media.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {
-                                MediaUtils.transcodeImage(media.file, postFile, cropRects == null ? null : cropRects.get(media.id), Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
+                                MediaUtils.transcodeImage(media.file, postFile, cropRects == null ? null : cropRects.get(media.file), Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
                             } catch (IOException e) {
                                 Log.e("failed to transcode image", e);
                                 return null;
@@ -379,7 +379,7 @@ public class PostComposerActivity extends AppCompatActivity {
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
         final MutableLiveData<Post> post = new MutableLiveData<>();
 
-        final Map<String, RectF> cropRects = new HashMap<>();
+        final Map<File, RectF> cropRects = new HashMap<>();
 
         PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
             super(application);

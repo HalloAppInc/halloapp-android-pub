@@ -21,11 +21,12 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.PostImageView;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
-public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, String> {
+public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File> {
 
-    private final LruCache<String, Bitmap> cache;
+    private final LruCache<File, Bitmap> cache;
     private final int placeholderColor;
     private final int dimensionLimit;
 
@@ -43,10 +44,10 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
         Log.i("MediaThumbnailLoader: create " + cacheSize + "KB cache for post images");
-        cache = new LruCache<String, Bitmap>(cacheSize) {
+        cache = new LruCache<File, Bitmap>(cacheSize) {
 
             @Override
-            protected int sizeOf(@NonNull String key, @NonNull Bitmap bitmap) {
+            protected int sizeOf(@NonNull File key, @NonNull Bitmap bitmap) {
                 // The cache size will be measured in kilobytes rather than number of items
                 return bitmap.getByteCount() / 1024;
             }
@@ -55,12 +56,12 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media) {
-        if (media.id.equals(view.getTag()) && view.getDrawable() != null) {
-            return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
-        }
         if (media.file == null) {
             view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
             return;
+        }
+        if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
+            return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
         }
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
@@ -113,6 +114,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Stri
                 }
             }
         };
-        load(view, loader, displayer, media.id, cache);
+        load(view, loader, displayer, media.file, cache);
     }
 }

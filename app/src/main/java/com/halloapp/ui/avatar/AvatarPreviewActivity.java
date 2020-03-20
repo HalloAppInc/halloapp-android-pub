@@ -175,7 +175,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
-                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.id, rect));
+                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
                 imageView.setGridEnabled(true);
             } else {
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -273,10 +273,10 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     class Prepare extends AsyncTask<Void, Void, Boolean> {
 
         private final List<Media> media;
-        private final Map<String, RectF> cropRects;
+        private final Map<File, RectF> cropRects;
         private final Application application;
 
-        Prepare(@NonNull Application application, @Nullable List<Media> media, @Nullable Map<String, RectF> cropRects) {
+        Prepare(@NonNull Application application, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects) {
             this.application = application;
             this.media = media;
             this.cropRects = cropRects;
@@ -288,7 +288,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 Media img = media.get(0);
                 final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
-                    TranscodeResult transcodeResult = transcode(img.file, outFile, cropRects == null ? null : cropRects.get(img.id), Constants.MAX_AVATAR_DIMENSION);
+                    TranscodeResult transcodeResult = transcode(img.file, outFile, cropRects == null ? null : cropRects.get(img.file), Constants.MAX_AVATAR_DIMENSION);
                     uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged();
@@ -422,7 +422,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
 
-        final Map<String, RectF> cropRects = new HashMap<>();
+        final Map<File, RectF> cropRects = new HashMap<>();
 
         PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
             super(application);

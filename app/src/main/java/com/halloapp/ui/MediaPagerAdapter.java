@@ -48,7 +48,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         int index = 0;
         final Object tag = ((View) object).getTag();
         for (Media mediaItem : media) {
-            if (mediaItem.id.equals(tag)) {
+            if (Long.valueOf(mediaItem.rowId).equals(tag)) {
                 return index;
             }
             index++;
@@ -75,7 +75,7 @@ public class MediaPagerAdapter extends PagerAdapter {
             view = parent.getRecycledMediaViews().pop();
         }
         final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
-        view.setTag(mediaItem.id);
+        view.setTag(mediaItem.rowId);
         final PostImageView imageView = view.findViewById(R.id.image);
         imageView.setSinglePointerDragStartDisabled(true);
         imageView.setDrawDelegate(parent.getDrawDelegateView());
@@ -117,7 +117,7 @@ public class MediaPagerAdapter extends PagerAdapter {
             final Object tag = child.getTag();
             final PostImageView imageView = child.findViewById(R.id.image);
             for (Media mediaItem : media) {
-                if (mediaItem.id.equals(tag)) {
+                if (Long.valueOf(mediaItem.rowId).equals(tag)) {
                     parent.getMediaThumbnailLoader().load(imageView, mediaItem);
                     break;
                 }
