@@ -42,8 +42,7 @@ public class PubSubHelper {
     void retractItem(@NonNull String nodeId, @NonNull Item item) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         Preconditions.checkNotNull(connection);
         final PubSub packet = PubSub.createPubsubPacket(pubSubManager.getServiceJid(), IQ.Type.set, new RetractItem<>(nodeId, Collections.singletonList(item)));
-        // TODO (ds): uncomment when server implements 'retract'
-        //connection.createStanzaCollectorAndSend(packet).nextResultOrThrow();
+        connection.createStanzaCollectorAndSend(packet).nextResultOrThrow();
     }
 
     List<PubSubItem> getItems(@NonNull String nodeId) throws SmackException.NotConnectedException, InterruptedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
