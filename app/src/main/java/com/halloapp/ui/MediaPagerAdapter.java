@@ -84,16 +84,17 @@ public class MediaPagerAdapter extends PagerAdapter {
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             playButton.setVisibility(View.VISIBLE);
             if (mediaItem.file != null) {
-                playButton.setOnClickListener(v -> {
+                imageView.setOnClickListener(v -> {
                     final Intent intent = new Intent(container.getContext(), VideoPlaybackActivity.class);
                     intent.setData(Uri.fromFile(mediaItem.file));
                     parent.startActivity(intent);
                 });
             } else {
-                playButton.setOnClickListener(null);
+                imageView.setOnClickListener(null);
             }
         } else {
             playButton.setVisibility(View.GONE);
+            imageView.setOnClickListener(null);
         }
 
         container.addView(view);
