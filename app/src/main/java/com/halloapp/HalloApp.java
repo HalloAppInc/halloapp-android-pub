@@ -16,11 +16,17 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.flatbuffers.FlatBufferBuilder;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
+import com.halloapp.schema.Media;
+import com.halloapp.schema.MediaType;
 import com.halloapp.util.Log;
+import com.halloapp.util.StringUtils;
 import com.halloapp.xmpp.Connection;
+
+import java.nio.ByteBuffer;
 
 import io.fabric.sdk.android.Fabric;
 
