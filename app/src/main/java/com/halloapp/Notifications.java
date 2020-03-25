@@ -16,9 +16,9 @@ import androidx.core.app.NotificationManagerCompat;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
@@ -131,7 +131,7 @@ public class Notifications {
         if (!preferences.getNotifyPosts()) {
             return null;
         }
-        final List<Post> unseenPosts = PostsDb.getInstance(context).getUnseenPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+        final List<Post> unseenPosts = ContentDb.getInstance(context).getUnseenPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
         if (unseenPosts.isEmpty()) {
             return null;
         }
@@ -164,7 +164,7 @@ public class Notifications {
         if (!preferences.getNotifyComments()) {
             return null;
         }
-        final List<Comment> unseenComments = PostsDb.getInstance(context).getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
+        final List<Comment> unseenComments = ContentDb.getInstance(context).getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
         if (unseenComments.isEmpty()) {
             return null;
         }

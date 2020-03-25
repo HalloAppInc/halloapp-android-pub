@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,11 +15,12 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.MediaTable;
+import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.SeenTable;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.posts.tables.CommentsTable;
-import com.halloapp.posts.tables.MediaTable;
-import com.halloapp.posts.tables.PostsTable;
-import com.halloapp.posts.tables.SeenTable;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
@@ -30,14 +31,14 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class PostsDb {
+public class ContentDb {
 
-    private static PostsDb instance;
+    private static ContentDb instance;
 
     private final Executor databaseWriteExecutor = Executors.newSingleThreadExecutor();
 
-    private final PostsDbObservers observers = new PostsDbObservers();
-    private final PostsDbHelper databaseHelper;
+    private final ContentDbObservers observers = new ContentDbObservers();
+    private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
 
     public interface Observer {
@@ -50,8 +51,11 @@ public class PostsDb {
         void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
-        void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
-        void onPostsCleanup();
+        void onMessageAdded(@NonNull Message message);
+        void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
+        void onFeedCleanup();
         void onDbCreated();
     }
 
@@ -65,24 +69,27 @@ public class PostsDb {
         public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
-        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
-        public void onPostsCleanup() {}
+        public void onMessageAdded(@NonNull Message message) {}
+        public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
+        public void onFeedCleanup() {}
         public void onDbCreated() {}
     }
 
-    public static PostsDb getInstance(final @NonNull Context context) {
+    public static ContentDb getInstance(final @NonNull Context context) {
         if (instance == null) {
-            synchronized(PostsDb.class) {
+            synchronized(ContentDb.class) {
                 if (instance == null) {
-                    instance = new PostsDb(context);
+                    instance = new ContentDb(context);
                 }
             }
         }
         return instance;
     }
 
-    private PostsDb(final @NonNull Context context) {
-        databaseHelper = new PostsDbHelper(context.getApplicationContext(), observers);
+    private ContentDb(final @NonNull Context context) {
+        databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
         fileStore = FileStore.getInstance(context);
     }
 
@@ -112,7 +119,7 @@ public class PostsDb {
                         try {
                             addPostInBackground(post);
                         } catch (SQLiteConstraintException ex) {
-                            Log.w("PostsDb.addPost: duplicate " + ex.getMessage() + " " + post);
+                            Log.w("ContentDb.addPost: duplicate " + ex.getMessage() + " " + post);
                             duplicate = true;
                         }
                     }
@@ -123,7 +130,7 @@ public class PostsDb {
                 // important to notify outside of transaction
                 if (!duplicate) {
                     if (post.isRetracted()) {
-                        observers.notifyPostRetracted(post.senderUserId, post.postId);
+                        observers.notifyPostRetracted(post.senderUserId, post.id);
                     } else {
                         observers.notifyPostAdded(post);
                     }
@@ -139,7 +146,7 @@ public class PostsDb {
                         addCommentInBackground(comment);
                         observers.notifyCommentAdded(comment);
                     } catch (SQLiteConstraintException ex) {
-                        Log.w("PostsDb.addComment: duplicate " + ex.getMessage() + " " + comment);
+                        Log.w("ContentDb.addComment: duplicate " + ex.getMessage() + " " + comment);
                     }
                 }
             }
@@ -152,13 +159,13 @@ public class PostsDb {
 
     @WorkerThread
     private void addPostInBackground(@NonNull Post post) {
-        Log.i("PostsDb.addPost " + post);
+        Log.i("ContentDb.addPost " + post);
         if (post.timestamp < getPostExpirationTime()) {
             throw new SQLiteConstraintException("attempting to add expired post");
         }
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
-        values.put(PostsTable.COLUMN_POST_ID, post.postId);
+        values.put(PostsTable.COLUMN_POST_ID, post.id);
         values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
         values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
         values.put(PostsTable.COLUMN_SEEN, post.seen);
@@ -169,7 +176,8 @@ public class PostsDb {
         post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
         for (Media mediaItem : post.media) {
             final ContentValues mediaItemValues = new ContentValues();
-            mediaItemValues.put(MediaTable.COLUMN_POST_ROW_ID, post.rowId);
+            mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, PostsTable.TABLE_NAME);
+            mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, post.rowId);
             mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
             if (mediaItem.url != null) {
                 mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
@@ -196,19 +204,19 @@ public class PostsDb {
             }
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
-        Log.i("PostsDb.addPost: added " + post);
+        Log.i("ContentDb.addPost: added " + post);
     }
 
     public void retractPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             retractPostInBackground(post);
-            observers.notifyPostRetracted(post.senderUserId, post.postId);
+            observers.notifyPostRetracted(post.senderUserId, post.id);
         });
     }
 
     @WorkerThread
     private void retractPostInBackground(@NonNull Post post) {
-        Log.i("PostsDb.retractPost: postId=" + post.postId);
+        Log.i("ContentDb.retractPost: postId=" + post.id);
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_TRANSFERRED, !post.senderUserId.isMe());
         values.put(PostsTable.COLUMN_TEXT, (String)null);
@@ -216,40 +224,40 @@ public class PostsDb {
         db.beginTransaction();
         try {
             if (post.rowId == 0) {
-                final Post updatePost = getPost(post.senderUserId, post.postId);
+                final Post updatePost = getPost(post.senderUserId, post.id);
                 if (updatePost != null) {
                     post = updatePost;
                 }
             }
             int updatedCount = db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                     PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                    new String[]{post.senderUserId.rawId(), post.postId},
+                    new String[]{post.senderUserId.rawId(), post.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
                 values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
-                values.put(PostsTable.COLUMN_POST_ID, post.postId);
+                values.put(PostsTable.COLUMN_POST_ID, post.id);
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
                 values.put(PostsTable.COLUMN_SEEN, false);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 db.delete(CommentsTable.TABLE_NAME,
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
-                        new String[]{post.senderUserId.rawId(), post.postId});
+                        new String[]{post.senderUserId.rawId(), post.id});
                 db.delete(MediaTable.TABLE_NAME,
-                        MediaTable.COLUMN_POST_ROW_ID + "=?",
+                        MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "=" + PostsTable.TABLE_NAME,
                         new String[]{Long.toString(post.rowId)});
                 for (Media media : post.media) {
                     if (media.file != null) {
                         if (!media.file.delete()) {
-                            Log.e("PostsDb.retractPost: failed to delete " + media.file.getAbsolutePath());
+                            Log.e("ContentDb.retractPost: failed to delete " + media.file.getAbsolutePath());
                         }
                     }
                 }
             }
             db.setTransactionSuccessful();
-            Log.i("PostsDb.retractPost: retracted postId=" + post.postId);
+            Log.i("ContentDb.retractPost: retracted postId=" + post.id);
         } catch (SQLException ex) {
-            Log.e("PostsDb.retractPost: failed");
+            Log.e("ContentDb.retractPost: failed");
             throw ex;
         } finally {
             db.endTransaction();
@@ -258,9 +266,9 @@ public class PostsDb {
 
     public void setIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setIncomingPostSeen: senderUserId=" + senderUserId + " postId=" + postId);
+            Log.i("ContentDb.setIncomingPostSeen: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_SEEN, Post.POST_SEEN_YES_PENDING);
+            values.put(PostsTable.COLUMN_SEEN, Post.SEEN_YES_PENDING);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
@@ -269,7 +277,7 @@ public class PostsDb {
                         SQLiteDatabase.CONFLICT_ABORT);
                 observers.notifyIncomingPostSeen(senderUserId, postId);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setIncomingPostSeen: failed");
+                Log.e("ContentDb.setIncomingPostSeen: failed");
                 throw ex;
             }
         });
@@ -277,7 +285,7 @@ public class PostsDb {
 
     public void setIncomingPostsSeen(@Post.SeenState int seen) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setIncomingPostsSeen: seen=" + seen);
+            Log.i("ContentDb.setIncomingPostsSeen: seen=" + seen);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -287,7 +295,7 @@ public class PostsDb {
                         null,
                         SQLiteDatabase.CONFLICT_ABORT);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setIncomingPostsSeen: failed");
+                Log.e("ContentDb.setIncomingPostsSeen: failed");
                 throw ex;
             }
         });
@@ -295,9 +303,9 @@ public class PostsDb {
 
     public void setSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
+            Log.i("ContentDb.setSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_SEEN, Post.POST_SEEN_YES);
+            values.put(PostsTable.COLUMN_SEEN, Post.SEEN_YES);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
@@ -305,7 +313,7 @@ public class PostsDb {
                         new String [] {senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setSeenReceiptSent: failed");
+                Log.e("ContentDb.setSeenReceiptSent: failed");
                 throw ex;
             }
         });
@@ -313,7 +321,7 @@ public class PostsDb {
 
     public void setOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId + " timestamp=" + timestamp);
+            Log.i("ContentDb.setOutgoingPostSeen: seenByUserId=" + seenByUserId + " postId=" + postId + " timestamp=" + timestamp);
             final ContentValues values = new ContentValues();
             values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, seenByUserId.rawId());
             values.put(SeenTable.COLUMN_POST_ID, postId);
@@ -323,9 +331,9 @@ public class PostsDb {
                 db.insertWithOnConflict(SeenTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 observers.notifyOutgoingPostSeen(seenByUserId, postId);
             } catch (SQLiteConstraintException ex) {
-                Log.i("PostsDb.setOutgoingPostSeen: seen duplicate", ex);
+                Log.i("ContentDb.setOutgoingPostSeen: seen duplicate", ex);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setOutgoingPostSeen: failed");
+                Log.e("ContentDb.setOutgoingPostSeen: failed");
                 throw ex;
             }
             completionRunnable.run();
@@ -334,7 +342,7 @@ public class PostsDb {
 
     public void setPostTransferred(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setPostTransferred: senderUserId=" + senderUserId + " postId=" + postId);
+            Log.i("ContentDb.setPostTransferred: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -345,7 +353,7 @@ public class PostsDb {
                         SQLiteDatabase.CONFLICT_ABORT);
                 observers.notifyPostUpdated(senderUserId, postId);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setPostTransferred: failed");
+                Log.e("ContentDb.setPostTransferred: failed");
                 throw ex;
             }
         });
@@ -353,7 +361,7 @@ public class PostsDb {
 
     public void setMediaTransferred(@NonNull Post post, @NonNull Media media) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setMediaTransferred: post=" + post + " media=" + media);
+            Log.i("ContentDb.setMediaTransferred: post=" + post + " media=" + media);
             final ContentValues values = new ContentValues();
             values.put(MediaTable.COLUMN_FILE, media.file == null ? null : media.file.getName());
             values.put(MediaTable.COLUMN_URL, media.url);
@@ -377,9 +385,9 @@ public class PostsDb {
                         MediaTable._ID + "=?",
                         new String [] {Long.toString(media.rowId)},
                         SQLiteDatabase.CONFLICT_ABORT);
-                observers.notifyPostUpdated(post.senderUserId, post.postId);
+                observers.notifyPostUpdated(post.senderUserId, post.id);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setMediaTransferred: failed", ex);
+                Log.e("ContentDb.setMediaTransferred: failed", ex);
                 throw ex;
             }
             if (post.isIncoming()) {
@@ -391,7 +399,53 @@ public class PostsDb {
                     }
                 }
                 if (transferred) {
-                    setPostTransferred(post.senderUserId, post.postId);
+                    setPostTransferred(post.senderUserId, post.id);
+                }
+            }
+        });
+    }
+
+    public void setMediaTransferred(@NonNull Message message, @NonNull Media media) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("ContentDb.setMediaTransferred: message=" + message + " media=" + media);
+            final ContentValues values = new ContentValues();
+            values.put(MediaTable.COLUMN_FILE, media.file == null ? null : media.file.getName());
+            values.put(MediaTable.COLUMN_URL, media.url);
+            if (media.encKey != null) {
+                values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
+            }
+            if (media.sha256hash != null) {
+                values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
+            }
+            if (media.width == 0 || media.height == 0) {
+                final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
+                if (dimensions != null && dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
+                    values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
+                    values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
+                }
+            }
+            values.put(MediaTable.COLUMN_TRANSFERRED, true);
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            try {
+                db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
+                        MediaTable._ID + "=?",
+                        new String [] {Long.toString(media.rowId)},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                observers.notifyMessageUpdated(message.chatId, message.senderUserId, message.id);
+            } catch (SQLException ex) {
+                Log.e("ContentDb.setMediaTransferred: failed", ex);
+                throw ex;
+            }
+            if (message.isIncoming()) {
+                boolean transferred = true;
+                for (Media mediaItem : message.media) {
+                    if (!mediaItem.transferred) {
+                        transferred = false;
+                        break;
+                    }
+                }
+                if (transferred) {
+                    setMessageTransferred(message.chatId, message.senderUserId, message.id);
                 }
             }
         });
@@ -403,7 +457,7 @@ public class PostsDb {
 
     @WorkerThread
     private void addCommentInBackground(@NonNull Comment comment) {
-        Log.i("PostsDb.addComment " + comment);
+        Log.i("ContentDb.addComment " + comment);
         if (comment.timestamp < getPostExpirationTime()) {
             throw new SQLiteConstraintException("attempting to add expired comment");
         }
@@ -419,7 +473,7 @@ public class PostsDb {
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-        Log.i("PostsDb.addComment: added " + comment);
+        Log.i("ContentDb.addComment: added " + comment);
     }
 
     public void retractComment(@NonNull Comment comment) {
@@ -431,7 +485,7 @@ public class PostsDb {
 
     @WorkerThread
     private void retractCommentInBackground(@NonNull Comment comment) {
-        Log.i("PostsDb.retractCommentInBackground: senderUserId=" + comment.commentSenderUserId + " commentId=" + comment.commentId);
+        Log.i("ContentDb.retractCommentInBackground: senderUserId=" + comment.commentSenderUserId + " commentId=" + comment.commentId);
         final ContentValues values = new ContentValues();
         if (comment.commentSenderUserId.isMe()) {
             values.put(CommentsTable.COLUMN_TRANSFERRED, false);
@@ -456,7 +510,7 @@ public class PostsDb {
             }
             db.setTransactionSuccessful();
         } catch (SQLException ex) {
-            Log.e("PostsDb.retractCommentInBackground: failed");
+            Log.e("ContentDb.retractCommentInBackground: failed");
             throw ex;
         } finally {
             db.endTransaction();
@@ -465,7 +519,7 @@ public class PostsDb {
 
     public void setCommentTransferred(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setCommentTransferred: senderUserId=" + commentSenderUserId + " commentId=" + commentId);
+            Log.i("ContentDb.setCommentTransferred: senderUserId=" + commentSenderUserId + " commentId=" + commentId);
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_TRANSFERRED, true);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -476,7 +530,7 @@ public class PostsDb {
                         SQLiteDatabase.CONFLICT_ABORT);
                 observers.notifyCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
             } catch (SQLException ex) {
-                Log.e("PostsDb.setCommentTransferred: failed");
+                Log.e("ContentDb.setCommentTransferred: failed");
                 throw ex;
             }
         });
@@ -484,7 +538,7 @@ public class PostsDb {
 
     public void setCommentsSeen(boolean seen) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setCommentsSeen: seen=" + seen);
+            Log.i("ContentDb.setCommentsSeen: seen=" + seen);
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -497,7 +551,7 @@ public class PostsDb {
                     observers.notifyCommentsSeen(UserId.ME, "");
                 }
             } catch (SQLException ex) {
-                Log.e("PostsDb.setCommentsSeen: failed");
+                Log.e("ContentDb.setCommentsSeen: failed");
                 throw ex;
             }
         });
@@ -509,7 +563,7 @@ public class PostsDb {
 
     public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, boolean seen) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("PostsDb.setCommentsSeen: postSenderUserId=" + postSenderUserId+ " postId=" + postId);
+            Log.i("ContentDb.setCommentsSeen: postSenderUserId=" + postSenderUserId+ " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_SEEN, seen);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -524,7 +578,7 @@ public class PostsDb {
                     observers.notifyCommentsSeen(postSenderUserId, postId);
                 }
             } catch (SQLException ex) {
-                Log.e("PostsDb.setCommentsSeen: failed");
+                Log.e("ContentDb.setCommentsSeen: failed");
                 throw ex;
             }
         });
@@ -541,18 +595,18 @@ public class PostsDb {
                     try {
                         addPostInBackground(post);
                         addedHistoryPosts.add(post);
-                        Log.i("PostsDb.addHistory: post added " + post);
+                        Log.i("ContentDb.addHistory: post added " + post);
                     } catch (SQLiteConstraintException ex) {
-                        Log.i("PostsDb.addHistory: post duplicate " + post, ex);
+                        Log.i("ContentDb.addHistory: post duplicate " + post, ex);
                     }
                 }
                 for (Comment comment : historyComments) {
                     try {
                         addCommentInBackground(comment);
                         addedHistoryComments.add(comment);
-                        Log.i("PostsDb.addHistory: comment added " + comment);
+                        Log.i("ContentDb.addHistory: comment added " + comment);
                     } catch (SQLiteConstraintException ex) {
-                        Log.i("PostsDb.addHistory: comment duplicate " + comment);
+                        Log.i("ContentDb.addHistory: comment duplicate " + comment);
                     }
                 }
                 db.setTransactionSuccessful();
@@ -562,7 +616,118 @@ public class PostsDb {
             // important to notify outside of transaction
             if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
                 Collections.sort(addedHistoryPosts, (o1, o2) -> Long.compare(o2.timestamp, o1.timestamp)); // sort, so download would happen in reverse order
-                observers.notifyHistoryAdded(addedHistoryPosts, addedHistoryComments);
+                observers.notifyFeedHistoryAdded(addedHistoryPosts, addedHistoryComments);
+            }
+        });
+    }
+
+    public void addMessage(@NonNull Message message) {
+        addMessage(message, null);
+    }
+
+    public void addMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+
+            boolean duplicate = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                if (message.isRetracted()) {
+                    retractMessageInBackground(message);
+                } else {
+                    try {
+                        addMessageInBackground(message);
+                    } catch (SQLiteConstraintException ex) {
+                        Log.w("ContentDb.addMessage: duplicate " + ex.getMessage() + " " + message);
+                        duplicate = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            // important to notify outside of transaction
+            if (!duplicate) {
+                if (message.isRetracted()) {
+                    observers.notifyMessageRetracted(message.chatId, message.senderUserId, message.id);
+                } else {
+                    observers.notifyMessageAdded(message);
+                }
+            }
+
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    private void retractMessageInBackground(@NonNull Message message) {
+        // TODO (ds): implement
+    }
+
+
+    private void addMessageInBackground(@NonNull Message message) {
+        Log.i("ContentDb.addMessage " + message);
+        final ContentValues values = new ContentValues();
+        values.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
+        values.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
+        values.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
+        values.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
+        values.put(MessagesTable.COLUMN_TRANSFERRED, message.transferred);
+        values.put(MessagesTable.COLUMN_SEEN, message.seen);
+        if (message.text != null) {
+            values.put(MessagesTable.COLUMN_TEXT, message.text);
+        }
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        for (Media mediaItem : message.media) {
+            final ContentValues mediaItemValues = new ContentValues();
+            mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
+            mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, message.rowId);
+            mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
+            if (mediaItem.url != null) {
+                mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+            }
+            if (mediaItem.file != null) {
+                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
+                if (mediaItem.width == 0 || mediaItem.height == 0) {
+                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
+                    if (dimensions != null) {
+                        mediaItem.width = dimensions.getWidth();
+                        mediaItem.height = dimensions.getHeight();
+                    }
+                }
+            }
+            if (mediaItem.width > 0 && mediaItem.height > 0) {
+                mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
+                mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+            }
+            if (mediaItem.encKey != null) {
+                mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+            }
+            if (mediaItem.sha256hash != null) {
+                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+            }
+            mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+        Log.i("ContentDb.addMessage: added " + message);
+    }
+
+    public void setMessageTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId);
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_TRANSFERRED, true);
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            try {
+                db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
+                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                        new String [] {chatId, senderUserId.rawId(), messageId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                observers.notifyMessageUpdated(chatId, senderUserId, messageId);
+            } catch (SQLException ex) {
+                Log.e("ContentDb.setMessageTransferred: failed");
+                throw ex;
             }
         });
     }
@@ -625,14 +790,15 @@ public class PostsDb {
             "LEFT JOIN (" +
                 "SELECT " +
                     MediaTable._ID + "," +
-                    MediaTable.COLUMN_POST_ROW_ID + "," +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
-                "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+                "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
                 "SELECT " +
                     CommentsTable.COLUMN_POST_SENDER_USER_ID + "," +
@@ -687,7 +853,7 @@ public class PostsDb {
                     if (firstCommentId != null) {
                         post.firstComment = new Comment(0,
                                 post.senderUserId,
-                                post.postId,
+                                post.id,
                                 new UserId(cursor.getString(17)),
                                 firstCommentId,
                                 null,
@@ -718,7 +884,7 @@ public class PostsDb {
         if (!after) {
             Collections.reverse(posts);
         }
-        Log.i("PostsDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp)));
+        Log.i("ContentDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp)));
 
         return posts;
     }
@@ -747,14 +913,15 @@ public class PostsDb {
                 "LEFT JOIN (" +
                     "SELECT " +
                         MediaTable._ID + "," +
-                        MediaTable.COLUMN_POST_ROW_ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ") " +
-                    "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=?";
 
         try (final Cursor cursor = db.rawQuery(sql, new String [] {userId.rawId(), postId})) {
@@ -785,7 +952,7 @@ public class PostsDb {
                 }
             }
         }
-        Log.i("PostsDb.getPost: post=" + post);
+        Log.i("ContentDb.getPost: post=" + post);
         return post;
     }
 
@@ -817,7 +984,7 @@ public class PostsDb {
                 comments.add(comment);
             }
         }
-        Log.i("PostsDb.getComments: start=" + start + " count=" + count + " comments.size=" + comments.size());
+        Log.i("ContentDb.getComments: start=" + start + " count=" + count + " comments.size=" + comments.size());
         return comments;
     }
 
@@ -869,7 +1036,7 @@ public class PostsDb {
                 comments.add(comment);
             }
         }
-        Log.i("PostsDb.getIncomingCommentsHistory: comments.size=" + comments.size());
+        Log.i("ContentDb.getIncomingCommentsHistory: comments.size=" + comments.size());
         return comments;
     }
 
@@ -906,35 +1073,28 @@ public class PostsDb {
                 comments.add(comment);
             }
         }
-        Log.i("PostsDb.getPendingComments: comments.size=" + comments.size());
+        Log.i("ContentDb.getPendingComments: comments.size=" + comments.size());
         return comments;
     }
 
-    // TODO (ds): implement getting messages from DB; the current code is a placeholder only, it gets posts and converts them to messages
     @WorkerThread
-    @NonNull List<ChatMessage> getMessages(@NonNull String chatId, @Nullable Long timestamp, int count, boolean after) {
-        final List<ChatMessage> messages = new ArrayList<>();
+    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long timestamp, int count, boolean after) {
+        final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String where;
-        if (timestamp == null) {
-            where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime();
-        } else {
-            if (after) {
-                where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "<" + timestamp;
-            } else {
-                where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + Math.max(getPostExpirationTime(), timestamp);
-            }
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + chatId;
+        if (timestamp != null) {
+            where += " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + (after ? "<" : ">") + timestamp;
         }
 
         String sql =
             "SELECT " +
-                PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
-                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -942,26 +1102,27 @@ public class PostsDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + " " +
-            "FROM " + PostsTable.TABLE_NAME + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
                     MediaTable._ID + "," +
-                    MediaTable.COLUMN_POST_ROW_ID + "," +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
-                "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "WHERE " + where + " " +
-            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
+            "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
             "LIMIT " + count;
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
 
             long lastRowId = -1;
-            ChatMessage message = null;
+            Message message = null;
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
                 if (lastRowId != rowId) {
@@ -969,9 +1130,9 @@ public class PostsDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    message = new ChatMessage(
+                    message = new Message(
                             rowId,
-                            "",
+                            chatId,
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
                             cursor.getLong(3),
@@ -999,7 +1160,7 @@ public class PostsDb {
         if (!after) {
             Collections.reverse(messages);
         }
-        Log.i("PostsDb.getMessages: start=" + timestamp + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
+        Log.i("ContentDb.getMessages: start=" + timestamp + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
 
         return messages;
     }
@@ -1032,7 +1193,8 @@ public class PostsDb {
                 "LEFT JOIN (" +
                     "SELECT " +
                         MediaTable._ID + "," +
-                        MediaTable.COLUMN_POST_ROW_ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
@@ -1040,8 +1202,8 @@ public class PostsDb {
                         MediaTable.COLUMN_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ") " +
-                    "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_POST_ROW_ID + " " +
+                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "WHERE " +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=0 AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " " +
                 "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
@@ -1083,8 +1245,93 @@ public class PostsDb {
                 posts.add(post);
             }
         }
-        Log.i("PostsDb.getPendingPosts: posts.size=" + posts.size());
+        Log.i("ContentDb.getPendingPosts: posts.size=" + posts.size());
         return posts;
+    }
+
+    @WorkerThread
+    @NonNull List<Message> getPendingMessages() {
+
+        final List<Message> messages = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                    "m." + MediaTable._ID + "," +
+                    "m." + MediaTable.COLUMN_TYPE + "," +
+                    "m." + MediaTable.COLUMN_URL + "," +
+                    "m." + MediaTable.COLUMN_FILE + "," +
+                    "m." + MediaTable.COLUMN_ENC_KEY + "," +
+                    "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                    "m." + MediaTable.COLUMN_WIDTH + "," +
+                    "m." + MediaTable.COLUMN_HEIGHT + "," +
+                    "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + " " +
+                "FROM " + MessagesTable.TABLE_NAME + " " +
+                "LEFT JOIN (" +
+                    "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_KEY + "," +
+                        MediaTable.COLUMN_SHA256_HASH + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                "WHERE " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "=0 AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " " +
+                "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " DESC ";
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            Message message = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (message != null) {
+                        messages.add(message);
+                    }
+                    message = new Message(
+                            rowId,
+                            cursor.getString(16),
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4) == 1,
+                            cursor.getInt(5),
+                            cursor.getString(6));
+                }
+                if (!cursor.isNull(7)) {
+                    Preconditions.checkNotNull(message).media.add(new Media(
+                            cursor.getLong(7),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getBlob(11),
+                            cursor.getBlob(12),
+                            cursor.getInt(13),
+                            cursor.getInt(14),
+                            cursor.getInt(15) == 1));
+                }
+            }
+            if (message != null) {
+                messages.add(message);
+            }
+        }
+        Log.i("ContentDb.getPendingMessages: messages.size=" + messages.size());
+        return messages;
     }
 
     @WorkerThread
@@ -1120,7 +1367,7 @@ public class PostsDb {
                 comments.add(comment);
             }
         }
-        Log.i("PostsDb.getPendingComments: comments.size=" + comments.size());
+        Log.i("ContentDb.getPendingComments: comments.size=" + comments.size());
         return comments;
     }
 
@@ -1132,7 +1379,7 @@ public class PostsDb {
                 new String [] {
                         PostsTable.COLUMN_SENDER_USER_ID,
                         PostsTable.COLUMN_POST_ID},
-                PostsTable.COLUMN_SEEN + "=" + Post.POST_SEEN_YES_PENDING + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "<>''",
+                PostsTable.COLUMN_SEEN + "=" + Post.SEEN_YES_PENDING + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "<>''",
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
                 final Receipt receipt = new Receipt(
@@ -1141,7 +1388,7 @@ public class PostsDb {
                 receipts.add(receipt);
             }
         }
-        Log.i("PostsDb.getPendingSeenReceipts: receipts.size=" + receipts.size());
+        Log.i("ContentDb.getPendingSeenReceipts: receipts.size=" + receipts.size());
         return receipts;
     }
 
@@ -1157,35 +1404,35 @@ public class PostsDb {
                 users.add(new UserId(cursor.getString(0)));
             }
         }
-        Log.i("PostsDb.getSeenBy: users.size=" + users.size());
+        Log.i("ContentDb.getSeenBy: users.size=" + users.size());
         return users;
     }
 
     @WorkerThread
     public void cleanup() {
-        Log.i("PostsDb.cleanup");
+        Log.i("ContentDb.cleanup");
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
                 PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
-        Log.i("PostsDb.cleanup: " + deletedPostsCount + " posts deleted");
+        Log.i("ContentDb.cleanup: " + deletedPostsCount + " posts deleted");
 
         // comments are deleted using trigger, but in case there are orphaned comments delete them here
         final int deletedCommentsCount = db.delete(CommentsTable.TABLE_NAME,
                 CommentsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
-        Log.i("PostsDb.cleanup: " + deletedCommentsCount + " comments deleted");
+        Log.i("ContentDb.cleanup: " + deletedCommentsCount + " comments deleted");
 
-        // seen receipts are deleted using trigger, but in case there are orphaned comments delete them here
+        // seen receipts are deleted using trigger, but in case there are orphaned receipts delete them here
         final int deletedSeenCount = db.delete(SeenTable.TABLE_NAME,
                 SeenTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
-        Log.i("PostsDb.cleanup: " + deletedSeenCount + " seen receipts deleted");
+        Log.i("ContentDb.cleanup: " + deletedSeenCount + " seen receipts deleted");
 
         if (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0) {
             db.execSQL("VACUUM");
-            Log.i("PostsDb.cleanup: vacuum");
-            observers.notifyPostsCleanup();
+            Log.i("ContentDb.cleanup: vacuum");
+            observers.notifyFeedCleanup();
         }
     }
 

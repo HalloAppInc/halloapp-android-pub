@@ -8,7 +8,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 
 import com.halloapp.R;
-import com.halloapp.posts.Post;
+import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
 
 public class IncomingPostViewHolder extends PostViewHolder {
@@ -23,7 +23,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
         itemView.findViewById(R.id.comment).setOnClickListener(view -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
         });

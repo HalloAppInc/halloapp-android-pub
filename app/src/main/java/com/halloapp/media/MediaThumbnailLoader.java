@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
-import com.halloapp.posts.Media;
+import com.halloapp.content.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;

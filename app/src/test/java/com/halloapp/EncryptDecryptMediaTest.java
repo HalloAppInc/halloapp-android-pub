@@ -2,7 +2,7 @@ package com.halloapp;
 
 import com.halloapp.media.MediaDecryptOutputStream;
 import com.halloapp.media.MediaEncryptOutputStream;
-import com.halloapp.posts.Media;
+import com.halloapp.content.Media;
 import com.halloapp.util.TailInputStream;
 
 import org.junit.Assert;

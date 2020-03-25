@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
 public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, String> {
 
     private final Context context;
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final LruCache<String, Drawable> cache;
 
     private final int dimensionLimit;
@@ -39,7 +39,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
 
         this.dimensionLimit = dimensionLimit;
         this.context = context.getApplicationContext();
-        postsDb = PostsDb.getInstance(context);
+        contentDb = ContentDb.getInstance(context);
 
         textSizeMax = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_max_text_size);
         textSizeMin = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_min_text_size);
@@ -69,7 +69,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
     public void load(@NonNull ImageView view, @NonNull UserId userId, @NonNull String postId) {
         final Callable<Drawable> loader = () -> {
 
-            final Post post = postsDb.getPost(userId, postId);
+            final Post post = contentDb.getPost(userId, postId);
             if (post == null) {
                 return null;
             }

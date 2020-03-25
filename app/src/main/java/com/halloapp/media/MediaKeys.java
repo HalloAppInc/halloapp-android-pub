@@ -2,7 +2,7 @@ package com.halloapp.media;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.posts.Media;
+import com.halloapp.content.Media;
 
 import java.nio.charset.StandardCharsets;
 

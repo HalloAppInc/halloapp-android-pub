@@ -70,7 +70,7 @@
             android:label=""/>
 
         <activity
-            android:name=".ui.PostComposerActivity"
+            android:name=".ui.ContentComposerActivity"
             android:label="@string/new_post"
             android:theme="@style/AppTheme.PostComposer"
             android:windowSoftInputMode="adjustResize" />

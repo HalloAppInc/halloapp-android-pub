@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
-import com.halloapp.posts.Media;
+import com.halloapp.content.Media;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.TailInputStream;
 

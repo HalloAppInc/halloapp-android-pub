@@ -11,7 +11,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.Log;
 
 import java.util.Calendar;
@@ -21,7 +21,7 @@ public class DailyWorker extends Worker {
 
     private static final String DAILY_WORKER_ID = "daily-worker";
 
-    public static void schedule(@NonNull Context context) {
+    static void schedule(@NonNull Context context) {
         Calendar currentDate = Calendar.getInstance();
         Calendar dueDate = Calendar.getInstance();
         // Set Execution around 04:00:00 AM
@@ -46,7 +46,7 @@ public class DailyWorker extends Worker {
     @Override
     public @NonNull Result doWork() {
         Log.i("DailyWorker.doWork");
-        PostsDb.getInstance(getApplicationContext()).cleanup();
+        ContentDb.getInstance(getApplicationContext()).cleanup();
         FileStore.getInstance(getApplicationContext()).cleanup();
         ContactsSync.getInstance(getApplicationContext()).startContactsSync(true);
         schedule(getApplicationContext());

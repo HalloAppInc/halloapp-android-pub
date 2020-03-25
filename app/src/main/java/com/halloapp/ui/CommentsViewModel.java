@@ -17,10 +17,10 @@ import androidx.paging.PagedList;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.CommentsDataSource;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.Comment;
+import com.halloapp.content.CommentsDataSource;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.util.Preconditions;
 
 class CommentsViewModel extends AndroidViewModel {
@@ -30,7 +30,7 @@ class CommentsViewModel extends AndroidViewModel {
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final UserId postSenderUserId;
     private final String postId;
 
@@ -38,7 +38,7 @@ class CommentsViewModel extends AndroidViewModel {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final PostsDb.Observer postsObserver = new PostsDb.DefaultObserver() {
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
         public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
@@ -50,7 +50,7 @@ class CommentsViewModel extends AndroidViewModel {
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (CommentsViewModel.this.postSenderUserId.equals(comment.postSenderUserId) && CommentsViewModel.this.postId.equals(comment.postId)) {
-                postsDb.setCommentsSeen(comment.postSenderUserId, comment.postId);
+                contentDb.setCommentsSeen(comment.postSenderUserId, comment.postId);
                 invalidateDataSource();
             }
         }
@@ -70,7 +70,7 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostsCleanup() {
+        public void onFeedCleanup() {
             invalidateDataSource();
         }
 
@@ -85,16 +85,16 @@ class CommentsViewModel extends AndroidViewModel {
         this.postSenderUserId = postSenderUserId;
         this.postId = postId;
 
-        postsDb = PostsDb.getInstance(application);
-        postsDb.addObserver(postsObserver);
+        contentDb = ContentDb.getInstance(application);
+        contentDb.addObserver(contentObserver);
 
-        final CommentsDataSource.Factory dataSourceFactory = new CommentsDataSource.Factory(postsDb, postSenderUserId, postId);
+        final CommentsDataSource.Factory dataSourceFactory = new CommentsDataSource.Factory(contentDb, postSenderUserId, postId);
         commentList = new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
 
     @Override
     protected void onCleared() {
-        postsDb.removeObserver(postsObserver);
+        contentDb.removeObserver(contentObserver);
     }
 
     void loadReplyUser(@NonNull UserId userId) {
@@ -156,7 +156,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         protected Post doInBackground(Void... voids) {
-            return PostsDb.getInstance(application).getPost(userId, postId);
+            return ContentDb.getInstance(application).getPost(userId, postId);
         }
 
         @Override

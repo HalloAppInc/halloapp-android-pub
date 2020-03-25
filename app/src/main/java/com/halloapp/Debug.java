@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -29,7 +29,7 @@ public class Debug {
 
     private static final String DEBUG_MENU_RESET_REGISTRATION = "Reset registration";
     private static final String DEBUG_MENU_LOGOUT = "Logout";
-    private static final String DEBUG_MENU_DELETE_POSTS_DB = "Delete posts DB";
+    private static final String DEBUG_MENU_DELETE_CONTENT_DB = "Delete posts DB";
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
     private static final String DEBUG_MENU_SYNC_CONTACTS = "Sync contacts";
     private static final String DEBUG_MENU_SET_COMMENTS_SEEN = "Set comments seen";
@@ -44,7 +44,7 @@ public class Debug {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_RESET_REGISTRATION);
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
-        menu.getMenu().add(DEBUG_MENU_DELETE_POSTS_DB);
+        menu.getMenu().add(DEBUG_MENU_DELETE_CONTENT_DB);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
         menu.getMenu().add(DEBUG_MENU_SYNC_CONTACTS);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_SEEN);
@@ -64,8 +64,8 @@ public class Debug {
                     Connection.getInstance().disconnect();
                     break;
                 }
-                case DEBUG_MENU_DELETE_POSTS_DB: {
-                    new DeletePostsDbTask(activity.getApplication()).execute();
+                case DEBUG_MENU_DELETE_CONTENT_DB: {
+                    new DeleteContentDbTask(activity.getApplication()).execute();
                     break;
                 }
                 case DEBUG_MENU_DELETE_CONTACTS_DB: {
@@ -77,10 +77,10 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {
-                    PostsDb.getInstance(activity).setCommentsSeen(true);
+                    ContentDb.getInstance(activity).setCommentsSeen(true);
                 }
                 case DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN: {
-                    PostsDb.getInstance(activity).setIncomingPostsSeen(Post.POST_SEEN_NO);
+                    ContentDb.getInstance(activity).setIncomingPostsSeen(Post.SEEN_NO);
                 }
                 case DEBUG_MENU_CLEANUP_POSTS: {
                     new CleanupPostsTask(activity.getApplication()).execute();
@@ -132,7 +132,7 @@ public class Debug {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
-                    PostsDb.getInstance(activity).setCommentsSeen(userId, postId, false);
+                    ContentDb.getInstance(activity).setCommentsSeen(userId, postId, false);
                     break;
                 }
             }
@@ -165,17 +165,17 @@ public class Debug {
         }
     }
 
-    static class DeletePostsDbTask extends AsyncTask<Void, Void, Void> {
+    static class DeleteContentDbTask extends AsyncTask<Void, Void, Void> {
 
         private final Application application;
 
-        DeletePostsDbTask(@NonNull Application application) {
+        DeleteContentDbTask(@NonNull Application application) {
             this.application = application;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            PostsDb.getInstance(application).deleteDb();
+            ContentDb.getInstance(application).deleteDb();
             FileUtils.deleteRecursive(FileStore.getInstance(application).getMediaDir());
             FileUtils.deleteRecursive(FileStore.getInstance(application).getTmpDir());
             restart(application);
@@ -209,7 +209,7 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            PostsDb.getInstance(application).cleanup();
+            ContentDb.getInstance(application).cleanup();
             FileStore.getInstance(application).cleanup();
             return null;
         }

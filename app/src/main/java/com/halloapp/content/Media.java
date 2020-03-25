@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import androidx.annotation.IntDef;
 

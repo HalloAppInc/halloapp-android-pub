@@ -14,8 +14,8 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
+import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.posts.Media;
 import com.halloapp.util.Rtl;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.PostImageView;

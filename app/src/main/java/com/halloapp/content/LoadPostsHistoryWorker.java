@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import android.content.Context;
 
@@ -42,7 +42,7 @@ public class LoadPostsHistoryWorker extends Worker {
                 Log.e("LoadPostsHistoryWorker: failed retrieve feed history");
                 return ListenableWorker.Result.failure();
             }
-            PostsDb.getInstance(getApplicationContext()).addHistory(Preconditions.checkNotNull(result.first), Preconditions.checkNotNull(result.second));
+            ContentDb.getInstance(getApplicationContext()).addHistory(Preconditions.checkNotNull(result.first), Preconditions.checkNotNull(result.second));
             return ListenableWorker.Result.success();
         } catch (ExecutionException | InterruptedException e) {
             Log.e("LoadPostsHistoryWorker: failed retrieve feed history", e);

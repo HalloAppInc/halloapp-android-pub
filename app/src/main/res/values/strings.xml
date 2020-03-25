@@ -151,4 +151,5 @@
     <string name="pick_media">Pick media</string>
     <string name="video">Video</string>
     <string name="photo">Photo</string>
+    <string name="new_messages">New messages</string>
 </resources>

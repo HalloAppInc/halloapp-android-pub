@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -11,34 +11,34 @@ import java.util.List;
 
 public class CommentsDataSource extends PositionalDataSource<Comment> {
 
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final UserId postSenderUserId;
     private final String postId;
 
     public static class Factory extends DataSource.Factory<Integer, Comment> {
 
-        private final PostsDb postsDb;
+        private final ContentDb contentDb;
         private final UserId postSenderUserId;
         private final String postId;
 
         private final MutableLiveData<CommentsDataSource> sourceLiveData = new MutableLiveData<>();
 
-        public Factory(@NonNull PostsDb postsDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
-            this.postsDb = postsDb;
+        public Factory(@NonNull ContentDb contentDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
+            this.contentDb = contentDb;
             this.postSenderUserId = postSenderUserId;
             this.postId = postId;
         }
 
         @Override
         public @NonNull DataSource<Integer, Comment> create() {
-            CommentsDataSource latestSource = new CommentsDataSource(postsDb, postSenderUserId, postId);
+            CommentsDataSource latestSource = new CommentsDataSource(contentDb, postSenderUserId, postId);
             sourceLiveData.postValue(latestSource);
             return latestSource;
         }
     }
 
-    private CommentsDataSource(@NonNull PostsDb postsDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
-        this.postsDb = postsDb;
+    private CommentsDataSource(@NonNull ContentDb contentDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
+        this.contentDb = contentDb;
         this.postSenderUserId = postSenderUserId;
         this.postId = postId;
 
@@ -46,12 +46,12 @@ public class CommentsDataSource extends PositionalDataSource<Comment> {
 
     @Override
     public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull LoadInitialCallback<Comment> callback) {
-        final List<Comment> comments = postsDb.getComments(postSenderUserId, postId, params.requestedStartPosition, params.requestedLoadSize);
+        final List<Comment> comments = contentDb.getComments(postSenderUserId, postId, params.requestedStartPosition, params.requestedLoadSize);
         callback.onResult(comments, params.requestedStartPosition);
     }
 
     @Override
     public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull LoadRangeCallback<Comment> callback) {
-        callback.onResult(postsDb.getComments(postSenderUserId, postId, params.startPosition, params.loadSize));
+        callback.onResult(contentDb.getComments(postSenderUserId, postId, params.startPosition, params.loadSize));
     }
 }

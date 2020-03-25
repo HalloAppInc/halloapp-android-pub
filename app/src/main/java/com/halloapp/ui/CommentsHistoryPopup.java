@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
@@ -26,8 +27,8 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.PostThumbnailLoader;
+import com.halloapp.content.Comment;
+import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
@@ -40,8 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
 public class CommentsHistoryPopup {
 

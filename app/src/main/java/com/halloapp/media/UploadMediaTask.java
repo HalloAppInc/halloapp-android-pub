@@ -9,9 +9,9 @@ import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
@@ -22,43 +22,43 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class UploadPostTask extends AsyncTask<Void, Void, Void> {
+public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
-    private final Post post;
+    private final ContentItem contentItem;
 
     private final FileStore fileStore;
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final Connection connection;
 
-    public UploadPostTask(@NonNull Post post, @NonNull FileStore fileStore, @NonNull PostsDb postsDb, @NonNull Connection connection) {
-        this.post = post;
+    public UploadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
+        this.contentItem = contentItem;
+        this.contentDb = contentDb;
         this.fileStore = fileStore;
-        this.postsDb = postsDb;
         this.connection = connection;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.i("UploadPostTask " + post);
-        for (Media media : post.media) {
+        Log.i("UploadMediaTask " + contentItem);
+        for (Media media : contentItem.media) {
             if (media.transferred) {
                 continue;
             }
             try {
                 prepareMedia(media);
             } catch (IOException | MediaConversionException e) {
-                Log.e("UploadPostTask", e);
+                Log.e("UploadMediaTask", e);
                 return null;
             }
             final MediaUploadIq.Urls urls;
             try {
                 urls = connection.requestMediaUpload().get();
             } catch (ExecutionException | InterruptedException e) {
-                Log.e("UploadPostTask", e);
+                Log.e("UploadMediaTask", e);
                 return null;
             }
             if (urls == null) {
-                Log.e("UploadPostTask: failed to get urls");
+                Log.e("UploadMediaTask: failed to get urls");
                 return null;
             }
 
@@ -67,13 +67,13 @@ public class UploadPostTask extends AsyncTask<Void, Void, Void> {
                 media.sha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
                 media.url = urls.getUrl;
                 media.transferred = true;
-                postsDb.setMediaTransferred(post, media);
+                contentItem.setMediaTransferred(media, contentDb);
             } catch (IOException e) {
-                Log.e("UploadPostTask", e);
+                Log.e("UploadMediaTask", e);
                 return null;
             }
         }
-        connection.sendPost(post);
+        contentItem.send(connection);
         return null;
     }
 

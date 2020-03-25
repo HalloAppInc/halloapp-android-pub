@@ -15,9 +15,9 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.PostDetailsActivity;
 import com.halloapp.util.TimeFormatter;
@@ -55,7 +55,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         final View.OnClickListener commentsClickListener = v -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
         };
@@ -64,14 +64,14 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         seenIndicator.setOnClickListener(v1 -> {
             final Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
-            intent.putExtra(PostDetailsActivity.EXTRA_POST_ID, post.postId);
+            intent.putExtra(PostDetailsActivity.EXTRA_POST_ID, post.id);
             parent.startActivity(intent);
         });
 
         itemView.findViewById(R.id.comment_reply).setOnClickListener(v -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
             intent.putExtra(CommentsActivity.EXTRA_REPLY_USER_ID, post.firstComment.commentSenderUserId.rawId());
             intent.putExtra(CommentsActivity.EXTRA_REPLY_COMMENT_ID, post.firstComment.commentId);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, true);
@@ -155,7 +155,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getString(R.string.retract_post_confirmation));
         builder.setCancelable(true);
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(context).retractPost(post));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(context).retractPost(post));
         builder.setNegativeButton(R.string.no, null);
         builder.show();
     }

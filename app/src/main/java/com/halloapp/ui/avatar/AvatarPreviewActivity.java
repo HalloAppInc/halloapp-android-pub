@@ -35,7 +35,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
-import com.halloapp.posts.Media;
+import com.halloapp.content.Media;
 import com.halloapp.ui.VideoPlaybackActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;

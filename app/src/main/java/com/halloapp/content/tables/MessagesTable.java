@@ -1,4 +1,4 @@
-package com.halloapp.posts.tables;
+package com.halloapp.content.tables;
 
 import android.provider.BaseColumns;
 
@@ -9,7 +9,6 @@ public final class MessagesTable implements BaseColumns {
     public static final String TABLE_NAME = "messages";
 
     public static final String INDEX_MESSAGE_KEY = "message_key";
-    public static final String INDEX_TIMESTAMP = "timestamp";
 
     public static final String TRIGGER_DELETE = "on_message_delete";
 

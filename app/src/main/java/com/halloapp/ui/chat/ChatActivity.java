@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,9 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Message;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.posts.ChatMessage;
-import com.halloapp.posts.Post;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -58,6 +59,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private DrawDelegateView drawDelegateView;
     private final Stack<View> recycledMediaViews = new Stack<>();
+
+    private boolean scrollUpOnDataLoaded;
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
@@ -105,7 +108,34 @@ public class ChatActivity extends AppCompatActivity {
         chatView.setAdapter(adapter);
 
         final ChatViewModel viewModel = new ViewModelProvider(this, new ChatViewModel.Factory(getApplication(), chatId)).get(ChatViewModel.class);
-        viewModel.messageList.observe(this, adapter::submitList);
+
+        final View newMessagesView = findViewById(R.id.new_messages);
+        newMessagesView.setOnClickListener(v -> {
+            scrollUpOnDataLoaded = true;
+            viewModel.reloadPostsAt(Long.MAX_VALUE);
+        });
+
+        viewModel.messageList.observe(this, messages -> adapter.submitList(messages, () -> {
+            if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
+                scrollUpOnDataLoaded = false;
+                chatView.scrollToPosition(0);
+                newMessagesView.setVisibility(View.GONE);
+            } else if (viewModel.checkPendingIncoming()) {
+                final View childView = layoutManager.getChildAt(0);
+                final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
+                if (scrolled) {
+                    if (newMessagesView.getVisibility() != View.VISIBLE) {
+                        newMessagesView.setVisibility(View.VISIBLE);
+                        newMessagesView.setTranslationY(getResources().getDimension(R.dimen.details_media_list_height));
+                        newMessagesView.animate().setDuration(200).translationY(0).start();
+                    }
+                } else {
+                    scrollUpOnDataLoaded = false;
+                    chatView.scrollToPosition(0);
+                    newMessagesView.setVisibility(View.GONE);
+                }
+            }
+        }));
 
         viewModel.contact.getLiveData().observe(this, contact -> setTitle(contact.getDisplayName()));
     }
@@ -125,38 +155,45 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
-        ChatMessage message = new ChatMessage(0,
+        final String messageText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+        if (TextUtils.isEmpty(messageText)) {
+            Log.w("ChatActivity: cannot send empty message");
+            return;
+        }
+        editText.setText(null);
+        final Message message = new Message(0,
                 chatId,
                 UserId.ME,
                 RandomId.create(),
                 System.currentTimeMillis(),
                 false,
-                Post.POST_SEEN_YES,
-                postText);
-        Connection.getInstance().sendMessage(message);
+                Message.SEEN_YES,
+                messageText);
+        message.addToStorage(ContentDb.getInstance(this));
     }
 
     private void pickMedia() {
+        // TODO (ds): uncomment when implemented
         final Intent intent = new Intent(this, MediaPickerActivity.class);
-        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
+        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_SEND);
+        intent.putExtra(MediaPickerActivity.EXTRA_CHAT_ID, chatId);
         startActivity(intent);
     }
 
-    private static final DiffUtil.ItemCallback<ChatMessage> DIFF_CALLBACK = new DiffUtil.ItemCallback<ChatMessage>() {
+    private static final DiffUtil.ItemCallback<Message> DIFF_CALLBACK = new DiffUtil.ItemCallback<Message>() {
 
         @Override
-        public boolean areItemsTheSame(ChatMessage oldItem, ChatMessage newItem) {
+        public boolean areItemsTheSame(Message oldItem, Message newItem) {
             return oldItem.rowId == newItem.rowId;
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull ChatMessage oldItem, @NonNull ChatMessage newItem) {
+        public boolean areContentsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {
             return oldItem.equals(newItem);
         }
     };
 
-    private class ChatAdapter extends PagedListAdapter<ChatMessage, ChatMessageViewHolder> {
+    private class ChatAdapter extends PagedListAdapter<Message, MessageViewHolder> {
 
         static final int MESSAGE_TYPE_TEXT = 0x00;
         static final int MESSAGE_TYPE_MEDIA = 0x01;
@@ -178,13 +215,14 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            final ChatMessage message = Preconditions.checkNotNull(getItem(position));
+            final Message message = Preconditions.checkNotNull(getItem(position));
             return (message.isRetracted() ? MESSAGE_TYPE_RETRACTED : (message.media.isEmpty() ? MESSAGE_TYPE_TEXT : MESSAGE_TYPE_MEDIA)) |
                     (message.isOutgoing() ? MESSAGE_DIRECTION_OUTGOING : MESSAGE_DIRECTION_INCOMING);
         }
 
         @Override
-        public @NonNull ChatMessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public @NonNull
+        MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             final @LayoutRes int layoutRes;
             switch (viewType & MESSAGE_DIRECTION_MASK) {
                 case MESSAGE_DIRECTION_INCOMING: {
@@ -221,16 +259,16 @@ public class ChatActivity extends AppCompatActivity {
             final ViewGroup contentHolder = layout.findViewById(R.id.content);
             LayoutInflater.from(parent.getContext()).inflate(contentLayoutRes, contentHolder, true);
 
-            return new ChatMessageViewHolder(layout, chatMessageViewHolderParent);
+            return new MessageViewHolder(layout, messageViewHolderParent);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ChatMessageViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
             holder.bindTo(Preconditions.checkNotNull(getItem(position)));
         }
     }
 
-    private final ChatMessageViewHolder.ChatMessageViewHolderParent chatMessageViewHolderParent = new ChatMessageViewHolder.ChatMessageViewHolderParent() {
+    private final MessageViewHolder.MessageViewHolderParent messageViewHolderParent = new MessageViewHolder.MessageViewHolderParent() {
 
         @Override
         public AvatarLoader getAvatarLoader() {

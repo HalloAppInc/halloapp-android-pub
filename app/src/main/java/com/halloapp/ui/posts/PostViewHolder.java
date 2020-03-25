@@ -12,9 +12,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
+import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -95,16 +95,16 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         final SeenDetectorLayout postContentLayout = itemView.findViewById(R.id.post_content);
         postContentLayout.setOnSeenListener(() -> {
-            if (post.seen == Post.POST_SEEN_NO && post.isIncoming()) {
-                post.seen = Post.POST_SEEN_YES_PENDING;
-                PostsDb.getInstance(itemView.getContext()).setIncomingPostSeen(post.senderUserId, post.postId);
+            if (post.seen == Post.SEEN_NO && post.isIncoming()) {
+                post.seen = Post.SEEN_YES_PENDING;
+                ContentDb.getInstance(itemView.getContext()).setIncomingPostSeen(post.senderUserId, post.id);
             }
         });
 
         textView.setOnReadMoreListener((view, limit) -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.postId);
+            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
             intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
             parent.startActivity(intent);

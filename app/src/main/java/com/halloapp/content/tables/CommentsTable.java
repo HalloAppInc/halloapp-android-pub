@@ -1,4 +1,4 @@
-package com.halloapp.posts.tables;
+package com.halloapp.content.tables;
 
 import android.provider.BaseColumns;
 

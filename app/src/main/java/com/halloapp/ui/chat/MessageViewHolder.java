@@ -8,32 +8,31 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.posts.ChatMessage;
-import com.halloapp.posts.Media;
-import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.content.Media;
+import com.halloapp.content.Message;
 import com.halloapp.ui.ContentViewHolderParent;
+import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Rtl;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
 
 import me.relex.circleindicator.CircleIndicator;
 
-class ChatMessageViewHolder extends ViewHolderWithLifecycle {
+class MessageViewHolder extends ViewHolderWithLifecycle {
 
     private final LimitingTextView textView;
     private final MediaViewPager mediaPagerView;
     private final CircleIndicator mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
 
-    private final ChatMessageViewHolderParent parent;
-    private ChatMessage message;
+    private final MessageViewHolderParent parent;
+    private Message message;
 
-    abstract static class ChatMessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
-
+    abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
     }
 
-    ChatMessageViewHolder(final @NonNull View itemView, @NonNull ChatMessageViewHolderParent parent) {
+    MessageViewHolder(@NonNull View itemView, @NonNull MessageViewHolderParent parent) {
         super(itemView);
 
         this.parent = parent;
@@ -72,7 +71,7 @@ class ChatMessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    void bindTo(final @NonNull ChatMessage message) {
+    void bindTo(@NonNull Message message) {
         this.message = message;
         //textView.setText(message.timestamp + " " + message.rowId + " " + message.text);
         if (message.media.isEmpty()) {

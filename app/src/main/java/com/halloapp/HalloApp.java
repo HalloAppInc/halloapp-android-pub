@@ -18,7 +18,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -42,7 +42,7 @@ public class HalloApp extends Application {
         }
 
         Connection.getInstance().setObserver(new ConnectionObserver(this));
-        PostsDb.getInstance(this).addObserver(MainPostsObserver.getInstance(this));
+        ContentDb.getInstance(this).addObserver(MainContentDbObserver.getInstance(this));
         ContactsDb.getInstance(this).addObserver(new ContactsDb.Observer() {
 
             @Override

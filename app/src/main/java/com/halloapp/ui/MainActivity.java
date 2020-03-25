@@ -141,12 +141,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private void onFabActionSelected(@IdRes int id) {
         switch (id) {
             case R.id.add_post_text: {
-                startActivity(new Intent(this, PostComposerActivity.class));
+                startActivity(new Intent(this, ContentComposerActivity.class));
                 break;
             }
             case R.id.add_post_gallery: {
                 final Intent intent = new Intent(this, MediaPickerActivity.class);
-                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
+                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_SEND);
                 startActivity(intent);
                 break;
             }
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         switch (request) {
             case REQUEST_CODE_CAPTURE_IMAGE: {
                 if (result == Activity.RESULT_OK) {
-                    final Intent intent = new Intent(this, PostComposerActivity.class);
+                    final Intent intent = new Intent(this, ContentComposerActivity.class);
                     intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
                             new ArrayList<>(Collections.singleton(MediaUtils.getImageCaptureUri(this))));
                     startActivity(intent);
@@ -279,14 +279,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (Intent.ACTION_SEND.equals(intent.getAction())) {
             final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             if (uri != null) {
-                final Intent composerIntent = new Intent(this, PostComposerActivity.class);
+                final Intent composerIntent = new Intent(this, ContentComposerActivity.class);
                 composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
                 startActivity(composerIntent);
             }
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
             final ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             if (uris != null && !uris.isEmpty()) {
-                final Intent composerIntent = new Intent(this, PostComposerActivity.class);
+                final Intent composerIntent = new Intent(this, ContentComposerActivity.class);
                 composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
                 startActivity(composerIntent);
             }

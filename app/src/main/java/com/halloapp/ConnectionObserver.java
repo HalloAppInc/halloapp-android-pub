@@ -7,11 +7,11 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.ChatMessage;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
-import com.halloapp.posts.TransferPendingItemsTask;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Message;
+import com.halloapp.content.Post;
+import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -64,39 +64,37 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onOutgoingPostSent(@NonNull String postId) {
-        PostsDb.getInstance(context).setPostTransferred(UserId.ME, postId);
+        ContentDb.getInstance(context).setPostTransferred(UserId.ME, postId);
     }
 
     @Override
     public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comments, @NonNull String ackId) {
-        PostsDb.getInstance(context).addFeedItems(posts, comments, () -> Connection.getInstance().sendAck(ackId));
+        ContentDb.getInstance(context).addFeedItems(posts, comments, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override
     public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {
-        PostsDb.getInstance(context).setOutgoingPostSeen(seenByUserId, postId, timestamp, () -> Connection.getInstance().sendAck(ackId));
+        ContentDb.getInstance(context).setOutgoingPostSeen(seenByUserId, postId, timestamp, () -> Connection.getInstance().sendAck(ackId));
     }
 
     @Override
     public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
-        PostsDb.getInstance(context).setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
+        ContentDb.getInstance(context).setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
     }
 
     @Override
     public void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
-        PostsDb.getInstance(context).setSeenReceiptSent(senderUserId, postId);
+        ContentDb.getInstance(context).setSeenReceiptSent(senderUserId, postId);
     }
 
     @Override
     public void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {
-        // TODO (ds): implement
-        Log.i("ConnectionObserver.onOutgoingMessageSent chatId=" + chatId + " messageId=" + messageId);
+        ContentDb.getInstance(context).setMessageTransferred(chatId, UserId.ME, messageId);
     }
 
     @Override
-    public void onIncomingMessageReceived(@NonNull ChatMessage message) {
-        // TODO (ds): implement
-        Log.i("ConnectionObserver.onIncomingMessageReceived chatId=" + message.chatId + " messageId=" + message.messageId);
+    public void onIncomingMessageReceived(@NonNull Message message) {
+        ContentDb.getInstance(context).addMessage(message, () -> Connection.getInstance().sendAck(message.id));
     }
 
     @Override

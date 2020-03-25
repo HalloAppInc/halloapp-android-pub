@@ -28,8 +28,8 @@ import java.util.List;
 
 public class PublishedEntry {
 
-    static final String ELEMENT = "entry";
-    static final String NAMESPACE = "http://halloapp.com/published-entry";
+    private static final String ELEMENT = "entry";
+    private static final String NAMESPACE = "http://halloapp.com/published-entry";
 
     private static final String ELEMENT_FEED_POST = "feedpost";
     private static final String ELEMENT_COMMENT = "comment";
@@ -114,29 +114,29 @@ public class PublishedEntry {
         }
     }
 
-    static @com.halloapp.posts.Media.MediaType int getMediaType(@PublishedEntry.Media.MediaType String protocolMediaType) {
+    static @com.halloapp.content.Media.MediaType int getMediaType(@PublishedEntry.Media.MediaType String protocolMediaType) {
         switch (protocolMediaType) {
             case PublishedEntry.Media.MEDIA_TYPE_IMAGE: {
-                return com.halloapp.posts.Media.MEDIA_TYPE_IMAGE;
+                return com.halloapp.content.Media.MEDIA_TYPE_IMAGE;
             }
             case PublishedEntry.Media.MEDIA_TYPE_VIDEO: {
-                return com.halloapp.posts.Media.MEDIA_TYPE_VIDEO;
+                return com.halloapp.content.Media.MEDIA_TYPE_VIDEO;
             }
             default: {
-                return com.halloapp.posts.Media.MEDIA_TYPE_UNKNOWN;
+                return com.halloapp.content.Media.MEDIA_TYPE_UNKNOWN;
             }
         }
     }
 
-    static @PublishedEntry.Media.MediaType String getMediaType(@com.halloapp.posts.Media.MediaType int mediaType) {
+    static @PublishedEntry.Media.MediaType String getMediaType(@com.halloapp.content.Media.MediaType int mediaType) {
         switch (mediaType) {
-            case com.halloapp.posts.Media.MEDIA_TYPE_IMAGE: {
+            case com.halloapp.content.Media.MEDIA_TYPE_IMAGE: {
                 return PublishedEntry.Media.MEDIA_TYPE_IMAGE;
             }
-            case com.halloapp.posts.Media.MEDIA_TYPE_VIDEO: {
+            case com.halloapp.content.Media.MEDIA_TYPE_VIDEO: {
                 return PublishedEntry.Media.MEDIA_TYPE_VIDEO;
             }
-            case com.halloapp.posts.Media.MEDIA_TYPE_UNKNOWN:
+            case com.halloapp.content.Media.MEDIA_TYPE_UNKNOWN:
             default: {
                 throw new IllegalArgumentException();
             }

@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
@@ -26,12 +26,12 @@ public class PostDetailsViewModel extends AndroidViewModel {
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final ComputableLiveData<List<Contact>> contactsList;
 
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final ContactsDb contactsDb;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final PostsDb.Observer postsObserver = new PostsDb.DefaultObserver() {
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
@@ -39,7 +39,7 @@ public class PostDetailsViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostsCleanup() {
+        public void onFeedCleanup() {
             invalidateContacts();
         }
 
@@ -63,8 +63,8 @@ public class PostDetailsViewModel extends AndroidViewModel {
     private PostDetailsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
 
-        postsDb = PostsDb.getInstance(application);
-        postsDb.addObserver(postsObserver);
+        contentDb = ContentDb.getInstance(application);
+        contentDb.addObserver(contentObserver);
 
         contactsDb = ContactsDb.getInstance(application);
         contactsDb.addObserver(contactsObserver);
@@ -73,7 +73,7 @@ public class PostDetailsViewModel extends AndroidViewModel {
 
             @Override
             protected List<Contact> compute() {
-                final List<UserId> userIds = postsDb.getSeenBy(postId);
+                final List<UserId> userIds = contentDb.getSeenBy(postId);
                 final List<Contact> contacts = new ArrayList<>(userIds.size());
                 for (UserId userId : userIds) {
                     Contact contact = contactsDb.getContact(userId);
@@ -89,7 +89,7 @@ public class PostDetailsViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        postsDb.removeObserver(postsObserver);
+        contentDb.removeObserver(contentObserver);
         contactsDb.removeObserver(contactsObserver);
     }
 
@@ -111,7 +111,7 @@ public class PostDetailsViewModel extends AndroidViewModel {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            post.postValue(PostsDb.getInstance(application).getPost(UserId.ME, postId));
+            post.postValue(ContentDb.getInstance(application).getPost(UserId.ME, postId));
             return null;
         }
     }

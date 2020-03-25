@@ -15,23 +15,53 @@ import androidx.paging.PagedList;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.ChatMessage;
-import com.halloapp.posts.MessagesDataSource;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Message;
+import com.halloapp.content.MessagesDataSource;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class ChatViewModel extends AndroidViewModel {
 
-    final LiveData<PagedList<ChatMessage>> messageList;
+    private final String chatId;
+
+    final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
 
-    private final PostsDb postsDb;
-    private final String chatId;
+    private final ContentDb contentDb;
+    private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
+    private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final PostsDb.Observer postsObserver = new PostsDb.DefaultObserver() {
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onMessageAdded(@NonNull Message message) {
+            if (ChatViewModel.this.chatId.equals(message.chatId)) {
+                if (message.isOutgoing()) {
+                    pendingOutgoing.set(true);
+                    mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
+                } else {
+                    pendingIncoming.set(true);
+                    invalidateMessages();
+                }
+            }
+        }
+
+        public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+            if (ChatViewModel.this.chatId.equals(chatId)) {
+                invalidateMessages();
+            }
+        }
+
+        public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+            if (ChatViewModel.this.chatId.equals(chatId)) {
+                invalidateMessages();
+            }
+        }
 
         @Override
         public void onDbCreated() {
@@ -47,10 +77,10 @@ public class ChatViewModel extends AndroidViewModel {
 
         this.chatId = chatId;
 
-        postsDb = PostsDb.getInstance(application);
-        postsDb.addObserver(postsObserver);
+        contentDb = ContentDb.getInstance(application);
+        contentDb.addObserver(contentObserver);
 
-        final MessagesDataSource.Factory dataSourceFactory = new MessagesDataSource.Factory(postsDb, chatId);
+        final MessagesDataSource.Factory dataSourceFactory = new MessagesDataSource.Factory(contentDb, chatId);
         messageList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
         contact = new ComputableLiveData<Contact>() {
@@ -64,8 +94,24 @@ public class ChatViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        postsDb.removeObserver(postsObserver);
+        contentDb.removeObserver(contentObserver);
     }
+
+    boolean checkPendingOutgoing() {
+        return pendingOutgoing.compareAndSet(true, false);
+    }
+
+    boolean checkPendingIncoming() {
+        return pendingIncoming.compareAndSet(true, false);
+    }
+
+    void reloadPostsAt(long timestamp) {
+        final PagedList pagedList = messageList.getValue();
+        if (pagedList != null) {
+            ((MessagesDataSource)pagedList.getDataSource()).reloadAt(timestamp);
+        }
+    }
+
 
     public static class Factory implements ViewModelProvider.Factory {
 

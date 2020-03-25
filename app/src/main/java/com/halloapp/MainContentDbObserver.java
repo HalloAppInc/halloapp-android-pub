@@ -5,43 +5,44 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.UserId;
-import com.halloapp.media.DownloadPostTask;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.LoadPostsHistoryWorker;
+import com.halloapp.content.Message;
+import com.halloapp.content.Post;
+import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
-import com.halloapp.media.UploadPostTask;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.LoadPostsHistoryWorker;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.media.UploadMediaTask;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
 
-public class MainPostsObserver implements PostsDb.Observer {
+public class MainContentDbObserver implements ContentDb.Observer {
 
-    private static MainPostsObserver instance;
+    private static MainContentDbObserver instance;
 
     private final Context context;
     private final Connection connection;
     private final FileStore fileStore;
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final Notifications notifications;
 
-    public static MainPostsObserver getInstance(@NonNull Context context) {
+    public static MainContentDbObserver getInstance(@NonNull Context context) {
         if (instance == null) {
-            synchronized(MainPostsObserver.class) {
+            synchronized(MainContentDbObserver.class) {
                 if (instance == null) {
-                    instance = new MainPostsObserver(context);
+                    instance = new MainContentDbObserver(context);
                 }
             }
         }
         return instance;
     }
 
-    private MainPostsObserver(@NonNull Context context) {
+    private MainContentDbObserver(@NonNull Context context) {
         this.context = context.getApplicationContext();
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance(context);
-        this.postsDb = PostsDb.getInstance(context);
+        this.contentDb = ContentDb.getInstance(context);
         this.notifications = Notifications.getInstance(context);
     }
 
@@ -51,11 +52,11 @@ public class MainPostsObserver implements PostsDb.Observer {
             if (post.media.isEmpty()) {
                 connection.sendPost(post);
             } else {
-                new UploadPostTask(post, fileStore, postsDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new UploadMediaTask(post, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
             if (!post.media.isEmpty()) {
-                new DownloadPostTask(post, fileStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
             notifications.update();
         }
@@ -108,16 +109,45 @@ public class MainPostsObserver implements PostsDb.Observer {
     }
 
     @Override
-    public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+    public void onMessageAdded(@NonNull Message message) {
+        if (message.isOutgoing()) {
+            if (message.media.isEmpty()) {
+                connection.sendMessage(message);
+            } else {
+                new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+            }
+        } else { // if (message.isIncoming())
+            if (!message.media.isEmpty()) {
+                new DownloadMediaTask(message, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+            }
+            notifications.update();
+        }
+    }
+
+    @Override
+    public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        if (senderUserId.isMe()) {
+            // TODO (ds): implement
+            //connection.retractMessage(chatId, messageId);
+        }
+    }
+
+    @Override
+    public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+
+    }
+
+    @Override
+    public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         for (Post post : historyPosts) {
             if (!post.media.isEmpty()) {
-                new DownloadPostTask(post, fileStore, postsDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         }
     }
 
     @Override
-    public void onPostsCleanup() {
+    public void onFeedCleanup() {
     }
 
     @Override

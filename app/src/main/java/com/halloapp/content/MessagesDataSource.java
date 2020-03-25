@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -9,40 +9,40 @@ import com.halloapp.util.Log;
 
 import java.util.List;
 
-public class MessagesDataSource extends ItemKeyedDataSource<Long, ChatMessage> {
+public class MessagesDataSource extends ItemKeyedDataSource<Long, Message> {
 
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final String chatId;
 
     private Long keyTimestamp;
 
-    public static class Factory extends DataSource.Factory<Long, ChatMessage> {
+    public static class Factory extends DataSource.Factory<Long, Message> {
 
-        private final PostsDb postsDb;
+        private final ContentDb contentDb;
         private final String chatId;
 
         private final MutableLiveData<MessagesDataSource> sourceLiveData = new MutableLiveData<>();
 
-        public Factory(@NonNull PostsDb postsDb, @NonNull String chatId) {
-            this.postsDb = postsDb;
+        public Factory(@NonNull ContentDb contentDb, @NonNull String chatId) {
+            this.contentDb = contentDb;
             this.chatId = chatId;
         }
 
         @Override
-        public @NonNull DataSource<Long, ChatMessage> create() {
-            final MessagesDataSource latestSource = new MessagesDataSource(postsDb, chatId);
+        public @NonNull DataSource<Long, Message> create() {
+            final MessagesDataSource latestSource = new MessagesDataSource(contentDb, chatId);
             sourceLiveData.postValue(latestSource);
             return latestSource;
         }
     }
 
-    private MessagesDataSource(@NonNull PostsDb postsDb, @NonNull String chatId) {
-        this.postsDb = postsDb;
+    private MessagesDataSource(@NonNull ContentDb contentDb, @NonNull String chatId) {
+        this.contentDb = contentDb;
         this.chatId = chatId;
     }
 
     @Override
-    public @NonNull Long getKey(@NonNull ChatMessage item) {
+    public @NonNull Long getKey(@NonNull Message item) {
         if (keyTimestamp  != null) {
             return keyTimestamp;
         }
@@ -57,14 +57,14 @@ public class MessagesDataSource extends ItemKeyedDataSource<Long, ChatMessage> {
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<ChatMessage> callback) {
-        final List<ChatMessage> messages;
+    public void loadInitial(@NonNull LoadInitialParams<Long> params, @NonNull LoadInitialCallback<Message> callback) {
+        final List<Message> messages;
         if (params.requestedInitialKey == null || params.requestedInitialKey == Long.MAX_VALUE) {
-            messages = postsDb.getMessages(chatId,null, params.requestedLoadSize, true);
+            messages = contentDb.getMessages(chatId,null, params.requestedLoadSize, true);
         } else {
             // load around params.requestedInitialKey, otherwise the view that represents this data may jump
-            messages = postsDb.getMessages(chatId, params.requestedInitialKey, params.requestedLoadSize / 2, false);
-            messages.addAll(postsDb.getMessages(chatId, params.requestedInitialKey + 1, params.requestedLoadSize / 2, true));
+            messages = contentDb.getMessages(chatId, params.requestedInitialKey, params.requestedLoadSize / 2, false);
+            messages.addAll(contentDb.getMessages(chatId, params.requestedInitialKey + 1, params.requestedLoadSize / 2, true));
 
         }
         Log.d("MessagesDataSource.loadInitial: requestedInitialKey=" + params.requestedInitialKey + " requestedLoadSize:" + params.requestedLoadSize + " got " + messages.size() +
@@ -73,14 +73,14 @@ public class MessagesDataSource extends ItemKeyedDataSource<Long, ChatMessage> {
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<ChatMessage> callback) {
+    public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Message> callback) {
         Log.d("MessagesDataSource.loadAfter: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(postsDb.getMessages(chatId, params.key, params.requestedLoadSize, true));
+        callback.onResult(contentDb.getMessages(chatId, params.key, params.requestedLoadSize, true));
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<ChatMessage> callback) {
+    public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<Message> callback) {
         Log.d("MessagesDataSource.loadBefore: key=" + params.key + " requestedLoadSize:" + params.requestedLoadSize);
-        callback.onResult(postsDb.getMessages(chatId, params.key, params.requestedLoadSize, false));
+        callback.onResult(contentDb.getMessages(chatId, params.key, params.requestedLoadSize, false));
     }
 }

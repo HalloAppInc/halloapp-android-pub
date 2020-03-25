@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.ui.PostComposerActivity;
+import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -47,12 +47,13 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MediaPickerActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
+    public static final String EXTRA_CHAT_ID = "chat_id";
 
-    public static final int PICKER_PURPOSE_POST = 1;
+    public static final int PICKER_PURPOSE_SEND = 1;
     public static final int PICKER_PURPOSE_AVATAR = 2;
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
-    private static final int REQUEST_CODE_COMPOSE_POST = 2;
+    private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
     private static final int REQUEST_CODE_PICK_MEDIA = 3;
     private static final int REQUEST_CODE_SET_AVATAR = 4;
 
@@ -62,7 +63,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
 
     private final Set<Long> selectedItems = new LinkedHashSet<>();
     private ActionMode actionMode;
-    private int pickerPurpose = PICKER_PURPOSE_POST;
+    private int pickerPurpose = PICKER_PURPOSE_SEND;
 
     private static final String KEY_SELECTED_MEDIA = "selected_media";
 
@@ -73,7 +74,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_POST);
+        pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
 
         final RecyclerView mediaView = findViewById(android.R.id.list);
         final View progressView = findViewById(R.id.progress);
@@ -177,7 +178,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                 }
                 break;
             }
-            case REQUEST_CODE_COMPOSE_POST:
+            case REQUEST_CODE_COMPOSE_CONTENT:
             case REQUEST_CODE_SET_AVATAR: {
                 if (result == RESULT_OK) {
                     overridePendingTransition(0, 0);
@@ -247,10 +248,11 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         }
     }
 
-    private void startPostComposer(@NonNull ArrayList<Uri> uris) {
-        final Intent intent = new Intent(this, PostComposerActivity.class);
+    private void startContentComposer(@NonNull ArrayList<Uri> uris) {
+        final Intent intent = new Intent(this, ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        startActivityForResult(intent, REQUEST_CODE_COMPOSE_POST);
+        intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, getIntent().getStringExtra(EXTRA_CHAT_ID));
+        startActivityForResult(intent, REQUEST_CODE_COMPOSE_CONTENT);
     }
 
     private void startAvatarPreview(@NonNull ArrayList<Uri> uris) {
@@ -260,8 +262,8 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     }
 
     private void handleSelection(@NonNull ArrayList<Uri> uris) {
-        if (pickerPurpose == PICKER_PURPOSE_POST) {
-            startPostComposer(uris);
+        if (pickerPurpose == PICKER_PURPOSE_SEND) {
+            startContentComposer(uris);
         } else if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
             startAvatarPreview(uris);
         }

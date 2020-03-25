@@ -3,12 +3,10 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.ChatMessage;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
+import com.halloapp.content.Media;
+import com.halloapp.content.Message;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
@@ -54,26 +52,26 @@ public class ChatMessageElement implements ExtensionElement {
         return xml;
     }
 
-    public static ChatMessageElement from(Message message) {
+    public static ChatMessageElement from(org.jivesoftware.smack.packet.Message message) {
         return message.getExtension(ELEMENT, NAMESPACE);
     }
 
-    ChatMessage getMessage(Jid from, String id) {
-        final ChatMessage chatMessage = new ChatMessage(0,
+    Message getMessage(Jid from, String id) {
+        final Message message = new Message(0,
                 from.getLocalpartOrNull().toString(),
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,
                 false,
-                Post.POST_SEEN_NO,
+                Message.SEEN_NO,
                 entry.text);
         for (PublishedEntry.Media entryMedia : entry.media) {
-            chatMessage.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
+            message.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                     entryMedia.encKey, entryMedia.sha256hash,
                     entryMedia.width, entryMedia.height));
         }
 
-        return chatMessage;
+        return message;
     }
 
     public static class Provider extends ExtensionElementProvider<ChatMessageElement> {
@@ -90,6 +88,5 @@ public class ChatMessageElement implements ExtensionElement {
             entryBuilder.timestamp(timestamp * 1000L);
             return new ChatMessageElement(entryBuilder.build(), timestamp * 1000L);
         }
-
     }
 }

@@ -30,11 +30,13 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
+import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -55,9 +57,11 @@ import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
 
-public class PostComposerActivity extends AppCompatActivity {
+public class ContentComposerActivity extends AppCompatActivity {
 
-    private PostComposerViewModel viewModel;
+    public static final String EXTRA_CHAT_ID = "chat_id";
+
+    private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
 
     @Override
@@ -84,7 +88,7 @@ public class PostComposerActivity extends AppCompatActivity {
                 Log.w("PostComposerActivity: cannot post empty");
                 return;
             }
-            viewModel.preparePost(postText.trim());
+            viewModel.prepareContent(getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim());
         });
 
         final View progressView = findViewById(R.id.progress);
@@ -118,12 +122,12 @@ public class PostComposerActivity extends AppCompatActivity {
         mediaPagerIndicator.setVisibility(View.GONE);
 
         viewModel = new ViewModelProvider(this,
-                new PostComposerViewModelFactory(getApplication(), uris)).get(PostComposerViewModel.class);
+                new ContentComposerViewModelFactory(getApplication(), uris)).get(ContentComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
                 viewPager.setMaxAspectRatio(Constants.MAX_IMAGE_ASPECT_RATIO/*Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media))*/);
-                viewPager.setAdapter(new PostMediaPagerAdapter(media));
+                viewPager.setAdapter(new MediaPagerAdapter(media));
                 viewPager.setVisibility(View.VISIBLE);
             }
             if (media.size() > 1) {
@@ -135,9 +139,9 @@ public class PostComposerActivity extends AppCompatActivity {
             }
             sendButton.setEnabled(true);
         });
-        viewModel.post.observe(this, post -> {
-            if (post != null) {
-                PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addPost(post);
+        viewModel.contentItem.observe(this, contentItem -> {
+            if (contentItem != null) {
+                contentItem.addToStorage(ContentDb.getInstance(getBaseContext()));
                 setResult(RESULT_OK);
                 finish();
             }
@@ -169,11 +173,11 @@ public class PostComposerActivity extends AppCompatActivity {
         super.finish();
     }
 
-    private class PostMediaPagerAdapter extends PagerAdapter {
+    private class MediaPagerAdapter extends PagerAdapter {
 
         final List<Media> media = new ArrayList<>();
 
-        PostMediaPagerAdapter(@NonNull List<Media> media) {
+        MediaPagerAdapter(@NonNull List<Media> media) {
             this.media.clear();
             this.media.addAll(media);
         }
@@ -229,13 +233,13 @@ public class PostComposerActivity extends AppCompatActivity {
         }
     }
 
-    static class LoadPostUrisTask extends AsyncTask<Void, Void, List<Media>> {
+    static class LoadContentUrisTask extends AsyncTask<Void, Void, List<Media>> {
 
         private final Collection<Uri> uris;
         private final Application application;
         private final MutableLiveData<List<Media>> media;
 
-        LoadPostUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<Media>> media) {
+        LoadContentUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<Media>> media) {
             this.application = application;
             this.uris = uris;
             this.media = media;
@@ -287,33 +291,30 @@ public class PostComposerActivity extends AppCompatActivity {
         }
     }
 
-    static class PreparePostTask extends AsyncTask<Void, Void, Post> {
+    static class PrepareContentTask extends AsyncTask<Void, Void, Void> {
 
+        private final String chatId;
         private final String text;
         private final List<Media> media;
         private final Map<File, RectF> cropRects;
         private final Application application;
-        private final MutableLiveData<Post> post;
+        private final MutableLiveData<ContentItem> contentItem;
 
-        PreparePostTask(@NonNull Application application, @Nullable String text, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects, @NonNull MutableLiveData<Post> post) {
+        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects, @NonNull MutableLiveData<ContentItem> contentItem) {
+            this.chatId = chatId;
             this.application = application;
             this.text = text;
             this.media = media;
             this.cropRects = cropRects;
-            this.post = post;
+            this.contentItem = contentItem;
         }
 
         @Override
-        protected Post doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
 
-            final Post post = new Post(
-                    0,
-                    UserId.ME,
-                    RandomId.create(),
-                    System.currentTimeMillis(),
-                    false,
-                    Post.POST_SEEN_YES,
-                    text);
+            final ContentItem contentItem = chatId == null ?
+                    new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),false, Post.SEEN_YES, text) :
+                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(),false, Post.SEEN_YES, text);
             if (media != null) {
                 for (Media media : media) {
                     final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
@@ -341,47 +342,42 @@ public class PostComposerActivity extends AppCompatActivity {
                         }
                     }
                     final Media sendMedia = Media.createFromFile(media.type, postFile);
-                    post.media.add(sendMedia);
+                    contentItem.media.add(sendMedia);
                 }
             }
-            return post;
-        }
-
-        @Override
-        protected void onPostExecute(Post post) {
-            this.post.postValue(post);
+            this.contentItem.postValue(contentItem);
+            return null;
         }
     }
 
-    public static class PostComposerViewModelFactory implements ViewModelProvider.Factory {
+    public static class ContentComposerViewModelFactory implements ViewModelProvider.Factory {
 
         private final Application application;
         private final Collection<Uri> uris;
 
-
-        PostComposerViewModelFactory(@NonNull Application application, @Nullable Collection<Uri> uris) {
+        ContentComposerViewModelFactory(@NonNull Application application, @Nullable Collection<Uri> uris) {
             this.application = application;
             this.uris = uris;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(PostComposerViewModel.class)) {
+            if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostComposerViewModel(application, uris);
+                return (T) new ContentComposerViewModel(application, uris);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }
 
-    public static class PostComposerViewModel extends AndroidViewModel {
+    public static class ContentComposerViewModel extends AndroidViewModel {
 
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
-        final MutableLiveData<Post> post = new MutableLiveData<>();
+        final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
 
         final Map<File, RectF> cropRects = new HashMap<>();
 
-        PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
+        ContentComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
             super(application);
             if (uris != null) {
                 loadUris(uris);
@@ -393,11 +389,11 @@ public class PostComposerActivity extends AppCompatActivity {
         }
 
         private void loadUris(@NonNull Collection<Uri> uris) {
-            new LoadPostUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new LoadContentUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        void preparePost(@Nullable String text) {
-            new PreparePostTask(getApplication(), text, getMedia(), cropRects, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        void prepareContent(@Nullable String chatId, @Nullable String text) {
+            new PrepareContentTask(getApplication(), chatId, text, getMedia(), cropRects, contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

@@ -15,10 +15,10 @@ import androidx.paging.PagedList;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDataSource;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
+import com.halloapp.content.PostsDataSource;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 
@@ -35,13 +35,13 @@ public class HomeViewModel extends AndroidViewModel {
     final LiveData<PagedList<Post>> postList;
     final ComputableLiveData<CommentsHistory> commentsHistory;
 
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostAdded(@NonNull Post post) {
             if (post.isOutgoing()) {
@@ -65,10 +65,6 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-        }
-
-        @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
             invalidatePosts();
         }
@@ -88,29 +84,21 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-        }
-
-        @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
             invalidatePosts();
             invalidateCommentHistory();
         }
 
         @Override
-        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
             invalidatePosts();
             invalidateCommentHistory();
         }
 
         @Override
-        public void onPostsCleanup() {
+        public void onFeedCleanup() {
             invalidatePosts();
             invalidateCommentHistory();
-        }
-
-        @Override
-        public void onDbCreated() {
         }
 
         private void invalidatePosts() {
@@ -125,10 +113,10 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NonNull Application application) {
         super(application);
 
-        postsDb = PostsDb.getInstance(application);
-        postsDb.addObserver(postsObserver);
+        contentDb = ContentDb.getInstance(application);
+        contentDb.addObserver(contentObserver);
 
-        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb, false);
+        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(contentDb, false);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
         commentsHistory = new ComputableLiveData<CommentsHistory>() {
@@ -141,7 +129,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        postsDb.removeObserver(postsObserver);
+        contentDb.removeObserver(contentObserver);
     }
 
     boolean checkPendingOutgoing() {
@@ -162,7 +150,7 @@ public class HomeViewModel extends AndroidViewModel {
     @WorkerThread
     private CommentsHistory loadCommentHistory() {
 
-        final List<Comment> comments = PostsDb.getInstance(getApplication()).getIncomingCommentsHistory(250);
+        final List<Comment> comments = ContentDb.getInstance(getApplication()).getIncomingCommentsHistory(250);
 
         final Map<Pair<UserId, String>, CommentsGroup> unseenComments = new HashMap<>();
         final List<CommentsGroup> seenComments = new ArrayList<>();

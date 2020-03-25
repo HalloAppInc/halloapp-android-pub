@@ -10,10 +10,11 @@ import androidx.core.util.Pair;
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.ChatMessage;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
+import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -27,7 +28,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.NamedElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
@@ -103,7 +103,7 @@ public class Connection {
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
         void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId);
-        void onIncomingMessageReceived(@NonNull ChatMessage message);
+        void onIncomingMessageReceived(@NonNull Message message);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
         void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId);
     }
@@ -197,7 +197,7 @@ public class Connection {
             return;
         }
 
-        connection.addSyncStanzaListener(new MessageStanzaListener(), new StanzaTypeFilter(Message.class));
+        connection.addSyncStanzaListener(new MessageStanzaListener(), new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
         connection.addSyncStanzaListener(new AckStanzaListener(), new StanzaTypeFilter(AckStanza.class));
 
         final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
@@ -412,10 +412,10 @@ public class Connection {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.postId, payload);
+                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
                 pubSubHelper.publishItem(getMyFeedNodeId(), item);
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-                observer.onOutgoingPostSent(post.postId);
+                observer.onOutgoingPostSent(post.id);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
             }
@@ -500,7 +500,7 @@ public class Connection {
         });
     }
 
-    public void sendMessage(final @NonNull ChatMessage chatMessage) {
+    public void sendMessage(final @NonNull Message message) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send post, no connection");
@@ -510,22 +510,22 @@ public class Connection {
                 final PublishedEntry entry = new PublishedEntry(
                         PublishedEntry.ENTRY_CHAT,
                         null,
-                        chatMessage.timestamp,
+                        message.timestamp,
                         connection.getUser().getLocalpart().toString(),
-                        chatMessage.text,
+                        message.text,
                         null,
                         null);
-                for (Media media : chatMessage.media) {
+                for (Media media : message.media) {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
 
-                final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(chatMessage.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
-                final Message message = new Message(recipientJid);
-                message.setStanzaId(chatMessage.messageId);
-                message.addExtension(new ChatMessageElement(entry));
-                ackHandlers.put(message.getStanzaId(), () -> observer.onOutgoingMessageSent(chatMessage.chatId, chatMessage.messageId));
-                Log.i("connection: sending message " + chatMessage.messageId + " to " + recipientJid);
-                connection.sendStanza(message);
+                final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
+                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
+                xmppMessage.setStanzaId(message.id);
+                xmppMessage.addExtension(new ChatMessageElement(entry));
+                ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
+                Log.i("connection: sending message " + message.id + " to " + recipientJid);
+                connection.sendStanza(xmppMessage);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
                 Log.e("connection: cannot send message", e);
             }
@@ -558,7 +558,7 @@ public class Connection {
             }
             try {
                 final Jid recipientJid = userIdToJid(senderUserId);
-                final Message message = new Message(recipientJid);
+                final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
                 message.addExtension(new SeenReceiptElement(postId));
                 ackHandlers.put(message.getStanzaId(), () -> observer.onSeenReceiptSent(senderUserId, postId));
@@ -626,7 +626,7 @@ public class Connection {
                             entry.id,
                             entry.timestamp,
                             entry.media.isEmpty(),
-                            Post.POST_SEEN_NO,
+                            ContentItem.SEEN_NO,
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
@@ -673,7 +673,7 @@ public class Connection {
                         entry.id,
                         entry.timestamp,
                         isMe(entry.user) || entry.media.isEmpty(),
-                        Post.POST_SEEN_YES,
+                        ContentItem.SEEN_YES,
                         entry.text
                 );
                 for (PublishedEntry.Media entryMedia : entry.media) {
@@ -777,13 +777,13 @@ public class Connection {
 
         @Override
         public void processStanza(final Stanza packet) {
-            if (!(packet instanceof Message)) {
+            if (!(packet instanceof org.jivesoftware.smack.packet.Message)) {
                 Log.w("connection: got packet instead of message " + packet);
                 return;
             }
             boolean handled = false;
-            final Message msg = (Message) packet;
-            if (msg.getType() == Message.Type.error) {
+            final org.jivesoftware.smack.packet.Message msg = (org.jivesoftware.smack.packet.Message) packet;
+            if (msg.getType() == org.jivesoftware.smack.packet.Message.Type.error) {
                 Log.w("connection: got error message " + msg);
             } else {
                 final EventElement event = packet.getExtension(PubSubNamespace.event.name(), PubSubNamespace.event.getXmlns());

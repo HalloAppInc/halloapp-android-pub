@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
-import com.halloapp.posts.PostThumbnailLoader;
+import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.CommentsHistoryPopup;
 import com.halloapp.ui.PostsFragment;

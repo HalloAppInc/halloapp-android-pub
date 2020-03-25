@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.Media;
+import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;

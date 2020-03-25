@@ -11,10 +11,10 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.contacts.UserId;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDataSource;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.Comment;
+import com.halloapp.content.Post;
+import com.halloapp.content.PostsDataSource;
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.Preconditions;
 
 import java.util.Collection;
@@ -22,11 +22,11 @@ import java.util.Collection;
 public class ProfileViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final PostsDb.Observer postsObserver = new PostsDb.Observer() {
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
         public void onPostAdded(@NonNull Post post) {
@@ -45,10 +45,6 @@ public class ProfileViewModel extends AndroidViewModel {
             if (senderUserId.isMe()) {
                 invalidatePosts();
             }
-        }
-
-        @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
         }
 
         @Override
@@ -78,17 +74,13 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
             invalidatePosts();
         }
 
         @Override
-        public void onPostsCleanup() {
+        public void onFeedCleanup() {
             invalidatePosts();
-        }
-
-        @Override
-        public void onDbCreated() {
         }
 
         private void invalidatePosts() {
@@ -99,15 +91,15 @@ public class ProfileViewModel extends AndroidViewModel {
     public ProfileViewModel(@NonNull Application application) {
         super(application);
 
-        postsDb = PostsDb.getInstance(application);
-        postsDb.addObserver(postsObserver);
+        contentDb = ContentDb.getInstance(application);
+        contentDb.addObserver(contentObserver);
 
-        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(postsDb, true);
+        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(contentDb, true);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
     }
 
     @Override
     protected void onCleared() {
-        postsDb.removeObserver(postsObserver);
+        contentDb.removeObserver(contentObserver);
     }
 }

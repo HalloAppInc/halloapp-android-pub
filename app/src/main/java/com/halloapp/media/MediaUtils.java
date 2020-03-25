@@ -22,7 +22,7 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
-import com.halloapp.posts.Media;
+import com.halloapp.content.Media;
 import com.halloapp.util.Log;
 
 import java.io.File;

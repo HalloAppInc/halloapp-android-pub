@@ -14,7 +14,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.posts.LoadPostsHistoryWorker;
+import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.util.Log;
 
 import java.util.List;

@@ -9,7 +9,7 @@
     android:paddingBottom="16dp"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
-    tools:context=".ui.PostComposerActivity">
+    tools:context=".ui.ContentComposerActivity">
 
     <!-- this view is to address initial focus issue on old devices -->
     <View

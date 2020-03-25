@@ -5,32 +5,32 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 
 import com.halloapp.FileStore;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 
 import java.io.File;
 import java.io.IOException;
 
-public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
+public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
 
-    private final Post post;
+    private final ContentItem contentItem;
 
     private final FileStore fileStore;
-    private final PostsDb postsDb;
+    private final ContentDb contentDb;
 
-    public DownloadPostTask(@NonNull Post post, @NonNull FileStore fileStore, @NonNull PostsDb postsDb) {
-        this.post = post;
+    public DownloadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb) {
+        this.contentItem = contentItem;
         this.fileStore = fileStore;
-        this.postsDb = postsDb;
+        this.contentDb = contentDb;
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-        Log.i("DownloadPostTask " + post);
-        for (Media media : post.media) {
+    protected Boolean doInBackground(Void... voids) {
+        Log.i("DownloadMediaTask " + contentItem);
+        for (Media media : contentItem.media) {
             if (media.transferred) {
                 continue;
             }
@@ -38,12 +38,12 @@ public class DownloadPostTask extends AsyncTask<Void, Void, Void> {
             try {
                 final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
                 Downloader.run(media.url, media.encKey, media.sha256hash, media.type, file, downloadListener);
-                if (!file.setLastModified(post.timestamp)) {
-                    Log.w("DownloadPostTask: failed to set last modified to " + file.getAbsolutePath());
+                if (!file.setLastModified(contentItem.timestamp)) {
+                    Log.w("DownloadMediaTask: failed to set last modified to " + file.getAbsolutePath());
                 }
                 media.file = file;
                 media.transferred = true;
-                postsDb.setMediaTransferred(post, media);
+                contentItem.setMediaTransferred(media, contentDb);
             } catch (IOException e) {
                 Log.e("DownloadPostTask", e);
                 return null;

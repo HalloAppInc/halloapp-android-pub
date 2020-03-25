@@ -38,11 +38,11 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
+import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.posts.Comment;
-import com.halloapp.posts.Media;
-import com.halloapp.posts.Post;
-import com.halloapp.posts.PostsDb;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -120,7 +120,7 @@ public class CommentsActivity extends AppCompatActivity {
         final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
-        PostsDb.getInstance(this).setCommentsSeen(userId, postId);
+        ContentDb.getInstance(this).setCommentsSeen(userId, postId);
 
         final View replyIndicator = findViewById(R.id.reply_indicator);
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
@@ -175,7 +175,7 @@ public class CommentsActivity extends AppCompatActivity {
                     false,
                     true,
                     postText);
-            PostsDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addComment(comment);
+            ContentDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addComment(comment);
             editText.setText(null);
             final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -329,7 +329,7 @@ public class CommentsActivity extends AppCompatActivity {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(context.getString(R.string.retract_comment_confirmation));
                 builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> PostsDb.getInstance(getBaseContext()).retractComment(comment));
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(getBaseContext()).retractComment(comment));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
             });

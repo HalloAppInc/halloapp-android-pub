@@ -1,4 +1,4 @@
-package com.halloapp.posts;
+package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 
@@ -8,17 +8,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PostsDbObservers {
+class ContentDbObservers {
 
-    private final Set<PostsDb.Observer> observers = new HashSet<>();
+    private final Set<ContentDb.Observer> observers = new HashSet<>();
 
-    void addObserver(@NonNull PostsDb.Observer observer) {
+    void addObserver(@NonNull ContentDb.Observer observer) {
         synchronized (observers) {
             observers.add(observer);
         }
     }
 
-    void removeObserver(@NonNull PostsDb.Observer observer) {
+    void removeObserver(@NonNull ContentDb.Observer observer) {
         synchronized (observers) {
             observers.remove(observer);
         }
@@ -26,7 +26,7 @@ public class PostsDbObservers {
 
     void notifyPostAdded(@NonNull Post post) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onPostAdded(post);
             }
         }
@@ -34,15 +34,15 @@ public class PostsDbObservers {
 
     void notifyPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onPostUpdated(senderUserId, postId);
             }
         }
     }
 
-    public void notifyPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+    void notifyPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onPostRetracted(senderUserId, postId);
             }
         }
@@ -50,7 +50,7 @@ public class PostsDbObservers {
 
     void notifyIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onIncomingPostSeen(senderUserId, postId);
             }
         }
@@ -58,7 +58,7 @@ public class PostsDbObservers {
 
     void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onOutgoingPostSeen(seenByUserId, postId);
             }
         }
@@ -66,7 +66,7 @@ public class PostsDbObservers {
 
     void notifyCommentAdded(@NonNull Comment comment) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onCommentAdded(comment);
             }
         }
@@ -74,7 +74,7 @@ public class PostsDbObservers {
 
     void notifyCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
             }
         }
@@ -82,7 +82,7 @@ public class PostsDbObservers {
 
     void notifyCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onCommentRetracted(postSenderUserId, postId, commentSenderUserId, commentId);
             }
         }
@@ -90,31 +90,54 @@ public class PostsDbObservers {
 
     void notifyCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onCommentsSeen(postSenderUserId, postId);
             }
         }
     }
 
-    void notifyHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+    public void notifyMessageAdded(@NonNull Message message) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
-                observer.onHistoryAdded(historyPosts, historyComments);
+            for (ContentDb.Observer observer : observers) {
+                observer.onMessageAdded(message);
             }
         }
     }
 
-    void notifyPostsCleanup() {
+    public void notifyMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
-                observer.onPostsCleanup();
+            for (ContentDb.Observer observer : observers) {
+                observer.onMessageUpdated(chatId, senderUserId,  messageId);
+            }
+        }
+    }
+
+    public void notifyMessageRetracted(String chatId, UserId senderUserId, String messageId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onMessageRetracted(chatId, senderUserId, messageId);
+            }
+        }
+    }
+    void notifyFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onFeedHistoryAdded(historyPosts, historyComments);
+            }
+        }
+    }
+
+    void notifyFeedCleanup() {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onFeedCleanup();
             }
         }
     }
 
     void notifyDbCreated() {
         synchronized (observers) {
-            for (PostsDb.Observer observer : observers) {
+            for (ContentDb.Observer observer : observers) {
                 observer.onDbCreated();
             }
         }
