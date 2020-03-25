@@ -244,7 +244,7 @@ public class ContentDb {
                         CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=?",
                         new String[]{post.senderUserId.rawId(), post.id});
                 db.delete(MediaTable.TABLE_NAME,
-                        MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "=" + PostsTable.TABLE_NAME,
+                        MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'",
                         new String[]{Long.toString(post.rowId)});
                 for (Media media : post.media) {
                     if (media.file != null) {
