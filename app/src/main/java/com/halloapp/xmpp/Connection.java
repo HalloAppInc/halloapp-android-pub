@@ -106,6 +106,7 @@ public class Connection {
         void onIncomingMessageReceived(@NonNull Message message);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
         void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId);
+        void onLowOneTimePreKeyCountReceived(int count);
     }
 
     private Connection() {
@@ -158,9 +159,11 @@ public class Connection {
         ProviderManager.addExtensionProvider(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE, new ChatMessageElement.Provider());
         ProviderManager.addExtensionProvider(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE, new SeenReceiptElement.Provider());
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
+        ProviderManager.addExtensionProvider(WhisperKeysLowCountMessage.ELEMENT, WhisperKeysLowCountMessage.NAMESPACE, new WhisperKeysLowCountMessage.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
+        ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
 
         try {
             final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
@@ -352,6 +355,62 @@ public class Connection {
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot send push token", e);
             }
+        });
+    }
+
+    public void uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: upload keys: no connection");
+                return;
+            }
+            final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(connection.getXMPPServiceDomain(), identityKey, signedPreKey, oneTimePreKeys);
+            try {
+                final IQ response = connection.createStanzaCollectorAndSend(uploadIq).nextResultOrThrow();
+                Log.d("connection: response after uploading keys " + response.toString());
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot upload keys", e);
+            }
+        });
+    }
+
+    public void uploadMoreOneTimePreKeys(@NonNull List<byte[]> oneTimePreKeys) {
+        uploadKeys(null, null, oneTimePreKeys);
+    }
+
+    public Future<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: download keys: no connection");
+                return null;
+            }
+            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(connection.getXMPPServiceDomain(), userId.rawId());
+            try {
+                final WhisperKeysResponseIq response = connection.createStanzaCollectorAndSend(downloadIq).nextResultOrThrow();
+                Log.d("connection: response after downloading keys " + response.toString());
+                return response;
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot download keys", e);
+            }
+            return null;
+        });
+    }
+
+    public Future<Integer> getOneTimeKeyCount() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: get one time key count: no connection");
+                return null;
+            }
+            final WhisperKeysCountIq countIq = new WhisperKeysCountIq(connection.getXMPPServiceDomain());
+            try {
+                final WhisperKeysResponseIq response = connection.createStanzaCollectorAndSend(countIq).nextResultOrThrow();
+                Log.d("connection: response for get key count  " + response.toString());
+                return response.count;
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot get one time key count", e);
+            }
+            return null;
         });
     }
 
@@ -821,6 +880,14 @@ public class Connection {
                     if (contactList != null) {
                         Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
                         observer.onContactsChanged(contactList.contacts, packet.getStanzaId());
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final WhisperKeysLowCountMessage whisperKeysLowCountMessage = packet.getExtension(WhisperKeysLowCountMessage.ELEMENT, WhisperKeysLowCountMessage.NAMESPACE);
+                    if (whisperKeysLowCountMessage != null) {
+                        Log.i("connection: got low otp count " + msg + " count: " + whisperKeysLowCountMessage.count);
+                        observer.onLowOneTimePreKeyCountReceived(whisperKeysLowCountMessage.count);
                         handled = true;
                     }
                 }

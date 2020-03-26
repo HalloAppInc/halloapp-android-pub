@@ -121,4 +121,9 @@ public class ConnectionObserver implements Connection.Observer {
             Connection.getInstance().sendAck(ackId);
         });
     }
+
+    @Override
+    public void onLowOneTimePreKeyCountReceived(int count) {
+        // TODO(jack): Upload more keys
+    }
 }

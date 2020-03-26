@@ -21,9 +21,13 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
+import com.halloapp.util.StringUtils;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.WhisperKeysResponseIq;
+import com.halloapp.xmpp.WhisperKeysUploadIq;
 
 import java.io.File;
+import java.util.Collections;
 
 public class Debug {
 
@@ -38,6 +42,7 @@ public class Debug {
     private static final String DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY = "Visit expiration activity";
     private static final String DEBUG_MENU_CLEAR_AVATAR_CACHE = "Clear avatar disk cache";
     private static final String DEBUG_MENU_REMOVE_AVATAR = "Remove avatar";
+    private static final String DEBUG_MENU_TEST_KEYS = "Test keys";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
@@ -53,6 +58,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY);
         menu.getMenu().add(DEBUG_MENU_CLEAR_AVATAR_CACHE);
         menu.getMenu().add(DEBUG_MENU_REMOVE_AVATAR);
+        menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -118,6 +124,19 @@ public class Debug {
                     }.execute();
 
                     break;
+                }
+                case DEBUG_MENU_TEST_KEYS: {
+                    try {
+                        Connection.getInstance().uploadKeys(new byte[]{1, 2, 3, 4}, new byte[]{5, 6, 7, 8}, Collections.singletonList(new byte[]{10, 11, 12, 13}));
+                        WhisperKeysResponseIq response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).get();
+                        Log.d("DEBUG response " + response + " identity key: " + StringUtils.bytesToHexString(response.identityKey));
+                        Connection.getInstance().uploadMoreOneTimePreKeys(Collections.singletonList(new byte[]{3, 3, 3, 3}));
+                        response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).get();
+                        Log.d("DEBUG response " + response + " identity key: " + StringUtils.bytesToHexString(response.identityKey));
+                        Log.d("DEBUG COUNT: " + Connection.getInstance().getOneTimeKeyCount().get());
+                    } catch (Exception e) {
+                        Log.w("DEBUG key failure", e);
+                    }
                 }
             }
             return false;
