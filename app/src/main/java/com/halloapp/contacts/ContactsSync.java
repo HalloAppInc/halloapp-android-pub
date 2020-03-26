@@ -23,7 +23,6 @@ import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
-import com.halloapp.xmpp.ContactSyncRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -142,8 +141,8 @@ public class ContactsSync {
     private ListenableWorker.Result performIncrementalContactSync(@NonNull ContactsDb.AddressBookSyncResult addressBookSyncResult) {
         if (!addressBookSyncResult.removed.isEmpty()) {
             try {
-                Connection.getInstance().syncContacts(addressBookSyncResult.removed,
-                        ContactSyncRequest.DELETE, null, true).get();
+                Connection.getInstance().syncContacts(null, addressBookSyncResult.removed,
+                        false, null, 0, true).get();
             } catch (ExecutionException | InterruptedException e) {
                 Log.i("ContactsSync.performContactSync: failed to delete contacts", e);
                 return ListenableWorker.Result.failure();
@@ -178,9 +177,9 @@ public class ContactsSync {
         Log.i("ContactsSync.performContactSync: " + phones.keySet().size() + " phones to sync");
         final List<String> phonesBatch = new ArrayList<>(CONTACT_SYNC_BATCH_SIZE);
         final List<ContactInfo> contactSyncResults = new ArrayList<>(phonesBatch.size());
-        @ContactSyncRequest.Type String batchType = fullSync ? ContactSyncRequest.SET : ContactSyncRequest.ADD;
         final String syncId = fullSync ? RandomId.create() : null;
         int phonesSyncedCount = 0;
+        int batchIndex = 0;
         for (String phone : phones.keySet()) {
             phonesBatch.add(phone);
             phonesSyncedCount++;
@@ -188,8 +187,7 @@ public class ContactsSync {
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE || lastBatch) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, batchType, syncId, lastBatch).get();
-                    batchType = ContactSyncRequest.ADD;
+                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, null, fullSync, syncId, batchIndex, lastBatch).get();
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
                         phonesBatch.clear();

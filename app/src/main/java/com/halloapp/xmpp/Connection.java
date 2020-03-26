@@ -321,14 +321,14 @@ public class Connection {
         });
     }
 
-    public Future<List<ContactInfo>> syncContacts(@NonNull Collection<String> phones, @ContactSyncRequest.Type String type, @Nullable String syncId, boolean lastBatch) {
+    public Future<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: sync contacts: no connection");
                 return null;
             }
             final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(connection.getXMPPServiceDomain(),
-                    phones, type, syncId, lastBatch);
+                    addPhones, deletePhones, fullSync, syncId, index, lastBatch);
             try {
                 final ContactsSyncResponseIq response = connection.createStanzaCollectorAndSend(contactsSyncIq).nextResultOrThrow();
                 return response.contactList.contacts;

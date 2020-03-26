@@ -17,18 +17,22 @@ public class ContactsSyncRequestIq extends IQ {
     private static final String ELEMENT_RAW = "raw";
     private static final String ELEMENT_NORMALIZED = "normalized";
 
-    private final @ContactSyncRequest.Type String type;
+    private final boolean isFullSync;
     private final String syncId;
+    private final int index;
     private final boolean lastBatch;
-    private final Collection<String> phones;
+    private final Collection<String> addPhones;
+    private final Collection<String> deletePhones;
 
-    ContactsSyncRequestIq(@NonNull Jid to, @NonNull Collection<String> phones,
-                          @ContactSyncRequest.Type String type, @Nullable String syncId, boolean lastBatch) {
+    ContactsSyncRequestIq(@NonNull Jid to, @Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones,
+                          boolean isFullSync, @Nullable String syncId, int index, boolean lastBatch) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.set);
         setTo(to);
-        this.phones = phones;
-        this.type = type;
+        this.addPhones = addPhones;
+        this.deletePhones = deletePhones;
+        this.isFullSync = isFullSync;
+        this.index = index;
         this.syncId = syncId;
         this.lastBatch = lastBatch;
     }
@@ -36,19 +40,34 @@ public class ContactsSyncRequestIq extends IQ {
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
 
-        final String phoneElement = ContactSyncRequest.DELETE.equals(type) ? ELEMENT_NORMALIZED : ELEMENT_RAW;
-        xml.attribute("type", type);
+        xml.attribute("type", isFullSync ? "full" : "delta");
         if (syncId != null) {
             xml.attribute("syncid", syncId);
+            xml.attribute("index", index);
             xml.attribute("last", lastBatch);
         }
         xml.rightAngleBracket();
-        for (String phone : phones) {
-            xml.openElement(ELEMENT_CONTACT);
-            xml.openElement(phoneElement);
-            xml.append(phone);
-            xml.closeElement(phoneElement);
-            xml.closeElement(ELEMENT_CONTACT);
+        if (deletePhones != null && !deletePhones.isEmpty()) {
+            for (String phone : deletePhones) {
+                xml.halfOpenElement(ELEMENT_CONTACT);
+                xml.attribute("type", "delete");
+                xml.rightAngleBracket();
+                xml.openElement(ELEMENT_NORMALIZED);
+                xml.append(phone);
+                xml.closeElement(ELEMENT_NORMALIZED);
+                xml.closeElement(ELEMENT_CONTACT);
+            }
+        }
+        if (addPhones != null && !addPhones.isEmpty()) {
+            for (String phone : addPhones) {
+                xml.halfOpenElement(ELEMENT_CONTACT);
+                xml.attribute("type", "add");
+                xml.rightAngleBracket();
+                xml.openElement(ELEMENT_RAW);
+                xml.append(phone);
+                xml.closeElement(ELEMENT_RAW);
+                xml.closeElement(ELEMENT_CONTACT);
+            }
         }
         return xml;
     }
