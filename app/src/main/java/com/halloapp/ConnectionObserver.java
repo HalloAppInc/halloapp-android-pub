@@ -114,11 +114,11 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId) {
+    public void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId) {
         AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
-        for (PublishedAvatarMetadata pam : pams) {
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             avatarLoader.reportAvatarMetadataUpdate(metadataUserId, pam.getHash(), pam.getUrl());
-        }
-        Connection.getInstance().sendAck(ackId);
+            Connection.getInstance().sendAck(ackId);
+        });
     }
 }

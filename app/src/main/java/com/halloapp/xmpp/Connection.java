@@ -105,7 +105,7 @@ public class Connection {
         void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId);
         void onIncomingMessageReceived(@NonNull Message message);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
-        void onAvatarMetadatasReceived(@NonNull UserId metadataUserId, @NonNull List<PublishedAvatarMetadata> pams, @NonNull String ackId);
+        void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId);
     }
 
     private Connection() {
@@ -660,7 +660,7 @@ public class Connection {
     private boolean processMetadataPubSubItems(@NonNull UserId metadataUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
         Preconditions.checkNotNull(connection);
         final List<PublishedAvatarMetadata> pams = PublishedAvatarMetadata.getAvatarMetadatas(items);
-        observer.onAvatarMetadatasReceived(metadataUserId, pams, ackId);
+        observer.onAvatarMetadataReceived(metadataUserId, pams.get(0), ackId);
         return true;
     }
 
