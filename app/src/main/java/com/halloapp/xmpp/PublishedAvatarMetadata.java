@@ -23,7 +23,6 @@ public class PublishedAvatarMetadata {
     private static final String ELEMENT_METADATA = "metadata";
     private static final String ELEMENT_INFO = "info";
 
-    private static final String ATTRIBUTE_TYPE = "type";
     private static final String ATTRIBUTE_WIDTH = "width";
     private static final String ATTRIBUTE_HEIGHT = "height";
     private static final String ATTRIBUTE_BYTES = "bytes";
@@ -34,7 +33,6 @@ public class PublishedAvatarMetadata {
 
     @Nullable final String url;
     final String hash;
-    final String type = "image/jpeg";
     final long numBytes;
     final int height;
     final int width;
@@ -61,7 +59,6 @@ public class PublishedAvatarMetadata {
                 serializer.attribute(null, ATTRIBUTE_BYTES, Long.toString(numBytes));
                 serializer.attribute(null, ATTRIBUTE_HASH, hash);
                 serializer.attribute(null, ATTRIBUTE_URL, url);
-                serializer.attribute(null, ATTRIBUTE_TYPE, type);
                 serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(width));
                 serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(height));
                 serializer.endTag(null, ELEMENT_INFO);
@@ -106,7 +103,6 @@ public class PublishedAvatarMetadata {
 
                 String hash = parser.getAttributeValue(null, ATTRIBUTE_HASH);
                 String url = parser.getAttributeValue(null, ATTRIBUTE_URL);
-                String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE); // TODO(jack): specify type
                 long numBytes = Long.parseLong(parser.getAttributeValue(null, ATTRIBUTE_BYTES));
                 int height = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_HEIGHT));
                 int width = Integer.parseInt(parser.getAttributeValue(null, ATTRIBUTE_WIDTH));
@@ -123,7 +119,7 @@ public class PublishedAvatarMetadata {
 
     @Override
     public @NonNull String toString() {
-        return "PublishedAvatarMetadata[hash=" + hash + " type=" + type + " bytes=" + numBytes + " width=" + width + " height=" + height + " url=" + url + "]";
+        return "PublishedAvatarMetadata[hash=" + hash + " bytes=" + numBytes + " width=" + width + " height=" + height + " url=" + url + "]";
     }
 
     public String getHash() {
