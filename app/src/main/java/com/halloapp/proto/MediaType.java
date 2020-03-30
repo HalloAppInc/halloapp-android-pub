@@ -9,24 +9,32 @@ package com.halloapp.proto;
 public enum MediaType
     implements com.google.protobuf.Internal.EnumLite {
   /**
-   * <code>Image = 0;</code>
+   * <code>MEDIA_TYPE_UNSPECIFIED = 0;</code>
    */
-  Image(0),
+  MEDIA_TYPE_UNSPECIFIED(0),
   /**
-   * <code>Video = 1;</code>
+   * <code>MEDIA_TYPE_IMAGE = 1;</code>
    */
-  Video(1),
+  MEDIA_TYPE_IMAGE(1),
+  /**
+   * <code>MEDIA_TYPE_VIDEO = 2;</code>
+   */
+  MEDIA_TYPE_VIDEO(2),
   UNRECOGNIZED(-1),
   ;
 
   /**
-   * <code>Image = 0;</code>
+   * <code>MEDIA_TYPE_UNSPECIFIED = 0;</code>
    */
-  public static final int Image_VALUE = 0;
+  public static final int MEDIA_TYPE_UNSPECIFIED_VALUE = 0;
   /**
-   * <code>Video = 1;</code>
+   * <code>MEDIA_TYPE_IMAGE = 1;</code>
    */
-  public static final int Video_VALUE = 1;
+  public static final int MEDIA_TYPE_IMAGE_VALUE = 1;
+  /**
+   * <code>MEDIA_TYPE_VIDEO = 2;</code>
+   */
+  public static final int MEDIA_TYPE_VIDEO_VALUE = 2;
 
 
   @java.lang.Override
@@ -50,8 +58,9 @@ public enum MediaType
 
   public static MediaType forNumber(int value) {
     switch (value) {
-      case 0: return Image;
-      case 1: return Video;
+      case 0: return MEDIA_TYPE_UNSPECIFIED;
+      case 1: return MEDIA_TYPE_IMAGE;
+      case 2: return MEDIA_TYPE_VIDEO;
       default: return null;
     }
   }
