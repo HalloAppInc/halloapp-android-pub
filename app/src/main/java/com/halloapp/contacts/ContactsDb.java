@@ -87,7 +87,7 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_NAME, addressBookContact.name);
                     values.put(ContactsTable.COLUMN_PHONE, addressBookContact.phone);
                     long rowId = db.insert(ContactsTable.TABLE_NAME, null, values);
-                    result.added.add(new Contact(rowId, addressBookContact.id, addressBookContact.name, addressBookContact.phone, null, false));
+                    result.added.add(new Contact(rowId, addressBookContact.id, addressBookContact.name, addressBookContact.phone, null, false, 0, null));
                 }
 
                 for (Contact updateContact : diff.updated) {
@@ -176,6 +176,64 @@ public class ContactsDb {
         });
     }
 
+    public Future<Void> updateContactAvatarInfo(@NonNull ContactAvatarInfo contact) {
+        return databaseWriteExecutor.submit(() -> {
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                    final ContentValues values = new ContentValues();
+                    values.put(ContactsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
+                    values.put(ContactsTable.COLUMN_AVATAR_HASH, contact.avatarHash);
+                    db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                            ContactsTable.COLUMN_USER_ID + "=? ",
+                            new String [] {contact.userId.rawId()},
+                            SQLiteDatabase.CONFLICT_ABORT);
+                Log.i("ContactsDb.updateContactAvatarInfo");
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            return null;
+        });
+    }
+
+    @WorkerThread
+    public ContactAvatarInfo getContactAvatarInfo(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] {
+                        ContactsTable.COLUMN_USER_ID,
+                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
+                        ContactsTable.COLUMN_AVATAR_HASH
+                },
+                ContactsTable.COLUMN_USER_ID + "=?", new String [] {userId.rawId()}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return new ContactAvatarInfo(userId, cursor.getInt(1), cursor.getString(2));
+            }
+        }
+        return null;
+    }
+
+    public Future<Void> insertContactAvatarInfo(@NonNull ContactAvatarInfo contact) {
+        return databaseWriteExecutor.submit(() -> {
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                final ContentValues values = new ContentValues();
+                values.put(ContactsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
+                values.put(ContactsTable.COLUMN_AVATAR_HASH, contact.avatarHash);
+                values.put(ContactsTable.COLUMN_USER_ID, contact.userId.rawId());
+                values.put(ContactsTable.COLUMN_NAME, "");
+                db.insert(ContactsTable.TABLE_NAME, null, values);
+                Log.i("ContactsDb.insertContactAvatarInfo");
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            return null;
+        });
+    }
+
     @WorkerThread
     public Contact getContact(@NonNull UserId userId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -185,9 +243,12 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NAME,
                         ContactsTable.COLUMN_PHONE,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
+                        ContactsTable.COLUMN_AVATAR_HASH
                 },
-                ContactsTable.COLUMN_USER_ID + "=?", new String [] {userId.rawId()}, null, null, null, "1")) {
+                ContactsTable.COLUMN_USER_ID + "=?" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
+                new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return new Contact(
                         cursor.getLong(0),
@@ -195,11 +256,14 @@ public class ContactsDb {
                         cursor.getString(2),
                         cursor.getString(3),
                         userId,
-                        cursor.getInt(5) == 1);
+                        cursor.getInt(5) == 1,
+                        cursor.getInt(6),
+                        cursor.getString(7));
             }
         }
         return null;
     }
+
 
     @WorkerThread
     List<Contact> getAllContacts() {
@@ -211,10 +275,11 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NAME,
                         ContactsTable.COLUMN_PHONE,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
+                        ContactsTable.COLUMN_AVATAR_HASH
                 },
-                null, null, null, null, null, null)) {
-
+                ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null, null, null, null, null)) {
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
                 final Contact contact = new Contact(
@@ -223,7 +288,9 @@ public class ContactsDb {
                         cursor.getString(2),
                         cursor.getString(3),
                         userIdStr == null ? null : new UserId(userIdStr),
-                        cursor.getInt(5) == 1);
+                        cursor.getInt(5) == 1,
+                        cursor.getInt(6),
+                        cursor.getString(7));
                 contacts.add(contact);
             }
         }
@@ -241,11 +308,12 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NAME,
                         ContactsTable.COLUMN_PHONE,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
+                        ContactsTable.COLUMN_AVATAR_HASH
                 },
-                ContactsTable.COLUMN_FRIEND + "=1",
+                ContactsTable.COLUMN_FRIEND + "=1" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
-
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(4);
@@ -256,7 +324,9 @@ public class ContactsDb {
                             cursor.getString(2),
                             cursor.getString(3),
                             new UserId(userIdStr),
-                            cursor.getInt(5) == 1);
+                            cursor.getInt(5) == 1,
+                            cursor.getInt(6),
+                            cursor.getString(7));
                     contacts.add(contact);
                 }
             }
@@ -298,12 +368,14 @@ public class ContactsDb {
         static final String COLUMN_NAME = "name";
         static final String COLUMN_PHONE = "phone";
         static final String COLUMN_FRIEND = "member"; // TODO (ds): rename
+        static final String COLUMN_AVATAR_TIMESTAMP = "avatar_timestamp";
+        static final String COLUMN_AVATAR_HASH = "avatar_hash";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 3;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -319,7 +391,9 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
                     + ContactsTable.COLUMN_NAME + " TEXT NOT NULL,"
                     + ContactsTable.COLUMN_PHONE + " TEXT,"
-                    + ContactsTable.COLUMN_FRIEND + " INTEGER"
+                    + ContactsTable.COLUMN_FRIEND + " INTEGER,"
+                    + ContactsTable.COLUMN_AVATAR_TIMESTAMP + " INTEGER,"
+                    + ContactsTable.COLUMN_AVATAR_HASH + " TEXT"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_JID);
@@ -384,6 +458,18 @@ public class ContactsDb {
 
         public boolean isEmpty() {
             return added.isEmpty() && updated.isEmpty() && removed.isEmpty();
+        }
+    }
+
+    public static class ContactAvatarInfo {
+        public final UserId userId;
+        public long avatarCheckTimestamp;
+        public String avatarHash;
+
+        public ContactAvatarInfo(UserId userId, long avatarCheckTimestamp, String avatarHash) {
+            this.userId = userId;
+            this.avatarCheckTimestamp = avatarCheckTimestamp;
+            this.avatarHash = avatarHash;
         }
     }
 }

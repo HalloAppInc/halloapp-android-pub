@@ -15,7 +15,6 @@ import androidx.collection.LruCache;
 
 import com.halloapp.FileStore;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.Downloader;
@@ -33,6 +32,8 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
+
+    private static final long AVATAR_DATA_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000; // a week
 
     private static AvatarLoader instance;
 
@@ -77,37 +78,54 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             FileStore fileStore = FileStore.getInstance(context);
             File avatarFile = fileStore.getAvatarFile(userId.rawId());
 
-            if (!avatarFile.exists()) {
-                PubSubItem item = connection.getMostRecentAvatarMetadata(userId).get();
-                if (item == null) {
-                    Log.i("No avatar metadata item for " + userId);
-                    return getDefaultAvatar();
-                }
-                PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
-                if (avatarMetadata == null) {
-                    Log.i("Empty avatar metadata item for " + userId);
-                    return getDefaultAvatar();
-                }
+            ContactsDb contactsDb = ContactsDb.getInstance(context);
+            ContactsDb.ContactAvatarInfo contact = contactsDb.getContactAvatarInfo(userId);
 
-                byte[] hash = StringUtils.bytesFromHexString(avatarMetadata.getHash());
+            boolean needsNewContact = contact == null;
+            if (needsNewContact) {
+                Log.i("Making new contact for user " + userId);
+                contact = new ContactsDb.ContactAvatarInfo(userId, 0, null);
+            }
 
-                // Do not permanently save avatars if we won't get updates
-                if (!userId.isMe()) {
-                    ContactsDb contactsDb = ContactsDb.getInstance(context);
-                    Contact contact = contactsDb.getContact(userId);
-                    if (contact == null || !contact.friend) {
-                        avatarFile = fileStore.getTmpFile(userId.rawId());
+            long currentTimeMs = System.currentTimeMillis();
+            if (currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS || !avatarFile.exists()) {
+                try {
+                    PubSubItem item = connection.getMostRecentAvatarMetadata(userId).get();
+                    if (item == null) {
+                        Log.i("No avatar metadata item for " + userId);
+                        return getDefaultAvatar();
                     }
-                }
+                    PublishedAvatarMetadata avatarMetadata = PublishedAvatarMetadata.getPublishedItem(item);
+                    if (avatarMetadata == null) {
+                        Log.i("Empty avatar metadata item for " + userId);
+                        return getDefaultAvatar();
+                    }
 
-                String url = avatarMetadata.getUrl();
-                if (url != null) {
-                    Downloader.run(url, null, hash, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
-                } else {
-                    return getDefaultAvatar();
+                    if (!avatarFile.exists() || !avatarMetadata.getHash().equals(contact.avatarHash)) {
+                        String url = avatarMetadata.getUrl();
+                        if (url != null) {
+                            byte[] hash = StringUtils.bytesFromHexString(avatarMetadata.getHash());
+                            Downloader.run(url, null, hash, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+                            contact.avatarHash = avatarMetadata.getHash();
+                        } else {
+                            return getDefaultAvatar();
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Log.w("Interrupted getting avatar", e);
+                } finally {
+                    contact.avatarCheckTimestamp = System.currentTimeMillis();
+                    if (needsNewContact) {
+                        contactsDb.insertContactAvatarInfo(contact);
+                    } else {
+                        contactsDb.updateContactAvatarInfo(contact);
+                    }
                 }
             }
 
+            if (!avatarFile.exists()) {
+                return getDefaultAvatar();
+            }
             return BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
         };
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
