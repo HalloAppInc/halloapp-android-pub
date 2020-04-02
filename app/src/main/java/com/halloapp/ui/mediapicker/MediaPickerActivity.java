@@ -76,6 +76,10 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
 
         pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
 
+        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            setTitle(R.string.avatar_picker_title);
+        }
+
         final RecyclerView mediaView = findViewById(android.R.id.list);
         final View progressView = findViewById(R.id.progress);
         final View emptyView = findViewById(android.R.id.empty);
