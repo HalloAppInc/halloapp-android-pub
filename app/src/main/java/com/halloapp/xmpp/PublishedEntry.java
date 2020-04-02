@@ -8,7 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
+import com.halloapp.proto.ChatMessage;
+import com.halloapp.proto.Comment;
+import com.halloapp.proto.Container;
+import com.halloapp.proto.MediaType;
+import com.halloapp.proto.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
@@ -39,6 +46,7 @@ public class PublishedEntry {
     private static final String ELEMENT_PARENT_COMMENT_ID = "parentCommentId";
     private static final String ELEMENT_URL = "url";
     private static final String ELEMENT_MEDIA = "media";
+    private static final String ELEMENT_PROTOBUF_STAGE_ONE = "s1";
 
     private static final String ATTRIBUTE_TYPE = "type";
     private static final String ATTRIBUTE_WIDTH = "width";
@@ -188,7 +196,12 @@ public class PublishedEntry {
                 continue;
             }
             final String name = Preconditions.checkNotNull(parser.getName());
-            if (name.equals(ELEMENT_FEED_POST)) {
+            if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
+                entryBuilder = readEncodedEntry(Xml.readText(parser));
+
+                // Stage one takes precedence over the other tags
+                return Preconditions.checkNotNull(entryBuilder);
+            } else if (name.equals(ELEMENT_FEED_POST)) {
                 entryBuilder = readEntryContent(parser);
                 entryBuilder.type(ENTRY_FEED);
             } else if (name.equals(ELEMENT_COMMENT)) {
@@ -317,6 +330,11 @@ public class PublishedEntry {
 
             }
             serializer.endTag(NAMESPACE, getTag());
+
+            serializer.startTag(NAMESPACE, ELEMENT_PROTOBUF_STAGE_ONE);
+            serializer.text(getEncodedEntry());
+            serializer.endTag(NAMESPACE, ELEMENT_PROTOBUF_STAGE_ONE);
+
             serializer.endTag(NAMESPACE, ELEMENT);
             serializer.flush();
         } catch (IOException e) {
@@ -324,6 +342,129 @@ public class PublishedEntry {
         }
 
         return writer.toString();
+    }
+
+    private String getEncodedEntry() {
+        Container.Builder containerBuilder = Container.newBuilder();
+        switch (type) {
+            case ENTRY_FEED: {
+                Post.Builder postBuilder = Post.newBuilder();
+                if (!media.isEmpty()) {
+                    postBuilder.addAllMedia(getMediaProtos());
+                }
+                postBuilder.setText(text);
+                containerBuilder.setPost(postBuilder.build());
+                break;
+            }
+            case ENTRY_COMMENT: {
+                Comment.Builder commentBuilder = Comment.newBuilder();
+                commentBuilder.setFeedPostId(feedItemId);
+                commentBuilder.setSenderUserId(user);
+                if (parentCommentId != null) {
+                    commentBuilder.setParentCommentId(parentCommentId);
+                }
+                commentBuilder.setText(text);
+                containerBuilder.setComment(commentBuilder.build());
+                break;
+            }
+            case ENTRY_CHAT: {
+                ChatMessage.Builder chatMessageBuilder = ChatMessage.newBuilder();
+                if (!media.isEmpty()) {
+                    chatMessageBuilder.addAllMedia(getMediaProtos());
+                }
+                chatMessageBuilder.setText(text);
+                containerBuilder.setChatMessage(chatMessageBuilder.build());
+                break;
+            }
+            default: {
+                throw new IllegalStateException("Unknown type " + type);
+            }
+        }
+        return Base64.encodeToString(containerBuilder.build().toByteArray(), Base64.DEFAULT);
+    }
+
+    private List<com.halloapp.proto.Media> getMediaProtos() {
+        Preconditions.checkState(!media.isEmpty(), "Trying to get empty media proto");
+
+        List<com.halloapp.proto.Media> mediaList = new ArrayList<>();
+        for (Media item : media) {
+            com.halloapp.proto.Media.Builder mediaBuilder = com.halloapp.proto.Media.newBuilder();
+            mediaBuilder.setType(getProtoMediaType(item.type));
+            mediaBuilder.setWidth(item.width);
+            mediaBuilder.setHeight(item.height);
+            mediaBuilder.setEncryptionKey(ByteString.copyFrom(item.encKey));
+            mediaBuilder.setPlaintextHash(ByteString.copyFrom(item.sha256hash));
+            mediaBuilder.setDownloadUrl(item.url);
+            mediaList.add(mediaBuilder.build());
+        }
+        return mediaList;
+    }
+
+    private MediaType getProtoMediaType(@NonNull String s) {
+        if ("image".equals(s)) {
+            return MediaType.MEDIA_TYPE_IMAGE;
+        } else if ("video".equals(s)) {
+            return MediaType.MEDIA_TYPE_VIDEO;
+        }
+        Log.w("Unrecognized media type string " + s);
+        return MediaType.MEDIA_TYPE_UNSPECIFIED;
+    }
+
+    private static String fromProtoMediaType(@NonNull MediaType type) {
+        if (type == MediaType.MEDIA_TYPE_IMAGE) {
+            return Media.MEDIA_TYPE_IMAGE;
+        } else if (type == MediaType.MEDIA_TYPE_VIDEO) {
+            return Media.MEDIA_TYPE_VIDEO;
+        }
+        Log.w("Unrecognized MediaType " + type);
+        return null;
+    }
+
+    private static List<Media> fromMediaProtos(List<com.halloapp.proto.Media> mediaList) {
+        List<Media> ret = new ArrayList<>();
+        for (com.halloapp.proto.Media item : mediaList) {
+            ret.add(new Media(fromProtoMediaType(
+                    item.getType()),
+                    item.getDownloadUrl(),
+                    item.getEncryptionKey().toByteArray(),
+                    item.getPlaintextHash().toByteArray(),
+                    item.getWidth(),
+                    item.getHeight()));
+        }
+        return ret;
+    }
+
+    private static Builder readEncodedEntry(String entry) {
+        try {
+            Container container = Container.parseFrom(Base64.decode(entry, Base64.DEFAULT));
+            Builder builder = new Builder();
+
+            if (container.hasPost()) {
+                Post post = container.getPost();
+                builder.type(ENTRY_FEED);
+                builder.text(post.getText());
+                builder.media(fromMediaProtos(post.getMediaList()));
+            } else if (container.hasComment()) {
+                Comment comment = container.getComment();
+                builder.type(ENTRY_COMMENT);
+                builder.feedItemId(comment.getFeedPostId());
+                builder.user(comment.getSenderUserId());
+                builder.parentCommentId(comment.getParentCommentId());
+                builder.text(comment.getText());
+            } else if (container.hasChatMessage()) {
+                ChatMessage chatMessage = container.getChatMessage();
+                builder.type(ENTRY_CHAT);
+                builder.text(chatMessage.getText());
+                builder.media(fromMediaProtos(chatMessage.getMediaList()));
+            } else {
+                Log.i("Unknown encoded entry type");
+            }
+
+            return builder;
+        } catch (InvalidProtocolBufferException e) {
+            Log.w("Error reading encoded entry", e);
+        }
+        return null;
     }
 
     @Override
