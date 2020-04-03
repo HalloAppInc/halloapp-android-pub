@@ -749,20 +749,16 @@ public class ContentDb {
                 final ContentValues messageValues = new ContentValues();
                 messageValues.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES_PENDING);
                 updated = db.updateWithOnConflict(MessagesTable.TABLE_NAME, messageValues,
-                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SEEN + "=?",
+                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "!='' AND " + MessagesTable.COLUMN_SEEN + "=?",
                         new String [] {chatId, Integer.toString(Message.SEEN_NO)},
                         SQLiteDatabase.CONFLICT_ABORT) > 0;
 
                 try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
-                        new String [] {
-                                ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
-                                ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
-                                ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
+                        new String [] {ChatsTable.COLUMN_NEW_MESSAGE_COUNT},
                         ChatsTable.COLUMN_CHAT_ID + "=?",
                         new String [] {chatId}, null, null, null)) {
                     if (cursor.moveToFirst()) {
                         final int newMessageCount = cursor.getInt(cursor.getColumnIndex(ChatsTable.COLUMN_NEW_MESSAGE_COUNT));
-                        final long lastMessageRowId = cursor.getInt(cursor.getColumnIndex(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID));
                         if (newMessageCount != 0) {
                             final ContentValues chatValues = new ContentValues();
                             chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
@@ -1265,7 +1261,10 @@ public class ContentDb {
     public @NonNull List<Message> getUnseenMessages(long timestamp, int count) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        final String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + timestamp;
+        final String where =
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "=" + Message.SEEN_NO + " AND " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "!='' AND " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + timestamp;
 
         String sql =
             "SELECT " +
