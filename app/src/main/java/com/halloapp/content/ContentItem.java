@@ -72,4 +72,13 @@ public abstract class ContentItem {
     public boolean isRetracted() {
         return TextUtils.isEmpty(text) && media.isEmpty();
     }
+
+    public boolean isAllMediaTransferred() {
+        for (Media mediaItem : media) {
+            if (!mediaItem.transferred) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
