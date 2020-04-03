@@ -290,10 +290,6 @@ public class Connection {
                 return null;
             }
             final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq(connection.getXMPPServiceDomain());
-            // TODO(jack): Remove this short-circuiting once server released to prod
-            if (true) {
-                return 20 * 60 * 60 * 24;
-            }
             try {
                 final SecondsToExpirationIq response = connection.createStanzaCollectorAndSend(secondsToExpirationIq).nextResultOrThrow();
                 return response.secondsLeft;
