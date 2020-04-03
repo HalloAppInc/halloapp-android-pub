@@ -9,6 +9,7 @@
     <string name="add_post">Add post</string>
     <string name="notifications">Notifications</string>
     <string name="feed_notifications_channel_name">Feed notifications</string>
+    <string name="message_notifications_channel_name">Message notifications</string>
     <string name="critical_notifications_channel_name">Critical app alerts</string>
     <string name="me">Me</string>
     <string name="camera_post">Camera</string>
@@ -114,6 +115,14 @@
         <item quantity="one">%d new post from %s</item>
         <item quantity="other">%d new posts from %s</item>
     </plurals>
+    <plurals name="new_messages_notification">
+        <item quantity="one">%d message from %s</item>
+        <item quantity="other">%d messages from %s</item>
+    </plurals>
+    <plurals name="new_messages_separator">
+        <item quantity="one">%d new message</item>
+        <item quantity="other">%d new messages</item>
+    </plurals>
     <string name="new_comments_notification">%s commented on your post</string>
     <string name="new_comments_on_multiple_posts_notification">%s commented on your posts</string>
     <string name="new_posts_and_comments_notification">%s. %s.</string>
@@ -152,5 +161,7 @@
     <string name="pick_media">Pick media</string>
     <string name="video">Video</string>
     <string name="photo">Photo</string>
+    <string name="album">Album</string>
     <string name="new_messages">New messages</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -124,7 +124,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         } else {
             parent.getContactLoader().load(nameView, post.senderUserId);
         }
-        if (!post.transferred) {
+        if (post.transferred == Post.TRANSFERRED_NO) {
             progressView.setVisibility(View.VISIBLE);
             timeView.setVisibility(View.GONE);
         } else {

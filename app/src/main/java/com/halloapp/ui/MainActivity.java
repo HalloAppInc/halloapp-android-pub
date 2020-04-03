@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onStart() {
         super.onStart();
         Log.i("MainActivity.onStart");
-        Notifications.getInstance(this).clear();
+        Notifications.getInstance(this).clearFeedNotifications();
         if (Connection.getInstance().clientExpired) {
             AppExpirationActivity.open(this, 0);
         }
@@ -293,6 +293,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else if (Notifications.ACTION_NOTIFY_FEED.equals(intent.getAction())) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_home);
+        } else if (Notifications.ACTION_NOTIFY_MESSAGE.equals(intent.getAction())) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_messages);
         }
     }
 }

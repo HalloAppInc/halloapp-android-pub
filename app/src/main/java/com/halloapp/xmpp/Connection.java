@@ -36,7 +36,6 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.sasl.SASLErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.EventElementType;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
@@ -44,7 +43,6 @@ import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
-import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
@@ -98,12 +96,15 @@ public class Connection {
         void onLoginFailed();
         void onClientVersionExpired();
         void onOutgoingPostSent(@NonNull String postId);
-        void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId);
         void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
-        void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
+        void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId);
+        void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId);
+        void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId);
+        void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId);
         void onIncomingMessageReceived(@NonNull Message message);
+        void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
         void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId);
         void onLowOneTimePreKeyCountReceived(int count);
@@ -157,6 +158,7 @@ public class Connection {
         ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider("retract", "http://jabber.org/protocol/pubsub#event", new PubSubItem.Provider()); // smack doesn't handle 'publisher' and 'timestamp' attributes
         ProviderManager.addExtensionProvider(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE, new ChatMessageElement.Provider());
+        ProviderManager.addExtensionProvider(DeliveryReceiptElement.ELEMENT, DeliveryReceiptElement.NAMESPACE, new DeliveryReceiptElement.Provider());
         ProviderManager.addExtensionProvider(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE, new SeenReceiptElement.Provider());
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addExtensionProvider(WhisperKeysLowCountMessage.ELEMENT, WhisperKeysLowCountMessage.NAMESPACE, new WhisperKeysLowCountMessage.Provider());
@@ -202,11 +204,6 @@ public class Connection {
 
         connection.addSyncStanzaListener(new MessageStanzaListener(), new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
         connection.addSyncStanzaListener(new AckStanzaListener(), new StanzaTypeFilter(AckStanza.class));
-
-        final ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(connection);
-        if (!sdm.includesFeature(DeliveryReceipt.NAMESPACE)) {
-            sdm.addFeature(DeliveryReceipt.NAMESPACE);
-        }
 
         Log.i("connection: connecting...");
         try {
@@ -619,12 +616,32 @@ public class Connection {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
-                message.addExtension(new SeenReceiptElement(postId));
-                ackHandlers.put(message.getStanzaId(), () -> observer.onSeenReceiptSent(senderUserId, postId));
+                message.addExtension(new SeenReceiptElement("feed", postId));
+                ackHandlers.put(message.getStanzaId(), () -> observer.onIncomingPostSeenReceiptSent(senderUserId, postId));
                 Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
                 Log.e("connection: cannot send post seen receipt", e);
+            }
+        });
+    }
+
+    public void sendDeliveryReceipt(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send delivery receipt, no connection");
+                return;
+            }
+            try {
+                final Jid recipientJid = userIdToJid(senderUserId);
+                final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
+                message.setStanzaId(RandomId.create());
+                message.addExtension(new DeliveryReceiptElement(chatId, messageId));
+                ackHandlers.put(message.getStanzaId(), () -> {});
+                Log.i("connection: sending message delivery receipt " + messageId + " to " + recipientJid);
+                connection.sendStanza(message);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send delivery receipt", e);
             }
         });
     }
@@ -684,8 +701,8 @@ public class Connection {
                             feedUserId,
                             entry.id,
                             entry.timestamp,
-                            entry.media.isEmpty(),
-                            ContentItem.SEEN_NO,
+                            entry.media.isEmpty() ? Post.TRANSFERRED_DESTINATION : Post.TRANSFERRED_NO,
+                            Post.SEEN_NO,
                             entry.text
                     );
                     for (PublishedEntry.Media entryMedia : entry.media) {
@@ -731,8 +748,8 @@ public class Connection {
                         getUserId(entry.user),
                         entry.id,
                         entry.timestamp,
-                        isMe(entry.user) || entry.media.isEmpty(),
-                        ContentItem.SEEN_YES,
+                        (isMe(entry.user) || entry.media.isEmpty()) ? Post.TRANSFERRED_DESTINATION : Post.TRANSFERRED_NO,
+                        Post.SEEN_YES,
                         entry.text
                 );
                 for (PublishedEntry.Media entryMedia : entry.media) {
@@ -868,10 +885,30 @@ public class Connection {
                     }
                 }
                 if (!handled) {
+                    final DeliveryReceiptElement deliveryReceipt = packet.getExtension(DeliveryReceiptElement.ELEMENT, DeliveryReceiptElement.NAMESPACE);
+                    if (deliveryReceipt != null) {
+                        Log.i("connection: got delivery receipt " + msg);
+                        final String threadId = deliveryReceipt.getThreadId();
+                        final UserId userId = getUserId(packet.getFrom());
+                        observer.onOutgoingMessageDelivered(threadId == null ? userId.rawId() : threadId, userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
+                        handled = true;
+                    }
+                }
+                if (!handled) {
                     final SeenReceiptElement seenReceipt = packet.getExtension(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE);
                     if (seenReceipt != null) {
                         Log.i("connection: got seen receipt " + msg);
-                        observer.onOutgoingPostSeen(getUserId(packet.getFrom()), seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                        final String threadId = seenReceipt.getThreadId();
+                        final UserId userId = getUserId(packet.getFrom());
+                        // TODO (ds): uncomment and remove next line when supported by server
+                        observer.onOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                        /*
+                        if ("feed".equals(threadId)) {
+                            observer.onOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                        } else {
+                            observer.onOutgoingMessageSeen(threadId, userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                        }
+                        */
                         handled = true;
                     }
                 }
@@ -899,7 +936,7 @@ public class Connection {
         }
     }
 
-    class HalloConnectionListener implements ConnectionListener {
+    static class HalloConnectionListener implements ConnectionListener {
 
         @Override
         public void connected(XMPPConnection connection) {

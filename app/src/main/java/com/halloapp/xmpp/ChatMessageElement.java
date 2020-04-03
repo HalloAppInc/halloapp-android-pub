@@ -62,7 +62,7 @@ public class ChatMessageElement implements ExtensionElement {
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,
-                false,
+                Message.TRANSFERRED_NO,
                 Message.SEEN_NO,
                 entry.text);
         for (PublishedEntry.Media entryMedia : entry.media) {

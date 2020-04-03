@@ -15,6 +15,7 @@ import androidx.paging.PagedList;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
@@ -29,6 +30,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
+    final ComputableLiveData<Chat> chat;
 
     private final ContentDb contentDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
@@ -63,6 +65,24 @@ public class ChatViewModel extends AndroidViewModel {
             }
         }
 
+        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
+            if (ChatViewModel.this.chatId.equals(chatId)) {
+                invalidateMessages();
+            }
+        }
+
+        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+            if (ChatViewModel.this.chatId.equals(chatId)) {
+                invalidateMessages();
+            }
+        }
+
+        public void onChatDeleted(@NonNull String chatId) {
+            if (ChatViewModel.this.chatId.equals(chatId)) {
+                invalidateMessages();
+            }
+        }
+
         @Override
         public void onDbCreated() {
         }
@@ -88,6 +108,13 @@ public class ChatViewModel extends AndroidViewModel {
             protected Contact compute() {
                 final Contact contact = ContactsDb.getInstance(application).getContact(new UserId(chatId));
                 return contact == null ? new Contact(new UserId(chatId)) : contact;
+            }
+        };
+
+        chat = new ComputableLiveData<Chat>() {
+            @Override
+            protected Chat compute() {
+                return contentDb.getChat(chatId);
             }
         };
     }

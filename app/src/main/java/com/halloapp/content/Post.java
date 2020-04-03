@@ -20,7 +20,7 @@ public class Post extends ContentItem {
             UserId senderUserId,
             String postId,
             long timestamp,
-            boolean transferred,
+            @TransferredState int transferred,
             @SeenState int seen,
             String text) {
         super(rowId, senderUserId, postId, timestamp, transferred, seen, text);

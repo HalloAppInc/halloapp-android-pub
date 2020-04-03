@@ -69,6 +69,15 @@ public class ViewDataLoader<V extends View, R, K> {
     }
 
     @MainThread
+    public void cancel(@NonNull V view) {
+        final Future existing = queue.get(view);
+        if (existing != null) {
+            existing.cancel(true);
+        }
+        view.setTag(null);
+    }
+
+    @MainThread
     public void destroy() {
         executor.shutdownNow();
     }

@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -22,9 +24,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
+import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -86,7 +90,6 @@ public class ChatActivity extends AppCompatActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(this);
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
-        //ContactsDb.getInstance(this).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
@@ -136,6 +139,10 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         }));
+        viewModel.chat.getLiveData().observe(this, chat -> {
+            adapter.setChat(chat);
+            ContentDb.getInstance(this).setChatSeen(chatId);
+        });
 
         viewModel.contact.getLiveData().observe(this, contact -> setTitle(contact.getDisplayName()));
     }
@@ -149,9 +156,45 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("ChatActivity.onStart");
+        Notifications.getInstance(this).clearMessageNotifications(chatId);
+        if (adapter.chat != null) {
+            ContentDb.getInstance(this).setChatSeen(chatId);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("ChatActivity.onStop");
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (item.getItemId()) {
+            case R.id.delete: {
+                ContentDb.getInstance(this).deleteChat(chatId);
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 
     private void sendMessage() {
@@ -166,8 +209,8 @@ public class ChatActivity extends AppCompatActivity {
                 UserId.ME,
                 RandomId.create(),
                 System.currentTimeMillis(),
-                false,
-                Message.SEEN_YES,
+                Message.TRANSFERRED_NO,
+                Message.SEEN_NO,
                 messageText);
         message.addToStorage(ContentDb.getInstance(this));
     }
@@ -204,11 +247,19 @@ public class ChatActivity extends AppCompatActivity {
         static final int MESSAGE_DIRECTION_INCOMING = 0x0100;
         static final int MESSAGE_DIRECTION_MASK = 0xFF00;
 
+        Chat chat;
+
         ChatAdapter() {
             super(DIFF_CALLBACK);
             setHasStableIds(true);
         }
 
+        public void setChat(Chat chat) {
+            this.chat = chat;
+            notifyDataSetChanged();
+        }
+
+        @Override
         public long getItemId(int position) {
             return Preconditions.checkNotNull(getItem(position)).rowId;
         }
@@ -264,7 +315,7 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-            holder.bindTo(Preconditions.checkNotNull(getItem(position)));
+            holder.bindTo(Preconditions.checkNotNull(getItem(position)), chat);
         }
     }
 

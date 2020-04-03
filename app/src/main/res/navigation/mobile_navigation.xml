@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_messages"
-        android:name="com.halloapp.ui.messages.MessagesFragment"
+        android:name="com.halloapp.ui.chats.ChatsFragment"
         android:label="@string/title_messages"
-        tools:layout="@layout/fragment_messages" />
+        tools:layout="@layout/fragment_chats" />
 
     <fragment
         android:id="@+id/navigation_profile"

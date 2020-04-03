@@ -1,11 +1,13 @@
 package com.halloapp.content;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -18,7 +20,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -43,6 +45,17 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_TEXT + " TEXT"
                 + ");");
 
+        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
+                + PostsTable.COLUMN_SENDER_USER_ID + ", "
+                + PostsTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
+        db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
+                + PostsTable.COLUMN_TIMESTAMP
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + MessagesTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + MessagesTable.TABLE_NAME + " ("
                 + MessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -54,6 +67,23 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_TRANSFERRED + " INTEGER,"
                 + MessagesTable.COLUMN_SEEN + " INTEGER,"
                 + MessagesTable.COLUMN_TEXT + " TEXT"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + MessagesTable.INDEX_MESSAGE_KEY + " ON " + MessagesTable.TABLE_NAME + "("
+                + MessagesTable.COLUMN_CHAT_ID + ", "
+                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
+                + MessagesTable.COLUMN_MESSAGE_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + ChatsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ChatsTable.TABLE_NAME + " ("
+                + ChatsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ChatsTable.COLUMN_CHAT_ID + " TEXT NOT NULL UNIQUE,"
+                + ChatsTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + " INTEGER,"
+                + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
+                + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MediaTable.TABLE_NAME);
@@ -71,6 +101,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_HEIGHT + " INTEGER"
                 + ");");
 
+        db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_MEDIA_KEY);
+        db.execSQL("CREATE INDEX " + MediaTable.INDEX_MEDIA_KEY + " ON " + MediaTable.TABLE_NAME + "("
+                + MediaTable.COLUMN_PARENT_TABLE + ", "
+                + MediaTable.COLUMN_PARENT_ROW_ID
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + CommentsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + CommentsTable.TABLE_NAME + " ("
                 + CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -85,41 +121,18 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_TEXT + " TEXT"
                 + ");");
 
+        db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + CommentsTable.INDEX_COMMENT_KEY + " ON " + CommentsTable.TABLE_NAME + "("
+                + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", "
+                + CommentsTable.COLUMN_COMMENT_ID
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + SeenTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + SeenTable.TABLE_NAME + " ("
                 + SeenTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + SeenTable.COLUMN_POST_ID + " TEXT NOT NULL,"
                 + SeenTable.COLUMN_SEEN_BY_USER_ID + " TEXT NOT NULL,"
                 + SeenTable.COLUMN_TIMESTAMP
-                + ");");
-
-        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
-        db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
-                + PostsTable.COLUMN_SENDER_USER_ID + ", "
-                + PostsTable.COLUMN_POST_ID
-                + ");");
-
-        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
-        db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
-                + PostsTable.COLUMN_TIMESTAMP
-                + ");");
-
-        db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
-        db.execSQL("CREATE UNIQUE INDEX " + MessagesTable.INDEX_MESSAGE_KEY + " ON " + MessagesTable.TABLE_NAME + "("
-                + MessagesTable.COLUMN_CHAT_ID + ", "
-                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
-                + MessagesTable.COLUMN_MESSAGE_ID
-                + ");");
-
-        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
-        db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
-                + PostsTable.COLUMN_TIMESTAMP
-                + ");");
-
-        db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
-        db.execSQL("CREATE UNIQUE INDEX " + CommentsTable.INDEX_COMMENT_KEY + " ON " + CommentsTable.TABLE_NAME + "("
-                + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", "
-                + CommentsTable.COLUMN_COMMENT_ID
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + SeenTable.INDEX_SEEN_KEY);
@@ -148,6 +161,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.beginTransaction();
         switch (oldVersion) {
             case 7: {
                 upgradeFromVersion7(db);
@@ -157,11 +171,17 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion8(db);
                 break;
             }
+            case 9:{
+                upgradeFromVersion9(db);
+                break;
+            }
             default: {
                 onCreate(db);
                 break;
             }
         }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     @Override
@@ -205,43 +225,24 @@ class ContentDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void upgradeFromVersion7(SQLiteDatabase db) {
+    private void upgradeFromVersion7(@NonNull SQLiteDatabase db) {
         Log.i("ContentDb.upgradeFromVersion7 started");
-        db.beginTransaction();
-
-        db.execSQL("CREATE TABLE tmp ("
-                + MediaTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "post_row_id" + " INTEGER,"
-                + MediaTable.COLUMN_TYPE + " INTEGER,"
-                + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
-                + MediaTable.COLUMN_URL + " TEXT,"
-                + MediaTable.COLUMN_FILE + " FILE,"
-                + MediaTable.COLUMN_ENC_KEY + " BLOB,"
-                + MediaTable.COLUMN_SHA256_HASH + " BLOB,"
-                + MediaTable.COLUMN_WIDTH + " INTEGER,"
-                + MediaTable.COLUMN_HEIGHT + " INTEGER"
-                + ");");
-        db.execSQL("INSERT INTO tmp SELECT "
-                + MediaTable._ID + " ,"
-                + "post_row_id" + " ,"
-                + MediaTable.COLUMN_TYPE + " ,"
-                + MediaTable.COLUMN_TRANSFERRED + " ,"
-                + MediaTable.COLUMN_URL + " ,"
-                + MediaTable.COLUMN_FILE + " ,"
-                + MediaTable.COLUMN_ENC_KEY + " ,"
-                + MediaTable.COLUMN_SHA256_HASH + " ,"
-                + MediaTable.COLUMN_WIDTH + " ,"
-                + MediaTable.COLUMN_HEIGHT + " "
-                + "FROM " + MediaTable.TABLE_NAME);
-        db.execSQL("DROP TABLE " + MediaTable.TABLE_NAME);
-        db.execSQL("ALTER TABLE tmp RENAME TO " + MediaTable.TABLE_NAME);
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
+        removeColumns(db, MediaTable.TABLE_NAME, new String [] {
+                MediaTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
+                "post_row_id" + " INTEGER",
+                MediaTable.COLUMN_TYPE + " INTEGER",
+                MediaTable.COLUMN_TRANSFERRED + " INTEGER",
+                MediaTable.COLUMN_URL + " TEXT",
+                MediaTable.COLUMN_FILE + " FILE",
+                MediaTable.COLUMN_ENC_KEY + " BLOB",
+                MediaTable.COLUMN_SHA256_HASH + " BLOB",
+                MediaTable.COLUMN_WIDTH + " INTEGER",
+                MediaTable.COLUMN_HEIGHT + " INTEGER"
+        });
         Log.i("ContentDb.upgradeFromVersion7 finished");
     }
 
-    private void upgradeFromVersion8(SQLiteDatabase db) {
+    private void upgradeFromVersion8(@NonNull SQLiteDatabase db) {
 
         // create messages table
         db.execSQL("DROP TABLE IF EXISTS " + MessagesTable.TABLE_NAME);
@@ -257,12 +258,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_TEXT + " TEXT"
                 + ");");
 
+        db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
         db.execSQL("CREATE UNIQUE INDEX " + MessagesTable.INDEX_MESSAGE_KEY + " ON " + MessagesTable.TABLE_NAME + "("
                 + MessagesTable.COLUMN_CHAT_ID + ", "
                 + MessagesTable.COLUMN_SENDER_USER_ID + ", "
                 + MessagesTable.COLUMN_MESSAGE_ID
                 + ");");
 
+        db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
         db.execSQL("CREATE TRIGGER " + MessagesTable.TRIGGER_DELETE + " AFTER DELETE ON " + MessagesTable.TABLE_NAME + " "
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
@@ -307,6 +310,54 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion9(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_MEDIA_KEY);
+        db.execSQL("CREATE INDEX " + MediaTable.INDEX_MEDIA_KEY + " ON " + MediaTable.TABLE_NAME + "("
+                + MediaTable.COLUMN_PARENT_TABLE + ", "
+                + MediaTable.COLUMN_PARENT_ROW_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + ChatsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ChatsTable.TABLE_NAME + " ("
+                + ChatsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ChatsTable.COLUMN_CHAT_ID + " TEXT NOT NULL UNIQUE,"
+                + ChatsTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + " INTEGER,"
+                + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
+                + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1"
+                + ");");
+
+        final ContentValues messageValues = new ContentValues();
+        messageValues.put(MessagesTable.COLUMN_TRANSFERRED, Message.TRANSFERRED_DESTINATION);
+        db.update(MessagesTable.TABLE_NAME, messageValues, MessagesTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
+
+        final ContentValues postValues = new ContentValues();
+        postValues.put(PostsTable.COLUMN_TRANSFERRED, Post.TRANSFERRED_DESTINATION);
+        db.update(PostsTable.TABLE_NAME, postValues, PostsTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
+    }
+
+    private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
+        final StringBuilder schema = new StringBuilder();
+        for (String column : columns) {
+            if (schema.length() != 0) {
+                schema.append(',');
+            }
+            schema.append(column);
+        }
+        final StringBuilder selection = new StringBuilder();
+        for (String column : columns) {
+            if (selection.length() != 0) {
+                selection.append(',');
+            }
+            selection.append(column.substring(0, column.indexOf(' ')));
+        }
+
+        db.execSQL("CREATE TABLE tmp (" + schema.toString() + ");");
+        db.execSQL("INSERT INTO tmp SELECT " + selection.toString() + " FROM " + tableName);
+        db.execSQL("DROP TABLE " + tableName);
+        db.execSQL("ALTER TABLE tmp RENAME TO " + tableName);
     }
 
     void deleteDb() {

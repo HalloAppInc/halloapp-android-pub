@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+@SuppressWarnings("WeakerAccess")
 public class ContentDb {
 
     private static ContentDb instance;
@@ -54,6 +57,10 @@ public class ContentDb {
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
+        void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
+        void onChatSeen(@NonNull String chatId);
+        void onChatDeleted(@NonNull String chatId);
         void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onFeedCleanup();
         void onDbCreated();
@@ -72,6 +79,10 @@ public class ContentDb {
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
+        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
+        public void onChatSeen(@NonNull String chatId) {}
+        public void onChatDeleted(@NonNull String chatId) {}
         public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
         public void onFeedCleanup() {}
         public void onDbCreated() {}
@@ -301,9 +312,9 @@ public class ContentDb {
         });
     }
 
-    public void setSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void setPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            Log.i("ContentDb.setSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
+            Log.i("ContentDb.setPostSeenReceiptSent: senderUserId=" + senderUserId + " postId=" + postId);
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_SEEN, Post.SEEN_YES);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -313,7 +324,7 @@ public class ContentDb {
                         new String [] {senderUserId.rawId(), postId},
                         SQLiteDatabase.CONFLICT_ABORT);
             } catch (SQLException ex) {
-                Log.e("ContentDb.setSeenReceiptSent: failed");
+                Log.e("ContentDb.setPostSeenReceiptSent: failed");
                 throw ex;
             }
         });
@@ -487,9 +498,7 @@ public class ContentDb {
     private void retractCommentInBackground(@NonNull Comment comment) {
         Log.i("ContentDb.retractCommentInBackground: senderUserId=" + comment.commentSenderUserId + " commentId=" + comment.commentId);
         final ContentValues values = new ContentValues();
-        if (comment.commentSenderUserId.isMe()) {
-            values.put(CommentsTable.COLUMN_TRANSFERRED, false);
-        }
+        values.put(CommentsTable.COLUMN_TRANSFERRED, !comment.commentSenderUserId.isMe());
         values.put(CommentsTable.COLUMN_TEXT, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -665,21 +674,131 @@ public class ContentDb {
         // TODO (ds): implement
     }
 
+    @WorkerThread
+    public @NonNull List<Chat> getChats() {
+        final List<Chat> chats = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
+                new String [] {
+                        ChatsTable._ID,
+                        ChatsTable.COLUMN_CHAT_ID,
+                        ChatsTable.COLUMN_TIMESTAMP,
+                        ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
+                        ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
+                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
+                null,
+                null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final Chat chat = new Chat(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getLong(2),
+                        cursor.getInt(3),
+                        cursor.getLong(4),
+                        cursor.getLong(5));
+                chats.add(chat);
+            }
+        }
+        return chats;
+    }
+
+    public @Nullable Chat getChat(@NonNull String chatId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
+                new String [] {
+                        ChatsTable._ID,
+                        ChatsTable.COLUMN_CHAT_ID,
+                        ChatsTable.COLUMN_TIMESTAMP,
+                        ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
+                        ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
+                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
+                ChatsTable.COLUMN_CHAT_ID + "=?",
+                new String [] {chatId},
+                null, null, null)) {
+            if (cursor.moveToNext()) {
+                return new Chat(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getLong(2),
+                        cursor.getInt(3),
+                        cursor.getLong(4),
+                        cursor.getLong(5));
+            }
+        }
+        return null;
+    }
+
+    public void deleteChat(@NonNull String chatId) {
+        databaseWriteExecutor.execute(() -> {
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
+            db.delete(ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
+            observers.notifyChatDeleted(chatId);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        });
+    }
+
+    public void setChatSeen(@NonNull String chatId) {
+        databaseWriteExecutor.execute(() -> {
+            boolean updated = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                final ContentValues messageValues = new ContentValues();
+                messageValues.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES_PENDING);
+                updated = db.updateWithOnConflict(MessagesTable.TABLE_NAME, messageValues,
+                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SEEN + "=?",
+                        new String [] {chatId, Integer.toString(Message.SEEN_NO)},
+                        SQLiteDatabase.CONFLICT_ABORT) > 0;
+
+                try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
+                        new String [] {
+                                ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
+                                ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
+                                ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
+                        ChatsTable.COLUMN_CHAT_ID + "=?",
+                        new String [] {chatId}, null, null, null)) {
+                    if (cursor.moveToFirst()) {
+                        final int newMessageCount = cursor.getInt(cursor.getColumnIndex(ChatsTable.COLUMN_NEW_MESSAGE_COUNT));
+                        final long lastMessageRowId = cursor.getInt(cursor.getColumnIndex(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID));
+                        if (newMessageCount != 0) {
+                            final ContentValues chatValues = new ContentValues();
+                            chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+                            chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
+                            db.updateWithOnConflict(ChatsTable.TABLE_NAME, chatValues,
+                                    ChatsTable.COLUMN_CHAT_ID + "=?",
+                                    new String [] {chatId},
+                                    SQLiteDatabase.CONFLICT_ABORT);
+                        }
+                        updated = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updated) {
+                observers.notifyChatSeen(chatId);
+            }
+        });
+    }
 
     private void addMessageInBackground(@NonNull Message message) {
         Log.i("ContentDb.addMessage " + message);
-        final ContentValues values = new ContentValues();
-        values.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
-        values.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
-        values.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
-        values.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
-        values.put(MessagesTable.COLUMN_TRANSFERRED, message.transferred);
-        values.put(MessagesTable.COLUMN_SEEN, message.seen);
+        final ContentValues messageValues = new ContentValues();
+        messageValues.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
+        messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
+        messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
+        messageValues.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
+        messageValues.put(MessagesTable.COLUMN_TRANSFERRED, message.transferred);
+        messageValues.put(MessagesTable.COLUMN_SEEN, message.seen);
         if (message.text != null) {
-            values.put(MessagesTable.COLUMN_TEXT, message.text);
+            messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
         }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, messageValues, SQLiteDatabase.CONFLICT_ABORT);
         for (Media mediaItem : message.media) {
             final ContentValues mediaItemValues = new ContentValues();
             mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
@@ -710,6 +829,31 @@ public class ContentDb {
             }
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
+        final boolean addUnseen = message.seen == Message.SEEN_NO && message.isIncoming();
+        final int updatedRowsCount;
+        try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
+                ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + ", " +
+                (addUnseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
+                (addUnseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
+                ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
+                "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId)) {
+            updatedRowsCount = statement.executeUpdateDelete();
+        }
+        if (updatedRowsCount == 0) {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId);
+            chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
+            chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+            if (addUnseen) {
+                chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
+                chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
+            } else {
+                chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+                chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
+            }
+            db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
+        }
+
         Log.i("ContentDb.addMessage: added " + message);
     }
 
@@ -717,7 +861,7 @@ public class ContentDb {
         databaseWriteExecutor.execute(() -> {
             Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId);
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_TRANSFERRED, true);
+            values.put(MessagesTable.COLUMN_TRANSFERRED, senderUserId.isMe() ? Message.TRANSFERRED_SERVER : Message.TRANSFERRED_DESTINATION);
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             try {
                 db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
@@ -729,6 +873,46 @@ public class ContentDb {
                 Log.e("ContentDb.setMessageTransferred: failed");
                 throw ex;
             }
+        });
+    }
+
+    public void setOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("ContentDb.setOutgoingMessageDelivered: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
+            final ContentValues values = new ContentValues();
+            values.put(MessagesTable.COLUMN_TRANSFERRED, Message.TRANSFERRED_DESTINATION);
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            try {
+                db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
+                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                        new String [] {chatId, messageId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                observers.notifyOutgoingMessageDelivered(chatId, recipientUserId, messageId);
+            } catch (SQLException ex) {
+                Log.e("ContentDb.setOutgoingMessageDelivered: failed");
+                throw ex;
+            }
+            completionRunnable.run();
+        });
+    }
+
+    public void setOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("ContentDb.setOutgoingMessageSeen: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
+            final ContentValues values = new ContentValues();
+            values.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES);
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            try {
+                db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
+                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                        new String [] {chatId, messageId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+                observers.notifyOutgoingMessageSeen(chatId, recipientUserId, messageId);
+            } catch (SQLException ex) {
+                Log.e("ContentDb.setOutgoingMessageSeen: failed");
+                throw ex;
+            }
+            completionRunnable.run();
         });
     }
 
@@ -844,7 +1028,7 @@ public class ContentDb {
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
                             cursor.getLong(3),
-                            cursor.getInt(4) == 1,
+                            cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
                     post.commentCount = cursor.getInt(14);
@@ -934,7 +1118,7 @@ public class ContentDb {
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
                             cursor.getLong(3),
-                            cursor.getInt(4) == 1,
+                            cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
@@ -1078,6 +1262,155 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Message> getUnseenMessages(long timestamp, int count) {
+        final List<Message> messages = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + timestamp;
+
+        String sql =
+            "SELECT " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                "m." + MediaTable._ID + "," +
+                "m." + MediaTable.COLUMN_TYPE + "," +
+                "m." + MediaTable.COLUMN_URL + "," +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_WIDTH + "," +
+                "m." + MediaTable.COLUMN_HEIGHT + "," +
+                "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    MediaTable._ID + "," +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                    MediaTable.COLUMN_TYPE + "," +
+                    MediaTable.COLUMN_URL + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_WIDTH + "," +
+                    MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + where + " " +
+            "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + " ASC " +
+            "LIMIT " + count;
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            Message message = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (message != null) {
+                        messages.add(message);
+                    }
+                    message = new Message(
+                            rowId,
+                            cursor.getString(14),
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4),
+                            cursor.getInt(5),
+                            cursor.getString(6));
+                }
+                if (!cursor.isNull(7)) {
+                    Preconditions.checkNotNull(message).media.add(new Media(
+                            cursor.getLong(7),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
+                            null,
+                            null,
+                            cursor.getInt(11),
+                            cursor.getInt(12),
+                            cursor.getInt(13) == 1));
+                }
+            }
+            if (message != null && cursor.getCount() < count) {
+                messages.add(message);
+            }
+        }
+        Log.i("ContentDb.getUnseenMessages: start=" + timestamp + " count=" + count + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
+
+        return messages;
+
+    }
+
+    @WorkerThread
+    @Nullable Message getMessage(long rowId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+            "SELECT " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                "m." + MediaTable._ID + "," +
+                "m." + MediaTable.COLUMN_TYPE + "," +
+                "m." + MediaTable.COLUMN_URL + "," +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_WIDTH + "," +
+                "m." + MediaTable.COLUMN_HEIGHT + "," +
+                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    MediaTable._ID + "," +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                    MediaTable.COLUMN_TYPE + "," +
+                    MediaTable.COLUMN_URL + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_WIDTH + "," +
+                    MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=" + rowId;
+        Message message = null;
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                if (message == null) {
+                    message = new Message(
+                            cursor.getLong(0),
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(5),
+                            cursor.getInt(6),
+                            cursor.getString(7));
+                }
+                if (!cursor.isNull(8)) {
+                    Preconditions.checkNotNull(message).media.add(new Media(
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
+                            null,
+                            null,
+                            cursor.getInt(12),
+                            cursor.getInt(13),
+                            cursor.getInt(14) == 1));
+                }
+            }
+        }
+        return message;
+    }
+
+    @WorkerThread
     @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long timestamp, int count, boolean after) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -1086,9 +1419,10 @@ public class ContentDb {
             where += " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + (after ? "<" : ">") + timestamp;
         }
 
-        String sql =
+        final String sql =
             "SELECT " +
                 MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
@@ -1132,25 +1466,25 @@ public class ContentDb {
                     }
                     message = new Message(
                             rowId,
-                            chatId,
-                            new UserId(cursor.getString(1)),
-                            cursor.getString(2),
-                            cursor.getLong(3),
-                            cursor.getInt(4) == 1,
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6));
+                            cursor.getInt(6),
+                            cursor.getString(7));
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13),
+                            cursor.getInt(14) == 1));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -1224,7 +1558,7 @@ public class ContentDb {
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
                             cursor.getLong(3),
-                            cursor.getInt(4) == 1,
+                            cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
@@ -1309,7 +1643,7 @@ public class ContentDb {
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
                             cursor.getLong(3),
-                            cursor.getInt(4) == 1,
+                            cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
                 }

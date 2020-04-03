@@ -2,12 +2,17 @@ package com.halloapp.ui.chat;
 
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.ContentViewHolderParent;
@@ -21,6 +26,9 @@ import me.relex.circleindicator.CircleIndicator;
 
 class MessageViewHolder extends ViewHolderWithLifecycle {
 
+    private final ImageView statusView;
+    private final TextView dateView;
+    private final TextView newMessagesSeparator;
     private final LimitingTextView textView;
     private final MediaViewPager mediaPagerView;
     private final CircleIndicator mediaPagerIndicator;
@@ -37,6 +45,9 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
 
         this.parent = parent;
 
+        statusView = itemView.findViewById(R.id.status);
+        dateView = itemView.findViewById(R.id.date);
+        newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
@@ -71,9 +82,21 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    void bindTo(@NonNull Message message) {
+    void bindTo(@NonNull Message message, @Nullable Chat chat) {
         this.message = message;
-        //textView.setText(message.timestamp + " " + message.rowId + " " + message.text);
+
+        if (statusView != null) {
+            if (message.seen == Message.SEEN_YES) {
+                statusView.setImageResource(R.drawable.ic_messaging_seen);
+            } else if (message.transferred == Message.TRANSFERRED_DESTINATION) {
+                statusView.setImageResource(R.drawable.ic_messaging_delivered);
+            } else if (message.transferred == Message.TRANSFERRED_SERVER) {
+                statusView.setImageResource(R.drawable.ic_messaging_sent);
+            } else {
+                statusView.setImageResource(R.drawable.ic_messaging_clock);
+            }
+        }
+
         if (message.media.isEmpty()) {
             textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
         } else {
@@ -96,6 +119,25 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), message.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
+        }
+
+        // TODO (ds): implement date
+        dateView.setVisibility(View.GONE);
+        /*
+        if (prevMessage != null && !areSameDay(message.timestamp, prevMessage.timestamp)) {
+            dateView.setVisibility(View.VISIBLE);
+            dateView.setText(message.timestamp);
+        } else {
+            dateView.setVisibility(View.GONE);
+        }
+        */
+
+        if (chat != null && chat.firstUnseenMessageRowId == message.rowId) {
+            newMessagesSeparator.setVisibility(View.VISIBLE);
+            newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, chat.newMessageCount, chat.newMessageCount));
+        } else {
+            newMessagesSeparator.setVisibility(View.GONE);
         }
     }
 }

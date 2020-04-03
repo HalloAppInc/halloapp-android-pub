@@ -96,7 +96,7 @@ class ContentDbObservers {
         }
     }
 
-    public void notifyMessageAdded(@NonNull Message message) {
+    void notifyMessageAdded(@NonNull Message message) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMessageAdded(message);
@@ -104,7 +104,7 @@ class ContentDbObservers {
         }
     }
 
-    public void notifyMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    void notifyMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMessageUpdated(chatId, senderUserId,  messageId);
@@ -112,13 +112,46 @@ class ContentDbObservers {
         }
     }
 
-    public void notifyMessageRetracted(String chatId, UserId senderUserId, String messageId) {
+    void notifyOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onOutgoingMessageDelivered(chatId, seenByUserId, postId);
+            }
+        }
+    }
+
+    void notifyOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onOutgoingMessageSeen(chatId, seenByUserId, postId);
+            }
+        }
+    }
+
+    void notifyMessageRetracted(String chatId, UserId senderUserId, String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMessageRetracted(chatId, senderUserId, messageId);
             }
         }
     }
+
+    void notifyChatSeen(String chatId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onChatSeen(chatId);
+            }
+        }
+    }
+
+    void notifyChatDeleted(String chatId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onChatDeleted(chatId);
+            }
+        }
+    }
+
     void notifyFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

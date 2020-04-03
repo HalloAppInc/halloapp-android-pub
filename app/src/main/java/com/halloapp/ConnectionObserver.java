@@ -83,8 +83,8 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
-        ContentDb.getInstance(context).setSeenReceiptSent(senderUserId, postId);
+    public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+        ContentDb.getInstance(context).setPostSeenReceiptSent(senderUserId, postId);
     }
 
     @Override
@@ -93,8 +93,26 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
+    public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+        ContentDb.getInstance(context).setOutgoingMessageDelivered(chatId, userId, id, timestamp, () -> Connection.getInstance().sendAck(stanzaId));
+    }
+
+    @Override
+    public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+        ContentDb.getInstance(context).setOutgoingMessageSeen(chatId, userId, id, timestamp, () -> Connection.getInstance().sendAck(stanzaId));
+    }
+
+    @Override
     public void onIncomingMessageReceived(@NonNull Message message) {
-        ContentDb.getInstance(context).addMessage(message, () -> Connection.getInstance().sendAck(message.id));
+        ContentDb.getInstance(context).addMessage(message, () -> {
+            Connection.getInstance().sendDeliveryReceipt(message.chatId, message.senderUserId, message.id);
+            Connection.getInstance().sendAck(message.id);
+        });
+    }
+
+    @Override
+    public void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        // TODO (ds): implement
     }
 
     @Override

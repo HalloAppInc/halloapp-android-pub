@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
+    android:paddingStart="0dp"
+    android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -22,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/time"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/info"
         app:layout_constraintVertical_chainStyle="packed"
@@ -35,11 +37,48 @@
         tools:text="Ded Pihtov"/>
 
     <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textAppearance="?textAppearanceListItemSecondary"
+        tools:text="Yesterday"/>
+
+    <ImageView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingEnd="6dp"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintEnd_toStartOf="@+id/media_icon"
+        app:layout_constraintTop_toTopOf="@+id/info"
+        app:layout_constraintBottom_toBottomOf="@+id/info"
+        tools:src="@drawable/ic_messaging_sent"/>
+
+    <ImageView
+        android:id="@+id/media_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintStart_toEndOf="@+id/status"
+        app:layout_constraintEnd_toStartOf="@+id/info"
+        app:layout_constraintTop_toTopOf="@+id/info"
+        app:layout_constraintBottom_toBottomOf="@+id/info"
+        android:tint="?android:textColorPrimary"
+        tools:src="@drawable/ic_camera"/>
+
+    <TextView
         android:id="@+id/info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/media_icon"
+        app:layout_constraintEnd_toStartOf="@+id/new_messages"
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent"
         android:singleLine="true"
@@ -48,5 +87,22 @@
         android:textDirection="locale"
         android:textAlignment="gravity"
         tools:text="+1 (650) 555-3000"/>
+
+    <TextView
+        android:id="@+id/new_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="16sp"
+        app:layout_constraintStart_toEndOf="@+id/info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/info"
+        app:layout_constraintBottom_toBottomOf="@+id/info"
+        android:includeFontPadding="false"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:background="@drawable/new_messages_indicator_background"
+        android:textColor="?android:textColorPrimaryInverse"
+        tools:text="3"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

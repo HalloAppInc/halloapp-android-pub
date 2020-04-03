@@ -6,28 +6,43 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
+import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
+import androidx.core.app.TaskStackBuilder;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
+import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
+import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
+import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -37,21 +52,29 @@ public class Notifications {
     private static Notifications instance;
 
     public static final String ACTION_NOTIFY_FEED = "halloapp.intent.action.NOTIFY_FEED";
+    public static final String ACTION_NOTIFY_MESSAGE = "halloapp.intent.action.NOTIFY_MESSAGE";
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
+    private static final String MESSAGE_NOTIFICATION_CHANNEL_ID = "message_notifications";
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
 
+    private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
+
     private static final int FEED_NOTIFICATION_ID = 0;
-    private static final int EXPIRATION_NOTIFICATION_ID = 1;
-    private static final int LOGIN_FAILED_NOTIFICATION_ID = 2;
+    private static final int MESSAGE_NOTIFICATION_ID = 1;
+    private static final int EXPIRATION_NOTIFICATION_ID = 2;
+    private static final int LOGIN_FAILED_NOTIFICATION_ID = 3;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
+    private static final int UNSEEN_MESSAGES_LIMIT = 256;
 
     private static final String EXTRA_FEED_NOTIFICATION_TIME_CUTOFF = "last_feed_notification_time";
 
     private final Context context;
     private final Preferences preferences;
+    private final AvatarLoader avatarLoader;
+    private final ContactsDb contactsDb;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private long feedNotificationTimeCutoff;
@@ -72,6 +95,8 @@ public class Notifications {
     private Notifications(Context context) {
         this.context = context.getApplicationContext();
         this.preferences = Preferences.getInstance(context);
+        this.avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
+        this.contactsDb = ContactsDb.getInstance(context);
     }
 
     public void init() {
@@ -79,10 +104,16 @@ public class Notifications {
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= 26) {
             final NotificationChannel feedNotificationsChannel = new NotificationChannel(FEED_NOTIFICATION_CHANNEL_ID, context.getString(R.string.feed_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            final NotificationChannel messageNotificationsChannel = new NotificationChannel(MESSAGE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.message_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+            messageNotificationsChannel.enableLights(true);
+            messageNotificationsChannel.enableVibration(true);
             final NotificationChannel criticalNotificationsChannel = new NotificationChannel(CRITICAL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.critical_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+            criticalNotificationsChannel.enableLights(true);
+            criticalNotificationsChannel.enableVibration(true);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
+            notificationManager.createNotificationChannel(messageNotificationsChannel);
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
 
             notificationManager.deleteNotificationChannel("new_post_notification"); // TODO (ds): remove
@@ -93,7 +124,7 @@ public class Notifications {
         this.enabled = enabled;
     }
 
-    public void clear() {
+    public void clearFeedNotifications() {
         executor.execute(() -> {
             if (feedNotificationTimeCutoff != 0) {
                 preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff);
@@ -103,7 +134,7 @@ public class Notifications {
         });
     }
 
-    public void update() {
+    public void updateFeedNotifications() {
         if (!enabled) {
             return;
         }
@@ -112,7 +143,7 @@ public class Notifications {
             final String newCommentsNotificationText = getNewCommentsNotificationText();
             if (TextUtils.isEmpty(newPostsNotificationText) && TextUtils.isEmpty(newCommentsNotificationText)) {
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                notificationManager.cancelAll();
+                notificationManager.cancel(FEED_NOTIFICATION_ID);
             } else {
                 final String text;
                 if (TextUtils.isEmpty(newCommentsNotificationText) && !TextUtils.isEmpty(newPostsNotificationText)) {
@@ -125,6 +156,197 @@ public class Notifications {
                 showFeedNotification(context.getString(R.string.app_name), text);
             }
         });
+    }
+
+    public void clearMessageNotifications(@NonNull String chatId) {
+        executor.execute(() -> {
+            /*
+            if (feedNotificationTimeCutoff != 0) {
+                preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff);
+            }
+            */
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            if (Build.VERSION.SDK_INT >= 23 && getMessageNotificationCount() <= 2) {
+                notificationManager.cancel(MESSAGE_NOTIFICATION_ID);
+            }
+            notificationManager.cancel(chatId, MESSAGE_NOTIFICATION_ID);
+        });
+    }
+
+    @RequiresApi(23)
+    private int getMessageNotificationCount() {
+        final NotificationManager notificationManager = (NotificationManager) Preconditions.checkNotNull(context.getSystemService(Context.NOTIFICATION_SERVICE));
+        final StatusBarNotification[] statusBarNotifications = notificationManager.getActiveNotifications();
+        int count = 0;
+        for (StatusBarNotification statusBarNotification : statusBarNotifications) {
+            if (statusBarNotification.getGroupKey().endsWith(MESSAGE_NOTIFICATION_GROUP_KEY)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void updateMessageNotifications() {
+        if (!enabled) {
+            return;
+        }
+        executor.execute(() -> {
+
+            final List<Message> messages = ContentDb.getInstance(context).getUnseenMessages(preferences.getMessageNotificationTimeCutoff(), UNSEEN_MESSAGES_LIMIT);
+            Log.i("Notifications.updateMessageNotifications: " + messages.size() + " messages");
+
+            // group messages by chat IDs
+            final HashMap<String, List<Message>> chatsMessages = new HashMap<>();
+            final List<String> chatsIds = new ArrayList<>();
+            for (Message message : messages) {
+                if (message.isOutgoing() || message.isRetracted()) {
+                    continue;
+                }
+                List<Message> chatMessages = chatsMessages.get(message.chatId);
+                if (chatMessages == null) {
+                    chatMessages = new ArrayList<>();
+                    chatsMessages.put(message.chatId, chatMessages);
+                    chatsIds.add(message.chatId);
+                }
+                chatMessages.add(message);
+            }
+
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            if (chatsMessages.isEmpty()) {
+                notificationManager.cancel(MESSAGE_NOTIFICATION_ID);
+                return;
+            }
+
+            final List<String> names = new ArrayList<>();
+            final Set<UserId> senders = new HashSet<>();
+            final Map<UserId, Bitmap> avatars = new HashMap<>();
+            for (String chatId : chatsIds) {
+                final List<Message> chatMessages = Preconditions.checkNotNull(chatsMessages.get(chatId));
+
+                final IconCompat chatIcon = IconCompat.createWithResource(context, R.drawable.avatar_person);
+                final Person chatUser = new Person.Builder().setIcon(chatIcon).setName(context.getString(R.string.me)).setKey("").build();
+                final NotificationCompat.MessagingStyle style = new NotificationCompat.MessagingStyle(chatUser);
+                final List<String> chatNames = new ArrayList<>();
+                final Set<UserId> chatSenders = new HashSet<>();
+                for (Message message : chatMessages) {
+                    Bitmap avatar = avatars.get(message.senderUserId);
+                    if (avatar == null) {
+                        avatar = MediaUtils.getCircledBitmap(avatarLoader.getAvatar(message.senderUserId));
+                        avatars.put(message.senderUserId, avatar);
+                    }
+                    final IconCompat icon = IconCompat.createWithBitmap(avatar);
+                    Contact sender = contactsDb.getContact(message.senderUserId);
+                    if (sender == null) {
+                        sender = new Contact(message.senderUserId);
+                    }
+                    if (senders.add(message.senderUserId)) {
+                        names.add(sender.getDisplayName());
+                    }
+                    if (chatSenders.add(message.senderUserId)) {
+                        chatNames.add(sender.getDisplayName());
+                    }
+                    Person user = new Person.Builder().setIcon(icon).setName(message.senderUserId.isMe() ? context.getString(R.string.me) : sender.getDisplayName()).setKey(message.senderUserId.rawId()).build();
+                    style.addMessage(getMessagePreviewIcon(message) + getMessagePreviewText(message), message.timestamp, user);
+                }
+                final String text = context.getResources().getQuantityString(R.plurals.new_messages_notification, chatMessages.size(), chatMessages.size(), ListFormatter.format(context, chatNames));
+                final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MESSAGE_NOTIFICATION_CHANNEL_ID)
+                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentText(text)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(false)
+                        .setStyle(style);
+                final Intent contentIntent = new Intent(context, ChatActivity.class);
+                contentIntent.setAction(ACTION_NOTIFY_MESSAGE + "." + chatId); // use different actions, to there are different pending intents per chat
+                contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                stackBuilder.addNextIntentWithParentStack(contentIntent);
+
+                builder.setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
+                //final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
+                //deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
+                //builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
+
+                notificationManager.notify(chatId, MESSAGE_NOTIFICATION_ID, builder.build());
+            }
+
+            final String text = context.getResources().getQuantityString(R.plurals.new_messages_notification, messages.size(), messages.size(), ListFormatter.format(context, names));
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MESSAGE_NOTIFICATION_CHANNEL_ID)
+                    .setContentTitle(context.getString(R.string.app_name))
+                    .setContentText(text)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setAutoCancel(true)
+                    .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
+                    .setGroupSummary(true);
+
+            if (chatsIds.size() > 1) {
+                final Intent contentIntent = new Intent(context, MainActivity.class);
+                contentIntent.setAction(ACTION_NOTIFY_MESSAGE);
+                builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+            } else {
+                final String chatId = chatsIds.get(0);
+                final Intent contentIntent = new Intent(context, ChatActivity.class);
+                contentIntent.setAction(ACTION_NOTIFY_MESSAGE);
+                contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                stackBuilder.addNextIntentWithParentStack(contentIntent);
+                builder.setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
+            }
+            notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
+
+            /*
+            final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
+            deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
+            builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
+            */
+        });
+    }
+
+    private String getMessagePreviewText(@NonNull Message message) {
+        if (TextUtils.isEmpty(message.text)) {
+            if (message.media.size() == 1) {
+                final Media media = message.media.get(0);
+                switch (media.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        return context.getString(R.string.photo);
+                    }
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        return context.getString(R.string.video);
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        Log.e("unknown media type " + media.file.getAbsolutePath());
+                        return "";
+                    }
+                }
+            } else {
+                return context.getString(R.string.album);
+            }
+        } else {
+            return message.text;
+        }
+    }
+
+    private String getMessagePreviewIcon(@NonNull Message message) {
+        if (message.media.size() == 0) {
+            return "";
+        } if (message.media.size() == 1) {
+            final Media media = message.media.get(0);
+            switch (media.type) {
+                case Media.MEDIA_TYPE_IMAGE: {
+                    return "\uD83D\uDCF7 ";
+                }
+                case Media.MEDIA_TYPE_VIDEO: {
+                    return "\uD83D\uDCF9 ";
+                }
+                case Media.MEDIA_TYPE_UNKNOWN:
+                default: {
+                    return "\uD83D\uDCC2 ";
+                }
+            }
+        } else {
+            return "\uD83D\uDCC2 ";
+        }
     }
 
     private String getNewPostsNotificationText() {

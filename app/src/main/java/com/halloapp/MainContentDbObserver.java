@@ -58,7 +58,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             if (!post.media.isEmpty()) {
                 new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
-            notifications.update();
+            notifications.updateFeedNotifications();
         }
     }
 
@@ -88,7 +88,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             connection.sendComment(comment);
         } else { // if (comment.isIncoming())
             if (comment.postSenderUserId.isMe()) {
-                notifications.update();
+                notifications.updateFeedNotifications();
             }
         }
     }
@@ -120,7 +120,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             if (!message.media.isEmpty()) {
                 new DownloadMediaTask(message, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
-            notifications.update();
+            notifications.updateMessageNotifications();
         }
     }
 
@@ -134,6 +134,26 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+
+    }
+
+    @Override
+    public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
+
+    }
+
+    @Override
+    public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+
+    }
+
+    @Override
+    public void onChatSeen(@NonNull String chatId) {
+        // TODO (ds): implement
+    }
+
+    @Override
+    public void onChatDeleted(@NonNull String chatId) {
 
     }
 

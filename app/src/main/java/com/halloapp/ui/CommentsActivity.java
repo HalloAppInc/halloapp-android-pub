@@ -346,7 +346,7 @@ public class CommentsActivity extends AppCompatActivity {
             } else {
                 contactLoader.load(nameView, post.senderUserId);
             }
-            progressView.setVisibility(post.transferred ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(post.transferred != Post.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 

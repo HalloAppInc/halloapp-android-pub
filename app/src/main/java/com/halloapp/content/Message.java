@@ -18,8 +18,8 @@ public class Message extends ContentItem {
             UserId senderUserId,
             String messageId,
             long timestamp,
-            boolean transferred,
-            @Post.SeenState int seen,
+            @TransferredState int transferred,
+            @SeenState int seen,
             String text) {
         super(rowId, senderUserId, messageId, timestamp, transferred, seen, text);
         this.chatId = chatId;
