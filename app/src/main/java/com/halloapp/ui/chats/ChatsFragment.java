@@ -171,12 +171,15 @@ public class ChatsFragment extends Fragment {
                             } else {
                                 infoView.setText("");
                                 statusView.setVisibility(View.GONE);
+                                mediaIcon.setVisibility(View.GONE);
                             }
                         }
 
                         @Override
                         public void showLoading(@NonNull View view) {
                             infoView.setText("");
+                            statusView.setVisibility(View.GONE);
+                            mediaIcon.setVisibility(View.GONE);
                         }
                     });
                 } else {
@@ -184,6 +187,7 @@ public class ChatsFragment extends Fragment {
                     infoView.setText(chat.info);
                     timeView.setText("");
                     statusView.setVisibility(View.GONE);
+                    mediaIcon.setVisibility(View.GONE);
                 }
                 if (chat.newMessageCount > 0) {
                     newMessagesView.setVisibility(View.VISIBLE);
