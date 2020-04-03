@@ -352,7 +352,9 @@ public class PublishedEntry {
                 if (!media.isEmpty()) {
                     postBuilder.addAllMedia(getMediaProtos());
                 }
-                postBuilder.setText(text);
+                if (text != null) {
+                    postBuilder.setText(text);
+                }
                 containerBuilder.setPost(postBuilder.build());
                 break;
             }
@@ -363,7 +365,9 @@ public class PublishedEntry {
                 if (parentCommentId != null) {
                     commentBuilder.setParentCommentId(parentCommentId);
                 }
-                commentBuilder.setText(text);
+                if (text != null) {
+                    commentBuilder.setText(text);
+                }
                 containerBuilder.setComment(commentBuilder.build());
                 break;
             }
@@ -372,7 +376,9 @@ public class PublishedEntry {
                 if (!media.isEmpty()) {
                     chatMessageBuilder.addAllMedia(getMediaProtos());
                 }
-                chatMessageBuilder.setText(text);
+                if (text != null) {
+                    chatMessageBuilder.setText(text);
+                }
                 containerBuilder.setChatMessage(chatMessageBuilder.build());
                 break;
             }
