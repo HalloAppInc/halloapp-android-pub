@@ -161,6 +161,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.i("ContentDb: upgrade from " + oldVersion + " to " + newVersion);
         db.beginTransaction();
         switch (oldVersion) {
             case 7: {
@@ -171,7 +172,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion8(db);
                 break;
             }
-            case 9:{
+            case 9: {
                 upgradeFromVersion9(db);
                 break;
             }
@@ -186,6 +187,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.i("ContentDb: downgrade from " + oldVersion + " to " + newVersion);
         onCreate(db);
     }
 
