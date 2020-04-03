@@ -687,7 +687,7 @@ public class ContentDb {
                         ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
                         ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
                 null,
-                null, null, null, null)) {
+                null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
