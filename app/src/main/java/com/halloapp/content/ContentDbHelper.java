@@ -20,7 +20,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -170,12 +170,18 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 8: {
                 upgradeFromVersion8(db);
-                break;
+                // fall through
             }
             case 9: {
                 upgradeFromVersion9(db);
-                break;
+                // fall through
             }
+            case 10: {
+                upgradeFromVersion10(db);
+                // fall through
+            }
+
+            break;
             default: {
                 onCreate(db);
                 break;
@@ -338,6 +344,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
         final ContentValues postValues = new ContentValues();
         postValues.put(PostsTable.COLUMN_TRANSFERRED, Post.TRANSFERRED_DESTINATION);
         db.update(PostsTable.TABLE_NAME, postValues, PostsTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
+    }
+
+    private void upgradeFromVersion10(@NonNull SQLiteDatabase db) {
+        final ContentValues messageValues = new ContentValues();
+        messageValues.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES);
+        db.update(MessagesTable.TABLE_NAME, messageValues, null, null);
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
