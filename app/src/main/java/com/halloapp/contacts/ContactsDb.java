@@ -87,7 +87,7 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_NAME, addressBookContact.name);
                     values.put(ContactsTable.COLUMN_PHONE, addressBookContact.phone);
                     long rowId = db.insert(ContactsTable.TABLE_NAME, null, values);
-                    result.added.add(new Contact(rowId, addressBookContact.id, addressBookContact.name, addressBookContact.phone, null, false, 0, null));
+                    result.added.add(new Contact(rowId, addressBookContact.id, addressBookContact.name, addressBookContact.phone, null, false));
                 }
 
                 for (Contact updateContact : diff.updated) {
@@ -256,9 +256,7 @@ public class ContactsDb {
                         cursor.getString(2),
                         cursor.getString(3),
                         userId,
-                        cursor.getInt(5) == 1,
-                        cursor.getInt(6),
-                        cursor.getString(7));
+                        cursor.getInt(5) == 1);
             }
         }
         return null;
@@ -288,9 +286,7 @@ public class ContactsDb {
                         cursor.getString(2),
                         cursor.getString(3),
                         userIdStr == null ? null : new UserId(userIdStr),
-                        cursor.getInt(5) == 1,
-                        cursor.getInt(6),
-                        cursor.getString(7));
+                        cursor.getInt(5) == 1);
                 contacts.add(contact);
             }
         }
@@ -324,9 +320,7 @@ public class ContactsDb {
                             cursor.getString(2),
                             cursor.getString(3),
                             new UserId(userIdStr),
-                            cursor.getInt(5) == 1,
-                            cursor.getInt(6),
-                            cursor.getString(7));
+                            cursor.getInt(5) == 1);
                     contacts.add(contact);
                 }
             }
