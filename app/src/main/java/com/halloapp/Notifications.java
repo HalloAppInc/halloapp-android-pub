@@ -473,9 +473,7 @@ public class Notifications {
             final long feedNotificationTimeCutoff = intent.getLongExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, 0);
             if (feedNotificationTimeCutoff > 0) {
                 Log.i("Notifications.BroadcastReceiver: cancel, notification cutoff at " + feedNotificationTimeCutoff);
-                Notifications.getInstance(context).executor.execute(() -> {
-                    Notifications.getInstance(context).preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff);
-                });
+                Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff));
             }
         }
     }

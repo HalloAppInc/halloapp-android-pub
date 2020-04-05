@@ -11,7 +11,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Me;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;

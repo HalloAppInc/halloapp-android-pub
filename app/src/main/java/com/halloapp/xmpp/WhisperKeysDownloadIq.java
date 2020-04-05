@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 
 import org.jivesoftware.smack.packet.IQ;

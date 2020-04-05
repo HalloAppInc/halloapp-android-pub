@@ -49,7 +49,7 @@ public class TextDrawable extends Drawable {
             return;
         }
         final Rect bounds = getBounds();
-        canvas.translate(padding, (bounds.height() - layout.getHeight()) / 2);
+        canvas.translate(padding, (bounds.height() - layout.getHeight()) / 2f);
         layout.draw(canvas);
     }
 

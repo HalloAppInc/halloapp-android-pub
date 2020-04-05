@@ -70,9 +70,7 @@ public class ProfileFragment extends PostsFragment {
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         final ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
-            emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
-        }));
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
 
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 

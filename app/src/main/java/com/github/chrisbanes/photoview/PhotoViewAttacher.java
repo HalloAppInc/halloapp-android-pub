@@ -467,8 +467,8 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
     public void setScale(float scale, boolean animate) {
         setScale(scale,
-            (mImageView.getRight()) / 2,
-            (mImageView.getBottom()) / 2,
+            (mImageView.getRight()) / 2f,
+            (mImageView.getBottom()) / 2f,
             animate);
     }
 

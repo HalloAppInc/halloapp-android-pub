@@ -21,19 +21,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
-import com.halloapp.content.MessageLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -77,9 +74,7 @@ public class ChatsFragment extends Fragment {
             adapter.setChats(chats);
             emptyView.setVisibility(chats.size() == 0 ? View.VISIBLE : View.GONE);
         });
-        viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> {
-            adapter.notifyDataSetChanged();
-        });
+        viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
 
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
@@ -151,9 +146,7 @@ public class ChatsFragment extends Fragment {
                 newMessagesView = itemView.findViewById(R.id.new_messages);
                 statusView = itemView.findViewById(R.id.status);
                 mediaIcon = itemView.findViewById(R.id.media_icon);
-                itemView.setOnClickListener(v -> {
-                    startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId));
-                });
+                itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId)));
             }
 
             void bindTo(@NonNull Chat chat) {

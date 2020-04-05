@@ -24,7 +24,6 @@ import com.halloapp.util.Log;
 import com.halloapp.util.StringUtils;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
-import com.halloapp.xmpp.WhisperKeysUploadIq;
 
 import java.io.File;
 import java.util.Collections;
