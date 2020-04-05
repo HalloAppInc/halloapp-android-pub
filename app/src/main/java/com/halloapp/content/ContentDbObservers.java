@@ -128,7 +128,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyMessageRetracted(String chatId, UserId senderUserId, String messageId) {
+    void notifyMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMessageRetracted(chatId, senderUserId, messageId);
@@ -136,7 +136,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyChatSeen(String chatId) {
+    void notifyChatSeen(@NonNull String chatId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onChatSeen(chatId);
@@ -144,7 +144,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyChatDeleted(String chatId) {
+    void notifyChatDeleted(@NonNull String chatId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onChatDeleted(chatId);

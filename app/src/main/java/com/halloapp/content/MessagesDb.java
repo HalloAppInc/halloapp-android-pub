@@ -3,6 +3,7 @@ package com.halloapp.content;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Size;
@@ -35,76 +36,86 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void addMessage(@NonNull Message message) {
+    boolean addMessage(@NonNull Message message) {
         Log.i("ContentDb.addMessage " + message);
-        final ContentValues messageValues = new ContentValues();
-        messageValues.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
-        messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
-        messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
-        messageValues.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
-        messageValues.put(MessagesTable.COLUMN_TRANSFERRED, message.transferred);
-        messageValues.put(MessagesTable.COLUMN_SEEN, message.seen);
-        if (message.text != null) {
-            messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
-        }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, messageValues, SQLiteDatabase.CONFLICT_ABORT);
-        for (Media mediaItem : message.media) {
-            final ContentValues mediaItemValues = new ContentValues();
-            mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
-            mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, message.rowId);
-            mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
-            if (mediaItem.url != null) {
-                mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+        db.beginTransaction();
+        try {
+            final ContentValues messageValues = new ContentValues();
+            messageValues.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
+            messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
+            messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
+            messageValues.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
+            messageValues.put(MessagesTable.COLUMN_TRANSFERRED, message.transferred);
+            messageValues.put(MessagesTable.COLUMN_SEEN, message.seen);
+            if (message.text != null) {
+                messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
             }
-            if (mediaItem.file != null) {
-                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
-                if (mediaItem.width == 0 || mediaItem.height == 0) {
-                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
-                    if (dimensions != null) {
-                        mediaItem.width = dimensions.getWidth();
-                        mediaItem.height = dimensions.getHeight();
+            message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, messageValues, SQLiteDatabase.CONFLICT_ABORT);
+            for (Media mediaItem : message.media) {
+                final ContentValues mediaItemValues = new ContentValues();
+                mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
+                mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, message.rowId);
+                mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
+                if (mediaItem.url != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+                }
+                if (mediaItem.file != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
+                    if (mediaItem.width == 0 || mediaItem.height == 0) {
+                        final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
+                        if (dimensions != null) {
+                            mediaItem.width = dimensions.getWidth();
+                            mediaItem.height = dimensions.getHeight();
+                        }
                     }
                 }
+                if (mediaItem.width > 0 && mediaItem.height > 0) {
+                    mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
+                    mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+                }
+                if (mediaItem.encKey != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+                }
+                if (mediaItem.sha256hash != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+                }
+                mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
-            if (mediaItem.width > 0 && mediaItem.height > 0) {
-                mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
-                mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+            final boolean addUnseen = message.seen == Message.SEEN_NO && message.isIncoming();
+            final int updatedRowsCount;
+            try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
+                    ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + ", " +
+                    (addUnseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
+                    (addUnseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
+                    ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
+                    "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId)) {
+                updatedRowsCount = statement.executeUpdateDelete();
             }
-            if (mediaItem.encKey != null) {
-                mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+            if (updatedRowsCount == 0) {
+                final ContentValues chatValues = new ContentValues();
+                chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId);
+                chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
+                chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+                if (addUnseen) {
+                    chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
+                    chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
+                } else {
+                    chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+                    chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
+                }
+                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
             }
-            if (mediaItem.sha256hash != null) {
-                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
-            }
-            mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
-        final boolean addUnseen = message.seen == Message.SEEN_NO && message.isIncoming();
-        final int updatedRowsCount;
-        try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
-                ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + ", " +
-                (addUnseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
-                (addUnseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
-                ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
-                "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId)) {
-            updatedRowsCount = statement.executeUpdateDelete();
-        }
-        if (updatedRowsCount == 0) {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId);
-            chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
-            chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
-            if (addUnseen) {
-                chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
-                chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
-            } else {
-                chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
-                chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
-            }
-            db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
-        }
 
-        Log.i("ContentDb.addMessage: added " + message);
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.addMessage: added " + message);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.addMessage: duplicate " + ex.getMessage() + " " + message);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
     }
 
     @WorkerThread
@@ -192,7 +203,50 @@ class MessagesDb {
 
     @WorkerThread
     void retractMessage(@NonNull Message message) {
-        // TODO (ds): implement
+        Log.i("ContentDb.retractMessage: messageId=" + message.id);
+        final ContentValues values = new ContentValues();
+        values.put(MessagesTable.COLUMN_TRANSFERRED, !message.senderUserId.isMe());
+        values.put(MessagesTable.COLUMN_TEXT, (String)null);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int updatedCount = db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " +MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    new String[]{message.chatId, message.senderUserId.rawId(), message.id},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            if (updatedCount == 0) {
+                values.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
+                values.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
+                values.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
+                values.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
+                values.put(MessagesTable.COLUMN_SEEN, Message.SEEN_NO);
+                message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            } else {
+                if (message.rowId == 0) {
+                    final Message updateMessage = getMessage(message.chatId, message.senderUserId, message.id);
+                    if (updateMessage != null) {
+                        message = updateMessage;
+                    }
+                }
+                db.delete(MediaTable.TABLE_NAME,
+                        MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'",
+                        new String[]{Long.toString(message.rowId)});
+                for (Media media : message.media) {
+                    if (media.file != null) {
+                        if (!media.file.delete()) {
+                            Log.e("ContentDb.retractMessage: failed to delete " + media.file.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.retractMessage: retracted messageId=" + message.id);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.retractMessage: failed");
+            throw ex;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     @WorkerThread
@@ -316,6 +370,73 @@ class MessagesDb {
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=" + rowId;
+        Message message = null;
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                if (message == null) {
+                    message = new Message(
+                            cursor.getLong(0),
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(5),
+                            cursor.getInt(6),
+                            cursor.getString(7));
+                }
+                if (!cursor.isNull(8)) {
+                    Preconditions.checkNotNull(message).media.add(new Media(
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
+                            null,
+                            null,
+                            cursor.getInt(12),
+                            cursor.getInt(13),
+                            cursor.getInt(14) == 1));
+                }
+            }
+        }
+        return message;
+    }
+
+    @WorkerThread
+    @Nullable Message getMessage(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+            "SELECT " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                "m." + MediaTable._ID + "," +
+                "m." + MediaTable.COLUMN_TYPE + "," +
+                "m." + MediaTable.COLUMN_URL + "," +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_WIDTH + "," +
+                "m." + MediaTable.COLUMN_HEIGHT + "," +
+                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    MediaTable._ID + "," +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                    MediaTable.COLUMN_TYPE + "," +
+                    MediaTable.COLUMN_URL + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_WIDTH + "," +
+                    MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + chatId + " AND " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=" + senderUserId.rawId() + " AND " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=" + messageId;
         Message message = null;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {

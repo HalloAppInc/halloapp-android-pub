@@ -330,34 +330,19 @@ public class ContentDb {
 
     public void addMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-
-            boolean duplicate = false;
-            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.beginTransaction();
-            try {
-                if (message.isRetracted()) {
-                    messagesDb.retractMessage(message);
-                } else {
-                    try {
-                        messagesDb.addMessage(message);
-                    } catch (SQLiteConstraintException ex) {
-                        Log.w("ContentDb.addMessage: duplicate " + ex.getMessage() + " " + message);
-                        duplicate = true;
-                    }
-                }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
+            if (messagesDb.addMessage(message)) {
+                observers.notifyMessageAdded(message);
             }
-            // important to notify outside of transaction
-            if (!duplicate) {
-                if (message.isRetracted()) {
-                    observers.notifyMessageRetracted(message.chatId, message.senderUserId, message.id);
-                } else {
-                    observers.notifyMessageAdded(message);
-                }
+            if (completionRunnable != null) {
+                completionRunnable.run();
             }
+        });
+    }
 
+    public void retractMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.retractMessage(message);
+            observers.notifyMessageRetracted(message.chatId, message.senderUserId, message.id);
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
