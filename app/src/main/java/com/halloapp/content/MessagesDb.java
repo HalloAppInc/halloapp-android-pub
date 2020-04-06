@@ -469,12 +469,12 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long timestamp, int count, boolean after) {
+    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + chatId;
-        if (timestamp != null) {
-            where += " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + (after ? "<" : ">") + timestamp;
+        if (startRowId != null) {
+            where += " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? "<" : ">") + startRowId;
         }
 
         final String sql =
@@ -508,7 +508,7 @@ class MessagesDb {
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "WHERE " + where + " " +
-            "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
+            "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? " DESC " : " ASC ") +
             "LIMIT " + count;
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -552,7 +552,7 @@ class MessagesDb {
         if (!after) {
             Collections.reverse(messages);
         }
-        Log.i("ContentDb.getMessages: start=" + timestamp + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
+        Log.i("ContentDb.getMessages: start=" + startRowId + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
 
         return messages;
     }

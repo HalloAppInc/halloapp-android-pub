@@ -393,8 +393,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long timestamp, int count, boolean after) {
-        return messagesDb.getMessages(chatId, timestamp, count, after);
+    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
+        return messagesDb.getMessages(chatId, startRowId, count, after);
     }
 
     @WorkerThread

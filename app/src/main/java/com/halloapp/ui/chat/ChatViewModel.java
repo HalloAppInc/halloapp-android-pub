@@ -45,7 +45,7 @@ public class ChatViewModel extends AndroidViewModel {
             if (ChatViewModel.this.chatId.equals(message.chatId)) {
                 if (message.isOutgoing()) {
                     pendingOutgoing.set(true);
-                    mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
+                    mainHandler.post(() -> reloadMessagesAt(Long.MAX_VALUE));
                 } else {
                     pendingIncoming.set(true);
                     invalidateMessages();
@@ -132,10 +132,10 @@ public class ChatViewModel extends AndroidViewModel {
         return pendingIncoming.compareAndSet(true, false);
     }
 
-    void reloadPostsAt(long timestamp) {
+    void reloadMessagesAt(long rowId) {
         final PagedList pagedList = messageList.getValue();
         if (pagedList != null) {
-            ((MessagesDataSource)pagedList.getDataSource()).reloadAt(timestamp);
+            ((MessagesDataSource)pagedList.getDataSource()).reloadAt(rowId);
         }
     }
 

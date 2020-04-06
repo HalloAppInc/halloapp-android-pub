@@ -14,7 +14,7 @@ public class MessagesDataSource extends ItemKeyedDataSource<Long, Message> {
     private final ContentDb contentDb;
     private final String chatId;
 
-    private Long keyTimestamp;
+    private Long keyRowId;
 
     public static class Factory extends DataSource.Factory<Long, Message> {
 
@@ -43,16 +43,16 @@ public class MessagesDataSource extends ItemKeyedDataSource<Long, Message> {
 
     @Override
     public @NonNull Long getKey(@NonNull Message item) {
-        if (keyTimestamp  != null) {
-            return keyTimestamp;
+        if (keyRowId  != null) {
+            return keyRowId;
         }
-        return item.timestamp;
+        return item.rowId;
     }
 
-    public void reloadAt(long timestamp) {
+    public void reloadAt(long rowId) {
         // next call to getKey on this data source will be used by framework to find load point of next data source after current one is invalidated;
-        // this ensures that next call to getKey returns timestamp regardless of what actual post item is
-        keyTimestamp = timestamp;
+        // this ensures that next call to getKey returns rowId regardless of what actual message item is
+        keyRowId = rowId;
         invalidate();
     }
 

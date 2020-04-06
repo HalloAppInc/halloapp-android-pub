@@ -116,7 +116,7 @@ public class ChatActivity extends AppCompatActivity {
         final View newMessagesView = findViewById(R.id.new_messages);
         newMessagesView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
-            viewModel.reloadPostsAt(Long.MAX_VALUE);
+            viewModel.reloadMessagesAt(Long.MAX_VALUE);
         });
 
         viewModel.messageList.observe(this, messages -> adapter.submitList(messages, () -> {
