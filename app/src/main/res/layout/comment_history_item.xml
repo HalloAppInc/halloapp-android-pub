@@ -38,7 +38,7 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
+        android:paddingStart="24dp"
         android:paddingEnd="16dp"
         android:textAppearance="?textAppearanceListItem"
         android:textColor="?android:attr/textColorSecondary"
