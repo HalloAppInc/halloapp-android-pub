@@ -182,6 +182,5 @@ public class HomeFragment extends PostsFragment {
         }
         notificationDrawable.setBadge(badgeValue);
         commentHistoryPopup.setCommentHistory(commentsHistory);
-
     }
 }
