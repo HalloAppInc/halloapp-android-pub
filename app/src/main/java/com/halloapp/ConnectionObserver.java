@@ -108,6 +108,9 @@ public class ConnectionObserver implements Connection.Observer {
             Connection.getInstance().sendMessageDeliveryReceipt(message.chatId, message.senderUserId, message.id);
             Connection.getInstance().sendAck(message.id);
         };
+        if (ForegroundChat.getInstance().isForegroundChatId(message.chatId)) {
+            message.seen = Message.SEEN_YES_PENDING;
+        }
         if (message.isRetracted()) {
             ContentDb.getInstance(context).retractMessage(message, completionRunnable);
         } else {

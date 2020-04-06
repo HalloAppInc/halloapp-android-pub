@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
+import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
@@ -159,6 +160,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.i("ChatActivity.onStart");
+        ForegroundChat.getInstance().setForegroundChatId(chatId);
         Notifications.getInstance(this).clearMessageNotifications(chatId);
         if (adapter.chat != null) {
             ContentDb.getInstance(this).setChatSeen(chatId);
@@ -169,6 +171,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.i("ChatActivity.onStop");
+        ForegroundChat.getInstance().setForegroundChatId(null);
     }
 
     @Override
