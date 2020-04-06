@@ -2,6 +2,7 @@ package com.halloapp.content;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
@@ -746,5 +747,10 @@ class MessagesDb {
             }
         }
         return null;
+    }
+
+    @WorkerThread
+    int getUnseenChatsCount() {
+        return (int)DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), "SELECT count(*) FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ">0", null);
     }
 }

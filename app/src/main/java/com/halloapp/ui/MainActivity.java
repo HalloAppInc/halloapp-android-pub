@@ -9,7 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.DrawableRes;
@@ -19,6 +21,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -38,6 +41,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.xmpp.Connection;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
@@ -45,6 +49,7 @@ import com.leinardi.android.speeddial.SpeedDialView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -93,6 +98,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        final MenuItem messagesMenuItem = navView.getMenu().findItem(R.id.navigation_messages);
+        final BadgedDrawable messageNotificationDrawable = new BadgedDrawable(
+                this,
+                messagesMenuItem.getIcon(),
+                getResources().getColor(R.color.badge_text),
+                getResources().getColor(R.color.badge_background),
+                getResources().getColor(R.color.window_background),
+                getResources().getDimension(R.dimen.badge));
+        messagesMenuItem.setIcon(messageNotificationDrawable);
+
+        final ViewGroup messagesTab = navView.findViewById(R.id.navigation_messages);
+        messagesTab.setClipChildren(false);
+        messagesTab.setClipToPadding(false);
+
+        final MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.unseenChatsCount.getLiveData().observe(this,
+                unseenChatsCount -> messageNotificationDrawable.setBadge(
+                        unseenChatsCount == null || unseenChatsCount == 0 ? "" : String.format(Locale.getDefault(), "%d", unseenChatsCount)));
 
         fabView = findViewById(R.id.speed_dial);
         fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));

@@ -407,6 +407,11 @@ public class ContentDb {
         return messagesDb.getChat(chatId);
     }
 
+    @WorkerThread
+    public int getUnseenChatsCount() {
+        return messagesDb.getUnseenChatsCount();
+    }
+
     public void deleteChat(@NonNull String chatId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.deleteChat(chatId);
