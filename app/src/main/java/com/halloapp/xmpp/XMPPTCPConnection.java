@@ -1,5 +1,6 @@
 package com.halloapp.xmpp;
 
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
 import org.jivesoftware.smack.AbstractConnectionListener;
@@ -955,7 +956,33 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         ParserUtils.assertAtEndTag(parser);
         processStanza(stanza);
     }
-    /* and halloapp added */
+
+    protected void parseAndProcessPresence(XmlPullParser parser) throws Exception {
+        ParserUtils.assertAtStartTag(parser);
+
+        String type = parser.getAttributeValue(null, "type");
+        String lastSeen = parser.getAttributeValue(null, "last_seen");
+
+        Long lastSeenLong = null;
+        if (lastSeen != null) {
+            try {
+                lastSeenLong = Long.parseLong(lastSeen);
+            } catch (NumberFormatException e) {
+                Log.w("Failed to parse last_seen", e);
+            }
+        }
+
+        if (type == null) {
+            type = "available";
+        }
+
+        PresenceStanza stanza = new PresenceStanza(ParserUtils.getJidAttribute(parser, "to"), parser.getAttributeValue("", "id"), type, lastSeenLong);
+        stanza.setFrom(ParserUtils.getJidAttribute(parser, "from"));
+
+        ParserUtils.assertAtEndTag(parser);
+        processStanza(stanza);
+    }
+    /* end halloapp added */
 
     protected class PacketReader {
 
@@ -1005,10 +1032,16 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                         clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
                                     }
                                     break;
+                                case Presence.ELEMENT:
+                                    try {
+                                        parseAndProcessPresence(parser);
+                                    } finally {
+                                        clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
+                                    }
+                                    break;
                                 /* end halloapp added */
                                 case Message.ELEMENT:
                                 case IQ.IQ_ELEMENT:
-                                case Presence.ELEMENT:
                                     try {
                                         parseAndProcessStanza(parser);
                                     } finally {

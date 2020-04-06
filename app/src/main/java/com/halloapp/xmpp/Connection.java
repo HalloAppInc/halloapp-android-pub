@@ -350,6 +350,42 @@ public class Connection {
         });
     }
 
+    public void subscribePresence(UserId userId) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!reconnectIfNeeded() || connection == null) {
+                    Log.e("connection: request presence subscription: no connection");
+                    return;
+                }
+                try {
+                    PresenceStanza stanza = new PresenceStanza(userIdToJid(userId), null, "subscribe", null);
+                    connection.sendStanza(stanza);
+                } catch (InterruptedException | SmackException.NotConnectedException e) {
+                    Log.e("Failed to subscribe", e);
+                }
+            }
+        });
+    }
+
+    public void updatePresence(boolean available) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!reconnectIfNeeded() || connection == null) {
+                    Log.e("connection: update presence: no connection");
+                    return;
+                }
+                try {
+                    PresenceStanza stanza = new PresenceStanza(connection.getXMPPServiceDomain(), null, available ? "available" : "away", null);
+                    connection.sendStanza(stanza);
+                } catch (InterruptedException | SmackException.NotConnectedException e) {
+                    Log.e("Failed to update presence", e);
+                }
+            }
+        });
+    }
+
     public void uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {

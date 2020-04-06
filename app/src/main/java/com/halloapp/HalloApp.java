@@ -122,6 +122,7 @@ public class HalloApp extends Application {
             unregisterReceiver(receiver);
             Notifications.getInstance(HalloApp.this).setEnabled(true);
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
+            Connection.getInstance().updatePresence(false);
         }
 
         @SuppressWarnings("unused")
@@ -132,6 +133,7 @@ public class HalloApp extends Application {
             connect();
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
+            Connection.getInstance().updatePresence(true);
         }
     }
 
