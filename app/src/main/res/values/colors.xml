@@ -20,6 +20,6 @@
     <color name="fab_background">#CD7C72</color>
     <color name="message_background_incoming">#EFEFEF</color>
     <color name="message_background_outgoing">#D6E4FA</color>
-    <color name="message_text_outgoing">#35529F</color>
     <color name="message_text_incoming">#de000000</color>
+    <color name="message_text_outgoing">#35529F</color>
 </resources>

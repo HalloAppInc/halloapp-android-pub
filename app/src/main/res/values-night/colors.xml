@@ -10,6 +10,8 @@
     <color name="card_background">@color/cardview_dark_background</color>
     <color name="reply_indicator_background">#606060</color>
     <color name="text_post_thumbnail_color">#ffffffff</color>
-    <color name="message_background_incoming">#EFEFEF</color>
-    <color name="message_background_outgoing">#D6E4FA</color>
+    <color name="message_background_incoming">#de000000</color>
+    <color name="message_background_outgoing">#35529F</color>
+    <color name="message_text_incoming">#EFEFEF</color>
+    <color name="message_text_outgoing">#D6E4FA</color>
 </resources>
