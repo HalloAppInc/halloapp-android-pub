@@ -74,7 +74,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         final List<Receipt> seenReceipts = contentDb.getPendingPostSeenReceipts();
         Log.i("TransferPendingItemsTask: " + seenReceipts.size() + " seen receipts");
         for (Receipt receipt : seenReceipts) {
-            connection.sendSeenReceipt(receipt.senderUserId, receipt.postId);
+            connection.sendPostSeenReceipt(receipt.senderUserId, receipt.postId);
         }
         return null;
     }

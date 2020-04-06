@@ -601,7 +601,7 @@ public class Connection {
         });
     }
 
-    public void sendSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void sendPostSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send seen receipt, no connection");
@@ -621,10 +621,30 @@ public class Connection {
         });
     }
 
-    public void sendDeliveryReceipt(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void sendMessageSeenReceipt(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot send delivery receipt, no connection");
+                Log.e("connection: cannot send message seen receipt, no connection");
+                return;
+            }
+            try {
+                final Jid recipientJid = userIdToJid(senderUserId);
+                final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
+                message.setStanzaId(RandomId.create());
+                message.addExtension(new SeenReceiptElement(chatId, messageId));
+                ackHandlers.put(message.getStanzaId(), () -> observer.onIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
+                Log.i("connection: sending message seen receipt " + messageId + " to " + recipientJid);
+                connection.sendStanza(message);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send message seen receipt", e);
+            }
+        });
+    }
+
+    public void sendMessageDeliveryReceipt(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send message delivery receipt, no connection");
                 return;
             }
             try {
@@ -636,7 +656,7 @@ public class Connection {
                 Log.i("connection: sending message delivery receipt " + messageId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send delivery receipt", e);
+                Log.e("connection: cannot send message delivery receipt", e);
             }
         });
     }

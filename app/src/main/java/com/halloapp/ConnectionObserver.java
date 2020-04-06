@@ -105,7 +105,7 @@ public class ConnectionObserver implements Connection.Observer {
     @Override
     public void onIncomingMessageReceived(@NonNull Message message) {
         final Runnable completionRunnable = () -> {
-            Connection.getInstance().sendDeliveryReceipt(message.chatId, message.senderUserId, message.id);
+            Connection.getInstance().sendMessageDeliveryReceipt(message.chatId, message.senderUserId, message.id);
             Connection.getInstance().sendAck(message.id);
         };
         if (message.isRetracted()) {

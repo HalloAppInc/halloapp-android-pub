@@ -75,7 +75,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-        connection.sendSeenReceipt(senderUserId, postId);
+        connection.sendPostSeenReceipt(senderUserId, postId);
     }
 
     @Override
