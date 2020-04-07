@@ -203,6 +203,7 @@ public class Connection {
 
         connection.addSyncStanzaListener(new MessageStanzaListener(), new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
         connection.addSyncStanzaListener(new AckStanzaListener(), new StanzaTypeFilter(AckStanza.class));
+        connection.addSyncStanzaListener(new PresenceStanzaListener(), new StanzaTypeFilter(PresenceStanza.class));
 
         Log.i("connection: connecting...");
         try {
@@ -897,6 +898,21 @@ public class Connection {
             } else {
                 Log.w("connection: ack doesn't match any pedning message " + ack);
             }
+        }
+    }
+
+    class PresenceStanzaListener implements StanzaListener {
+
+        @Override
+        public void processStanza(final Stanza packet) {
+            if (!(packet instanceof PresenceStanza)) {
+                Log.w("connection: got packet instead of ack " + packet);
+                return;
+            }
+            final PresenceStanza presence = (PresenceStanza) packet;
+            Log.i("connection: got presence " + presence);
+            PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.this);
+            presenceLoader.reportPresence(getUserId(packet.getFrom()), ((PresenceStanza) packet).lastSeen);
         }
     }
 

@@ -34,8 +34,9 @@ public class PresenceStanza extends Stanza {
     @Override
     public @NonNull String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Ack Stanza [");
+        sb.append("Presence Stanza [");
         logCommonAttributes(sb);
+        sb.append("type=").append(type);
         sb.append(']');
         return sb.toString();
     }

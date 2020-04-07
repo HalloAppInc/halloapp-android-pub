@@ -45,6 +45,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.PostEditText;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.Stack;
 
@@ -146,7 +147,15 @@ public class ChatActivity extends AppCompatActivity {
             ContentDb.getInstance(this).setChatSeen(chatId);
         });
 
-        viewModel.contact.getLiveData().observe(this, contact -> setTitle(contact.getDisplayName()));
+        viewModel.contact.getLiveData().observe(this, contact -> {
+            setTitle(contact.getDisplayName());
+            PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
+            presenceLoader.getLastSeenLiveData(contact.userId).observe(this, lastSeen -> {
+                // TODO(jack): set last seen in UI
+            });
+        });
+
+
     }
 
     @Override
