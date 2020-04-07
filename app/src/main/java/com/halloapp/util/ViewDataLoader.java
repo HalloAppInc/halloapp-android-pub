@@ -15,11 +15,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 
 public class ViewDataLoader<V extends View, R, K> {
 
     private final ExecutorService executor;
     private final Map<View, Future> queue = new HashMap<>();
+    private final Map<K, Semaphore> keyLoadGuards = new HashMap<>();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public interface Displayer<V, R> {
@@ -51,21 +53,48 @@ public class ViewDataLoader<V extends View, R, K> {
                 return;
             }
         }
-
         displayer.showLoading(view);
+
         final Future future = executor.submit(() -> {
+            final Semaphore keyGuard;
             try {
-                final R result = loader.call();
-                if (result != null && cache != null) {
-                    cache.put(key, result);
-                }
-                executeShowResult(view, displayer, key, result);
-            } catch (Exception e) {
-                Log.e("ViewDataLoader: exception", e);
+                keyGuard = getKeyGuard(key);
+                keyGuard.acquire();
+            } catch (InterruptedException e) {
                 executeShowResult(view, displayer, key, null);
+                return;
             }
+            R result = null;
+            if (cache != null) {
+                result = cache.get(key);
+            }
+            if (result == null) {
+                try {
+                    result = loader.call();
+                } catch (Exception e) {
+                    Log.e("ViewDataLoader: exception key=" + key, e);
+                }
+            }
+            if (result != null && cache != null) {
+                cache.put(key, result);
+            }
+            keyGuard.release();
+
+            executeShowResult(view, displayer, key, result);
         });
         queue.put(view, future);
+    }
+
+    private Semaphore getKeyGuard(@NonNull K key) throws InterruptedException {
+        Semaphore semaphore;
+        synchronized (keyLoadGuards) {
+            semaphore = keyLoadGuards.get(key);
+            if (semaphore == null) {
+                semaphore = new Semaphore(1);
+                keyLoadGuards.put(key, semaphore);
+            }
+        }
+        return semaphore;
     }
 
     @MainThread
