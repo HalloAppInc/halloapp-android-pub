@@ -37,6 +37,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -332,6 +333,12 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public SeenByLoader getSeenByLoader() {
+            Preconditions.checkState(false, "messageViewHolderParent.getSeenByLoader call not expected");
+            return null;
         }
 
         @Override

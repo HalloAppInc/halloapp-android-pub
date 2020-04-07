@@ -52,6 +52,8 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         firstCommentTimestamp = itemView.findViewById(R.id.comment_time);
         myAvatarView = itemView.findViewById(R.id.my_avatar);
 
+        seenIndicator.setAvatarLoader(parent.getAvatarLoader());
+
         final View.OnClickListener commentsClickListener = v -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
@@ -121,6 +123,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             if (seenIndicator.getChildCount() == MAX_SEEN_BY_AVATARS) {
                 seenIndicator.getChildAt(0).setAlpha(.5f);
             }
+            parent.getSeenByLoader().load(seenIndicator, post.id);
         } else {
             seenIndicator.setVisibility(View.GONE);
             footerSpacing.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);

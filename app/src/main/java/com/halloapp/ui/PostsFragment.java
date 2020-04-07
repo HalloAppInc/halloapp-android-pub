@@ -34,6 +34,7 @@ import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
+import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.xmpp.Connection;
@@ -49,6 +50,7 @@ public class PostsFragment extends Fragment {
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
+    private SeenByLoader seenByLoader;
     private TimestampRefresher timestampRefresher;
 
     private DrawDelegateView drawDelegateView;
@@ -79,6 +81,7 @@ public class PostsFragment extends Fragment {
         Preconditions.checkNotNull(getActivity()).getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
+        seenByLoader = new SeenByLoader(Preconditions.checkNotNull(getContext()));
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
@@ -91,6 +94,7 @@ public class PostsFragment extends Fragment {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
+        seenByLoader.destroy();
         ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).removeObserver(contactsObserver);
     }
 
@@ -146,6 +150,11 @@ public class PostsFragment extends Fragment {
             @Override
             public ContactLoader getContactLoader() {
                 return contactLoader;
+            }
+
+            @Override
+            public SeenByLoader getSeenByLoader() {
+                return seenByLoader;
             }
 
             @Override

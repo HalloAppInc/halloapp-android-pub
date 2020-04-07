@@ -22,11 +22,13 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.LinearSpacingItemDecoration;
+import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class PostDetailsActivity extends AppCompatActivity {
 
     private final SeenByAdapter adapter = new SeenByAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private AvatarLoader avatarLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class PostDetailsActivity extends AppCompatActivity {
         viewModel.contactsList.getLiveData().observe(this, adapter::setContacts);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
+        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
 
         viewModel.post.observe(this, this::showPost);
         viewModel.loadPost(postId);
@@ -200,6 +204,7 @@ public class PostDetailsActivity extends AppCompatActivity {
             void bindTo(@NonNull Contact contact) {
                 this.contact = contact;
                 avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
+                avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
                 nameView.setText(contact.getDisplayName());
             }
         }

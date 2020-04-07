@@ -9,11 +9,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
+import com.halloapp.ui.avatar.AvatarLoader;
+
+import java.util.List;
 
 public class AvatarsLayout extends FrameLayout {
 
@@ -21,6 +26,7 @@ public class AvatarsLayout extends FrameLayout {
     private int paddingColor;
     private int paddingSize;
     private float elevation;
+    private AvatarLoader avatarLoader;
 
     public AvatarsLayout(@NonNull Context context) {
         super(context);
@@ -70,7 +76,7 @@ public class AvatarsLayout extends FrameLayout {
                 view.paint.setStyle(Paint.Style.STROKE);
                 view.setClipToOutline(true);
                 view.setElevation(elevation);
-                view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                view.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 view.setBackgroundResource(R.drawable.avatar_circle);
                 view.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
                 view.setImageResource(R.drawable.avatar_person);
@@ -85,6 +91,27 @@ public class AvatarsLayout extends FrameLayout {
             getChildAt(i).setVisibility(View.GONE);
         }
         requestLayout();
+    }
+
+    public void setAvatarLoader(AvatarLoader avatarLoader) {
+        this.avatarLoader = avatarLoader;
+    }
+
+    public void setUsers(@NonNull List<UserId> users) {
+        final int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            if (users.size() <= i) {
+                break;
+            }
+            avatarLoader.load((ImageView) getChildAt(childCount - i - 1), users.get(i));
+        }
+    }
+
+    public void setImageResource(@DrawableRes int resource) {
+        final int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            ((ImageView) getChildAt(i)).setImageResource(resource);
+        }
     }
 
     @Override
