@@ -1,6 +1,7 @@
 package com.halloapp.ui.chats;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -118,6 +119,11 @@ public class ChatsViewModel extends AndroidViewModel {
                     }
                     chat.name = friend.getDisplayName();
                     chat.info = friend.getInternationalPhone();
+                }
+                for (Chat chat : chats) {
+                    if (TextUtils.isEmpty(chat.name)) {
+                        chat.name = new Contact(new UserId(chat.chatId)).getDisplayName();
+                    }
                 }
 
                 return chats;
