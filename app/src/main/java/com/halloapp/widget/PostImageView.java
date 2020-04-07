@@ -78,6 +78,10 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
         setClipToOutline(true);
     }
 
+    public void setCornerRadius(float cornerRadius) {
+        this.cornerRadius = cornerRadius;
+    }
+
     public void setDrawDelegate(DrawDelegateView drawDelegateView) {
         this.drawDelegateView = drawDelegateView;
     }

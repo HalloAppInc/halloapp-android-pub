@@ -9,19 +9,30 @@
         android:id="@+id/new_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:gravity="center_horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:textAppearance="?textAppearanceBody1"
         android:background="@color/message_background_incoming"
+        android:singleLine="true"
+        android:ellipsize="end"
         tools:text="6 new messages"/>
 
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="28sp"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="8dp"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:background="@drawable/date_separator_background"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
         tools:text="Yesterday"/>
 
     <FrameLayout

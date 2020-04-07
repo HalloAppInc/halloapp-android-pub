@@ -1,6 +1,7 @@
 package com.halloapp.util;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,5 +33,16 @@ public class TimeFormatter {
     public static void setTimeDiffText(@NonNull TextView textView, long timeDiff) {
         textView.setText(formatTimeDiff(textView.getContext(), timeDiff, false));
         textView.setContentDescription(formatTimeDiff(textView.getContext(), timeDiff, true));
+    }
+
+    public static CharSequence formatMessageSeparatorDate(@NonNull Context context, long timestamp) {
+        final long currentTime = System.currentTimeMillis();
+        if (TimeUtils.isSameDay(currentTime, timestamp)) {
+            return "Today";
+        } else if (TimeUtils.isSameDay(currentTime - DateUtils.DAY_IN_MILLIS, timestamp)) {
+            return "Yesterday";
+        } else {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
+        }
     }
 }

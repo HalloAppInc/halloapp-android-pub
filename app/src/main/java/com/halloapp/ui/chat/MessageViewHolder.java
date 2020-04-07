@@ -19,6 +19,8 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Rtl;
+import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MediaViewPager;
 
@@ -53,7 +55,7 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
 
         if (mediaPagerView != null) {
-            mediaPagerAdapter = new MediaPagerAdapter(parent);
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.setPageMargin(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
             mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -82,7 +84,7 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    void bindTo(@NonNull Message message, @Nullable Chat chat) {
+    void bindTo(@NonNull Message message, @Nullable Chat chat, @Nullable Message prevMessage) {
         this.message = message;
 
         if (statusView != null) {
@@ -122,16 +124,12 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), message.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
         }
 
-        // TODO (ds): implement date
-        dateView.setVisibility(View.GONE);
-        /*
-        if (prevMessage != null && !areSameDay(message.timestamp, prevMessage.timestamp)) {
+        if (prevMessage == null || !TimeUtils.isSameDay(message.timestamp, prevMessage.timestamp)) {
             dateView.setVisibility(View.VISIBLE);
-            dateView.setText(message.timestamp);
+            dateView.setText(TimeFormatter.formatMessageSeparatorDate(dateView.getContext(), message.timestamp));
         } else {
             dateView.setVisibility(View.GONE);
         }
-        */
 
         if (chat != null && chat.firstUnseenMessageRowId == message.rowId) {
             newMessagesSeparator.setVisibility(View.VISIBLE);

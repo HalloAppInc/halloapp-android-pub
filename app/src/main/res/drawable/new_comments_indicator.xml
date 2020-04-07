@@ -7,7 +7,7 @@
         android:height="6dp" />
 
     <solid
-        android:color="#8BBA3B" />
+        android:color="#82BD2D" />
 
     <padding
          android:left="8dp"

@@ -64,7 +64,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         footer = itemView.findViewById(R.id.post_footer);
 
         if (mediaPagerView != null) {
-            mediaPagerAdapter = new MediaPagerAdapter(parent);
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius));
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.setPageMargin(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
 
@@ -117,7 +117,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         this.post = post;
 
-        avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));

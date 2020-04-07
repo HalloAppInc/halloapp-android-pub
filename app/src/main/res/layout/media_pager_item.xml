@@ -13,7 +13,7 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         app:pivCornerColor="@color/card_background"
-        app:pivCornerRadius="8dp"
+        app:pivCornerRadius="@dimen/message_media_radius"
         tools:src="@mipmap/ic_launcher" />
 
     <ImageView

@@ -2,9 +2,9 @@
     android:shape="rectangle">
 
     <corners
-        android:radius="20dp"/>
+        android:radius="14sp"/>
 
     <solid
-        android:color="@color/message_background_incoming" />
+        android:color="@color/card_background" />
 
 </shape>

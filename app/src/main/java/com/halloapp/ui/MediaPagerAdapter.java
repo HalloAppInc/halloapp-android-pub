@@ -26,6 +26,7 @@ import java.util.Stack;
 public class MediaPagerAdapter extends PagerAdapter {
 
     private final MediaPagerAdapterParent parent;
+    private final float mediaCornerRadius;
     private List<Media> media;
 
     public interface MediaPagerAdapterParent {
@@ -35,8 +36,9 @@ public class MediaPagerAdapter extends PagerAdapter {
         void startActivity(Intent intent);
     }
 
-    public MediaPagerAdapter(@NonNull MediaPagerAdapterParent parent) {
+    public MediaPagerAdapter(@NonNull MediaPagerAdapterParent parent, float mediaCornerRadius) {
         this.parent = parent;
+        this.mediaCornerRadius = mediaCornerRadius;
     }
 
     public void setMedia(@NonNull List<Media> media) {
@@ -61,7 +63,7 @@ public class MediaPagerAdapter extends PagerAdapter {
     Object instantiateItem(@NonNull ViewGroup container, int position) {
         final View view;
         if (parent.getRecycledMediaViews().empty()) {
-            view = LayoutInflater.from(container.getContext()).inflate(R.layout.post_feed_media_pager_item, container, false);
+            view = LayoutInflater.from(container.getContext()).inflate(R.layout.media_pager_item, container, false);
             if (BuildConfig.DEBUG_MEDIA) {
                 final TextView mediaInfoView = new TextView(container.getContext());
                 mediaInfoView.setTextColor(0xffffffff);
@@ -77,6 +79,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
         view.setTag(mediaItem.rowId);
         final PostImageView imageView = view.findViewById(R.id.image);
+        imageView.setCornerRadius(mediaCornerRadius);
         imageView.setSinglePointerDragStartDisabled(true);
         imageView.setDrawDelegate(parent.getDrawDelegateView());
         parent.getMediaThumbnailLoader().load(imageView, mediaItem);

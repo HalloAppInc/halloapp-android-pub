@@ -328,7 +328,7 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-            holder.bindTo(Preconditions.checkNotNull(getItem(position)), chat);
+            holder.bindTo(Preconditions.checkNotNull(getItem(position)), chat, position < getItemCount() - 1 ? getItem(position+1) : null);
         }
     }
 
