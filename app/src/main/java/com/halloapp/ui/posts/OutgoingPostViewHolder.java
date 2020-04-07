@@ -104,7 +104,6 @@ public class OutgoingPostViewHolder extends PostViewHolder {
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
 
-        myAvatarView.setImageResource(R.drawable.avatar_person);
         parent.getAvatarLoader().load(myAvatarView, UserId.ME);
 
         if (post.commentCount == 0) {
@@ -135,7 +134,6 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         if (firstComment != null) {
             firstCommentContent.setVisibility(View.VISIBLE);
 
-            firstCommentAvatar.setImageResource(R.drawable.avatar_person); // TODO (ds): load profile photo
             parent.getAvatarLoader().load(firstCommentAvatar, firstComment.commentSenderUserId);
 
             firstCommentText.setText(firstComment.text);

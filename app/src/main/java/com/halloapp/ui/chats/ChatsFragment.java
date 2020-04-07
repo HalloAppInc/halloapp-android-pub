@@ -152,7 +152,6 @@ public class ChatsFragment extends Fragment {
             void bindTo(@NonNull Chat chat) {
                 this.chat = chat;
                 TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - chat.timestamp);
-                avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
                 avatarLoader.load(avatarView, new UserId(chat.chatId));
                 nameView.setText(chat.name);
                 if (chat.lastMessageRowId >= 0) {

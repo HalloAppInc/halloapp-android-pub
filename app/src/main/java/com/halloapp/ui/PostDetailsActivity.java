@@ -203,7 +203,6 @@ public class PostDetailsActivity extends AppCompatActivity {
 
             void bindTo(@NonNull Contact contact) {
                 this.contact = contact;
-                avatarView.setImageResource(R.drawable.avatar_person); // TODO (ds): load contact image
                 avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
                 nameView.setText(contact.getDisplayName());
             }

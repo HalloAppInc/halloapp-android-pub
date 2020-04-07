@@ -88,6 +88,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
+                view.setImageResource(R.drawable.avatar_person);
             }
         };
         load(view, loader, displayer, userId.rawId(), cache);
