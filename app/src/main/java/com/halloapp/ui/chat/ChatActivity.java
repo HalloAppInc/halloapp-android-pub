@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -151,11 +152,22 @@ public class ChatActivity extends AppCompatActivity {
             setTitle(contact.getDisplayName());
             PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
             presenceLoader.getLastSeenLiveData(contact.userId).observe(this, lastSeen -> {
-                // TODO(jack): set last seen in UI
+                if (lastSeen == null) {
+                    toolbar.setSubtitle(null);
+                } else {
+                    toolbar.setSubtitle(getElapsedTimeString(lastSeen));
+                }
             });
         });
+    }
 
-
+    private String getElapsedTimeString(long lastSeenS) {
+        long lastSeenMs = lastSeenS * 1000;
+        long now = System.currentTimeMillis();
+        if (lastSeenMs > now) {
+            lastSeenMs = now;
+        }
+        return getString(R.string.last_seen, DateUtils.getRelativeTimeSpanString(lastSeenMs));
     }
 
     @Override

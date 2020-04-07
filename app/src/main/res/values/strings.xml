@@ -164,4 +164,5 @@
     <string name="album">Album</string>
     <string name="new_messages">New messages</string>
     <string name="delete">Delete</string>
+    <string name="last_seen">Last seen %s</string>
 </resources>
