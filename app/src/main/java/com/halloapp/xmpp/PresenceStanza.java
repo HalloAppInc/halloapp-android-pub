@@ -14,6 +14,12 @@ public class PresenceStanza extends Stanza {
     public final String type;
     public final Long lastSeen;
 
+    PresenceStanza(@NonNull Jid to, @NonNull String type) {
+        setTo(to);
+        this.type = type;
+        this.lastSeen = null;
+    }
+
     PresenceStanza(@NonNull Jid to, @NonNull String id, @NonNull String type, @Nullable Long lastSeen) {
         setTo(to);
         setStanzaId(id);
