@@ -19,19 +19,24 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
         private final ContentDb contentDb;
         private final boolean outgoingOnly;
-
-        private final MutableLiveData<PostsDataSource> sourceLiveData = new MutableLiveData<>();
+        private PostsDataSource latestSource;
 
         public Factory(@NonNull ContentDb contentDb, boolean outgoingOnly) {
             this.contentDb = contentDb;
             this.outgoingOnly = outgoingOnly;
+            latestSource = new PostsDataSource(contentDb, outgoingOnly);
         }
 
         @Override
         public @NonNull DataSource<Long, Post> create() {
-            final PostsDataSource latestSource = new PostsDataSource(contentDb, outgoingOnly);
-            sourceLiveData.postValue(latestSource);
+            if (latestSource.isInvalid()) {
+                latestSource = new PostsDataSource(contentDb, outgoingOnly);
+            }
             return latestSource;
+        }
+
+        public void invalidateLatestDataSource() {
+            latestSource.invalidate();
         }
     }
 

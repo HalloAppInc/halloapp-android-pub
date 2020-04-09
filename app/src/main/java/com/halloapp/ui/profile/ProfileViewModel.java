@@ -12,10 +12,9 @@ import androidx.paging.PagedList;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
-import com.halloapp.content.ContentDb;
-import com.halloapp.util.Preconditions;
 
 import java.util.Collection;
 
@@ -23,6 +22,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
     private final ContentDb contentDb;
+    private final PostsDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -84,7 +84,7 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         private void invalidatePosts() {
-            mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
+            mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
     };
 
@@ -94,7 +94,7 @@ public class ProfileViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
-        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(contentDb, true);
+        dataSourceFactory = new PostsDataSource.Factory(contentDb, true);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
     }
 

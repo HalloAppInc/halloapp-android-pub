@@ -20,7 +20,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.Preconditions;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,6 +34,7 @@ public class ChatViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
+    private final MessagesDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -88,7 +88,7 @@ public class ChatViewModel extends AndroidViewModel {
         }
 
         private void invalidateMessages() {
-            mainHandler.post(() -> Preconditions.checkNotNull(messageList.getValue()).getDataSource().invalidate());
+            mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
     };
 
@@ -100,7 +100,7 @@ public class ChatViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
-        final MessagesDataSource.Factory dataSourceFactory = new MessagesDataSource.Factory(contentDb, chatId);
+        dataSourceFactory = new MessagesDataSource.Factory(contentDb, chatId);
         messageList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
         contact = new ComputableLiveData<Contact>() {

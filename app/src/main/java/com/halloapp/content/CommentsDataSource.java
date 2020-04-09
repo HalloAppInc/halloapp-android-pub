@@ -21,19 +21,25 @@ public class CommentsDataSource extends PositionalDataSource<Comment> {
         private final UserId postSenderUserId;
         private final String postId;
 
-        private final MutableLiveData<CommentsDataSource> sourceLiveData = new MutableLiveData<>();
+        private CommentsDataSource latestSource;
 
         public Factory(@NonNull ContentDb contentDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
             this.contentDb = contentDb;
             this.postSenderUserId = postSenderUserId;
             this.postId = postId;
+            latestSource = new CommentsDataSource(contentDb, postSenderUserId, postId);
         }
 
         @Override
         public @NonNull DataSource<Integer, Comment> create() {
-            CommentsDataSource latestSource = new CommentsDataSource(contentDb, postSenderUserId, postId);
-            sourceLiveData.postValue(latestSource);
+            if (latestSource.isInvalid()) {
+                latestSource = new CommentsDataSource(contentDb, postSenderUserId, postId);
+            }
             return latestSource;
+        }
+
+        public void invalidateLatestDataSource() {
+            latestSource.invalidate();
         }
     }
 

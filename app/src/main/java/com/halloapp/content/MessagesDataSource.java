@@ -21,18 +21,24 @@ public class MessagesDataSource extends ItemKeyedDataSource<Long, Message> {
         private final ContentDb contentDb;
         private final String chatId;
 
-        private final MutableLiveData<MessagesDataSource> sourceLiveData = new MutableLiveData<>();
+        private MessagesDataSource latestSource;
 
         public Factory(@NonNull ContentDb contentDb, @NonNull String chatId) {
             this.contentDb = contentDb;
             this.chatId = chatId;
+            latestSource = new MessagesDataSource(contentDb, chatId);
         }
 
         @Override
         public @NonNull DataSource<Long, Message> create() {
-            final MessagesDataSource latestSource = new MessagesDataSource(contentDb, chatId);
-            sourceLiveData.postValue(latestSource);
+            if (latestSource.isInvalid()) {
+                latestSource = new MessagesDataSource(contentDb, chatId);
+            }
             return latestSource;
+        }
+
+        public void invalidateLatestDataSource() {
+            latestSource.invalidate();
         }
     }
 

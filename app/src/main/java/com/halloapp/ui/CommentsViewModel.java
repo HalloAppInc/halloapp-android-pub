@@ -21,7 +21,6 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
-import com.halloapp.util.Preconditions;
 
 class CommentsViewModel extends AndroidViewModel {
 
@@ -33,6 +32,7 @@ class CommentsViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final UserId postSenderUserId;
     private final String postId;
+    private final CommentsDataSource.Factory dataSourceFactory;
 
     private LoadUserTask loadUserTask;
 
@@ -75,7 +75,7 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         private void invalidateDataSource() {
-            mainHandler.post(() -> Preconditions.checkNotNull(commentList.getValue()).getDataSource().invalidate());
+            mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
     };
 
@@ -88,7 +88,7 @@ class CommentsViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
-        final CommentsDataSource.Factory dataSourceFactory = new CommentsDataSource.Factory(contentDb, postSenderUserId, postId);
+        dataSourceFactory = new CommentsDataSource.Factory(contentDb, postSenderUserId, postId);
         commentList = new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
 

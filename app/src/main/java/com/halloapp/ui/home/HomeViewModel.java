@@ -20,7 +20,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +37,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
+    private final PostsDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -102,7 +102,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         private void invalidatePosts() {
-            mainHandler.post(() -> Preconditions.checkNotNull(postList.getValue()).getDataSource().invalidate());
+            mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
 
         private void invalidateCommentHistory() {
@@ -116,7 +116,7 @@ public class HomeViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
-        final PostsDataSource.Factory dataSourceFactory = new PostsDataSource.Factory(contentDb, false);
+        dataSourceFactory = new PostsDataSource.Factory(contentDb, false);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
         commentsHistory = new ComputableLiveData<CommentsHistory>() {
