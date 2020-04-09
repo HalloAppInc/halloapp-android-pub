@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -103,6 +104,16 @@ public class ChatActivity extends AppCompatActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         final RecyclerView chatView = findViewById(R.id.chat);
+        chatView.setItemAnimator(new DefaultItemAnimator() {
+            @Override
+            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
+                                         int fromX, int fromY, int toX, int toY) {
+                if (oldHolder == newHolder) {
+                    return false;
+                }
+                return super.animateChange(oldHolder, newHolder, fromX, fromY, toX, toY);
+            }
+        });
 
         findViewById(R.id.send).setOnClickListener(v -> sendMessage());
         findViewById(R.id.media).setOnClickListener(v -> pickMedia());
@@ -263,14 +274,14 @@ public class ChatActivity extends AppCompatActivity {
 
     private class ChatAdapter extends PagedListAdapter<Message, MessageViewHolder> {
 
-        static final int MESSAGE_TYPE_TEXT = 0x00;
-        static final int MESSAGE_TYPE_MEDIA = 0x01;
-        static final int MESSAGE_TYPE_RETRACTED = 0x02;
-        static final int MESSAGE_TYPE_MASK = 0xFF;
+        static final int VIEW_TYPE_OUTGOING_TEXT = 1;
+        static final int VIEW_TYPE_INCOMING_TEXT = 2;
+        static final int VIEW_TYPE_OUTGOING_MEDIA = 3;
+        static final int VIEW_TYPE_OUTGOING_MEDIA_NO_CAPTION = 4;
+        static final int VIEW_TYPE_INCOMING_MEDIA = 5;
+        static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
+        static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
 
-        static final int MESSAGE_DIRECTION_OUTGOING = 0x0000;
-        static final int MESSAGE_DIRECTION_INCOMING = 0x0100;
-        static final int MESSAGE_DIRECTION_MASK = 0xFF00;
 
         Chat chat;
 
@@ -292,21 +303,58 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public int getItemViewType(int position) {
             final Message message = Preconditions.checkNotNull(getItem(position));
-            return (message.isRetracted() ? MESSAGE_TYPE_RETRACTED : (message.media.isEmpty() ? MESSAGE_TYPE_TEXT : MESSAGE_TYPE_MEDIA)) |
-                    (message.isOutgoing() ? MESSAGE_DIRECTION_OUTGOING : MESSAGE_DIRECTION_INCOMING);
+            if (message.isIncoming()) {
+                if (message.isRetracted()) {
+                    return VIEW_TYPE_INCOMING_RETRACTED;
+                } else if (message.media.isEmpty()) {
+                    return VIEW_TYPE_INCOMING_TEXT;
+                } else {
+                    return VIEW_TYPE_INCOMING_MEDIA;
+                }
+            } else {
+                if (message.isRetracted()) {
+                    return VIEW_TYPE_OUTGOING_RETRACTED;
+                } else if (message.media.isEmpty()) {
+                    return VIEW_TYPE_OUTGOING_TEXT;
+                } else if (TextUtils.isEmpty(message.text)) {
+                    return VIEW_TYPE_OUTGOING_MEDIA_NO_CAPTION;
+                } else {
+                    return VIEW_TYPE_OUTGOING_MEDIA;
+                }
+            }
         }
 
         @Override
         public @NonNull
         MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             final @LayoutRes int layoutRes;
-            switch (viewType & MESSAGE_DIRECTION_MASK) {
-                case MESSAGE_DIRECTION_INCOMING: {
-                    layoutRes = R.layout.message_item_incoming;
+            switch (viewType) {
+                case VIEW_TYPE_INCOMING_TEXT: {
+                    layoutRes = R.layout.message_item_incoming_text;
                     break;
                 }
-                case MESSAGE_DIRECTION_OUTGOING: {
-                    layoutRes = R.layout.message_item_outgoing;
+                case VIEW_TYPE_OUTGOING_TEXT: {
+                    layoutRes = R.layout.message_item_outgoing_text;
+                    break;
+                }
+                case VIEW_TYPE_INCOMING_MEDIA: {
+                    layoutRes = R.layout.message_item_incoming_media;
+                    break;
+                }
+                case VIEW_TYPE_OUTGOING_MEDIA: {
+                    layoutRes = R.layout.message_item_outgoing_media;
+                    break;
+                }
+                case VIEW_TYPE_OUTGOING_MEDIA_NO_CAPTION: {
+                    layoutRes = R.layout.message_item_outgoing_media_no_caption;
+                    break;
+                }
+                case VIEW_TYPE_INCOMING_RETRACTED: {
+                    layoutRes = R.layout.message_item_incoming_retracted;
+                    break;
+                }
+                case VIEW_TYPE_OUTGOING_RETRACTED: {
+                    layoutRes = R.layout.message_item_outgoing_retracted;
                     break;
                 }
                 default: {
@@ -314,27 +362,6 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
             final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
-            final @LayoutRes int contentLayoutRes;
-            switch (viewType & MESSAGE_TYPE_MASK) {
-                case MESSAGE_TYPE_TEXT: {
-                    contentLayoutRes = R.layout.message_content_text;
-                    break;
-                }
-                case MESSAGE_TYPE_MEDIA: {
-                    contentLayoutRes = R.layout.message_content_media;
-                    break;
-                }
-                case MESSAGE_TYPE_RETRACTED: {
-                    contentLayoutRes = R.layout.message_content_retracted;
-                    break;
-                }
-                default: {
-                    throw new IllegalArgumentException();
-                }
-            }
-            final ViewGroup contentHolder = layout.findViewById(R.id.content);
-            LayoutInflater.from(parent.getContext()).inflate(contentLayoutRes, contentHolder, true);
-
             return new MessageViewHolder(layout, messageViewHolderParent);
         }
 

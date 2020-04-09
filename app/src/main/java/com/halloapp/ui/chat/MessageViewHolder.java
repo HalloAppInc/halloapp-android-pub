@@ -99,9 +99,7 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
             }
         }
 
-        if (message.media.isEmpty()) {
-            textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
-        } else {
+        if (!message.media.isEmpty()) {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(message.media)));
             mediaPagerAdapter.setMedia(message.media);
             if (message.media.size() > 1) {
@@ -112,16 +110,23 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
-            textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
         }
-        textView.setLineStep(0);
-        textView.setText(message.text);
 
-        if (TextUtils.isEmpty(message.text)) {
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setVisibility(View.VISIBLE);
-            textView.setTextColor(ContextCompat.getColor(textView.getContext(), message.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
+        if (textView != null) {
+            if (message.media.isEmpty()) {
+                textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
+            } else {
+                textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
+            }
+            textView.setLineStep(0);
+            textView.setText(message.text);
+
+            if (TextUtils.isEmpty(message.text)) {
+                textView.setVisibility(View.GONE);
+            } else {
+                textView.setVisibility(View.VISIBLE);
+                textView.setTextColor(ContextCompat.getColor(textView.getContext(), message.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
+            }
         }
 
         if (prevMessage == null || !TimeUtils.isSameDay(message.timestamp, prevMessage.timestamp)) {

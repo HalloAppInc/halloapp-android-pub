@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/message_item_header"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="64dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/message_background_outgoing"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <com.halloapp.widget.MediaViewPager
+                    android:id="@+id/media_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_height="150dp"/>
+
+                <me.relex.circleindicator.CircleIndicator
+                    android:id="@+id/media_pager_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_gravity="center_horizontal"
+                    app:ci_width="5dp"
+                    app:ci_height="5dp"
+                    app:ci_margin="4dp"
+                    app:ci_drawable="@drawable/pager_item_indicator_selected"
+                    app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+                    app:ci_animator="@animator/pager_indicator"
+                    android:layout_marginBottom="8dp"
+                    android:layoutDirection="ltr"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/checkmark_background"
+                android:paddingStart="6.5dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="6.5dp"
+                android:paddingBottom="4dp"
+                android:layout_margin="4dp"
+                tools:src="@drawable/ic_messaging_delivered" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+</LinearLayout>

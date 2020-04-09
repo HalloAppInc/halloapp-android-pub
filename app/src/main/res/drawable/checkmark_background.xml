@@ -2,14 +2,10 @@
     android:shape="rectangle">
 
     <corners
-        android:radius="9dp"/>
+        android:topLeftRadius="14dp"/>
 
     <solid
         android:color="@color/message_background_outgoing" />
-
-    <stroke
-        android:width="1dp"
-        android:color="@color/window_background" />
 
 </shape>
 
