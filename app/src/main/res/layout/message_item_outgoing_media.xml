@@ -72,7 +72,7 @@
                     android:paddingStart="0dp"
                     android:paddingTop="4dp"
                     android:paddingEnd="2dp"
-                    android:paddingBottom="2dp"
+                    android:paddingBottom="4dp"
                     tools:src="@drawable/ic_messaging_delivered" />
 
             </com.halloapp.widget.MessageTextLayout>

@@ -27,7 +27,9 @@
 
             <com.halloapp.widget.MessageTextLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:layout_marginBottom="9dp">
 
                 <com.halloapp.widget.LimitingTextView
                     android:id="@+id/text"
@@ -36,9 +38,7 @@
                     android:autoLink="web"
                     android:lineSpacingMultiplier="1.1"
                     android:paddingStart="14dp"
-                    android:paddingTop="9dp"
                     android:paddingEnd="14dp"
-                    android:paddingBottom="9dp"
                     android:textAppearance="?textAppearanceListItemSmall"
                     android:textSize="16sp"
                     app:ltvReadMore="@string/read_more"
@@ -52,7 +52,7 @@
                     android:paddingStart="0dp"
                     android:paddingTop="4dp"
                     android:paddingEnd="10dp"
-                    android:paddingBottom="13dp"
+                    android:paddingBottom="4dp"
                     tools:src="@drawable/ic_messaging_delivered" />
 
             </com.halloapp.widget.MessageTextLayout>
