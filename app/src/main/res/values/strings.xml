@@ -165,4 +165,6 @@
     <string name="new_messages">New messages</string>
     <string name="delete">Delete</string>
     <string name="last_seen">Last seen %s</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

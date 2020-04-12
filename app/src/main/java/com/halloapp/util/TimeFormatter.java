@@ -38,11 +38,13 @@ public class TimeFormatter {
     public static CharSequence formatMessageSeparatorDate(@NonNull Context context, long timestamp) {
         final long currentTime = System.currentTimeMillis();
         if (TimeUtils.isSameDay(currentTime, timestamp)) {
-            return "Today";
+            return context.getString(R.string.today);
         } else if (TimeUtils.isSameDay(currentTime - DateUtils.DAY_IN_MILLIS, timestamp)) {
-            return "Yesterday";
-        } else {
+            return context.getString(R.string.yesterday);
+        } else if (TimeUtils.isSameYear(currentTime, timestamp)) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
+        } else {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR);
         }
     }
 }
