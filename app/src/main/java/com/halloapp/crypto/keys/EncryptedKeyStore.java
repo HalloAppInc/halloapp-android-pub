@@ -364,7 +364,7 @@ public class EncryptedKeyStore {
     }
 
     private static SharedPreferences getSharedPreferences(Context context, String fileName) throws Exception {
-        String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // TODO: Is default master key okay?
+        String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // TODO(jack): Is default master key okay?
         return EncryptedSharedPreferences.create(
                 fileName,
                 masterKeyAlias,
@@ -376,14 +376,14 @@ public class EncryptedKeyStore {
 
     private static String bytesToString(byte[] bytes) {
         Preconditions.checkArgument(bytes != null);
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 
     private static byte[] stringToBytes(String string) {
         if (string == null) {
             return null;
         }
-        return Base64.decode(string, Base64.DEFAULT);
+        return Base64.decode(string, Base64.NO_WRAP);
     }
 
 

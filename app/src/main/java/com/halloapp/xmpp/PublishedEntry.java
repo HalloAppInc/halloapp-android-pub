@@ -373,11 +373,11 @@ public class PublishedEntry {
                     serializer.attribute(null, ATTRIBUTE_SENDER_USER_ID, senderUserId.rawId());
                 }
                 if (ephemeralKey != null && ephemralKeyId != null) {
-                    serializer.attribute(null, ATTRIBUTE_EPHEMERAL_KEY, Base64.encodeToString(ephemeralKey.getKeyMaterial(), Base64.DEFAULT));
+                    serializer.attribute(null, ATTRIBUTE_EPHEMERAL_KEY, Base64.encodeToString(ephemeralKey.getKeyMaterial(), Base64.NO_WRAP));
                     serializer.attribute(null, ATTRIBUTE_EPHEMERAL_KEY_ID, ephemralKeyId.toString());
                 }
                 if (identityKey != null) {
-                    serializer.attribute(null, ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey.getKeyMaterial(), Base64.DEFAULT));
+                    serializer.attribute(null, ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey.getKeyMaterial(), Base64.NO_WRAP));
                 }
                 if (oneTimePreKeyId != null) {
                     serializer.attribute(null, ATTRIBUTE_ONE_TIME_PRE_KEY_ID, oneTimePreKeyId.toString());
@@ -399,7 +399,7 @@ public class PublishedEntry {
         try {
             byte[] encodedEntry = getEncodedEntry();
             byte[] encryptedEntry = SessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
-            return Base64.encodeToString(encryptedEntry, Base64.DEFAULT);
+            return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
         } catch (Exception e) {
             Log.e("Failed to encrypt", e);
         }
@@ -407,7 +407,7 @@ public class PublishedEntry {
     }
 
     private String getEncodedEntryString() {
-        return Base64.encodeToString(getEncodedEntry(), Base64.DEFAULT);
+        return Base64.encodeToString(getEncodedEntry(), Base64.NO_WRAP);
     }
 
     private byte[] getEncodedEntry() {
@@ -507,7 +507,7 @@ public class PublishedEntry {
     }
 
     private static Builder readEncodedEntryString(String entry) {
-        return readEncodedEntry(Base64.decode(entry, Base64.DEFAULT));
+        return readEncodedEntry(Base64.decode(entry, Base64.NO_WRAP));
     }
 
     private static Builder readEncodedEntry(byte[] entry) {
@@ -562,11 +562,11 @@ public class PublishedEntry {
         } catch (NumberFormatException e) {
             Log.w("Got invalid ephemeral key id " + ephemeralKeyIdString);
         }
-        PublicECKey ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.DEFAULT));
-        PublicECKey identityKey = new PublicECKey(Base64.decode(identityKeyString, Base64.DEFAULT));
+        PublicECKey ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
+        PublicECKey identityKey = new PublicECKey(Base64.decode(identityKeyString, Base64.NO_WRAP));
 
         String encryptedEntry = Xml.readText(parser);
-        byte[] bytes = Base64.decode(encryptedEntry, Base64.DEFAULT);
+        byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);
         byte[] dec = SessionManager.getInstance().decryptMessage(bytes, new UserId(rawUserId), identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
         final PublishedEntry.Builder builder = readEncodedEntry(dec);
 

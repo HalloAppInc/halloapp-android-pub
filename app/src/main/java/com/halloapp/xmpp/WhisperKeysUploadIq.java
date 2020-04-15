@@ -63,7 +63,7 @@ public class WhisperKeysUploadIq extends IQ {
     }
 
     private static String encode(byte[] bytes) {
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 }
 

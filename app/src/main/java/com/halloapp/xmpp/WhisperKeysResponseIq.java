@@ -71,7 +71,7 @@ public class WhisperKeysResponseIq extends IQ {
     }
 
     private static byte[] decode(String s) {
-        return Base64.decode(s, Base64.DEFAULT);
+        return Base64.decode(s, Base64.NO_WRAP);
     }
 }
 
