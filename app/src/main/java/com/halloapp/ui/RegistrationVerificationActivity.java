@@ -13,9 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -30,12 +28,6 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
-
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 public class RegistrationVerificationActivity extends AppCompatActivity {
 
@@ -78,7 +70,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
             if (result == null) {
                 return;
             }
-            if (result.result == RegistrationVerificationResult.RESULT_OK && !TextUtils.isEmpty(result.password)) {
+            if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
                 setResult(RESULT_OK);
                 finish();
             } else {
@@ -149,35 +141,15 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
         registrationVerificationViewModel.verifyRegistration(phone, code);
     }
 
-    private static class RegistrationVerificationResult {
-
-        @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK})
-        @interface Result {}
-        static final int RESULT_OK = 0;
-        static final int RESULT_FAILED_SERVER = 1;
-        static final int RESULT_FAILED_NETWORK = 2;
-
-        final String phone;
-        final String password;
-        final @Result int result;
-
-        RegistrationVerificationResult(@NonNull String phone, @Nullable String password, @Result int result) {
-            this.phone = phone;
-            this.password = password;
-            this.result = result;
-        }
-    }
-
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
 
-        private final MutableLiveData<RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
+        private final MutableLiveData<Registration.RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
 
         public RegistrationVerificationViewModel(@NonNull Application application) {
             super(application);
         }
 
-        LiveData<RegistrationVerificationResult> getRegistrationVerificationResult() {
+        LiveData<Registration.RegistrationVerificationResult> getRegistrationVerificationResult() {
             return registrationRequestResult;
         }
 
@@ -186,7 +158,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
         }
     }
 
-    private static class RegistrationVerificationTask extends AsyncTask<Void, Void, RegistrationVerificationResult> {
+    private static class RegistrationVerificationTask extends AsyncTask<Void, Void, Registration.RegistrationVerificationResult> {
 
         final RegistrationVerificationViewModel viewModel;
         final String phone;
@@ -199,23 +171,18 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
         }
 
         @Override
-        protected RegistrationVerificationResult doInBackground(Void... voids) {
-            try {
-                String password = Registration.getInstance().verifyRegistration(phone, code);
-                if (!TextUtils.isEmpty(password)) {
-                    final Me me = Me.getInstance(viewModel.getApplication());
-                    me.saveRegistration(phone, password);
-                    Connection.getInstance().connect(me);
-                }
-                return new RegistrationVerificationResult(phone, password, RegistrationVerificationResult.RESULT_OK);
-            } catch (IOException | JSONException e) {
-                Log.e("RegistrationVerificationTask", e);
-                return new RegistrationVerificationResult(phone, null, RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+        protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
+            final Registration.RegistrationVerificationResult result = Registration.getInstance().verifyRegistration(phone, code);
+            if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
+                final Me me = Me.getInstance(viewModel.getApplication());
+                me.saveRegistration(Preconditions.checkNotNull(result.user), Preconditions.checkNotNull(result.password), Preconditions.checkNotNull(result.phone));
+                Connection.getInstance().connect(me);
             }
+            return result;
         }
 
         @Override
-        protected void onPostExecute(final RegistrationVerificationResult result) {
+        protected void onPostExecute(final Registration.RegistrationVerificationResult result) {
             viewModel.registrationRequestResult.setValue(result);
         }
     }

@@ -28,9 +28,9 @@ class ContactsDiff {
         final Set<String> removedNormalizedPhones = new HashSet<>();
         for (Contact contact : halloContacts) {
             halloContactsMap.append(contact.addressBookId, contact);
-            removedRowIds.add(contact.id);
-            if (contact.userId != null) {
-                removedNormalizedPhones.add(contact.userId.rawId());
+            removedRowIds.add(contact.rowId);
+            if (contact.normalizedPhone != null) {
+                removedNormalizedPhones.add(contact.normalizedPhone);
             }
         }
         for (AddressBookContacts.AddressBookContact addressBookContact : addressBookContacts) {
@@ -38,19 +38,21 @@ class ContactsDiff {
             if (contact == null) {
                 added.add(addressBookContact);
             } else {
-                if (!Objects.equals(contact.phone, addressBookContact.phone)) {
-                    contact.phone = addressBookContact.phone;
-                    contact.name = addressBookContact.name;
+                if (!Objects.equals(contact.addressBookPhone, addressBookContact.phone)) {
+                    contact.addressBookPhone = addressBookContact.phone;
+                    contact.addressBookName = addressBookContact.name;
+                    contact.halloName = null;
+                    contact.normalizedPhone = null;
                     contact.userId = null;
                     contact.friend = false;
                     updated.add(contact);
-                } else if (!Objects.equals(contact.name, addressBookContact.name)) {
-                    contact.name = addressBookContact.name;
+                } else if (!Objects.equals(contact.addressBookName, addressBookContact.name)) {
+                    contact.addressBookName = addressBookContact.name;
                     updated.add(contact);
                 }
-                removedRowIds.remove(contact.id);
-                if (contact.userId != null) {
-                    removedNormalizedPhones.remove(contact.userId.rawId());
+                removedRowIds.remove(contact.rowId);
+                if (contact.normalizedPhone != null) {
+                    removedNormalizedPhones.remove(contact.normalizedPhone);
                 }
             }
         }

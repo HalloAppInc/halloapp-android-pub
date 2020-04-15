@@ -19,6 +19,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
@@ -166,10 +167,10 @@ public class ContactsSync {
     private ListenableWorker.Result updateContactsOnServer(@NonNull Collection<Contact> contacts, boolean fullSync) {
         final HashMap<String, List<Contact>> phones = new HashMap<>();
         for (Contact contact : contacts) {
-            List<Contact> phoneContactList = phones.get(contact.phone);
+            List<Contact> phoneContactList = phones.get(contact.addressBookPhone);
             if (phoneContactList == null) {
                 phoneContactList = new ArrayList<>();
-                phones.put(contact.phone, phoneContactList);
+                phones.put(contact.addressBookPhone, phoneContactList);
             }
             phoneContactList.add(contact);
         }
@@ -214,15 +215,20 @@ public class ContactsSync {
                 if (contact.friend != ("friends".equals(contactsSyncResult.role))) {
                     contact.friend = !contact.friend;
                     contactUpdated = true;
-                    Log.i("ContactsSync.performContactSync: update friendship for " + contact.name + " to " + contact.friend);
+                    Log.i("ContactsSync.performContactSync: update friendship for " + contact.addressBookName + " to " + contact.friend);
                 }
-                if (!Objects.equals(contact.userId == null ? null : contact.userId.rawId(), contactsSyncResult.normalizedPhone)) {
-                    if (contactsSyncResult.normalizedPhone == null) {
+                if (!Objects.equals(contact.userId == null ? null : contact.userId.rawId(), contactsSyncResult.userId)) {
+                    if (contactsSyncResult.userId == null) {
                         contact.userId = null;
                     } else {
-                        contact.userId = new UserId(contactsSyncResult.normalizedPhone);
+                        contact.userId = new UserId(contactsSyncResult.userId);
                     }
-                    Log.i("ContactsSync.performContactSync: update jid for " + contact.name + " to " + contact.userId);
+                    Log.i("ContactsSync.performContactSync: update user id for " + contact.addressBookName + " to " + contact.userId);
+                    contactUpdated = true;
+                }
+                if (!Objects.equals(contact.normalizedPhone, contactsSyncResult.normalizedPhone)) {
+                    contact.normalizedPhone = contactsSyncResult.normalizedPhone;
+                    Log.i("ContactsSync.performContactSync: update normalized phone for " + contact.addressBookName + " to " + contact.normalizedPhone);
                     contactUpdated = true;
                 }
                 if (contactUpdated) {
@@ -234,6 +240,8 @@ public class ContactsSync {
         if (!updatedContacts.isEmpty()) {
             try {
                 ContactsDb.getInstance(context).updateContactsServerData(updatedContacts).get();
+                // TODO(ds): remove
+                ContentDb.getInstance(context).migrateUserIds(updatedContacts);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.performContactSync: failed to update server data", e);
                 return ListenableWorker.Result.failure();

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
@@ -118,11 +119,11 @@ public class ChatsViewModel extends AndroidViewModel {
                         chats.add(chat);
                     }
                     chat.name = friend.getDisplayName();
-                    chat.info = friend.getInternationalPhone();
+                    chat.info = friend.getDisplayPhone();
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name)) {
-                        chat.name = new Contact(new UserId(chat.chatId)).getDisplayName();
+                        chat.name = application.getString(R.string.unknown_contact);
                     }
                 }
 

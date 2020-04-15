@@ -184,12 +184,7 @@ public class CommentsHistoryPopup {
         protected Map<UserId, Contact> doInBackground(Void... voids) {
             final Map<UserId, Contact> contacts = new HashMap<>();
             for (UserId userId : userIds) {
-                final Contact contact = contactsDb.getContact(userId);
-                if (contact != null) {
-                    contacts.put(userId, contact);
-                } else {
-                    contacts.put(userId, new Contact(userId));
-                }
+                contacts.put(userId, contactsDb.getContact(userId));
             }
             return contacts;
         }

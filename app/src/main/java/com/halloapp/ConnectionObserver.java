@@ -127,7 +127,7 @@ public class ConnectionObserver implements Connection.Observer {
     public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId) {
         final List<ContactsDb.ContactFriendship> contactsFriendship = new ArrayList<>(protocolContacts.size());
         for (ContactInfo contact : protocolContacts) {
-            contactsFriendship.add(new ContactsDb.ContactFriendship(new UserId(contact.normalizedPhone), "friends".equals(contact.role)));
+            contactsFriendship.add(new ContactsDb.ContactFriendship(new UserId(contact.userId), "friends".equals(contact.role)));
         }
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {

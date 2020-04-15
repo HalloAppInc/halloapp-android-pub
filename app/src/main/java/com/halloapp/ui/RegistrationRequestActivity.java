@@ -10,7 +10,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -25,12 +24,6 @@ import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
 import com.halloapp.widget.CenterToast;
 import com.hbb20.CountryCodePicker;
-
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 
 public class RegistrationRequestActivity extends AppCompatActivity {
@@ -79,7 +72,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
                 return;
             }
 
-            if (result.result == RegistrationRequestResult.RESULT_OK) {
+            if (result.result == Registration.RegistrationRequestResult.RESULT_OK) {
                 final Intent intent = new Intent(this, RegistrationVerificationActivity.class);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
                 startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
@@ -145,29 +138,11 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber());
     }
 
-    private static class RegistrationRequestResult {
-
-        @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK})
-        @interface Result {}
-        static final int RESULT_OK = 0;
-        static final int RESULT_FAILED_SERVER = 1;
-        static final int RESULT_FAILED_NETWORK = 2;
-
-        final String phone;
-        final @Result int result;
-
-        RegistrationRequestResult(@NonNull String phone, @Result int result) {
-            this.phone = phone;
-            this.result = result;
-        }
-    }
-
     public static class RegistrationRequestViewModel extends ViewModel {
 
-        private final MutableLiveData<RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
+        private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
 
-        LiveData<RegistrationRequestResult> getRegistrationRequestResult() {
+        LiveData<Registration.RegistrationRequestResult> getRegistrationRequestResult() {
             return registrationRequestResult;
         }
 
@@ -176,7 +151,7 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         }
     }
 
-    private static class RegistrationRequestTask extends AsyncTask<Void, Void, RegistrationRequestResult> {
+    private static class RegistrationRequestTask extends AsyncTask<Void, Void, Registration.RegistrationRequestResult> {
 
         final RegistrationRequestViewModel viewModel;
         final String phone;
@@ -187,18 +162,12 @@ public class RegistrationRequestActivity extends AppCompatActivity {
         }
 
         @Override
-        protected RegistrationRequestResult doInBackground(Void... voids) {
-            try {
-                Registration.getInstance().requestRegistration(phone);
-                return new RegistrationRequestResult(phone, RegistrationRequestResult.RESULT_OK);
-            } catch (IOException | JSONException e) {
-                Log.e("RegistrationRequestTask", e);
-                return new RegistrationRequestResult(phone, RegistrationRequestResult.RESULT_FAILED_NETWORK);
-            }
+        protected Registration.RegistrationRequestResult doInBackground(Void... voids) {
+            return Registration.getInstance().requestRegistration(phone);
         }
 
         @Override
-        protected void onPostExecute(final RegistrationRequestResult result) {
+        protected void onPostExecute(final Registration.RegistrationRequestResult result) {
             viewModel.registrationRequestResult.setValue(result);
         }
     }

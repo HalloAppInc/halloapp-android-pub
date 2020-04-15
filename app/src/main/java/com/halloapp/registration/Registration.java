@@ -2,23 +2,28 @@ package com.halloapp.registration;
 
 import android.text.TextUtils;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
-import com.halloapp.xmpp.Connection;
+import com.halloapp.util.Preconditions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Registration {
+
+    private static final String HOST = "api.halloapp.net";
 
     private static Registration instance;
 
@@ -37,30 +42,43 @@ public class Registration {
     }
 
     @WorkerThread
-    public void requestRegistration(@NonNull String phone) throws IOException, JSONException {
+    public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone) {
+        Log.i("Registration.requestRegistration phone=" + phone);
         InputStream inStream = null;
         HttpURLConnection connection = null;
         try {
-            final URL url = new URL("https://" + Connection.HOST + "/cgi-bin/request.sh?user=" + phone);
+            final URL url = new URL("https://" + HOST + "/api/registration/request_sms");
             connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setUseCaches(false);
             connection.setAllowUserInteraction(false);
             connection.setConnectTimeout(30_000);
             connection.setReadTimeout(30_000);
-            connection.connect();
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Bad response code: " + connection.getResponseCode());
-            }
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            JSONObject requestJson = new JSONObject();
+            requestJson.put("phone", phone);
+            connection.getOutputStream().write(requestJson.toString().getBytes());
 
             inStream = connection.getInputStream();
             final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-
             final String result = responseJson.optString("result");
-            Log.i("Registration.requestRegistration: " + result);
-            if ("Error".equals(result)) {
-                throw new IOException("Registration error");
+            final String normalizedPhone = responseJson.optString("phone");
+            final String error = responseJson.optString("error");
+            Log.i("Registration.requestRegistration result=" + result + " error=" + error + " phone=" + normalizedPhone);
+            if (!"ok".equals(result)) {
+                return new RegistrationRequestResult(RegistrationRequestResult.translateServerErrorCode(error));
             }
+            if (TextUtils.isEmpty(phone)) {
+                return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER);
+            }
+            return new RegistrationRequestResult(phone);
+        } catch (IOException e) {
+            return new RegistrationRequestResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+        } catch (JSONException e) {
+            return new RegistrationRequestResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
@@ -70,34 +88,116 @@ public class Registration {
     }
 
     @WorkerThread
-    public String verifyRegistration(@NonNull String phone, @NonNull String code) throws IOException, JSONException {
+    public @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code) {
+        Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
         InputStream inStream = null;
         HttpURLConnection connection = null;
         try {
-            final URL url = new URL("https://" + Connection.HOST + "/cgi-bin/register.sh?user=" + phone + "&code=" + code);
+            final URL url = new URL("https://" + HOST + "/api/registration/register");
             connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setUseCaches(false);
             connection.setAllowUserInteraction(false);
             connection.setConnectTimeout(30_000);
             connection.setReadTimeout(30_000);
-            connection.connect();
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Bad response code: " + connection.getResponseCode());
-            }
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            JSONObject requestJson = new JSONObject();
+            requestJson.put("phone", phone);
+            requestJson.put("code", code);
+            connection.getOutputStream().write(requestJson.toString().getBytes());
 
             inStream = connection.getInputStream();
             final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-            final String password = responseJson.optString("pass");
-            if (TextUtils.isEmpty(password)) {
-                throw new IOException("Unexpected result: " + responseJson.getString("result"));
+            final String result = responseJson.optString("result");
+            final String normalizedPhone = responseJson.optString("phone");
+            final String password = responseJson.optString("password");
+            final String uid = responseJson.optString("uid");
+            final String error = responseJson.optString("error");
+            Log.i("Registration.verifyRegistration result=" + result + " phone=" + normalizedPhone + " uid=" + uid + " password=" + password + " error=" + error); // TODO (ds): don't log password
+            if (!"ok".equals(result)) {
+                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
             }
-            return password;
+            if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid) || TextUtils.isEmpty(password)) {
+                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+            }
+            return new RegistrationVerificationResult(uid, password, phone);
+        } catch (IOException e) {
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+        } catch (JSONException e) {
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
                 connection.disconnect();
             }
+        }
+    }
+
+    public static class RegistrationRequestResult {
+
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK})
+        @interface Result {}
+        public static final int RESULT_OK = 0;
+        public static final int RESULT_FAILED_NETWORK = 1;
+        public static final int RESULT_FAILED_SERVER = 2;
+        public static final int RESULT_FAILED_SERVER_SMS_FAIL = 3; // Sending the SMS failed
+        public static final int RESULT_FAILED_SERVER_CANNOT_ENROLL = 4; // Error during the enroll function. This one does not make much sense.
+
+        public final String phone;
+        public final @Result int result;
+
+        RegistrationRequestResult(@NonNull String phone) {
+            this.phone = phone;
+            this.result = RESULT_OK;
+        }
+
+        RegistrationRequestResult(@Result int result) {
+            Preconditions.checkState(result != RESULT_OK);
+            this.phone = null;
+            this.result = result;
+        }
+
+        static @Result int translateServerErrorCode(String error) {
+            if ("sms_fail".equals(error)) {
+                return RESULT_FAILED_SERVER_SMS_FAIL;
+            } else if ("cannot_enroll".equals(error)) {
+                return RESULT_FAILED_SERVER_CANNOT_ENROLL;
+            }
+            return RESULT_FAILED_SERVER;
+        }
+    }
+
+    public static class RegistrationVerificationResult {
+
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK})
+        @interface Result {}
+        public static final int RESULT_OK = 0;
+        public static final int RESULT_FAILED_SERVER = 1;
+        public static final int RESULT_FAILED_NETWORK = 2;
+
+        public final String user;
+        public final String password;
+        public final String phone;
+        public final @Result int result;
+
+        RegistrationVerificationResult(@NonNull String user, @NonNull String password, @NonNull String phone) {
+            this.user = user;
+            this.password = password;
+            this.phone = phone;
+            this.result = RESULT_OK;
+        }
+
+        RegistrationVerificationResult(@Result int result) {
+            Preconditions.checkState(result != RESULT_OK);
+            this.user = null;
+            this.password = null;
+            this.phone = null;
+            this.result = result;
         }
     }
 }

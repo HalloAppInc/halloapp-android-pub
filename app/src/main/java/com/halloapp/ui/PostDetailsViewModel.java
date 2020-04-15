@@ -76,11 +76,7 @@ public class PostDetailsViewModel extends AndroidViewModel {
                 final List<UserId> userIds = contentDb.getPostSeenBy(postId);
                 final List<Contact> contacts = new ArrayList<>(userIds.size());
                 for (UserId userId : userIds) {
-                    Contact contact = contactsDb.getContact(userId);
-                    if (contact == null) {
-                        contact = new Contact(userId);
-                    }
-                    contacts.add(contact);
+                    contacts.add(contactsDb.getContact(userId));
                 }
                 return contacts;
             }

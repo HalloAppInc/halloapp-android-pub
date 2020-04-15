@@ -8,9 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Me;
+import com.halloapp.R;
 import com.halloapp.util.Log;
 
 import java.io.File;
@@ -84,21 +86,23 @@ public class ContactsDb {
                 for (AddressBookContacts.AddressBookContact addressBookContact : diff.added) {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_ADDRESS_BOOK_ID, addressBookContact.id);
-                    values.put(ContactsTable.COLUMN_NAME, addressBookContact.name);
-                    values.put(ContactsTable.COLUMN_PHONE, addressBookContact.phone);
+                    values.put(ContactsTable.COLUMN_ADDRESS_BOOK_NAME, addressBookContact.name);
+                    values.put(ContactsTable.COLUMN_ADDRESS_BOOK_PHONE, addressBookContact.phone);
                     long rowId = db.insert(ContactsTable.TABLE_NAME, null, values);
-                    result.added.add(new Contact(rowId, addressBookContact.id, addressBookContact.name, addressBookContact.phone, null, false));
+                    result.added.add(new Contact(rowId,
+                            addressBookContact.id, addressBookContact.name, addressBookContact.phone,
+                            null, null, null, false));
                 }
 
                 for (Contact updateContact : diff.updated) {
                     final ContentValues values = new ContentValues();
-                    values.put(ContactsTable.COLUMN_NAME, updateContact.name);
-                    values.put(ContactsTable.COLUMN_PHONE, updateContact.phone);
+                    values.put(ContactsTable.COLUMN_ADDRESS_BOOK_NAME, updateContact.addressBookName);
+                    values.put(ContactsTable.COLUMN_ADDRESS_BOOK_PHONE, updateContact.addressBookPhone);
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
                     db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
-                            new String [] {Long.toString(updateContact.id)},
+                            new String [] {Long.toString(updateContact.rowId)},
                             SQLiteDatabase.CONFLICT_ABORT);
                     result.updated.add(updateContact);
                 }
@@ -135,7 +139,7 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
                     updatedRows += db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
-                            new String [] {Long.toString(updateContact.id)},
+                            new String [] {Long.toString(updateContact.rowId)},
                             SQLiteDatabase.CONFLICT_ABORT);
                 }
                 Log.i("ContactsDb.updateContactsFriendship: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
@@ -223,7 +227,6 @@ public class ContactsDb {
                 values.put(ContactsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
                 values.put(ContactsTable.COLUMN_AVATAR_HASH, contact.avatarHash);
                 values.put(ContactsTable.COLUMN_USER_ID, contact.userId.rawId());
-                values.put(ContactsTable.COLUMN_NAME, "");
                 db.insert(ContactsTable.TABLE_NAME, null, values);
                 Log.i("ContactsDb.insertContactAvatarInfo");
                 db.setTransactionSuccessful();
@@ -235,17 +238,23 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public Contact getContact(@NonNull UserId userId) {
+    public @NonNull Contact getContact(@NonNull UserId userId) {
+        final Contact contact = readContact(userId);
+        return contact == null ? new Contact(userId, context.getString(R.string.unknown_contact)) : contact;
+    }
+
+    @WorkerThread
+    public @Nullable Contact readContact(@NonNull UserId userId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
                 new String[] { ContactsTable._ID,
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID,
-                        ContactsTable.COLUMN_NAME,
-                        ContactsTable.COLUMN_PHONE,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_NAME,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_PHONE,
+                        ContactsTable.COLUMN_HALLO_NAME,
+                        ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
-                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
-                        ContactsTable.COLUMN_AVATAR_HASH
+                        ContactsTable.COLUMN_FRIEND
                 },
                 ContactsTable.COLUMN_USER_ID + "=?" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
@@ -255,8 +264,10 @@ public class ContactsDb {
                         cursor.getLong(1),
                         cursor.getString(2),
                         cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
                         userId,
-                        cursor.getInt(5) == 1);
+                        cursor.getInt(7) == 1);
             }
         }
         return null;
@@ -270,23 +281,25 @@ public class ContactsDb {
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
                 new String[] { ContactsTable._ID,
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID,
-                        ContactsTable.COLUMN_NAME,
-                        ContactsTable.COLUMN_PHONE,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_NAME,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_PHONE,
+                        ContactsTable.COLUMN_HALLO_NAME,
+                        ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
-                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
-                        ContactsTable.COLUMN_AVATAR_HASH
+                        ContactsTable.COLUMN_FRIEND
                 },
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null, null, null, null, null)) {
             while (cursor.moveToNext()) {
-                final String userIdStr = cursor.getString(4);
+                final String userIdStr = cursor.getString(6);
                 final Contact contact = new Contact(
                         cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
                         cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
                         userIdStr == null ? null : new UserId(userIdStr),
-                        cursor.getInt(5) == 1);
+                        cursor.getInt(7) == 1);
                 contacts.add(contact);
             }
         }
@@ -301,26 +314,28 @@ public class ContactsDb {
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
                 new String[] { ContactsTable._ID,
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID,
-                        ContactsTable.COLUMN_NAME,
-                        ContactsTable.COLUMN_PHONE,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_NAME,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_PHONE,
+                        ContactsTable.COLUMN_HALLO_NAME,
+                        ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
-                        ContactsTable.COLUMN_AVATAR_TIMESTAMP,
-                        ContactsTable.COLUMN_AVATAR_HASH
+                        ContactsTable.COLUMN_FRIEND
                 },
                 ContactsTable.COLUMN_FRIEND + "=1" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
-                final String userIdStr = cursor.getString(4);
+                final String userIdStr = cursor.getString(6);
                 if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance(context).getUser())) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),
                             cursor.getString(2),
                             cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(5),
                             new UserId(userIdStr),
-                            cursor.getInt(5) == 1);
+                            cursor.getInt(7) == 1);
                     contacts.add(contact);
                 }
             }
@@ -355,13 +370,15 @@ public class ContactsDb {
 
         static final String TABLE_NAME = "contacts";
 
-        static final String INDEX_JID = "jid";
+        static final String INDEX_USER_ID = "user_id_index";
 
         static final String COLUMN_ADDRESS_BOOK_ID = "address_book_id";
+        static final String COLUMN_ADDRESS_BOOK_NAME = "address_book_name";
+        static final String COLUMN_ADDRESS_BOOK_PHONE = "address_book_phone";
+        static final String COLUMN_HALLO_NAME = "hallo_name";
+        static final String COLUMN_NORMALIZED_PHONE = "normalized_phone";
         static final String COLUMN_USER_ID = "user_id";
-        static final String COLUMN_NAME = "name";
-        static final String COLUMN_PHONE = "phone";
-        static final String COLUMN_FRIEND = "member"; // TODO (ds): rename
+        static final String COLUMN_FRIEND = "friend";
         static final String COLUMN_AVATAR_TIMESTAMP = "avatar_timestamp";
         static final String COLUMN_AVATAR_HASH = "avatar_hash";
     }
@@ -369,7 +386,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 3;
+        private static final int DATABASE_VERSION = 4;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -382,16 +399,18 @@ public class ContactsDb {
             db.execSQL("CREATE TABLE " + ContactsTable.TABLE_NAME + " ("
                     + ContactsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " INTEGER,"
+                    + ContactsTable.COLUMN_ADDRESS_BOOK_NAME + " TEXT,"
+                    + ContactsTable.COLUMN_ADDRESS_BOOK_PHONE + " TEXT,"
+                    + ContactsTable.COLUMN_HALLO_NAME + " TEXT,"
+                    + ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT,"
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
-                    + ContactsTable.COLUMN_NAME + " TEXT NOT NULL,"
-                    + ContactsTable.COLUMN_PHONE + " TEXT,"
                     + ContactsTable.COLUMN_FRIEND + " INTEGER,"
                     + ContactsTable.COLUMN_AVATAR_TIMESTAMP + " INTEGER,"
                     + ContactsTable.COLUMN_AVATAR_HASH + " TEXT"
                     + ");");
 
-            db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_JID);
-            db.execSQL("CREATE INDEX " + ContactsTable.INDEX_JID + " ON " + ContactsTable.TABLE_NAME + " ("
+            db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
+            db.execSQL("CREATE INDEX " + ContactsTable.INDEX_USER_ID + " ON " + ContactsTable.TABLE_NAME + " ("
                     + ContactsTable.COLUMN_USER_ID
                     + ");");
         }
@@ -432,7 +451,6 @@ public class ContactsDb {
             }
         }
     }
-
 
     public static class ContactFriendship {
         public final UserId userId;

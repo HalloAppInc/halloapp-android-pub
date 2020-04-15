@@ -24,7 +24,6 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Chat;
-import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.AdapterWithLifecycle;
@@ -92,7 +91,6 @@ public class ChatsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.refresh_contacts: {
                 ContactsSync.getInstance(Preconditions.checkNotNull(getContext())).startContactsSync(true);
-                LoadPostsHistoryWorker.loadPostsHistory(getContext()); // TODO (ds): remove
                 return true;
             }
             default: {

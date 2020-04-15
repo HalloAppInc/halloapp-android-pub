@@ -1,5 +1,6 @@
 package com.halloapp.contacts;
 
+import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
 import android.text.TextUtils;
 
@@ -8,25 +9,31 @@ import androidx.annotation.Nullable;
 
 public class Contact {
 
-    final long id;
+    final long rowId;
     final long addressBookId;
-    public @Nullable String name;
-    public @Nullable String phone;
+    public @Nullable String addressBookName; // name from address book
+    public @Nullable String addressBookPhone; // phone from address book
+    public @Nullable String halloName; // from server
+    public @Nullable String normalizedPhone; // phone from server contact sync
     public @Nullable UserId userId;
     public boolean friend;
 
-
-    public Contact(long id, long addressBookId, @Nullable String name, @Nullable String phone, @Nullable UserId userId, boolean friend) {
-        this.id = id;
+    public Contact(long rowId,
+                   long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,
+                   @Nullable String halloName, @Nullable String normalizedPhone,
+                   @Nullable UserId userId, boolean friend) {
+        this.rowId = rowId;
         this.addressBookId = addressBookId;
-        this.name = name;
-        this.phone = phone;
+        this.addressBookName = addressBookName;
+        this.addressBookPhone = addressBookPhone;
+        this.halloName = halloName;
+        this.normalizedPhone = normalizedPhone;
         this.userId = userId;
         this.friend = friend;
     }
 
-    public Contact(@NonNull UserId userId) {
-        this(0, 0, null, null, userId, true);
+    public Contact(@NonNull UserId userId, @NonNull String name) {
+        this(0, 0, name, null, null, null, userId, true);
     }
 
     public @Nullable String getRawUserId() {
@@ -34,15 +41,15 @@ public class Contact {
     }
 
     public String getDisplayName() {
-        return TextUtils.isEmpty(name) ? getInternationalPhone() : name;
+        return TextUtils.isEmpty(addressBookName) ? (TextUtils.isEmpty(halloName) ? getDisplayPhone() : halloName) : addressBookName;
     }
 
-    public String getInternationalPhone() {
+    public String getDisplayPhone() {
         final String internationalPhone;
-        if (userId != null) {
-            internationalPhone = userId.formatPhoneNumber();
+        if (normalizedPhone != null) {
+            internationalPhone = PhoneNumberUtils.formatNumber("+" + normalizedPhone, null);
         } else {
-            internationalPhone = phone;
+            internationalPhone = addressBookPhone;
         }
         return BidiFormatter.getInstance().unicodeWrap(internationalPhone, false);
     }

@@ -189,19 +189,11 @@ public class HomeViewModel extends AndroidViewModel {
         for (Comment comment : comments) {
             if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
                 final Contact contact = ContactsDb.getInstance(getApplication()).getContact(comment.commentSenderUserId);
-                if (contact == null) {
-                    contacts.put(comment.commentSenderUserId, new Contact(comment.commentSenderUserId));
-                } else {
-                    contacts.put(comment.commentSenderUserId, contact);
-                }
+                contacts.put(comment.commentSenderUserId, contact);
             }
             if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
                 final Contact contact = ContactsDb.getInstance(getApplication()).getContact(comment.postSenderUserId);
-                if (contact == null) {
-                    contacts.put(comment.postSenderUserId, new Contact(comment.postSenderUserId));
-                } else {
-                    contacts.put(comment.postSenderUserId, contact);
-                }
+                contacts.put(comment.postSenderUserId, contact);
             }
         }
         return new CommentsHistory(commentGroups, unseenComments.size(), contacts);

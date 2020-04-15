@@ -235,10 +235,7 @@ public class Notifications {
                         avatars.put(message.senderUserId, avatar);
                     }
                     final IconCompat icon = IconCompat.createWithBitmap(avatar);
-                    Contact sender = contactsDb.getContact(message.senderUserId);
-                    if (sender == null) {
-                        sender = new Contact(message.senderUserId);
-                    }
+                    final Contact sender = contactsDb.getContact(message.senderUserId);
                     if (senders.add(message.senderUserId)) {
                         names.add(sender.getDisplayName());
                     }
@@ -367,10 +364,7 @@ public class Notifications {
         }
         final List<String> names = new ArrayList<>();
         for (UserId userId : userIds) {
-            Contact contact = ContactsDb.getInstance(context).getContact(userId);
-            if (contact == null) {
-                contact = new Contact(userId);
-            }
+            final Contact contact = ContactsDb.getInstance(context).getContact(userId);
             names.add(contact.getDisplayName());
         }
         final String text;
@@ -402,10 +396,7 @@ public class Notifications {
         }
         final List<String> names = new ArrayList<>();
         for (UserId userId : userIds) {
-            Contact contact = ContactsDb.getInstance(context).getContact(userId);
-            if (contact == null) {
-                contact = new Contact(userId);
-            }
+            final Contact contact = ContactsDb.getInstance(context).getContact(userId);
             names.add(contact.getDisplayName());
         }
         return postIds.size() == 1 ? context.getString(R.string.new_comments_notification, ListFormatter.format(context, names)) :

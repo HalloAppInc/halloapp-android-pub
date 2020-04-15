@@ -141,7 +141,7 @@ public class ProfileFragment extends PostsFragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            name.postValue(me.getUser());
+            name.postValue(me.getPhone());
             return null;
         }
     }

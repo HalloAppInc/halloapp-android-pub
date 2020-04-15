@@ -23,6 +23,7 @@ public class Me {
 
     private static final String PREF_KEY_USER_ID = "user_id";
     private static final String PREF_KEY_PASSWORD = "password";
+    private static final String PREF_KEY_PHONE = "phone";
 
     private final Context context;
     private SharedPreferences preferences;
@@ -89,16 +90,21 @@ public class Me {
     }
 
     @WorkerThread
-    public synchronized void saveRegistration(@NonNull String user, @NonNull String password) {
+    public synchronized String getPhone() {
+        return getPreferences().getString(PREF_KEY_PHONE, null);
+    }
+
+    @WorkerThread
+    public synchronized void saveRegistration(@NonNull String user, @NonNull String password, @NonNull String phone) {
         Log.i("Me.saveRegistration: " + user + " " + password);
-        if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).commit()) {
+        if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.saveRegistration: failed");
         }
     }
 
     @WorkerThread
     public synchronized void resetRegistration() {
-        if (!getPreferences().edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).commit()) {
+        if (!getPreferences().edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).remove(PREF_KEY_PHONE).commit()) {
             Log.e("Me.resetRegistration: failed");
         }
     }

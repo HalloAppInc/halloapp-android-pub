@@ -1,16 +1,25 @@
 package com.halloapp.content;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.tables.ChatsTable;
+import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.SeenTable;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -455,6 +464,54 @@ public class ContentDb {
             Log.i("ContentDb.cleanup: vacuum");
             observers.notifyFeedCleanup();
         }
+    }
+
+    // TODO (ds): remove
+    public void migrateUserIds(Collection<Contact> contacts) {
+        databaseWriteExecutor.execute(() -> {
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            for (com.halloapp.contacts.Contact contact : contacts) {
+                if (contact.userId == null || TextUtils.isEmpty(contact.userId.rawId()) || TextUtils.isEmpty(contact.normalizedPhone)) {
+                    continue;
+                }
+                final String newId = Preconditions.checkNotNull(Preconditions.checkNotNull(contact.userId).rawId());
+                final String oldId = Preconditions.checkNotNull(contact.normalizedPhone);
+
+                ContentValues values = new ContentValues();
+                values.put(MessagesTable.COLUMN_CHAT_ID, newId);
+                db.update(MessagesTable.TABLE_NAME, values, MessagesTable.COLUMN_CHAT_ID + "=?", new String[]{oldId});
+
+                values.clear();
+                values.put(MessagesTable.COLUMN_SENDER_USER_ID, newId);
+                db.update(MessagesTable.TABLE_NAME, values, MessagesTable.COLUMN_SENDER_USER_ID + "=?", new String[]{oldId});
+
+                values.clear();
+                values.put(ChatsTable.COLUMN_CHAT_ID, newId);
+                db.update(ChatsTable.TABLE_NAME, values, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{oldId});
+
+                values.clear();
+                values.put(PostsTable.COLUMN_SENDER_USER_ID, newId);
+                db.update(PostsTable.TABLE_NAME, values, PostsTable.COLUMN_SENDER_USER_ID + "=?", new String[]{oldId});
+
+                values.clear();
+                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, newId);
+                db.update(CommentsTable.TABLE_NAME, values, CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=?", new String[]{oldId});
+
+                values.clear();
+                values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, newId);
+                db.update(CommentsTable.TABLE_NAME, values, CommentsTable.COLUMN_POST_SENDER_USER_ID + "=?", new String[]{oldId});
+
+                values.clear();
+                values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, newId);
+                db.update(SeenTable.TABLE_NAME, values, SeenTable.COLUMN_SEEN_BY_USER_ID + "=?", new String[]{oldId});
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            observers.notifyChatSeen("");
+            observers.notifyFeedCleanup();
+        });
     }
 
     public void deleteDb() {
