@@ -13,7 +13,6 @@ public  final class Comment extends
     CommentOrBuilder {
   private Comment() {
     feedPostId_ = "";
-    senderUserId_ = "";
     parentCommentId_ = "";
     text_ = "";
   }
@@ -61,53 +60,6 @@ public  final class Comment extends
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     feedPostId_ = value.toStringUtf8();
-    
-  }
-
-  public static final int SENDER_USER_ID_FIELD_NUMBER = 2;
-  private java.lang.String senderUserId_;
-  /**
-   * <code>string sender_user_id = 2;</code>
-   * @return The senderUserId.
-   */
-  @java.lang.Override
-  public java.lang.String getSenderUserId() {
-    return senderUserId_;
-  }
-  /**
-   * <code>string sender_user_id = 2;</code>
-   * @return The bytes for senderUserId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getSenderUserIdBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(senderUserId_);
-  }
-  /**
-   * <code>string sender_user_id = 2;</code>
-   * @param value The senderUserId to set.
-   */
-  private void setSenderUserId(
-      java.lang.String value) {
-    value.getClass();
-  
-    senderUserId_ = value;
-  }
-  /**
-   * <code>string sender_user_id = 2;</code>
-   */
-  private void clearSenderUserId() {
-    
-    senderUserId_ = getDefaultInstance().getSenderUserId();
-  }
-  /**
-   * <code>string sender_user_id = 2;</code>
-   * @param value The bytes for senderUserId to set.
-   */
-  private void setSenderUserIdBytes(
-      com.google.protobuf.ByteString value) {
-    checkByteStringIsUtf8(value);
-    senderUserId_ = value.toStringUtf8();
     
   }
 
@@ -350,55 +302,6 @@ public  final class Comment extends
     }
 
     /**
-     * <code>string sender_user_id = 2;</code>
-     * @return The senderUserId.
-     */
-    @java.lang.Override
-    public java.lang.String getSenderUserId() {
-      return instance.getSenderUserId();
-    }
-    /**
-     * <code>string sender_user_id = 2;</code>
-     * @return The bytes for senderUserId.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getSenderUserIdBytes() {
-      return instance.getSenderUserIdBytes();
-    }
-    /**
-     * <code>string sender_user_id = 2;</code>
-     * @param value The senderUserId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setSenderUserId(
-        java.lang.String value) {
-      copyOnWrite();
-      instance.setSenderUserId(value);
-      return this;
-    }
-    /**
-     * <code>string sender_user_id = 2;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearSenderUserId() {
-      copyOnWrite();
-      instance.clearSenderUserId();
-      return this;
-    }
-    /**
-     * <code>string sender_user_id = 2;</code>
-     * @param value The bytes for senderUserId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setSenderUserIdBytes(
-        com.google.protobuf.ByteString value) {
-      copyOnWrite();
-      instance.setSenderUserIdBytes(value);
-      return this;
-    }
-
-    /**
      * <code>string parent_comment_id = 3;</code>
      * @return The parentCommentId.
      */
@@ -513,13 +416,12 @@ public  final class Comment extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "feedPostId_",
-            "senderUserId_",
             "parentCommentId_",
             "text_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208";
+              "\u0000\u0003\u0000\u0000\u0001\u0004\u0003\u0000\u0000\u0000\u0001\u0208\u0003\u0208" +
+              "\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

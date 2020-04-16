@@ -20,18 +20,6 @@ public interface CommentOrBuilder extends
       getFeedPostIdBytes();
 
   /**
-   * <code>string sender_user_id = 2;</code>
-   * @return The senderUserId.
-   */
-  java.lang.String getSenderUserId();
-  /**
-   * <code>string sender_user_id = 2;</code>
-   * @return The bytes for senderUserId.
-   */
-  com.google.protobuf.ByteString
-      getSenderUserIdBytes();
-
-  /**
    * <code>string parent_comment_id = 3;</code>
    * @return The parentCommentId.
    */

@@ -198,6 +198,7 @@ public class PublishedEntry {
             entryBuilder.id(item.getId());
             entryBuilder.timestamp(item.getTimestamp());
             if (item.getPublisher() != null) {
+                // TODO(jack): Use this to get the user ID for decryption!
                 entryBuilder.user(item.getPublisher().getLocalpartOrNull().toString());
             }
         }
@@ -427,7 +428,6 @@ public class PublishedEntry {
             case ENTRY_COMMENT: {
                 Comment.Builder commentBuilder = Comment.newBuilder();
                 commentBuilder.setFeedPostId(feedItemId);
-                commentBuilder.setSenderUserId(user);
                 if (parentCommentId != null) {
                     commentBuilder.setParentCommentId(parentCommentId);
                 }
@@ -524,7 +524,6 @@ public class PublishedEntry {
                 Comment comment = container.getComment();
                 builder.type(ENTRY_COMMENT);
                 builder.feedItemId(comment.getFeedPostId());
-                builder.user(comment.getSenderUserId());
                 builder.parentCommentId(comment.getParentCommentId());
                 builder.text(comment.getText());
             } else if (container.hasChatMessage()) {
