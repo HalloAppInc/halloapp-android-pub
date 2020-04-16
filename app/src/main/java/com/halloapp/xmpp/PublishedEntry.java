@@ -547,7 +547,7 @@ public class PublishedEntry {
         String identityKeyString = parser.getAttributeValue(null, ATTRIBUTE_IDENTITY_KEY);
         String ephemeralKeyIdString = parser.getAttributeValue(null, ATTRIBUTE_EPHEMERAL_KEY_ID);
         String ephemeralKeyString = parser.getAttributeValue(null, ATTRIBUTE_EPHEMERAL_KEY);
-        String rawUserId = parser.getAttributeValue(null, ATTRIBUTE_SENDER_USER_ID); // TODO(jack): handle this properly
+        String rawUserId = parser.getAttributeValue(null, ATTRIBUTE_SENDER_USER_ID); // TODO(jack): handle this properly, ideally passed in
 
         Integer oneTimePreKeyId = null;
         try {

@@ -595,6 +595,7 @@ public class Connection {
     public void sendMessage(final @NonNull Message message) {
         final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
         final UserId recipientUserId = new UserId(recipientJid.toString());
+        final UserId myExternalUserId = new UserId(connection.getUser().toString());
         try {
             SessionSetupInfo sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
             executor.execute(() -> {
@@ -613,7 +614,7 @@ public class Connection {
                             null,
                             null,
                             recipientUserId,
-                            message.senderUserId,
+                            myExternalUserId,
                             sessionSetupInfo.ephemeralKey,
                             sessionSetupInfo.ephemeralKeyId,
                             sessionSetupInfo.identityKey,
