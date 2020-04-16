@@ -134,13 +134,13 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId) {
-        final List<ContactsDb.ContactFriendship> contactsFriendship = new ArrayList<>(protocolContacts.size());
+        final List<ContactsDb.NormalizedPhoneData> normalizedPhoneDataList = new ArrayList<>(protocolContacts.size());
         for (ContactInfo contact : protocolContacts) {
-            contactsFriendship.add(new ContactsDb.ContactFriendship(new UserId(contact.userId), "friends".equals(contact.role)));
+            normalizedPhoneDataList.add(new ContactsDb.NormalizedPhoneData(contact.normalizedPhone, new UserId(contact.userId), "friends".equals(contact.role)));
         }
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
-                ContactsDb.getInstance(context).updateContactsFriendship(contactsFriendship).get();
+                ContactsDb.getInstance(context).updateNormalizedPhoneData(normalizedPhoneDataList).get();
                 Connection.getInstance().sendAck(ackId);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ConnectionObserver.onContactsChanged", e);

@@ -98,6 +98,8 @@ public class ContactsDb {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_ADDRESS_BOOK_NAME, updateContact.addressBookName);
                     values.put(ContactsTable.COLUMN_ADDRESS_BOOK_PHONE, updateContact.addressBookPhone);
+                    values.put(ContactsTable.COLUMN_HALLO_NAME, updateContact.halloName);
+                    values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, updateContact.normalizedPhone);
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
                     db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
@@ -136,13 +138,16 @@ public class ContactsDb {
                 for (Contact updateContact : updatedContacts) {
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
+                    values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, updateContact.normalizedPhone);
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
-                    updatedRows += db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                    final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.rowId)},
                             SQLiteDatabase.CONFLICT_ABORT);
+                    Log.i("ContactsDb.updateContactsServerData: " + updatedContactRows + " rows updated for " + updateContact.getDisplayName() + " " + updateContact.normalizedPhone + " " + updateContact.userId + " " + updateContact.friend);
+                    updatedRows += updatedContactRows;
                 }
-                Log.i("ContactsDb.updateContactsFriendship: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
+                Log.i("ContactsDb.updateContactsServerData: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
@@ -154,21 +159,24 @@ public class ContactsDb {
         });
     }
 
-    public Future<Void> updateContactsFriendship(@NonNull List<ContactFriendship> contactsFriendship) {
+    public Future<Void> updateNormalizedPhoneData(@NonNull List<NormalizedPhoneData> normalizedPhoneDataList) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             int updatedRows = 0;
             try {
-                for (ContactFriendship contactFriendship : contactsFriendship) {
+                for (NormalizedPhoneData normalizedPhoneData : normalizedPhoneDataList) {
                     final ContentValues values = new ContentValues();
-                    values.put(ContactsTable.COLUMN_FRIEND, contactFriendship.friend);
-                    updatedRows += db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
-                            ContactsTable.COLUMN_USER_ID + "=? ",
-                            new String [] {contactFriendship.userId.rawId()},
+                    values.put(ContactsTable.COLUMN_FRIEND, normalizedPhoneData.friend);
+                    values.put(ContactsTable.COLUMN_USER_ID, normalizedPhoneData.userId.rawId());
+                    final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                            ContactsTable.COLUMN_NORMALIZED_PHONE + "=? ",
+                            new String [] {normalizedPhoneData.normalizedPhone},
                             SQLiteDatabase.CONFLICT_ABORT);
+                    Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedContactRows + " rows updated for " + normalizedPhoneData.normalizedPhone + " " + normalizedPhoneData.userId + " " + normalizedPhoneData.friend);
+                    updatedRows += updatedContactRows;
                 }
-                Log.i("ContactsDb.updateContactsFriendship: " + updatedRows + " rows updated for " + contactsFriendship.size() + " contacts");
+                Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedRows + " rows updated for " + normalizedPhoneDataList.size() + " contacts");
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
@@ -452,18 +460,19 @@ public class ContactsDb {
         }
     }
 
-    public static class ContactFriendship {
-        public final UserId userId;
-        public final boolean friend;
+    public static class NormalizedPhoneData {
+        private final String normalizedPhone;
+        private final UserId userId;
+        private final boolean friend;
 
-        public ContactFriendship(@NonNull UserId userId, boolean friend) {
+        public NormalizedPhoneData(@NonNull String normalizedPhone, @NonNull UserId userId, boolean friend) {
+            this.normalizedPhone = normalizedPhone;
             this.userId = userId;
             this.friend = friend;
         }
     }
 
     static class AddressBookSyncResult {
-
         final Collection<Contact> added = new ArrayList<>();
         final Collection<Contact> updated = new ArrayList<>();
         final Collection<String> removed = new HashSet<>();
