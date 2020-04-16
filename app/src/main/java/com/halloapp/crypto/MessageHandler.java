@@ -59,6 +59,8 @@ public class MessageHandler {
             myKeyManager.updateOutboundChainAndRootKey(peerUserId, newEphemeralKey, ephemeralKey);
         }
 
+        CryptoUtil.nullify(inboundMessageKey, aesKey, hmacKey, iv);
+
         return ret;
     }
 
@@ -73,6 +75,8 @@ public class MessageHandler {
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         c.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
         byte[] encryptedContents = c.doFinal(message);
+
+        CryptoUtil.nullify(outboundMessageKey, aesKey, hmacKey, iv);
 
         return encryptedContents;
     }

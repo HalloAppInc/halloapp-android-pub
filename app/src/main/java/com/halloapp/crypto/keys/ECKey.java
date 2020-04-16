@@ -1,6 +1,7 @@
 package com.halloapp.crypto.keys;
 
 import com.google.crypto.tink.subtle.X25519;
+import com.halloapp.crypto.CryptoUtil;
 import com.halloapp.util.Preconditions;
 
 import java.security.InvalidKeyException;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 public abstract class ECKey {
     private static final int KEY_SIZE_BYTES = 32;
 
-    final private byte[] key;
+    private final byte[] key;
 
     public static PrivateECKey generatePrivateKey() {
         return new PrivateECKey(X25519.generatePrivateKey());
@@ -36,9 +37,7 @@ public abstract class ECKey {
      * contains the key material and we can access it, so we delete it.
      */
     public void destroyKeyMaterial() {
-        if (key != null) {
-            Arrays.fill(key, (byte) 0);
-        }
+        CryptoUtil.nullify(key);
     }
     @Override
     protected void finalize() throws Throwable {

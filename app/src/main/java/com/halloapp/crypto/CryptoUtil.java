@@ -31,6 +31,19 @@ public class CryptoUtil {
         return ret;
     }
 
+    public static void nullify(@Nullable byte[] first, byte[]... rest) {
+        nullify(first);
+        for (byte[] bytes : rest) {
+            nullify(bytes);
+        }
+    }
+
+    private static void nullify(@Nullable byte[] bytes) {
+        if (bytes != null) {
+            Arrays.fill(bytes, (byte) 0);
+        }
+    }
+
     public static byte[] hkdf(@NonNull byte[] ikm, @Nullable byte[] salt, int len) throws GeneralSecurityException {
         return Hkdf.computeHkdf("HMACSHA256", ikm, salt, getStringBytes("HalloApp"), len);
     }

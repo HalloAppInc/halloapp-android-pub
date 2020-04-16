@@ -92,6 +92,7 @@ public class KeyManager {
         if (recipientPublicOneTimePreKey != null) {
             byte[] d = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicOneTimePreKey.publicECKey);
             masterSecret = CryptoUtil.concat(a, b, c, d);
+            CryptoUtil.nullify(d);
         } else {
             masterSecret = CryptoUtil.concat(a, b, c);
         }
@@ -108,6 +109,8 @@ public class KeyManager {
         encryptedKeyStore.setInboundChainKey(peerUserId, inboundChainKey);
         encryptedKeyStore.setLastSentEphemeralKey(peerUserId, privateEphemeralKey);
         encryptedKeyStore.setLastSentEphemeralKeyId(peerUserId, firstId);
+
+        CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
     public void receiveSessionSetup(UserId peerUserId, PublicECKey publicEphemeralKey, int ephemeralKeyId, PublicECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
@@ -121,6 +124,7 @@ public class KeyManager {
         if (oneTimePreKeyId != null) {
             byte[] d = CryptoUtil.ecdh(encryptedKeyStore.removeOneTimePreKeyById(oneTimePreKeyId), publicEphemeralKey);
             masterSecret = CryptoUtil.concat(a, b, c, d);
+            CryptoUtil.nullify(d);
         } else {
             masterSecret = CryptoUtil.concat(a, b, c);
         }
@@ -143,6 +147,8 @@ public class KeyManager {
         encryptedKeyStore.setLastSentEphemeralKeyId(peerUserId, 1);
 
         updateOutboundChainAndRootKey(peerUserId, myEphemeralKey, publicEphemeralKey);
+
+        CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
     }
 
     public byte[] getNextOutboundMessageKey(UserId peerUserId) throws Exception {
@@ -164,6 +170,8 @@ public class KeyManager {
         } else {
             encryptedKeyStore.setInboundChainKey(peerUserId, newChainKey);
         }
+
+        CryptoUtil.nullify(chainKey, newChainKey);
 
         return messageKey;
     }
@@ -189,6 +197,8 @@ public class KeyManager {
         } else {
             encryptedKeyStore.setInboundChainKey(peerUserId, chainKey);
         }
+
+        CryptoUtil.nullify(ephemeralSecret, output, rootKey, chainKey);
     }
 
 }
