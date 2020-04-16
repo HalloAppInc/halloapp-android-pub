@@ -83,7 +83,6 @@ public class KeyManager {
         PrivateECKey privateEphemeralKey = ECKey.generatePrivateKey();
         PrivateECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateIdentityKey();
 
-        // TODO(jack): Null out all byte arrays once no longer needed
         byte[] a = CryptoUtil.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
         byte[] b = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicIdentityKey);
         byte[] c = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicSignedPreKey);

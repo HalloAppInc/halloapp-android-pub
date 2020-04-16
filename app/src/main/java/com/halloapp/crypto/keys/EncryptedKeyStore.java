@@ -133,12 +133,8 @@ public class EncryptedKeyStore {
     }
 
     public PublicECKey getMyPublicIdentityKey() {
-        return new PublicECKey(getMyPublicIdentityKeyInternal());
-    }
-
-    private byte[] getMyPublicIdentityKeyInternal() {
         try {
-            return X25519.publicFromPrivate(getMyPrivateIdentityKeyInternal());
+            return ECKey.publicFromPrivate(getMyPrivateIdentityKey());
         } catch (InvalidKeyException e) {
             Log.w("Failed to get public identity key", e);
         }
@@ -158,13 +154,8 @@ public class EncryptedKeyStore {
     }
 
     public PublicECKey getMyPublicSignedPreKey() {
-        return new PublicECKey(getMyPublicSignedPreKeyInternal());
-    }
-
-    // TODO(jack): Switch to ECKey.publicFromPrivate
-    private byte[] getMyPublicSignedPreKeyInternal() {
         try {
-            return X25519.publicFromPrivate(getMyPrivateSignedPreKeyInternal());
+            return ECKey.publicFromPrivate(getMyPrivateSignedPreKey());
         } catch (InvalidKeyException e) {
             Log.w("Failed to get public identity key", e);
         }
