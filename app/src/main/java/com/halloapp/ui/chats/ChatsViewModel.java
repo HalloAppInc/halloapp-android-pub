@@ -123,7 +123,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name)) {
-                        chat.name = application.getString(R.string.unknown_contact);
+                        chat.name = ContactsDb.getInstance(application).getContact(new UserId(chat.chatId)).getDisplayName();
                     }
                 }
 
