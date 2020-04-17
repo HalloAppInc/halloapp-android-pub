@@ -90,8 +90,8 @@ public class SessionManager {
         }
 
         return new SessionSetupInfo(
-                ECKey.publicFromPrivate(encryptedKeyStore.getLastSentEphemeralKey(peerUserId)),
-                encryptedKeyStore.getLastSentEphemeralKeyId(peerUserId),
+                ECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
+                encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
                 encryptedKeyStore.getMyPublicIdentityKey(),
                 encryptedKeyStore.getPeerOneTimePreKeyId(peerUserId)
         );

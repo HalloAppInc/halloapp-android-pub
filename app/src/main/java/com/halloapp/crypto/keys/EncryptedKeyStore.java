@@ -15,8 +15,6 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,9 +48,9 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_OUTBOUND_CHAIN_KEY_SUFFIX = "outbound_chain_key";
     private static final String PREF_KEY_INBOUND_CHAIN_KEY_SUFFIX = "inbound_chain_key";
     private static final String PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_SUFFIX = "last_received_ephemeral_key";
-    private static final String PREF_KEY_LAST_SENT_EPHEMERAL_KEY_SUFFIX = "last_sent_ephemeral_key";
-    private static final String PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_ID_SUFFIX = "last_received_ephemeral_key_id";
-    private static final String PREF_KEY_LAST_SENT_EPHEMERAL_KEY_ID_SUFFIX = "last_sent_ephemeral_key_id";
+    private static final String PREF_KEY_OUTBOUND_EPHEMERAL_KEY_SUFFIX = "last_sent_ephemeral_key";
+    private static final String PREF_KEY_INBOUND_EPHEMERAL_KEY_ID_SUFFIX = "last_received_ephemeral_key_id";
+    private static final String PREF_KEY_OUTBOUND_EPHEMERAL_KEY_ID_SUFFIX = "last_sent_ephemeral_key_id";
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
@@ -282,52 +280,52 @@ public class EncryptedKeyStore {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_CHAIN_KEY_SUFFIX;
     }
 
-    public void setLastReceivedEphemeralKey(UserId peerUserId, PublicECKey key) {
-        storeCurve25519PrivateKey(getLastReceivedEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
+    public void setInboundEphemeralKey(UserId peerUserId, PublicECKey key) {
+        storeCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicECKey getLastReceivedEphemeralKey(UserId peerUserId) {
-        return new PublicECKey(retrieveCurve25519PrivateKey(getLastReceivedEphemeralKeyPrefKey(peerUserId)));
+    public PublicECKey getInboundEphemeralKey(UserId peerUserId) {
+        return new PublicECKey(retrieveCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId)));
     }
 
-    private String getLastReceivedEphemeralKeyPrefKey(UserId peerUserId) {
+    private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_SUFFIX;
     }
 
-    public void setLastSentEphemeralKey(UserId peerUserId, PrivateECKey key) {
-        storeCurve25519PrivateKey(getLastSentEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
+    public void setOutboundEphemeralKey(UserId peerUserId, PrivateECKey key) {
+        storeCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PrivateECKey getLastSentEphemeralKey(UserId peerUserId) {
-        return new PrivateECKey(retrieveCurve25519PrivateKey(getLastSentEphemeralKeyPrefKey(peerUserId)));
+    public PrivateECKey getOutboundEphemeralKey(UserId peerUserId) {
+        return new PrivateECKey(retrieveCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId)));
     }
 
-    private String getLastSentEphemeralKeyPrefKey(UserId peerUserId) {
-        return peerUserId.rawId() + "/" + PREF_KEY_LAST_SENT_EPHEMERAL_KEY_SUFFIX;
+    private String getOutboundEphemeralKeyPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_EPHEMERAL_KEY_SUFFIX;
     }
 
-    public void setLastReceivedEphemeralKeyId(UserId peerUserId, int id) {
-        sharedPreferences.edit().putInt(getLastReceivedEphemeralKeyIdPrefKey(peerUserId), id).apply();
+    public void setInboundEphemeralKeyId(UserId peerUserId, int id) {
+        sharedPreferences.edit().putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
     }
 
-    public int getLastReceivedEphemeralKeyId(UserId peerUserId) {
-        return sharedPreferences.getInt(getLastReceivedEphemeralKeyIdPrefKey(peerUserId), -1);
+    public int getInboundEphemeralKeyId(UserId peerUserId) {
+        return sharedPreferences.getInt(getInboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
-    private String getLastReceivedEphemeralKeyIdPrefKey(UserId peerUserId) {
-        return peerUserId.rawId() + "/" + PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_ID_SUFFIX;
+    private String getInboundEphemeralKeyIdPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_EPHEMERAL_KEY_ID_SUFFIX;
     }
 
-    public void setLastSentEphemeralKeyId(UserId peerUserId, int id) {
-        sharedPreferences.edit().putInt(getLastSentEphemeralKeyIdPrefKey(peerUserId), id).apply();
+    public void setOutboundEphemeralKeyId(UserId peerUserId, int id) {
+        sharedPreferences.edit().putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
     }
 
-    public int getLastSentEphemeralKeyId(UserId peerUserId) {
-        return sharedPreferences.getInt(getLastSentEphemeralKeyIdPrefKey(peerUserId), -1);
+    public int getOutboundEphemeralKeyId(UserId peerUserId) {
+        return sharedPreferences.getInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
-    private String getLastSentEphemeralKeyIdPrefKey(UserId peerUserId) {
-        return peerUserId.rawId() + "/" + PREF_KEY_LAST_SENT_EPHEMERAL_KEY_ID_SUFFIX;
+    private String getOutboundEphemeralKeyIdPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_EPHEMERAL_KEY_ID_SUFFIX;
     }
 
 

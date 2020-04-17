@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 public class KeyManager {
 
     private static KeyManager instance;
@@ -106,8 +103,8 @@ public class KeyManager {
         encryptedKeyStore.setRootKey(peerUserId, rootKey);
         encryptedKeyStore.setOutboundChainKey(peerUserId, outboundChainKey);
         encryptedKeyStore.setInboundChainKey(peerUserId, inboundChainKey);
-        encryptedKeyStore.setLastSentEphemeralKey(peerUserId, privateEphemeralKey);
-        encryptedKeyStore.setLastSentEphemeralKeyId(peerUserId, firstId);
+        encryptedKeyStore.setOutboundEphemeralKey(peerUserId, privateEphemeralKey);
+        encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, firstId);
 
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
@@ -138,12 +135,12 @@ public class KeyManager {
         encryptedKeyStore.setRootKey(peerUserId, rootKey);
         encryptedKeyStore.setOutboundChainKey(peerUserId, outboundChainKey);
         encryptedKeyStore.setInboundChainKey(peerUserId, inboundChainKey);
-        encryptedKeyStore.setLastReceivedEphemeralKey(peerUserId, publicEphemeralKey);
-        encryptedKeyStore.setLastReceivedEphemeralKeyId(peerUserId, ephemeralKeyId);
+        encryptedKeyStore.setInboundEphemeralKey(peerUserId, publicEphemeralKey);
+        encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
 
         PrivateECKey myEphemeralKey = ECKey.generatePrivateKey();
-        encryptedKeyStore.setLastSentEphemeralKey(peerUserId, myEphemeralKey);
-        encryptedKeyStore.setLastSentEphemeralKeyId(peerUserId, 1);
+        encryptedKeyStore.setOutboundEphemeralKey(peerUserId, myEphemeralKey);
+        encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, 1);
 
         updateOutboundChainAndRootKey(peerUserId, myEphemeralKey, publicEphemeralKey);
 

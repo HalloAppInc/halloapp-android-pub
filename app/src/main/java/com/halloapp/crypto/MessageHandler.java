@@ -33,11 +33,11 @@ public class MessageHandler {
     }
 
     public byte[] convertFromWire(byte[] message, UserId peerUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId) throws Exception {
-        boolean shouldUpdateChains = ephemeralKeyId != myEncryptedKeyStore.getLastReceivedEphemeralKeyId(peerUserId);
+        boolean shouldUpdateChains = ephemeralKeyId != myEncryptedKeyStore.getInboundEphemeralKeyId(peerUserId);
         if (shouldUpdateChains) {
-            myKeyManager.updateInboundChainAndRootKey(peerUserId, myEncryptedKeyStore.getLastSentEphemeralKey(peerUserId), ephemeralKey);
-            myEncryptedKeyStore.setLastReceivedEphemeralKeyId(peerUserId, ephemeralKeyId);
-            myEncryptedKeyStore.setLastReceivedEphemeralKey(peerUserId, ephemeralKey);
+            myKeyManager.updateInboundChainAndRootKey(peerUserId, myEncryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
+            myEncryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
+            myEncryptedKeyStore.setInboundEphemeralKey(peerUserId, ephemeralKey);
         }
 
         byte[] inboundMessageKey = myKeyManager.getNextInboundMessageKey(peerUserId);
@@ -53,9 +53,9 @@ public class MessageHandler {
 
         if (shouldUpdateChains) {
             PrivateECKey newEphemeralKey = ECKey.generatePrivateKey();
-            int lastSentId = myEncryptedKeyStore.getLastSentEphemeralKeyId(peerUserId);
-            myEncryptedKeyStore.setLastSentEphemeralKeyId(peerUserId, lastSentId + 1);
-            myEncryptedKeyStore.setLastSentEphemeralKey(peerUserId, newEphemeralKey); // TODO(jack): probably should be "outbound ephemeral key" not last sent
+            int lastSentId = myEncryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
+            myEncryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, lastSentId + 1);
+            myEncryptedKeyStore.setOutboundEphemeralKey(peerUserId, newEphemeralKey);
             myKeyManager.updateOutboundChainAndRootKey(peerUserId, newEphemeralKey, ephemeralKey);
         }
 
