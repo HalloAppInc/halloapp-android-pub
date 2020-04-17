@@ -47,4 +47,13 @@ public class TimeFormatter {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR);
         }
     }
+
+    public static CharSequence formatLastSeen(@NonNull Context context, long timestamp) {
+        final long now = System.currentTimeMillis();
+        if (timestamp > now) {
+            timestamp = now;
+        }
+        return context.getString(R.string.last_seen, DateUtils.getRelativeTimeSpanString(timestamp));
+
+    }
 }

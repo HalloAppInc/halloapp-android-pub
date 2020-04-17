@@ -44,6 +44,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.PostEditText;
 import com.halloapp.xmpp.Connection;
@@ -165,7 +166,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (lastSeen == null) {
                     toolbar.setSubtitle(null);
                 } else {
-                    toolbar.setSubtitle(getElapsedTimeString(lastSeen));
+                    toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, lastSeen * 1000L));
                 }
             });
         });
@@ -174,15 +175,6 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    private String getElapsedTimeString(long lastSeenS) {
-        long lastSeenMs = lastSeenS * 1000;
-        long now = System.currentTimeMillis();
-        if (lastSeenMs > now) {
-            lastSeenMs = now;
-        }
-        return getString(R.string.last_seen, DateUtils.getRelativeTimeSpanString(lastSeenMs));
     }
 
     @Override
