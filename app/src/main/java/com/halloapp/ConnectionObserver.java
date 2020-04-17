@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
@@ -12,7 +13,9 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
+import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -23,6 +26,7 @@ import com.halloapp.xmpp.PublishedAvatarMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class ConnectionObserver implements Connection.Observer {
@@ -161,6 +165,16 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onLowOneTimePreKeyCountReceived(int count) {
-        // TODO(jack): Upload more keys
+        Log.i("OTPK count down to " + count + "; replenishing");
+        Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
+        List<byte[]> protoKeys = new ArrayList<>();
+        for (OneTimePreKey otpk : keys) {
+            com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
+                    .setId(otpk.id)
+                    .setPublicKey(ByteString.copyFrom(otpk.publicECKey.getKeyMaterial()))
+                    .build();
+            protoKeys.add(protoKey.toByteArray());
+        }
+        Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
     }
 }
