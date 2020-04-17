@@ -7,6 +7,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
@@ -30,6 +31,7 @@ public class ChatViewModel extends AndroidViewModel {
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
     final ComputableLiveData<Chat> chat;
+    final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
     private final ContentDb contentDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
@@ -79,6 +81,7 @@ public class ChatViewModel extends AndroidViewModel {
 
         public void onChatDeleted(@NonNull String chatId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
+                deleted.postValue(true);
                 invalidateMessages();
             }
         }

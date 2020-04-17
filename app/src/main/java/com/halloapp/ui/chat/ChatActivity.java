@@ -158,7 +158,6 @@ public class ChatActivity extends AppCompatActivity {
             adapter.setChat(chat);
             ContentDb.getInstance(this).setChatSeen(chatId);
         });
-
         viewModel.contact.getLiveData().observe(this, contact -> {
             setTitle(contact.getDisplayName());
             PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
@@ -169,6 +168,11 @@ public class ChatActivity extends AppCompatActivity {
                     toolbar.setSubtitle(getElapsedTimeString(lastSeen));
                 }
             });
+        });
+        viewModel.deleted.observe(this, deleted -> {
+            if (deleted != null && deleted) {
+                finish();
+            }
         });
     }
 
