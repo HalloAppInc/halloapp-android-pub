@@ -3,6 +3,7 @@ package com.halloapp.crypto.keys;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Base64;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,8 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.HashSet;
 import java.util.Set;
@@ -355,14 +358,19 @@ public class EncryptedKeyStore {
     }
 
     private static SharedPreferences getSharedPreferences(Context context, String fileName) throws Exception {
-        String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // TODO(jack): Is default master key okay?
-        return EncryptedSharedPreferences.create(
-                fileName,
-                masterKeyAlias,
-                context,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        );
+        if (Build.VERSION.SDK_INT >= 23) {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // TODO(jack): Is default master key okay?
+            return EncryptedSharedPreferences.create(
+                    fileName,
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } else {
+            // TODO(jack): remove once androidx.security supports back to API 21
+            return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        }
     }
 
     private static String bytesToString(byte[] bytes) {
