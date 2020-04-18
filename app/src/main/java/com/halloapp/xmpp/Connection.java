@@ -593,51 +593,51 @@ public class Connection {
     }
 
     public void sendMessage(final @NonNull Message message) {
-        final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
-        final UserId recipientUserId = new UserId(recipientJid.toString());
-        final UserId myExternalUserId = new UserId(connection.getUser().toString());
-        try {
-            SessionSetupInfo sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
-            executor.execute(() -> {
-                if (!reconnectIfNeeded() || connection == null) {
-                    Log.e("connection: cannot send message, no connection");
-                    return;
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+            final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
+            final UserId recipientUserId = new UserId(recipientJid.toString());
+            final UserId myExternalUserId = new UserId(connection.getUser().toString());
+            final SessionSetupInfo sessionSetupInfo;
+            try {
+                sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
+            } catch (Exception e) {
+                Log.e("Failed to set up encryption session", e);
+                return;
+            }
+            try {
+                // TODO(jack): keys should be stored for use until the message send is successful
+                final PublishedEntry entry = new PublishedEntry(
+                        PublishedEntry.ENTRY_CHAT,
+                        null,
+                        message.timestamp,
+                        connection.getUser().getLocalpart().toString(),
+                        message.text,
+                        null,
+                        null,
+                        recipientUserId,
+                        myExternalUserId,
+                        sessionSetupInfo.ephemeralKey,
+                        sessionSetupInfo.ephemeralKeyId,
+                        sessionSetupInfo.identityKey,
+                        sessionSetupInfo.oneTimePreKeyId);
+                for (Media media : message.media) {
+                    entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
-                try {
-                    // TODO(jack): keys should be stored for use until the message send is successful
-                    final PublishedEntry entry = new PublishedEntry(
-                            PublishedEntry.ENTRY_CHAT,
-                            null,
-                            message.timestamp,
-                            connection.getUser().getLocalpart().toString(),
-                            message.text,
-                            null,
-                            null,
-                            recipientUserId,
-                            myExternalUserId,
-                            sessionSetupInfo.ephemeralKey,
-                            sessionSetupInfo.ephemeralKeyId,
-                            sessionSetupInfo.identityKey,
-                            sessionSetupInfo.oneTimePreKeyId);
-                    for (Media media : message.media) {
-                        entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
-                    }
 
-
-                    final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
-                    xmppMessage.setStanzaId(message.id);
-                    xmppMessage.addExtension(new ChatMessageElement(entry));
-                    ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
-                    Log.i("connection: sending message " + message.id + " to " + recipientJid);
-                    connection.sendStanza(xmppMessage);
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
-                    Log.e("connection: cannot send message", e);
-                }
-            });
-        } catch (Exception e) {
-            Log.e("Failed to set up encryption session", e);
-        }
-
+                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
+                xmppMessage.setStanzaId(message.id);
+                xmppMessage.addExtension(new ChatMessageElement(entry));
+                ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
+                Log.i("connection: sending message " + message.id + " to " + recipientJid);
+                connection.sendStanza(xmppMessage);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send message", e);
+            }
+        });
     }
 
 
