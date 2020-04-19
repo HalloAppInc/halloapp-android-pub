@@ -11,6 +11,7 @@ import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.util.Log;
@@ -20,7 +21,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -64,8 +65,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_REPLY_TO_ROW_ID + " INTEGER,"
                 + MessagesTable.COLUMN_TIMESTAMP + " INTEGER,"
-                + MessagesTable.COLUMN_TRANSFERRED + " INTEGER,"
-                + MessagesTable.COLUMN_SEEN + " INTEGER,"
+                + MessagesTable.COLUMN_STATE + " INTEGER,"
                 + MessagesTable.COLUMN_TEXT + " TEXT"
                 + ");");
 
@@ -141,6 +141,21 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + SeenTable.COLUMN_SEEN_BY_USER_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + OutgoingSeenReceiptsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + OutgoingSeenReceiptsTable.TABLE_NAME + " ("
+                + OutgoingSeenReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + OutgoingSeenReceiptsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
+                + OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + OutgoingSeenReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + OutgoingSeenReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY + " ON " + OutgoingSeenReceiptsTable.TABLE_NAME + "("
+                + OutgoingSeenReceiptsTable.COLUMN_CHAT_ID + ", "
+                + OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID + ", "
+                + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID
+                + ");");
+
         db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
         //noinspection SyntaxError
         db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
@@ -162,7 +177,6 @@ class ContentDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.i("ContentDb: upgrade from " + oldVersion + " to " + newVersion);
-        db.beginTransaction();
         switch (oldVersion) {
             case 7: {
                 upgradeFromVersion7(db);
@@ -180,6 +194,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion10(db);
                 // fall through
             }
+            case 11: {
+                upgradeFromVersion11(db);
+                // fall through
+            }
 
             break;
             default: {
@@ -187,8 +205,6 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 break;
             }
         }
-        db.setTransactionSuccessful();
-        db.endTransaction();
     }
 
     @Override
@@ -261,8 +277,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_REPLY_TO_ROW_ID + " INTEGER,"
                 + MessagesTable.COLUMN_TIMESTAMP + " INTEGER,"
-                + MessagesTable.COLUMN_TRANSFERRED + " INTEGER,"
-                + MessagesTable.COLUMN_SEEN + " INTEGER,"
+                + "transferred" + " INTEGER,"
+                + "seen" + " INTEGER,"
                 + MessagesTable.COLUMN_TEXT + " TEXT"
                 + ");");
 
@@ -338,18 +354,56 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ");");
 
         final ContentValues messageValues = new ContentValues();
-        messageValues.put(MessagesTable.COLUMN_TRANSFERRED, Message.TRANSFERRED_DESTINATION);
-        db.update(MessagesTable.TABLE_NAME, messageValues, MessagesTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
+        messageValues.put("transferred", 2);
+        db.update(MessagesTable.TABLE_NAME, messageValues, "transferred" + "=?", new String [] {"1"});
 
         final ContentValues postValues = new ContentValues();
-        postValues.put(PostsTable.COLUMN_TRANSFERRED, Post.TRANSFERRED_DESTINATION);
+        postValues.put(PostsTable.COLUMN_TRANSFERRED, Post.TRANSFERRED_YES);
         db.update(PostsTable.TABLE_NAME, postValues, PostsTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
     }
 
     private void upgradeFromVersion10(@NonNull SQLiteDatabase db) {
         final ContentValues messageValues = new ContentValues();
-        messageValues.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES);
+        messageValues.put("seen", 2);
         db.update(MessagesTable.TABLE_NAME, messageValues, null, null);
+    }
+
+    private void upgradeFromVersion11(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + OutgoingSeenReceiptsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + OutgoingSeenReceiptsTable.TABLE_NAME + " ("
+                + OutgoingSeenReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + OutgoingSeenReceiptsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
+                + OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + OutgoingSeenReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + OutgoingSeenReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY + " ON " + OutgoingSeenReceiptsTable.TABLE_NAME + "("
+                + OutgoingSeenReceiptsTable.COLUMN_CHAT_ID + ", "
+                + OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID + ", "
+                + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID
+                + ");");
+
+        removeColumns(db, MessagesTable.TABLE_NAME, new String [] {
+                MessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
+                MessagesTable.COLUMN_CHAT_ID + " TEXT NOT NULL",
+                MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL",
+                MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL",
+                MessagesTable.COLUMN_REPLY_TO_ROW_ID + " INTEGER",
+                MessagesTable.COLUMN_TIMESTAMP + " INTEGER",
+                MessagesTable.COLUMN_TEXT + " TEXT"
+        });
+
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_STATE + " INTEGER");
+        ContentValues values = new ContentValues();
+        values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_SEEN);
+        db.update(MessagesTable.TABLE_NAME, values, MessagesTable.COLUMN_SENDER_USER_ID + "=''", null);
+        values.put(MessagesTable.COLUMN_STATE, Message.STATE_INCOMING_RECEIVED);
+        db.update(MessagesTable.TABLE_NAME, values, MessagesTable.COLUMN_SENDER_USER_ID + "<>''", null);
+
+        final ContentValues postValues = new ContentValues();
+        postValues.put(PostsTable.COLUMN_TRANSFERRED, Post.TRANSFERRED_YES);
+        db.update(PostsTable.TABLE_NAME, postValues, PostsTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
@@ -368,6 +422,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
             selection.append(column.substring(0, column.indexOf(' ')));
         }
 
+        db.execSQL("DROP TABLE IF EXISTS tmp");
         db.execSQL("CREATE TABLE tmp (" + schema.toString() + ");");
         db.execSQL("INSERT INTO tmp SELECT " + selection.toString() + " FROM " + tableName);
         db.execSQL("DROP TABLE " + tableName);

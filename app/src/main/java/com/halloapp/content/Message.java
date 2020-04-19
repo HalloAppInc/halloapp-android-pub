@@ -1,16 +1,29 @@
 package com.halloapp.content;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.contacts.UserId;
 import com.halloapp.xmpp.Connection;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 
 public class Message extends ContentItem {
 
     public final String chatId;
+    public final @State int state;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN})
+    public @interface State {}
+    public static final int STATE_INITIAL = 0;
+    public static final int STATE_INCOMING_RECEIVED = 1;
+    public static final int STATE_OUTGOING_SENT = 1;
+    public static final int STATE_OUTGOING_DELIVERED = 2;
+    public static final int STATE_OUTGOING_SEEN = 3;
 
     public Message(
             long rowId,
@@ -18,11 +31,11 @@ public class Message extends ContentItem {
             UserId senderUserId,
             String messageId,
             long timestamp,
-            @TransferredState int transferred,
-            @SeenState int seen,
+            @State int state,
             String text) {
-        super(rowId, senderUserId, messageId, timestamp, transferred, seen, text);
+        super(rowId, senderUserId, messageId, timestamp, text);
         this.chatId = chatId;
+        this.state = state;
     }
 
     @Override
@@ -62,7 +75,6 @@ public class Message extends ContentItem {
                 Objects.equals(id, message.id) &&
                 timestamp == message.timestamp &&
                 Objects.equals(text, message.text) &&
-                transferred == message.transferred &&
-                seen == message.seen;
+                state == message.state;
     }
 }

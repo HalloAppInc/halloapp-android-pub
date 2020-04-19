@@ -56,7 +56,7 @@ public class ContentDb {
         void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
-        void onChatSeen(@NonNull String chatId);
+        void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts);
         void onChatDeleted(@NonNull String chatId);
         void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onFeedCleanup();
@@ -78,7 +78,7 @@ public class ContentDb {
         public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
-        public void onChatSeen(@NonNull String chatId) {}
+        public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
         public void onChatDeleted(@NonNull String chatId) {}
         public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
         public void onFeedCleanup() {}
@@ -334,12 +334,12 @@ public class ContentDb {
     }
 
     public void addMessage(@NonNull Message message) {
-        addMessage(message, null);
+        addMessage(message, false, null);
     }
 
-    public void addMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
+    public void addMessage(@NonNull Message message, boolean unseen, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.addMessage(message)) {
+            if (messagesDb.addMessage(message, unseen)) {
                 observers.notifyMessageAdded(message);
             }
             if (completionRunnable != null) {
@@ -430,15 +430,27 @@ public class ContentDb {
 
     public void setChatSeen(@NonNull String chatId) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setChatSeen(chatId)) {
-                observers.notifyChatSeen(chatId);
+            final Collection<SeenReceipt> seenReceipts = messagesDb.setChatSeen(chatId);
+            if (!seenReceipts.isEmpty()) {
+                observers.notifyChatSeen(chatId, seenReceipts);
             }
+        });
+    }
+
+    public void setMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
         });
     }
 
     @WorkerThread
     @NonNull List<Message> getPendingMessages() {
         return messagesDb.getPendingMessages();
+    }
+
+    @WorkerThread
+    @NonNull List<SeenReceipt> getPendingMessageSeenReceipts() {
+        return messagesDb.getPendingMessageSeenReceipts();
     }
 
     @WorkerThread
@@ -452,7 +464,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    @NonNull List<Receipt> getPendingPostSeenReceipts() {
+    @NonNull List<SeenReceipt> getPendingPostSeenReceipts() {
         return postsDb.getPendingPostSeenReceipts();
     }
 
@@ -488,7 +500,9 @@ public class ContentDb {
 
                 values.clear();
                 values.put(ChatsTable.COLUMN_CHAT_ID, newId);
-                db.update(ChatsTable.TABLE_NAME, values, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{oldId});
+                try {
+                    db.update(ChatsTable.TABLE_NAME, values, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{oldId});
+                } catch (SQLiteConstraintException ignore) {}
 
                 values.clear();
                 values.put(PostsTable.COLUMN_SENDER_USER_ID, newId);
@@ -509,7 +523,7 @@ public class ContentDb {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            observers.notifyChatSeen("");
+            observers.notifyChatSeen("", new ArrayList<>());
             observers.notifyFeedCleanup();
         });
     }

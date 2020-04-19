@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Constants;
 import com.halloapp.ForegroundChat;
@@ -105,16 +106,7 @@ public class ChatActivity extends AppCompatActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         final RecyclerView chatView = findViewById(R.id.chat);
-        chatView.setItemAnimator(new DefaultItemAnimator() {
-            @Override
-            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
-                                         int fromX, int fromY, int toX, int toY) {
-                if (oldHolder == newHolder) {
-                    return false;
-                }
-                return super.animateChange(oldHolder, newHolder, fromX, fromY, toX, toY);
-            }
-        });
+        Preconditions.checkNotNull((SimpleItemAnimator)chatView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         findViewById(R.id.send).setOnClickListener(v -> sendMessage());
         findViewById(R.id.media).setOnClickListener(v -> pickMedia());
@@ -241,8 +233,7 @@ public class ChatActivity extends AppCompatActivity {
                 UserId.ME,
                 RandomId.create(),
                 System.currentTimeMillis(),
-                Message.TRANSFERRED_NO,
-                Message.SEEN_NO,
+                Message.STATE_INITIAL,
                 messageText);
         message.addToStorage(ContentDb.getInstance(this));
     }

@@ -15,10 +15,12 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessageLoader;
+import com.halloapp.content.SeenReceipt;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 
 import java.text.Collator;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +70,7 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateMessage(chatId, UserId.ME, messageId);
         }
 
-        public void onChatSeen(@NonNull String chatId) {
+        public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
             invalidateChats();
         }
 

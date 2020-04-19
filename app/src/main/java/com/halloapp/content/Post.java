@@ -1,14 +1,35 @@
 package com.halloapp.content;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.contacts.UserId;
 import com.halloapp.xmpp.Connection;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Post extends ContentItem {
+
+    public final @TransferredState int transferred;
+    public @SeenState int seen;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({SEEN_NO, SEEN_YES_PENDING, SEEN_YES})
+    public @interface SeenState {}
+    public static final int SEEN_NO = 0;
+    public static final int SEEN_YES_PENDING = 1;
+    public static final int SEEN_YES = 2;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TRANSFERRED_NO, TRANSFERRED_YES})
+    public @interface TransferredState {}
+    public static final int TRANSFERRED_NO = 0;
+    public static final int TRANSFERRED_YES = 1;
 
     public int commentCount;
     public int unseenCommentCount;
@@ -23,7 +44,9 @@ public class Post extends ContentItem {
             @TransferredState int transferred,
             @SeenState int seen,
             String text) {
-        super(rowId, senderUserId, postId, timestamp, transferred, seen, text);
+        super(rowId, senderUserId, postId, timestamp, text);
+        this.transferred = transferred;
+        this.seen = seen;
     }
 
     @Override

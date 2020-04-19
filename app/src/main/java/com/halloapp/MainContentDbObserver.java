@@ -10,6 +10,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.SeenReceipt;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
@@ -148,8 +149,10 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onChatSeen(@NonNull String chatId) {
-        // TODO (ds): implement
+    public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
+        for (SeenReceipt seenReceipt : seenReceipts) {
+            connection.sendMessageSeenReceipt(seenReceipt.chatId, seenReceipt.senderUserId, seenReceipt.itemId);
+        }
     }
 
     @Override

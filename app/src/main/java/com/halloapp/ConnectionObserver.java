@@ -117,23 +117,26 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onIncomingMessageReceived(@NonNull Message message) {
+        final boolean isMessageForForegroundChat = ForegroundChat.getInstance().isForegroundChatId(message.chatId);
         final Runnable completionRunnable = () -> {
-            Connection.getInstance().sendMessageDeliveryReceipt(message.chatId, message.senderUserId, message.id);
-            Connection.getInstance().sendAck(message.id);
+            final Connection connection = Connection.getInstance();
+            if (isMessageForForegroundChat) {
+                connection.sendMessageSeenReceipt(message.chatId, message.senderUserId, message.id);
+            } else {
+                connection.sendMessageDeliveryReceipt(message.chatId, message.senderUserId, message.id);
+            }
+            connection.sendAck(message.id);
         };
-        if (ForegroundChat.getInstance().isForegroundChatId(message.chatId)) {
-            message.seen = Message.SEEN_YES_PENDING;
-        }
         if (message.isRetracted()) {
             ContentDb.getInstance(context).retractMessage(message, completionRunnable);
         } else {
-            ContentDb.getInstance(context).addMessage(message, completionRunnable);
+            ContentDb.getInstance(context).addMessage(message, !isMessageForForegroundChat, completionRunnable);
         }
     }
 
     @Override
     public void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-        // TODO (ds): implement
+        ContentDb.getInstance(context).setMessageSeenReceiptSent(chatId, senderUserId, messageId);
     }
 
     @Override

@@ -20,40 +20,19 @@ public abstract class ContentItem {
     public final String id;
     public final long timestamp;
 
-    public final @TransferredState int transferred;
-    public @SeenState int seen;
-
     public final String text;
     public final List<Media> media = new ArrayList<>();
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SEEN_NO, SEEN_YES_PENDING, SEEN_YES})
-    public @interface SeenState {}
-    public static final int SEEN_NO = 0;
-    public static final int SEEN_YES_PENDING = 1;
-    public static final int SEEN_YES = 2;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TRANSFERRED_NO, TRANSFERRED_SERVER, TRANSFERRED_DESTINATION})
-    public @interface TransferredState {}
-    public static final int TRANSFERRED_NO = 0;
-    public static final int TRANSFERRED_SERVER = 1;
-    public static final int TRANSFERRED_DESTINATION = 2;
 
     public ContentItem(
             long rowId,
             UserId senderUserId,
             String id,
             long timestamp,
-            @TransferredState int transferred,
-            @SeenState int seen,
             String text) {
         this.rowId = rowId;
         this.senderUserId = senderUserId;
         this.id = id;
         this.timestamp = timestamp;
-        this.transferred = transferred;
-        this.seen = seen;
         this.text = text;
     }
 

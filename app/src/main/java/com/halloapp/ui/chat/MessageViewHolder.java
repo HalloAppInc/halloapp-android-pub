@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -26,7 +27,7 @@ import com.halloapp.widget.MediaViewPager;
 
 import me.relex.circleindicator.CircleIndicator;
 
-class MessageViewHolder extends ViewHolderWithLifecycle {
+public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     private final ImageView statusView;
     private final TextView dateView;
@@ -40,6 +41,20 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
     private Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
+    }
+
+    public static @DrawableRes int getStatusImageResource(@Message.State int state) {
+        switch (state) {
+            case Message.STATE_OUTGOING_SENT:
+                return R.drawable.ic_messaging_sent;
+            case Message.STATE_OUTGOING_DELIVERED:
+                return R.drawable.ic_messaging_delivered;
+            case Message.STATE_OUTGOING_SEEN:
+                return R.drawable.ic_messaging_seen;
+            case Message.STATE_INITIAL:
+            default:
+                return R.drawable.ic_messaging_clock;
+        }
     }
 
     MessageViewHolder(@NonNull View itemView, @NonNull MessageViewHolderParent parent) {
@@ -88,15 +103,7 @@ class MessageViewHolder extends ViewHolderWithLifecycle {
         this.message = message;
 
         if (statusView != null) {
-            if (message.seen == Message.SEEN_YES) {
-                statusView.setImageResource(R.drawable.ic_messaging_seen);
-            } else if (message.transferred == Message.TRANSFERRED_DESTINATION) {
-                statusView.setImageResource(R.drawable.ic_messaging_delivered);
-            } else if (message.transferred == Message.TRANSFERRED_SERVER) {
-                statusView.setImageResource(R.drawable.ic_messaging_sent);
-            } else {
-                statusView.setImageResource(R.drawable.ic_messaging_clock);
-            }
+            statusView.setImageResource(getStatusImageResource(message.state));
         }
 
         if (!message.media.isEmpty()) {

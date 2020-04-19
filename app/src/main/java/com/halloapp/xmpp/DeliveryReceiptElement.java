@@ -15,6 +15,10 @@ public class DeliveryReceiptElement extends DeliveryReceipt {
     static final String NAMESPACE = "urn:xmpp:receipts";
     static final String ELEMENT = "received";
 
+    private static final String ATTRIBUTE_THREAD_ID = "thread_id";
+    private static final String ATTRIBUTE_ID = "id";
+    private static final String ATTRIBUTE_TIMESTAMP = "timestamp";
+
     private final String threadId;
     private final long timestamp;
 
@@ -36,7 +40,7 @@ public class DeliveryReceiptElement extends DeliveryReceipt {
         return timestamp;
     }
 
-    public @Nullable String getThreadId() {
+    @Nullable String getThreadId() {
         return threadId;
     }
 
@@ -53,8 +57,8 @@ public class DeliveryReceiptElement extends DeliveryReceipt {
     @Override
     public XmlStringBuilder toXML(String enclosingNamespace) {
         XmlStringBuilder xml = new XmlStringBuilder(this);
-        xml.optAttribute("id", getId());
-        xml.optAttribute("threadid", threadId);
+        xml.optAttribute(ATTRIBUTE_ID, getId());
+        xml.optAttribute(ATTRIBUTE_THREAD_ID, threadId);
         xml.closeEmptyElement();
         return xml;
     }
@@ -63,12 +67,12 @@ public class DeliveryReceiptElement extends DeliveryReceipt {
 
         @Override
         protected DeliveryReceiptElement createReturnExtension(String currentElement, String currentNamespace, Map<String, String> attributeMap, List<? extends ExtensionElement> content) {
-            final String timestampStr = attributeMap.get("timestamp");
+            final String timestampStr = attributeMap.get(ATTRIBUTE_TIMESTAMP);
             long timestamp = 0;
             if (timestampStr != null) {
                 timestamp = Long.parseLong(timestampStr);
             }
-            return new DeliveryReceiptElement(attributeMap.get("threadid"), attributeMap.get("id"), timestamp * 1000L);
+            return new DeliveryReceiptElement(attributeMap.get(ATTRIBUTE_THREAD_ID), attributeMap.get(ATTRIBUTE_ID), timestamp * 1000L);
         }
     }
 }

@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
@@ -30,6 +31,7 @@ import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.chat.MessageViewHolder;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -63,6 +65,8 @@ public class ChatsFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_chats, container, false);
         final RecyclerView chatsView = root.findViewById(R.id.chats);
         final View emptyView = root.findViewById(android.R.id.empty);
+
+        Preconditions.checkNotNull((SimpleItemAnimator)chatsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         chatsView.setLayoutManager(layoutManager);
@@ -192,15 +196,7 @@ public class ChatsFragment extends Fragment {
                     statusView.setVisibility(View.GONE);
                 } else {
                     statusView.setVisibility(View.VISIBLE);
-                    if (message.seen == Message.SEEN_YES) {
-                        statusView.setImageResource(R.drawable.ic_messaging_seen);
-                    } else if (message.transferred == Message.TRANSFERRED_DESTINATION) {
-                        statusView.setImageResource(R.drawable.ic_messaging_delivered);
-                    } else if (message.transferred == Message.TRANSFERRED_SERVER) {
-                        statusView.setImageResource(R.drawable.ic_messaging_sent);
-                    } else {
-                        statusView.setImageResource(R.drawable.ic_messaging_clock);
-                    }
+                    statusView.setImageResource(MessageViewHolder.getStatusImageResource(message.state));
                 }
                 if (message.media.size() == 0) {
                     mediaIcon.setVisibility(View.GONE);

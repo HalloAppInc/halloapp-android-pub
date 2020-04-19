@@ -72,6 +72,8 @@ public class Connection {
     private static final int CONNECTION_TIMEOUT = 20_000;
     private static final int REPLY_TIMEOUT = 20_000;
 
+    public static final String FEED_THREAD_ID = "feed";
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
     private PubSubHelper pubSubHelper;
@@ -668,7 +670,7 @@ public class Connection {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
-                message.addExtension(new SeenReceiptElement("feed", postId));
+                message.addExtension(new SeenReceiptElement(FEED_THREAD_ID, postId));
                 ackHandlers.put(message.getStanzaId(), () -> observer.onIncomingPostSeenReceiptSent(senderUserId, postId));
                 Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
@@ -688,7 +690,7 @@ public class Connection {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
-                message.addExtension(new SeenReceiptElement(chatId, messageId));
+                message.addExtension(new SeenReceiptElement(senderUserId.rawId().equals(chatId) ? null : chatId, messageId));
                 ackHandlers.put(message.getStanzaId(), () -> observer.onIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
                 Log.i("connection: sending message seen receipt " + messageId + " to " + recipientJid);
                 connection.sendStanza(message);
@@ -708,7 +710,7 @@ public class Connection {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
-                message.addExtension(new DeliveryReceiptElement(chatId, messageId));
+                message.addExtension(new DeliveryReceiptElement(senderUserId.rawId().equals(chatId) ? null : chatId, messageId));
                 ackHandlers.put(message.getStanzaId(), () -> {});
                 Log.i("connection: sending message delivery receipt " + messageId + " to " + recipientJid);
                 connection.sendStanza(message);
@@ -773,7 +775,7 @@ public class Connection {
                             feedUserId,
                             entry.id,
                             entry.timestamp,
-                            entry.media.isEmpty() ? Post.TRANSFERRED_DESTINATION : Post.TRANSFERRED_NO,
+                            entry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO,
                             Post.SEEN_NO,
                             entry.text
                     );
@@ -820,7 +822,7 @@ public class Connection {
                         getUserId(entry.user),
                         entry.id,
                         entry.timestamp,
-                        (isMe(entry.user) || entry.media.isEmpty()) ? Post.TRANSFERRED_DESTINATION : Post.TRANSFERRED_NO,
+                        (isMe(entry.user) || entry.media.isEmpty()) ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO,
                         Post.SEEN_YES,
                         entry.text
                 );
@@ -987,15 +989,11 @@ public class Connection {
                         Log.i("connection: got seen receipt " + msg);
                         final String threadId = seenReceipt.getThreadId();
                         final UserId userId = getUserId(packet.getFrom());
-                        // TODO (ds): uncomment and remove next line when supported by server
-                        observer.onOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
-                        /*
-                        if ("feed".equals(threadId)) {
+                        if (FEED_THREAD_ID.equals(threadId)) {
                             observer.onOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         } else {
-                            observer.onOutgoingMessageSeen(threadId, userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                            observer.onOutgoingMessageSeen(threadId == null ? userId.rawId() : threadId, userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         }
-                        */
                         handled = true;
                     }
                 }

@@ -16,8 +16,7 @@ public final class MessagesTable implements BaseColumns {
     public static final String COLUMN_SENDER_USER_ID = "sender_user_id";
     public static final String COLUMN_MESSAGE_ID = "message_id";
     public static final String COLUMN_REPLY_TO_ROW_ID = "reply_to_row_id";
-    public static final String COLUMN_TIMESTAMP = "timestamp";
-    public static final String COLUMN_TRANSFERRED = "transferred";
-    public static final String COLUMN_SEEN = "seen";
+    public static final String  COLUMN_TIMESTAMP = "timestamp";
+    public static final String COLUMN_STATE = "state";
     public static final String COLUMN_TEXT = "text";
 }

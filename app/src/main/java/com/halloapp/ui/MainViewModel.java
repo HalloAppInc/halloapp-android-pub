@@ -7,7 +7,10 @@ import androidx.lifecycle.AndroidViewModel;
 
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
+import com.halloapp.content.SeenReceipt;
 import com.halloapp.util.ComputableLiveData;
+
+import java.util.Collection;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -23,7 +26,7 @@ public class MainViewModel extends AndroidViewModel {
             }
         }
 
-        public void onChatSeen(@NonNull String chatId) {
+        public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
             unseenChatsCount.invalidate();
         }
 

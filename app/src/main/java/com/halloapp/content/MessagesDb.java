@@ -18,6 +18,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -37,8 +38,8 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean addMessage(@NonNull Message message) {
-        Log.i("ContentDb.addMessage " + message);
+    boolean addMessage(@NonNull Message message, boolean unseen) {
+        Log.i("ContentDb.addMessage " + message + " " + unseen);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -47,8 +48,7 @@ class MessagesDb {
             messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
             messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
             messageValues.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
-            messageValues.put(MessagesTable.COLUMN_TRANSFERRED, message.transferred);
-            messageValues.put(MessagesTable.COLUMN_SEEN, message.seen);
+            messageValues.put(MessagesTable.COLUMN_STATE, message.state);
             if (message.text != null) {
                 messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
             }
@@ -83,12 +83,11 @@ class MessagesDb {
                 }
                 mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
-            final boolean addUnseen = message.seen == Message.SEEN_NO && message.isIncoming();
             final int updatedRowsCount;
             try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
                     ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + ", " +
-                    (addUnseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
-                    (addUnseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
+                    (unseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
+                    (unseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
                     ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
                     "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId)) {
                 updatedRowsCount = statement.executeUpdateDelete();
@@ -98,7 +97,7 @@ class MessagesDb {
                 chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId);
                 chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
                 chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
-                if (addUnseen) {
+                if (unseen) {
                     chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
                     chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
                 } else {
@@ -155,7 +154,7 @@ class MessagesDb {
     void setMessageTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
-        values.put(MessagesTable.COLUMN_TRANSFERRED, senderUserId.isMe() ? Message.TRANSFERRED_SERVER : Message.TRANSFERRED_DESTINATION);
+        values.put(MessagesTable.COLUMN_STATE, senderUserId.isMe() ? Message.STATE_OUTGOING_SENT : Message.STATE_INCOMING_RECEIVED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
@@ -169,14 +168,14 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp) {
+    void setOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageDelivered: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
-        values.put(MessagesTable.COLUMN_TRANSFERRED, Message.TRANSFERRED_DESTINATION);
+        values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_DELIVERED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "<" + Message.STATE_OUTGOING_DELIVERED,
                     new String [] {chatId, messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
@@ -186,10 +185,10 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp) {
+    void setOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageSeen: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
-        values.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES);
+        values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_SEEN);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
@@ -206,13 +205,13 @@ class MessagesDb {
     void retractMessage(@NonNull Message message) {
         Log.i("ContentDb.retractMessage: messageId=" + message.id);
         final ContentValues values = new ContentValues();
-        values.put(MessagesTable.COLUMN_TRANSFERRED, !message.senderUserId.isMe());
+        values.put(MessagesTable.COLUMN_STATE, message.isOutgoing() ? Message.STATE_INITIAL : Message.STATE_INCOMING_RECEIVED);
         values.put(MessagesTable.COLUMN_TEXT, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             int updatedCount = db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " +MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
                     new String[]{message.chatId, message.senderUserId.rawId(), message.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
@@ -220,7 +219,6 @@ class MessagesDb {
                 values.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
                 values.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
                 values.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
-                values.put(MessagesTable.COLUMN_SEEN, Message.SEEN_NO);
                 message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 if (message.rowId == 0) {
@@ -255,18 +253,18 @@ class MessagesDb {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String where =
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "=" + Message.SEEN_NO + " AND " +
+                MessagesTable.TABLE_NAME + "." + MessagesTable._ID + ">=" + ChatsTable.TABLE_NAME + "." + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " AND " +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "!='' AND " +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + timestamp;
 
         String sql =
             "SELECT " +
                 MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + ", " +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
@@ -274,9 +272,8 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
-                "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + " " +
-            "FROM " + MessagesTable.TABLE_NAME + " " +
+                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+            "FROM " + MessagesTable.TABLE_NAME + "," + ChatsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
                     MediaTable._ID + "," +
@@ -306,11 +303,10 @@ class MessagesDb {
                     }
                     message = new Message(
                             rowId,
-                            cursor.getString(14),
-                            new UserId(cursor.getString(1)),
-                            cursor.getString(2),
-                            cursor.getLong(3),
-                            cursor.getInt(4),
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
@@ -347,8 +343,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
@@ -382,20 +377,19 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getInt(6),
-                            cursor.getString(7));
+                            cursor.getString(6));
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(7),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
                             null,
                             null,
+                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14) == 1));
+                            cursor.getInt(13) == 1));
                 }
             }
         }
@@ -412,8 +406,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
@@ -449,20 +442,19 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getInt(6),
-                            cursor.getString(7));
+                            cursor.getString(6));
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(7),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
                             null,
                             null,
+                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14) == 1));
+                            cursor.getInt(13) == 1));
                 }
             }
         }
@@ -485,8 +477,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
-                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
@@ -530,20 +521,19 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getInt(6),
-                            cursor.getString(7));
+                            cursor.getString(6));
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(7),
+                            cursor.getInt(8),
+                            cursor.getString(9),
+                            fileStore.getMediaFile(cursor.getString(10)),
                             null,
                             null,
+                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14) == 1));
+                            cursor.getInt(13) == 1));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -565,11 +555,11 @@ class MessagesDb {
         final String sql =
                 "SELECT " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + ", " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
-                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "," +
-                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SEEN + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
@@ -579,8 +569,7 @@ class MessagesDb {
                     "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
-                    "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
-                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + " " +
+                    "m." + MediaTable.COLUMN_TRANSFERRED + " " +
                 "FROM " + MessagesTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -597,7 +586,7 @@ class MessagesDb {
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "WHERE " +
-                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TRANSFERRED + "=0 AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + getMessageRetryExpirationTime() + " " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "=0 AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + getMessageRetryExpirationTime() + " " +
                 "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " DESC ";
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -613,11 +602,10 @@ class MessagesDb {
                     }
                     message = new Message(
                             rowId,
-                            cursor.getString(16),
-                            new UserId(cursor.getString(1)),
-                            cursor.getString(2),
-                            cursor.getLong(3),
-                            cursor.getInt(4),
+                            cursor.getString(1),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6));
                 }
@@ -648,6 +636,7 @@ class MessagesDb {
 
     @WorkerThread
     void deleteChat(@NonNull String chatId) {
+        Log.i("ContentDb.deleteChat " + chatId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
@@ -657,41 +646,54 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean setChatSeen(@NonNull String chatId) {
-        boolean updated;
+    @NonNull List<SeenReceipt> setChatSeen(@NonNull String chatId) {
+        Log.i("ContentDb.setChatSeen " + chatId);
+        final List<SeenReceipt> seenReceipts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            final ContentValues messageValues = new ContentValues();
-            messageValues.put(MessagesTable.COLUMN_SEEN, Message.SEEN_YES_PENDING);
-            updated = db.updateWithOnConflict(MessagesTable.TABLE_NAME, messageValues,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "!='' AND " + MessagesTable.COLUMN_SEEN + "=?",
-                    new String [] {chatId, Integer.toString(Message.SEEN_NO)},
-                    SQLiteDatabase.CONFLICT_ABORT) > 0;
+            final Chat chat = getChat(chatId);
+            if (chat != null && chat.newMessageCount > 0) {
+                // update chats table
+                final ContentValues chatValues = new ContentValues();
+                chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+                chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
+                db.updateWithOnConflict(ChatsTable.TABLE_NAME, chatValues,
+                        ChatsTable.COLUMN_CHAT_ID + "=?",
+                        new String [] {chatId},
+                        SQLiteDatabase.CONFLICT_ABORT);
 
-            try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
-                    new String [] {ChatsTable.COLUMN_NEW_MESSAGE_COUNT},
-                    ChatsTable.COLUMN_CHAT_ID + "=?",
-                    new String [] {chatId}, null, null, null)) {
-                if (cursor.moveToFirst()) {
-                    final int newMessageCount = cursor.getInt(cursor.getColumnIndex(ChatsTable.COLUMN_NEW_MESSAGE_COUNT));
-                    if (newMessageCount != 0) {
-                        final ContentValues chatValues = new ContentValues();
-                        chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
-                        chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
-                        db.updateWithOnConflict(ChatsTable.TABLE_NAME, chatValues,
-                                ChatsTable.COLUMN_CHAT_ID + "=?",
-                                new String [] {chatId},
-                                SQLiteDatabase.CONFLICT_ABORT);
+                try (final Cursor cursor = db.query(MessagesTable.TABLE_NAME,
+                        new String [] {MessagesTable.COLUMN_MESSAGE_ID, MessagesTable.COLUMN_SENDER_USER_ID},
+                        MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable._ID + ">=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "<>''",
+                        new String [] {chatId, String.valueOf(chat.firstUnseenMessageRowId)}, null, null, null)) {
+                    while (cursor.moveToNext()) {
+                        final String messageId = cursor.getString(0);
+                        final UserId senderUserId = new UserId(cursor.getString(1));
+                        seenReceipts.add(new SeenReceipt(chatId, senderUserId, messageId));
+
+                        final ContentValues values = new ContentValues();
+                        values.put(OutgoingSeenReceiptsTable.COLUMN_CHAT_ID, chatId);
+                        values.put(OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
+                        values.put(OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID, messageId);
+                        db.insert(OutgoingSeenReceiptsTable.TABLE_NAME, null, values);
                     }
-                    updated = true;
+                    Log.i("ContentDb.setChatSeen: number of seen messages is " + seenReceipts.size());
                 }
             }
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
         }
-        return updated;
+        return seenReceipts;
+    }
+
+    @WorkerThread
+    void setMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        final int deleteCount = databaseHelper.getWritableDatabase().delete(OutgoingSeenReceiptsTable.TABLE_NAME,
+                OutgoingSeenReceiptsTable.COLUMN_CHAT_ID + "=? AND " + OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID + "=? AND " + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID + "=?",
+                new String [] {chatId, senderUserId.rawId(), messageId});
+        Log.i("ContentDb.setMessageSeenReceiptSent: delete " + deleteCount + " rows for " + chatId + " " + senderUserId + " " + messageId);
     }
 
     @WorkerThread
@@ -752,5 +754,27 @@ class MessagesDb {
     @WorkerThread
     int getUnseenChatsCount() {
         return (int)DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), "SELECT count(*) FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ">0", null);
+    }
+
+    @WorkerThread
+    List<SeenReceipt> getPendingMessageSeenReceipts() {
+        final List<SeenReceipt> receipts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(OutgoingSeenReceiptsTable.TABLE_NAME,
+                new String [] {
+                        OutgoingSeenReceiptsTable.COLUMN_CHAT_ID,
+                        OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID,
+                        OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID},
+                null, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final SeenReceipt receipt = new SeenReceipt(
+                        cursor.getString(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2));
+                receipts.add(receipt);
+            }
+        }
+        Log.i("ContentDb.getPendingMessageSeenReceipts: receipts.size=" + receipts.size());
+        return receipts;
     }
 }

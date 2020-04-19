@@ -112,18 +112,18 @@ class ContentDbObservers {
         }
     }
 
-    void notifyOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String postId) {
+    void notifyOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onOutgoingMessageDelivered(chatId, seenByUserId, postId);
+                observer.onOutgoingMessageDelivered(chatId, seenByUserId, messageId);
             }
         }
     }
 
-    void notifyOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String postId) {
+    void notifyOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onOutgoingMessageSeen(chatId, seenByUserId, postId);
+                observer.onOutgoingMessageSeen(chatId, seenByUserId, messageId);
             }
         }
     }
@@ -136,10 +136,10 @@ class ContentDbObservers {
         }
     }
 
-    void notifyChatSeen(@NonNull String chatId) {
+    void notifyChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onChatSeen(chatId);
+                observer.onChatSeen(chatId, seenReceipts);
             }
         }
     }

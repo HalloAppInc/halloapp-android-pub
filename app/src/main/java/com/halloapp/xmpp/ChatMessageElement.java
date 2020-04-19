@@ -62,8 +62,7 @@ public class ChatMessageElement implements ExtensionElement {
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,
-                Message.TRANSFERRED_NO,
-                Message.SEEN_NO,
+                entry.media.isEmpty() ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
                 entry.text);
         for (PublishedEntry.Media entryMedia : entry.media) {
             message.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,

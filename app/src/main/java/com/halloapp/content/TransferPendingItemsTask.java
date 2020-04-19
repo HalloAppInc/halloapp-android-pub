@@ -53,6 +53,8 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
             if (message.isIncoming()) {
                 if (!message.media.isEmpty()) {
                     new DownloadMediaTask(message, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                } else {
+                    contentDb.setMessageTransferred(message.chatId, message.senderUserId, message.id);
                 }
             } else /*post.isOutgoing()*/ {
                 if (message.media.isEmpty()) {
@@ -71,10 +73,16 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
             connection.sendComment(comment);
         }
 
-        final List<Receipt> seenReceipts = contentDb.getPendingPostSeenReceipts();
-        Log.i("TransferPendingItemsTask: " + seenReceipts.size() + " seen receipts");
-        for (Receipt receipt : seenReceipts) {
-            connection.sendPostSeenReceipt(receipt.senderUserId, receipt.postId);
+        final List<SeenReceipt> postSeenReceipts = contentDb.getPendingPostSeenReceipts();
+        Log.i("TransferPendingItemsTask: " + postSeenReceipts.size() + " post seen receipts");
+        for (SeenReceipt receipt : postSeenReceipts) {
+            connection.sendPostSeenReceipt(receipt.senderUserId, receipt.itemId);
+        }
+
+        final List<SeenReceipt> messageSeenReceipts = contentDb.getPendingMessageSeenReceipts();
+        Log.i("TransferPendingItemsTask: " + messageSeenReceipts.size() + " message seen receipts");
+        for (SeenReceipt receipt : messageSeenReceipts) {
+            connection.sendMessageSeenReceipt(receipt.chatId, receipt.senderUserId, receipt.itemId);
         }
         return null;
     }

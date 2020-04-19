@@ -850,8 +850,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Receipt> getPendingPostSeenReceipts() {
-        final List<Receipt> receipts = new ArrayList<>();
+    @NonNull List<SeenReceipt> getPendingPostSeenReceipts() {
+        final List<SeenReceipt> receipts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
                 new String [] {
@@ -860,7 +860,8 @@ class PostsDb {
                 PostsTable.COLUMN_SEEN + "=" + Post.SEEN_YES_PENDING + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "<>''",
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
-                final Receipt receipt = new Receipt(
+                final SeenReceipt receipt = new SeenReceipt(
+                        null,
                         new UserId(cursor.getString(0)),
                         cursor.getString(1));
                 receipts.add(receipt);
