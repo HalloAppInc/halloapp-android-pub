@@ -99,7 +99,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    void bindTo(@NonNull Message message, @Nullable Chat chat, @Nullable Message prevMessage) {
+    void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage) {
         this.message = message;
 
         if (statusView != null) {
@@ -143,9 +143,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             dateView.setVisibility(View.GONE);
         }
 
-        if (chat != null && chat.firstUnseenMessageRowId == message.rowId) {
+        if (newMessageCountSeparator > 0) {
             newMessagesSeparator.setVisibility(View.VISIBLE);
-            newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, chat.newMessageCount, chat.newMessageCount));
+            newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, newMessageCountSeparator, newMessageCountSeparator));
         } else {
             newMessagesSeparator.setVisibility(View.GONE);
         }

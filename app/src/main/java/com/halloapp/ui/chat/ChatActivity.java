@@ -127,11 +127,17 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         viewModel.messageList.observe(this, messages -> adapter.submitList(messages, () -> {
-            if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
+            final boolean newOutgoingMessage = viewModel.checkPendingOutgoing();
+            final int newIncomingMessage = viewModel.checkPendingIncoming();
+            if (newOutgoingMessage || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
                 chatView.scrollToPosition(0);
                 newMessagesView.setVisibility(View.GONE);
-            } else if (viewModel.checkPendingIncoming()) {
+                if (newOutgoingMessage && adapter.newMessageCount > 0) {
+                    adapter.newMessageCount = 0;
+                    adapter.notifyDataSetChanged();
+                }
+            } else if (newIncomingMessage > 0) {
                 final View childView = layoutManager.getChildAt(0);
                 final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
                 if (scrolled) {
@@ -144,6 +150,10 @@ public class ChatActivity extends AppCompatActivity {
                     scrollUpOnDataLoaded = false;
                     chatView.scrollToPosition(0);
                     newMessagesView.setVisibility(View.GONE);
+                }
+                if (adapter.chat != null && adapter.newMessageCount > 0) {
+                    adapter.newMessageCount += newIncomingMessage;
+                    adapter.notifyDataSetChanged();
                 }
             }
         }));
@@ -269,8 +279,8 @@ public class ChatActivity extends AppCompatActivity {
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
 
-
         Chat chat;
+        int newMessageCount;
 
         ChatAdapter() {
             super(DIFF_CALLBACK);
@@ -279,6 +289,7 @@ public class ChatActivity extends AppCompatActivity {
 
         public void setChat(Chat chat) {
             this.chat = chat;
+            this.newMessageCount = chat.newMessageCount;
             notifyDataSetChanged();
         }
 
@@ -354,7 +365,8 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-            holder.bindTo(Preconditions.checkNotNull(getItem(position)), chat, position < getItemCount() - 1 ? getItem(position+1) : null);
+            final Message message = Preconditions.checkNotNull(getItem(position));
+            holder.bindTo(message, (chat != null && chat.firstUnseenMessageRowId == message.rowId) ? newMessageCount : -1, position < getItemCount() - 1 ? getItem(position+1) : null);
         }
     }
 
@@ -406,5 +418,4 @@ public class ChatActivity extends AppCompatActivity {
             ChatActivity.this.startActivity(intent);
         }
     };
-
 }

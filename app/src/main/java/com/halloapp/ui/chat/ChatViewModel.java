@@ -23,6 +23,7 @@ import com.halloapp.content.MessagesDataSource;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatViewModel extends AndroidViewModel {
 
@@ -35,7 +36,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     private final ContentDb contentDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
-    private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
+    private final AtomicInteger pendingIncoming = new AtomicInteger(0);
     private final MessagesDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -49,7 +50,7 @@ public class ChatViewModel extends AndroidViewModel {
                     pendingOutgoing.set(true);
                     mainHandler.post(() -> reloadMessagesAt(Long.MAX_VALUE));
                 } else {
-                    pendingIncoming.set(true);
+                    pendingIncoming.incrementAndGet();
                     invalidateMessages();
                 }
             }
@@ -130,8 +131,8 @@ public class ChatViewModel extends AndroidViewModel {
         return pendingOutgoing.compareAndSet(true, false);
     }
 
-    boolean checkPendingIncoming() {
-        return pendingIncoming.compareAndSet(true, false);
+    int checkPendingIncoming() {
+        return pendingIncoming.getAndSet(0);
     }
 
     void reloadMessagesAt(long rowId) {
