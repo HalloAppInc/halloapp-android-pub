@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="9dp">
 
                 <com.halloapp.widget.LimitingTextView
                     android:id="@+id/text"
@@ -72,7 +72,7 @@
                     android:paddingStart="0dp"
                     android:paddingTop="4dp"
                     android:paddingEnd="2dp"
-                    android:paddingBottom="4dp"
+                    android:paddingBottom="3.5dp"
                     tools:src="@drawable/ic_messaging_delivered" />
 
             </com.halloapp.widget.MessageTextLayout>

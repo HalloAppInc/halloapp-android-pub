@@ -92,6 +92,7 @@
         android:id="@+id/new_messages"
         android:layout_width="wrap_content"
         android:layout_height="18sp"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@+id/info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/info"
