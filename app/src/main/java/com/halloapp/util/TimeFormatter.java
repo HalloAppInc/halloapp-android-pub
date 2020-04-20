@@ -53,7 +53,7 @@ public class TimeFormatter {
         if (timestamp > now) {
             timestamp = now;
         }
-        if (timestamp < now + 60_000) {
+        if (timestamp > now - 60_000) {
             return context.getString(R.string.last_seen_less_minute);
         }
         return context.getString(R.string.last_seen, DateUtils.getRelativeTimeSpanString(timestamp));
