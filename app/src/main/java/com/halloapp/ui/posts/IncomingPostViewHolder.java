@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.R;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
+import com.halloapp.ui.chat.ChatActivity;
 
 public class IncomingPostViewHolder extends PostViewHolder {
 
@@ -28,7 +29,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
             parent.startActivity(intent);
         });
         itemView.findViewById(R.id.message).setOnClickListener(view -> {
-            // TODO (ds): start message activity
+            parent.startActivity(new Intent(view.getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId.rawId()));
         });
     }
 
