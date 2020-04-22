@@ -71,6 +71,10 @@
             android:label=""/>
 
         <activity
+            android:name=".ui.contacts.ContactsActivity"
+            android:label="@string/select_contact"/>
+
+        <activity
             android:name=".ui.ContentComposerActivity"
             android:label="@string/new_post"
             android:theme="@style/AppTheme.PostComposer"

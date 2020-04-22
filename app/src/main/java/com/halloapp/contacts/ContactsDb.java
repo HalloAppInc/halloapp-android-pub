@@ -352,6 +352,43 @@ public class ContactsDb {
         return contacts;
     }
 
+    @WorkerThread
+    public List<Contact> getUsers() {
+        final List<Contact> contacts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] { ContactsTable._ID,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_ID,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_NAME,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_PHONE,
+                        ContactsTable.COLUMN_HALLO_NAME,
+                        ContactsTable.COLUMN_NORMALIZED_PHONE,
+                        ContactsTable.COLUMN_USER_ID,
+                        ContactsTable.COLUMN_FRIEND
+                },
+                ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
+                null, null, null, null)) {
+            final Set<String> userIds = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String userIdStr = cursor.getString(6);
+                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance(context).getUser())) {
+                    final Contact contact = new Contact(
+                            cursor.getLong(0),
+                            cursor.getLong(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(5),
+                            new UserId(userIdStr),
+                            cursor.getInt(7) == 1);
+                    contacts.add(contact);
+                }
+            }
+        }
+        Log.i("ContactsDb.getUsers: " + contacts.size());
+        return contacts;
+    }
+
     private void notifyContactsChanged() {
         synchronized (observers) {
             for (Observer observer : observers) {

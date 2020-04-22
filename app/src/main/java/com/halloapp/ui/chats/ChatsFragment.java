@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
@@ -60,8 +56,6 @@ public class ChatsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        setHasOptionsMenu(true);
-
         final View root = inflater.inflate(R.layout.fragment_chats, container, false);
         final RecyclerView chatsView = root.findViewById(R.id.chats);
         final View emptyView = root.findViewById(android.R.id.empty);
@@ -82,25 +76,6 @@ public class ChatsFragment extends Fragment {
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
 
         return root;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.chats_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.refresh_contacts: {
-                ContactsSync.getInstance(Preconditions.checkNotNull(getContext())).startContactsSync(true);
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
-        }
     }
 
     private class ChatsAdapter extends AdapterWithLifecycle<ChatsAdapter.ViewHolder> {

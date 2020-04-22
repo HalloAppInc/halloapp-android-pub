@@ -38,6 +38,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -119,23 +120,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         unseenChatsCount == null || unseenChatsCount == 0 ? "" : String.format(Locale.getDefault(), "%d", unseenChatsCount)));
 
         fabView = findViewById(R.id.speed_dial);
-        fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
-        addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_media_collection, R.string.gallery_post);
-        addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
-        addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
-        fabView.setOnActionSelectedListener(actionItem -> {
-            onFabActionSelected(actionItem.getId());
-            return true;
-        });
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (fabView.isOpen()) {
                 fabView.close();
             }
-            if (destination.getId() == R.id.navigation_messages) {
-                fabView.hide();
-            } else {
-                fabView.show();
-            }
+            updateFab(destination.getId());
         });
 
         final String[] perms = {Manifest.permission.READ_CONTACTS};
@@ -150,6 +139,37 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         ContactsDb.getInstance(this).addObserver(contactsObserver);
+    }
+
+    private void updateFab(@IdRes int id) {
+        fabView.clearActionItems();
+        if (id == R.id.navigation_messages) {
+            fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.new_chat));
+            fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_chat));
+            fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+                @Override
+                public boolean onMainActionSelected() {
+                    startActivity(new Intent(getBaseContext(), ContactsActivity.class));
+                    return true;
+                }
+
+                @Override
+                public void onToggleChanged(boolean b) {
+                }
+            });
+            fabView.setOnActionSelectedListener(null);
+        } else {
+            fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
+            fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
+            fabView.setOnChangeListener(null);
+            fabView.setOnActionSelectedListener(actionItem -> {
+                onFabActionSelected(actionItem.getId());
+                return true;
+            });
+            addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_media_collection, R.string.gallery_post);
+            addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+            addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+        }
     }
 
     private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {

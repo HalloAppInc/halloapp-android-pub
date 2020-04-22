@@ -22,4 +22,6 @@
     <color name="message_background_outgoing">#D6E4FA</color>
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">#35529F</color>
+    <color name="contacts_list_item_header_text_color">#4575E5</color>
+    <color name="search_highlight">#ff33b5e5</color>
 </resources>

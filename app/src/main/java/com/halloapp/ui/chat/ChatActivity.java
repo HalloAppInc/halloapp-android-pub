@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
@@ -279,7 +280,7 @@ public class ChatActivity extends AppCompatActivity {
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
 
-        Chat chat;
+        @Nullable Chat chat;
         int newMessageCount;
 
         ChatAdapter() {
@@ -287,9 +288,13 @@ public class ChatActivity extends AppCompatActivity {
             setHasStableIds(true);
         }
 
-        public void setChat(Chat chat) {
+        public void setChat(@Nullable Chat chat) {
             this.chat = chat;
-            this.newMessageCount = chat.newMessageCount;
+            if (chat != null) {
+                this.newMessageCount = chat.newMessageCount;
+            } else {
+                this.newMessageCount = 0;
+            }
             notifyDataSetChanged();
         }
 
