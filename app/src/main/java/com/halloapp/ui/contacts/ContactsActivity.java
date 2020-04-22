@@ -162,6 +162,9 @@ public class ContactsActivity extends AppCompatActivity implements EasyPermissio
         }
     }
 
+    private static final int ITEM_TYPE_CONTACT = 0;
+    private static final int ITEM_TYPE_INVITE = 1;
+
     private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
 
         private List<Contact> contacts = new ArrayList<>();
@@ -183,22 +186,26 @@ public class ContactsActivity extends AppCompatActivity implements EasyPermissio
 
         @Override
         public int getItemViewType(int position) {
-            return 0;
+            return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
         }
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false));
+            return viewType == ITEM_TYPE_CONTACT ?
+                    new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false)) :
+                    new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bindTo(filteredContacts.get(position), filterTokens);
+            if (position < getFilteredContactsCount()) {
+                holder.bindTo(filteredContacts.get(position), filterTokens);
+            }
         }
 
         @Override
         public int getItemCount() {
-            return filteredContacts == null ? 0 : filteredContacts.size();
+            return getFilteredContactsCount() + (TextUtils.isEmpty(filterText) ? 1 : 0);
         }
 
         @NonNull
@@ -218,6 +225,10 @@ public class ContactsActivity extends AppCompatActivity implements EasyPermissio
         @Override
         public Filter getFilter() {
             return new ContactsFilter(contacts);
+        }
+
+        private int getFilteredContactsCount() {
+            return filteredContacts == null ? 0 : filteredContacts.size();
         }
     }
 
@@ -300,13 +311,23 @@ public class ContactsActivity extends AppCompatActivity implements EasyPermissio
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        void bindTo(@NonNull Contact contact, List<String> filterTokens) {
+        }
+    }
+
+    class ContactViewHolder extends ViewHolder {
+
         final private ImageView avatarView;
         final private TextView nameView;
         final private TextView phoneView;
 
         private Contact contact;
 
-        ViewHolder(@NonNull View itemView) {
+        ContactViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
@@ -349,6 +370,21 @@ public class ContactsActivity extends AppCompatActivity implements EasyPermissio
                 nameView.setText(contact.getDisplayName());
             }
             phoneView.setText(contact.getDisplayPhone());
+        }
+    }
+
+    class InviteViewHolder extends ViewHolder {
+
+        InviteViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(v -> {
+                final Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_text));
+                intent.setType("text/plain");
+                startActivity(Intent.createChooser(intent, getText(R.string.share_via)));
+            });
         }
     }
 }

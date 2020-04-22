@@ -173,4 +173,7 @@
     <string name="select_contact">Select contact</string>
     <string name="search">Search</string>
     <string name="contact_search_empty">Nothing found for \'%s\'</string>
+    <string name="invite_friends">Invite friends</string>
+    <string name="invite_text">Hey,\n\nHalloApp is a fast, simple and secure app that I use to share what I care about with friends and family.\n\nGet it for free at\nhttps://www.halloapp.com/download/</string>
+    <string name="share_via">Share via…</string>
 </resources>
