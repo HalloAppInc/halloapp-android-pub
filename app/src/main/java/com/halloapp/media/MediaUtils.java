@@ -265,15 +265,25 @@ public class MediaUtils {
         final Bitmap bitmap = decodeImage(fileFrom, maxWidth, maxHeight);
         if (bitmap != null) {
             final Bitmap croppedBitmap;
-            if (cropRect != null) {
+            if (cropRect != null && !(cropRect.left == 0 && cropRect.top == 0 && cropRect.right == 1 && cropRect.bottom == 1)) {
                 final Rect bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
                         (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
                 croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), Bitmap.Config.ARGB_8888);
                 final Canvas canvas = new Canvas(croppedBitmap);
+                canvas.drawColor(0xffffffff); // white background in case image has transparency
                 canvas.drawBitmap(bitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
                 bitmap.recycle();
             } else {
-                croppedBitmap = bitmap;
+                if (bitmap.getPixel(0,0) == 0) {
+                    // white background in case image has transparency
+                    croppedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                    final Canvas canvas = new Canvas(croppedBitmap);
+                    canvas.drawColor(0xffffffff);
+                    canvas.drawBitmap(bitmap, 0, 0, null);
+                    bitmap.recycle();
+                } else {
+                    croppedBitmap = bitmap;
+                }
             }
             try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
                 croppedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, streamTo);

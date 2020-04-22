@@ -5,7 +5,6 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +35,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -52,6 +51,8 @@ import com.halloapp.widget.PostEditText;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceLoader;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 public class ChatActivity extends AppCompatActivity {
@@ -104,6 +105,9 @@ public class ChatActivity extends AppCompatActivity {
         chatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
 
         editText = findViewById(R.id.entry);
+        editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)
+                .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
+                .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)));
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         final RecyclerView chatView = findViewById(R.id.chat);
