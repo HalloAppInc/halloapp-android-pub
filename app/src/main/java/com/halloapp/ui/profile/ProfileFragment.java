@@ -86,7 +86,7 @@ public class ProfileFragment extends PostsFragment {
         avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
 
-        final CircleImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
+        final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
         changeAvatarView.setOnClickListener(v -> {
             Log.d("ProfileFragment request change avatar");
             final Intent intent = new Intent(getContext(), MediaPickerActivity.class);

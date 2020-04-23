@@ -21,15 +21,13 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="48dp" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/change_avatar"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/avatar_person"
+        android:src="@drawable/change_avatar_button"
         app:layout_constraintBottom_toBottomOf="@+id/avatar"
         app:layout_constraintEnd_toEndOf="@+id/avatar"
-        app:civ_border_color="@color/card_background"
-        app:civ_border_width="2dp"
         />
 
     <TextView
