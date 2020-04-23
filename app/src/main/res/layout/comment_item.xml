@@ -72,13 +72,14 @@
 
     <LinearLayout
         android:id="@+id/footer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/comment"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/comment"
         android:orientation="horizontal"
         android:paddingStart="10dp"
-        android:paddingEnd="8dp"
+        android:paddingEnd="6dp"
         android:gravity="center_vertical">
 
         <TextView
@@ -112,17 +113,18 @@
             android:background="?selectableItemBackground"
             android:text="@string/reply"/>
 
-        <TextView
-            android:id="@+id/retract"
-            android:layout_width="wrap_content"
+        <Space
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorSecondary"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/retract"
+            android:layout_width="15sp"
+            android:layout_height="15sp"
             android:background="?selectableItemBackground"
+            android:src="@drawable/ic_delete"
+            android:tint="@color/retract_comment_tint"
             android:text="@string/retract"/>
     </LinearLayout>
 

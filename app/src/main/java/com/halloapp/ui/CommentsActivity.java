@@ -21,12 +21,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,6 +55,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.PostEditText;
+import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
 
 import java.util.List;
@@ -80,6 +83,8 @@ public class CommentsActivity extends AppCompatActivity {
     private UserId replyUserId;
 
     private PostEditText editText;
+
+    private ItemTouchHelper itemTouchHelper;
 
     private static final long POST_TEXT_LIMITS_ID = -1;
     private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
@@ -211,6 +216,38 @@ public class CommentsActivity extends AppCompatActivity {
         if (replyUser != null && replyCommentId != null) {
             updateReplyIndicator(new UserId(replyUser), replyCommentId);
         }
+
+        itemTouchHelper = new ItemTouchHelper(new SwipeListItemHelper(
+                Preconditions.checkNotNull(getDrawable(R.drawable.ic_delete)),
+                ContextCompat.getColor(this, R.color.swipe_delete_background),
+                getResources().getDimensionPixelSize(R.dimen.swipe_delete_icon_margin)) {
+
+            @Override
+            public boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {
+                final Comment comment = ((ViewHolder)viewHolder).comment;
+                return comment != null && comment.commentSenderUserId.isMe() && !comment.isRetracted();
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // workaround to reset swiped out view
+                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                itemTouchHelper.attachToRecyclerView(null);
+                itemTouchHelper.attachToRecyclerView(commentsView);
+
+                final Comment comment = ((ViewHolder)viewHolder).comment;
+                if (comment == null || !comment.commentSenderUserId.isMe() || comment.isRetracted()) {
+                    return;
+                }
+                final AlertDialog.Builder builder = new AlertDialog.Builder(CommentsActivity.this);
+                builder.setMessage(getBaseContext().getString(R.string.retract_comment_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(CommentsActivity.this).retractComment(comment));
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(commentsView);
     }
 
     @Override
@@ -269,6 +306,8 @@ public class CommentsActivity extends AppCompatActivity {
         final View retractButton;
         final RecyclerView mediaGallery;
 
+        Comment comment;
+
         ViewHolder(final @NonNull View v) {
             super(v);
             avatarView = v.findViewById(R.id.avatar);
@@ -287,6 +326,8 @@ public class CommentsActivity extends AppCompatActivity {
         }
 
         void bindTo(final @NonNull Comment comment) {
+
+            this.comment = comment;
 
             avatarLoader.load(avatarView, comment.commentSenderUserId);
             if (comment.isOutgoing()) {
@@ -335,6 +376,9 @@ public class CommentsActivity extends AppCompatActivity {
         }
 
         void bindTo(final @Nullable Post post) {
+
+            this.comment = null;
+
             if (post == null) {
                 return;
             }

@@ -20,4 +20,5 @@
     <dimen name="contacts_list_item_height">72dp</dimen>
     <dimen name="contacts_list_item_header_text_size">20sp</dimen>
     <dimen name="contacts_list_item_header_width">56dp</dimen>
+    <dimen name="swipe_delete_icon_margin">24dp</dimen>
 </resources>
