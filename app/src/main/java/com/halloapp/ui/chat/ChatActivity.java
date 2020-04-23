@@ -163,14 +163,14 @@ public class ChatActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 }
             } else {
-                if (adapter.chat != null && initialScroll.compareAndSet(true, false)) {
+                if (adapter.chat != null && initialScroll.compareAndSet(true, false) && adapter.chat.newMessageCount > 0) {
                     layoutManager.scrollToPositionWithOffset(adapter.chat.newMessageCount, chatView.getHeight() * 9 / 10);
                 }
             }
         }));
         viewModel.chat.getLiveData().observe(this, chat -> {
             adapter.setChat(chat);
-            if (chat != null && adapter.getItemCount() >= chat.newMessageCount && initialScroll.compareAndSet(true, false)) {
+            if (chat != null && adapter.getItemCount() >= chat.newMessageCount && initialScroll.compareAndSet(true, false)  && chat.newMessageCount > 0) {
                 layoutManager.scrollToPositionWithOffset(chat.newMessageCount, chatView.getHeight() * 9 / 10);
             }
             ContentDb.getInstance(this).setChatSeen(chatId);
