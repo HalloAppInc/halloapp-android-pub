@@ -147,8 +147,8 @@
     <string name="message_retracted_placeholder">This message has been deleted</string>
     <string name="comment_retracted_placeholder">This comment has been deleted</string>
     <string name="retract">Delete</string>
-    <string name="retract_post_confirmation">Would you like to deleted your post?</string>
-    <string name="retract_comment_confirmation">Would you like to deleted your comment?</string>
+    <string name="retract_post_confirmation">Would you like to delete your post?</string>
+    <string name="retract_comment_confirmation">Would you like to delete your comment?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="activity">Activity</string>
