@@ -54,6 +54,7 @@ import com.halloapp.xmpp.PresenceLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -131,6 +132,7 @@ public class ChatActivity extends AppCompatActivity {
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
         });
 
+        final AtomicBoolean initialScroll = new AtomicBoolean(true);
         viewModel.messageList.observe(this, messages -> adapter.submitList(messages, () -> {
             final boolean newOutgoingMessage = viewModel.checkPendingOutgoing();
             final int newIncomingMessage = viewModel.checkPendingIncoming();
@@ -160,10 +162,17 @@ public class ChatActivity extends AppCompatActivity {
                     adapter.newMessageCount += newIncomingMessage;
                     adapter.notifyDataSetChanged();
                 }
+            } else {
+                if (adapter.chat != null && initialScroll.compareAndSet(true, false)) {
+                    layoutManager.scrollToPositionWithOffset(adapter.chat.newMessageCount, chatView.getHeight() * 9 / 10);
+                }
             }
         }));
         viewModel.chat.getLiveData().observe(this, chat -> {
             adapter.setChat(chat);
+            if (chat != null && adapter.getItemCount() >= chat.newMessageCount && initialScroll.compareAndSet(true, false)) {
+                layoutManager.scrollToPositionWithOffset(chat.newMessageCount, chatView.getHeight() * 9 / 10);
+            }
             ContentDb.getInstance(this).setChatSeen(chatId);
         });
         viewModel.contact.getLiveData().observe(this, contact -> {
