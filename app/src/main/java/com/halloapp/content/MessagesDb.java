@@ -23,6 +23,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -641,10 +642,38 @@ class MessagesDb {
         Log.i("ContentDb.deleteChat " + chatId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
-        db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
-        db.delete(ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
+
+        final String sql =
+            "SELECT " +
+                "m." + MediaTable.COLUMN_FILE + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
+            "INNER JOIN (" +
+                "SELECT " +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE;
+
+        int filesDeleted = 0;
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                final File mediaFile = fileStore.getMediaFile(cursor.getString(0));
+                if (mediaFile != null) {
+                    if (mediaFile.delete()) {
+                        filesDeleted++;
+                    } else {
+                        Log.i("ContentDb.deleteChat: failed to delete " + mediaFile.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        final int messagesDeleted = db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
+        final int chatsDeleted = db.delete(ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
         db.setTransactionSuccessful();
         db.endTransaction();
+
+        Log.i("ContentDb.deleteChat " + chatId + " filesDeleted=" + filesDeleted + " messagesDeleted=" + messagesDeleted + " chatsDeleted=" + chatsDeleted);
     }
 
     @WorkerThread
