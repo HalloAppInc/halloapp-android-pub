@@ -80,7 +80,6 @@ public class FileStore {
 
     @WorkerThread
     public void cleanup() {
-        cleanupDir(mediaDir);
         cleanupDir(tmpDir);
         cleanupDir(cameraDir);
     }

@@ -22,6 +22,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -101,11 +102,12 @@ class PostsDb {
                     post = updatePost;
                 }
             }
-            int updatedCount = db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+            final int updatedCount = db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                     PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
                     new String[]{post.senderUserId.rawId(), post.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
+                Log.i("ContentDb.retractPost: nothing to retract, will insert new post");
                 values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
                 values.put(PostsTable.COLUMN_POST_ID, post.id);
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
@@ -874,6 +876,34 @@ class PostsDb {
     @WorkerThread
     boolean cleanup() {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        final String sql =
+            "SELECT " +
+                "m." + MediaTable.COLUMN_FILE + " " +
+            "FROM " + PostsTable.TABLE_NAME + " " +
+            "INNER JOIN (" +
+                "SELECT " +
+                    MediaTable.COLUMN_PARENT_TABLE + "," +
+                    MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
+                "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime();
+        int deletedFiles = 0;
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                final File mediaFile = fileStore.getMediaFile(cursor.getString(0));
+                if (mediaFile != null) {
+                    if (mediaFile.delete()) {
+                        deletedFiles++;
+                    } else {
+                        Log.i("ContentDb.cleanup: failed to delete " + mediaFile.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        Log.i("ContentDb.cleanup: " + deletedFiles + " media files deleted");
+
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
                 PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
