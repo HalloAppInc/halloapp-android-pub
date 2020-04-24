@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
@@ -56,6 +57,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
     private static final int REQUEST_CODE_PICK_MEDIA = 3;
     private static final int REQUEST_CODE_SET_AVATAR = 4;
+    private static final int REQUEST_CODE_TAKE_PHOTO = 5;
 
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;
@@ -152,6 +154,14 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
         switch (request) {
+            case REQUEST_CODE_TAKE_PHOTO: {
+                if (result == RESULT_OK) {
+                    final ArrayList<Uri> uris = new ArrayList<>();
+                    uris.add(MediaUtils.getImageCaptureUri(this));
+                    handleSelection(uris);
+                }
+                break;
+            }
             case REQUEST_CODE_PICK_MEDIA: {
                 if (result == RESULT_OK) {
                     if (data == null) {
@@ -229,6 +239,10 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.media_picker, menu);
+        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            MenuItem menuItem = menu.findItem(R.id.camera);
+            menuItem.setVisible(true);
+        }
         return true;
     }
 
@@ -245,6 +259,11 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
                 startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
                 return true;
+            }
+            case R.id.camera: {
+                final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(this));
+                startActivityForResult(intent, REQUEST_CODE_TAKE_PHOTO);
             }
             default: {
                 return super.onOptionsItemSelected(item);

@@ -8,4 +8,11 @@
         android:title="@string/other_media"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/camera"
+        android:icon="@drawable/ic_camera"
+        android:title="@string/camera_post"
+        app:showAsAction="always"
+        android:visible="false"/>
+
 </menu>
