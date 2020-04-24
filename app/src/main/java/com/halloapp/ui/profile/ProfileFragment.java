@@ -87,12 +87,14 @@ public class ProfileFragment extends PostsFragment {
         AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
 
         final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
-        changeAvatarView.setOnClickListener(v -> {
+        View.OnClickListener changeAvatarListener = v -> {
             Log.d("ProfileFragment request change avatar");
             final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
             intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
-        });
+        };
+        changeAvatarView.setOnClickListener(changeAvatarListener);
+        avatarView.setOnClickListener(changeAvatarListener);
 
         adapter.addHeader(headerView);
 
