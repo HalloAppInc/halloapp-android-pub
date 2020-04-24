@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
@@ -35,6 +36,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
@@ -236,7 +238,12 @@ public class ChatActivity extends AppCompatActivity {
         //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.delete: {
-                ContentDb.getInstance(this).deleteChat(chatId);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getBaseContext().getString(R.string.delete_chat_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(this).deleteChat(chatId));
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
                 return true;
             }
             default: {

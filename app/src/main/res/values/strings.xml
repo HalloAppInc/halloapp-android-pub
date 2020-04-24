@@ -149,6 +149,7 @@
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to delete your post?</string>
     <string name="retract_comment_confirmation">Would you like to delete your comment?</string>
+    <string name="delete_chat_confirmation">Would you like to delete this chat?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="activity">Activity</string>
