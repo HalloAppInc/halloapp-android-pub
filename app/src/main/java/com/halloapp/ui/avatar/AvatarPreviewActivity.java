@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Size;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,10 +33,10 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
-import com.halloapp.content.Media;
 import com.halloapp.ui.VideoPlaybackActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
@@ -44,7 +45,6 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.CropImageView;
-import com.halloapp.widget.MediaViewPager;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 
@@ -61,8 +61,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import me.relex.circleindicator.CircleIndicator;
 
 public class AvatarPreviewActivity extends AppCompatActivity {
 
@@ -84,9 +82,15 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        final View setButton = findViewById(R.id.set_avatar);
+        final View setButton = findViewById(R.id.done);
         setButton.setOnClickListener(v -> {
             viewModel.preparePost();
+        });
+
+        final View resetButton = findViewById(R.id.reset);
+        resetButton.setOnClickListener(v -> {
+            final CropImageView imageView = findViewById(R.id.image);
+            imageView.getAttacher().update();
         });
 
         final View progressView = findViewById(R.id.progress);
@@ -101,24 +105,27 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             setButton.setEnabled(false);
         }
 
-        final MediaViewPager viewPager = findViewById(R.id.media_pager);
-        viewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
-        viewPager.setVisibility(View.GONE);
-        final CircleIndicator mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
-        mediaPagerIndicator.setVisibility(View.GONE);
-
         viewModel = new ViewModelProvider(this,
                 new PostComposerViewModelFactory(getApplication(), uris)).get(PostComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
-                viewPager.setMaxAspectRatio(1);
-                viewPager.setAdapter(new PostMediaPagerAdapter(media));
-                viewPager.setVisibility(View.VISIBLE);
+                final CropImageView imageView = findViewById(R.id.image);
+                final Media mediaItem = media.get(0);
+                imageView.setSinglePointerDragStartDisabled(media.size() > 1);
+                imageView.setReturnToMinScaleOnUp(false);
+                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } else {
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                }
+                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
+                imageView.setGridEnabled(true);
+                mediaThumbnailLoader.load(imageView, mediaItem);
+                imageView.setVisibility(View.VISIBLE);
             }
             if (media.size() > 1) {
-                mediaPagerIndicator.setVisibility(View.VISIBLE);
-                mediaPagerIndicator.setViewPager(viewPager);
+                throw new IllegalStateException("Can only have a single profile photo"); // TODO(jack)
             }
             if (uris != null && media.size() != uris.size()) {
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
@@ -141,6 +148,12 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_photo_crop_menu, menu);
         return true;
     }
 

@@ -29,7 +29,8 @@
     <string name="type_a_caption_hint">Type a caption</string>
     <string name="type_a_message_hint">Type a message</string>
     <string name="send">Send</string>
-    <string name="set_avatar">Set Avatar</string>
+    <string name="set_avatar_done">Done</string>
+    <string name="set_avatar_reset">Reset</string>
     <string name="new_post">New post</string>
     <string name="posts_empty">Your posts will appear here</string>
     <string name="invalid_phone_number">Invalid phone number</string>
@@ -106,6 +107,7 @@
     <string name="select">OK</string>
     <string name="avatar_picker_title">Profile Photo</string>
     <string name="other_media">Other media</string>
+    <string name="rotate">Rotate</string>
     <string name="seen_by">Seen by</string>
     <string name="options">Options</string>
     <string name="block">Block</string>

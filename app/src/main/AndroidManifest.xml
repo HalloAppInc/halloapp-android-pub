@@ -104,7 +104,8 @@
             android:label="" />
 
         <activity android:name=".ui.avatar.AvatarPreviewActivity"
-            android:label="" />
+            android:theme="@style/AppTheme.ActionBarBlack"
+            android:label="@string/avatar_picker_title" />
 
         <receiver
             android:name=".registration.SmsVerificationReceiver"

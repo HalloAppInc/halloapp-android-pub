@@ -18,6 +18,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.ActionBarBlack" parent="AppTheme">
+        <item name="actionBarStyle">@style/ActionBarBlack</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:textColorPrimary">#FFF</item>
+    </style>
+
     <style name="AppTheme.MediaPlayer" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@android:color/black</item>
@@ -43,6 +49,13 @@
         <item name="background">@color/color_action_bar</item>
         <item name="backgroundStacked">@color/color_action_bar</item>
         <item name="backgroundSplit">@color/color_action_bar</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="ActionBarBlack" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
+        <item name="background">@android:color/black</item>
+        <item name="backgroundStacked">@android:color/black</item>
+        <item name="backgroundSplit">@android:color/black</item>
         <item name="elevation">0dp</item>
     </style>
 
