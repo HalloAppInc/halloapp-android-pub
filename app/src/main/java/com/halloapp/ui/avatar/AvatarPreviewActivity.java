@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.util.Size;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
@@ -27,7 +26,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -37,7 +35,6 @@ import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
-import com.halloapp.ui.VideoPlaybackActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -163,66 +160,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         setTitle("");
         getWindow().setStatusBarColor(0);
         super.finish();
-    }
-
-    private class PostMediaPagerAdapter extends PagerAdapter {
-
-        final List<Media> media = new ArrayList<>();
-
-        PostMediaPagerAdapter(@NonNull List<Media> media) {
-            this.media.clear();
-            this.media.addAll(media);
-        }
-
-        @Override
-        public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
-            final View view = getLayoutInflater().inflate(R.layout.post_composer_media_pager_item, container, false);
-            final CropImageView imageView = view.findViewById(R.id.image);
-            final View playButton = view.findViewById(R.id.play);
-            final Media mediaItem = media.get(position);
-            if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                imageView.setSinglePointerDragStartDisabled(media.size() > 1);
-                imageView.setReturnToMinScaleOnUp(false);
-                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                } else {
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                }
-                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
-                imageView.setGridEnabled(true);
-            } else {
-                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                imageView.setGridEnabled(false);
-            }
-            mediaThumbnailLoader.load(imageView, mediaItem);
-            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-                playButton.setVisibility(View.VISIBLE);
-                playButton.setOnClickListener(v -> {
-                    final Intent intent = new Intent(getBaseContext(), VideoPlaybackActivity.class);
-                    intent.setData(Uri.fromFile(mediaItem.file));
-                    startActivity(intent);
-                });
-            } else {
-                playButton.setVisibility(View.GONE);
-            }
-            container.addView(view);
-            return view;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object view) {
-            container.removeView((View) view);
-        }
-
-        @Override
-        public int getCount() {
-            return media.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view == object;
-        }
     }
 
     static class LoadPostUrisTask extends AsyncTask<Void, Void, List<Media>> {
