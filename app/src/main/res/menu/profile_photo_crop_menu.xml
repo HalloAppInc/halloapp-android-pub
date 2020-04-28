@@ -6,7 +6,6 @@
         android:id="@+id/rotate"
         android:icon="@drawable/ic_rotate"
         android:title="@string/rotate"
-        android:visible="false"
         app:showAsAction="always"/>
 
 </menu>

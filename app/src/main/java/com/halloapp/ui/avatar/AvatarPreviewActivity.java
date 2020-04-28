@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -14,9 +15,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Size;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,6 +64,9 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
     private PostComposerViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private CropImageView imageView;
+    private RectF cropRect;
+    private int rotation = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,29 +99,29 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         final ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (uris != null) {
             progressView.setVisibility(View.VISIBLE);
-            if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
-                CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
-                uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
+            if (uris.size() > 1) {
+                uris.subList(1, uris.size()).clear();
             }
             setButton.setEnabled(false);
         }
+
+        imageView = findViewById(R.id.image);
 
         viewModel = new ViewModelProvider(this,
                 new PostComposerViewModelFactory(getApplication(), uris)).get(PostComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
-                final CropImageView imageView = findViewById(R.id.image);
                 final Media mediaItem = media.get(0);
                 imageView.setSinglePointerDragStartDisabled(media.size() > 1);
                 imageView.setReturnToMinScaleOnUp(false);
-                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
+                imageView.setOnCropListener(rect -> cropRect = rect);
                 imageView.setGridEnabled(false);
                 mediaThumbnailLoader.load(imageView, mediaItem);
                 imageView.setVisibility(View.VISIBLE);
             }
-            if (media.size() > 1) {
-                throw new IllegalStateException("Can only have a single profile photo"); // TODO(jack)
+            if (media.size() != 1) {
+                throw new IllegalStateException("Can only have a single profile photo");
             }
             if (uris != null && media.size() != uris.size()) {
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
@@ -147,6 +151,21 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.profile_photo_crop_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (item.getItemId()) {
+            case R.id.rotate: {
+                imageView.setRotationBy(270);
+                rotation = (rotation + 270) % 360;
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 
     @Override
@@ -218,13 +237,11 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     class Prepare extends AsyncTask<Void, Void, Boolean> {
 
         private final List<Media> media;
-        private final Map<File, RectF> cropRects;
         private final Application application;
 
-        Prepare(@NonNull Application application, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects) {
+        Prepare(@NonNull Application application, @Nullable List<Media> media) {
             this.application = application;
             this.media = media;
-            this.cropRects = cropRects;
         }
 
         @Override
@@ -233,7 +250,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 Media img = media.get(0);
                 final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
-                    TranscodeResult transcodeResult = transcode(img.file, outFile, cropRects == null ? null : cropRects.get(img.file), Constants.MAX_AVATAR_DIMENSION);
+                    TranscodeResult transcodeResult = transcode(img.file, outFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
                     uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged();
@@ -288,17 +305,18 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 maxHeight = maxDimension;
             }
             final Bitmap bitmap = MediaUtils.decodeImage(fileFrom, maxWidth, maxHeight);
-            if (bitmap != null) {
+            final Bitmap rotatedBitmap = rotateBitmap(bitmap, rotation);
+            if (rotatedBitmap != null) {
                 final Bitmap croppedBitmap;
                 if (cropRect != null) {
-                    final Rect bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
-                            (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
+                    final Rect bitmapRect = new Rect((int)(rotatedBitmap.getWidth() * cropRect.left), (int)(rotatedBitmap.getHeight() * cropRect.top),
+                            (int)(rotatedBitmap.getWidth() * cropRect.right), (int)(rotatedBitmap.getHeight() * cropRect.bottom));
                     croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), Bitmap.Config.ARGB_8888);
                     final Canvas canvas = new Canvas(croppedBitmap);
-                    canvas.drawBitmap(bitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
-                    bitmap.recycle();
+                    canvas.drawBitmap(rotatedBitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
+                    rotatedBitmap.recycle();
                 } else {
-                    croppedBitmap = bitmap;
+                    croppedBitmap = rotatedBitmap;
                 }
 
                 MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -318,7 +336,13 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             }
         }
 
-        public void uploadAvatar(File pngFile, Connection connection, final TranscodeResult transcodeResult) {
+        private Bitmap rotateBitmap(Bitmap source, float angle) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+        }
+
+        public void uploadAvatar(File file, Connection connection, final TranscodeResult transcodeResult) {
             final MediaUploadIq.Urls urls;
             try {
                 urls = connection.requestMediaUpload().get();
@@ -333,7 +357,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
             final Uploader.UploadListener uploadListener = percent -> true;
             try {
-                Uploader.run(pngFile, null, Media.MEDIA_TYPE_UNKNOWN, urls.putUrl, uploadListener);
+                Uploader.run(file, null, Media.MEDIA_TYPE_UNKNOWN, urls.putUrl, uploadListener);
                 connection.publishAvatarMetadata(transcodeResult.hash, urls.getUrl, transcodeResult.byteCount, transcodeResult.height, transcodeResult.width);
             } catch (IOException e) {
                 Log.e("upload avatar", e);
@@ -367,8 +391,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
 
-        final Map<File, RectF> cropRects = new HashMap<>();
-
         PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
             super(application);
             if (uris != null) {
@@ -385,7 +407,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         void preparePost() {
-            new Prepare(getApplication(), getMedia(), cropRects).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new Prepare(getApplication(), getMedia()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }
