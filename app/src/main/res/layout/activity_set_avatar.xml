@@ -22,22 +22,30 @@
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/footer"
+        android:layout_margin="8dp"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:visibility="gone"
         app:civCornerColor="@android:color/black"
-        app:civCornerRadius="8dp"
-        app:civGridColor="#a0ffffff"
-        app:civGridSize="2dp"
+        app:civCornerRadius="0dp"
+        />
+
+    <com.halloapp.ui.avatar.AvatarCropOverlay
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@+id/image"
+        app:layout_constraintBottom_toBottomOf="@+id/image"
+        app:layout_constraintEnd_toEndOf="@+id/image"
+        app:layout_constraintStart_toStartOf="@+id/image"
         />
 
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

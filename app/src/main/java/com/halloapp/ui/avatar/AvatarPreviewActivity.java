@@ -111,13 +111,8 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 final Media mediaItem = media.get(0);
                 imageView.setSinglePointerDragStartDisabled(media.size() > 1);
                 imageView.setReturnToMinScaleOnUp(false);
-                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                } else {
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                }
                 imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
-                imageView.setGridEnabled(true);
+                imageView.setGridEnabled(false);
                 mediaThumbnailLoader.load(imageView, mediaItem);
                 imageView.setVisibility(View.VISIBLE);
             }

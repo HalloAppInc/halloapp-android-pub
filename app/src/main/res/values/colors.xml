@@ -26,4 +26,5 @@
     <color name="search_highlight">#ff33b5e5</color>
     <color name="swipe_delete_background">#D93025</color>
     <color name="retract_comment_tint">#80808080</color>
+    <color name="avatar_crop_overlay">#C4C4C4C4</color>
 </resources>
