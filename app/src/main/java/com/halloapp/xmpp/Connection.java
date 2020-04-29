@@ -493,9 +493,7 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         post.text,
                         null,
-                        null,
-                        null,
-                        post.senderUserId);
+                        null);
                 for (Media media : post.media) {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
@@ -524,8 +522,6 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         null,
                         null,
-                        null,
-                        null,
                         null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
@@ -552,9 +548,7 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         comment.text,
                         comment.postId,
-                        comment.parentCommentId,
-                        null,
-                        comment.commentSenderUserId);
+                        comment.parentCommentId);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
                 pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
@@ -580,9 +574,7 @@ public class Connection {
                         connection.getUser().getLocalpart().toString(),
                         null,
                         postId,
-                        null,
-                        null,
-                        postSenderUserId);
+                        null);
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
                 pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
@@ -612,27 +604,16 @@ public class Connection {
             }
             try {
                 // TODO(jack): keys should be stored for use until the message send is successful
-                final PublishedEntry entry = new PublishedEntry(
-                        PublishedEntry.ENTRY_CHAT,
-                        null,
-                        message.timestamp,
-                        connection.getUser().getLocalpart().toString(),
-                        message.text,
-                        null,
-                        null,
+                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
+                xmppMessage.setStanzaId(message.id);
+                xmppMessage.addExtension(new ChatMessageElement(
+                        message,
                         recipientUserId,
                         myExternalUserId,
                         sessionSetupInfo.ephemeralKey,
                         sessionSetupInfo.ephemeralKeyId,
                         sessionSetupInfo.identityKey,
-                        sessionSetupInfo.oneTimePreKeyId);
-                for (Media media : message.media) {
-                    entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
-                }
-
-                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
-                xmppMessage.setStanzaId(message.id);
-                xmppMessage.addExtension(new ChatMessageElement(entry));
+                        sessionSetupInfo.oneTimePreKeyId));
                 ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
                 Log.i("connection: sending message " + message.id + " to " + recipientJid);
                 connection.sendStanza(xmppMessage);

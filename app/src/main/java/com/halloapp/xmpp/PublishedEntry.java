@@ -11,10 +11,6 @@ import androidx.annotation.StringDef;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
-import com.halloapp.contacts.UserId;
-import com.halloapp.crypto.SessionManager;
-import com.halloapp.crypto.keys.PublicECKey;
-import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Comment;
 import com.halloapp.proto.Container;
 import com.halloapp.proto.MediaType;
@@ -43,14 +39,12 @@ public class PublishedEntry {
 
     private static final String ELEMENT_FEED_POST = "feedpost";
     private static final String ELEMENT_COMMENT = "comment";
-    private static final String ELEMENT_CHAT_MESSAGE = "chatmessage";
     private static final String ELEMENT_TEXT = "text";
     private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
     private static final String ELEMENT_PARENT_COMMENT_ID = "parentCommentId";
     private static final String ELEMENT_URL = "url";
     private static final String ELEMENT_MEDIA = "media";
     private static final String ELEMENT_PROTOBUF_STAGE_ONE = "s1";
-    private static final String ELEMENT_ENCRYPTED = "enc";
 
     private static final String ATTRIBUTE_TYPE = "type";
     private static final String ATTRIBUTE_WIDTH = "width";
@@ -58,18 +52,11 @@ public class PublishedEntry {
     private static final String ATTRIBUTE_ENC_KEY = "key";
     private static final String ATTRIBUTE_SHA256_HASH = "sha256hash";
 
-    private static final String ATTRIBUTE_EPHEMERAL_KEY_ID = "id";
-    private static final String ATTRIBUTE_EPHEMERAL_KEY = "ephemeral_key_bytes";
-    private static final String ATTRIBUTE_IDENTITY_KEY = "identity_key";
-    private static final String ATTRIBUTE_ONE_TIME_PRE_KEY_ID = "one_time_pre_key_id";
-    private static final String ATTRIBUTE_SENDER_USER_ID = "sender_user_id";
-
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ENTRY_FEED, ENTRY_COMMENT, ENTRY_CHAT})
+    @IntDef({ENTRY_FEED, ENTRY_COMMENT})
     @interface EntryType {}
     static final int ENTRY_FEED = 0;
     static final int ENTRY_COMMENT = 1;
-    static final int ENTRY_CHAT = 2;
 
     final @EntryType int type;
     final String id;
@@ -79,12 +66,6 @@ public class PublishedEntry {
     final String feedItemId;
     final String parentCommentId;
     final List<Media> media = new ArrayList<>();
-    final UserId recipientUserId;
-    final UserId senderUserId;
-    final PublicECKey ephemeralKey;
-    final Integer ephemralKeyId;
-    final PublicECKey identityKey;
-    final Integer oneTimePreKeyId;
 
     public static class Media {
 
@@ -205,7 +186,7 @@ public class PublishedEntry {
         return entryBuilder == null ? null : entryBuilder.build();
     }
 
-    public static @NonNull PublishedEntry.Builder readEntry(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static @NonNull PublishedEntry.Builder readEntry(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, ELEMENT);
         PublishedEntry.Builder entryBuilder = null;
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -213,16 +194,7 @@ public class PublishedEntry {
                 continue;
             }
             final String name = Preconditions.checkNotNull(parser.getName());
-            if (name.equals(ELEMENT_ENCRYPTED)) {
-                try {
-                    if (Constants.ENCRYPTION_TURNED_ON) {
-                        entryBuilder = readEncryptedEntry(parser);
-                        return Preconditions.checkNotNull(entryBuilder);
-                    }
-                } catch (Exception e) {
-                    Log.w("Failed to read encrypted entry", e);
-                }
-            } else if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
+            if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
                 // TODO(jack): fix precedence (enc > s1 > original)
                 entryBuilder = readEncodedEntryString(Xml.readText(parser));
             } else if (name.equals(ELEMENT_FEED_POST)) {
@@ -231,9 +203,6 @@ public class PublishedEntry {
             } else if (name.equals(ELEMENT_COMMENT)) {
                 entryBuilder = readEntryContent(parser);
                 entryBuilder.type(ENTRY_COMMENT);
-            } else if (name.equals(ELEMENT_CHAT_MESSAGE)) {
-                entryBuilder = readEntryContent(parser);
-                entryBuilder.type(ENTRY_CHAT);
             } else {
                 Xml.skip(parser);
             }
@@ -291,11 +260,7 @@ public class PublishedEntry {
         return media;
     }
 
-    PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId, UserId recipientUserId, UserId senderUserId) {
-        this(type, id, timestamp, user, text, feedItemId, parentCommentId, recipientUserId, senderUserId, null, null, null, null);
-    }
-
-    PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId, UserId recipientUserId, UserId senderUserId, PublicECKey ephemeralKey, Integer ephemralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId) {
+    PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
         this.type = type;
         this.id = id;
         this.timestamp = timestamp;
@@ -307,12 +272,6 @@ public class PublishedEntry {
         }
         this.feedItemId = feedItemId;
         this.parentCommentId = parentCommentId;
-        this.recipientUserId = recipientUserId;
-        this.senderUserId = senderUserId;
-        this.ephemeralKey = ephemeralKey;
-        this.ephemralKeyId = ephemralKeyId;
-        this.identityKey = identityKey;
-        this.oneTimePreKeyId = oneTimePreKeyId;
     }
 
     @NonNull String toXml() {
@@ -368,25 +327,6 @@ public class PublishedEntry {
             serializer.text(getEncodedEntryString());
             serializer.endTag(NAMESPACE, ELEMENT_PROTOBUF_STAGE_ONE);
 
-            if (Constants.ENCRYPTION_TURNED_ON) {
-                serializer.startTag(NAMESPACE, ELEMENT_ENCRYPTED);
-                if (senderUserId != null) {
-                    serializer.attribute(null, ATTRIBUTE_SENDER_USER_ID, senderUserId.rawId());
-                }
-                if (ephemeralKey != null && ephemralKeyId != null) {
-                    serializer.attribute(null, ATTRIBUTE_EPHEMERAL_KEY, Base64.encodeToString(ephemeralKey.getKeyMaterial(), Base64.NO_WRAP));
-                    serializer.attribute(null, ATTRIBUTE_EPHEMERAL_KEY_ID, ephemralKeyId.toString());
-                }
-                if (identityKey != null) {
-                    serializer.attribute(null, ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey.getKeyMaterial(), Base64.NO_WRAP));
-                }
-                if (oneTimePreKeyId != null) {
-                    serializer.attribute(null, ATTRIBUTE_ONE_TIME_PRE_KEY_ID, oneTimePreKeyId.toString());
-                }
-                serializer.text(getEncryptedEntryString());
-                serializer.endTag(NAMESPACE, ELEMENT_ENCRYPTED);
-            }
-
             serializer.endTag(NAMESPACE, ELEMENT);
             serializer.flush();
         } catch (IOException e) {
@@ -394,17 +334,6 @@ public class PublishedEntry {
         }
 
         return writer.toString();
-    }
-
-    private String getEncryptedEntryString() {
-        try {
-            byte[] encodedEntry = getEncodedEntry();
-            byte[] encryptedEntry = SessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
-            return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
-        } catch (Exception e) {
-            Log.e("Failed to encrypt", e);
-        }
-        return "";
     }
 
     private String getEncodedEntryString() {
@@ -435,17 +364,6 @@ public class PublishedEntry {
                     commentBuilder.setText(text);
                 }
                 containerBuilder.setComment(commentBuilder.build());
-                break;
-            }
-            case ENTRY_CHAT: {
-                ChatMessage.Builder chatMessageBuilder = ChatMessage.newBuilder();
-                if (!media.isEmpty()) {
-                    chatMessageBuilder.addAllMedia(getMediaProtos());
-                }
-                if (text != null) {
-                    chatMessageBuilder.setText(text);
-                }
-                containerBuilder.setChatMessage(chatMessageBuilder.build());
                 break;
             }
             default: {
@@ -526,11 +444,6 @@ public class PublishedEntry {
                 builder.feedItemId(comment.getFeedPostId());
                 builder.parentCommentId(comment.getParentCommentId());
                 builder.text(comment.getText());
-            } else if (container.hasChatMessage()) {
-                ChatMessage chatMessage = container.getChatMessage();
-                builder.type(ENTRY_CHAT);
-                builder.text(chatMessage.getText());
-                builder.media(fromMediaProtos(chatMessage.getMediaList()));
             } else {
                 Log.i("Unknown encoded entry type");
             }
@@ -540,42 +453,6 @@ public class PublishedEntry {
             Log.w("Error reading encoded entry", e);
         }
         return null;
-    }
-
-    private static Builder readEncryptedEntry(XmlPullParser parser) throws Exception {
-        String oneTimePreKeyIdString = parser.getAttributeValue(null, ATTRIBUTE_ONE_TIME_PRE_KEY_ID);
-        String identityKeyString = parser.getAttributeValue(null, ATTRIBUTE_IDENTITY_KEY);
-        String ephemeralKeyIdString = parser.getAttributeValue(null, ATTRIBUTE_EPHEMERAL_KEY_ID);
-        String ephemeralKeyString = parser.getAttributeValue(null, ATTRIBUTE_EPHEMERAL_KEY);
-        String rawUserId = parser.getAttributeValue(null, ATTRIBUTE_SENDER_USER_ID); // TODO(jack): handle this properly, ideally passed in
-
-        Integer oneTimePreKeyId = null;
-        try {
-            oneTimePreKeyId = Integer.parseInt(oneTimePreKeyIdString);
-        } catch (NumberFormatException e) {
-            Log.w("Got invalid one time pre key id " + oneTimePreKeyIdString);
-        }
-        Integer ephemeralKeyId = null;
-        try {
-            ephemeralKeyId = Integer.parseInt(ephemeralKeyIdString);
-        } catch (NumberFormatException e) {
-            Log.w("Got invalid ephemeral key id " + ephemeralKeyIdString);
-        }
-        PublicECKey ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
-        PublicECKey identityKey = new PublicECKey(Base64.decode(identityKeyString, Base64.NO_WRAP));
-
-        String encryptedEntry = Xml.readText(parser);
-        byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);
-        byte[] dec = SessionManager.getInstance().decryptMessage(bytes, new UserId(rawUserId), identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
-        final PublishedEntry.Builder builder = readEncodedEntry(dec);
-
-        // TODO(jack): make sure builder not null
-        builder.oneTimePreKeyId(oneTimePreKeyId);
-        builder.identityKey(identityKey);
-        builder.ephemeralKeyId(ephemeralKeyId);
-        builder.ephemeralKey(ephemeralKey);
-
-        return builder;
     }
 
     @Override
@@ -590,9 +467,6 @@ public class PublishedEntry {
             }
             case ENTRY_COMMENT: {
                 return ELEMENT_COMMENT;
-            }
-            case ENTRY_CHAT: {
-                return ELEMENT_CHAT_MESSAGE;
             }
             default: {
                 throw new IllegalStateException("Unknown type " + type);
@@ -614,12 +488,6 @@ public class PublishedEntry {
         String feedItemId;
         String parentCommentId;
         List<Media> media;
-        UserId recipientUserId;
-        UserId senderUserId;
-        PublicECKey ephemeralKey;
-        Integer ephemeralKeyId;
-        PublicECKey identityKey;
-        Integer oneTimePreKeyId;
 
         Builder type(@EntryType int type) {
             this.type = type;
@@ -660,39 +528,8 @@ public class PublishedEntry {
             this.media = media;
             return this;
         }
-
-        Builder recipientUserId(UserId recipientUserId) {
-            this.recipientUserId = recipientUserId;
-            return this;
-        }
-
-        Builder senderUserId(UserId senderUserId) {
-            this.senderUserId = senderUserId;
-            return this;
-        }
-
-        Builder ephemeralKey(PublicECKey ephemeralKey) {
-            this.ephemeralKey = ephemeralKey;
-            return this;
-        }
-
-        Builder ephemeralKeyId(Integer ephemralKeyId) {
-            this.ephemeralKeyId = ephemralKeyId;
-            return this;
-        }
-
-        Builder identityKey(PublicECKey identityKey) {
-            this.identityKey = identityKey;
-            return this;
-        }
-
-        Builder oneTimePreKeyId(Integer oneTimePreKeyId) {
-            this.oneTimePreKeyId = oneTimePreKeyId;
-            return this;
-        }
-
         PublishedEntry build() {
-            final PublishedEntry entry = new PublishedEntry(type, id, timestamp, user, text, feedItemId, parentCommentId, recipientUserId, senderUserId, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId);
+            final PublishedEntry entry = new PublishedEntry(type, id, timestamp, user, text, feedItemId, parentCommentId);
             if (media != null) {
                 entry.media.addAll(media);
             }
