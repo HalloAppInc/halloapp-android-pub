@@ -54,10 +54,6 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class AvatarPreviewActivity extends AppCompatActivity {
@@ -100,34 +96,31 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         if (uris != null) {
             progressView.setVisibility(View.VISIBLE);
             if (uris.size() > 1) {
+                Log.w("AvatarPreviewActivity got too many uris: " + uris.size());
                 uris.subList(1, uris.size()).clear();
             }
             setButton.setEnabled(false);
+
+            imageView = findViewById(R.id.image);
+
+            viewModel = new ViewModelProvider(this, new PostComposerViewModelFactory(getApplication(), uris.get(0))).get(PostComposerViewModel.class);
+            viewModel.media.observe(this, mediaItem -> {
+                progressView.setVisibility(View.GONE);
+                if (mediaItem != null) {
+                    imageView.setSinglePointerDragStartDisabled(false);
+                    imageView.setReturnToMinScaleOnUp(false);
+                    imageView.setOnCropListener(rect -> cropRect = rect);
+                    imageView.setGridEnabled(false);
+                    mediaThumbnailLoader.load(imageView, mediaItem);
+                    imageView.setVisibility(View.VISIBLE);
+                } else {
+                    CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
+                }
+                setButton.setEnabled(true);
+            });
+        } else {
+            Log.e("AvatarPreviewActivity no uris provided");
         }
-
-        imageView = findViewById(R.id.image);
-
-        viewModel = new ViewModelProvider(this,
-                new PostComposerViewModelFactory(getApplication(), uris)).get(PostComposerViewModel.class);
-        viewModel.media.observe(this, media -> {
-            progressView.setVisibility(View.GONE);
-            if (!media.isEmpty()) {
-                final Media mediaItem = media.get(0);
-                imageView.setSinglePointerDragStartDisabled(media.size() > 1);
-                imageView.setReturnToMinScaleOnUp(false);
-                imageView.setOnCropListener(rect -> cropRect = rect);
-                imageView.setGridEnabled(false);
-                mediaThumbnailLoader.load(imageView, mediaItem);
-                imageView.setVisibility(View.VISIBLE);
-            }
-            if (media.size() != 1) {
-                throw new IllegalStateException("Can only have a single profile photo");
-            }
-            if (uris != null && media.size() != uris.size()) {
-                CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
-            }
-            setButton.setEnabled(true);
-        });
     }
 
     @Override
@@ -135,9 +128,9 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("AvatarPreviewActivity: onDestroy");
         mediaThumbnailLoader.destroy();
-        final List<Media> tmpMedia = viewModel.getMedia();
+        final Media tmpMedia = viewModel.getMedia();
         if (tmpMedia != null) {
-            new CleanupTmpFilesTask(tmpMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new CleanupTmpFileTask(tmpMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -176,59 +169,54 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         super.finish();
     }
 
-    static class LoadPostUrisTask extends AsyncTask<Void, Void, List<Media>> {
+    static class LoadPostUrisTask extends AsyncTask<Void, Void, Media> {
 
-        private final Collection<Uri> uris;
+        private final Uri uri;
         private final Application application;
-        private final MutableLiveData<List<Media>> media;
+        private final MutableLiveData<Media> media;
 
-        LoadPostUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<Media>> media) {
+        LoadPostUrisTask(@NonNull Application application, @NonNull Uri uri, @NonNull MutableLiveData<Media> media) {
             this.application = application;
-            this.uris = uris;
+            this.uri = uri;
             this.media = media;
         }
 
         @Override
-        protected List<Media> doInBackground(Void... voids) {
-            final List<Media> media = new ArrayList<>();
+        protected Media doInBackground(Void... voids) {
             final ContentResolver contentResolver = application.getContentResolver();
-            for (Uri uri : uris) {
-                @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
-                final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
-                FileUtils.uriToFile(application, uri, file);
-                final Size size = MediaUtils.getDimensions(file, mediaType);
-                if (size != null) {
-                    final Media mediaItem = Media.createFromFile(mediaType, file);
-                    mediaItem.width = size.getWidth();
-                    mediaItem.height = size.getHeight();
-                    media.add(mediaItem);
-                } else {
-                    Log.e("AvatarPreviewActivity: failed to load " + uri);
-                }
+            @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
+            final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
+            FileUtils.uriToFile(application, uri, file);
+            final Size size = MediaUtils.getDimensions(file, mediaType);
+            if (size != null) {
+                final Media mediaItem = Media.createFromFile(mediaType, file);
+                mediaItem.width = size.getWidth();
+                mediaItem.height = size.getHeight();
+                return mediaItem;
+            } else {
+                Log.e("AvatarPreviewActivity: failed to load " + uri);
             }
-            return media;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(List<Media> media) {
+        protected void onPostExecute(Media media) {
             this.media.postValue(media);
         }
     }
 
-    static class CleanupTmpFilesTask extends AsyncTask<Void, Void, Void> {
+    static class CleanupTmpFileTask extends AsyncTask<Void, Void, Void> {
 
-        private final List<Media> media;
+        private final Media media;
 
-        CleanupTmpFilesTask(@NonNull List<Media> media) {
+        CleanupTmpFileTask(@NonNull Media media) {
             this.media = media;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            for (Media mediaItem : media) {
-                if (!mediaItem.file.delete()) {
-                    Log.e("failed to delete temporary file " + mediaItem.file.getAbsolutePath());
-                }
+            if (!media.file.delete()) {
+                Log.e("failed to delete temporary file " + media.file.getAbsolutePath());
             }
             return null;
         }
@@ -236,10 +224,10 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
     class Prepare extends AsyncTask<Void, Void, Boolean> {
 
-        private final List<Media> media;
+        private final Media media;
         private final Application application;
 
-        Prepare(@NonNull Application application, @Nullable List<Media> media) {
+        Prepare(@NonNull Application application, @Nullable Media media) {
             this.application = application;
             this.media = media;
         }
@@ -247,10 +235,9 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (media != null) {
-                Media img = media.get(0);
                 final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
-                    TranscodeResult transcodeResult = transcode(img.file, outFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
+                    TranscodeResult transcodeResult = transcode(media.file, outFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
                     uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged();
@@ -369,19 +356,19 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     public class PostComposerViewModelFactory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final Collection<Uri> uris;
+        private final Uri uri;
 
 
-        PostComposerViewModelFactory(@NonNull Application application, @Nullable Collection<Uri> uris) {
+        PostComposerViewModelFactory(@NonNull Application application, @Nullable Uri uri) {
             this.application = application;
-            this.uris = uris;
+            this.uri = uri;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(PostComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostComposerViewModel(application, uris);
+                return (T) new PostComposerViewModel(application, uri);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -389,21 +376,21 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
     public class PostComposerViewModel extends AndroidViewModel {
 
-        final MutableLiveData<List<Media>> media = new MutableLiveData<>();
+        final MutableLiveData<Media> media = new MutableLiveData<>();
 
-        PostComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
+        PostComposerViewModel(@NonNull Application application, @Nullable Uri uri) {
             super(application);
-            if (uris != null) {
-                loadUris(uris);
+            if (uri != null) {
+                loadUri(uri);
             }
         }
 
-        List<Media> getMedia() {
+        Media getMedia() {
             return media.getValue();
         }
 
-        private void loadUris(@NonNull Collection<Uri> uris) {
-            new LoadPostUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        private void loadUri(@NonNull Uri uri) {
+            new LoadPostUrisTask(getApplication(), uri, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         void preparePost() {
