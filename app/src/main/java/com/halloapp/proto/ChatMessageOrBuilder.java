@@ -32,4 +32,28 @@ public interface ChatMessageOrBuilder extends
    */
   com.google.protobuf.ByteString
       getTextBytes();
+
+  /**
+   * <code>string feed_post_id = 3;</code>
+   * @return The feedPostId.
+   */
+  java.lang.String getFeedPostId();
+  /**
+   * <code>string feed_post_id = 3;</code>
+   * @return The bytes for feedPostId.
+   */
+  com.google.protobuf.ByteString
+      getFeedPostIdBytes();
+
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   * @return The feedPostMediaIndex.
+   */
+  java.lang.String getFeedPostMediaIndex();
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   * @return The bytes for feedPostMediaIndex.
+   */
+  com.google.protobuf.ByteString
+      getFeedPostMediaIndexBytes();
 }

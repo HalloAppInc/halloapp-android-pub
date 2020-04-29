@@ -14,6 +14,8 @@ public  final class ChatMessage extends
   private ChatMessage() {
     media_ = emptyProtobufList();
     text_ = "";
+    feedPostId_ = "";
+    feedPostMediaIndex_ = "";
   }
   public static final int MEDIA_FIELD_NUMBER = 1;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Media> media_;
@@ -152,6 +154,100 @@ public  final class ChatMessage extends
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     text_ = value.toStringUtf8();
+    
+  }
+
+  public static final int FEED_POST_ID_FIELD_NUMBER = 3;
+  private java.lang.String feedPostId_;
+  /**
+   * <code>string feed_post_id = 3;</code>
+   * @return The feedPostId.
+   */
+  @java.lang.Override
+  public java.lang.String getFeedPostId() {
+    return feedPostId_;
+  }
+  /**
+   * <code>string feed_post_id = 3;</code>
+   * @return The bytes for feedPostId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getFeedPostIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(feedPostId_);
+  }
+  /**
+   * <code>string feed_post_id = 3;</code>
+   * @param value The feedPostId to set.
+   */
+  private void setFeedPostId(
+      java.lang.String value) {
+    value.getClass();
+  
+    feedPostId_ = value;
+  }
+  /**
+   * <code>string feed_post_id = 3;</code>
+   */
+  private void clearFeedPostId() {
+    
+    feedPostId_ = getDefaultInstance().getFeedPostId();
+  }
+  /**
+   * <code>string feed_post_id = 3;</code>
+   * @param value The bytes for feedPostId to set.
+   */
+  private void setFeedPostIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    feedPostId_ = value.toStringUtf8();
+    
+  }
+
+  public static final int FEED_POST_MEDIA_INDEX_FIELD_NUMBER = 4;
+  private java.lang.String feedPostMediaIndex_;
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   * @return The feedPostMediaIndex.
+   */
+  @java.lang.Override
+  public java.lang.String getFeedPostMediaIndex() {
+    return feedPostMediaIndex_;
+  }
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   * @return The bytes for feedPostMediaIndex.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getFeedPostMediaIndexBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(feedPostMediaIndex_);
+  }
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   * @param value The feedPostMediaIndex to set.
+   */
+  private void setFeedPostMediaIndex(
+      java.lang.String value) {
+    value.getClass();
+  
+    feedPostMediaIndex_ = value;
+  }
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   */
+  private void clearFeedPostMediaIndex() {
+    
+    feedPostMediaIndex_ = getDefaultInstance().getFeedPostMediaIndex();
+  }
+  /**
+   * <code>string feed_post_media_index = 4;</code>
+   * @param value The bytes for feedPostMediaIndex to set.
+   */
+  private void setFeedPostMediaIndexBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    feedPostMediaIndex_ = value.toStringUtf8();
     
   }
 
@@ -401,6 +497,104 @@ public  final class ChatMessage extends
       return this;
     }
 
+    /**
+     * <code>string feed_post_id = 3;</code>
+     * @return The feedPostId.
+     */
+    @java.lang.Override
+    public java.lang.String getFeedPostId() {
+      return instance.getFeedPostId();
+    }
+    /**
+     * <code>string feed_post_id = 3;</code>
+     * @return The bytes for feedPostId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFeedPostIdBytes() {
+      return instance.getFeedPostIdBytes();
+    }
+    /**
+     * <code>string feed_post_id = 3;</code>
+     * @param value The feedPostId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFeedPostId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setFeedPostId(value);
+      return this;
+    }
+    /**
+     * <code>string feed_post_id = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFeedPostId() {
+      copyOnWrite();
+      instance.clearFeedPostId();
+      return this;
+    }
+    /**
+     * <code>string feed_post_id = 3;</code>
+     * @param value The bytes for feedPostId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFeedPostIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setFeedPostIdBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>string feed_post_media_index = 4;</code>
+     * @return The feedPostMediaIndex.
+     */
+    @java.lang.Override
+    public java.lang.String getFeedPostMediaIndex() {
+      return instance.getFeedPostMediaIndex();
+    }
+    /**
+     * <code>string feed_post_media_index = 4;</code>
+     * @return The bytes for feedPostMediaIndex.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFeedPostMediaIndexBytes() {
+      return instance.getFeedPostMediaIndexBytes();
+    }
+    /**
+     * <code>string feed_post_media_index = 4;</code>
+     * @param value The feedPostMediaIndex to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFeedPostMediaIndex(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setFeedPostMediaIndex(value);
+      return this;
+    }
+    /**
+     * <code>string feed_post_media_index = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFeedPostMediaIndex() {
+      copyOnWrite();
+      instance.clearFeedPostMediaIndex();
+      return this;
+    }
+    /**
+     * <code>string feed_post_media_index = 4;</code>
+     * @param value The bytes for feedPostMediaIndex to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFeedPostMediaIndexBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setFeedPostMediaIndexBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:proto.ChatMessage)
   }
   @java.lang.Override
@@ -420,10 +614,12 @@ public  final class ChatMessage extends
             "media_",
             com.halloapp.proto.Media.class,
             "text_",
+            "feedPostId_",
+            "feedPostMediaIndex_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\u0208" +
-              "";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u001b\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
