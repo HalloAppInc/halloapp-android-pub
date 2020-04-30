@@ -122,8 +122,6 @@ public class ConnectionObserver implements Connection.Observer {
             final Connection connection = Connection.getInstance();
             if (isMessageForForegroundChat) {
                 connection.sendMessageSeenReceipt(message.chatId, message.senderUserId, message.id);
-            } else {
-                connection.sendMessageDeliveryReceipt(message.chatId, message.senderUserId, message.id);
             }
             connection.sendAck(message.id);
         };

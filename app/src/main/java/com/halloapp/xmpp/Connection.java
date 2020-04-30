@@ -681,26 +681,6 @@ public class Connection {
         });
     }
 
-    public void sendMessageDeliveryReceipt(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot send message delivery receipt, no connection");
-                return;
-            }
-            try {
-                final Jid recipientJid = userIdToJid(senderUserId);
-                final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
-                message.setStanzaId(RandomId.create());
-                message.addExtension(new DeliveryReceiptElement(senderUserId.rawId().equals(chatId) ? null : chatId, messageId));
-                ackHandlers.put(message.getStanzaId(), () -> {});
-                Log.i("connection: sending message delivery receipt " + messageId + " to " + recipientJid);
-                connection.sendStanza(message);
-            } catch (SmackException.NotConnectedException | InterruptedException e) {
-                Log.e("connection: cannot send message delivery receipt", e);
-            }
-        });
-    }
-
     // TODO (ds): remove
     public Future<Pair<Collection<Post>, Collection<Comment>>> getFeedHistory() {
         return executor.submit(() -> {
