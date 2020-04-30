@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -20,6 +21,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
+import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,6 +34,7 @@ public class ChatViewModel extends AndroidViewModel {
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
     final ComputableLiveData<Chat> chat;
+    final ComputableLiveData<Post> replyPost;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
     private final ContentDb contentDb;
@@ -96,7 +99,7 @@ public class ChatViewModel extends AndroidViewModel {
         }
     };
 
-    public ChatViewModel(@NonNull Application application, @NonNull String chatId) {
+    public ChatViewModel(@NonNull Application application, @NonNull String chatId, @Nullable String replyPostId) {
         super(application);
 
         this.chatId = chatId;
@@ -120,6 +123,17 @@ public class ChatViewModel extends AndroidViewModel {
                 return contentDb.getChat(chatId);
             }
         };
+
+        if (replyPostId != null) {
+            replyPost = new ComputableLiveData<Post>() {
+                @Override
+                protected Post compute() {
+                    return contentDb.getPost(new UserId(chatId), replyPostId);
+                }
+            };
+        } else {
+            replyPost = null;
+        }
     }
 
     @Override
@@ -147,17 +161,19 @@ public class ChatViewModel extends AndroidViewModel {
 
         private final Application application;
         private final String chatId;
+        private final String replyPostId;
 
-        Factory(@NonNull Application application, @NonNull String chatId) {
+        Factory(@NonNull Application application, @NonNull String chatId, @Nullable String replyPostId) {
             this.application = application;
             this.chatId = chatId;
+            this.replyPostId = replyPostId;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ChatViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ChatViewModel(application, chatId);
+                return (T) new ChatViewModel(application, chatId, replyPostId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

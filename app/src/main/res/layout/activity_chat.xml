@@ -66,18 +66,97 @@
             android:background="@color/card_background"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="0dp"
             android:elevation="3dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chat">
+            app:layout_constraintTop_toBottomOf="@+id/chat"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/reply_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@drawable/reply_frame"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/guideline">
+
+                <TextView
+                    android:id="@+id/reply_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textAppearance="?textAppearanceListItem"
+                    android:fontFamily="sans-serif-medium"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity"
+                    android:padding="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/reply_thumb"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/reply_text"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="Ded Pihtov"/>
+
+                <ImageView
+                    android:id="@+id/reply_media_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/reply_text"
+                    app:layout_constraintTop_toTopOf="@+id/reply_text"
+                    app:layout_constraintBottom_toBottomOf="@+id/reply_text"
+                    android:tint="?android:textColorSecondary"
+                    tools:src="@drawable/ic_camera"/>
+
+                <TextView
+                    android:id="@+id/reply_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    app:layout_constraintStart_toEndOf="@+id/reply_media_icon"
+                    app:layout_constraintEnd_toStartOf="@+id/reply_thumb"
+                    app:layout_constraintTop_toBottomOf="@+id/reply_name"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Have a nice day"/>
+
+                <ImageView
+                    android:id="@+id/reply_thumb"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toEndOf="@+id/reply_name"
+                    app:layout_constraintEnd_toStartOf="@+id/reply_close"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:src="@drawable/avatar_person"/>
+
+                <ImageView
+                    android:id="@+id/reply_close"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:paddingBottom="16dp"
+                    android:src="@drawable/ic_close"
+                    app:layout_constraintStart_toEndOf="@+id/reply_thumb"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.halloapp.widget.PostEditText
                 android:id="@+id/entry"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
                 android:background="@null"
                 android:hint="@string/type_a_message_hint"
@@ -85,7 +164,7 @@
                 android:inputType="textCapSentences|textMultiLine"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/media"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reply_container"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
             <ImageButton
@@ -95,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_media_collection"
                 android:contentDescription="@string/pick_media"
-                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reply_container"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/send"
                 app:layout_constraintStart_toEndOf="@+id/entry"/>
@@ -107,10 +186,10 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_send"
                 android:contentDescription="@string/send"
+                app:layout_constraintTop_toBottomOf="@+id/reply_container"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/media"
-                app:layout_constraintTop_toBottomOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/media" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

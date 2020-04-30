@@ -29,7 +29,12 @@ public class IncomingPostViewHolder extends PostViewHolder {
             parent.startActivity(intent);
         });
         itemView.findViewById(R.id.message).setOnClickListener(view -> {
-            parent.startActivity(new Intent(view.getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId.rawId()));
+            final Intent intent = new Intent(itemView.getContext(), ChatActivity.class);
+            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId.rawId());
+            intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, post.id);
+            final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
+            intent.putExtra(ChatActivity.EXTRA_REPLY_POST_MEDIA_INDEX, selPos == null ? 0 : selPos);
+            parent.startActivity(intent);
         });
     }
 

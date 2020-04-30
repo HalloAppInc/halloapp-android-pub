@@ -1,6 +1,7 @@
 package com.halloapp.ui.chat;
 
 import android.content.Intent;
+import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -34,9 +38,10 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
@@ -61,6 +66,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ChatActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
+    public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
     private final ChatAdapter adapter = new ChatAdapter();
 
@@ -72,6 +79,9 @@ public class ChatActivity extends AppCompatActivity {
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private TimestampRefresher timestampRefresher;
+
+    private String replyPostId;
+    private int replyPostMediaIndex;
 
     private DrawDelegateView drawDelegateView;
     private final Stack<View> recycledMediaViews = new Stack<>();
@@ -126,7 +136,16 @@ public class ChatActivity extends AppCompatActivity {
 
         chatView.setAdapter(adapter);
 
-        final ChatViewModel viewModel = new ViewModelProvider(this, new ChatViewModel.Factory(getApplication(), chatId)).get(ChatViewModel.class);
+        if (savedInstanceState == null) {
+            replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        } else {
+            replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        }
+
+        final ChatViewModel viewModel = new ViewModelProvider(this,
+                new ChatViewModel.Factory(getApplication(), chatId, replyPostId)).get(ChatViewModel.class);
 
         final View newMessagesView = findViewById(R.id.new_messages);
         newMessagesView.setOnClickListener(v -> {
@@ -179,6 +198,10 @@ public class ChatActivity extends AppCompatActivity {
         });
         viewModel.contact.getLiveData().observe(this, contact -> {
             setTitle(contact.getDisplayName());
+            if (replyPostId != null) {
+                final TextView replyNameView = findViewById(R.id.reply_name);
+                replyNameView.setText(contact.getDisplayName());
+            }
             PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
             presenceLoader.getLastSeenLiveData(contact.userId).observe(this, lastSeen -> {
                 if (lastSeen == null) {
@@ -193,6 +216,12 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+        final View replyContainer = findViewById(R.id.reply_container);
+        if (viewModel.replyPost != null) {
+            viewModel.replyPost.getLiveData().observe(this, post -> updatePostReply(replyContainer, post));
+        } else {
+            replyContainer.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -219,6 +248,15 @@ public class ChatActivity extends AppCompatActivity {
         super.onStop();
         Log.i("ChatActivity.onStop");
         ForegroundChat.getInstance().setForegroundChatId(null);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (replyPostId != null) {
+            outState.putString(EXTRA_REPLY_POST_ID, replyPostId);
+            outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
+        }
     }
 
     @Override
@@ -249,6 +287,61 @@ public class ChatActivity extends AppCompatActivity {
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    private void updatePostReply(@NonNull View replyContainer, @Nullable Post post) {
+        if (post != null) {
+            replyContainer.setVisibility(View.VISIBLE);
+            final TextView replyTextView = findViewById(R.id.reply_text);
+            replyTextView.setText(post.text);
+            final ImageView replyMediaIcon = findViewById(R.id.reply_media_icon);
+            final ImageView replyThumbView = findViewById(R.id.reply_thumb);
+            if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
+                replyThumbView.setVisibility(View.VISIBLE);
+                replyThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
+                    }
+                });
+                replyThumbView.setClipToOutline(true);
+                final Media media = post.media.get(replyPostMediaIndex);
+                mediaThumbnailLoader.load(replyThumbView, media);
+                replyMediaIcon.setVisibility(View.VISIBLE);
+                switch (media.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        replyMediaIcon.setImageResource(R.drawable.ic_camera);
+                        if (TextUtils.isEmpty(post.text)) {
+                            replyTextView.setText(R.string.photo);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        replyMediaIcon.setImageResource(R.drawable.ic_video);
+                        if (TextUtils.isEmpty(post.text)) {
+                            replyTextView.setText(R.string.video);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        replyMediaIcon.setImageResource(R.drawable.ic_media_collection);
+                        break;
+                    }
+                }
+
+            } else {
+                replyThumbView.setVisibility(View.GONE);
+                replyMediaIcon.setVisibility(View.GONE);
+            }
+            findViewById(R.id.reply_close).setOnClickListener(v -> {
+                replyPostId = null;
+                replyPostMediaIndex = -1;
+                replyContainer.setVisibility(View.GONE);
+            });
+        } else {
+            replyContainer.setVisibility(View.GONE);
         }
     }
 
