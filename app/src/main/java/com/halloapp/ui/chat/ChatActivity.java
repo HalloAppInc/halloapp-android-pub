@@ -143,6 +143,9 @@ public class ChatActivity extends AppCompatActivity {
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
+        if (replyPostId != null) {
+            editText.requestFocus();
+        }
 
         final ChatViewModel viewModel = new ViewModelProvider(this,
                 new ChatViewModel.Factory(getApplication(), chatId, replyPostId)).get(ChatViewModel.class);
