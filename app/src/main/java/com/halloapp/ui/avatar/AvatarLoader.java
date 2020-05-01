@@ -63,7 +63,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        Log.i("PostThumbnailLoader: create " + cacheSize + "KB cache for post images");
+        Log.i("AvatarLoader: create " + cacheSize + "KB cache for post images");
         cache = new LruCache<String, Bitmap>(cacheSize) {
 
             @Override
@@ -122,7 +122,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         }
 
         long currentTimeMs = System.currentTimeMillis();
-        if (currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS || !avatarFile.exists()) {
+        if (currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
             try {
                 PubSubItem item = null;
                 try {
@@ -156,7 +156,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 Log.w("Failed getting avatar", e);
             } finally {
                 contact.avatarCheckTimestamp = System.currentTimeMillis();
-                if (needsNewContact) {
+                // Check whether contact was added during fetch
+                if (needsNewContact && contactsDb.getContactAvatarInfo(userId) == null) {
                     contactsDb.insertContactAvatarInfo(contact);
                 } else {
                     contactsDb.updateContactAvatarInfo(contact);

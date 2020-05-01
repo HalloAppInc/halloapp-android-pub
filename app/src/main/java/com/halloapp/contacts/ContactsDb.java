@@ -220,7 +220,7 @@ public class ContactsDb {
                 },
                 ContactsTable.COLUMN_USER_ID + "=?", new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
-                return new ContactAvatarInfo(userId, cursor.getInt(1), cursor.getString(2));
+                return new ContactAvatarInfo(userId, cursor.getLong(1), cursor.getString(2));
             }
         }
         return null;
