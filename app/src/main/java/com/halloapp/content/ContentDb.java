@@ -339,7 +339,8 @@ public class ContentDb {
 
     public void addMessage(@NonNull Message message, boolean unseen, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.addMessage(message, unseen)) {
+            final Post replyPost = message.replyPostId == null ? null : getPost(message.isIncoming() ? UserId.ME : new UserId(message.chatId), message.replyPostId);
+            if (messagesDb.addMessage(message, unseen, replyPost)) {
                 observers.notifyMessageAdded(message);
             }
             if (completionRunnable != null) {
@@ -404,6 +405,11 @@ public class ContentDb {
     @WorkerThread
     @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
         return messagesDb.getMessages(chatId, startRowId, count, after);
+    }
+
+    @WorkerThread
+    public @Nullable ReplyPreview getReplyPreview(long messageRowId) {
+        return messagesDb.getReplyPreview(messageRowId);
     }
 
     @WorkerThread

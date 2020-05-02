@@ -1,7 +1,9 @@
 package com.halloapp.ui.chat;
 
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,7 +15,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.ContentViewHolderParent;
@@ -29,6 +30,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle {
 
+    private final View contentView;
     private final ImageView statusView;
     private final TextView dateView;
     private final TextView newMessagesSeparator;
@@ -36,11 +38,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final MediaViewPager mediaPagerView;
     private final CircleIndicator mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
+    private @Nullable ReplyContainer replyContainer;
 
     private final MessageViewHolderParent parent;
     private Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
+        abstract ReplyLoader getReplyLoader();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -62,6 +66,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         this.parent = parent;
 
+        contentView = itemView.findViewById(R.id.content);
         statusView = itemView.findViewById(R.id.status);
         dateView = itemView.findViewById(R.id.date);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
@@ -148,6 +153,20 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, newMessageCountSeparator, newMessageCountSeparator));
         } else {
             newMessagesSeparator.setVisibility(View.GONE);
+        }
+
+        //
+        if (message.replyPostId != null) {
+            if (replyContainer == null) {
+                final ViewGroup replyContainerView = itemView.findViewById(R.id.reply_container);
+                replyContainer = new ReplyContainer(LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView), parent.getReplyLoader());
+            }
+            replyContainer.bindTo(message);
+            replyContainer.show();
+            contentView.setMinimumWidth(itemView.getResources().getDimensionPixelSize(R.dimen.reply_min_width));
+        } else if (replyContainer != null) {
+            replyContainer.hide();
+            contentView.setMinimumWidth(0);
         }
     }
 }

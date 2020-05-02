@@ -72,12 +72,14 @@ public class ChatActivity extends AppCompatActivity {
     private final ChatAdapter adapter = new ChatAdapter();
 
     private PostEditText editText;
+    private View replyContainer;
 
     private String chatId;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
+    private ReplyLoader replyLoader;
     private TimestampRefresher timestampRefresher;
 
     private String replyPostId;
@@ -111,6 +113,7 @@ public class ChatActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(this);
+        replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -219,9 +222,9 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
-        final View replyContainer = findViewById(R.id.reply_container);
+        replyContainer = findViewById(R.id.reply_container);
         if (viewModel.replyPost != null) {
-            viewModel.replyPost.getLiveData().observe(this, post -> updatePostReply(replyContainer, post));
+            viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
         } else {
             replyContainer.setVisibility(View.GONE);
         }
@@ -233,6 +236,7 @@ public class ChatActivity extends AppCompatActivity {
         Log.d("ChatActivity.onDestroy");
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
+        replyLoader.destroy();
     }
 
     @Override
@@ -293,35 +297,35 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private void updatePostReply(@NonNull View replyContainer, @Nullable Post post) {
+    private void updatePostReply(@Nullable Post post) {
         if (post != null) {
             replyContainer.setVisibility(View.VISIBLE);
             final TextView replyTextView = findViewById(R.id.reply_text);
             replyTextView.setText(post.text);
-            final ImageView replyMediaIcon = findViewById(R.id.reply_media_icon);
-            final ImageView replyThumbView = findViewById(R.id.reply_thumb);
+            final ImageView replyMediaIconView = findViewById(R.id.reply_media_icon);
+            final ImageView replyMediaThumbView = findViewById(R.id.reply_media_thumb);
             if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
-                replyThumbView.setVisibility(View.VISIBLE);
-                replyThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                replyMediaThumbView.setVisibility(View.VISIBLE);
+                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
                     @Override
                     public void getOutline(View view, Outline outline) {
                         outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
                     }
                 });
-                replyThumbView.setClipToOutline(true);
+                replyMediaThumbView.setClipToOutline(true);
                 final Media media = post.media.get(replyPostMediaIndex);
-                mediaThumbnailLoader.load(replyThumbView, media);
-                replyMediaIcon.setVisibility(View.VISIBLE);
+                mediaThumbnailLoader.load(replyMediaThumbView, media);
+                replyMediaIconView.setVisibility(View.VISIBLE);
                 switch (media.type) {
                     case Media.MEDIA_TYPE_IMAGE: {
-                        replyMediaIcon.setImageResource(R.drawable.ic_camera);
+                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
                         if (TextUtils.isEmpty(post.text)) {
                             replyTextView.setText(R.string.photo);
                         }
                         break;
                     }
                     case Media.MEDIA_TYPE_VIDEO: {
-                        replyMediaIcon.setImageResource(R.drawable.ic_video);
+                        replyMediaIconView.setImageResource(R.drawable.ic_video);
                         if (TextUtils.isEmpty(post.text)) {
                             replyTextView.setText(R.string.video);
                         }
@@ -329,14 +333,13 @@ public class ChatActivity extends AppCompatActivity {
                     }
                     case Media.MEDIA_TYPE_UNKNOWN:
                     default: {
-                        replyMediaIcon.setImageResource(R.drawable.ic_media_collection);
+                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
                         break;
                     }
                 }
-
             } else {
-                replyThumbView.setVisibility(View.GONE);
-                replyMediaIcon.setVisibility(View.GONE);
+                replyMediaThumbView.setVisibility(View.GONE);
+                replyMediaIconView.setVisibility(View.GONE);
             }
             findViewById(R.id.reply_close).setOnClickListener(v -> {
                 replyPostId = null;
@@ -361,7 +364,12 @@ public class ChatActivity extends AppCompatActivity {
                 RandomId.create(),
                 System.currentTimeMillis(),
                 Message.STATE_INITIAL,
-                messageText);
+                messageText,
+                replyPostId,
+                replyPostMediaIndex);
+        replyPostId = null;
+        replyPostMediaIndex = -1;
+        replyContainer.setVisibility(View.GONE);
         message.addToStorage(ContentDb.getInstance(this));
     }
 
@@ -537,6 +545,11 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void startActivity(Intent intent) {
             ChatActivity.this.startActivity(intent);
+        }
+
+        @Override
+        ReplyLoader getReplyLoader() {
+            return replyLoader;
         }
     };
 }

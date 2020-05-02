@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -19,11 +20,14 @@ import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
+import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +43,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean addMessage(@NonNull Message message, boolean unseen) {
+    boolean addMessage(@NonNull Message message, boolean unseen, @Nullable Post replyPost) {
         Log.i("ContentDb.addMessage " + message + " " + unseen);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -83,6 +87,29 @@ class MessagesDb {
                     mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
                 }
                 mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+            if (message.replyPostId != null) {
+                final ContentValues replyPostValues = new ContentValues();
+                replyPostValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
+                replyPostValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
+                replyPostValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+                if (replyPost != null) {
+                    if (!TextUtils.isEmpty(replyPost.text)) {
+                        replyPostValues.put(RepliesTable.COLUMN_TEXT, replyPost.text);
+                    }
+                    final Media replyMedia = (message.replyPostMediaIndex >= 0 && message.replyPostMediaIndex < replyPost.media.size()) ? replyPost.media.get(message.replyPostMediaIndex) : null;
+                    if (replyMedia != null && replyMedia.file != null) {
+                        replyPostValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
+                        final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
+                        try {
+                            MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
+                            replyPostValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
+                        } catch (IOException e) {
+                            Log.e("ContentDb.addMessage: cannot create reply preview", e);
+                        }
+                    }
+                }
+                db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyPostValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
             final int updatedRowsCount;
             try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
@@ -275,7 +302,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
-                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
             "FROM " + MessagesTable.TABLE_NAME + "," + ChatsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -289,6 +318,12 @@ class MessagesDb {
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_POST_ID + "," +
+                    RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + " ASC " +
             "LIMIT " + count;
@@ -311,7 +346,9 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6));
+                            cursor.getString(6),
+                            cursor.getString(14),
+                            cursor.getInt(15));
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -354,7 +391,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
-                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -368,6 +407,12 @@ class MessagesDb {
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_POST_ID + "," +
+                    RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
             "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=" + rowId;
         Message message = null;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -380,7 +425,9 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6));
+                            cursor.getString(6),
+                            cursor.getString(14),
+                            cursor.getInt(15));
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -417,7 +464,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
-                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -431,6 +480,12 @@ class MessagesDb {
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_POST_ID + "," +
+                    RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
             "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + chatId + " AND " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=" + senderUserId.rawId() + " AND " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=" + messageId;
@@ -445,7 +500,9 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6));
+                            cursor.getString(6),
+                            cursor.getString(14),
+                            cursor.getInt(15));
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -488,7 +545,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
-                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -502,6 +561,12 @@ class MessagesDb {
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_POST_ID + "," +
+                    RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? " DESC " : " ASC ") +
             "LIMIT " + count;
@@ -524,7 +589,9 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6));
+                            cursor.getString(6),
+                            cursor.getString(14),
+                            cursor.getInt(15));
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -572,7 +639,9 @@ class MessagesDb {
                     "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
-                    "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                    "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                    "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                    "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
                 "FROM " + MessagesTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -588,6 +657,12 @@ class MessagesDb {
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                "LEFT JOIN (" +
+                    "SELECT " +
+                        RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                        RepliesTable.COLUMN_POST_ID + "," +
+                        RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                    "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
                 "WHERE " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "=0 AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + ">" + getMessageRetryExpirationTime() + " " +
                 "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " DESC ";
@@ -610,7 +685,9 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6));
+                            cursor.getString(6),
+                            cursor.getString(16),
+                            cursor.getInt(17));
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -631,6 +708,26 @@ class MessagesDb {
         }
         Log.i("ContentDb.getPendingMessages: messages.size=" + messages.size());
         return messages;
+    }
+
+    @WorkerThread
+    @Nullable ReplyPreview getReplyPreview(long messageRowId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(RepliesTable.TABLE_NAME,
+                new String [] {
+                        RepliesTable.COLUMN_TEXT,
+                        RepliesTable.COLUMN_MEDIA_TYPE,
+                        RepliesTable.COLUMN_MEDIA_PREVIEW_FILE},
+                RepliesTable.COLUMN_MESSAGE_ROW_ID + "=?",
+                new String [] {String.valueOf(messageRowId)}, null, null, null)) {
+            if (cursor.moveToNext()) {
+                return new ReplyPreview(
+                        cursor.getString(0),
+                        cursor.getInt(1),
+                        fileStore.getMediaFile(cursor.getString(2)));
+            }
+        }
+        return null;
     }
 
     private static long getMessageRetryExpirationTime() {

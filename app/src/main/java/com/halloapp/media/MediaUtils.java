@@ -104,6 +104,18 @@ public class MediaUtils {
     }
 
     @WorkerThread
+    public static void createThumb(@NonNull File fileFrom, @NonNull File fileTo, @Media.MediaType int mediaType, int maxDimension) throws IOException {
+        final Bitmap thumb = decode(fileFrom, mediaType, maxDimension);
+        if (thumb == null) {
+            throw new IOException("cannot decode " + fileFrom.getAbsolutePath());
+        }
+        try (final FileOutputStream streamTo = new FileOutputStream(fileTo)) {
+            thumb.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, streamTo);
+        }
+        thumb.recycle();
+    }
+
+    @WorkerThread
     public static @Nullable Bitmap decodeImage(@NonNull File file, int maxDimension) throws IOException {
         return decodeImage(file, maxDimension, maxDimension);
     }

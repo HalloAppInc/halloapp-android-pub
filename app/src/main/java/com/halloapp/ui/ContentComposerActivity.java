@@ -29,6 +29,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -37,6 +38,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -122,7 +124,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         mediaPagerIndicator.setVisibility(View.GONE);
 
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModelFactory(getApplication(), uris)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris)).get(ContentComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
@@ -146,6 +148,10 @@ public class ContentComposerActivity extends AppCompatActivity {
                 finish();
             }
         });
+        if (viewModel.chatName != null) {
+            setTitle("");
+            viewModel.chatName.getLiveData().observe(this, this::setTitle);
+        }
     }
 
     @Override
@@ -314,7 +320,7 @@ public class ContentComposerActivity extends AppCompatActivity {
 
             final ContentItem contentItem = chatId == null ?
                     new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text);
+                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, null, -1);
             if (media != null) {
                 for (Media media : media) {
                     final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
@@ -353,10 +359,12 @@ public class ContentComposerActivity extends AppCompatActivity {
     public static class ContentComposerViewModelFactory implements ViewModelProvider.Factory {
 
         private final Application application;
+        private final String chatId;
         private final Collection<Uri> uris;
 
-        ContentComposerViewModelFactory(@NonNull Application application, @Nullable Collection<Uri> uris) {
+        ContentComposerViewModelFactory(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
             this.application = application;
+            this.chatId = chatId;
             this.uris = uris;
         }
 
@@ -364,7 +372,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContentComposerViewModel(application, uris);
+                return (T) new ContentComposerViewModel(application, chatId, uris);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -374,13 +382,24 @@ public class ContentComposerActivity extends AppCompatActivity {
 
         final MutableLiveData<List<Media>> media = new MutableLiveData<>();
         final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
+        final ComputableLiveData<String> chatName;
 
         final Map<File, RectF> cropRects = new HashMap<>();
 
-        ContentComposerViewModel(@NonNull Application application, @Nullable Collection<Uri> uris) {
+        ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
             super(application);
             if (uris != null) {
                 loadUris(uris);
+            }
+            if (chatId != null) {
+                chatName = new ComputableLiveData<String>() {
+                    @Override
+                    protected String compute() {
+                        return ContactsDb.getInstance(application).getContact(new UserId(chatId)).getDisplayName();
+                    }
+                };
+            } else {
+                chatName = null;
             }
         }
 

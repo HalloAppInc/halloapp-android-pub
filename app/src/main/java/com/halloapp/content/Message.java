@@ -1,5 +1,7 @@
 package com.halloapp.content;
 
+import android.text.TextUtils;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
@@ -15,6 +17,9 @@ public class Message extends ContentItem {
 
     public final String chatId;
     public final @State int state;
+
+    public String replyPostId;
+    public int replyPostMediaIndex;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN})
@@ -32,10 +37,14 @@ public class Message extends ContentItem {
             String messageId,
             long timestamp,
             @State int state,
-            String text) {
+            String text,
+            String replyPostId,
+            int replyPostMediaIndex) {
         super(rowId, senderUserId, messageId, timestamp, text);
         this.chatId = chatId;
         this.state = state;
+        this.replyPostId = TextUtils.isEmpty(replyPostId) ? null : replyPostId;
+        this.replyPostMediaIndex = replyPostMediaIndex;
     }
 
     @Override

@@ -124,7 +124,9 @@ public class ChatMessageElement implements ExtensionElement {
                 id,
                 timestamp,
                 chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
-                chatMessage.getText());
+                chatMessage.getText(),
+                chatMessage.getFeedPostId(),
+                chatMessage.getFeedPostMediaIndex());
         for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(
                     fromProtoMediaType(item.getType()),
@@ -177,6 +179,10 @@ public class ChatMessageElement implements ExtensionElement {
         }
         if (message.text != null) {
             chatMessageBuilder.setText(message.text);
+        }
+        if (message.replyPostId != null) {
+            chatMessageBuilder.setFeedPostId(message.replyPostId);
+            chatMessageBuilder.setFeedPostMediaIndex(message.replyPostMediaIndex);
         }
         return chatMessageBuilder.build();
     }

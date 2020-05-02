@@ -33,7 +33,7 @@ public abstract class ContentItem {
         this.senderUserId = senderUserId;
         this.id = id;
         this.timestamp = timestamp;
-        this.text = text;
+        this.text = TextUtils.isEmpty(text) ? null : text;
     }
 
     public abstract void addToStorage(@NonNull ContentDb contentDb);

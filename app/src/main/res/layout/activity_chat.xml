@@ -82,8 +82,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:background="@drawable/reply_frame"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/guideline">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/reply_name"
@@ -97,7 +96,7 @@
                     android:textAlignment="gravity"
                     android:padding="2dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/reply_thumb"
+                    app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/reply_text"
                     app:layout_constraintVertical_chainStyle="packed"
@@ -124,13 +123,13 @@
                     android:ellipsize="end"
                     android:maxLines="2"
                     app:layout_constraintStart_toEndOf="@+id/reply_media_icon"
-                    app:layout_constraintEnd_toStartOf="@+id/reply_thumb"
+                    app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
                     app:layout_constraintTop_toBottomOf="@+id/reply_name"
                     app:layout_constraintBottom_toBottomOf="parent"
                     tools:text="Have a nice day"/>
 
                 <ImageView
-                    android:id="@+id/reply_thumb"
+                    android:id="@+id/reply_media_thumb"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
                     android:scaleType="centerCrop"
@@ -146,7 +145,7 @@
                     android:layout_height="32dp"
                     android:paddingBottom="16dp"
                     android:src="@drawable/ic_close"
-                    app:layout_constraintStart_toEndOf="@+id/reply_thumb"
+                    app:layout_constraintStart_toEndOf="@+id/reply_media_thumb"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 

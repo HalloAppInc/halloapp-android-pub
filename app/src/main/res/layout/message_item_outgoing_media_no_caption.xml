@@ -30,6 +30,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
+                <FrameLayout
+                    android:id="@+id/reply_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <com.halloapp.widget.MediaViewPager
                     android:id="@+id/media_pager"
                     android:layout_width="match_parent"

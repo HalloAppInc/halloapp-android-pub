@@ -15,7 +15,6 @@ public  final class ChatMessage extends
     media_ = emptyProtobufList();
     text_ = "";
     feedPostId_ = "";
-    feedPostMediaIndex_ = "";
   }
   public static final int MEDIA_FIELD_NUMBER = 1;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Media> media_;
@@ -205,50 +204,29 @@ public  final class ChatMessage extends
   }
 
   public static final int FEED_POST_MEDIA_INDEX_FIELD_NUMBER = 4;
-  private java.lang.String feedPostMediaIndex_;
+  private int feedPostMediaIndex_;
   /**
-   * <code>string feed_post_media_index = 4;</code>
+   * <code>int32 feed_post_media_index = 4;</code>
    * @return The feedPostMediaIndex.
    */
   @java.lang.Override
-  public java.lang.String getFeedPostMediaIndex() {
+  public int getFeedPostMediaIndex() {
     return feedPostMediaIndex_;
   }
   /**
-   * <code>string feed_post_media_index = 4;</code>
-   * @return The bytes for feedPostMediaIndex.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getFeedPostMediaIndexBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(feedPostMediaIndex_);
-  }
-  /**
-   * <code>string feed_post_media_index = 4;</code>
+   * <code>int32 feed_post_media_index = 4;</code>
    * @param value The feedPostMediaIndex to set.
    */
-  private void setFeedPostMediaIndex(
-      java.lang.String value) {
-    value.getClass();
-  
+  private void setFeedPostMediaIndex(int value) {
+    
     feedPostMediaIndex_ = value;
   }
   /**
-   * <code>string feed_post_media_index = 4;</code>
+   * <code>int32 feed_post_media_index = 4;</code>
    */
   private void clearFeedPostMediaIndex() {
     
-    feedPostMediaIndex_ = getDefaultInstance().getFeedPostMediaIndex();
-  }
-  /**
-   * <code>string feed_post_media_index = 4;</code>
-   * @param value The bytes for feedPostMediaIndex to set.
-   */
-  private void setFeedPostMediaIndexBytes(
-      com.google.protobuf.ByteString value) {
-    checkByteStringIsUtf8(value);
-    feedPostMediaIndex_ = value.toStringUtf8();
-    
+    feedPostMediaIndex_ = 0;
   }
 
   public static com.halloapp.proto.ChatMessage parseFrom(
@@ -547,51 +525,30 @@ public  final class ChatMessage extends
     }
 
     /**
-     * <code>string feed_post_media_index = 4;</code>
+     * <code>int32 feed_post_media_index = 4;</code>
      * @return The feedPostMediaIndex.
      */
     @java.lang.Override
-    public java.lang.String getFeedPostMediaIndex() {
+    public int getFeedPostMediaIndex() {
       return instance.getFeedPostMediaIndex();
     }
     /**
-     * <code>string feed_post_media_index = 4;</code>
-     * @return The bytes for feedPostMediaIndex.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getFeedPostMediaIndexBytes() {
-      return instance.getFeedPostMediaIndexBytes();
-    }
-    /**
-     * <code>string feed_post_media_index = 4;</code>
+     * <code>int32 feed_post_media_index = 4;</code>
      * @param value The feedPostMediaIndex to set.
      * @return This builder for chaining.
      */
-    public Builder setFeedPostMediaIndex(
-        java.lang.String value) {
+    public Builder setFeedPostMediaIndex(int value) {
       copyOnWrite();
       instance.setFeedPostMediaIndex(value);
       return this;
     }
     /**
-     * <code>string feed_post_media_index = 4;</code>
+     * <code>int32 feed_post_media_index = 4;</code>
      * @return This builder for chaining.
      */
     public Builder clearFeedPostMediaIndex() {
       copyOnWrite();
       instance.clearFeedPostMediaIndex();
-      return this;
-    }
-    /**
-     * <code>string feed_post_media_index = 4;</code>
-     * @param value The bytes for feedPostMediaIndex to set.
-     * @return This builder for chaining.
-     */
-    public Builder setFeedPostMediaIndexBytes(
-        com.google.protobuf.ByteString value) {
-      copyOnWrite();
-      instance.setFeedPostMediaIndexBytes(value);
       return this;
     }
 
@@ -619,7 +576,7 @@ public  final class ChatMessage extends
           };
           java.lang.String info =
               "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u001b\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208";
+              "\u0003\u0208\u0004\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

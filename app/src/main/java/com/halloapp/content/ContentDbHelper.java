@@ -13,6 +13,7 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.util.Log;
 
@@ -21,7 +22,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 14;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -63,7 +64,6 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
-                + MessagesTable.COLUMN_REPLY_TO_ROW_ID + " INTEGER,"
                 + MessagesTable.COLUMN_TIMESTAMP + " INTEGER,"
                 + MessagesTable.COLUMN_STATE + " INTEGER,"
                 + MessagesTable.COLUMN_TEXT + " TEXT"
@@ -84,6 +84,22 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + " INTEGER,"
                 + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
                 + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1"
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + RepliesTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + RepliesTable.TABLE_NAME + " ("
+                + RepliesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + RepliesTable.COLUMN_MESSAGE_ROW_ID + " INTEGER,"
+                + RepliesTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + RepliesTable.COLUMN_POST_MEDIA_INDEX + " INTEGER,"
+                + RepliesTable.COLUMN_TEXT + " TEXT,"
+                + RepliesTable.COLUMN_MEDIA_TYPE + " INTEGER,"
+                + RepliesTable.COLUMN_MEDIA_PREVIEW_FILE + " TEXT"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + RepliesTable.INDEX_MESSAGE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + RepliesTable.INDEX_MESSAGE_KEY + " ON " + RepliesTable.TABLE_NAME + "("
+                + RepliesTable.COLUMN_MESSAGE_ROW_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MediaTable.TABLE_NAME);
@@ -186,6 +202,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion11(db);
                 // fall through
             }
+            case 12: {
+                upgradeFromVersion12(db);
+                // fall through
+            }
 
             break;
             default: {
@@ -228,7 +248,6 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 MessagesTable.COLUMN_CHAT_ID + " TEXT NOT NULL",
                 MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL",
                 MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL",
-                MessagesTable.COLUMN_REPLY_TO_ROW_ID + " INTEGER",
                 MessagesTable.COLUMN_TIMESTAMP + " INTEGER",
                 MessagesTable.COLUMN_TEXT + " TEXT"
         });
@@ -243,6 +262,29 @@ class ContentDbHelper extends SQLiteOpenHelper {
         final ContentValues postValues = new ContentValues();
         postValues.put(PostsTable.COLUMN_TRANSFERRED, Post.TRANSFERRED_YES);
         db.update(PostsTable.TABLE_NAME, postValues, PostsTable.COLUMN_TRANSFERRED + "=?", new String [] {"1"});
+    }
+
+    private void upgradeFromVersion12(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + RepliesTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + RepliesTable.TABLE_NAME + " ("
+                + RepliesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + RepliesTable.COLUMN_MESSAGE_ROW_ID + " INTEGER,"
+                + RepliesTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + RepliesTable.COLUMN_POST_MEDIA_INDEX + " INTEGER,"
+                + RepliesTable.COLUMN_TEXT + " TEXT,"
+                + RepliesTable.COLUMN_MEDIA_TYPE + " INTEGER,"
+                + RepliesTable.COLUMN_MEDIA_PREVIEW_FILE + " TEXT"
+                + ");");
+
+        removeColumns(db, MessagesTable.TABLE_NAME, new String [] {
+                MessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
+                MessagesTable.COLUMN_CHAT_ID + " TEXT NOT NULL",
+                MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL",
+                MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL",
+                MessagesTable.COLUMN_TIMESTAMP + " INTEGER",
+                MessagesTable.COLUMN_STATE + " INTEGER",
+                MessagesTable.COLUMN_TEXT + " TEXT"
+        });
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

@@ -25,9 +25,15 @@
             android:background="@drawable/message_background_outgoing"
             android:orientation="vertical">
 
+            <FrameLayout
+                android:id="@+id/reply_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <com.halloapp.widget.MessageTextLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:layout_marginTop="9dp"
                 android:layout_marginBottom="9dp">
 

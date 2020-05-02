@@ -115,4 +115,16 @@ public class FileUtils {
             Log.e("Unable to delete file " + file.getAbsolutePath());
         }
     }
+
+    public static void copyFile(@NonNull File src, @NonNull File dst) throws IOException {
+        try (InputStream in = new FileInputStream(src)) {
+            try (OutputStream out = new FileOutputStream(dst)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+        }
+    }
 }

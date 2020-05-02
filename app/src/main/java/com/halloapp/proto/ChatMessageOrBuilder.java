@@ -46,14 +46,8 @@ public interface ChatMessageOrBuilder extends
       getFeedPostIdBytes();
 
   /**
-   * <code>string feed_post_media_index = 4;</code>
+   * <code>int32 feed_post_media_index = 4;</code>
    * @return The feedPostMediaIndex.
    */
-  java.lang.String getFeedPostMediaIndex();
-  /**
-   * <code>string feed_post_media_index = 4;</code>
-   * @return The bytes for feedPostMediaIndex.
-   */
-  com.google.protobuf.ByteString
-      getFeedPostMediaIndexBytes();
+  int getFeedPostMediaIndex();
 }
