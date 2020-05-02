@@ -89,8 +89,8 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:hint="@string/type_a_caption_hint"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:importantForAutofill="no"
                     android:inputType="textCapSentences|textMultiLine"/>
 
