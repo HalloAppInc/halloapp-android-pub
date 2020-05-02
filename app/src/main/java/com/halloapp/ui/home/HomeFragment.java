@@ -172,15 +172,7 @@ public class HomeFragment extends PostsFragment {
     }
 
     private void updateCommentHistory(@Nullable HomeViewModel.CommentsHistory commentsHistory) {
-        String badgeValue;
-        if (commentsHistory == null || commentsHistory.unseenCount == 0) {
-            badgeValue = "";
-        } else if (commentsHistory.unseenCount < 10) {
-            badgeValue = String.format(Locale.getDefault(), "%d", commentsHistory.unseenCount);
-        } else {
-            badgeValue = "*";
-        }
-        notificationDrawable.setBadge(badgeValue);
+        notificationDrawable.setBadge((commentsHistory == null || commentsHistory.unseenCount == 0) ? "" : "•");
         commentHistoryPopup.setCommentHistory(commentsHistory);
     }
 }
