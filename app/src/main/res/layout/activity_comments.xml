@@ -70,16 +70,23 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
+            android:background="@null"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:hint="@string/type_a_comment_hint"
             android:importantForAutofill="no"
             android:inputType="textCapSentences|textMultiLine"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/send"
+            style="?actionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:text="@string/send" />
+            android:src="@drawable/ic_send"
+            android:contentDescription="@string/send" />
 
     </LinearLayout>
 
