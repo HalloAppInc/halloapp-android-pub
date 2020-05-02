@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="android:textColorLink">@color/color_link</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="android:navigationBarColor">@color/color_primary_dark</item>
         <item name="actionBarStyle">@style/ActionBar</item>
@@ -28,6 +29,7 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="android:textColorLink">@color/color_link</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/black</item>

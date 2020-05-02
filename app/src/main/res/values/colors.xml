@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="light_system_bars">true</bool>
-    <color name="color_primary">#FF4500</color>
+    <color name="color_primary">#ff4500</color>
     <color name="color_primary_dark">#757575</color>
-    <color name="color_accent">#FF4500</color>
-    <color name="launcher_background">#FFFFFF</color>
+    <color name="color_accent">#ff4500</color>
+    <color name="color_link">#ff33b5e5</color>
+    <color name="launcher_background">#ffffff</color>
     <color name="color_action_bar">#f6f6f6</color>
     <color name="window_background">#f6f6f6</color>
     <color name="post_actions_separator">#20000000</color>
     <color name="badge_text">#ffffff</color>
-    <color name="badge_background">#FF4500</color>
+    <color name="badge_background">#ff4500</color>
     <color name="tab_active">#414141</color>
     <color name="tab_inactive">#a1a1a1</color>
     <color name="media_placeholder">#f6f6f6</color>
@@ -17,14 +18,14 @@
     <color name="card_background">@color/cardview_light_background</color>
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
-    <color name="fab_background">#FF4500</color>
-    <color name="message_background_incoming">#EEEEEE</color>
-    <color name="message_background_outgoing">#D6E4FA</color>
+    <color name="fab_background">#ff4500</color>
+    <color name="message_background_incoming">#eeeeee</color>
+    <color name="message_background_outgoing">#d6e4fa</color>
     <color name="message_text_incoming">#de000000</color>
-    <color name="message_text_outgoing">#35529F</color>
-    <color name="contacts_list_item_header_text_color">#4575E5</color>
+    <color name="message_text_outgoing">#35529f</color>
+    <color name="contacts_list_item_header_text_color">#4575e5</color>
     <color name="search_highlight">#ff33b5e5</color>
-    <color name="swipe_delete_background">#D93025</color>
+    <color name="swipe_delete_background">#d93025</color>
     <color name="retract_comment_tint">#80808080</color>
-    <color name="avatar_crop_overlay">#C4C4C4C4</color>
+    <color name="avatar_crop_overlay">#c4c4c4c4</color>
 </resources>
