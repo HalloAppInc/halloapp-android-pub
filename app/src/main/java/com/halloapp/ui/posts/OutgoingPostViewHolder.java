@@ -25,7 +25,7 @@ import com.halloapp.widget.AvatarsLayout;
 
 public class OutgoingPostViewHolder extends PostViewHolder {
 
-    private static final int MAX_SEEN_BY_AVATARS = 4;
+    private static final int MAX_SEEN_BY_AVATARS = 3;
 
     private final View addCommentButton;
     private final View viewCommentsButton;
@@ -120,7 +120,8 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             seenIndicator.setContentDescription(itemView.getContext().getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
             seenIndicator.setAvatarCount(Math.min(post.seenByCount, MAX_SEEN_BY_AVATARS));
             if (seenIndicator.getChildCount() == MAX_SEEN_BY_AVATARS) {
-                seenIndicator.getChildAt(0).setAlpha(.5f);
+                seenIndicator.getChildAt(1).setAlpha(.75f);
+                seenIndicator.getChildAt(0).setAlpha(.50f);
             }
             parent.getSeenByLoader().load(seenIndicator, post.id);
         } else {

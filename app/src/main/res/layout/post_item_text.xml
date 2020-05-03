@@ -38,7 +38,7 @@
         android:visibility="gone"
         app:alPaddingColor="@color/card_background"
         app:alPaddingSize="1dp"
-        app:alElevation="2dp"
+        app:alElevation="0dp"
         app:alAvatarSize="28dp"/>
 
 </merge>

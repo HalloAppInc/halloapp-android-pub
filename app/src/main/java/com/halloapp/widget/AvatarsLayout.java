@@ -130,7 +130,7 @@ public class AvatarsLayout extends FrameLayout {
             setMeasuredDimension(0, avatarSize +  + getPaddingTop() + getPaddingBottom());
         } else {
             setMeasuredDimension(
-                    avatarSize + (int)((visibleChildCount - 1) * (avatarSize / 2f)) + getPaddingLeft() + getPaddingRight(),
+                    avatarSize + (int)((visibleChildCount - 1) * (2f * avatarSize / 3f)) + getPaddingLeft() + getPaddingRight(),
                     avatarSize +  + getPaddingTop() + getPaddingBottom());
         }
     }
@@ -153,12 +153,12 @@ public class AvatarsLayout extends FrameLayout {
             if (child.getVisibility() != View.GONE) {
                 if (getLayoutDirection() == LAYOUT_DIRECTION_RTL) {
                     child.layout(
-                            paddingLeft + index * avatarSize / 2, paddingTop,
-                            paddingLeft + index * avatarSize / 2 + avatarSize, paddingTop + avatarSize);
+                            paddingLeft + index * 2 * avatarSize / 3, paddingTop,
+                            paddingLeft + index * 2 * avatarSize / 3 + avatarSize, paddingTop + avatarSize);
                 } else {
                     child.layout(
-                            paddingLeft + (visibleChildCount - index - 1) * avatarSize / 2, paddingTop,
-                            paddingLeft + (visibleChildCount - index - 1) * avatarSize / 2 + avatarSize, paddingTop + avatarSize);
+                            paddingLeft + (visibleChildCount - index - 1) * 2 * avatarSize / 3, paddingTop,
+                            paddingLeft + (visibleChildCount - index - 1) * 2 * avatarSize / 3 + avatarSize, paddingTop + avatarSize);
                 }
                 index++;
             }
