@@ -37,7 +37,21 @@ public class PublishedEntry {
     private static final String ELEMENT = "entry";
     private static final String NAMESPACE = "http://halloapp.com/published-entry";
 
+    // TODO(jack): Delete all XML stuff on 6/5/20 or whenever feed history is cleared
+    private static final String ELEMENT_FEED_POST = "feedpost";
+    private static final String ELEMENT_COMMENT = "comment";
+    private static final String ELEMENT_TEXT = "text";
+    private static final String ELEMENT_FEED_ITEM_ID = "feedItemId";
+    private static final String ELEMENT_PARENT_COMMENT_ID = "parentCommentId";
+    private static final String ELEMENT_URL = "url";
+    private static final String ELEMENT_MEDIA = "media";
     private static final String ELEMENT_PROTOBUF_STAGE_ONE = "s1";
+
+    private static final String ATTRIBUTE_TYPE = "type";
+    private static final String ATTRIBUTE_WIDTH = "width";
+    private static final String ATTRIBUTE_HEIGHT = "height";
+    private static final String ATTRIBUTE_ENC_KEY = "key";
+    private static final String ATTRIBUTE_SHA256_HASH = "sha256hash";
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ENTRY_FEED, ENTRY_COMMENT})
@@ -182,12 +196,69 @@ public class PublishedEntry {
             }
             final String name = Preconditions.checkNotNull(parser.getName());
             if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
+                // TODO(jack): fix precedence (enc > s1 > original)
                 entryBuilder = readEncodedEntryString(Xml.readText(parser));
+            } else if (name.equals(ELEMENT_FEED_POST)) {
+                entryBuilder = readEntryContent(parser);
+                entryBuilder.type(ENTRY_FEED);
+            } else if (name.equals(ELEMENT_COMMENT)) {
+                entryBuilder = readEntryContent(parser);
+                entryBuilder.type(ENTRY_COMMENT);
             } else {
                 Xml.skip(parser);
             }
         }
         return Preconditions.checkNotNull(entryBuilder);
+    }
+
+    private static @NonNull PublishedEntry.Builder readEntryContent(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
+        final PublishedEntry.Builder builder = new PublishedEntry.Builder();
+        final List<Media> media = new ArrayList<>();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            final String name = Preconditions.checkNotNull(parser.getName());
+            if (ELEMENT_MEDIA.equals(name)) {
+                media.clear();
+                media.addAll(readMedia(parser));
+            } else if (ELEMENT_TEXT.equals(name)) {
+                builder.text(Xml.readText(parser));
+            } else if (ELEMENT_FEED_ITEM_ID.equals(name)) {
+                builder.feedItemId(Xml.readText(parser));
+            } else if (ELEMENT_PARENT_COMMENT_ID.equals(name)) {
+                builder.parentCommentId(Xml.readText(parser));
+            } else {
+                Xml.skip(parser);
+            }
+        }
+        builder.media(media);
+        return builder;
+    }
+
+    private static List<Media> readMedia(XmlPullParser parser) throws IOException, XmlPullParserException {
+        final List<Media> media = new ArrayList<>();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            final String name = Preconditions.checkNotNull(parser.getName());
+            if (ELEMENT_URL.equals(name)) {
+                final String type = parser.getAttributeValue(null, ATTRIBUTE_TYPE);
+                final String widthStr = parser.getAttributeValue(null, ATTRIBUTE_WIDTH);
+                final String heightStr = parser.getAttributeValue(null, ATTRIBUTE_HEIGHT);
+                final String key = parser.getAttributeValue(null, ATTRIBUTE_ENC_KEY);
+                final String sha256hash = parser.getAttributeValue(null, ATTRIBUTE_SHA256_HASH);
+                final Media mediaItem = new Media(type, Xml.readText(parser),
+                        key, sha256hash, widthStr, heightStr);
+                if (!TextUtils.isEmpty(mediaItem.url)) {
+                    media.add(mediaItem);
+                }
+            } else {
+                Xml.skip(parser);
+            }
+        }
+        return media;
     }
 
     PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
@@ -212,6 +283,46 @@ public class PublishedEntry {
             serializer.setOutput(writer);
             serializer.setPrefix("", NAMESPACE);
             serializer.startTag(NAMESPACE, ELEMENT);
+            serializer.startTag(NAMESPACE, getTag());
+            if (text != null) {
+                serializer.startTag(NAMESPACE, ELEMENT_TEXT);
+                serializer.text(text);
+                serializer.endTag(NAMESPACE, ELEMENT_TEXT);
+            }
+            if (feedItemId != null) {
+                serializer.startTag(NAMESPACE, ELEMENT_FEED_ITEM_ID);
+                serializer.text(feedItemId);
+                serializer.endTag(NAMESPACE, ELEMENT_FEED_ITEM_ID);
+            }
+            if (parentCommentId != null) {
+                serializer.startTag(NAMESPACE, ELEMENT_PARENT_COMMENT_ID);
+                serializer.text(parentCommentId);
+                serializer.endTag(NAMESPACE, ELEMENT_PARENT_COMMENT_ID);
+            }
+            if (!media.isEmpty()) {
+                serializer.startTag(NAMESPACE, ELEMENT_MEDIA);
+                for (Media mediaItem : media) {
+                    serializer.startTag(NAMESPACE, ELEMENT_URL);
+                    serializer.attribute(null, ATTRIBUTE_TYPE, mediaItem.type);
+                    if (mediaItem.width != 0) {
+                        serializer.attribute(null, ATTRIBUTE_WIDTH, Integer.toString(mediaItem.width));
+                    }
+                    if (mediaItem.height != 0) {
+                        serializer.attribute(null, ATTRIBUTE_HEIGHT, Integer.toString(mediaItem.height));
+                    }
+                    if (mediaItem.encKey != null) {
+                        serializer.attribute(null, ATTRIBUTE_ENC_KEY, Base64.encodeToString(mediaItem.encKey, Base64.NO_WRAP));
+                    }
+                    if (mediaItem.sha256hash != null) {
+                        serializer.attribute(null, ATTRIBUTE_SHA256_HASH, Base64.encodeToString(mediaItem.sha256hash, Base64.NO_WRAP));
+                    }
+                    serializer.text(mediaItem.url);
+                    serializer.endTag(NAMESPACE, ELEMENT_URL);
+                }
+                serializer.endTag(NAMESPACE, ELEMENT_MEDIA);
+
+            }
+            serializer.endTag(NAMESPACE, getTag());
 
             serializer.startTag(NAMESPACE, ELEMENT_PROTOBUF_STAGE_ONE);
             serializer.text(getEncodedEntryString());
@@ -348,6 +459,20 @@ public class PublishedEntry {
     @Override
     public @NonNull String toString() {
         return "PublishedEntry[id=" + id + " type=" + type + " text=" + text + "]";
+    }
+
+    private @NonNull String getTag() {
+        switch (type) {
+            case ENTRY_FEED: {
+                return ELEMENT_FEED_POST;
+            }
+            case ENTRY_COMMENT: {
+                return ELEMENT_COMMENT;
+            }
+            default: {
+                throw new IllegalStateException("Unknown type " + type);
+            }
+        }
     }
 
     private boolean valid() {
