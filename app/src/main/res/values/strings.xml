@@ -19,7 +19,7 @@
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">now</string>
     <string name="phone_number_hint">Phone number</string>
-    <string name="request_registration_title">Enter your phone number to get started</string>
+    <string name="request_registration_title">Welcome to HalloApp</string>
     <string name="reverify_registration_title">Please, re-verify your phone number</string>
     <string name="request_registration_subtitle">You will receive verification code. Carrier rates may apply.</string>
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
@@ -179,4 +179,11 @@
     <string name="invite_friends">Invite friends</string>
     <string name="invite_text">Hey,\n\nHalloApp is a fast, simple and secure app that I use to share what I care about with friends and family.\n\nGet it for free at\nhttps://www.halloapp.com/download/</string>
     <string name="share_via">Share via…</string>
+    <string name="name_hint">Your name</string>
+    <string name="name_must_be_specified">Name must be specified</string>
+    <string name="your_name">Your name</string>
+    <string name="update">Update</string>
+    <string name="counter">%d/%d</string>
+    <string name="failed_set_name">Failed to set name, try again later</string>
+    <string name="name_updated">Name updated</string>
 </resources>

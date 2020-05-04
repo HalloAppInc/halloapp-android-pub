@@ -60,7 +60,8 @@
 
         <activity
             android:name=".ui.RegistrationRequestActivity"
-            android:label=""/>
+            android:label=""
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity android:name=".ui.InitialSyncActivity"
             android:label=""/>
@@ -87,6 +88,11 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings"/>
+
+        <activity
+            android:name=".ui.UserNameActivity"
+            android:label="@string/your_name"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
 
         <activity
             android:name=".ui.VideoPlaybackActivity"

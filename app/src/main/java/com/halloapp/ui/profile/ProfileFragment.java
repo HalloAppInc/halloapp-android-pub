@@ -28,14 +28,13 @@ import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.SettingsActivity;
+import com.halloapp.ui.UserNameActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.Connection;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -78,10 +77,14 @@ public class ProfileFragment extends PostsFragment {
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
-        final LoadNameTask loadNameTask = new LoadNameTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
-        loadNameTask.name.observe(getViewLifecycleOwner(), user -> nameView.setText(
-                BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + user, null))));
-        loadNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        final TextView phoneView = headerView.findViewById(R.id.phone);
+        final LoadProfileInfoTask loadProfileInfoTask = new LoadProfileInfoTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
+        loadProfileInfoTask.phone.observe(getViewLifecycleOwner(), phone -> phoneView.setText(
+                BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null))));
+        loadProfileInfoTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        Me.getInstance(getContext()).name.observe(this, nameView::setText);
+        AsyncTask.execute(() -> Me.getInstance(getContext()).getName());
 
         avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
@@ -95,6 +98,8 @@ public class ProfileFragment extends PostsFragment {
         };
         changeAvatarView.setOnClickListener(changeAvatarListener);
         avatarView.setOnClickListener(changeAvatarListener);
+
+        headerView.findViewById(R.id.name).setOnClickListener(v -> startActivity(new Intent(getContext(), UserNameActivity.class)));
 
         adapter.addHeader(headerView);
 
@@ -132,18 +137,18 @@ public class ProfileFragment extends PostsFragment {
         }
     }
 
-    private static class LoadNameTask extends AsyncTask<Void, Void, Void> {
+    private static class LoadProfileInfoTask extends AsyncTask<Void, Void, Void> {
 
         final Me me;
-        final MutableLiveData<String> name = new MutableLiveData<>() ;
+        final MutableLiveData<String> phone = new MutableLiveData<>() ;
 
-        LoadNameTask(@NonNull Me me) {
+        LoadProfileInfoTask(@NonNull Me me) {
             this.me = me;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            name.postValue(me.getPhone());
+            phone.postValue(me.getPhone());
             return null;
         }
     }

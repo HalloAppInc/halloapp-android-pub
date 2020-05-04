@@ -26,6 +26,7 @@ import com.halloapp.xmpp.PublishedAvatarMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -151,6 +152,11 @@ public class ConnectionObserver implements Connection.Observer {
                 Log.e("ConnectionObserver.onContactsChanged", e);
             }
         });
+    }
+
+    @Override
+    public void onUserNamesReceived(@NonNull Map<UserId, String> names) {
+        ContactsDb.getInstance(context).updateUserNames(names);
     }
 
     @Override

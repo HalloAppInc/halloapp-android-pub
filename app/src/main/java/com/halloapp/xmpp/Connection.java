@@ -14,7 +14,6 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.crypto.SessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -54,6 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,6 +111,7 @@ public class Connection {
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
         void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId);
         void onLowOneTimePreKeyCountReceived(int count);
+        void onUserNamesReceived(@NonNull Map<UserId, String> names);
     }
 
     private Connection() {
@@ -351,6 +352,24 @@ public class Connection {
                 Log.d("connection: response after setting the push token " + response.toString());
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot send push token", e);
+            }
+        });
+    }
+
+    public Future<Boolean> sendName(@NonNull final String name) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: send name: no connection");
+                return Boolean.FALSE;
+            }
+            final UserNameIq nameIq = new UserNameIq(connection.getXMPPServiceDomain(), name);
+            try {
+                final IQ response = connection.createStanzaCollectorAndSend(nameIq).nextResultOrThrow();
+                Log.d("connection: response after setting name " + response.toString());
+                return Boolean.TRUE;
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot send name", e);
+                return Boolean.FALSE;
             }
         });
     }
@@ -754,6 +773,18 @@ public class Connection {
                     comments.add(comment);
                 }
             }
+        }
+        final Map<UserId, String> names = new HashMap<>();
+        for (NamedElement item : items) {
+            if (item instanceof PubSubItem) {
+                final PubSubItem pubSubItem = (PubSubItem) item;
+                if (pubSubItem.getPublisher() != null && pubSubItem.getPublisherName() != null) {
+                    names.put(new UserId(pubSubItem.getPublisher().getLocalpartOrNull().toString()), pubSubItem.getPublisherName());
+                }
+            }
+        }
+        if (!names.isEmpty()) {
+            observer.onUserNamesReceived(names);
         }
         if (!posts.isEmpty() || !comments.isEmpty()) {
             observer.onIncomingFeedItemsReceived(posts, comments, ackId);

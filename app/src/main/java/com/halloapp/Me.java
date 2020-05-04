@@ -7,6 +7,8 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
@@ -14,6 +16,7 @@ import com.halloapp.util.Log;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Objects;
 
 public class Me {
 
@@ -24,9 +27,12 @@ public class Me {
     private static final String PREF_KEY_USER_ID = "user_id";
     private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_PHONE = "phone";
+    private static final String PREF_KEY_NAME = "name";
 
     private final Context context;
     private SharedPreferences preferences;
+
+    public final MutableLiveData<String> name = new MutableLiveData<>();
 
     public static Me getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -76,7 +82,7 @@ public class Me {
                 }
             }
         }
-        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword());
+        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword()) && !TextUtils.isEmpty(getName());
     }
 
     @WorkerThread
@@ -92,6 +98,25 @@ public class Me {
     @WorkerThread
     public synchronized String getPhone() {
         return getPreferences().getString(PREF_KEY_PHONE, null);
+    }
+
+    @WorkerThread
+    public synchronized String getName() {
+        final String name = getPreferences().getString(PREF_KEY_NAME, null);
+        if (!Objects.equals(this.name.getValue(), name)) {
+            this.name.postValue(name);
+        }
+        return name;
+    }
+
+    @WorkerThread
+    public synchronized void saveName(@NonNull String name) {
+        Log.i("Me.saveName: " + name);
+        if (!getPreferences().edit().putString(PREF_KEY_NAME, name).commit()) {
+            Log.e("Me.saveName: failed");
+        } else {
+            this.name.postValue(name);
+        }
     }
 
     @WorkerThread

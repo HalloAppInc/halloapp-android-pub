@@ -88,7 +88,7 @@ public class Registration {
     }
 
     @WorkerThread
-    public @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code) {
+    public @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code, @NonNull String name) {
         Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
         InputStream inStream = null;
         HttpURLConnection connection = null;
@@ -107,6 +107,7 @@ public class Registration {
             JSONObject requestJson = new JSONObject();
             requestJson.put("phone", phone);
             requestJson.put("code", code);
+            requestJson.put("name", name);
             connection.getOutputStream().write(requestJson.toString().getBytes());
 
             inStream = connection.getInputStream();

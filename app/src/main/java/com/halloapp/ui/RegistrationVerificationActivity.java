@@ -172,7 +172,7 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            final Registration.RegistrationVerificationResult result = Registration.getInstance().verifyRegistration(phone, code);
+            final Registration.RegistrationVerificationResult result = Registration.getInstance().verifyRegistration(phone, code, Me.getInstance(viewModel.getApplication()).getName());
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
                 final Me me = Me.getInstance(viewModel.getApplication());
                 me.saveRegistration(Preconditions.checkNotNull(result.user), Preconditions.checkNotNull(result.password), Preconditions.checkNotNull(result.phone));

@@ -13,6 +13,7 @@ public class Constants {
     public static final int MEDIA_POST_LINE_LIMIT = 3;
     public static final int TEXT_POST_LINE_LIMIT = 12;
     public static final int MAX_AVATAR_DIMENSION = 250;
+    public static final int MAX_NAME_LENGTH = 25;
 
     public static final int JPEG_QUALITY = 80;
     public static final int VIDEO_BITRATE = 2000000;

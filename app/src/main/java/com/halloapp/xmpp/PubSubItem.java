@@ -23,6 +23,7 @@ public class PubSubItem extends PayloadItem<SimplePayload> {
 
     private long timestamp;
     private Jid publisher;
+    private String publisherName;
     private @ItemType String type;
 
     @Retention(RetentionPolicy.SOURCE)
@@ -51,6 +52,10 @@ public class PubSubItem extends PayloadItem<SimplePayload> {
         return publisher;
     }
 
+    String getPublisherName() {
+        return publisherName;
+    }
+
     @Override
     public XmlStringBuilder toXML(String enclosingNamespace) {
         XmlStringBuilder xml = getCommonXml();
@@ -71,6 +76,7 @@ public class PubSubItem extends PayloadItem<SimplePayload> {
             String node = parser.getAttributeValue(null, "node");
             String timestamp = parser.getAttributeValue(null, "timestamp");
             String publisher = parser.getAttributeValue(null, "publisher");
+            String publisherName = parser.getAttributeValue(null, "publisher_name");
             String xmlns = parser.getNamespace();
             Item.ItemNamespace itemNamespace = Item.ItemNamespace.fromXmlns(xmlns);
 
@@ -100,6 +106,7 @@ public class PubSubItem extends PayloadItem<SimplePayload> {
             if (timestamp != null) {
                 item.timestamp = Long.parseLong(timestamp);
             }
+            item.publisherName = publisherName;
             return item;
         }
     }

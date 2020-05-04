@@ -41,10 +41,10 @@ public class Contact {
     }
 
     public String getDisplayName() {
-        return TextUtils.isEmpty(addressBookName) ? (TextUtils.isEmpty(halloName) ? getDisplayPhone() : halloName) : addressBookName;
+        return TextUtils.isEmpty(addressBookName) ? (TextUtils.isEmpty(halloName) ? getDisplayPhone() : ("~" + halloName)) : addressBookName;
     }
 
-    public String getDisplayPhone() {
+    public @Nullable String getDisplayPhone() {
         final String internationalPhone;
         if (normalizedPhone != null) {
             internationalPhone = PhoneNumberUtils.formatNumber("+" + normalizedPhone, null);

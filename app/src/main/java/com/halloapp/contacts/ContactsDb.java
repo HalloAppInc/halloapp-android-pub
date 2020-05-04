@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -188,18 +191,60 @@ public class ContactsDb {
         });
     }
 
+    public Future<Void> updateUserNames(@NonNull Map<UserId, String> names) {
+        return databaseWriteExecutor.submit(() -> {
+            boolean updated = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                for (Map.Entry<UserId, String> user : names.entrySet()) {
+                    String currentName = null;
+                    try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                            new String[] { ContactsTable.COLUMN_HALLO_NAME },
+                            ContactsTable.COLUMN_USER_ID + "=?",
+                            new String [] {user.getKey().rawId()}, null, null, null, "1")) {
+                        if (cursor.moveToNext()) {
+                            currentName = cursor.getString(0);
+                        }
+                    }
+                    if (!Objects.equals(currentName, user.getValue())) {
+                        final ContentValues values = new ContentValues();
+                        values.put(ContactsTable.COLUMN_HALLO_NAME, user.getValue());
+                        final int updatedRowsCount = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                                ContactsTable.COLUMN_USER_ID + "=? ",
+                                new String[]{user.getKey().rawId()},
+                                SQLiteDatabase.CONFLICT_ABORT);
+                        if (updatedRowsCount == 0) {
+                            values.put(ContactsTable.COLUMN_USER_ID, user.getKey().rawId());
+                            db.insert(ContactsTable.TABLE_NAME, null, values);
+                            Log.i("ContactsDb.updateUserNames: name " + user.getValue() + " added for " + user.getKey());
+                        }
+                        updated = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updated) {
+                notifyContactsChanged();
+            }
+            return null;
+        });
+    }
+
     public Future<Void> updateContactAvatarInfo(@NonNull ContactAvatarInfo contact) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             try {
-                    final ContentValues values = new ContentValues();
-                    values.put(ContactsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
-                    values.put(ContactsTable.COLUMN_AVATAR_HASH, contact.avatarHash);
-                    db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
-                            ContactsTable.COLUMN_USER_ID + "=? ",
-                            new String [] {contact.userId.rawId()},
-                            SQLiteDatabase.CONFLICT_ABORT);
+                final ContentValues values = new ContentValues();
+                values.put(ContactsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
+                values.put(ContactsTable.COLUMN_AVATAR_HASH, contact.avatarHash);
+                db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                        ContactsTable.COLUMN_USER_ID + "=? ",
+                        new String [] {contact.userId.rawId()},
+                        SQLiteDatabase.CONFLICT_ABORT);
                 Log.i("ContactsDb.updateContactAvatarInfo");
                 db.setTransactionSuccessful();
             } finally {
@@ -248,6 +293,9 @@ public class ContactsDb {
     @WorkerThread
     public @NonNull Contact getContact(@NonNull UserId userId) {
         final Contact contact = readContact(userId);
+        if (contact != null && TextUtils.isEmpty(contact.addressBookName) && TextUtils.isEmpty(contact.addressBookPhone) && TextUtils.isEmpty(contact.halloName)) {
+            contact.addressBookName = context.getString(R.string.unknown_contact);
+        }
         return contact == null ? new Contact(userId, context.getString(R.string.unknown_contact)) : contact;
     }
 
@@ -264,7 +312,7 @@ public class ContactsDb {
                         ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_FRIEND
                 },
-                ContactsTable.COLUMN_USER_ID + "=?" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
+                ContactsTable.COLUMN_USER_ID + "=?",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return new Contact(
