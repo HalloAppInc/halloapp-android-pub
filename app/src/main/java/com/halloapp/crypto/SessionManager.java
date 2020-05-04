@@ -1,7 +1,10 @@
 package com.halloapp.crypto;
 
+import androidx.annotation.NonNull;
+
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.Message;
 import com.halloapp.crypto.keys.ECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
@@ -12,6 +15,11 @@ import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
+
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Domainpart;
+import org.jxmpp.jid.parts.Localpart;
 
 public class SessionManager {
     private final Connection connection;
@@ -53,6 +61,19 @@ public class SessionManager {
         }
 
         return messageHandler.convertFromWire(message, peerUserId, ephemeralKey, ephemeralKeyId);
+    }
+
+    public void sendMessage(final @NonNull Message message) {
+        final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(Connection.XMPP_DOMAIN));
+        final UserId recipientUserId = new UserId(recipientJid.toString());
+        final SessionSetupInfo sessionSetupInfo;
+        try {
+            sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
+        } catch (Exception e) {
+            Log.e("Failed to set up encryption session", e);
+            return;
+        }
+        connection.sendMessage(message, sessionSetupInfo);
     }
 
     public SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {

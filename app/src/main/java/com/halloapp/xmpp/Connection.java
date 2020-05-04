@@ -586,7 +586,7 @@ public class Connection {
         });
     }
 
-    public void sendMessage(final @NonNull Message message) {
+    public void sendMessage(final @NonNull Message message, final @NonNull SessionSetupInfo sessionSetupInfo) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send message, no connection");
@@ -595,13 +595,6 @@ public class Connection {
             final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
             final UserId recipientUserId = new UserId(recipientJid.toString());
             final UserId myExternalUserId = new UserId(connection.getUser().toString());
-            final SessionSetupInfo sessionSetupInfo;
-            try {
-                sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
-            } catch (Exception e) {
-                Log.e("Failed to set up encryption session", e);
-                return;
-            }
             try {
                 // TODO(jack): keys should be stored for use until the message send is successful
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);

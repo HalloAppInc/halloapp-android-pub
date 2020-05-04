@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.contacts.UserId;
+import com.halloapp.crypto.SessionManager;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
@@ -54,7 +55,7 @@ public class Message extends ContentItem {
 
     @Override
     public void send(@NonNull Connection connection) {
-        connection.sendMessage(this);
+        SessionManager.getInstance().sendMessage(this);
     }
 
     @Override
