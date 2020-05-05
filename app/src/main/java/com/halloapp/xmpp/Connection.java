@@ -613,7 +613,7 @@ public class Connection {
             }
             final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
             final UserId recipientUserId = new UserId(recipientJid.toString());
-            final UserId myExternalUserId = new UserId(connection.getUser().toString());
+            final UserId myExternalUserId = new UserId(connection.getUser().asEntityBareJidString());
             try {
                 // TODO(jack): keys should be stored for use until the message send is successful
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);

@@ -246,8 +246,15 @@ public class ChatMessageElement implements ExtensionElement {
         } catch (NumberFormatException e) {
             Log.w("Got invalid ephemeral key id " + ephemeralKeyIdString);
         }
-        final PublicECKey ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
-        final PublicECKey identityKey = new PublicECKey(Base64.decode(identityKeyString, Base64.NO_WRAP));
+
+        PublicECKey ephemeralKey = null;
+        if (ephemeralKeyString != null) {
+            ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
+        }
+        PublicECKey identityKey = null;
+        if (identityKeyString != null) {
+            identityKey = new PublicECKey(Base64.decode(identityKeyString, Base64.NO_WRAP));
+        }
 
         final String encryptedEntry = Xml.readText(parser);
         final byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);

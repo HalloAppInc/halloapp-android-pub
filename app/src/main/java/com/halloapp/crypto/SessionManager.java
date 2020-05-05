@@ -59,6 +59,7 @@ public class SessionManager {
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
             return ret;
         }
+        encryptedKeyStore.setPeerResponded(peerUserId, true);
 
         return messageHandler.convertFromWire(message, peerUserId, ephemeralKey, ephemeralKeyId);
     }
@@ -79,6 +80,15 @@ public class SessionManager {
     public SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
         if (!Constants.ENCRYPTION_TURNED_ON) {
             return nullInfo;
+        }
+
+        if (encryptedKeyStore.getPeerResponded(peerUserId)) {
+            return new SessionSetupInfo(
+                    ECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
+                    encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
+                    null,
+                    null
+            );
         }
 
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
