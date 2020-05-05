@@ -159,7 +159,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         if (message.replyPostId != null) {
             if (replyContainer == null) {
                 final ViewGroup replyContainerView = itemView.findViewById(R.id.reply_container);
-                replyContainer = new ReplyContainer(LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView), parent.getReplyLoader());
+                replyContainer = new ReplyContainer(LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView), parent);
             }
             replyContainer.bindTo(message);
             replyContainer.show();

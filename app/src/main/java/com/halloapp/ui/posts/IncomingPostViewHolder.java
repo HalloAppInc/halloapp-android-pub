@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.R;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
+import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.chat.ChatActivity;
 
 public class IncomingPostViewHolder extends PostViewHolder {
@@ -30,6 +31,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
         });
         itemView.findViewById(R.id.message).setOnClickListener(view -> {
             final Intent intent = new Intent(itemView.getContext(), ChatActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId.rawId());
             intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, post.id);
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);

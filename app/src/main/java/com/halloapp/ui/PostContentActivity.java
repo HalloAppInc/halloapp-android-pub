@@ -1,0 +1,247 @@
+package com.halloapp.ui;
+
+import android.content.Intent;
+import android.graphics.Point;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.LongSparseArray;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.halloapp.Constants;
+import com.halloapp.R;
+import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.UserId;
+import com.halloapp.content.Post;
+import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.posts.IncomingPostViewHolder;
+import com.halloapp.ui.posts.OutgoingPostViewHolder;
+import com.halloapp.ui.posts.PostViewHolder;
+import com.halloapp.ui.posts.RetractedPostViewHolder;
+import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
+import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.xmpp.Connection;
+
+import java.util.Stack;
+
+public class PostContentActivity extends AppCompatActivity {
+
+    public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
+    public static final String EXTRA_POST_ID = "post_id";
+    public static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
+
+    private MediaThumbnailLoader mediaThumbnailLoader;
+    private ContactLoader contactLoader;
+    private AvatarLoader avatarLoader;
+    private SeenByLoader seenByLoader;
+    private TimestampRefresher timestampRefresher;
+
+    private DrawDelegateView drawDelegateView;
+    private final Stack<View> recycledMediaViews = new Stack<>();
+
+    private Post post;
+    private PostViewHolder postViewHolder;
+    private ViewGroup postViewGroup;
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+
+        @Override
+        public void onContactsChanged() {
+            contactLoader.resetCache();
+            mainHandler.post(() -> updatePost());
+        }
+
+        @Override
+        public void onContactsReset() {
+        }
+    };
+
+    static final int POST_TYPE_TEXT = 0x00;
+    static final int POST_TYPE_MEDIA = 0x01;
+    static final int POST_TYPE_RETRACTED = 0x02;
+    static final int POST_TYPE_MASK = 0xFF;
+
+    static final int POST_DIRECTION_OUTGOING = 0x0000;
+    static final int POST_DIRECTION_INCOMING = 0x0100;
+    static final int POST_DIRECTION_MASK = 0xFF00;
+
+    private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
+
+        private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+
+        @Override
+        public AvatarLoader getAvatarLoader() {
+            return avatarLoader;
+        }
+
+        @Override
+        public ContactLoader getContactLoader() {
+            return contactLoader;
+        }
+
+        @Override
+        public SeenByLoader getSeenByLoader() {
+            return seenByLoader;
+        }
+
+        @Override
+        public DrawDelegateView getDrawDelegateView() {
+            return drawDelegateView;
+        }
+
+        @Override
+        public MediaThumbnailLoader getMediaThumbnailLoader() {
+            return mediaThumbnailLoader;
+        }
+
+        @Override
+        public LongSparseArray<Integer> getMediaPagerPositionMap() {
+            return mediaPagerPositionMap;
+        }
+
+        @Override
+        public Stack<View> getRecycledMediaViews() {
+            return recycledMediaViews;
+        }
+
+        @Override
+        public TimestampRefresher getTimestampRefresher() {
+            return timestampRefresher;
+        }
+
+        @Override
+        public void startActivity(Intent intent) {
+            PostContentActivity.this.startActivity(intent);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("PostContentActivity.onCreate");
+
+        if (Build.VERSION.SDK_INT >= 28) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        setContentView(R.layout.activity_post_content);
+
+        postViewGroup = findViewById(R.id.post);
+
+        final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
+        final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+
+        final PostContentViewModel viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), userId, postId)).get(PostContentViewModel.class);
+
+        final Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        contactLoader = new ContactLoader(this);
+        seenByLoader = new SeenByLoader(this);
+        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        ContactsDb.getInstance(this).addObserver(contactsObserver);
+        timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
+        timestampRefresher.refresh.observe(this, value -> updatePost());
+
+        drawDelegateView = Preconditions.checkNotNull(this).findViewById(R.id.draw_delegate);
+
+        viewModel.post.getLiveData().observe(this, this::showPost);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("PostContentActivity.onDestroy");
+        mediaThumbnailLoader.destroy();
+        contactLoader.destroy();
+        seenByLoader.destroy();
+        ContactsDb.getInstance(this).removeObserver(contactsObserver);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private void showPost(@Nullable Post post) {
+        this.post = post;
+        postViewGroup.removeAllViews();
+        if (post != null) {
+            postViewHolder = createViewHolder(postViewGroup, post);
+            postViewHolder.bindTo(post);
+            postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));
+        }
+    }
+
+    private void updatePost() {
+        if (post != null && postViewHolder != null) {
+            postViewHolder.bindTo(post);
+        }
+    }
+
+    public int getItemViewType(Post post) {
+        return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
+                (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
+    }
+
+    public @NonNull PostViewHolder createViewHolder(@NonNull ViewGroup parent, @NonNull Post post) {
+        final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, true);
+        final int viewType = getItemViewType(post);
+        @LayoutRes int contentLayoutRes;
+        switch (viewType & POST_TYPE_MASK) {
+            case POST_TYPE_TEXT: {
+                contentLayoutRes = R.layout.post_item_text;
+                break;
+            }
+            case POST_TYPE_MEDIA: {
+                contentLayoutRes = R.layout.post_item_media;
+                break;
+            }
+            case POST_TYPE_RETRACTED: {
+                contentLayoutRes = R.layout.post_item_retracted;
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException();
+            }
+        }
+        final ViewGroup content = layout.findViewById(R.id.post_content);
+        LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
+        if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
+            return new RetractedPostViewHolder(layout, postViewHolderParent);
+        }
+        final ViewGroup footer = layout.findViewById(R.id.post_footer);
+        switch (viewType & POST_DIRECTION_MASK) {
+            case POST_DIRECTION_INCOMING: {
+                LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                return new IncomingPostViewHolder(layout, postViewHolderParent);
+            }
+            case POST_DIRECTION_OUTGOING: {
+                LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
+                return new OutgoingPostViewHolder(layout, postViewHolderParent);
+            }
+            default: {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+}

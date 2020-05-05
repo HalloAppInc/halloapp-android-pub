@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+
 import android.app.Application;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -21,30 +22,23 @@ import com.halloapp.util.ComputableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostDetailsViewModel extends AndroidViewModel {
+public class PostContentViewModel extends AndroidViewModel {
 
-    final MutableLiveData<Post> post = new MutableLiveData<>();
-    final ComputableLiveData<List<Contact>> contactsList;
+    final ComputableLiveData<Post> post;
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
-
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            invalidateContacts();
+            invalidatePost();
         }
 
         @Override
         public void onFeedCleanup() {
-            invalidateContacts();
-        }
-
-        private void invalidateContacts() {
-            mainHandler.post(contactsList::invalidate);
+            invalidatePost();
         }
     };
 
@@ -52,15 +46,16 @@ public class PostDetailsViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsChanged() {
-            mainHandler.post(contactsList::invalidate);
+            invalidatePost();
         }
 
         @Override
         public void onContactsReset() {
+            invalidatePost();
         }
     };
 
-    private PostDetailsViewModel(@NonNull Application application, @NonNull String postId) {
+    private PostContentViewModel(@NonNull Application application, @NonNull UserId senderUserId, @NonNull String postId) {
         super(application);
 
         contentDb = ContentDb.getInstance(application);
@@ -69,16 +64,10 @@ public class PostDetailsViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance(application);
         contactsDb.addObserver(contactsObserver);
 
-        contactsList = new ComputableLiveData<List<Contact>>() {
-
+        post = new ComputableLiveData<Post>() {
             @Override
-            protected List<Contact> compute() {
-                final List<UserId> userIds = contentDb.getPostSeenBy(postId);
-                final List<Contact> contacts = new ArrayList<>(userIds.size());
-                for (UserId userId : userIds) {
-                    contacts.add(contactsDb.getContact(userId));
-                }
-                return contacts;
+            protected Post compute() {
+                return ContentDb.getInstance(application).getPost(senderUserId, postId);
             }
         };
     }
@@ -89,44 +78,27 @@ public class PostDetailsViewModel extends AndroidViewModel {
         contactsDb.removeObserver(contactsObserver);
     }
 
-    void loadPost(@NonNull String postId) {
-        new LoadPostTask(getApplication(), postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    static class LoadPostTask extends AsyncTask<Void, Void, Void> {
-
-        private final String postId;
-        private final MutableLiveData<Post> post;
-        private final Application application;
-
-        LoadPostTask(@NonNull Application application, @NonNull String postId, @NonNull MutableLiveData<Post> post) {
-            this.application = application;
-            this.postId = postId;
-            this.post = post;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            post.postValue(ContentDb.getInstance(application).getPost(UserId.ME, postId));
-            return null;
-        }
+    private void invalidatePost() {
+        post.invalidate();
     }
 
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
+        private final UserId senderUserId;
         private final String postId;
 
-        Factory(@NonNull Application application, @NonNull String postId) {
+        Factory(@NonNull Application application, @NonNull UserId senderUserId, @NonNull String postId) {
             this.application = application;
+            this.senderUserId = senderUserId;
             this.postId = postId;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(PostDetailsViewModel.class)) {
+            if (modelClass.isAssignableFrom(PostContentViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostDetailsViewModel(application, postId);
+                return (T) new PostContentViewModel(application, senderUserId, postId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

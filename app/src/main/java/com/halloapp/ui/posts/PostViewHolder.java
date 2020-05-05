@@ -165,5 +165,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             footer.setVisibility(View.VISIBLE);
         }
     }
+
+    public void selectMedia(int index) {
+        if (mediaPagerView != null) {
+            mediaPagerView.setCurrentItem(index, false);
+        }
+    }
 }
 

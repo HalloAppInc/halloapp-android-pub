@@ -32,7 +32,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
-public class PostDetailsActivity extends AppCompatActivity {
+public class PostSeenByActivity extends AppCompatActivity {
 
     public static final String EXTRA_POST_ID = "post_id";
 
@@ -43,8 +43,8 @@ public class PostDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("PostDetailsActivity.onCreate");
-        setContentView(R.layout.activity_post_details);
+        Log.d("PostSeenByActivity.onCreate");
+        setContentView(R.layout.activity_post_seen_by);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -55,20 +55,19 @@ public class PostDetailsActivity extends AppCompatActivity {
 
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
-        final PostDetailsViewModel viewModel = new ViewModelProvider(this, new PostDetailsViewModel.Factory(getApplication(), postId)).get(PostDetailsViewModel.class);
+        final PostSeenByViewModel viewModel = new ViewModelProvider(this, new PostSeenByViewModel.Factory(getApplication(), postId)).get(PostSeenByViewModel.class);
         viewModel.contactsList.getLiveData().observe(this, adapter::setContacts);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
 
-        viewModel.post.observe(this, this::showPost);
-        viewModel.loadPost(postId);
+        viewModel.post.getLiveData().observe(this, this::showPost);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("PostDetailsActivity.onDestroy");
+        Log.d("PostSeenByActivity.onDestroy");
         mediaThumbnailLoader.destroy();
     }
 

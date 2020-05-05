@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.content.Intent;
 import android.graphics.Outline;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,8 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.ui.PostContentActivity;
 import com.halloapp.util.ViewDataLoader;
 
 class ReplyContainer {
@@ -22,11 +25,11 @@ class ReplyContainer {
     private final TextView textView;
     private final ImageView mediaThumbView;
     private final ImageView mediaIconView;
-    private final ReplyLoader replyLoader;
+    private final MessageViewHolder.MessageViewHolderParent parent;
 
-    ReplyContainer(@NonNull View containerView, @NonNull ReplyLoader replyLoader) {
+    ReplyContainer(@NonNull View containerView, @NonNull MessageViewHolder.MessageViewHolderParent parent) {
         this.containerView = containerView;
-        this.replyLoader = replyLoader;
+        this.parent = parent;
         nameView = containerView.findViewById(R.id.reply_name);
         textView = containerView.findViewById(R.id.reply_text);
         mediaThumbView = containerView.findViewById(R.id.reply_media_thumb);
@@ -49,8 +52,17 @@ class ReplyContainer {
     }
 
     void bindTo(@NonNull Message message) {
+
+        containerView.setOnClickListener(v -> {
+            final Intent intent = new Intent(containerView.getContext(), PostContentActivity.class);
+            intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME.rawId() : message.chatId);
+            intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
+            intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+            parent.startActivity(intent);
+        });
+
         containerView.setBackgroundResource(message.isIncoming() ? R.drawable.reply_frame_incoming : R.drawable.reply_frame_outgoing);
-        replyLoader.load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
+        parent.getReplyLoader().load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
             @Override
             public void showResult(@NonNull View view, @Nullable ReplyLoader.Result result) {
                 if (result != null) {

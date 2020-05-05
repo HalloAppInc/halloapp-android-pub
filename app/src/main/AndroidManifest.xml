@@ -78,7 +78,7 @@
         <activity
             android:name=".ui.ContentComposerActivity"
             android:label="@string/new_post"
-            android:theme="@style/AppTheme.PostComposer"
+            android:theme="@style/AppTheme.Popup"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
@@ -103,7 +103,12 @@
             android:label="@string/gallery"/>
 
         <activity
-            android:name=".ui.PostDetailsActivity"
+            android:name=".ui.PostSeenByActivity"
+            android:label=""/>
+
+        <activity
+            android:name=".ui.PostContentActivity"
+            android:theme="@style/AppTheme.Popup.NoActionBar"
             android:label=""/>
 
         <activity android:name=".ui.AppExpirationActivity"

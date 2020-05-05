@@ -58,9 +58,8 @@
 
     <ImageView
         android:id="@+id/reply_media_thumb"
-        android:layout_width="60dp"
+        android:layout_width="52dp"
         android:layout_height="52dp"
-        android:paddingStart="8dp"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/reply_name"
         app:layout_constraintEnd_toEndOf="parent"

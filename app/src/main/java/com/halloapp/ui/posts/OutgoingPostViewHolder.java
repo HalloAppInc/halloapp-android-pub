@@ -19,7 +19,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
-import com.halloapp.ui.PostDetailsActivity;
+import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.AvatarsLayout;
 
@@ -65,8 +65,8 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         viewCommentsButton.setOnClickListener(commentsClickListener);
 
         seenIndicator.setOnClickListener(v1 -> {
-            final Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
-            intent.putExtra(PostDetailsActivity.EXTRA_POST_ID, post.id);
+            final Intent intent = new Intent(itemView.getContext(), PostSeenByActivity.class);
+            intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, post.id);
             parent.startActivity(intent);
         });
 
