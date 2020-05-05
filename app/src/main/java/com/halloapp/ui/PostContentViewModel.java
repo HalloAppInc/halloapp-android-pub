@@ -34,7 +34,9 @@ public class PostContentViewModel extends AndroidViewModel {
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            invalidatePost();
+            if (seenByUserId.equals(PostContentViewModel.this.senderUserId) && postId.equals(PostContentViewModel.this.postId)) {
+                invalidatePost();
+            }
         }
 
         @Override
