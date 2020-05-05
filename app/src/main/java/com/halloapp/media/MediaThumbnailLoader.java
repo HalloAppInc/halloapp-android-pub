@@ -32,8 +32,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
 
     private static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 
-    private final LongSparseArray<String> debugInfos = BuildConfig.DEBUG_MEDIA ? new LongSparseArray<>() : null; // for debug; remove when debugging is no longer needed
-
     @MainThread
     public MediaThumbnailLoader(@NonNull Context context, int dimensionLimit) {
 
@@ -68,9 +66,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
             if (media.file != null) {
                 if (media.file.exists()) {
                     bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
-                    if (BuildConfig.DEBUG_MEDIA) {
-                        debugInfos.put(media.rowId, media.width + "x" + media.height + ", " + media.file.length() + " bytes");
-                    }
                 } else {
                     Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
                 }
@@ -95,12 +90,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
                     if (oldDrawable instanceof PlaceholderDrawable && view instanceof PostImageView) {
                         view.setBackgroundColor(placeholderColor);
                         ((PostImageView)view).playTransition(150);
-                    }
-                    if (BuildConfig.DEBUG_MEDIA && view.getParent() != null) {
-                        final TextView infoView = (((View)view.getParent()).findViewById(R.id.comment));
-                        if (infoView != null) {
-                            infoView.setText(debugInfos.get(media.rowId));
-                        }
                     }
                 }
             }

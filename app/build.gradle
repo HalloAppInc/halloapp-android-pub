@@ -28,10 +28,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "boolean", "DEBUG_MEDIA", 'false'
-        }
-        debug {
-            buildConfigField "boolean", "DEBUG_MEDIA", getLocalProperty("debug_media") ?: 'false'
         }
     }
     compileOptions {

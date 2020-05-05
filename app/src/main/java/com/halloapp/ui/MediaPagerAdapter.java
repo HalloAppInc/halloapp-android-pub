@@ -64,15 +64,6 @@ public class MediaPagerAdapter extends PagerAdapter {
         final View view;
         if (parent.getRecycledMediaViews().empty()) {
             view = LayoutInflater.from(container.getContext()).inflate(R.layout.media_pager_item, container, false);
-            if (BuildConfig.DEBUG_MEDIA) {
-                final TextView mediaInfoView = new TextView(container.getContext());
-                mediaInfoView.setTextColor(0xffffffff);
-                mediaInfoView.setShadowLayer(1, 1, 1, 0xff000000);
-                int padding = container.getContext().getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing);
-                mediaInfoView.setPadding(2 * padding, padding, 2 * padding, padding);
-                mediaInfoView.setId(R.id.comment);
-                ((ViewGroup) view).addView(mediaInfoView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
-            }
         } else {
             view = parent.getRecycledMediaViews().pop();
         }
