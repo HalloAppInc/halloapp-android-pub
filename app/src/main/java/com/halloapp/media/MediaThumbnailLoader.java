@@ -3,17 +3,13 @@ package com.halloapp.media;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.collection.LongSparseArray;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.util.Log;

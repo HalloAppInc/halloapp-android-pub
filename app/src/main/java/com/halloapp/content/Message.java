@@ -19,8 +19,8 @@ public class Message extends ContentItem {
     public final String chatId;
     public final @State int state;
 
-    public String replyPostId;
-    public int replyPostMediaIndex;
+    public final String replyPostId;
+    public final int replyPostMediaIndex;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN})

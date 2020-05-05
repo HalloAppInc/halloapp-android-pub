@@ -80,9 +80,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         final View setButton = findViewById(R.id.done);
-        setButton.setOnClickListener(v -> {
-            viewModel.preparePost();
-        });
+        setButton.setOnClickListener(v -> viewModel.preparePost());
 
         final View resetButton = findViewById(R.id.reset);
         resetButton.setOnClickListener(v -> {

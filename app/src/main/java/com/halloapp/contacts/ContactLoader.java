@@ -24,9 +24,7 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
     @MainThread
     public void load(@NonNull TextView view, @NonNull UserId userId) {
-        final Callable<Contact> loader = () -> {
-            return contactsDb.getContact(userId);
-        };
+        final Callable<Contact> loader = () -> contactsDb.getContact(userId);
         final ViewDataLoader.Displayer<TextView, Contact> displayer = new ViewDataLoader.Displayer<TextView, Contact>() {
 
             @Override

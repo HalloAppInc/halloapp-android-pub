@@ -5,7 +5,6 @@ import com.halloapp.crypto.CryptoUtil;
 import com.halloapp.util.Preconditions;
 
 import java.security.InvalidKeyException;
-import java.util.Arrays;
 
 public abstract class ECKey {
     private static final int KEY_SIZE_BYTES = 32;

@@ -444,9 +444,7 @@ public class ContentDb {
     }
 
     public void setMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-        databaseWriteExecutor.execute(() -> {
-            messagesDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
-        });
+        databaseWriteExecutor.execute(() -> messagesDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId));
     }
 
     @WorkerThread

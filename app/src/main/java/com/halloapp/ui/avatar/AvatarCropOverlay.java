@@ -11,7 +11,6 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.halloapp.R;
-import com.halloapp.util.Log;
 
 public class AvatarCropOverlay extends View {
     private Path path = new Path();

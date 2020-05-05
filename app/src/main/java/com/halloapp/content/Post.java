@@ -9,8 +9,6 @@ import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Post extends ContentItem {

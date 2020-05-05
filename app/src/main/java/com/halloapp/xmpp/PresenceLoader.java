@@ -1,6 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.content.Context;
 import android.view.View;
 
 import androidx.lifecycle.LiveData;

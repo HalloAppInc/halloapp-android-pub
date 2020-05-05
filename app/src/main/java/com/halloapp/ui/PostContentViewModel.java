@@ -2,25 +2,16 @@ package com.halloapp.ui;
 
 
 import android.app.Application;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PostContentViewModel extends AndroidViewModel {
 

@@ -13,12 +13,12 @@ public class ContactsSectionItemDecoration extends RecyclerView.ItemDecoration {
 
     private final SectionCallback sectionCallback;
 
-    private float headerWidth;
-    private float headerHeight;
+    private final float headerWidth;
+    private final float headerHeight;
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Rect tmpRect = new Rect();
 
-    public ContactsSectionItemDecoration(float headerWidth, float headerHeight, float textSize, int textColor, @NonNull SectionCallback sectionCallback) {
+    ContactsSectionItemDecoration(float headerWidth, float headerHeight, float textSize, int textColor, @NonNull SectionCallback sectionCallback) {
         this.headerWidth = headerWidth;
         this.headerHeight = headerHeight;
         this.sectionCallback = sectionCallback;

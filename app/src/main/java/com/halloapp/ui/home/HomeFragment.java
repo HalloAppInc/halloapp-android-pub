@@ -28,8 +28,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 
-import java.util.Locale;
-
 public class HomeFragment extends PostsFragment {
 
     private HomeViewModel viewModel;

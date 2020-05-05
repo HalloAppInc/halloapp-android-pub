@@ -1,7 +1,6 @@
 package com.halloapp.content;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
 import androidx.paging.PositionalDataSource;
 

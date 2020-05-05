@@ -85,7 +85,7 @@ public class ViewDataLoader<V extends View, R, K> {
         queue.put(view, future);
     }
 
-    private Semaphore getKeyGuard(@NonNull K key) throws InterruptedException {
+    private Semaphore getKeyGuard(@NonNull K key) {
         Semaphore semaphore;
         synchronized (keyLoadGuards) {
             semaphore = keyLoadGuards.get(key);

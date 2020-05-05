@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import com.halloapp.R;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
-import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.chat.ChatActivity;
 
 public class IncomingPostViewHolder extends PostViewHolder {

@@ -309,9 +309,9 @@ public class ContactsActivity extends AppCompatActivity implements EasyPermissio
         return filterTokens;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
         }
 
