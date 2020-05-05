@@ -26,8 +26,9 @@ public class PostContentViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
 
+    private final UserId senderUserId;
+    private final String postId;
     private final ContentDb contentDb;
-    private final ContactsDb contactsDb;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -42,27 +43,14 @@ public class PostContentViewModel extends AndroidViewModel {
         }
     };
 
-    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
-
-        @Override
-        public void onContactsChanged() {
-            invalidatePost();
-        }
-
-        @Override
-        public void onContactsReset() {
-            invalidatePost();
-        }
-    };
-
     private PostContentViewModel(@NonNull Application application, @NonNull UserId senderUserId, @NonNull String postId) {
         super(application);
 
+        this.senderUserId = senderUserId;
+        this.postId = postId;
+
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
-
-        contactsDb = ContactsDb.getInstance(application);
-        contactsDb.addObserver(contactsObserver);
 
         post = new ComputableLiveData<Post>() {
             @Override
@@ -75,7 +63,6 @@ public class PostContentViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
-        contactsDb.removeObserver(contactsObserver);
     }
 
     private void invalidatePost() {
