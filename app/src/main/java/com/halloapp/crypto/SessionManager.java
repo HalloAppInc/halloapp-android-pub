@@ -101,6 +101,10 @@ public class SessionManager {
 
             if (identityKeyBytes == null || identityKeyBytes.length == 0 || signedPreKeyBytes == null || signedPreKeyBytes.length == 0) {
                 Log.i("Did not get any keys for peer " + peerUserId);
+
+                // TODO(jack): Once encryption is turned on for all clients this probably should be removed [stops repeated key requests]
+                encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+
                 return nullInfo;
             }
 
