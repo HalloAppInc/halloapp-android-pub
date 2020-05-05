@@ -43,11 +43,11 @@ public class ChatMessageElement implements ExtensionElement {
     private final UserId recipientUserId;
     private final PublicECKey ephemeralKey;
     private final Integer ephemeralKeyId;
-    private final PublicECKey identityKey;
+    private final byte[] identityKey;
     private final Integer oneTimePreKeyId;
     private final byte[] encryptedBytes;
 
-    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId) {
+    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId) {
         this.chatMessage = messageToChatMessage(message);
         this.timestamp = 0;
         this.recipientUserId = recipientUserId;
@@ -58,7 +58,7 @@ public class ChatMessageElement implements ExtensionElement {
         this.encryptedBytes = null;
     }
 
-    private ChatMessageElement(byte[] encryptedBytes, PublicECKey ephemeralKey, Integer ephemeralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId, long timestamp) {
+    private ChatMessageElement(byte[] encryptedBytes, PublicECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId, long timestamp) {
         this.chatMessage = null;
         this.timestamp = timestamp;
         this.recipientUserId = null;
@@ -110,7 +110,7 @@ public class ChatMessageElement implements ExtensionElement {
                 xml.attribute(ATTRIBUTE_EPHEMERAL_KEY_ID, ephemeralKeyId.toString());
             }
             if (identityKey != null) {
-                xml.attribute(ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey.getKeyMaterial(), Base64.NO_WRAP));
+                xml.attribute(ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey, Base64.NO_WRAP));
             }
             if (oneTimePreKeyId != null) {
                 xml.attribute(ATTRIBUTE_ONE_TIME_PRE_KEY_ID, oneTimePreKeyId.toString());
@@ -266,9 +266,9 @@ public class ChatMessageElement implements ExtensionElement {
         if (ephemeralKeyString != null) {
             ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
         }
-        PublicECKey identityKey = null;
+        byte[] identityKey = null;
         if (identityKeyString != null) {
-            identityKey = new PublicECKey(Base64.decode(identityKeyString, Base64.NO_WRAP));
+            identityKey = Base64.decode(identityKeyString, Base64.NO_WRAP);
         }
 
         final String encryptedEntry = Xml.readText(parser);
@@ -296,7 +296,7 @@ public class ChatMessageElement implements ExtensionElement {
                 if (name.equals(ELEMENT_ENCRYPTED)) {
                     try {
                         if (Constants.ENCRYPTION_TURNED_ON) {
-                            chatMessageElement = readEncryptedEntry(parser, timestamp); // TODO(jack): chatMessageElement with keys and ciphertext set; then getMessage(Jid from) will decrypt
+                            chatMessageElement = readEncryptedEntry(parser, timestamp);
                         }
                     } catch (Exception e) {
                         Log.w("Failed to read encrypted entry", e);

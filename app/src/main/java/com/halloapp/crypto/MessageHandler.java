@@ -23,7 +23,8 @@ public class MessageHandler {
         this.myKeyManager = KeyManager.getInstance();
     }
 
-    public byte[] receiveFirstMessage(byte[] message, UserId peerUserId, PublicECKey identityKey, PublicECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    // TODO(jack): Probably move this up to SessionManager
+    public byte[] receiveFirstMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!myEncryptedKeyStore.getPeerResponded(peerUserId)) {
             myKeyManager.receiveSessionSetup(peerUserId, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId);
             myEncryptedKeyStore.setPeerResponded(peerUserId, true);

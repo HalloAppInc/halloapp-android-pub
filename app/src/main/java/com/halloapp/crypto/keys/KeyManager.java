@@ -6,11 +6,14 @@ import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.crypto.CryptoUtil;
+import com.halloapp.crypto.SodiumWrapper;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
+import com.halloapp.util.StringUtils;
 import com.halloapp.xmpp.Connection;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,13 +47,19 @@ public class KeyManager {
         if (!encryptedKeyStore.getKeysUploaded()) {
             encryptedKeyStore.generateClientPrivateKeys();
 
-            IdentityKey identityKey = IdentityKey.newBuilder()
-                    .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicIdentityKey().getKeyMaterial()))
+            IdentityKey identityKeyProto = IdentityKey.newBuilder()
+                    .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey()))
                     .build();
-            SignedPreKey signedPreKey = SignedPreKey.newBuilder()
-                    .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicSignedPreKey().getKeyMaterial()))
-                    // TODO(jack): ID, signature
+
+            PublicECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
+            byte[] signature = SodiumWrapper.getInstance().sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
+
+            SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
+                    .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
+                    .setSignature(ByteString.copyFrom(signature))
+                    // TODO(jack): ID
                     .build();
+
             List<byte[]> oneTimePreKeys = new ArrayList<>();
             for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
                 com.halloapp.proto.OneTimePreKey toAdd = com.halloapp.proto.OneTimePreKey.newBuilder()
@@ -61,7 +70,7 @@ public class KeyManager {
             }
 
             // TODO(jack): Check for success
-            connection.uploadKeys(identityKey.toByteArray(), signedPreKey.toByteArray(), oneTimePreKeys);
+            connection.uploadKeys(identityKeyProto.toByteArray(), signedPreKeyProto.toByteArray(), oneTimePreKeys);
 
             encryptedKeyStore.setKeysUploaded(true);
         } else {
@@ -69,7 +78,7 @@ public class KeyManager {
         }
     }
 
-    public void setUpSession(UserId peerUserId, PublicECKey recipientPublicIdentityKey, PublicECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
+    public void setUpSession(UserId peerUserId, byte[] recipientPublicIdentityKey, PublicECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
         encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
@@ -78,10 +87,10 @@ public class KeyManager {
         }
 
         PrivateECKey privateEphemeralKey = ECKey.generatePrivateKey();
-        PrivateECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateIdentityKey();
+        PrivateECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
 
         byte[] a = CryptoUtil.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
-        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicIdentityKey);
+        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, new PublicECKey(SodiumWrapper.getInstance().convertPublicEdToX(recipientPublicIdentityKey)));
         byte[] c = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicSignedPreKey);
 
         byte[] masterSecret;
@@ -109,11 +118,11 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicECKey publicEphemeralKey, int ephemeralKeyId, PublicECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
+    public void receiveSessionSetup(UserId peerUserId, PublicECKey publicEphemeralKey, int ephemeralKeyId, byte[] initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
 
-        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), initiatorPublicIdentityKey);
-        byte[] b = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateIdentityKey(), publicEphemeralKey);
+        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), new PublicECKey(SodiumWrapper.getInstance().convertPublicEdToX(initiatorPublicIdentityKey)));
+        byte[] b = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
         byte[] c = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
 
         byte[] masterSecret;

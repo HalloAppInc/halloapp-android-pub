@@ -12,10 +12,12 @@ import androidx.security.crypto.MasterKeys;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.contacts.UserId;
+import com.halloapp.crypto.SodiumWrapper;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
 import java.security.InvalidKeyException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +33,7 @@ public class EncryptedKeyStore {
 
     private static final String ENC_PREF_FILE_NAME = "halloapp_keys";
 
+    private static final String PREF_KEY_MY_ED25519_IDENTITY_KEY = "my_ed25519_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_IDENTITY_KEY = "my_private_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
@@ -115,31 +118,30 @@ public class EncryptedKeyStore {
     }
 
     public void generateClientPrivateKeys() {
-        setMyPrivateIdentityKey(X25519.generatePrivateKey());
+        setMyEd25519IdentityKey(SodiumWrapper.getInstance().generateEd25519KeyPair());
         setMyPrivateSignedPreKey(X25519.generatePrivateKey());
     }
 
 
 
-    private void setMyPrivateIdentityKey(byte[] key) {
-        storeCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_IDENTITY_KEY, key);
+    private void setMyEd25519IdentityKey(byte[] key) {
+        storeBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY, key);
     }
 
-    public PrivateECKey getMyPrivateIdentityKey() {
-        return new PrivateECKey(getMyPrivateIdentityKeyInternal());
+    private byte[] getMyEd25519IdentityKey() {
+        return retrieveBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY);
     }
 
-    private byte[] getMyPrivateIdentityKeyInternal() {
-        return retrieveCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_IDENTITY_KEY);
+    public byte[] getMyPublicEd25519IdentityKey() {
+        return Arrays.copyOfRange(getMyEd25519IdentityKey(), 0, 32);
     }
 
-    public PublicECKey getMyPublicIdentityKey() {
-        try {
-            return ECKey.publicFromPrivate(getMyPrivateIdentityKey());
-        } catch (InvalidKeyException e) {
-            Log.w("Failed to get public identity key", e);
-        }
-        return null;
+    public byte[] getMyPrivateEd25519IdentityKey() {
+        return Arrays.copyOfRange(getMyEd25519IdentityKey(), 32, 96);
+    }
+
+    public PrivateECKey getMyPrivateX25519IdentityKey() {
+        return new PrivateECKey(SodiumWrapper.getInstance().convertPrivateEdToX(getMyPrivateEd25519IdentityKey()));
     }
 
     private void setMyPrivateSignedPreKey(byte[] key) {
@@ -192,8 +194,8 @@ public class EncryptedKeyStore {
         return PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX + "/" + id;
     }
 
-    public void setPeerPublicIdentityKey(UserId peerUserId, PublicECKey key) {
-        storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
+    public void setPeerPublicIdentityKey(UserId peerUserId, byte[] key) {
+        storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key);
     }
 
     public PublicECKey getPeerPublicIdentityKey(UserId peerUserId) {

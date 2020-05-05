@@ -16,11 +16,6 @@ import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
-
 public class SessionManager {
     private final Connection connection;
     private final KeyManager keyManager;
@@ -53,7 +48,7 @@ public class SessionManager {
         return messageHandler.convertForWire(message, peerUserId);
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, PublicECKey identityKey, PublicECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    public byte[] decryptMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
             byte[] ret = messageHandler.receiveFirstMessage(message, peerUserId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
@@ -107,8 +102,12 @@ public class SessionManager {
                 return nullInfo;
             }
 
-            PublicECKey peerIdentityKey = new PublicECKey(identityKeyBytes);
-            PublicECKey peerSignedPreKey = new PublicECKey(signedPreKeyBytes); // TODO(jack): Verify sig
+            // TODO(jack): Log signature verification failures
+            byte[] signature = signedPreKeyProto.getSignature().toByteArray();
+            SodiumWrapper.getInstance().verify(signature, signedPreKeyBytes, identityKeyBytes);
+
+            //PublicECKey peerIdentityKey = new PublicECKey(identityKeyBytes);
+            PublicECKey peerSignedPreKey = new PublicECKey(signedPreKeyBytes);
 
             OneTimePreKey oneTimePreKey = null;
             if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {
@@ -119,14 +118,14 @@ public class SessionManager {
                 }
             }
 
-            keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
+            keyManager.setUpSession(peerUserId, identityKeyBytes, peerSignedPreKey, oneTimePreKey);
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
         }
 
         return new SessionSetupInfo(
                 ECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
                 encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
-                encryptedKeyStore.getMyPublicIdentityKey(),
+                encryptedKeyStore.getMyPublicEd25519IdentityKey(),
                 encryptedKeyStore.getPeerOneTimePreKeyId(peerUserId)
         );
     }
