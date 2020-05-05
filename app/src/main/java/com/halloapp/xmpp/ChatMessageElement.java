@@ -37,23 +37,20 @@ public class ChatMessageElement implements ExtensionElement {
     private static final String ATTRIBUTE_EPHEMERAL_KEY = "ephemeral_key_bytes";
     private static final String ATTRIBUTE_IDENTITY_KEY = "identity_key";
     private static final String ATTRIBUTE_ONE_TIME_PRE_KEY_ID = "one_time_pre_key_id";
-    private static final String ATTRIBUTE_SENDER_USER_ID = "sender_user_id";
 
     private ChatMessage chatMessage;
     private final long timestamp;
     private final UserId recipientUserId;
-    private final UserId senderUserId;
     private final PublicECKey ephemeralKey;
     private final Integer ephemeralKeyId;
     private final PublicECKey identityKey;
     private final Integer oneTimePreKeyId;
     private final byte[] encryptedBytes;
 
-    ChatMessageElement(@NonNull Message message, UserId recipientUserId, UserId senderUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId) {
+    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId) {
         this.chatMessage = messageToChatMessage(message);
         this.timestamp = 0;
         this.recipientUserId = recipientUserId;
-        this.senderUserId = senderUserId;
         this.ephemeralKey = ephemeralKey;
         this.ephemeralKeyId = ephemeralKeyId;
         this.identityKey = identityKey;
@@ -61,11 +58,10 @@ public class ChatMessageElement implements ExtensionElement {
         this.encryptedBytes = null;
     }
 
-    private ChatMessageElement(byte[] encryptedBytes, UserId senderUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId, long timestamp) {
+    private ChatMessageElement(byte[] encryptedBytes, PublicECKey ephemeralKey, Integer ephemeralKeyId, PublicECKey identityKey, Integer oneTimePreKeyId, long timestamp) {
         this.chatMessage = null;
         this.timestamp = timestamp;
         this.recipientUserId = null;
-        this.senderUserId = senderUserId;
         this.ephemeralKey = ephemeralKey;
         this.ephemeralKeyId = ephemeralKeyId;
         this.identityKey = identityKey;
@@ -77,7 +73,6 @@ public class ChatMessageElement implements ExtensionElement {
         this.chatMessage = chatMessage;
         this.timestamp = timestamp;
         this.recipientUserId = null;
-        this.senderUserId = null;
         this.ephemeralKey = null;
         this.ephemeralKeyId = null;
         this.identityKey = null;
@@ -110,9 +105,6 @@ public class ChatMessageElement implements ExtensionElement {
 
         if (Constants.ENCRYPTION_TURNED_ON) {
             xml.halfOpenElement(ELEMENT_ENCRYPTED);
-            if (senderUserId != null) {
-                xml.attribute(ATTRIBUTE_SENDER_USER_ID, senderUserId.rawId());
-            }
             if (ephemeralKey != null && ephemeralKeyId != null) {
                 xml.attribute(ATTRIBUTE_EPHEMERAL_KEY, Base64.encodeToString(ephemeralKey.getKeyMaterial(), Base64.NO_WRAP));
                 xml.attribute(ATTRIBUTE_EPHEMERAL_KEY_ID, ephemeralKeyId.toString());
@@ -256,7 +248,6 @@ public class ChatMessageElement implements ExtensionElement {
         final String identityKeyString = parser.getAttributeValue(null, ATTRIBUTE_IDENTITY_KEY);
         final String ephemeralKeyIdString = parser.getAttributeValue(null, ATTRIBUTE_EPHEMERAL_KEY_ID);
         final String ephemeralKeyString = parser.getAttributeValue(null, ATTRIBUTE_EPHEMERAL_KEY);
-        final String rawUserId = parser.getAttributeValue(null, ATTRIBUTE_SENDER_USER_ID); // TODO(jack): handle this properly, ideally passed in
 
         Integer oneTimePreKeyId = null;
         try {
@@ -283,7 +274,7 @@ public class ChatMessageElement implements ExtensionElement {
         final String encryptedEntry = Xml.readText(parser);
         final byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);
 
-        return new ChatMessageElement(bytes, new UserId(rawUserId), ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId, timestamp);
+        return new ChatMessageElement(bytes, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId, timestamp);
     }
 
     public static class Provider extends ExtensionElementProvider<ChatMessageElement> {
