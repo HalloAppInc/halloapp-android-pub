@@ -126,10 +126,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("AvatarPreviewActivity: onDestroy");
         mediaThumbnailLoader.destroy();
-        final Media tmpMedia = viewModel.getMedia();
-        if (tmpMedia != null) {
-            new CleanupTmpFileTask(tmpMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
     }
 
     @Override
@@ -380,6 +376,14 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             super(application);
             if (uri != null) {
                 loadUri(uri);
+            }
+        }
+
+        @Override
+        protected void onCleared() {
+            final Media tmpMedia = viewModel.getMedia();
+            if (tmpMedia != null) {
+                new CleanupTmpFileTask(tmpMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
 
