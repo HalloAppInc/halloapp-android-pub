@@ -22,7 +22,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -206,6 +206,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion12(db);
                 // fall through
             }
+            case 14: {
+                upgradeFromVersion14(db);
+                // fall through
+            }
 
             break;
             default: {
@@ -285,6 +289,29 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 MessagesTable.COLUMN_STATE + " INTEGER",
                 MessagesTable.COLUMN_TEXT + " TEXT"
         });
+    }
+
+    private void upgradeFromVersion14(@NonNull SQLiteDatabase db) {
+        // delete duplicate messages due to bug in upgradeFromVersion12
+        db.execSQL("DELETE FROM messages WHERE _id NOT IN (SELECT MAX(_id) FROM messages GROUP BY chat_id, sender_user_id, message_id)");
+        // recreate messages key
+        db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + MessagesTable.INDEX_MESSAGE_KEY + " ON " + MessagesTable.TABLE_NAME + "("
+                + MessagesTable.COLUMN_CHAT_ID + ", "
+                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
+                + MessagesTable.COLUMN_MESSAGE_ID
+                + ");");
+        // recreate replies key
+        db.execSQL("DROP INDEX IF EXISTS " + RepliesTable.INDEX_MESSAGE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + RepliesTable.INDEX_MESSAGE_KEY + " ON " + RepliesTable.TABLE_NAME + "("
+                + RepliesTable.COLUMN_MESSAGE_ROW_ID
+                + ");");
+        // recreate messages trigger
+        db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + MessagesTable.TRIGGER_DELETE + " AFTER DELETE ON " + MessagesTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                + "END;");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
