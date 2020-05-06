@@ -29,6 +29,10 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
             @Override
             public void showResult(@NonNull TextView view, Contact contact) {
+                if (contact == null) {
+                    view.setText(R.string.unknown_contact);
+                    return;
+                }
                 final String name = contact.getDisplayName();
                 if (TextUtils.isEmpty(name)) {
                     view.setText(R.string.unknown_contact);
