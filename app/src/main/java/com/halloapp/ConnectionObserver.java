@@ -22,6 +22,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
+import com.halloapp.xmpp.PresenceLoader;
 import com.halloapp.xmpp.PublishedAvatarMetadata;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class ConnectionObserver implements Connection.Observer {
         new TransferPendingItemsTask(context).execute();
         HalloApp.sendPushTokenFromFirebase();
         new RequestExpirationInfoTask(Connection.getInstance(), context).execute();
+        PresenceLoader.getInstance(Connection.getInstance()).resetSubscriptions();
     }
 
     @Override

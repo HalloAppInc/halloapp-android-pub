@@ -52,4 +52,8 @@ public class PresenceLoader extends ViewDataLoader<View, Long, String> {
         }
         mld.postValue(lastSeen);
     }
+
+    public void resetSubscriptions() {
+        this.map.clear();
+    }
 }
