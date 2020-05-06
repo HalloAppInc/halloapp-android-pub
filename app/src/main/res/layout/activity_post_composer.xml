@@ -91,6 +91,7 @@
                     android:hint="@string/type_a_caption_hint"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
+                    android:maxLines="6"
                     android:importantForAutofill="no"
                     android:inputType="textCapSentences|textMultiLine"/>
 

@@ -76,6 +76,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:hint="@string/type_a_comment_hint"
+            android:maxLines="6"
             android:importantForAutofill="no"
             android:inputType="textCapSentences|textMultiLine"/>
 
