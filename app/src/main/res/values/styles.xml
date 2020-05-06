@@ -19,10 +19,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.ActionBarBlack" parent="AppTheme">
+    <style name="AppTheme.ActionBarBlack" parent="AppThemeBase">
         <item name="actionBarStyle">@style/ActionBarBlack</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="android:textColorPrimary">#FFF</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 
     <style name="AppTheme.MediaPlayer" parent="Theme.MaterialComponents.DayNight">
