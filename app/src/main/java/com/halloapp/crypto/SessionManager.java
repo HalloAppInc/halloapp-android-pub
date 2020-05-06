@@ -65,8 +65,7 @@ public class SessionManager {
     }
 
     public void sendMessage(final @NonNull Message message) {
-        final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(Connection.XMPP_DOMAIN));
-        final UserId recipientUserId = new UserId(recipientJid.toString());
+        final UserId recipientUserId = new UserId(message.chatId);
         final SessionSetupInfo sessionSetupInfo;
         try {
             sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);

@@ -430,7 +430,7 @@ public class Connection {
                 Log.e("connection: download keys: no connection");
                 return null;
             }
-            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(connection.getXMPPServiceDomain(), userId.rawId());
+            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(connection.getXMPPServiceDomain(), userIdToJid(userId).toString());
             try {
                 final WhisperKeysResponseIq response = connection.createStanzaCollectorAndSend(downloadIq).nextResultOrThrow();
                 Log.d("connection: response after downloading keys " + response.toString());
@@ -612,7 +612,7 @@ public class Connection {
                 return;
             }
             final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
-            final UserId recipientUserId = new UserId(recipientJid.toString());
+            final UserId recipientUserId = new UserId(message.chatId);
             try {
                 // TODO(jack): keys should be stored for use until the message send is successful
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);

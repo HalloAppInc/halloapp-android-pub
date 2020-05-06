@@ -127,7 +127,7 @@ public class ChatMessageElement implements ExtensionElement {
     Message getMessage(Jid from, String id) {
         if (this.chatMessage == null) {
             try {
-                UserId userId = new UserId(from.asEntityBareJidOrThrow().asEntityBareJidString());
+                UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
                 final byte[] dec = SessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
                 this.chatMessage = readEncodedEntry(dec);
             } catch (Exception e) {
