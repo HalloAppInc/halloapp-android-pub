@@ -106,8 +106,7 @@
 
         <activity
             android:name=".ui.VideoPlaybackActivity"
-            android:theme="@style/AppTheme.MediaPlayer"
-            android:screenOrientation="portrait"/>
+            android:theme="@style/AppTheme.MediaPlayer"/>
 
         <activity
             android:name=".ui.mediapicker.MediaPickerActivity"
