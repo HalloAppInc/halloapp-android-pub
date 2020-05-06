@@ -159,10 +159,6 @@ public class ContentComposerActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("PostComposerActivity: onDestroy");
         mediaThumbnailLoader.destroy();
-        final List<Media> tmpMedia = viewModel.getMedia();
-        if (tmpMedia != null) {
-            new CleanupTmpFilesTask(tmpMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
     }
 
     @Override
@@ -400,6 +396,13 @@ public class ContentComposerActivity extends AppCompatActivity {
                 };
             } else {
                 chatName = null;
+            }
+        }
+
+        protected void onCleared() {
+            final List<Media> mediaList = media.getValue();
+            if (mediaList != null) {
+                new CleanupTmpFilesTask(mediaList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
 
