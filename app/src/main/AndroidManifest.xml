@@ -108,7 +108,7 @@
 
         <activity
             android:name=".ui.PostContentActivity"
-            android:theme="@style/AppTheme.Popup.NoActionBar"
+            android:theme="@style/AppTheme.PostContentActivity"
             android:label=""/>
 
         <activity android:name=".ui.AppExpirationActivity"

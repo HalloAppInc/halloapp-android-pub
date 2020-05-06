@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -543,8 +544,13 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         @Override
-        public void startActivity(Intent intent) {
+        public void startActivity(@NonNull Intent intent) {
             ChatActivity.this.startActivity(intent);
+        }
+
+        @Override
+        public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
+            ChatActivity.this.startActivity(intent, options.toBundle());
         }
 
         @Override

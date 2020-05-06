@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.halloapp.R;
@@ -24,12 +25,18 @@ public class MediaPagerAdapter extends PagerAdapter {
     private final MediaPagerAdapterParent parent;
     private final float mediaCornerRadius;
     private List<Media> media;
+    private String contentId;
 
     public interface MediaPagerAdapterParent {
         Stack<View> getRecycledMediaViews();
         DrawDelegateView getDrawDelegateView();
         MediaThumbnailLoader getMediaThumbnailLoader();
-        void startActivity(Intent intent);
+        void startActivity(@NonNull Intent intent);
+        void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options);
+    }
+
+    public static String getTransitionName(String contentId, int mediaIndex) {
+        return "image-transition-" + contentId + "-" + mediaIndex;
     }
 
     public MediaPagerAdapter(@NonNull MediaPagerAdapterParent parent, float mediaCornerRadius) {
@@ -40,6 +47,10 @@ public class MediaPagerAdapter extends PagerAdapter {
     public void setMedia(@NonNull List<Media> media) {
         this.media = media;
         notifyDataSetChanged();
+    }
+
+    public void setContentId(@NonNull String contentId) {
+        this.contentId = contentId;
     }
 
     public int getItemPosition(@NonNull Object object) {
@@ -66,6 +77,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
         view.setTag(mediaItem.rowId);
         final PostImageView imageView = view.findViewById(R.id.image);
+        imageView.setTransitionName(getTransitionName(contentId, position));
         imageView.setCornerRadius(mediaCornerRadius);
         imageView.setSinglePointerDragStartDisabled(true);
         imageView.setDrawDelegate(parent.getDrawDelegateView());

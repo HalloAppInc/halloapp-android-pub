@@ -136,6 +136,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
         } else {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
+            mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
             if (post.media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);

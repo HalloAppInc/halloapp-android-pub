@@ -14,6 +14,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -183,8 +184,13 @@ public class PostsFragment extends Fragment {
             }
 
             @Override
-            public void startActivity(Intent intent) {
+            public void startActivity(@NonNull Intent intent) {
                 PostsFragment.this.startActivity(intent);
+            }
+
+            @Override
+            public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
+                PostsFragment.this.startActivity(intent, options.toBundle());
             }
         };
 

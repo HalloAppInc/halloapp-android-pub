@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.LayoutRes;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
@@ -126,8 +128,13 @@ public class PostContentActivity extends AppCompatActivity {
         }
 
         @Override
-        public void startActivity(Intent intent) {
+        public void startActivity(@NonNull Intent intent) {
             PostContentActivity.this.startActivity(intent);
+        }
+
+        @Override
+        public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
+            PostContentActivity.this.startActivity(intent, options.toBundle());
         }
     };
 
@@ -139,12 +146,16 @@ public class PostContentActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_post_content);
 
         postViewGroup = findViewById(R.id.post);
+
+        findViewById(R.id.content).setOnClickListener(v -> finishAfterTransition());
 
         final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));

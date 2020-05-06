@@ -52,6 +52,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.PostContentActivity" parent="AppTheme.Popup.NoActionBar">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="android:navigationBarColor">@color/color_primary_dark</item>
+        <item name="android:statusBarColor">@color/color_primary_dark</item>
+    </style>
+
     <style name="ActionBar" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
         <item name="background">@color/color_action_bar</item>
         <item name="backgroundStacked">@color/color_action_bar</item>

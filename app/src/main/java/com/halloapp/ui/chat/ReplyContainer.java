@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.text.TextUtils;
@@ -10,11 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
 import com.halloapp.util.ViewDataLoader;
 
@@ -58,9 +61,15 @@ class ReplyContainer {
             intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME.rawId() : message.chatId);
             intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
             intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, message.replyPostMediaIndex);
-            parent.startActivity(intent);
+            if (containerView.getContext() instanceof Activity) {
+                final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)(containerView.getContext()), mediaThumbView, mediaThumbView.getTransitionName());
+                parent.startActivity(intent, options);
+            } else {
+                parent.startActivity(intent);
+            }
         });
 
+        mediaThumbView.setTransitionName(MediaPagerAdapter.getTransitionName(message.replyPostId, message.replyPostMediaIndex));
         containerView.setBackgroundResource(message.isIncoming() ? R.drawable.reply_frame_incoming : R.drawable.reply_frame_outgoing);
         parent.getReplyLoader().load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
             @Override
