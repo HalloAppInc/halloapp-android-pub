@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Message;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -48,7 +49,7 @@ public class SessionManager {
         return messageHandler.convertForWire(message, peerUserId);
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    public byte[] decryptMessage(byte[] message, UserId peerUserId, PublicEdECKey identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
             byte[] ret = messageHandler.receiveFirstMessage(message, peerUserId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
@@ -102,12 +103,12 @@ public class SessionManager {
                 return nullInfo;
             }
 
+            PublicEdECKey peerIdentityKey = new PublicEdECKey(identityKeyBytes);
+            PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
+
             // TODO(jack): Log signature verification failures
             byte[] signature = signedPreKeyProto.getSignature().toByteArray();
-            SodiumWrapper.getInstance().verify(signature, signedPreKeyBytes, identityKeyBytes);
-
-            //PublicXECKey peerIdentityKey = new PublicXECKey(identityKeyBytes);
-            PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
+            SodiumWrapper.getInstance().verify(signature, signedPreKeyBytes, peerIdentityKey);
 
             OneTimePreKey oneTimePreKey = null;
             if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {
@@ -118,7 +119,7 @@ public class SessionManager {
                 }
             }
 
-            keyManager.setUpSession(peerUserId, identityKeyBytes, peerSignedPreKey, oneTimePreKey);
+            keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
         }
 

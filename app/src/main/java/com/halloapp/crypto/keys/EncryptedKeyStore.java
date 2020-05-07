@@ -132,12 +132,12 @@ public class EncryptedKeyStore {
         return retrieveBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY);
     }
 
-    public byte[] getMyPublicEd25519IdentityKey() {
-        return Arrays.copyOfRange(getMyEd25519IdentityKey(), 0, 32);
+    public PublicEdECKey getMyPublicEd25519IdentityKey() {
+        return new PublicEdECKey(Arrays.copyOfRange(getMyEd25519IdentityKey(), 0, 32));
     }
 
-    public byte[] getMyPrivateEd25519IdentityKey() {
-        return Arrays.copyOfRange(getMyEd25519IdentityKey(), 32, 96);
+    public PrivateEdECKey getMyPrivateEd25519IdentityKey() {
+        return new PrivateEdECKey(Arrays.copyOfRange(getMyEd25519IdentityKey(), 32, 96));
     }
 
     public PrivateXECKey getMyPrivateX25519IdentityKey() {
@@ -194,8 +194,8 @@ public class EncryptedKeyStore {
         return PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX + "/" + id;
     }
 
-    public void setPeerPublicIdentityKey(UserId peerUserId, byte[] key) {
-        storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key);
+    public void setPeerPublicIdentityKey(UserId peerUserId, PublicEdECKey key) {
+        storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
     public PublicXECKey getPeerPublicIdentityKey(UserId peerUserId) {

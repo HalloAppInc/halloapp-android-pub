@@ -46,7 +46,7 @@ public class KeyManager {
             encryptedKeyStore.generateClientPrivateKeys();
 
             IdentityKey identityKeyProto = IdentityKey.newBuilder()
-                    .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey()))
+                    .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))
                     .build();
 
             PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
@@ -76,7 +76,7 @@ public class KeyManager {
         }
     }
 
-    public void setUpSession(UserId peerUserId, byte[] recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
+    public void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
         encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
@@ -116,7 +116,7 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, byte[] initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
+    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, PublicEdECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
 
         byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), SodiumWrapper.getInstance().convertPublicEdToX(initiatorPublicIdentityKey));

@@ -2,6 +2,7 @@ package com.halloapp.crypto;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.crypto.keys.PrivateXECKey;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -24,7 +25,7 @@ public class MessageHandler {
     }
 
     // TODO(jack): Probably move this up to SessionManager
-    public byte[] receiveFirstMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    public byte[] receiveFirstMessage(byte[] message, UserId peerUserId, PublicEdECKey identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!myEncryptedKeyStore.getPeerResponded(peerUserId)) {
             myKeyManager.receiveSessionSetup(peerUserId, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId);
             myEncryptedKeyStore.setPeerResponded(peerUserId, true);

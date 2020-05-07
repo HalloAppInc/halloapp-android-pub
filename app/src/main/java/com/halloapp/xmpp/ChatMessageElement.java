@@ -11,6 +11,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.SessionManager;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Container;
@@ -43,11 +44,11 @@ public class ChatMessageElement implements ExtensionElement {
     private final UserId recipientUserId;
     private final PublicXECKey ephemeralKey;
     private final Integer ephemeralKeyId;
-    private final byte[] identityKey;
+    private final PublicEdECKey identityKey;
     private final Integer oneTimePreKeyId;
     private final byte[] encryptedBytes;
 
-    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId) {
+    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId, PublicEdECKey identityKey, Integer oneTimePreKeyId) {
         this.chatMessage = messageToChatMessage(message);
         this.timestamp = 0;
         this.recipientUserId = recipientUserId;
@@ -58,7 +59,7 @@ public class ChatMessageElement implements ExtensionElement {
         this.encryptedBytes = null;
     }
 
-    private ChatMessageElement(byte[] encryptedBytes, PublicXECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId, long timestamp) {
+    private ChatMessageElement(byte[] encryptedBytes, PublicXECKey ephemeralKey, Integer ephemeralKeyId, PublicEdECKey identityKey, Integer oneTimePreKeyId, long timestamp) {
         this.chatMessage = null;
         this.timestamp = timestamp;
         this.recipientUserId = null;
@@ -110,7 +111,7 @@ public class ChatMessageElement implements ExtensionElement {
                 xml.attribute(ATTRIBUTE_EPHEMERAL_KEY_ID, ephemeralKeyId.toString());
             }
             if (identityKey != null) {
-                xml.attribute(ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey, Base64.NO_WRAP));
+                xml.attribute(ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey.getKeyMaterial(), Base64.NO_WRAP));
             }
             if (oneTimePreKeyId != null) {
                 xml.attribute(ATTRIBUTE_ONE_TIME_PRE_KEY_ID, oneTimePreKeyId.toString());
@@ -266,9 +267,9 @@ public class ChatMessageElement implements ExtensionElement {
         if (ephemeralKeyString != null) {
             ephemeralKey = new PublicXECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
         }
-        byte[] identityKey = null;
+        PublicEdECKey identityKey = null;
         if (identityKeyString != null) {
-            identityKey = Base64.decode(identityKeyString, Base64.NO_WRAP);
+            identityKey = new PublicEdECKey(Base64.decode(identityKeyString, Base64.NO_WRAP));
         }
 
         final String encryptedEntry = Xml.readText(parser);
