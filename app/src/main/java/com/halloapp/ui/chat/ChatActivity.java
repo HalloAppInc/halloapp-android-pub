@@ -71,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
     private final ChatAdapter adapter = new ChatAdapter();
+    private ChatViewModel viewModel;
 
     private PostEditText editText;
     private View replyContainer;
@@ -90,13 +91,14 @@ public class ChatActivity extends AppCompatActivity {
     private final Stack<View> recycledMediaViews = new Stack<>();
 
     private boolean scrollUpOnDataLoaded;
+    private boolean scrollToNewMessageOnDataLoaded = true;
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("ChatActivity.onCreate");
+        Log.i("ChatActivity.onCreate");
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -151,7 +153,7 @@ public class ChatActivity extends AppCompatActivity {
             editText.requestFocus();
         }
 
-        final ChatViewModel viewModel = new ViewModelProvider(this,
+        viewModel = new ViewModelProvider(this,
                 new ChatViewModel.Factory(getApplication(), chatId, replyPostId)).get(ChatViewModel.class);
 
         final View newMessagesView = findViewById(R.id.new_messages);
@@ -160,46 +162,65 @@ public class ChatActivity extends AppCompatActivity {
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
         });
 
-        final AtomicBoolean initialScroll = new AtomicBoolean(true);
-        viewModel.messageList.observe(this, messages -> adapter.submitList(messages, () -> {
-            final boolean newOutgoingMessage = viewModel.checkPendingOutgoing();
-            final int newIncomingMessage = viewModel.checkPendingIncoming();
-            if (newOutgoingMessage || scrollUpOnDataLoaded) {
-                scrollUpOnDataLoaded = false;
-                chatView.scrollToPosition(0);
-                newMessagesView.setVisibility(View.GONE);
-                if (newOutgoingMessage && adapter.newMessageCount > 0) {
-                    adapter.newMessageCount = 0;
-                    adapter.notifyDataSetChanged();
-                }
-            } else if (newIncomingMessage > 0) {
-                final View childView = layoutManager.getChildAt(0);
-                final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
-                if (scrolled) {
-                    if (newMessagesView.getVisibility() != View.VISIBLE) {
-                        newMessagesView.setVisibility(View.VISIBLE);
-                        newMessagesView.setTranslationY(getResources().getDimension(R.dimen.details_media_list_height));
-                        newMessagesView.animate().setDuration(200).translationY(0).start();
-                    }
-                } else {
+        final Runnable newListCommitCallback = new Runnable() {
+
+            int outgoingAdded;
+            int incomingAdded;
+
+            @Override
+            public void run() {
+                final int outgoingAdded = viewModel.getOutgoingAdded();
+                final int incomingAdded = viewModel.getIncomingAdded();
+                Log.i("ChatActivity: message list changed," +
+                        " outgoingAdded=" + outgoingAdded +
+                        " incomingAdded=" + incomingAdded +
+                        " scrollToNewMessageOnDataLoaded=" + scrollToNewMessageOnDataLoaded +
+                        " scrollUpOnDataLoaded=" + scrollUpOnDataLoaded);
+
+                final boolean newOutgoingMessage = outgoingAdded > this.outgoingAdded;
+                final boolean newIncomingMessage = incomingAdded > this.incomingAdded;
+
+                this.outgoingAdded = outgoingAdded;
+                this.incomingAdded = incomingAdded;
+
+                adapter.setNewMessageCount(outgoingAdded == 0 ? viewModel.getInitialUnseen() + incomingAdded : 0);
+
+                if (newOutgoingMessage || scrollUpOnDataLoaded) {
+                    Log.i("ChatActivity: scroll up");
                     scrollUpOnDataLoaded = false;
                     chatView.scrollToPosition(0);
                     newMessagesView.setVisibility(View.GONE);
-                }
-                if (adapter.chat != null && adapter.newMessageCount > 0) {
-                    adapter.newMessageCount += newIncomingMessage;
+                } else if (newIncomingMessage) {
+                    final View childView = layoutManager.getChildAt(0);
+                    final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
+                    if (scrolled) {
+                        Log.i("ChatActivity: show 'new messages view'");
+                        if (newMessagesView.getVisibility() != View.VISIBLE) {
+                            newMessagesView.setVisibility(View.VISIBLE);
+                            newMessagesView.setTranslationY(getResources().getDimension(R.dimen.details_media_list_height));
+                            newMessagesView.animate().setDuration(200).translationY(0).start();
+                        }
+                    } else {
+                        Log.i("ChatActivity: scroll up on new incoming message");
+                        scrollUpOnDataLoaded = false;
+                        chatView.scrollToPosition(0);
+                        newMessagesView.setVisibility(View.GONE);
+                    }
                     adapter.notifyDataSetChanged();
-                }
-            } else {
-                if (adapter.chat != null && initialScroll.compareAndSet(true, false) && adapter.chat.newMessageCount > 0) {
-                    layoutManager.scrollToPositionWithOffset(adapter.chat.newMessageCount, chatView.getHeight() * 9 / 10);
+                } else if (scrollToNewMessageOnDataLoaded && adapter.newMessageCount > 0) {
+                    Log.i("ChatActivity: scroll to new message, position=" + adapter.newMessageCount + " offset=" + (chatView.getHeight() * 9 / 10));
+                    layoutManager.scrollToPositionWithOffset(adapter.newMessageCount, chatView.getHeight() * 9 / 10);
+                    scrollToNewMessageOnDataLoaded = false;
                 }
             }
-        }));
+        };
+
+        viewModel.messageList.observe(this, messages -> adapter.submitList(messages, newListCommitCallback));
         viewModel.chat.getLiveData().observe(this, chat -> {
-            adapter.setChat(chat);
-            if (chat != null && adapter.getItemCount() >= chat.newMessageCount && initialScroll.compareAndSet(true, false)  && chat.newMessageCount > 0) {
-                layoutManager.scrollToPositionWithOffset(chat.newMessageCount, chatView.getHeight() * 9 / 10);
+            Log.i("ChatActivity: chat changed, newMessageCount=" + (chat == null ? "null" : chat.newMessageCount));
+            if (chat != null) {
+                adapter.setFirstUnseenMessageRowId(chat.firstUnseenMessageRowId);
+                adapter.setNewMessageCount(chat.newMessageCount);
             }
             ContentDb.getInstance(this).setChatSeen(chatId);
         });
@@ -234,7 +255,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("ChatActivity.onDestroy");
+        Log.i("ChatActivity.onDestroy");
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         replyLoader.destroy();
@@ -243,10 +264,11 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("ChatActivity.onStart");
+        Log.i("ChatActivity.onStart " + chatId);
         ForegroundChat.getInstance().setForegroundChatId(chatId);
         Notifications.getInstance(this).clearMessageNotifications(chatId);
-        if (adapter.chat != null) {
+        if (adapter.firstUnseenMessageRowId >= 0) {
+            Log.i("ChatActivity.onStart mark " + chatId + " as seen");
             ContentDb.getInstance(this).setChatSeen(chatId);
         }
     }
@@ -255,6 +277,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.i("ChatActivity.onStop");
+        scrollToNewMessageOnDataLoaded = true;
+        viewModel.chat.invalidate();
         ForegroundChat.getInstance().setForegroundChatId(null);
     }
 
@@ -405,7 +429,7 @@ public class ChatActivity extends AppCompatActivity {
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
 
-        @Nullable Chat chat;
+        long firstUnseenMessageRowId = -1L;
         int newMessageCount;
 
         ChatAdapter() {
@@ -413,14 +437,18 @@ public class ChatActivity extends AppCompatActivity {
             setHasStableIds(true);
         }
 
-        public void setChat(@Nullable Chat chat) {
-            this.chat = chat;
-            if (chat != null) {
-                this.newMessageCount = chat.newMessageCount;
-            } else {
-                this.newMessageCount = 0;
+        public void setFirstUnseenMessageRowId(long firstUnseenMessageRowId) {
+            if (this.firstUnseenMessageRowId != firstUnseenMessageRowId) {
+                this.firstUnseenMessageRowId = firstUnseenMessageRowId;
+                notifyDataSetChanged();
             }
-            notifyDataSetChanged();
+        }
+
+        public void setNewMessageCount(int newMessageCount) {
+            if (this.newMessageCount != newMessageCount) {
+                this.newMessageCount = newMessageCount;
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -496,7 +524,7 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
             final Message message = Preconditions.checkNotNull(getItem(position));
-            holder.bindTo(message, (chat != null && chat.firstUnseenMessageRowId == message.rowId) ? newMessageCount : -1, position < getItemCount() - 1 ? getItem(position+1) : null);
+            holder.bindTo(message, firstUnseenMessageRowId == message.rowId ? newMessageCount : 0, position < getItemCount() - 1 ? getItem(position+1) : null);
         }
     }
 

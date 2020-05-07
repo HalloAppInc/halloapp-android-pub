@@ -38,8 +38,9 @@ public class ChatViewModel extends AndroidViewModel {
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
     private final ContentDb contentDb;
-    private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
-    private final AtomicInteger pendingIncoming = new AtomicInteger(0);
+    private final AtomicInteger outgoingAddedCount = new AtomicInteger(0);
+    private final AtomicInteger incomingAddedCount = new AtomicInteger(0);
+    private final AtomicInteger initialUnseen = new AtomicInteger(0);
     private final MessagesDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -50,10 +51,10 @@ public class ChatViewModel extends AndroidViewModel {
         public void onMessageAdded(@NonNull Message message) {
             if (ChatViewModel.this.chatId.equals(message.chatId)) {
                 if (message.isOutgoing()) {
-                    pendingOutgoing.set(true);
+                    outgoingAddedCount.incrementAndGet();
                     mainHandler.post(() -> reloadMessagesAt(Long.MAX_VALUE));
                 } else {
-                    pendingIncoming.incrementAndGet();
+                    incomingAddedCount.incrementAndGet();
                     invalidateMessages();
                 }
             }
@@ -120,7 +121,11 @@ public class ChatViewModel extends AndroidViewModel {
         chat = new ComputableLiveData<Chat>() {
             @Override
             protected Chat compute() {
-                return contentDb.getChat(chatId);
+                final Chat chat = contentDb.getChat(chatId);
+                initialUnseen.set(chat != null ? chat.newMessageCount : 0);
+                incomingAddedCount.set(0);
+                outgoingAddedCount.set(0);
+                return chat;
             }
         };
 
@@ -141,12 +146,16 @@ public class ChatViewModel extends AndroidViewModel {
         contentDb.removeObserver(contentObserver);
     }
 
-    boolean checkPendingOutgoing() {
-        return pendingOutgoing.compareAndSet(true, false);
+    int getOutgoingAdded() {
+        return outgoingAddedCount.get();
     }
 
-    int checkPendingIncoming() {
-        return pendingIncoming.getAndSet(0);
+    int getIncomingAdded() {
+        return incomingAddedCount.get();
+    }
+
+    int getInitialUnseen() {
+        return initialUnseen.get();
     }
 
     void reloadMessagesAt(long rowId) {
