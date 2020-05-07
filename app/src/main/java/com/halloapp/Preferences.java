@@ -17,7 +17,6 @@ public class Preferences {
     private static final String PREF_KEY_LAST_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
-    private static final String PREF_KEY_MESSAGE_NOTIFICATION_TIME_CUTOFF = "message_notification_time_cutoff";
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
 
@@ -80,18 +79,6 @@ public class Preferences {
     public void setFeedNotificationTimeCutoff(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF, time).commit()) {
             Log.e("preferences: failed to set feed notification time cutoff");
-        }
-    }
-
-    @WorkerThread
-    public long getMessageNotificationTimeCutoff() {
-        return getPreferences().getLong(PREF_KEY_MESSAGE_NOTIFICATION_TIME_CUTOFF, 0);
-    }
-
-    @WorkerThread
-    public void setMessageNotificationTimeCutoff(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_MESSAGE_NOTIFICATION_TIME_CUTOFF, time).commit()) {
-            Log.e("preferences: failed to set message notification time cutoff");
         }
     }
 

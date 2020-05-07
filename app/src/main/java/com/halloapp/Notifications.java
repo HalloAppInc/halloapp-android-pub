@@ -164,11 +164,6 @@ public class Notifications {
 
     public void clearMessageNotifications(@NonNull String chatId) {
         executor.execute(() -> {
-            /*
-            if (feedNotificationTimeCutoff != 0) {
-                preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff);
-            }
-            */
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (Build.VERSION.SDK_INT >= 23 && getMessageNotificationCount() <= 2) {
                 notificationManager.cancel(MESSAGE_NOTIFICATION_ID);
@@ -269,10 +264,6 @@ public class Notifications {
                 builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex, PendingIntent.FLAG_UPDATE_CURRENT));
                 chatIndex++;
 
-                //final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
-                //deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
-                //builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
-
                 notificationManager.notify(chatId, MESSAGE_NOTIFICATION_ID, builder.build());
             }
 
@@ -301,12 +292,6 @@ public class Notifications {
                 builder.setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
             }
             notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
-
-            /*
-            final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
-            deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
-            builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
-            */
         });
     }
 
