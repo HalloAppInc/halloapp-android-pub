@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 
 public class Media {
 
@@ -93,5 +94,23 @@ public class Media {
         final byte [] encKey = new byte[32];
         random.nextBytes(encKey);
         return encKey;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        final Media media = (Media) o;
+        return rowId == media.rowId &&
+                type == media.type &&
+                Objects.equals(file, media.file) &&
+                transferred == media.transferred;
     }
 }

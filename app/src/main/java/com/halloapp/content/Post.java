@@ -88,6 +88,7 @@ public class Post extends ContentItem {
                 commentCount == post.commentCount &&
                 unseenCommentCount == post.unseenCommentCount &&
                 seenByCount == post.seenByCount &&
-                seen == post.seen;
+                seen == post.seen &&
+                media.equals(post.media);
     }
 }

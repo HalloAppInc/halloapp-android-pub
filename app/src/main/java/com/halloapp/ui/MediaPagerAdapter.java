@@ -57,7 +57,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         int index = 0;
         final Object tag = ((View) object).getTag();
         for (Media mediaItem : media) {
-            if (Long.valueOf(mediaItem.rowId).equals(tag)) {
+            if (mediaItem.equals(tag)) {
                 return index;
             }
             index++;
@@ -66,8 +66,7 @@ public class MediaPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public @NonNull
-    Object instantiateItem(@NonNull ViewGroup container, int position) {
+    public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
         final View view;
         if (parent.getRecycledMediaViews().empty()) {
             view = LayoutInflater.from(container.getContext()).inflate(R.layout.media_pager_item, container, false);
@@ -75,7 +74,7 @@ public class MediaPagerAdapter extends PagerAdapter {
             view = parent.getRecycledMediaViews().pop();
         }
         final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
-        view.setTag(mediaItem.rowId);
+        view.setTag(mediaItem);
         final PostImageView imageView = view.findViewById(R.id.image);
         imageView.setTransitionName(getTransitionName(contentId, position));
         imageView.setCornerRadius(mediaCornerRadius);

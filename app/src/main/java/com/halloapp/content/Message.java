@@ -85,6 +85,7 @@ public class Message extends ContentItem {
                 Objects.equals(id, message.id) &&
                 timestamp == message.timestamp &&
                 Objects.equals(text, message.text) &&
-                state == message.state;
+                state == message.state &&
+                media.equals(message.media);
     }
 }
