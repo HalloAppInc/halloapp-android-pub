@@ -90,7 +90,7 @@ public class KeyManager {
         PrivateECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
 
         byte[] a = CryptoUtil.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
-        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, new PublicECKey(SodiumWrapper.getInstance().convertPublicEdToX(recipientPublicIdentityKey)));
+        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, SodiumWrapper.getInstance().convertPublicEdToX(recipientPublicIdentityKey));
         byte[] c = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicSignedPreKey);
 
         byte[] masterSecret;
@@ -121,7 +121,7 @@ public class KeyManager {
     public void receiveSessionSetup(UserId peerUserId, PublicECKey publicEphemeralKey, int ephemeralKeyId, byte[] initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
 
-        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), new PublicECKey(SodiumWrapper.getInstance().convertPublicEdToX(initiatorPublicIdentityKey)));
+        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), SodiumWrapper.getInstance().convertPublicEdToX(initiatorPublicIdentityKey));
         byte[] b = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
         byte[] c = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
 

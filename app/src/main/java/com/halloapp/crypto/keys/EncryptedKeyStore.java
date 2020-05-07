@@ -141,7 +141,7 @@ public class EncryptedKeyStore {
     }
 
     public PrivateECKey getMyPrivateX25519IdentityKey() {
-        return new PrivateECKey(SodiumWrapper.getInstance().convertPrivateEdToX(getMyPrivateEd25519IdentityKey()));
+        return SodiumWrapper.getInstance().convertPrivateEdToX(getMyPrivateEd25519IdentityKey());
     }
 
     private void setMyPrivateSignedPreKey(byte[] key) {

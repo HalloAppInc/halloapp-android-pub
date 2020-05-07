@@ -4,6 +4,8 @@ import com.goterl.lazycode.lazysodium.LazySodiumAndroid;
 import com.goterl.lazycode.lazysodium.SodiumAndroid;
 import com.goterl.lazycode.lazysodium.interfaces.Box;
 import com.goterl.lazycode.lazysodium.interfaces.Sign;
+import com.halloapp.crypto.keys.PrivateECKey;
+import com.halloapp.crypto.keys.PublicECKey;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -38,18 +40,18 @@ public class SodiumWrapper {
         return CryptoUtil.concat(publicKey, privateKey);
     }
 
-    public byte[] convertPublicEdToX(byte[] ed) {
+    public PublicECKey convertPublicEdToX(byte[] ed) {
         Sign.Native sign = (Sign.Native) lazySodium;
         byte[] ret = new byte[Box.PUBLICKEYBYTES];
         sign.convertPublicKeyEd25519ToCurve25519(ret, ed);
-        return ret;
+        return new PublicECKey(ret);
     }
 
-    public byte[] convertPrivateEdToX(byte[] ed) {
+    public PrivateECKey convertPrivateEdToX(byte[] ed) {
         Sign.Native sign = (Sign.Native) lazySodium;
         byte[] ret = new byte[Box.SECRETKEYBYTES];
         sign.convertSecretKeyEd25519ToCurve25519(ret, ed);
-        return ret;
+        return new PrivateECKey(ret);
     }
 
     public byte[] sign(byte[] message, byte[] key) {
