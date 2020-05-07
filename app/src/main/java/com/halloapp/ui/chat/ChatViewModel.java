@@ -124,7 +124,6 @@ public class ChatViewModel extends AndroidViewModel {
                 final Chat chat = contentDb.getChat(chatId);
                 initialUnseen.set(chat != null ? chat.newMessageCount : 0);
                 incomingAddedCount.set(0);
-                outgoingAddedCount.set(0);
                 return chat;
             }
         };
