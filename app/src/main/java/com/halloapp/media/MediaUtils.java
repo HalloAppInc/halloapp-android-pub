@@ -177,9 +177,9 @@ public class MediaUtils {
         }
         final Bitmap bitmap;
         if (Build.VERSION.SDK_INT >= 27) {
-            bitmap = mediaMetadataRetriever.getScaledFrameAtTime(-1, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, maxDimension, maxDimension);
+            bitmap = mediaMetadataRetriever.getScaledFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, maxDimension, maxDimension);
         } else {
-            final Bitmap frameBitmap = mediaMetadataRetriever.getFrameAtTime();
+            final Bitmap frameBitmap = mediaMetadataRetriever.getFrameAtTime(0);
             if (frameBitmap != null && (frameBitmap.getWidth() > maxDimension || frameBitmap.getHeight() > maxDimension)) {
                 final float scale = Math.min(1f * maxDimension / frameBitmap.getWidth(), 1f * maxDimension / frameBitmap.getHeight());
                 bitmap = Bitmap.createScaledBitmap(frameBitmap, (int) (frameBitmap.getWidth() * scale), (int) (frameBitmap.getHeight() * scale), true);
