@@ -154,12 +154,72 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
     }
 
-    public byte[] getNextOutboundMessageKey(UserId peerUserId) throws Exception {
-        return getNextMessageKey(peerUserId, true);
+    public MessageKey getNextOutboundMessageKey(UserId peerUserId) throws Exception {
+        int ephemeralKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
+        int previousChainLength = encryptedKeyStore.getOutboundPreviousChainLength(peerUserId);
+        int currentChainIndex = encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId);
+
+        byte[] messageKey = getNextMessageKey(peerUserId, true);
+        int newIndex = currentChainIndex + 1;
+        encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, newIndex);
+
+        return new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
     }
 
-    public byte[] getNextInboundMessageKey(UserId peerUserId) throws Exception {
+    private byte[] getNextInboundMessageKey(UserId peerUserId) throws Exception {
         return getNextMessageKey(peerUserId, false);
+    }
+
+    public byte[] getInboundMessageKey(UserId peerUserId, PublicXECKey ephemeralKey, int ephemeralKeyId, int previousChainLength, int currentChainIndex) throws Exception {
+        int latestStoredEphemeralKeyId = encryptedKeyStore.getInboundEphemeralKeyId(peerUserId);
+        int latestPreviousChainLength = encryptedKeyStore.getInboundPreviousChainLength(peerUserId);
+        int latestStoredChainIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId);
+
+        if (ephemeralKeyId < latestStoredEphemeralKeyId || (ephemeralKeyId == latestStoredEphemeralKeyId && currentChainIndex < latestStoredChainIndex)) {
+            Log.i("KeyManager retrieving stored message key");
+            return encryptedKeyStore.removeSkippedMessageKey(peerUserId, ephemeralKeyId, currentChainIndex);
+        }
+
+        boolean shouldUpdateChains = ephemeralKeyId != latestStoredEphemeralKeyId;
+        if (shouldUpdateChains) {
+            skipInboundKeys(peerUserId, previousChainLength - latestStoredChainIndex - 1, latestStoredEphemeralKeyId, latestPreviousChainLength, latestStoredChainIndex);
+
+            updateInboundChainAndRootKey(peerUserId, encryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
+            encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
+            encryptedKeyStore.setInboundEphemeralKey(peerUserId, ephemeralKey);
+
+            encryptedKeyStore.setInboundPreviousChainLength(peerUserId, previousChainLength);
+            encryptedKeyStore.setInboundCurrentChainIndex(peerUserId, 0);
+        }
+
+        int currentStoredIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId); // NOTE: could have been updated in if statement above
+        skipInboundKeys(peerUserId, currentChainIndex - currentStoredIndex, ephemeralKeyId, previousChainLength, currentStoredIndex);
+
+        byte[] messageKey = getNextMessageKey(peerUserId, false);
+
+        encryptedKeyStore.setInboundCurrentChainIndex(peerUserId, currentChainIndex + 1);
+
+        if (shouldUpdateChains) {
+            PrivateXECKey newEphemeralKey = XECKey.generatePrivateKey();
+            int lastSentId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
+            encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, lastSentId + 1);
+            encryptedKeyStore.setOutboundEphemeralKey(peerUserId, newEphemeralKey);
+            updateOutboundChainAndRootKey(peerUserId, newEphemeralKey, ephemeralKey);
+
+            encryptedKeyStore.setOutboundPreviousChainLength(peerUserId, encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId));
+            encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, 0); // TODO(jack): synchronization (per user would work?)
+        }
+
+        return messageKey;
+    }
+
+    private void skipInboundKeys(UserId peerUserId, int count, int ephemeralKeyId, int previousChainLength, int startIndex) throws Exception {
+        Log.i("skipping " + count + " inbound keys");
+        for (int i=0; i<count; i++) {
+            byte[] inboundMessageKey = getNextInboundMessageKey(peerUserId);
+            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, startIndex + i, inboundMessageKey);
+            encryptedKeyStore.storeSkippedMessageKey(peerUserId, messageKey);
+        }
     }
 
     private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws Exception {

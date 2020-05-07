@@ -38,7 +38,7 @@ public class EncryptedSessionManager {
         return instance;
     }
 
-    EncryptedSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore, MessageCipher messageCipher) {
+    private EncryptedSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore, MessageCipher messageCipher) {
         this.connection = connection;
         this.keyManager = keyManager;
         this.encryptedKeyStore = encryptedKeyStore;

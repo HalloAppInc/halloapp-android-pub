@@ -37,8 +37,10 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
     private static final String PREF_KEY_KEYS_UPLOADED = "keys_uploaded";
+    private static final String PREF_KEY_MESSAGE_KEY_SET = "message_key_set";
 
     private static final String PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX = "one_time_pre_key";
+    private static final String PREF_KEY_MESSAGE_KEY_PREFIX = "message_key";
 
     private static final String PREF_KEY_SESSION_ALREADY_SET_UP_SUFFIX = "session_already_set_up";
     private static final String PREF_KEY_PEER_RESPONDED_SUFFIX = "peer_responded";
@@ -49,10 +51,14 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_ROOT_KEY_SUFFIX = "root_key";
     private static final String PREF_KEY_OUTBOUND_CHAIN_KEY_SUFFIX = "outbound_chain_key";
     private static final String PREF_KEY_INBOUND_CHAIN_KEY_SUFFIX = "inbound_chain_key";
-    private static final String PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_SUFFIX = "last_received_ephemeral_key";
+    private static final String PREF_KEY_INBOUND_EPHEMERAL_KEY_SUFFIX = "last_received_ephemeral_key";
     private static final String PREF_KEY_OUTBOUND_EPHEMERAL_KEY_SUFFIX = "last_sent_ephemeral_key";
     private static final String PREF_KEY_INBOUND_EPHEMERAL_KEY_ID_SUFFIX = "last_received_ephemeral_key_id";
     private static final String PREF_KEY_OUTBOUND_EPHEMERAL_KEY_ID_SUFFIX = "last_sent_ephemeral_key_id";
+    private static final String PREF_KEY_INBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX = "inbound_previous_chain_length";
+    private static final String PREF_KEY_OUTBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX = "outbound_previous_chain_length";
+    private static final String PREF_KEY_INBOUND_CURRENT_CHAIN_INDEX_SUFFIX = "inbound_current_chain_index";
+    private static final String PREF_KEY_OUTBOUND_CURRENT_CHAIN_INDEX_SUFFIX = "outbound_current_chain_index";
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
@@ -193,6 +199,44 @@ public class EncryptedKeyStore {
         return PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX + "/" + id;
     }
 
+    public byte[] removeSkippedMessageKey(UserId peerUserId, int ephemeralKeyId, int chainIndex) {
+        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(PREF_KEY_MESSAGE_KEY_SET, new HashSet<>());
+
+        String prefKey = getMessageKeyPrefKey(peerUserId, ephemeralKeyId, chainIndex);
+        if (!messageKeyPrefKeys.remove(prefKey)) {
+            Log.e("Message key for " + prefKey + " not found in set");
+            return null;
+        }
+
+        String messageKeyString = sharedPreferences.getString(prefKey, null);
+        if (messageKeyString == null) {
+            Log.e("Failed to retrieve message key for " + prefKey);
+            return null;
+        }
+
+        sharedPreferences.edit().putStringSet(PREF_KEY_MESSAGE_KEY_SET, messageKeyPrefKeys).apply();
+
+        return stringToBytes(messageKeyString);
+    }
+
+    // TODO(jack): Clear out old keys after some threshold
+    public void storeSkippedMessageKey(UserId peerUserId, MessageKey messageKey) {
+        Log.i("Storing skipped message key " + messageKey + " for user " + peerUserId);
+        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(PREF_KEY_MESSAGE_KEY_SET, new HashSet<>());
+
+        String keyPrefKey = getMessageKeyPrefKey(peerUserId, messageKey.getEphemeralKeyId(), messageKey.getCurrentChainIndex());
+        messageKeyPrefKeys.add(keyPrefKey);
+
+        sharedPreferences.edit()
+                .putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial()))
+                .putStringSet(PREF_KEY_MESSAGE_KEY_SET, messageKeyPrefKeys)
+                .apply();
+    }
+
+    private String getMessageKeyPrefKey(UserId peerUserId, int ephemeralKeyId, int currentChainIndex) {
+        return PREF_KEY_MESSAGE_KEY_PREFIX + "/" + peerUserId.rawId() + "/" + ephemeralKeyId + "/" + currentChainIndex;
+    }
+
     public void setPeerPublicIdentityKey(UserId peerUserId, PublicEdECKey key) {
         storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
@@ -290,7 +334,7 @@ public class EncryptedKeyStore {
     }
 
     private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
-        return peerUserId.rawId() + "/" + PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_SUFFIX;
+        return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_EPHEMERAL_KEY_SUFFIX;
     }
 
     public void setOutboundEphemeralKey(UserId peerUserId, PrivateXECKey key) {
@@ -327,6 +371,54 @@ public class EncryptedKeyStore {
 
     private String getOutboundEphemeralKeyIdPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_EPHEMERAL_KEY_ID_SUFFIX;
+    }
+
+    public void setInboundPreviousChainLength(UserId peerUserId, int len) {
+        sharedPreferences.edit().putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len).apply();
+    }
+
+    public int getInboundPreviousChainLength(UserId peerUserId) {
+        return sharedPreferences.getInt(getInboundPreviousChainLengthPrefKey(peerUserId), 0);
+    }
+
+    private String getInboundPreviousChainLengthPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX;
+    }
+
+    public void setOutboundPreviousChainLength(UserId peerUserId, int len) {
+        sharedPreferences.edit().putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len).apply();
+    }
+
+    public int getOutboundPreviousChainLength(UserId peerUserId) {
+        return sharedPreferences.getInt(getOutboundPreviousChainLengthPrefKey(peerUserId), 0);
+    }
+
+    private String getOutboundPreviousChainLengthPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX;
+    }
+
+    public void setInboundCurrentChainIndex(UserId peerUserId, int index) {
+        sharedPreferences.edit().putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index).apply();
+    }
+
+    public int getInboundCurrentChainIndex(UserId peerUserId) {
+        return sharedPreferences.getInt(getInboundCurrentChainIndexPrefKey(peerUserId), 0);
+    }
+
+    private String getInboundCurrentChainIndexPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_CURRENT_CHAIN_INDEX_SUFFIX;
+    }
+
+    public void setOutboundCurrentChainIndex(UserId peerUserId, int index) {
+        sharedPreferences.edit().putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index).apply();
+    }
+
+    public int getOutboundCurrentChainIndex(UserId peerUserId) {
+        return sharedPreferences.getInt(getOutboundCurrentChainIndexPrefKey(peerUserId), 0);
+    }
+
+    private String getOutboundCurrentChainIndexPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_CURRENT_CHAIN_INDEX_SUFFIX;
     }
 
 
