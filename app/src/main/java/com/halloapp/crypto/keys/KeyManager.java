@@ -10,10 +10,8 @@ import com.halloapp.crypto.SodiumWrapper;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
-import com.halloapp.util.StringUtils;
 import com.halloapp.xmpp.Connection;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +49,7 @@ public class KeyManager {
                     .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey()))
                     .build();
 
-            PublicECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
+            PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
             byte[] signature = SodiumWrapper.getInstance().sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
 
             SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
@@ -78,7 +76,7 @@ public class KeyManager {
         }
     }
 
-    public void setUpSession(UserId peerUserId, byte[] recipientPublicIdentityKey, PublicECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
+    public void setUpSession(UserId peerUserId, byte[] recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
         encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
@@ -86,8 +84,8 @@ public class KeyManager {
             encryptedKeyStore.setPeerOneTimePreKeyId(peerUserId, recipientPublicOneTimePreKey.id);
         }
 
-        PrivateECKey privateEphemeralKey = ECKey.generatePrivateKey();
-        PrivateECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
+        PrivateXECKey privateEphemeralKey = XECKey.generatePrivateKey();
+        PrivateXECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
 
         byte[] a = CryptoUtil.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
         byte[] b = CryptoUtil.ecdh(privateEphemeralKey, SodiumWrapper.getInstance().convertPublicEdToX(recipientPublicIdentityKey));
@@ -118,7 +116,7 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicECKey publicEphemeralKey, int ephemeralKeyId, byte[] initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
+    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, byte[] initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
 
         byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), SodiumWrapper.getInstance().convertPublicEdToX(initiatorPublicIdentityKey));
@@ -147,7 +145,7 @@ public class KeyManager {
         encryptedKeyStore.setInboundEphemeralKey(peerUserId, publicEphemeralKey);
         encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
 
-        PrivateECKey myEphemeralKey = ECKey.generatePrivateKey();
+        PrivateXECKey myEphemeralKey = XECKey.generatePrivateKey();
         encryptedKeyStore.setOutboundEphemeralKey(peerUserId, myEphemeralKey);
         encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, 1);
 
@@ -181,15 +179,15 @@ public class KeyManager {
         return messageKey;
     }
 
-    public void updateOutboundChainAndRootKey(UserId peerUserId, PrivateECKey myEphemeral, PublicECKey peerEphemeral) throws Exception {
+    public void updateOutboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws Exception {
         updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, true);
     }
 
-    public void updateInboundChainAndRootKey(UserId peerUserId, PrivateECKey myEphemeral, PublicECKey peerEphemeral) throws Exception {
+    public void updateInboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws Exception {
         updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, false);
     }
 
-    private void updateChainAndRootKey(UserId peerUserId, PrivateECKey myEphemeral, PublicECKey peerEphemeral, boolean isOutbound) throws Exception {
+    private void updateChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws Exception {
         byte[] ephemeralSecret = CryptoUtil.ecdh(myEphemeral, peerEphemeral);
 
         byte[] output = CryptoUtil.hkdf(encryptedKeyStore.getRootKey(peerUserId), ephemeralSecret, 64);

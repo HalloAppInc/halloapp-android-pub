@@ -11,7 +11,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.SessionManager;
-import com.halloapp.crypto.keys.PublicECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Container;
 import com.halloapp.proto.MediaType;
@@ -41,13 +41,13 @@ public class ChatMessageElement implements ExtensionElement {
     private ChatMessage chatMessage;
     private final long timestamp;
     private final UserId recipientUserId;
-    private final PublicECKey ephemeralKey;
+    private final PublicXECKey ephemeralKey;
     private final Integer ephemeralKeyId;
     private final byte[] identityKey;
     private final Integer oneTimePreKeyId;
     private final byte[] encryptedBytes;
 
-    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId) {
+    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId) {
         this.chatMessage = messageToChatMessage(message);
         this.timestamp = 0;
         this.recipientUserId = recipientUserId;
@@ -58,7 +58,7 @@ public class ChatMessageElement implements ExtensionElement {
         this.encryptedBytes = null;
     }
 
-    private ChatMessageElement(byte[] encryptedBytes, PublicECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId, long timestamp) {
+    private ChatMessageElement(byte[] encryptedBytes, PublicXECKey ephemeralKey, Integer ephemeralKeyId, byte[] identityKey, Integer oneTimePreKeyId, long timestamp) {
         this.chatMessage = null;
         this.timestamp = timestamp;
         this.recipientUserId = null;
@@ -262,9 +262,9 @@ public class ChatMessageElement implements ExtensionElement {
             Log.w("Got invalid ephemeral key id " + ephemeralKeyIdString);
         }
 
-        PublicECKey ephemeralKey = null;
+        PublicXECKey ephemeralKey = null;
         if (ephemeralKeyString != null) {
-            ephemeralKey = new PublicECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
+            ephemeralKey = new PublicXECKey(Base64.decode(ephemeralKeyString, Base64.NO_WRAP));
         }
         byte[] identityKey = null;
         if (identityKeyString != null) {

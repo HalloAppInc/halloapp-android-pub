@@ -5,8 +5,8 @@ import androidx.annotation.Nullable;
 
 import com.google.crypto.tink.subtle.Hkdf;
 import com.google.crypto.tink.subtle.X25519;
-import com.halloapp.crypto.keys.PrivateECKey;
-import com.halloapp.crypto.keys.PublicECKey;
+import com.halloapp.crypto.keys.PrivateXECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -48,7 +48,7 @@ public class CryptoUtil {
         return Hkdf.computeHkdf("HMACSHA256", ikm, salt, getStringBytes("HalloApp"), len);
     }
 
-    public static byte[] ecdh(@NonNull PrivateECKey a, @NonNull PublicECKey b) throws InvalidKeyException {
+    public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) throws InvalidKeyException {
         return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
     }
 

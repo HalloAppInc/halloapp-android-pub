@@ -5,11 +5,11 @@ import androidx.annotation.NonNull;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Message;
-import com.halloapp.crypto.keys.ECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
-import com.halloapp.crypto.keys.PublicECKey;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
@@ -48,7 +48,7 @@ public class SessionManager {
         return messageHandler.convertForWire(message, peerUserId);
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    public byte[] decryptMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
             byte[] ret = messageHandler.receiveFirstMessage(message, peerUserId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
@@ -78,7 +78,7 @@ public class SessionManager {
 
         if (encryptedKeyStore.getPeerResponded(peerUserId)) {
             return new SessionSetupInfo(
-                    ECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
+                    XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
                     encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
                     null,
                     null
@@ -106,15 +106,15 @@ public class SessionManager {
             byte[] signature = signedPreKeyProto.getSignature().toByteArray();
             SodiumWrapper.getInstance().verify(signature, signedPreKeyBytes, identityKeyBytes);
 
-            //PublicECKey peerIdentityKey = new PublicECKey(identityKeyBytes);
-            PublicECKey peerSignedPreKey = new PublicECKey(signedPreKeyBytes);
+            //PublicXECKey peerIdentityKey = new PublicXECKey(identityKeyBytes);
+            PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
 
             OneTimePreKey oneTimePreKey = null;
             if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {
                 com.halloapp.proto.OneTimePreKey otpk = com.halloapp.proto.OneTimePreKey.parseFrom(keysIq.oneTimePreKeys.get(0));
                 byte[] bytes = otpk.getPublicKey().toByteArray();
                 if (bytes != null && bytes.length > 0) {
-                    oneTimePreKey = new OneTimePreKey(new PublicECKey(bytes), otpk.getId());
+                    oneTimePreKey = new OneTimePreKey(new PublicXECKey(bytes), otpk.getId());
                 }
             }
 
@@ -123,7 +123,7 @@ public class SessionManager {
         }
 
         return new SessionSetupInfo(
-                ECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
+                XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
                 encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
                 encryptedKeyStore.getMyPublicEd25519IdentityKey(),
                 encryptedKeyStore.getPeerOneTimePreKeyId(peerUserId)

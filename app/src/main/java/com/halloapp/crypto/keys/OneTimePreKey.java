@@ -1,9 +1,9 @@
 package com.halloapp.crypto.keys;
 
 public class OneTimePreKey {
-    public final PublicECKey publicECKey;
+    public final PublicXECKey publicECKey;
     public final int id;
-    public OneTimePreKey(PublicECKey publicECKey, int id) {
+    public OneTimePreKey(PublicXECKey publicECKey, int id) {
         this.publicECKey = publicECKey;
         this.id = id;
     }

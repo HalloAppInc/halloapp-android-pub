@@ -1,11 +1,11 @@
 package com.halloapp.crypto;
 
 import com.halloapp.contacts.UserId;
-import com.halloapp.crypto.keys.ECKey;
+import com.halloapp.crypto.keys.PrivateXECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
-import com.halloapp.crypto.keys.PrivateECKey;
-import com.halloapp.crypto.keys.PublicECKey;
 
 import java.util.Arrays;
 
@@ -24,7 +24,7 @@ public class MessageHandler {
     }
 
     // TODO(jack): Probably move this up to SessionManager
-    public byte[] receiveFirstMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    public byte[] receiveFirstMessage(byte[] message, UserId peerUserId, byte[] identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!myEncryptedKeyStore.getPeerResponded(peerUserId)) {
             myKeyManager.receiveSessionSetup(peerUserId, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId);
             myEncryptedKeyStore.setPeerResponded(peerUserId, true);
@@ -33,7 +33,7 @@ public class MessageHandler {
         return convertFromWire(message, peerUserId, ephemeralKey, ephemeralKeyId);
     }
 
-    public byte[] convertFromWire(byte[] message, UserId peerUserId, PublicECKey ephemeralKey, Integer ephemeralKeyId) throws Exception {
+    public byte[] convertFromWire(byte[] message, UserId peerUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId) throws Exception {
         boolean shouldUpdateChains = ephemeralKeyId != myEncryptedKeyStore.getInboundEphemeralKeyId(peerUserId);
         if (shouldUpdateChains) {
             myKeyManager.updateInboundChainAndRootKey(peerUserId, myEncryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
@@ -53,7 +53,7 @@ public class MessageHandler {
         byte[] ret =  c.doFinal(message);
 
         if (shouldUpdateChains) {
-            PrivateECKey newEphemeralKey = ECKey.generatePrivateKey();
+            PrivateXECKey newEphemeralKey = XECKey.generatePrivateKey();
             int lastSentId = myEncryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
             myEncryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, lastSentId + 1);
             myEncryptedKeyStore.setOutboundEphemeralKey(peerUserId, newEphemeralKey);

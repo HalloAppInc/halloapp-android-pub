@@ -140,7 +140,7 @@ public class EncryptedKeyStore {
         return Arrays.copyOfRange(getMyEd25519IdentityKey(), 32, 96);
     }
 
-    public PrivateECKey getMyPrivateX25519IdentityKey() {
+    public PrivateXECKey getMyPrivateX25519IdentityKey() {
         return SodiumWrapper.getInstance().convertPrivateEdToX(getMyPrivateEd25519IdentityKey());
     }
 
@@ -148,17 +148,17 @@ public class EncryptedKeyStore {
         storeCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY, key);
     }
 
-    public PrivateECKey getMyPrivateSignedPreKey() {
-        return new PrivateECKey(getMyPrivateSignedPreKeyInternal());
+    public PrivateXECKey getMyPrivateSignedPreKey() {
+        return new PrivateXECKey(getMyPrivateSignedPreKeyInternal());
     }
 
     private byte[] getMyPrivateSignedPreKeyInternal() {
         return retrieveCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY);
     }
 
-    public PublicECKey getMyPublicSignedPreKey() {
+    public PublicXECKey getMyPublicSignedPreKey() {
         try {
-            return ECKey.publicFromPrivate(getMyPrivateSignedPreKey());
+            return XECKey.publicFromPrivate(getMyPrivateSignedPreKey());
         } catch (InvalidKeyException e) {
             Log.w("Failed to get public identity key", e);
         }
@@ -171,10 +171,10 @@ public class EncryptedKeyStore {
         Set<OneTimePreKey> ret = new HashSet<>();
         for (int i=0; i<ONE_TIME_PRE_KEY_BATCH_COUNT; i++) {
             int id = startId + i;
-            PrivateECKey privateKey = ECKey.generatePrivateKey();
+            PrivateXECKey privateKey = XECKey.generatePrivateKey();
             storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial());
             try {
-                OneTimePreKey otpk = new OneTimePreKey(ECKey.publicFromPrivate(privateKey), id);
+                OneTimePreKey otpk = new OneTimePreKey(XECKey.publicFromPrivate(privateKey), id);
                 ret.add(otpk);
             } catch (InvalidKeyException e) {
                 Log.w("Invalid X25519 private key for conversion", e);
@@ -183,9 +183,9 @@ public class EncryptedKeyStore {
         return ret;
     }
 
-    public PrivateECKey removeOneTimePreKeyById(int id) {
+    public PrivateXECKey removeOneTimePreKeyById(int id) {
         String prefKey = getOneTimePreKeyPrefKey(id);
-        PrivateECKey ret = new PrivateECKey(retrieveCurve25519PrivateKey(prefKey));
+        PrivateXECKey ret = new PrivateXECKey(retrieveCurve25519PrivateKey(prefKey));
         sharedPreferences.edit().remove(prefKey).apply();
         return ret;
     }
@@ -198,32 +198,32 @@ public class EncryptedKeyStore {
         storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key);
     }
 
-    public PublicECKey getPeerPublicIdentityKey(UserId peerUserId) {
-        return new PublicECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
+    public PublicXECKey getPeerPublicIdentityKey(UserId peerUserId) {
+        return new PublicXECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
     }
 
     public String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_IDENTITY_KEY_SUFFIX;
     }
 
-    public void setPeerSignedPreKey(UserId peerUserId, PublicECKey key) {
+    public void setPeerSignedPreKey(UserId peerUserId, PublicXECKey key) {
         storeBytes(getPeerSignedPreKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicECKey getPeerSignedPreKey(UserId peerUserId) {
-        return new PublicECKey(retrieveBytes(getPeerSignedPreKeyPrefKey(peerUserId)));
+    public PublicXECKey getPeerSignedPreKey(UserId peerUserId) {
+        return new PublicXECKey(retrieveBytes(getPeerSignedPreKeyPrefKey(peerUserId)));
     }
 
     private String getPeerSignedPreKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_SIGNED_PRE_KEY_SUFFIX;
     }
 
-    public void setPeerOneTimePreKey(UserId peerUserId, PublicECKey key) {
+    public void setPeerOneTimePreKey(UserId peerUserId, PublicXECKey key) {
         storeBytes(getPeerOneTimePreKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicECKey getPeerOneTimePreKey(UserId peerUserId) {
-        return new PublicECKey(retrieveBytes(getPeerOneTimePreKeyPrefKey(peerUserId)));
+    public PublicXECKey getPeerOneTimePreKey(UserId peerUserId) {
+        return new PublicXECKey(retrieveBytes(getPeerOneTimePreKeyPrefKey(peerUserId)));
     }
 
     private String getPeerOneTimePreKeyPrefKey(UserId peerUserId) {
@@ -282,24 +282,24 @@ public class EncryptedKeyStore {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_CHAIN_KEY_SUFFIX;
     }
 
-    public void setInboundEphemeralKey(UserId peerUserId, PublicECKey key) {
+    public void setInboundEphemeralKey(UserId peerUserId, PublicXECKey key) {
         storeCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicECKey getInboundEphemeralKey(UserId peerUserId) {
-        return new PublicECKey(retrieveCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId)));
+    public PublicXECKey getInboundEphemeralKey(UserId peerUserId) {
+        return new PublicXECKey(retrieveCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId)));
     }
 
     private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_LAST_RECEIVED_EPHEMERAL_KEY_SUFFIX;
     }
 
-    public void setOutboundEphemeralKey(UserId peerUserId, PrivateECKey key) {
+    public void setOutboundEphemeralKey(UserId peerUserId, PrivateXECKey key) {
         storeCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PrivateECKey getOutboundEphemeralKey(UserId peerUserId) {
-        return new PrivateECKey(retrieveCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId)));
+    public PrivateXECKey getOutboundEphemeralKey(UserId peerUserId) {
+        return new PrivateXECKey(retrieveCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId)));
     }
 
     private String getOutboundEphemeralKeyPrefKey(UserId peerUserId) {

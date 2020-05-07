@@ -6,20 +6,20 @@ import com.halloapp.util.Preconditions;
 
 import java.security.InvalidKeyException;
 
-public abstract class ECKey {
+public abstract class XECKey {
     private static final int KEY_SIZE_BYTES = 32;
 
     private final byte[] key;
 
-    public static PrivateECKey generatePrivateKey() {
-        return new PrivateECKey(X25519.generatePrivateKey());
+    public static PrivateXECKey generatePrivateKey() {
+        return new PrivateXECKey(X25519.generatePrivateKey());
     }
 
-    public static PublicECKey publicFromPrivate(PrivateECKey privateECKey) throws InvalidKeyException {
-        return new PublicECKey(X25519.publicFromPrivate(privateECKey.getKeyMaterial()));
+    public static PublicXECKey publicFromPrivate(PrivateXECKey privateECKey) throws InvalidKeyException {
+        return new PublicXECKey(X25519.publicFromPrivate(privateECKey.getKeyMaterial()));
     }
 
-    public ECKey(byte[] key) {
+    public XECKey(byte[] key) {
         Preconditions.checkArgument(key.length == KEY_SIZE_BYTES);
         this.key = key;
     }
