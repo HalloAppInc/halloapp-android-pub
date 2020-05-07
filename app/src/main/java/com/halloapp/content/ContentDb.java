@@ -393,8 +393,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<Message> getUnseenMessages(long timestamp, int count) {
-        return messagesDb.getUnseenMessages(timestamp, count);
+    public @NonNull List<Message> getUnseenMessages(int count) {
+        return messagesDb.getUnseenMessages(count);
     }
 
     @WorkerThread

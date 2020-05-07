@@ -191,7 +191,7 @@ public class Notifications {
         }
         executor.execute(() -> {
 
-            final List<Message> messages = ContentDb.getInstance(context).getUnseenMessages(preferences.getMessageNotificationTimeCutoff(), UNSEEN_MESSAGES_LIMIT);
+            final List<Message> messages = ContentDb.getInstance(context).getUnseenMessages(UNSEEN_MESSAGES_LIMIT);
             Log.i("Notifications.updateMessageNotifications: " + messages.size() + " messages");
 
             // group messages by chat IDs
