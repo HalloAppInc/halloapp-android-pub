@@ -2,6 +2,7 @@ package com.halloapp.ui.posts;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -156,6 +157,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             postActionsSeparator.setVisibility(post.seenByCount == 0 ? View.GONE : View.VISIBLE);
         } else {
             textView.setVisibility(View.VISIBLE);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
+                    (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
             postActionsSeparator.setVisibility(View.VISIBLE);
         }
 
