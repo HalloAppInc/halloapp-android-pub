@@ -320,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void processIntent(Intent intent) {
+        Log.i("MainActivity.processIntent " + intent.getAction() + " " + intent.getStringExtra(Notifications.EXTRA_NOTIFICATION_NAV_TARGET));
         if (Intent.ACTION_SEND.equals(intent.getAction())) {
             final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             if (uri != null) {
@@ -334,12 +335,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
                 startActivity(composerIntent);
             }
-        } else if (Notifications.ACTION_NOTIFY_FEED.equals(intent.getAction())) {
-            final BottomNavigationView navView = findViewById(R.id.nav_view);
-            navView.setSelectedItemId(R.id.navigation_home);
-        } else if (Notifications.ACTION_NOTIFY_MESSAGE.equals(intent.getAction())) {
-            final BottomNavigationView navView = findViewById(R.id.nav_view);
-            navView.setSelectedItemId(R.id.navigation_messages);
+        } else {
+            final String extraNotificationNavTarget = intent.getStringExtra(Notifications.EXTRA_NOTIFICATION_NAV_TARGET);
+            if (Notifications.NOTIFICATION_NAV_TARGET_FEED.equals(extraNotificationNavTarget)) {
+                final BottomNavigationView navView = findViewById(R.id.nav_view);
+                navView.setSelectedItemId(R.id.navigation_home);
+            } else if (Notifications.NOTIFICATION_NAV_TARGET_MESSAGES.equals(extraNotificationNavTarget)) {
+                final BottomNavigationView navView = findViewById(R.id.nav_view);
+                navView.setSelectedItemId(R.id.navigation_messages);
+            }
         }
     }
 }
