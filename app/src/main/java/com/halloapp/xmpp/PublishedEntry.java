@@ -166,7 +166,6 @@ public class PublishedEntry {
             entryBuilder.id(item.getId());
             entryBuilder.timestamp(item.getTimestamp());
             if (item.getPublisher() != null) {
-                // TODO(jack): Use this to get the user ID for decryption!
                 entryBuilder.user(item.getPublisher().getLocalpartOrNull().toString());
             }
         }

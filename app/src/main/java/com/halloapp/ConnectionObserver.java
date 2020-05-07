@@ -180,7 +180,7 @@ public class ConnectionObserver implements Connection.Observer {
         for (OneTimePreKey otpk : keys) {
             com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
                     .setId(otpk.id)
-                    .setPublicKey(ByteString.copyFrom(otpk.publicECKey.getKeyMaterial()))
+                    .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
                     .build();
             protoKeys.add(protoKey.toByteArray());
         }

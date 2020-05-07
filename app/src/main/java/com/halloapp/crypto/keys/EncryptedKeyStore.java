@@ -34,7 +34,6 @@ public class EncryptedKeyStore {
     private static final String ENC_PREF_FILE_NAME = "halloapp_keys";
 
     private static final String PREF_KEY_MY_ED25519_IDENTITY_KEY = "my_ed25519_identity_key";
-    private static final String PREF_KEY_MY_PRIVATE_IDENTITY_KEY = "my_private_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
     private static final String PREF_KEY_KEYS_UPLOADED = "keys_uploaded";

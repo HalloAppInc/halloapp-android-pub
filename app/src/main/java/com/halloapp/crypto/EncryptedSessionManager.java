@@ -17,54 +17,53 @@ import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
-public class SessionManager {
+public class EncryptedSessionManager {
     private final Connection connection;
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
-    private final MessageHandler messageHandler;
+    private final MessageCipher messageCipher;
 
     private static final SessionSetupInfo nullInfo = new SessionSetupInfo(null, null, null, null);
 
-    private static SessionManager instance = null;
+    private static EncryptedSessionManager instance = null;
 
-    public static SessionManager getInstance() {
+    public static EncryptedSessionManager getInstance() {
         if (instance == null) {
-            synchronized (SessionManager.class) {
+            synchronized (EncryptedSessionManager.class) {
                 if (instance == null) {
-                    instance = new SessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance(), new MessageHandler());
+                    instance = new EncryptedSessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance(), new MessageCipher());
                 }
             }
         }
         return instance;
     }
 
-    public SessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore, MessageHandler messageHandler) {
+    EncryptedSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore, MessageCipher messageCipher) {
         this.connection = connection;
         this.keyManager = keyManager;
         this.encryptedKeyStore = encryptedKeyStore;
-        this.messageHandler = messageHandler;
+        this.messageCipher = messageCipher;
     }
 
     public byte[] encryptMessage(byte[] message, UserId peerUserId) throws Exception {
-        return messageHandler.convertForWire(message, peerUserId);
+        return messageCipher.convertForWire(message, peerUserId);
     }
 
     public byte[] decryptMessage(byte[] message, UserId peerUserId, PublicEdECKey identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-            byte[] ret = messageHandler.receiveFirstMessage(message, peerUserId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
-            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
-            return ret;
+            keyManager.receiveSessionSetup(peerUserId, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId);
         }
+        encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
         encryptedKeyStore.setPeerResponded(peerUserId, true);
 
-        return messageHandler.convertFromWire(message, peerUserId, ephemeralKey, ephemeralKeyId);
+        return messageCipher.convertFromWire(message, peerUserId, ephemeralKey, ephemeralKeyId);
     }
 
     public void sendMessage(final @NonNull Message message) {
         final UserId recipientUserId = new UserId(message.chatId);
         final SessionSetupInfo sessionSetupInfo;
         try {
-            sessionSetupInfo = SessionManager.getInstance().setUpSession(recipientUserId);
+            sessionSetupInfo = EncryptedSessionManager.getInstance().setUpSession(recipientUserId);
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
             return;
@@ -72,7 +71,7 @@ public class SessionManager {
         connection.sendMessage(message, sessionSetupInfo);
     }
 
-    public SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
+    private SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
         if (!Constants.ENCRYPTION_TURNED_ON) {
             return nullInfo;
         }

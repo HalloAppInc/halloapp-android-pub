@@ -10,7 +10,7 @@ import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
-import com.halloapp.crypto.SessionManager;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.ChatMessage;
@@ -129,7 +129,7 @@ public class ChatMessageElement implements ExtensionElement {
         if (this.chatMessage == null) {
             try {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
-                final byte[] dec = SessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
+                final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
                 this.chatMessage = readEncodedEntry(dec);
             } catch (Exception e) {
                 Log.e("Failed to decrypt message", e);
@@ -164,7 +164,7 @@ public class ChatMessageElement implements ExtensionElement {
     private String getEncryptedEntryString() {
         try {
             byte[] encodedEntry = getEncodedEntry();
-            byte[] encryptedEntry = SessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
+            byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
             return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
         } catch (Exception e) {
             Log.e("Failed to encrypt", e);

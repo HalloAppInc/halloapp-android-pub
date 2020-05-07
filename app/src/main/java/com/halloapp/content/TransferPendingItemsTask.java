@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.halloapp.FileStore;
-import com.halloapp.crypto.SessionManager;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
@@ -22,13 +22,13 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
-    private final SessionManager sessionManager;
+    private final EncryptedSessionManager encryptedSessionManager;
 
     public TransferPendingItemsTask(@NonNull Context context) {
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance(context);
         this.contentDb = ContentDb.getInstance(context);
-        this.sessionManager = SessionManager.getInstance();
+        this.encryptedSessionManager = EncryptedSessionManager.getInstance();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                 }
             } else /*post.isOutgoing()*/ {
                 if (message.media.isEmpty()) {
-                    sessionManager.sendMessage(message);
+                    encryptedSessionManager.sendMessage(message);
                 } else {
                     new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
                 }

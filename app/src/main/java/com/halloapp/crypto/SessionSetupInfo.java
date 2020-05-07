@@ -9,7 +9,7 @@ public class SessionSetupInfo {
     public final PublicEdECKey identityKey;
     public final Integer oneTimePreKeyId;
 
-    public SessionSetupInfo(PublicXECKey ephemeralKey, Integer ephemeralKeyId, PublicEdECKey identityKey, Integer oneTimePreKeyId) {
+    SessionSetupInfo(PublicXECKey ephemeralKey, Integer ephemeralKeyId, PublicEdECKey identityKey, Integer oneTimePreKeyId) {
         this.ephemeralKey = ephemeralKey;
         this.ephemeralKeyId = ephemeralKeyId;
         this.identityKey = identityKey;

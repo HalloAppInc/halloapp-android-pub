@@ -11,7 +11,7 @@ import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
-import com.halloapp.crypto.SessionManager;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
@@ -28,7 +28,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final Notifications notifications;
-    private final SessionManager sessionManager;
+    private final EncryptedSessionManager encryptedSessionManager;
 
     public static MainContentDbObserver getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -47,7 +47,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
         this.fileStore = FileStore.getInstance(context);
         this.contentDb = ContentDb.getInstance(context);
         this.notifications = Notifications.getInstance(context);
-        this.sessionManager = SessionManager.getInstance();
+        this.encryptedSessionManager = EncryptedSessionManager.getInstance();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onMessageAdded(@NonNull Message message) {
         if (message.isOutgoing()) {
             if (message.media.isEmpty()) {
-                sessionManager.sendMessage(message);
+                encryptedSessionManager.sendMessage(message);
             } else {
                 new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }

@@ -62,7 +62,7 @@ public class KeyManager {
             for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
                 com.halloapp.proto.OneTimePreKey toAdd = com.halloapp.proto.OneTimePreKey.newBuilder()
                         .setId(otpk.id)
-                        .setPublicKey(ByteString.copyFrom(otpk.publicECKey.getKeyMaterial()))
+                        .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
                         .build();
                 oneTimePreKeys.add(toAdd.toByteArray());
             }
@@ -80,7 +80,7 @@ public class KeyManager {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
         encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
-            encryptedKeyStore.setPeerOneTimePreKey(peerUserId, recipientPublicOneTimePreKey.publicECKey);
+            encryptedKeyStore.setPeerOneTimePreKey(peerUserId, recipientPublicOneTimePreKey.publicXECKey);
             encryptedKeyStore.setPeerOneTimePreKeyId(peerUserId, recipientPublicOneTimePreKey.id);
         }
 
@@ -93,7 +93,7 @@ public class KeyManager {
 
         byte[] masterSecret;
         if (recipientPublicOneTimePreKey != null) {
-            byte[] d = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicOneTimePreKey.publicECKey);
+            byte[] d = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicOneTimePreKey.publicXECKey);
             masterSecret = CryptoUtil.concat(a, b, c, d);
             CryptoUtil.nullify(d);
         } else {
