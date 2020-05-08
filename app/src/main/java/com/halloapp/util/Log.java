@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 import com.halloapp.Me;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 import io.fabric.sdk.android.Fabric;
 
 public class Log {
@@ -75,8 +78,32 @@ public class Log {
 
     public static void sendErrorReport(String msg) {
         Log.e(msg + " (sending error report)");
+
+        // Cannot hard-code; proguard minification will change the names
+        String logClassName = Log.class.getName();
+        Method thisMethod = new Object() {}.getClass().getEnclosingMethod();
+        String methodName = thisMethod == null ? "" : thisMethod.getName();
+
+        // Remove irrelevant stack elements so that Crashlytics grouping works
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < stackTrace.length; i++) {
+            StackTraceElement elem = stackTrace[i];
+            if (elem.getClassName().equals(logClassName) && elem.getMethodName().equals(methodName)) {
+                stackTrace = Arrays.copyOfRange(stackTrace, i + 1, stackTrace.length);
+                break;
+            }
+        }
+        Throwable e = new ConstructedException(msg, stackTrace);
+
         if (Fabric.isInitialized()) {
-            Crashlytics.logException(new RuntimeException(msg));
+            Crashlytics.logException(e);
+        }
+    }
+
+    private static class ConstructedException extends Throwable {
+        ConstructedException(String message, StackTraceElement[] stackTrace) {
+            super(message, null, false, true);
+            setStackTrace(stackTrace);
         }
     }
 
