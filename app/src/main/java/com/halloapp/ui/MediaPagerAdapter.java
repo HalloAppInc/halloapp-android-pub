@@ -119,7 +119,7 @@ public class MediaPagerAdapter extends PagerAdapter {
             final Object tag = child.getTag();
             final PostImageView imageView = child.findViewById(R.id.image);
             for (Media mediaItem : media) {
-                if (Long.valueOf(mediaItem.rowId).equals(tag)) {
+                if (mediaItem.equals(tag)) {
                     parent.getMediaThumbnailLoader().load(imageView, mediaItem);
                     break;
                 }
