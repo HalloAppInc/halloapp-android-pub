@@ -90,7 +90,7 @@ public class ProfileFragment extends PostsFragment {
         AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
 
         final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
-        View.OnClickListener changeAvatarListener = v -> {
+        final View.OnClickListener changeAvatarListener = v -> {
             Log.d("ProfileFragment request change avatar");
             final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
             intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
@@ -99,7 +99,9 @@ public class ProfileFragment extends PostsFragment {
         changeAvatarView.setOnClickListener(changeAvatarListener);
         avatarView.setOnClickListener(changeAvatarListener);
 
-        headerView.findViewById(R.id.name).setOnClickListener(v -> startActivity(new Intent(getContext(), UserNameActivity.class)));
+        final View.OnClickListener changeNameListener = v -> startActivity(new Intent(getContext(), UserNameActivity.class));
+        headerView.findViewById(R.id.name).setOnClickListener(changeNameListener);
+        headerView.findViewById(R.id.change_name).setOnClickListener(changeNameListener);
 
         adapter.addHeader(headerView);
 

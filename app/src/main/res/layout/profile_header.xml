@@ -41,6 +41,18 @@
         app:layout_constraintBottom_toTopOf="@+id/phone"
         tools:text="Ded Pihtov" />
 
+    <ImageView
+        android:id="@+id/change_name"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp"
+        android:src="@drawable/ic_edit"
+        android:tint="?attr/colorControlNormal"
+        android:alpha="0.5"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@+id/name"/>
+
     <TextView
         android:id="@+id/phone"
         android:layout_width="wrap_content"

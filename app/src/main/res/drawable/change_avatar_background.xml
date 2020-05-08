@@ -7,15 +7,15 @@
         android:height="24dp" />
 
     <solid
-        android:color="#000000" />
+        android:color="#BFBFBF" />
 
     <stroke
-        android:color="#000000"
+        android:color="@color/card_background"
         android:width="2dp"/>
 
     <padding
-        android:left="8dp"
-        android:top="8dp"
-        android:right="8dp"
-        android:bottom="8dp" />
+        android:left="10dp"
+        android:top="10dp"
+        android:right="10dp"
+        android:bottom="10dp" />
 </shape>
