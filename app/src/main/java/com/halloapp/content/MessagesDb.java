@@ -749,7 +749,8 @@ class MessagesDb {
                     MediaTable.COLUMN_PARENT_ROW_ID + "," +
                     MediaTable.COLUMN_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
-                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE;
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + MessagesTable.COLUMN_CHAT_ID  + "=" + chatId;
 
         int filesDeleted = 0;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
