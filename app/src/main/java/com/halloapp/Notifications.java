@@ -250,6 +250,7 @@ public class Notifications {
                         .setContentTitle(context.getString(R.string.app_name))
                         .setContentText(text)
                         .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(context.getColor(R.color.color_accent))
                         .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
                         .setGroupSummary(false)
                         .setStyle(style);
@@ -272,6 +273,7 @@ public class Notifications {
                     .setContentTitle(context.getString(R.string.app_name))
                     .setContentText(text)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(context.getColor(R.color.color_accent))
                     .setAutoCancel(true)
                     .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
                     .setGroupSummary(true);
@@ -402,6 +404,7 @@ public class Notifications {
     private void showFeedNotification(@NonNull String title, @NonNull String body) {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(context.getColor(R.color.color_accent))
                 .setContentTitle(title)
                 .setContentText(body)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
@@ -425,6 +428,7 @@ public class Notifications {
         }
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(context.getColor(R.color.color_accent))
                 .setContentTitle(title)
                 .setContentText(context.getString(R.string.notification_app_expiration_body))
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
@@ -438,6 +442,7 @@ public class Notifications {
     public void showLoginFailedNotification() {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(context.getColor(R.color.color_accent))
                 .setContentTitle(context.getString(R.string.login_failed))
                 .setContentText(context.getString(R.string.login_failed_explanation))
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
