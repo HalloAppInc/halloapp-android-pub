@@ -195,6 +195,7 @@ public class PostSeenByActivity extends AppCompatActivity {
                     });
                     menu.show();
                 });
+                menuView.setVisibility(View.INVISIBLE); // TODO (ds): uncomment when blocking is implemented
             }
 
             void bindTo(@NonNull Contact contact) {
