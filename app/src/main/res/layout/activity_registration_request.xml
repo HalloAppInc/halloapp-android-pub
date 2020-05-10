@@ -44,7 +44,7 @@
             android:hint="@string/name_hint"
             android:padding="8dp"
             android:autofillHints="personName"
-            android:inputType="textPersonName"/>
+            android:inputType="textPersonName|textCapWords"/>
 
         <TextView
             android:id="@+id/counter"
