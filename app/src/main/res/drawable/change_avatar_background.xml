@@ -7,7 +7,7 @@
         android:height="24dp" />
 
     <solid
-        android:color="#BFBFBF" />
+        android:color="@color/change_avatar_background" />
 
     <stroke
         android:color="@color/card_background"

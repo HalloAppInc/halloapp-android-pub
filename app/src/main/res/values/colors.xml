@@ -28,4 +28,5 @@
     <color name="swipe_delete_background">#d93025</color>
     <color name="retract_comment_tint">#80808080</color>
     <color name="avatar_crop_overlay">#c4c4c4c4</color>
+    <color name="change_avatar_background">#B5B5B5</color>
 </resources>
