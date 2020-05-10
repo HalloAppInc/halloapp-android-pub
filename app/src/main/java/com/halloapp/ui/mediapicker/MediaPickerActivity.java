@@ -307,6 +307,9 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
     }
 
     private void handleMultiSelection(@NonNull GalleryItem galleryItem, View view) {
+        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            return;
+        }
         final float animateScale;
         if (!selectedItems.remove(galleryItem.id)) {
             if (selectedItems.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
