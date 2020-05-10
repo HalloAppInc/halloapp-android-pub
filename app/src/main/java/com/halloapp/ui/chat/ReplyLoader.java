@@ -47,7 +47,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
             }
             Bitmap thumb = null;
             if (replyPreview.file != null) {
-                thumb = MediaUtils.decode(replyPreview.file, replyPreview.mediaType, dimensionLimit);
+                thumb = MediaUtils.decodeImage(replyPreview.file, dimensionLimit);
             }
             return new Result(name, replyPreview.text, replyPreview.mediaType, thumb);
         };
