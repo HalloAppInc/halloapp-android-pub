@@ -95,9 +95,6 @@ public class PostSeenByActivity extends AppCompatActivity {
             textView.setVisibility(View.VISIBLE);
             textView.setText(post.text);
         }
-
-        final TextView timeView = findViewById(R.id.time);
-        TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
     }
 
     private class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
