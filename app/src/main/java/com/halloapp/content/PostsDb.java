@@ -723,7 +723,7 @@ class PostsDb {
         try (final Cursor cursor = db.query(SeenTable.TABLE_NAME,
                 new String [] {SeenTable.COLUMN_SEEN_BY_USER_ID},
                 SeenTable.COLUMN_POST_ID + "=?",
-                new String [] {postId}, null, null, null)) {
+                new String [] {postId}, null, null, SeenTable._ID + " DESC")) {
             while (cursor.moveToNext()) {
                 users.add(new UserId(cursor.getString(0)));
             }
