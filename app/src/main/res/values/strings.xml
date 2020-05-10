@@ -105,7 +105,7 @@
     <string name="no_photos_or_videos_found">No photos or videos found</string>
     <string name="gallery">Gallery</string>
     <string name="select">OK</string>
-    <string name="avatar_picker_title">Profile Photo</string>
+    <string name="avatar_picker_title">Profile photo</string>
     <string name="other_media">Other media</string>
     <string name="rotate">Rotate</string>
     <string name="seen_by">Seen by</string>
