@@ -24,6 +24,9 @@
 -keep class org.jivesoftware.smack.** { *; }
 -keep class org.jivesoftware.smackx.** { *; }
 
+# Crashlytics needs these for deobfuscating crash reports better
+-keepattributes SourceFile,LineNumberTable
+
 # https://issuetracker.google.com/issues/154315507 TODO(jack): Remove if fixed by Google
 -keep class com.google.crypto.tink.proto.** { *; }
 
