@@ -33,8 +33,10 @@
                 app:layout_constraintBottom_toTopOf="@+id/footer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:clipToPadding="false"/>
 
             <TextView
                 android:id="@+id/new_messages"
