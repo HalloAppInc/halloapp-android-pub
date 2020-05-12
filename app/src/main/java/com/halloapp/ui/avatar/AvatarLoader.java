@@ -45,7 +45,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private Bitmap defaultAvatar;
 
-    public static AvatarLoader getInstance(Connection connection, Context context) {
+    public static AvatarLoader getInstance(@NonNull Connection connection, @NonNull Context context) {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
@@ -56,7 +56,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return instance;
     }
 
-    private AvatarLoader(Connection connection, Context context) {
+    private AvatarLoader(@NonNull Connection connection, @NonNull Context context) {
         this.connection = connection;
         this.context = context.getApplicationContext();
 
@@ -185,27 +185,28 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             return ((BitmapDrawable)drawable).getBitmap();
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
+        final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return bitmap;
     }
 
     public void removeMyAvatar() {
-        Connection connection = Connection.getInstance();
         connection.publishAvatarMetadata(RandomId.create(), null, 0, 0, 0);
 
         FileStore fileStore = FileStore.getInstance(context);
         File avatarFile = fileStore.getAvatarFile(UserId.ME.rawId());
         if (avatarFile.exists()) {
-            avatarFile.delete();
+            if (!avatarFile.delete()) {
+                Log.e("failed to remove my avatar " + avatarFile.getAbsolutePath());
+            }
         }
 
         reportMyAvatarChanged();
     }
 
-    public void reportMyAvatarChanged() {
+    void reportMyAvatarChanged() {
         cache.remove(UserId.ME.rawId());
     }
 
@@ -220,7 +221,9 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     Log.w("avatar metadata update", e);
                 }
             } else if (avatarFile.exists()) {
-                avatarFile.delete();
+                if (!avatarFile.delete()) {
+                    Log.e("failed to remove avatar " + avatarFile.getAbsolutePath());
+                }
             }
             cache.remove(userId.rawId());
         }

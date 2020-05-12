@@ -76,9 +76,9 @@ public class Registration {
             }
             return new RegistrationRequestResult(phone);
         } catch (IOException e) {
-            return new RegistrationRequestResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK);
         } catch (JSONException e) {
-            return new RegistrationRequestResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER);
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
@@ -140,7 +140,7 @@ public class Registration {
     public static class RegistrationRequestResult {
 
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK})
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL})
         @interface Result {}
         public static final int RESULT_OK = 0;
         public static final int RESULT_FAILED_NETWORK = 1;

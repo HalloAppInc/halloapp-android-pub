@@ -40,7 +40,7 @@ public class HomeFragment extends PostsFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Context context = Preconditions.checkNotNull(getContext());
+        final Context context = requireContext();
         postThumbnailLoader = new PostThumbnailLoader(context, context.getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
         Log.d("HomeFragment: onCreate");
     }
@@ -100,7 +100,7 @@ public class HomeFragment extends PostsFragment {
             }
         });
 
-        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())) {
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()) {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
@@ -115,7 +115,7 @@ public class HomeFragment extends PostsFragment {
 
         postsView.setAdapter(adapter);
 
-        commentHistoryPopup = new CommentsHistoryPopup(Preconditions.checkNotNull(getContext()), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
+        commentHistoryPopup = new CommentsHistoryPopup(requireContext(), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
         commentHistoryPopup.setOnItemClickListener(commentsGroup -> {
             commentHistoryPopup.dismiss();
             final HomeViewModel.CommentsHistory commentHistoryData = viewModel.commentsHistory.getLiveData().getValue();
@@ -142,7 +142,7 @@ public class HomeFragment extends PostsFragment {
         inflater.inflate(R.menu.home_menu, menu);
         final MenuItem notificationsMenuItem = menu.findItem(R.id.notifications);
         notificationDrawable = new BadgedDrawable(
-                Preconditions.checkNotNull(getContext()),
+                requireContext(),
                 notificationsMenuItem.getIcon(),
                 getResources().getColor(R.color.badge_text),
                 getResources().getColor(R.color.badge_background),

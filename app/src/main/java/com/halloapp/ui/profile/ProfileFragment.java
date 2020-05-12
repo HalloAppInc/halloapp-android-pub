@@ -71,23 +71,23 @@ public class ProfileFragment extends PostsFragment {
         final ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
 
-        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) Preconditions.checkNotNull(getActivity())));
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
         final TextView phoneView = headerView.findViewById(R.id.phone);
-        final LoadProfileInfoTask loadProfileInfoTask = new LoadProfileInfoTask(Me.getInstance(Preconditions.checkNotNull(getContext())));
+        final LoadProfileInfoTask loadProfileInfoTask = new LoadProfileInfoTask(Me.getInstance(requireContext()));
         loadProfileInfoTask.phone.observe(getViewLifecycleOwner(), phone -> phoneView.setText(
                 BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null))));
         loadProfileInfoTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        Me.getInstance(getContext()).name.observe(this, nameView::setText);
-        AsyncTask.execute(() -> Me.getInstance(getContext()).getName());
+        Me.getInstance(requireContext()).name.observe(getViewLifecycleOwner(), nameView::setText);
+        AsyncTask.execute(() -> Me.getInstance(requireContext()).getName());
 
         avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
+        AvatarLoader.getInstance(Connection.getInstance(), requireContext()).load(avatarView, UserId.ME);
 
         final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
         final View.OnClickListener changeAvatarListener = v -> {

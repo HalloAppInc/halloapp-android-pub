@@ -63,8 +63,8 @@ public class SettingsActivity extends AppCompatActivity {
 
             Preconditions.checkNotNull((Preference)findPreference("send_logs")).setOnPreferenceClickListener(preference -> {
                 Log.sendErrorReport(getString(R.string.send_logs));
-                CenterToast.show(Preconditions.checkNotNull(getContext()), R.string.send_logs);
-                Preconditions.checkNotNull(getActivity()).finish();
+                CenterToast.show(requireContext(), R.string.send_logs);
+                requireActivity().finish();
                 return false;
             });
 
@@ -72,7 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
             debugPreference.setVisible(BuildConfig.DEBUG);
             debugPreference.setOnPreferenceClickListener(preference -> {
                 View prefView = getListView().getChildAt(preference.getOrder());
-                Debug.showDebugMenu(Preconditions.checkNotNull(getActivity()), prefView);
+                Debug.showDebugMenu(requireActivity(), prefView);
                 return false;
             });
         }

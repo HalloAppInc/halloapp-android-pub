@@ -79,12 +79,12 @@ public class PostsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Point point = new Point();
-        Preconditions.checkNotNull(getActivity()).getWindowManager().getDefaultDisplay().getSize(point);
-        mediaThumbnailLoader = new MediaThumbnailLoader(Preconditions.checkNotNull(getContext()), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
-        contactLoader = new ContactLoader(Preconditions.checkNotNull(getContext()));
-        seenByLoader = new SeenByLoader(Preconditions.checkNotNull(getContext()));
+        requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        contactLoader = new ContactLoader(requireContext());
+        seenByLoader = new SeenByLoader(requireContext());
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
-        ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).addObserver(contactsObserver);
+        ContactsDb.getInstance(requireContext()).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
     }
@@ -96,14 +96,14 @@ public class PostsFragment extends Fragment {
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();
-        ContactsDb.getInstance(Preconditions.checkNotNull(getContext())).removeObserver(contactsObserver);
+        ContactsDb.getInstance(requireContext()).removeObserver(contactsObserver);
     }
 
     @CallSuper
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        drawDelegateView = Preconditions.checkNotNull(getActivity()).findViewById(R.id.draw_delegate);
+        drawDelegateView = requireActivity().findViewById(R.id.draw_delegate);
     }
 
     private static class HeaderViewHolder extends ViewHolderWithLifecycle {

@@ -16,6 +16,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.halloapp.util.Rtl;
 
@@ -88,6 +89,7 @@ public class BadgedDrawable extends Drawable {
         return drawable.getPadding(padding);
     }
 
+    @RequiresApi(29)
     @Override
     public @NonNull Insets getOpticalInsets() {
         return drawable.getOpticalInsets();
@@ -103,6 +105,7 @@ public class BadgedDrawable extends Drawable {
         drawable.setHotspotBounds(left, top, right, bottom);
     }
 
+    @RequiresApi(23)
     @Override
     public void getHotspotBounds(@NonNull Rect outRect) {
         drawable.getHotspotBounds(outRect);
@@ -140,6 +143,7 @@ public class BadgedDrawable extends Drawable {
         drawable.setTintList(tint);
     }
 
+    @RequiresApi(29)
     @Override
     public void setTintBlendMode(@Nullable BlendMode blendMode) {
         drawable.setTintBlendMode(blendMode);
