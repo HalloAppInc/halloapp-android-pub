@@ -24,7 +24,6 @@ import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatViewModel extends AndroidViewModel {

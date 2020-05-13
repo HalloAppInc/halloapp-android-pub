@@ -25,7 +25,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.xmpp.Connection;

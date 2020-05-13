@@ -38,7 +38,6 @@ import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.UserId;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
@@ -63,7 +62,6 @@ import com.halloapp.xmpp.PresenceLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -449,14 +447,14 @@ public class ChatActivity extends AppCompatActivity {
             setHasStableIds(true);
         }
 
-        public void setFirstUnseenMessageRowId(long firstUnseenMessageRowId) {
+        void setFirstUnseenMessageRowId(long firstUnseenMessageRowId) {
             if (this.firstUnseenMessageRowId != firstUnseenMessageRowId) {
                 this.firstUnseenMessageRowId = firstUnseenMessageRowId;
                 notifyDataSetChanged();
             }
         }
 
-        public void setNewMessageCount(int newMessageCount) {
+        void setNewMessageCount(int newMessageCount) {
             if (this.newMessageCount != newMessageCount) {
                 this.newMessageCount = newMessageCount;
                 notifyDataSetChanged();
