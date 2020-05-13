@@ -52,7 +52,7 @@ public class CryptoUtil {
         return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
     }
 
-    private static byte[] getStringBytes(String s) {
+    private static byte[] getStringBytes(@NonNull String s) {
         return s.getBytes(StandardCharsets.UTF_8);
     }
 }
