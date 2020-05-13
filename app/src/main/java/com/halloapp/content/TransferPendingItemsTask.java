@@ -1,6 +1,7 @@
 package com.halloapp.content;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
@@ -14,8 +15,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
 import java.util.List;
-
-import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
 public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
 
