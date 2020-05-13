@@ -45,7 +45,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                 media.transferred = true;
                 contentItem.setMediaTransferred(media, contentDb);
             } catch (IOException e) {
-                Log.e("DownloadPostTask", e);
+                Log.e("DownloadMediaTask: " + media.url, e);
                 return null;
             }
         }

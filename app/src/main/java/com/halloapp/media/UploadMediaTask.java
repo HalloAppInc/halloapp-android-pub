@@ -69,7 +69,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 media.transferred = true;
                 contentItem.setMediaTransferred(media, contentDb);
             } catch (IOException e) {
-                Log.e("UploadMediaTask", e);
+                Log.e("UploadMediaTask: " + urls.putUrl, e);
                 return null;
             }
         }
