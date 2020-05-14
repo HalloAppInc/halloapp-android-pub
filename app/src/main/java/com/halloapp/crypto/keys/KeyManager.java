@@ -12,6 +12,7 @@ import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +20,10 @@ import java.util.List;
 public class KeyManager {
 
     private static KeyManager instance;
+
+    private static final byte[] HKDF_ROOT_KEY_INFO = "HalloApp".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] HKDF_INPUT_MESSAGE_KEY = new byte[]{1};
+    private static final byte[] HKDF_INPUT_CHAIN_KEY = new byte[]{2};
 
     private EncryptedKeyStore encryptedKeyStore;
 
@@ -100,7 +105,7 @@ public class KeyManager {
             masterSecret = CryptoUtil.concat(a, b, c);
         }
 
-        byte[] output = CryptoUtil.hkdf(masterSecret, null, 96);
+        byte[] output = CryptoUtil.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
         byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
         byte[] outboundChainKey = Arrays.copyOfRange(output, 32, 64);
         byte[] inboundChainKey = Arrays.copyOfRange(output, 64, 96);
@@ -132,7 +137,7 @@ public class KeyManager {
             masterSecret = CryptoUtil.concat(a, b, c);
         }
 
-        byte[] output = CryptoUtil.hkdf(masterSecret, null, 96);
+        byte[] output = CryptoUtil.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
         byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
 
         // NOTE: Order switched so that keys match appropriately
@@ -225,8 +230,8 @@ public class KeyManager {
     private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws Exception {
         byte[] chainKey = isOutbound ? encryptedKeyStore.getOutboundChainKey(peerUserId) : encryptedKeyStore.getInboundChainKey(peerUserId);
 
-        byte[] messageKey = CryptoUtil.hkdf(chainKey, new byte[]{1}, 80);
-        byte[] newChainKey = CryptoUtil.hkdf(chainKey, new byte[]{2}, 32);
+        byte[] messageKey = CryptoUtil.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
+        byte[] newChainKey = CryptoUtil.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
 
         if (isOutbound) {
             encryptedKeyStore.setOutboundChainKey(peerUserId, newChainKey);
@@ -250,7 +255,7 @@ public class KeyManager {
     private void updateChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws Exception {
         byte[] ephemeralSecret = CryptoUtil.ecdh(myEphemeral, peerEphemeral);
 
-        byte[] output = CryptoUtil.hkdf(encryptedKeyStore.getRootKey(peerUserId), ephemeralSecret, 64);
+        byte[] output = CryptoUtil.hkdf(ephemeralSecret, encryptedKeyStore.getRootKey(peerUserId), HKDF_ROOT_KEY_INFO, 64);
         byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
         byte[] chainKey = Arrays.copyOfRange(output, 32, 64);
 

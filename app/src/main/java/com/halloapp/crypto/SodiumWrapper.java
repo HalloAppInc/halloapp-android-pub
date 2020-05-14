@@ -2,6 +2,7 @@ package com.halloapp.crypto;
 
 import com.goterl.lazycode.lazysodium.LazySodiumAndroid;
 import com.goterl.lazycode.lazysodium.SodiumAndroid;
+import com.goterl.lazycode.lazysodium.interfaces.Auth;
 import com.goterl.lazycode.lazysodium.interfaces.Box;
 import com.goterl.lazycode.lazysodium.interfaces.Sign;
 import com.halloapp.crypto.keys.PrivateEdECKey;
@@ -29,11 +30,13 @@ public class SodiumWrapper {
     private final SodiumAndroid sodium;
     private final LazySodiumAndroid lazySodium;
     private final Sign.Native sign;
+    private final Auth.Native auth;
 
     private SodiumWrapper() {
         sodium = new SodiumAndroid();
         lazySodium = new LazySodiumAndroid(sodium, StandardCharsets.UTF_8);
         sign = (Sign.Native) lazySodium;
+        auth = lazySodium;
     }
 
     public byte[] generateEd25519KeyPair() {
@@ -65,5 +68,11 @@ public class SodiumWrapper {
         if (!sign.cryptoSignVerifyDetached(signature, message, message.length, key.getKeyMaterial())) {
             throw new GeneralSecurityException("Invalid signature");
         }
+    }
+
+    public byte[] hmac(byte[] key, byte[] input) {
+        byte[] ret = new byte[Auth.HMACSHA256_BYTES];
+        auth.cryptoAuthHMACSha256(ret, input, input.length, key);
+        return ret;
     }
 }

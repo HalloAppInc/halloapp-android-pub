@@ -44,15 +44,11 @@ public class CryptoUtil {
         }
     }
 
-    public static byte[] hkdf(@NonNull byte[] ikm, @Nullable byte[] salt, int len) throws GeneralSecurityException {
-        return Hkdf.computeHkdf("HMACSHA256", ikm, salt, getStringBytes("HalloApp"), len);
+    public static byte[] hkdf(@NonNull byte[] ikm, @Nullable byte[] salt, @Nullable byte[] info, int len) throws GeneralSecurityException {
+        return Hkdf.computeHkdf("HMACSHA256", ikm, salt, info, len);
     }
 
     public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) throws InvalidKeyException {
         return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
-    }
-
-    private static byte[] getStringBytes(@NonNull String s) {
-        return s.getBytes(StandardCharsets.UTF_8);
     }
 }
