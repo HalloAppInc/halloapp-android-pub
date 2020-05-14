@@ -1,70 +1,67 @@
 package com.halloapp.ui;
 
-import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Outline;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Size;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
-import com.halloapp.FileStore;
 import com.halloapp.R;
-import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
-import com.halloapp.content.Message;
-import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.media.MediaUtils;
-import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.ClippedBitmapDrawable;
 import com.halloapp.widget.CropImageView;
+import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MediaViewPager;
+import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.PostEditText;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import me.relex.circleindicator.CircleIndicator;
 
 public class ContentComposerActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHAT_ID = "chat_id";
 
     private ContentComposerViewModel viewModel;
-    private MediaThumbnailLoader mediaThumbnailLoader;
+    private MediaThumbnailLoader fullThumbnailLoader;
+    private MediaThumbnailLoader smallThumbnailLoader;
+    private PostEditText editText;
+    private MediaViewPager mediaPager;
+    private MediaPagerAdapter mediaPagerAdapter;
+    private MediaListAdapter mediaListAdapter;
+    private RecyclerView mediaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +76,10 @@ public class ContentComposerActivity extends AppCompatActivity {
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-        mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        smallThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
 
-        final PostEditText editText = findViewById(R.id.entry);
+        editText = findViewById(R.id.entry);
 
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
@@ -117,29 +115,53 @@ public class ContentComposerActivity extends AppCompatActivity {
             });
         }
 
-        final MediaViewPager viewPager = findViewById(R.id.media_pager);
-        viewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
-        viewPager.setVisibility(View.GONE);
-        final CircleIndicator mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
-        mediaPagerIndicator.setVisibility(View.GONE);
+        mediaList = findViewById(R.id.media_list);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaList.getContext(), RecyclerView.HORIZONTAL, false);
+        mediaList.setLayoutManager(layoutManager);
+        mediaList.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.details_media_list_spacing)));
+        mediaListAdapter = new MediaListAdapter();
+        mediaList.setAdapter(mediaListAdapter);
+
+        mediaPager = findViewById(R.id.media_pager);
+        mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
+        mediaPager.setVisibility(View.GONE);
+        mediaPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+        mediaPager.setMaxAspectRatio(Constants.MAX_IMAGE_ASPECT_RATIO);
+        mediaPagerAdapter = new MediaPagerAdapter();
+        mediaPager.setAdapter(mediaPagerAdapter);
 
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris)).get(ContentComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
-                viewPager.setMaxAspectRatio(Constants.MAX_IMAGE_ASPECT_RATIO/*Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media))*/);
-                viewPager.setAdapter(new MediaPagerAdapter(media));
-                viewPager.setVisibility(View.VISIBLE);
+                mediaPager.setVisibility(View.VISIBLE);
+                mediaPager.setOffscreenPageLimit(media.size());
             }
-            if (media.size() > 1) {
-                mediaPagerIndicator.setVisibility(View.VISIBLE);
-                mediaPagerIndicator.setViewPager(viewPager);
+            mediaPagerAdapter.setMedia(media);
+            if (media.size() <= 1) {
+                mediaList.setVisibility(View.GONE);
+            } else {
+                mediaList.setVisibility(View.VISIBLE);
+                mediaListAdapter.setMedia(media);
             }
             if (uris != null && media.size() != uris.size()) {
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
             }
             sendButton.setEnabled(true);
+            invalidateOptionsMenu();
         });
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {
@@ -158,7 +180,8 @@ public class ContentComposerActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("PostComposerActivity: onDestroy");
-        mediaThumbnailLoader.destroy();
+        fullThumbnailLoader.destroy();
+        smallThumbnailLoader.destroy();
     }
 
     @Override
@@ -168,20 +191,83 @@ public class ContentComposerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
-        Preconditions.checkNotNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0));
-        setTitle("");
-        getWindow().setStatusBarColor(0);
-        super.finish();
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.content_composer_menu, menu);
+        menu.findItem(R.id.crop).setVisible(false); // TODO (ds): add cropping activity
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem deleteMenuItem = menu.findItem(R.id.delete);
+        final List<Media> media = viewModel.media.getValue();
+        deleteMenuItem.setVisible(media != null && media.size() > 0);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.crop: {
+                // TODO (ds): add cropping activity
+                return true;
+            }
+            case R.id.delete: {
+                deleteCurrentItem();
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    private void deleteCurrentItem() {
+        final int currentItem = mediaPager.getCurrentItem();
+        final List<Media> media = viewModel.media.getValue();
+        if (media == null) {
+            return;
+        }
+        media.remove(currentItem);
+        mediaPagerAdapter.setMedia(media);
+        mediaListAdapter.setMedia(media);
+        if (!media.isEmpty()) {
+            mediaPager.setCurrentItem(currentItem > media.size() ? media.size() - 1 : currentItem);
+        } else {
+            editText.setHint(R.string.type_a_post_hint);
+            editText.requestFocus();
+            final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+            imm.showSoftInput(editText,0);
+        }
+        if (media.size() <= 1) {
+            mediaList.setVisibility(View.GONE);
+        }
+        invalidateOptionsMenu();
     }
 
     private class MediaPagerAdapter extends PagerAdapter {
 
         final List<Media> media = new ArrayList<>();
 
-        MediaPagerAdapter(@NonNull List<Media> media) {
+        MediaPagerAdapter() {
+        }
+
+        void setMedia(@NonNull List<Media> media) {
             this.media.clear();
             this.media.addAll(media);
+            notifyDataSetChanged();
+        }
+
+        public int getItemPosition(@NonNull Object object) {
+            int index = 0;
+            final Object tag = ((View) object).getTag();
+            for (Media mediaItem : media) {
+                if (mediaItem.equals(tag)) {
+                    return index;
+                }
+                index++;
+            }
+            return POSITION_NONE;
         }
 
         @Override
@@ -190,21 +276,37 @@ public class ContentComposerActivity extends AppCompatActivity {
             final CropImageView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
             final Media mediaItem = media.get(position);
+            view.setTag(mediaItem);
+
             if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                imageView.setSinglePointerDragStartDisabled(media.size() > 1);
+                //imageView.setSinglePointerDragStartDisabled(media.size() > 1);
                 imageView.setReturnToMinScaleOnUp(false);
                 if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
-                imageView.setOnCropListener(rect -> viewModel.cropRects.put(mediaItem.file, rect));
+                imageView.setOnCropListener(rect -> {
+                    if (position != mediaPager.getCurrentItem()) {
+                        return;
+                    }
+                    viewModel.cropRects.put(mediaItem.file, rect);
+
+                    final Bitmap bitmap = smallThumbnailLoader.getCached(mediaItem.file);
+                    final View mediaItemView = mediaList.findViewWithTag(mediaItem.file);
+                    if (bitmap != null && mediaItemView instanceof ImageView) {
+                        ((ImageView)mediaItemView).setImageDrawable(new ClippedBitmapDrawable(bitmap, new Rect((int)(bitmap.getWidth() * rect.left), (int)(bitmap.getHeight() * rect.top),
+                                (int)(bitmap.getWidth() * rect.right), (int)(bitmap.getHeight() * rect.bottom))));
+                    } else {
+                        mediaListAdapter.notifyDataSetChanged();
+                    }
+                });
                 imageView.setGridEnabled(true);
             } else {
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 imageView.setGridEnabled(false);
             }
-            mediaThumbnailLoader.load(imageView, mediaItem);
+            fullThumbnailLoader.load(imageView, mediaItem);
             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                 playButton.setVisibility(View.VISIBLE);
                 playButton.setOnClickListener(v -> {
@@ -235,42 +337,85 @@ public class ContentComposerActivity extends AppCompatActivity {
         }
     }
 
-    static class LoadContentUrisTask extends AsyncTask<Void, Void, List<Media>> {
+    private class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.ViewHolder> {
 
-        private final Collection<Uri> uris;
-        private final Application application;
-        private final MutableLiveData<List<Media>> media;
+        final List<Media> media = new ArrayList<>();
 
-        LoadContentUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<Media>> media) {
-            this.application = application;
-            this.uris = uris;
-            this.media = media;
+        MediaListAdapter() {
         }
 
+        void setMedia(@NonNull List<Media> media) {
+            this.media.clear();
+            this.media.addAll(media);
+            notifyDataSetChanged();
+        }
+
+        @NonNull
         @Override
-        protected List<Media> doInBackground(Void... voids) {
-            final List<Media> media = new ArrayList<>();
-            final ContentResolver contentResolver = application.getContentResolver();
-            for (Uri uri : uris) {
-                @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
-                final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
-                FileUtils.uriToFile(application, uri, file);
-                final Size size = MediaUtils.getDimensions(file, mediaType);
-                if (size != null) {
-                    final Media mediaItem = Media.createFromFile(mediaType, file);
-                    mediaItem.width = size.getWidth();
-                    mediaItem.height = size.getHeight();
-                    media.add(mediaItem);
-                } else {
-                    Log.e("PostComposerActivity: failed to load " + uri);
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            final ImageView imageView = new ImageView(parent.getContext());
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            imageView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
                 }
-            }
-            return media;
+            });
+            imageView.setClipToOutline(true);
+            return new ViewHolder(imageView);
         }
 
         @Override
-        protected void onPostExecute(List<Media> media) {
-            this.media.postValue(media);
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            final ImageView imageView = (ImageView)holder.itemView;
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setAdjustViewBounds(true);
+            final Media mediaItem = media.get(position);
+            smallThumbnailLoader.load(imageView, mediaItem, new ViewDataLoader.Displayer<ImageView, Bitmap>() {
+                @Override
+                public void showResult(@NonNull ImageView view, @Nullable Bitmap bitmap) {
+                    if (bitmap != null) {
+                        final Rect bitmapRect;
+                        final RectF cropRect = viewModel.cropRects.get(mediaItem.file);
+                        if (cropRect != null) {
+                            bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
+                                    (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
+                        } else {
+                            if (bitmap.getHeight() > Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) {
+                                final int padding = (int)((bitmap.getHeight() - Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) / 2);
+                                bitmapRect = new Rect(0, padding, bitmap.getWidth(), bitmap.getHeight() - padding);
+                            } else {
+                                bitmapRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                            }
+                        }
+                        view.setImageDrawable(new ClippedBitmapDrawable(bitmap, bitmapRect));
+                    } else {
+                        showLoading(view);
+                    }
+                }
+
+                @Override
+                public void showLoading(@NonNull ImageView view) {
+                    if (mediaItem.width != 0 && mediaItem.height != 0) {
+                        view.setImageDrawable(new PlaceholderDrawable(mediaItem.width, mediaItem.height, ContextCompat.getColor(getBaseContext(), R.color.media_placeholder)));
+                    } else {
+                        view.setImageDrawable(null);
+                    }
+                }
+            });
+            imageView.setOnClickListener(v -> mediaPager.setCurrentItem(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return media.size();
+        }
+
+        private class ViewHolder extends RecyclerView.ViewHolder {
+
+            ViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
         }
     }
 
@@ -290,132 +435,6 @@ public class ContentComposerActivity extends AppCompatActivity {
                 }
             }
             return null;
-        }
-    }
-
-    static class PrepareContentTask extends AsyncTask<Void, Void, Void> {
-
-        private final String chatId;
-        private final String text;
-        private final List<Media> media;
-        private final Map<File, RectF> cropRects;
-        private final Application application;
-        private final MutableLiveData<ContentItem> contentItem;
-
-        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects, @NonNull MutableLiveData<ContentItem> contentItem) {
-            this.chatId = chatId;
-            this.application = application;
-            this.text = text;
-            this.media = media;
-            this.cropRects = cropRects;
-            this.contentItem = contentItem;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            final ContentItem contentItem = chatId == null ?
-                    new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, null, -1);
-            if (media != null) {
-                for (Media media : media) {
-                    final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
-                    switch (media.type) {
-                        case Media.MEDIA_TYPE_IMAGE: {
-                            try {
-                                MediaUtils.transcodeImage(media.file, postFile, cropRects == null ? null : cropRects.get(media.file), Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
-                            } catch (IOException e) {
-                                Log.e("failed to transcode image", e);
-                                return null;
-                            }
-                            break;
-                        }
-                        case Media.MEDIA_TYPE_VIDEO: {
-                            if (!media.file.renameTo(postFile)) {
-                                Log.e("failed to rename " + media.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
-                                return null;
-                            }
-                            break;
-                        }
-                        case Media.MEDIA_TYPE_UNKNOWN:
-                        default: {
-                            Log.e("unknown media type " + media.file.getAbsolutePath());
-                            return null;
-                        }
-                    }
-                    final Media sendMedia = Media.createFromFile(media.type, postFile);
-                    contentItem.media.add(sendMedia);
-                }
-            }
-            this.contentItem.postValue(contentItem);
-            return null;
-        }
-    }
-
-    public static class ContentComposerViewModelFactory implements ViewModelProvider.Factory {
-
-        private final Application application;
-        private final String chatId;
-        private final Collection<Uri> uris;
-
-        ContentComposerViewModelFactory(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
-            this.application = application;
-            this.chatId = chatId;
-            this.uris = uris;
-        }
-
-        @Override
-        public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
-                //noinspection unchecked
-                return (T) new ContentComposerViewModel(application, chatId, uris);
-            }
-            throw new IllegalArgumentException("Unknown ViewModel class");
-        }
-    }
-
-    public static class ContentComposerViewModel extends AndroidViewModel {
-
-        final MutableLiveData<List<Media>> media = new MutableLiveData<>();
-        final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
-        final ComputableLiveData<String> chatName;
-
-        final Map<File, RectF> cropRects = new HashMap<>();
-
-        ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
-            super(application);
-            if (uris != null) {
-                loadUris(uris);
-            }
-            if (chatId != null) {
-                chatName = new ComputableLiveData<String>() {
-                    @Override
-                    protected String compute() {
-                        return ContactsDb.getInstance(application).getContact(new UserId(chatId)).getDisplayName();
-                    }
-                };
-            } else {
-                chatName = null;
-            }
-        }
-
-        protected void onCleared() {
-            final List<Media> mediaList = media.getValue();
-            if (mediaList != null) {
-                new CleanupTmpFilesTask(mediaList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        }
-
-        List<Media> getMedia() {
-            return media.getValue();
-        }
-
-        private void loadUris(@NonNull Collection<Uri> uris) {
-            new LoadContentUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        void prepareContent(@Nullable String chatId, @Nullable String text) {
-            new PrepareContentTask(getApplication(), chatId, text, getMedia(), cropRects, contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

@@ -218,7 +218,7 @@ public class CommentsActivity extends AppCompatActivity {
         }
 
         itemTouchHelper = new ItemTouchHelper(new SwipeListItemHelper(
-                Preconditions.checkNotNull(getDrawable(R.drawable.ic_delete)),
+                Preconditions.checkNotNull(getDrawable(R.drawable.ic_delete_white)),
                 ContextCompat.getColor(this, R.color.swipe_delete_background),
                 getResources().getDimensionPixelSize(R.dimen.swipe_delete_icon_margin)) {
 

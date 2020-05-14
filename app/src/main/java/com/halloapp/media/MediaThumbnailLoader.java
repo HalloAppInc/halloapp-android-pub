@@ -50,30 +50,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media) {
-        if (media.file == null) {
-            view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
-            return;
-        }
-        if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
-            return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
-        }
-        final Callable<Bitmap> loader = () -> {
-            Bitmap bitmap = null;
-            if (media.file != null) {
-                if (media.file.exists()) {
-                    bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
-                } else {
-                    Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
-                }
-            }
-            if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
-                return INVALID_BITMAP;
-            } else {
-                return bitmap;
-            }
-
-        };
         final ViewDataLoader.Displayer<ImageView, Bitmap> displayer = new ViewDataLoader.Displayer<ImageView, Bitmap>() {
 
             @Override
@@ -99,6 +75,43 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
                 }
             }
         };
+        load(view, media, displayer);
+    }
+
+    @MainThread
+    public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
+        if (media.file == null) {
+            view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
+            return;
+        }
+        if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
+            return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
+        }
+        final Callable<Bitmap> loader = () -> {
+            Bitmap bitmap = null;
+            if (media.file != null) {
+                if (media.file.exists()) {
+                    bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
+                } else {
+                    Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
+                }
+            }
+            if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+                Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
+                return INVALID_BITMAP;
+            } else {
+                return bitmap;
+            }
+
+        };
         load(view, loader, displayer, media.file, cache);
+    }
+
+    public void remove(@NonNull File file) {
+        cache.remove(file);
+    }
+
+    public Bitmap getCached(@NonNull File file) {
+        return cache.get(file);
     }
 }

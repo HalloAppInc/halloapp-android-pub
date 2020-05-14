@@ -78,7 +78,6 @@
         <activity
             android:name=".ui.ContentComposerActivity"
             android:label="@string/new_post"
-            android:theme="@style/AppTheme.Popup"
             android:windowSoftInputMode="adjustResize" />
 
         <activity

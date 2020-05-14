@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
-        app:civCornerColor="@color/card_background"
+        app:civCornerColor="@color/window_background"
         app:civCornerRadius="8dp"
         app:civGridColor="#a0ffffff"
         app:civGridSize="2dp"

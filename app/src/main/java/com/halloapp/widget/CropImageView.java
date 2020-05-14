@@ -120,6 +120,9 @@ public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {
     }
 
     private void updateCropRect(RectF displayRect) {
+        if (displayRect == null) {
+            return;
+        }
         displayCropRect.set(displayRect);
         if (displayRect.left < 0) {
             displayCropRect.left = 0;
