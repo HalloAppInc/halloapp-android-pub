@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
@@ -45,6 +46,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         abstract ReplyLoader getReplyLoader();
+        abstract LongSparseArray<Integer> getTextLimits();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -125,12 +127,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (textView != null) {
-            if (message.media.isEmpty()) {
-                textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
-            } else {
-                textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
-            }
-            textView.setLineStep(0);
+            final Integer textLimit = parent.getTextLimits().get(message.rowId);
+            textView.setLineLimit(textLimit != null ? textLimit :
+                    (message.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
+            textView.setOnReadMoreListener((view, limit) -> {
+                parent.getTextLimits().put(message.rowId, limit);
+                return false;
+            });
             textView.setText(message.text);
 
             if (TextUtils.isEmpty(message.text)) {
