@@ -41,7 +41,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         Log.i("UploadMediaTask " + contentItem);
         for (Media media : contentItem.media) {
-            if (media.transferred) {
+            if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE) {
                 continue;
             }
             try {
@@ -66,8 +66,14 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             try {
                 media.sha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
                 media.url = urls.getUrl;
-                media.transferred = true;
+                media.transferred = Media.TRANSFERRED_YES;
                 contentItem.setMediaTransferred(media, contentDb);
+            } catch (Uploader.UploadException e) {
+                Log.e("UploadMediaTask: " + media.url, e);
+                if (e.code / 100 == 4) {
+                    media.transferred = Media.TRANSFERRED_FAILURE;
+                    contentItem.setMediaTransferred(media, contentDb);
+                }
             } catch (IOException e) {
                 Log.e("UploadMediaTask: " + urls.putUrl, e);
                 return null;

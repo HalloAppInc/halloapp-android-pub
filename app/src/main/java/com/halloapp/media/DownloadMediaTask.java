@@ -31,7 +31,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... voids) {
         Log.i("DownloadMediaTask " + contentItem);
         for (Media media : contentItem.media) {
-            if (media.transferred) {
+            if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE) {
                 continue;
             }
             final Downloader.DownloadListener downloadListener = percent -> true;
@@ -42,8 +42,14 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     Log.w("DownloadMediaTask: failed to set last modified to " + file.getAbsolutePath());
                 }
                 media.file = file;
-                media.transferred = true;
+                media.transferred = Media.TRANSFERRED_YES;
                 contentItem.setMediaTransferred(media, contentDb);
+            } catch (Downloader.DownloadException e) {
+                Log.e("DownloadMediaTask: " + media.url, e);
+                if (e.code / 100 == 4) {
+                    media.transferred = Media.TRANSFERRED_FAILURE;
+                    contentItem.setMediaTransferred(media, contentDb);
+                }
             } catch (IOException e) {
                 Log.e("DownloadMediaTask: " + media.url, e);
                 return null;

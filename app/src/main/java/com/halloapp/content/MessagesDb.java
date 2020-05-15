@@ -158,14 +158,14 @@ class MessagesDb {
         if (media.sha256hash != null) {
             values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
         }
-        if (media.width == 0 || media.height == 0) {
+        if (media.file != null && (media.width == 0 || media.height == 0)) {
             final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
             if (dimensions != null && dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
                 values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
                 values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
             }
         }
-        values.put(MediaTable.COLUMN_TRANSFERRED, true);
+        values.put(MediaTable.COLUMN_TRANSFERRED, media.transferred);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
@@ -359,7 +359,7 @@ class MessagesDb {
                             null,
                             cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13)));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -438,7 +438,7 @@ class MessagesDb {
                             null,
                             cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13)));
                 }
             }
         }
@@ -513,7 +513,7 @@ class MessagesDb {
                             null,
                             cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13)));
                 }
             }
         }
@@ -602,7 +602,7 @@ class MessagesDb {
                             null,
                             cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13) == 1));
+                            cursor.getInt(13)));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -698,7 +698,7 @@ class MessagesDb {
                             cursor.getBlob(12),
                             cursor.getInt(13),
                             cursor.getInt(14),
-                            cursor.getInt(15) == 1));
+                            cursor.getInt(15)));
                 }
             }
             if (message != null) {

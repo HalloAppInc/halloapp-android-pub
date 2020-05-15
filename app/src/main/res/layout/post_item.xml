@@ -51,6 +51,24 @@
                     android:textAlignment="gravity"
                     tools:text="Ded Pihtov"/>
 
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:padding="8dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+                <ImageView
+                    android:id="@+id/status"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:padding="8dp"
+                    tools:src="@drawable/ic_error"
+                    tools:tint="@color/design_default_color_error"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
                 <TextView
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
@@ -59,12 +77,6 @@
                     android:textColor="?android:attr/textColorSecondary"
                     tools:text="1h"/>
 
-                <ProgressBar
-                    android:id="@+id/progress"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:padding="2dp"
-                    android:visibility="gone"/>
             </LinearLayout>
 
             <com.halloapp.widget.SeenDetectorLayout

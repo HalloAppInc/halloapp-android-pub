@@ -1,6 +1,7 @@
 package com.halloapp.ui.posts;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
@@ -33,6 +35,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final ImageView avatarView;
     private final TextView nameView;
     private final TextView timeView;
+    private final ImageView statusView;
     private final View progressView;
     private final MediaViewPager mediaPagerView;
     private final CircleIndicator mediaPagerIndicator;
@@ -56,6 +59,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         avatarView = itemView.findViewById(R.id.avatar);
         nameView = itemView.findViewById(R.id.name);
         timeView = itemView.findViewById(R.id.time);
+        statusView = itemView.findViewById(R.id.status);
         progressView = itemView.findViewById(R.id.progress);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
@@ -125,14 +129,22 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             parent.getContactLoader().load(nameView, post.senderUserId);
         }
         if (post.transferred == Post.TRANSFERRED_NO) {
-            progressView.setVisibility(View.VISIBLE);
-            timeView.setVisibility(View.GONE);
+            if (post.isTransferFailed()) {
+                progressView.setVisibility(View.GONE);
+                statusView.setVisibility(View.VISIBLE);
+                statusView.setImageResource(R.drawable.ic_error);
+                statusView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(statusView.getContext(), R.color.design_default_color_error)));
+            } else {
+                progressView.setVisibility(View.VISIBLE);
+                statusView.setVisibility(View.GONE);
+            }
         } else {
             progressView.setVisibility(View.GONE);
-            timeView.setVisibility(View.VISIBLE);
-            TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
-            parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
+            statusView.setVisibility(View.GONE);
         }
+        TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
+        parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
+
         if (post.media.isEmpty()) {
             textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
         } else {

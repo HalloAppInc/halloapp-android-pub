@@ -51,10 +51,19 @@ public abstract class ContentItem {
 
     public boolean isAllMediaTransferred() {
         for (Media mediaItem : media) {
-            if (!mediaItem.transferred) {
+            if (mediaItem.transferred != Media.TRANSFERRED_YES) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isTransferFailed() {
+        for (Media mediaItem : media) {
+            if (mediaItem.transferred == Media.TRANSFERRED_FAILURE) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -207,10 +207,10 @@ public class ContentDb {
     public void setMediaTransferred(@NonNull Post post, @NonNull Media media) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setMediaTransferred(post, media);
-            observers.notifyPostUpdated(post.senderUserId, post.id);
             if (post.isIncoming() && post.isAllMediaTransferred()) {
-                setPostTransferred(post.senderUserId, post.id);
+                postsDb.setPostTransferred(post.senderUserId, post.id);
             }
+            observers.notifyPostUpdated(post.senderUserId, post.id);
         });
     }
 
@@ -362,10 +362,10 @@ public class ContentDb {
     public void setMediaTransferred(@NonNull Message message, @NonNull Media media) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMediaTransferred(message, media);
-            observers.notifyMessageUpdated(message.chatId, message.senderUserId, message.id);
             if (message.isIncoming() && message.isAllMediaTransferred()) {
-                setMessageTransferred(message.chatId, message.senderUserId, message.id);
+                messagesDb.setMessageTransferred(message.chatId, message.senderUserId, message.id);
             }
+            observers.notifyMessageUpdated(message.chatId, message.senderUserId, message.id);
         });
     }
 
