@@ -5,7 +5,14 @@ import androidx.annotation.Nullable;
 
 import com.google.crypto.tink.subtle.Hkdf;
 import com.google.crypto.tink.subtle.X25519;
+import com.goterl.lazycode.lazysodium.LazySodiumAndroid;
+import com.goterl.lazycode.lazysodium.SodiumAndroid;
+import com.goterl.lazycode.lazysodium.interfaces.Auth;
+import com.goterl.lazycode.lazysodium.interfaces.Box;
+import com.goterl.lazycode.lazysodium.interfaces.Sign;
+import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 
 import java.nio.charset.StandardCharsets;
@@ -16,6 +23,10 @@ import java.util.Arrays;
 public class CryptoUtil {
     // not instantiable
     private CryptoUtil() {}
+
+    private static final LazySodiumAndroid lazySodium = new LazySodiumAndroid(new SodiumAndroid(), StandardCharsets.UTF_8);
+    private static final Sign.Native sign = lazySodium;
+    private static final Auth.Native auth = lazySodium;
 
     public static byte[] concat(byte[] first, byte[]... rest) {
         int len = first.length;
@@ -50,5 +61,42 @@ public class CryptoUtil {
 
     public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) throws InvalidKeyException {
         return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
+    }
+
+    public static byte[] hmac(byte[] key, byte[] input) {
+        byte[] ret = new byte[Auth.HMACSHA256_BYTES];
+        auth.cryptoAuthHMACSha256(ret, input, input.length, key);
+        return ret;
+    }
+
+    public static byte[] generateEd25519KeyPair() {
+        byte[] publicKey = new byte[Sign.ED25519_PUBLICKEYBYTES];
+        byte[] privateKey = new byte[Sign.ED25519_SECRETKEYBYTES];
+        sign.cryptoSignKeypair(publicKey, privateKey);
+        return CryptoUtil.concat(publicKey, privateKey);
+    }
+
+    public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) {
+        byte[] ret = new byte[Box.PUBLICKEYBYTES];
+        sign.convertPublicKeyEd25519ToCurve25519(ret, ed.getKeyMaterial());
+        return new PublicXECKey(ret);
+    }
+
+    public static PrivateXECKey convertPrivateEdToX(PrivateEdECKey ed) {
+        byte[] ret = new byte[Box.SECRETKEYBYTES];
+        sign.convertSecretKeyEd25519ToCurve25519(ret, ed.getKeyMaterial());
+        return new PrivateXECKey(ret);
+    }
+
+    public static byte[] sign(byte[] message, PrivateEdECKey key) {
+        byte[] ret = new byte[Sign.ED25519_BYTES];
+        sign.cryptoSignDetached(ret, message, message.length, key.getKeyMaterial());
+        return ret;
+    }
+
+    public static void verify(byte[] signature, byte[] message, PublicEdECKey key) throws GeneralSecurityException {
+        if (!sign.cryptoSignVerifyDetached(signature, message, message.length, key.getKeyMaterial())) {
+            throw new GeneralSecurityException("Invalid signature");
+        }
     }
 }

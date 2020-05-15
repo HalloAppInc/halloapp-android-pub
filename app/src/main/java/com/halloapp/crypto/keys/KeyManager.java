@@ -6,7 +6,6 @@ import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.crypto.CryptoUtil;
-import com.halloapp.crypto.SodiumWrapper;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
@@ -55,7 +54,7 @@ public class KeyManager {
                     .build();
 
             PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
-            byte[] signature = SodiumWrapper.getInstance().sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
+            byte[] signature = CryptoUtil.sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
 
             SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
                     .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
@@ -93,7 +92,7 @@ public class KeyManager {
         PrivateXECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
 
         byte[] a = CryptoUtil.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
-        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, SodiumWrapper.getInstance().convertPublicEdToX(recipientPublicIdentityKey));
+        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, CryptoUtil.convertPublicEdToX(recipientPublicIdentityKey));
         byte[] c = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicSignedPreKey);
 
         byte[] masterSecret;
@@ -124,7 +123,7 @@ public class KeyManager {
     public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, PublicEdECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
 
-        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), SodiumWrapper.getInstance().convertPublicEdToX(initiatorPublicIdentityKey));
+        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtil.convertPublicEdToX(initiatorPublicIdentityKey));
         byte[] b = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
         byte[] c = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
 

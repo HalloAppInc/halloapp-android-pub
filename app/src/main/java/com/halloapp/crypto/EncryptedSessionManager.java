@@ -107,7 +107,7 @@ public class EncryptedSessionManager {
 
             // TODO(jack): Log signature verification failures
             byte[] signature = signedPreKeyProto.getSignature().toByteArray();
-            SodiumWrapper.getInstance().verify(signature, signedPreKeyBytes, peerIdentityKey);
+            CryptoUtil.verify(signature, signedPreKeyBytes, peerIdentityKey);
 
             OneTimePreKey oneTimePreKey = null;
             if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {

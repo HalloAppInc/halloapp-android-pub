@@ -12,7 +12,7 @@ import androidx.security.crypto.MasterKeys;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.contacts.UserId;
-import com.halloapp.crypto.SodiumWrapper;
+import com.halloapp.crypto.CryptoUtil;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
@@ -123,7 +123,7 @@ public class EncryptedKeyStore {
     }
 
     public void generateClientPrivateKeys() {
-        setMyEd25519IdentityKey(SodiumWrapper.getInstance().generateEd25519KeyPair());
+        setMyEd25519IdentityKey(CryptoUtil.generateEd25519KeyPair());
         setMyPrivateSignedPreKey(X25519.generatePrivateKey());
     }
 
@@ -146,7 +146,7 @@ public class EncryptedKeyStore {
     }
 
     public PrivateXECKey getMyPrivateX25519IdentityKey() {
-        return SodiumWrapper.getInstance().convertPrivateEdToX(getMyPrivateEd25519IdentityKey());
+        return CryptoUtil.convertPrivateEdToX(getMyPrivateEd25519IdentityKey());
     }
 
     private void setMyPrivateSignedPreKey(byte[] key) {
