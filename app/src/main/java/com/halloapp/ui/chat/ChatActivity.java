@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +33,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.Debug;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -306,6 +309,16 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
+            final UserId userId = new UserId(chatId);
+            Debug.showDebugMenu(this, editText, userId);
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
     }
 
     @Override

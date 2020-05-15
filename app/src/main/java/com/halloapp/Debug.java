@@ -17,6 +17,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -45,6 +46,7 @@ public class Debug {
     private static final String DEBUG_MENU_TEST_KEYS = "Test keys";
     private static final String DEBUG_MENU_CLEAR_KEY_STORE = "Clear key store";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
+    private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
@@ -172,6 +174,26 @@ public class Debug {
         });
         menu.show();
 
+    }
+
+    public static void showDebugMenu(@NonNull Activity activity, View anchor, UserId peerUserId) {
+        PopupMenu menu = new PopupMenu(activity, anchor);
+        menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
+        menu.setOnMenuItemClickListener(item -> {
+            Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
+            switch (item.getTitle().toString()) {
+                case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
+                    try {
+                        KeyManager.getInstance().getNextOutboundMessageKey(peerUserId);
+                    } catch (Exception e) {
+                        Log.w("DEBUG error skipping outbound message key", e);
+                    }
+                    break;
+                }
+            }
+            return false;
+        });
+        menu.show();
     }
 
     private static void restart(Context context) {
