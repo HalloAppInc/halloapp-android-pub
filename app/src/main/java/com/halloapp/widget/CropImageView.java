@@ -51,10 +51,10 @@ public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {
     private void init(AttributeSet attrs, int defStyle) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CropImageView, defStyle, 0);
 
-        cornerPaint.setColor(a.getColor(R.styleable.CropImageView_civCornerColor, 0));
-        cornerRadius = a.getDimension(R.styleable.CropImageView_civCornerRadius, 0);
-        gridColor = a.getColor(R.styleable.CropImageView_civGridColor, 0);
-        gridPaint.setStrokeWidth(a.getDimension(R.styleable.CropImageView_civGridSize, 0));
+        cornerPaint.setColor(a.getColor(R.styleable.CropImageView2_civCornerColor, 0));
+        cornerRadius = a.getDimension(R.styleable.CropImageView2_civCornerRadius, 0);
+        gridColor = a.getColor(R.styleable.CropImageView2_civGridColor, 0);
+        gridPaint.setStrokeWidth(a.getDimension(R.styleable.CropImageView2_civGridSize, 0));
 
         a.recycle();
 

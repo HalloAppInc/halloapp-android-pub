@@ -35,6 +35,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.halloapp.R;
+
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
@@ -183,6 +185,7 @@ public class CropImageView extends FrameLayout {
     super(context, attrs);
 
     CropImageOptions options = null;
+    /*
     Intent intent = context instanceof Activity ? ((Activity) context).getIntent() : null;
     if (intent != null) {
       Bundle bundle = intent.getBundleExtra(CropImage.CROP_IMAGE_EXTRA_BUNDLE);
@@ -190,6 +193,7 @@ public class CropImageView extends FrameLayout {
         options = bundle.getParcelable(CropImage.CROP_IMAGE_EXTRA_OPTIONS);
       }
     }
+    */
 
     if (options == null) {
 
