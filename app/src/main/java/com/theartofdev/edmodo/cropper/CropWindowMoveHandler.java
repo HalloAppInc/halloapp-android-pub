@@ -101,7 +101,8 @@ final class CropWindowMoveHandler {
       int viewHeight,
       float snapMargin,
       boolean fixedAspectRatio,
-      float aspectRatio) {
+      float aspectRatio,
+      float minAspectRatio) {
 
     // Adjust the coordinates for the finger position's offset (i.e. the
     // distance from the initial touch to the precise handle location).
@@ -117,7 +118,7 @@ final class CropWindowMoveHandler {
         moveSizeWithFixedAspectRatio(
             rect, adjX, adjY, bounds, viewWidth, viewHeight, snapMargin, aspectRatio);
       } else {
-        moveSizeWithFreeAspectRatio(rect, adjX, adjY, bounds, viewWidth, viewHeight, snapMargin);
+        moveSizeWithFreeAspectRatio(rect, adjX, adjY, bounds, viewWidth, viewHeight, snapMargin, minAspectRatio);
       }
     }
   }
@@ -209,35 +210,67 @@ final class CropWindowMoveHandler {
    * Only the primary edge(s) are fixed to stay within limits.
    */
   private void moveSizeWithFreeAspectRatio(
-      RectF rect, float x, float y, RectF bounds, int viewWidth, int viewHeight, float snapMargin) {
+      RectF rect, float x, float y, RectF bounds, int viewWidth, int viewHeight, float snapMargin, float minAspectRatio) {
     switch (mType) {
       case TOP_LEFT:
-        adjustTop(rect, y, bounds, snapMargin, 0, false, false);
-        adjustLeft(rect, x, bounds, snapMargin, 0, false, false);
+        if (calculateAspectRatio(x, y, rect.right, rect.bottom) < minAspectRatio) {
+          adjustTop(rect, y, bounds, snapMargin, minAspectRatio, true, false);
+          adjustLeftByAspectRatio(rect, minAspectRatio);
+        } else {
+          adjustTop(rect, y, bounds, snapMargin, 0, false, false);
+          adjustLeft(rect, x, bounds, snapMargin, 0, false, false);
+        }
         break;
       case TOP_RIGHT:
-        adjustTop(rect, y, bounds, snapMargin, 0, false, false);
-        adjustRight(rect, x, bounds, viewWidth, snapMargin, 0, false, false);
+        if (calculateAspectRatio(rect.left, y, x, rect.bottom) < minAspectRatio) {
+          adjustTop(rect, y, bounds, snapMargin, minAspectRatio, false, true);
+          adjustRightByAspectRatio(rect, minAspectRatio);
+        } else {
+          adjustTop(rect, y, bounds, snapMargin, 0, false, false);
+          adjustRight(rect, x, bounds, viewWidth, snapMargin, 0, false, false);
+        }
         break;
       case BOTTOM_LEFT:
-        adjustBottom(rect, y, bounds, viewHeight, snapMargin, 0, false, false);
-        adjustLeft(rect, x, bounds, snapMargin, 0, false, false);
+        if (calculateAspectRatio(x, rect.top, rect.right, y) < minAspectRatio) {
+          adjustBottom(rect, y, bounds, viewHeight, snapMargin, minAspectRatio, true, false);
+          adjustLeftByAspectRatio(rect, minAspectRatio);
+        } else {
+          adjustBottom(rect, y, bounds, viewHeight, snapMargin, 0, false, false);
+          adjustLeft(rect, x, bounds, snapMargin, 0, false, false);
+        }
         break;
       case BOTTOM_RIGHT:
-        adjustBottom(rect, y, bounds, viewHeight, snapMargin, 0, false, false);
-        adjustRight(rect, x, bounds, viewWidth, snapMargin, 0, false, false);
+        if (calculateAspectRatio(rect.left, rect.top, x, y) < minAspectRatio) {
+          adjustBottom(rect, y, bounds, viewHeight, snapMargin, minAspectRatio, false, true);
+          adjustRightByAspectRatio(rect, minAspectRatio);
+        } else {
+          adjustBottom(rect, y, bounds, viewHeight, snapMargin, 0, false, false);
+          adjustRight(rect, x, bounds, viewWidth, snapMargin, 0, false, false);
+        }
         break;
       case LEFT:
         adjustLeft(rect, x, bounds, snapMargin, 0, false, false);
+        if (calculateAspectRatio(x, rect.top, rect.right, rect.bottom) < minAspectRatio) {
+          adjustTopBottomByAspectRatio(rect, bounds, minAspectRatio);
+        }
         break;
       case TOP:
         adjustTop(rect, y, bounds, snapMargin, 0, false, false);
+        if (calculateAspectRatio(rect.left, y, rect.right, rect.bottom) < minAspectRatio) {
+          adjustLeftRightByAspectRatio(rect, bounds, minAspectRatio);
+        }
         break;
       case RIGHT:
         adjustRight(rect, x, bounds, viewWidth, snapMargin, 0, false, false);
+        if (calculateAspectRatio(rect.left, rect.top, x, rect.bottom) < minAspectRatio) {
+          adjustTopBottomByAspectRatio(rect, bounds, minAspectRatio);
+        }
         break;
       case BOTTOM:
         adjustBottom(rect, y, bounds, viewHeight, snapMargin, 0, false, false);
+        if (calculateAspectRatio(rect.left, rect.top, rect.right, y) < minAspectRatio) {
+          adjustLeftRightByAspectRatio(rect, bounds, minAspectRatio);
+        }
         break;
       default:
         break;

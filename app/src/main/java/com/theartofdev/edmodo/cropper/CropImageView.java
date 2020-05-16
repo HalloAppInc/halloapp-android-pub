@@ -532,6 +532,10 @@ public class CropImageView extends FrameLayout {
     setFixedAspectRatio(false);
   }
 
+  public void setMinAspectRatio(float minAspectRatio) {
+    mCropOverlayView.setMinAspectRatio(minAspectRatio);
+  }
+
   /**
    * An edge of the crop window will snap to the corresponding edge of a specified bounding box when
    * the crop window edge is less than or equal to this distance (in pixels) away from the bounding

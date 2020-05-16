@@ -116,6 +116,8 @@ public class CropOverlayView extends View {
    */
   private float mTargetAspectRatio = ((float) mAspectRatioX) / mAspectRatioY;
 
+  private float mMinAspectRatio;
+
   /** Instance variables for customizable attributes */
   private CropImageView.Guidelines mGuidelines;
 
@@ -260,6 +262,14 @@ public class CropOverlayView extends View {
         initCropWindow();
         invalidate();
       }
+    }
+  }
+
+  public void setMinAspectRatio(float minAspectRatio) {
+    mMinAspectRatio = minAspectRatio;
+    if (initializedCropWindow) {
+      initCropWindow();
+      invalidate();
     }
   }
 
@@ -880,7 +890,8 @@ public class CropOverlayView extends View {
           mViewHeight,
           snapRadius,
           mFixAspectRatio,
-          mTargetAspectRatio);
+          mTargetAspectRatio,
+          mMinAspectRatio);
       mCropWindowHandler.setRect(rect);
       callOnCropWindowChanged(true);
       invalidate();
