@@ -25,4 +25,18 @@ public class SystemUiVisibility {
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
+
+    public static int getDefaultSystemUiVisibilityDark(@NonNull Context context) {
+        return
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    }
+
+    public static int getFullScreenSystemUiVisibilityDark(@NonNull Context context) {
+        return SystemUiVisibility.getFullScreenSystemUiVisibilityDark(context)
+                // Hide the nav bar and status bar
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+    }
 }

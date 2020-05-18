@@ -48,7 +48,7 @@ public class VideoPlaybackActivity extends AppCompatActivity {
         playerView = findViewById(R.id.player_view);
         playerView.requestFocus();
 
-        playerView.setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        playerView.setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibilityDark(this));
 
         final PlayerControlView playerControlView = playerView.findViewById(R.id.exo_controller);
         playerControlView.setFitsSystemWindows(true);
@@ -62,7 +62,7 @@ public class VideoPlaybackActivity extends AppCompatActivity {
         });
         playerControlView.addVisibilityListener(visibility -> {
             if (visibility == View.GONE) {
-                playerView.setSystemUiVisibility(SystemUiVisibility.getFullScreenSystemUiVisibility(getBaseContext()));
+                playerView.setSystemUiVisibility(SystemUiVisibility.getFullScreenSystemUiVisibilityDark(getBaseContext()));
             }
         });
 
