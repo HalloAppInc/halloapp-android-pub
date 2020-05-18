@@ -350,7 +350,7 @@ public class CommentsActivity extends AppCompatActivity {
                 commentView.setText(comment.text);
                 commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceNormal);
                 replyButton.setVisibility(View.VISIBLE);
-                retractButton.setVisibility(comment.commentSenderUserId.isMe() ? View.VISIBLE : View.GONE);
+                retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
             }
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(comment.rowId, limit);

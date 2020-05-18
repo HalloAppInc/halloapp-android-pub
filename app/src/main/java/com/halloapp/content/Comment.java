@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 
 import java.util.Objects;
@@ -62,6 +63,10 @@ public class Comment {
 
     public boolean isRetracted() {
         return TextUtils.isEmpty(text);
+    }
+
+    public boolean canBeRetracted() {
+        return isOutgoing() && (timestamp + Constants.RETRACT_COMMENT_ALLOWED_TIME > System.currentTimeMillis());
     }
 
     @Override
