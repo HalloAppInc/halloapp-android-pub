@@ -151,7 +151,7 @@ public class KeyManager {
 
         PrivateXECKey myEphemeralKey = XECKey.generatePrivateKey();
         encryptedKeyStore.setOutboundEphemeralKey(peerUserId, myEphemeralKey);
-        encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, 1);
+        encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, 0);
 
         updateOutboundChainAndRootKey(peerUserId, myEphemeralKey, publicEphemeralKey);
 
