@@ -8,8 +8,10 @@ import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.util.Log;
+import com.halloapp.util.StringUtils;
 
 import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -28,7 +30,8 @@ class MessageCipher {
     byte[] convertFromWire(byte[] message, UserId peerUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId) throws Exception {
         byte[] previousChainLengthBytes = Arrays.copyOfRange(message, 0, 4);
         byte[] currentChainIndexBytes = Arrays.copyOfRange(message, 4, 8);
-        byte[] encryptedMessage = Arrays.copyOfRange(message, 8, message.length);
+        byte[] encryptedMessage = Arrays.copyOfRange(message, 8, message.length - 32);
+        byte[] receivedHmac = Arrays.copyOfRange(message, message.length - 32, message.length);
 
         int previousChainLength = ByteBuffer.wrap(previousChainLengthBytes).getInt();
         int currentChainIndex = ByteBuffer.wrap(currentChainIndexBytes).getInt();
@@ -38,6 +41,11 @@ class MessageCipher {
         byte[] aesKey = Arrays.copyOfRange(inboundMessageKey, 0, 32);
         byte[] hmacKey = Arrays.copyOfRange(inboundMessageKey, 32, 64);
         byte[] iv = Arrays.copyOfRange(inboundMessageKey, 64, 80);
+
+        byte[] calculatedHmac = CryptoUtil.hmac(hmacKey, encryptedMessage);
+        if (!Arrays.equals(calculatedHmac, receivedHmac)) {
+            throw new GeneralSecurityException("HMAC mismatch");
+        }
 
         Cipher c = Cipher.getInstance("AES/CBC/PKCS7Padding"); // NOTE: for AES same as PKCS5
         SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
@@ -64,11 +72,13 @@ class MessageCipher {
         c.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
         byte[] encryptedContents = c.doFinal(message);
 
+        byte[] hmac = CryptoUtil.hmac(hmacKey, encryptedContents);
+
         CryptoUtil.nullify(outboundMessageKey, aesKey, hmacKey, iv);
 
         byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
         byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
 
-        return CryptoUtil.concat(previousChainLengthBytes, currentChainIndexBytes, encryptedContents);
+        return CryptoUtil.concat(previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
     }
 }
