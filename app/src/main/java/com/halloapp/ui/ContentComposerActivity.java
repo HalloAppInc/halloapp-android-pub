@@ -69,11 +69,11 @@ public class ContentComposerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("PostComposerActivity: onCreate");
+        Log.d("ContentComposerActivity: onCreate");
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-        setContentView(R.layout.activity_post_composer);
+        setContentView(R.layout.activity_content_composer);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -88,7 +88,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         sendButton.setOnClickListener(v -> {
             final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
             if (TextUtils.isEmpty(postText) && viewModel.getMedia() == null) {
-                Log.w("PostComposerActivity: cannot post empty");
+                Log.w("ContentComposerActivity: cannot send empty content");
                 return;
             }
             viewModel.prepareContent(getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim());
@@ -182,7 +182,7 @@ public class ContentComposerActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("PostComposerActivity: onDestroy");
+        Log.d("ContentComposerActivity: onDestroy");
         fullThumbnailLoader.destroy();
         smallThumbnailLoader.destroy();
     }
