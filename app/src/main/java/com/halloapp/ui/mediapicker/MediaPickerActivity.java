@@ -248,7 +248,6 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.other_media: {
                 final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
