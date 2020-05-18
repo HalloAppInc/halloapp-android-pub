@@ -107,5 +107,4 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
         };
         load(view, loader, displayer, userId.rawId() + "_" + postId, cache);
     }
-
 }
