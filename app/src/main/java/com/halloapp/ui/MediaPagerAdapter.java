@@ -15,7 +15,7 @@ import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.Rtl;
 import com.halloapp.widget.DrawDelegateView;
-import com.halloapp.widget.PostImageView;
+import com.halloapp.widget.ContentPhotoView;
 
 import java.util.List;
 import java.util.Stack;
@@ -75,7 +75,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         }
         final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
         view.setTag(mediaItem);
-        final PostImageView imageView = view.findViewById(R.id.image);
+        final ContentPhotoView imageView = view.findViewById(R.id.image);
         imageView.setTransitionName(getTransitionName(contentId, position));
         imageView.setCornerRadius(mediaCornerRadius);
         imageView.setSinglePointerDragStartDisabled(true);
@@ -105,7 +105,7 @@ public class MediaPagerAdapter extends PagerAdapter {
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         final View view = (View) object;
-        final PostImageView imageView = view.findViewById(R.id.image);
+        final ContentPhotoView imageView = view.findViewById(R.id.image);
         imageView.setImageDrawable(null);
         container.removeView(view);
         parent.getRecycledMediaViews().push(view);
@@ -117,7 +117,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         for (int i = 0; i < childCount; i++) {
             final View child = container.getChildAt(i);
             final Object tag = child.getTag();
-            final PostImageView imageView = child.findViewById(R.id.image);
+            final ContentPhotoView imageView = child.findViewById(R.id.image);
             for (Media mediaItem : media) {
                 if (mediaItem.equals(tag)) {
                     parent.getMediaThumbnailLoader().load(imageView, mediaItem);

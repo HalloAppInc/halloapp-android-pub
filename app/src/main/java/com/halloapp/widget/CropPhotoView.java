@@ -13,7 +13,7 @@ import android.view.animation.Transformation;
 
 import com.halloapp.R;
 
-public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {
+public class CropPhotoView extends com.github.chrisbanes.photoview.PhotoView {
 
     private final Paint gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private int gridColor;
@@ -33,28 +33,28 @@ public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {
         void onCrop(RectF rect);
     }
 
-    public CropImageView(Context context) {
+    public CropPhotoView(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public CropImageView(Context context, AttributeSet attrs) {
+    public CropPhotoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public CropImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CropPhotoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CropImageView2, defStyle, 0);
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CropPhotoView, defStyle, 0);
 
-        cornerPaint.setColor(a.getColor(R.styleable.CropImageView2_civCornerColor, 0));
-        cornerRadius = a.getDimension(R.styleable.CropImageView2_civCornerRadius, 0);
-        gridColor = a.getColor(R.styleable.CropImageView2_civGridColor, 0);
-        gridPaint.setStrokeWidth(a.getDimension(R.styleable.CropImageView2_civGridSize, 0));
+        cornerPaint.setColor(a.getColor(R.styleable.CropPhotoView_cropPvCornerColor, 0));
+        cornerRadius = a.getDimension(R.styleable.CropPhotoView_cropPvCornerRadius, 0);
+        gridColor = a.getColor(R.styleable.CropPhotoView_cropPvGridColor, 0);
+        gridPaint.setStrokeWidth(a.getDimension(R.styleable.CropPhotoView_cropPvGridSize, 0));
 
         a.recycle();
 

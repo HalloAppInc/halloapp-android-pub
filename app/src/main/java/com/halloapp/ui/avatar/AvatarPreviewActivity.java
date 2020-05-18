@@ -42,7 +42,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
-import com.halloapp.widget.CropImageView;
+import com.halloapp.widget.CropPhotoView;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 
@@ -60,7 +60,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
     private PostComposerViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private CropImageView imageView;
+    private CropPhotoView imageView;
     private RectF cropRect;
     private int rotation = 0;
 
@@ -84,7 +84,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
         final View resetButton = findViewById(R.id.reset);
         resetButton.setOnClickListener(v -> {
-            final CropImageView imageView = findViewById(R.id.image);
+            final CropPhotoView imageView = findViewById(R.id.image);
             imageView.getAttacher().update();
         });
 

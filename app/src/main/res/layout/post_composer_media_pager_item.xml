@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <com.halloapp.widget.PostImageView
+    <com.halloapp.widget.ContentPhotoView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
-        app:civCornerColor="@color/window_background"
-        app:pivCornerRadius="8dp"
+        app:contentPvCornerColor="@color/window_background"
+        app:contentPvCornerRadius="8dp"
         tools:src="@mipmap/ic_launcher" />
 
     <ImageView

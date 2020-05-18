@@ -15,7 +15,7 @@ import com.halloapp.content.Media;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;
-import com.halloapp.widget.PostImageView;
+import com.halloapp.widget.ContentPhotoView;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -59,9 +59,9 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
                 } else {
                     final Drawable oldDrawable = view.getDrawable();
                     view.setImageBitmap(result);
-                    if (oldDrawable instanceof PlaceholderDrawable && view instanceof PostImageView) {
+                    if (oldDrawable instanceof PlaceholderDrawable && view instanceof ContentPhotoView) {
                         view.setBackgroundColor(placeholderColor);
-                        ((PostImageView)view).playTransition(150);
+                        ((ContentPhotoView)view).playTransition(150);
                     }
                 }
             }

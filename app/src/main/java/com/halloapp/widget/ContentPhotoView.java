@@ -18,7 +18,7 @@ import android.view.ViewOutlineProvider;
 import com.halloapp.Constants;
 import com.halloapp.R;
 
-public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
+public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView {
 
     private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
 
@@ -28,27 +28,27 @@ public class PostImageView extends com.github.chrisbanes.photoview.PhotoView {
 
     private DrawDelegateView drawDelegateView;
 
-    public PostImageView(Context context) {
+    public ContentPhotoView(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public PostImageView(Context context, AttributeSet attrs) {
+    public ContentPhotoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public PostImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ContentPhotoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PostImageView, defStyle, 0);
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ContentPhotoView, defStyle, 0);
 
-        cornerPaint.setColor(a.getColor(R.styleable.PostImageView_pivCornerColor, 0));
-        cornerRadius = a.getDimension(R.styleable.PostImageView_pivCornerRadius, 0);
-        maxAspectRatio = a.getDimension(R.styleable.PostImageView_pivMaxAspectRatio, maxAspectRatio);
+        cornerPaint.setColor(a.getColor(R.styleable.ContentPhotoView_contentPvCornerColor, 0));
+        cornerRadius = a.getDimension(R.styleable.ContentPhotoView_contentPvCornerRadius, 0);
+        maxAspectRatio = a.getDimension(R.styleable.ContentPhotoView_contentPvMaxAspectRatio, maxAspectRatio);
 
         a.recycle();
 

@@ -78,7 +78,7 @@ public class DrawDelegateView extends View {
         setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(getContext()));
     }
 
-    public void setDecoration(PostImageView delegateView, float decorationFactor, boolean hideSystemUi) {
+    public void setDecoration(ContentPhotoView delegateView, float decorationFactor, boolean hideSystemUi) {
         if (this.delegateView != delegateView) {
             return;
         }

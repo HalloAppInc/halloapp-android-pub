@@ -45,7 +45,7 @@ import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.PostEditText;
-import com.halloapp.widget.PostImageView;
+import com.halloapp.widget.ContentPhotoView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -329,7 +329,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         @Override
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             final View view = getLayoutInflater().inflate(R.layout.post_composer_media_pager_item, container, false);
-            final PostImageView imageView = view.findViewById(R.id.image);
+            final ContentPhotoView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
             final Media mediaItem = media.get(position);
             view.setTag(mediaItem);

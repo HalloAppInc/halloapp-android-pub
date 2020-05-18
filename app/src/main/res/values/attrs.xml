@@ -6,17 +6,17 @@
         <attr name="cetCodeLength" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="PostImageView">
-        <attr name="pivCornerRadius" format="dimension" />
-        <attr name="pivCornerColor" format="color" />
-        <attr name="pivMaxAspectRatio" format="float" />
+    <declare-styleable name="ContentPhotoView">
+        <attr name="contentPvCornerRadius" format="dimension" />
+        <attr name="contentPvCornerColor" format="color" />
+        <attr name="contentPvMaxAspectRatio" format="float" />
     </declare-styleable>
 
-    <declare-styleable name="CropImageView2">
-        <attr name="civCornerRadius" format="dimension" />
-        <attr name="civCornerColor" format="color" />
-        <attr name="civGridSize" format="dimension" />
-        <attr name="civGridColor" format="color" />
+    <declare-styleable name="CropPhotoView">
+        <attr name="cropPvCornerRadius" format="dimension" />
+        <attr name="cropPvCornerColor" format="color" />
+        <attr name="cropPvGridSize" format="dimension" />
+        <attr name="cropPvGridColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="LimitingTextView">
