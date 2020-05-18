@@ -34,7 +34,7 @@ public class SystemUiVisibility {
     }
 
     public static int getFullScreenSystemUiVisibilityDark(@NonNull Context context) {
-        return SystemUiVisibility.getFullScreenSystemUiVisibilityDark(context)
+        return SystemUiVisibility.getDefaultSystemUiVisibilityDark(context)
                 // Hide the nav bar and status bar
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
