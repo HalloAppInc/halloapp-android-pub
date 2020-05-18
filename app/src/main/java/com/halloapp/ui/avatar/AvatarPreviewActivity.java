@@ -58,7 +58,7 @@ import java.util.concurrent.ExecutionException;
 
 public class AvatarPreviewActivity extends AppCompatActivity {
 
-    private PostComposerViewModel viewModel;
+    private AvatarPreviewViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
     private CropPhotoView imageView;
     private RectF cropRect;
@@ -101,7 +101,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
             imageView = findViewById(R.id.image);
 
-            viewModel = new ViewModelProvider(this, new PostComposerViewModelFactory(getApplication(), uris.get(0))).get(PostComposerViewModel.class);
+            viewModel = new ViewModelProvider(this, new AvatarPreviewViewModelFactory(getApplication(), uris.get(0))).get(AvatarPreviewViewModel.class);
             viewModel.media.observe(this, mediaItem -> {
                 progressView.setVisibility(View.GONE);
                 if (mediaItem != null) {
@@ -163,13 +163,13 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         super.finish();
     }
 
-    static class LoadPostUrisTask extends AsyncTask<Void, Void, Media> {
+    static class LoadAvatarUriTask extends AsyncTask<Void, Void, Media> {
 
         private final Uri uri;
         private final Application application;
         private final MutableLiveData<Media> media;
 
-        LoadPostUrisTask(@NonNull Application application, @NonNull Uri uri, @NonNull MutableLiveData<Media> media) {
+        LoadAvatarUriTask(@NonNull Application application, @NonNull Uri uri, @NonNull MutableLiveData<Media> media) {
             this.application = application;
             this.uri = uri;
             this.media = media;
@@ -347,32 +347,31 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
     }
 
-    public class PostComposerViewModelFactory implements ViewModelProvider.Factory {
+    public class AvatarPreviewViewModelFactory implements ViewModelProvider.Factory {
 
         private final Application application;
         private final Uri uri;
 
-
-        PostComposerViewModelFactory(@NonNull Application application, @Nullable Uri uri) {
+        AvatarPreviewViewModelFactory(@NonNull Application application, @Nullable Uri uri) {
             this.application = application;
             this.uri = uri;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(PostComposerViewModel.class)) {
+            if (modelClass.isAssignableFrom(AvatarPreviewViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostComposerViewModel(application, uri);
+                return (T) new AvatarPreviewViewModel(application, uri);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }
 
-    public class PostComposerViewModel extends AndroidViewModel {
+    public class AvatarPreviewViewModel extends AndroidViewModel {
 
         final MutableLiveData<Media> media = new MutableLiveData<>();
 
-        PostComposerViewModel(@NonNull Application application, @Nullable Uri uri) {
+        AvatarPreviewViewModel(@NonNull Application application, @Nullable Uri uri) {
             super(application);
             if (uri != null) {
                 loadUri(uri);
@@ -392,7 +391,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         }
 
         private void loadUri(@NonNull Uri uri) {
-            new LoadPostUrisTask(getApplication(), uri, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new LoadAvatarUriTask(getApplication(), uri, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         void preparePost() {
