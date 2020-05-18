@@ -62,7 +62,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
     private MediaThumbnailLoader mediaThumbnailLoader;
     private CropPhotoView imageView;
     private RectF cropRect;
-    private int rotation = 0;
+    private int rotation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +82,10 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         final View setButton = findViewById(R.id.done);
         setButton.setOnClickListener(v -> viewModel.preparePost());
 
+        imageView = findViewById(R.id.image);
+
         final View resetButton = findViewById(R.id.reset);
-        resetButton.setOnClickListener(v -> {
-            final CropPhotoView imageView = findViewById(R.id.image);
-            imageView.getAttacher().update();
-        });
+        resetButton.setOnClickListener(v -> imageView.getAttacher().update());
 
         final View progressView = findViewById(R.id.progress);
 
@@ -98,8 +97,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 uris.subList(1, uris.size()).clear();
             }
             setButton.setEnabled(false);
-
-            imageView = findViewById(R.id.image);
 
             viewModel = new ViewModelProvider(this, new AvatarPreviewViewModelFactory(getApplication(), uris.get(0))).get(AvatarPreviewViewModel.class);
             viewModel.media.observe(this, mediaItem -> {
@@ -153,14 +150,6 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
             }
         }
-    }
-
-    @Override
-    public void finish() {
-        Preconditions.checkNotNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0));
-        setTitle("");
-        getWindow().setStatusBarColor(0);
-        super.finish();
     }
 
     static class LoadAvatarUriTask extends AsyncTask<Void, Void, Media> {
