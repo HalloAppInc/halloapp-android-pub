@@ -77,6 +77,7 @@
 
         <activity
             android:name=".ui.ContentComposerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/new_post"
             android:windowSoftInputMode="adjustResize" />
 

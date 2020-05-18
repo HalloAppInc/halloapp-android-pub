@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +43,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.ClippedBitmapDrawable;
+import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PlaceholderDrawable;
@@ -63,6 +66,7 @@ public class ContentComposerActivity extends AppCompatActivity {
     private MediaPagerAdapter mediaPagerAdapter;
     private MediaListAdapter mediaListAdapter;
     private RecyclerView mediaList;
+    private DrawDelegateView drawDelegateView;
 
     private static final int REQUEST_CODE_CROP = 1;
 
@@ -71,10 +75,16 @@ public class ContentComposerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("ContentComposerActivity: onCreate");
 
+        if (Build.VERSION.SDK_INT >= 28) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_content_composer);
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final Point point = new Point();
@@ -144,6 +154,8 @@ public class ContentComposerActivity extends AppCompatActivity {
         });
         mediaPagerAdapter = new MediaPagerAdapter();
         mediaPager.setAdapter(mediaPagerAdapter);
+
+        drawDelegateView = findViewById(R.id.draw_delegate);
 
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris)).get(ContentComposerViewModel.class);
@@ -354,6 +366,7 @@ public class ContentComposerActivity extends AppCompatActivity {
             } else {
                 playButton.setVisibility(View.GONE);
             }
+            imageView.setDrawDelegate(drawDelegateView);
             container.addView(view);
             return view;
         }
