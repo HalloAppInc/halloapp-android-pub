@@ -135,6 +135,7 @@ public class ContentComposerActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                invalidateOptionsMenu();
             }
 
             @Override
@@ -200,8 +201,15 @@ public class ContentComposerActivity extends AppCompatActivity {
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem deleteMenuItem = menu.findItem(R.id.delete);
+        final MenuItem cropMenuItem = menu.findItem(R.id.crop);
         final List<Media> media = viewModel.media.getValue();
-        deleteMenuItem.setVisible(media != null && media.size() > 0);
+        if (media == null) {
+            deleteMenuItem.setVisible(false);
+            cropMenuItem.setVisible(false);
+        } else {
+            deleteMenuItem.setVisible(media.size() > 0);
+            cropMenuItem.setVisible(media.size() > mediaPager.getCurrentItem() && media.get(mediaPager.getCurrentItem()).type == Media.MEDIA_TYPE_IMAGE);
+        }
         return true;
     }
 
