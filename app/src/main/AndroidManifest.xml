@@ -115,11 +115,11 @@
             android:label="" />
 
         <activity android:name=".ui.avatar.AvatarPreviewActivity"
-            android:theme="@style/AppTheme.ActionBarBlack"
+            android:theme="@style/AppTheme.Black"
             android:label="@string/avatar_picker_title" />
 
         <activity android:name=".ui.CropImageActivity"
-            android:theme="@style/AppTheme.ActionBarBlack"
+            android:theme="@style/AppTheme.Black"
             android:label="@string/crop"/>
 
         <receiver
