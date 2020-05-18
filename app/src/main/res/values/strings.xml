@@ -187,4 +187,5 @@
     <string name="failed_set_name">Failed to set name, try again later</string>
     <string name="name_updated">Name updated</string>
     <string name="crop">Crop</string>
+    <string name="flip">Flip</string>
 </resources>

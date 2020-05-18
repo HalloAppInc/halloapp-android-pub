@@ -27,9 +27,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/media_pager_container"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/media_container"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
@@ -38,12 +38,22 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.halloapp.widget.MediaViewPager
-                android:id="@+id/media_pager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
-        </FrameLayout>
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="4:5"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.halloapp.widget.MediaViewPager
+                    android:id="@+id/media_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/media_list"
@@ -57,7 +67,7 @@
             app:layout_constraintBottom_toTopOf="@+id/footer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/media_pager_container" />
+            app:layout_constraintTop_toBottomOf="@+id/media_container" />
 
         <LinearLayout
             android:id="@+id/footer"

@@ -5,12 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,12 +41,13 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.ClippedBitmapDrawable;
-import com.halloapp.widget.CropImageView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.PostEditText;
+import com.halloapp.widget.PostImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,8 @@ public class ContentComposerActivity extends AppCompatActivity {
     private MediaPagerAdapter mediaPagerAdapter;
     private MediaListAdapter mediaListAdapter;
     private RecyclerView mediaList;
+
+    private static final int REQUEST_CODE_CROP = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +141,6 @@ public class ContentComposerActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        mediaPager.setMaxAspectRatio(Constants.MAX_IMAGE_ASPECT_RATIO);
         mediaPagerAdapter = new MediaPagerAdapter();
         mediaPager.setAdapter(mediaPagerAdapter);
 
@@ -193,23 +195,30 @@ public class ContentComposerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.content_composer_menu, menu);
-        menu.findItem(R.id.crop).setVisible(false); // TODO (ds): add cropping activity
         return true;
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem deleteMenuItem = menu.findItem(R.id.delete);
+        final MenuItem deleteMenuItem = menu.findItem(R.id.delete);
         final List<Media> media = viewModel.media.getValue();
         deleteMenuItem.setVisible(media != null && media.size() > 0);
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.crop: {
-                // TODO (ds): add cropping activity
+                final int currentItem = mediaPager.getCurrentItem();
+                final List<Media> media = viewModel.media.getValue();
+                if (media != null && media.size() > currentItem) {
+                    final Media mediaItem = media.get(currentItem);
+                    final Intent intent = new Intent(this, CropImageActivity.class);
+                    intent.setData(Uri.fromFile(mediaItem.file));
+                    intent.putExtra(CropImageActivity.EXTRA_STATE, viewModel.cropStates.get(mediaItem.file));
+                    intent.putExtra(CropImageActivity.EXTRA_OUTPUT, Uri.fromFile(ContentComposerViewModel.getCropFile(mediaItem.file)));
+                    startActivityForResult(intent, REQUEST_CODE_CROP);
+                }
                 return true;
             }
             case R.id.delete: {
@@ -219,6 +228,45 @@ public class ContentComposerActivity extends AppCompatActivity {
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(final int request, final int result, final Intent data) {
+        super.onActivityResult(request, result, data);
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (request) {
+            case REQUEST_CODE_CROP: {
+                if (result == RESULT_OK) {
+                    onCropped(data);
+                }
+                break;
+            }
+        }
+    }
+
+    private void onCropped(@NonNull final Intent data) {
+        if (data.getData() == null || data.getData().getPath() == null) {
+            return;
+        }
+        final File origFile = new File(data.getData().getPath());
+        final File cropFile = ContentComposerViewModel.getCropFile(origFile);
+        smallThumbnailLoader.remove(origFile);
+        smallThumbnailLoader.remove(cropFile);
+        fullThumbnailLoader.remove(origFile);
+        fullThumbnailLoader.remove(cropFile);
+        viewModel.cropStates.put(origFile, data.getParcelableExtra(CropImageActivity.EXTRA_STATE));
+        mediaListAdapter.notifyDataSetChanged();
+        mediaPagerAdapter.notifyDataSetChanged();
+        View view = mediaPager.findViewWithTag(origFile);
+        if (view == null) {
+            view = mediaPager.findViewWithTag(cropFile);
+        }
+        if (view instanceof ImageView) {
+            final ImageView imageView = (ImageView)view;
+            final Media displayMedia = new Media(0, Media.MEDIA_TYPE_IMAGE, null, cropFile, null, null, 0, 0, Media.TRANSFERRED_NO);
+            imageView.setImageDrawable(null);
+            fullThumbnailLoader.load(imageView, displayMedia);
         }
     }
 
@@ -273,38 +321,19 @@ public class ContentComposerActivity extends AppCompatActivity {
         @Override
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             final View view = getLayoutInflater().inflate(R.layout.post_composer_media_pager_item, container, false);
-            final CropImageView imageView = view.findViewById(R.id.image);
+            final PostImageView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
             final Media mediaItem = media.get(position);
             view.setTag(mediaItem);
 
             if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                //imageView.setSinglePointerDragStartDisabled(media.size() > 1);
-                imageView.setReturnToMinScaleOnUp(false);
                 if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
-                imageView.setOnCropListener(rect -> {
-                    if (position != mediaPager.getCurrentItem()) {
-                        return;
-                    }
-                    viewModel.cropRects.put(mediaItem.file, rect);
-
-                    final Bitmap bitmap = smallThumbnailLoader.getCached(mediaItem.file);
-                    final View mediaItemView = mediaList.findViewWithTag(mediaItem.file);
-                    if (bitmap != null && mediaItemView instanceof ImageView) {
-                        ((ImageView)mediaItemView).setImageDrawable(new ClippedBitmapDrawable(bitmap, new Rect((int)(bitmap.getWidth() * rect.left), (int)(bitmap.getHeight() * rect.top),
-                                (int)(bitmap.getWidth() * rect.right), (int)(bitmap.getHeight() * rect.bottom))));
-                    } else {
-                        mediaListAdapter.notifyDataSetChanged();
-                    }
-                });
-                imageView.setGridEnabled(true);
             } else {
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                imageView.setGridEnabled(false);
             }
             fullThumbnailLoader.load(imageView, mediaItem);
             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
@@ -353,57 +382,13 @@ public class ContentComposerActivity extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            final ImageView imageView = new ImageView(parent.getContext());
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            imageView.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
-                }
-            });
-            imageView.setClipToOutline(true);
-            return new ViewHolder(imageView);
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_preview_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            final ImageView imageView = (ImageView)holder.itemView;
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setAdjustViewBounds(true);
-            final Media mediaItem = media.get(position);
-            smallThumbnailLoader.load(imageView, mediaItem, new ViewDataLoader.Displayer<ImageView, Bitmap>() {
-                @Override
-                public void showResult(@NonNull ImageView view, @Nullable Bitmap bitmap) {
-                    if (bitmap != null) {
-                        final Rect bitmapRect;
-                        final RectF cropRect = viewModel.cropRects.get(mediaItem.file);
-                        if (cropRect != null) {
-                            bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
-                                    (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
-                        } else {
-                            if (bitmap.getHeight() > Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) {
-                                final int padding = (int)((bitmap.getHeight() - Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) / 2);
-                                bitmapRect = new Rect(0, padding, bitmap.getWidth(), bitmap.getHeight() - padding);
-                            } else {
-                                bitmapRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-                            }
-                        }
-                        view.setImageDrawable(new ClippedBitmapDrawable(bitmap, bitmapRect));
-                    } else {
-                        showLoading(view);
-                    }
-                }
-
-                @Override
-                public void showLoading(@NonNull ImageView view) {
-                    if (mediaItem.width != 0 && mediaItem.height != 0) {
-                        view.setImageDrawable(new PlaceholderDrawable(mediaItem.width, mediaItem.height, ContextCompat.getColor(getBaseContext(), R.color.media_placeholder)));
-                    } else {
-                        view.setImageDrawable(null);
-                    }
-                }
-            });
-            imageView.setOnClickListener(v -> mediaPager.setCurrentItem(position));
+            holder.bind(media.get(position));
+            holder.thumbnailView.setOnClickListener(v -> mediaPager.setCurrentItem(position));
         }
 
         @Override
@@ -413,8 +398,63 @@ public class ContentComposerActivity extends AppCompatActivity {
 
         private class ViewHolder extends RecyclerView.ViewHolder {
 
+            final ImageView thumbnailView;
+            final ImageView typeIndicator;
+
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
+                thumbnailView = itemView.findViewById(R.id.thumbnail);
+                thumbnailView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
+                    }
+                });
+                thumbnailView.setClipToOutline(true);
+                typeIndicator = itemView.findViewById(R.id.type_indicator);
+            }
+
+            void bind(Media media) {
+                final Media displayMedia;
+                if (viewModel.cropStates.containsKey(media.file)) {
+                    displayMedia = new Media(0, media.type, null, ContentComposerViewModel.getCropFile(media.file), null, null, 0, 0, Media.TRANSFERRED_NO);
+                } else {
+                    displayMedia = media;
+                }
+
+                smallThumbnailLoader.load(thumbnailView, displayMedia, new ViewDataLoader.Displayer<ImageView, Bitmap>() {
+                    @Override
+                    public void showResult(@NonNull ImageView view, @Nullable Bitmap bitmap) {
+                        if (bitmap != null) {
+                            if (bitmap.getHeight() > Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) {
+                                final int padding = (int) ((bitmap.getHeight() - Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) / 2);
+                                final Rect bitmapRect = new Rect(0, padding, bitmap.getWidth(), bitmap.getHeight() - padding);
+                                view.setImageDrawable(new ClippedBitmapDrawable(bitmap, bitmapRect));
+                            } else {
+                                view.setImageBitmap(bitmap);
+                            }
+                        } else {
+                            showLoading(view);
+                        }
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull ImageView view) {
+                        if (media.width != 0 && media.height != 0) {
+                            view.setImageDrawable(new PlaceholderDrawable(displayMedia.width, displayMedia.height, ContextCompat.getColor(getBaseContext(), R.color.media_placeholder)));
+                        } else {
+                            view.setImageDrawable(null);
+                        }
+                    }
+                });
+                if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    typeIndicator.setImageResource(R.drawable.ic_video);
+                    typeIndicator.setVisibility(View.VISIBLE);
+                    thumbnailView.setContentDescription(getString(R.string.video));
+                } else {
+                    typeIndicator.setVisibility(View.GONE);
+                    thumbnailView.setContentDescription(getString(R.string.photo));
+                }
             }
         }
     }

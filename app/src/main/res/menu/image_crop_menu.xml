@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/flip"
+        android:icon="@drawable/ic_flip"
+        android:title="@string/flip"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/rotate"
+        android:icon="@drawable/ic_rotate"
+        android:title="@string/rotate"
+        app:showAsAction="always"/>
+
+</menu>

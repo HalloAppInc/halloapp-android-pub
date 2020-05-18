@@ -49,7 +49,7 @@ public class CropImageView extends com.github.chrisbanes.photoview.PhotoView {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CropImageView, defStyle, 0);
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CropImageView2, defStyle, 0);
 
         cornerPaint.setColor(a.getColor(R.styleable.CropImageView2_civCornerColor, 0));
         cornerRadius = a.getDimension(R.styleable.CropImageView2_civCornerRadius, 0);

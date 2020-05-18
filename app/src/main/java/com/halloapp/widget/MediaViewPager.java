@@ -29,19 +29,20 @@ public class MediaViewPager extends ViewPager {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        int childHPadding = 0;
-        int childVPadding = 0;
-        if (getChildCount() > 0) {
-            final View child = getChildAt(0);
-            childHPadding = child.getPaddingLeft() + child.getPaddingRight();
-            childVPadding = child.getPaddingTop() + child.getPaddingBottom();
-        }
-        final int height = (int)((getMeasuredWidth() - childHPadding) * maxAspectRatio) + childVPadding;
-        setMeasuredDimension(getMeasuredWidth(), height);
-        for (int i = 0; i < getChildCount(); i++) {
-            final View child = getChildAt(i);
-            child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
+        if (maxAspectRatio != 0) {
+            int childHPadding = 0;
+            int childVPadding = 0;
+            if (getChildCount() > 0) {
+                final View child = getChildAt(0);
+                childHPadding = child.getPaddingLeft() + child.getPaddingRight();
+                childVPadding = child.getPaddingTop() + child.getPaddingBottom();
+            }
+            final int height = (int) ((getMeasuredWidth() - childHPadding) * maxAspectRatio) + childVPadding;
+            setMeasuredDimension(getMeasuredWidth(), height);
+            for (int i = 0; i < getChildCount(); i++) {
+                final View child = getChildAt(i);
+                child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
+            }
         }
     }
 

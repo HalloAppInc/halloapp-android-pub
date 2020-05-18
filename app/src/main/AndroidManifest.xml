@@ -117,6 +117,10 @@
             android:theme="@style/AppTheme.ActionBarBlack"
             android:label="@string/avatar_picker_title" />
 
+        <activity android:name=".ui.CropImageActivity"
+            android:theme="@style/AppTheme.ActionBarBlack"
+            android:label="@string/crop"/>
+
         <receiver
             android:name=".registration.SmsVerificationReceiver"
             android:exported="true"

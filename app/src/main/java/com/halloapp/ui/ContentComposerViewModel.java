@@ -2,9 +2,11 @@ package com.halloapp.ui;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -42,7 +44,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
     final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
     final ComputableLiveData<String> chatName;
 
-    final Map<File, RectF> cropRects = new HashMap<>();
+    final Map<File, Parcelable> cropStates = new HashMap<>();
+
 
     ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
         super(application);
@@ -72,12 +75,29 @@ public class ContentComposerViewModel extends AndroidViewModel {
         return media.getValue();
     }
 
+    public static File getCropFile(@NonNull File file) {
+        return new File(file.getAbsolutePath() + "-crop");
+    }
+
     private void loadUris(@NonNull Collection<Uri> uris) {
         new LoadContentUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void prepareContent(@Nullable String chatId, @Nullable String text) {
-        new PrepareContentTask(getApplication(), chatId, text, getMedia(), cropRects, contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        final List<Media> mediaList = getMedia();
+        final List<Media> sendMediaList = new ArrayList<>();
+        for (Media media : mediaList) {
+            final Parcelable cropState = cropStates.get(media.file);
+            final Media sendMedia;
+            if (cropState != null) {
+                sendMedia = new Media(0, media.type, null, getCropFile(media.file), null, null, 0, 0, Media.TRANSFERRED_NO);
+            } else {
+                sendMedia = media;
+            }
+            sendMediaList.add(sendMedia);
+        }
+        new PrepareContentTask(getApplication(), chatId, text, sendMediaList, contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public static class Factory implements ViewModelProvider.Factory {
@@ -146,16 +166,14 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final String chatId;
         private final String text;
         private final List<Media> media;
-        private final Map<File, RectF> cropRects;
         private final Application application;
         private final MutableLiveData<ContentItem> contentItem;
 
-        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @Nullable Map<File, RectF> cropRects, @NonNull MutableLiveData<ContentItem> contentItem) {
+        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @NonNull MutableLiveData<ContentItem> contentItem) {
             this.chatId = chatId;
             this.application = application;
             this.text = text;
             this.media = media;
-            this.cropRects = cropRects;
             this.contentItem = contentItem;
         }
 
@@ -171,7 +189,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     switch (media.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {
-                                MediaUtils.transcodeImage(media.file, postFile, cropRects == null ? null : cropRects.get(media.file), Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
+                                RectF cropRect = null;
+                                if (media.height > Constants.MAX_IMAGE_ASPECT_RATIO * media.width) {
+                                    final float padding = (media.height - Constants.MAX_IMAGE_ASPECT_RATIO * media.width) / 2;
+                                    cropRect = new RectF(0, padding / media.height, 1, 1 - padding / media.height);
+                                }
+                                MediaUtils.transcodeImage(media.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
                             } catch (IOException e) {
                                 Log.e("failed to transcode image", e);
                                 return null;
