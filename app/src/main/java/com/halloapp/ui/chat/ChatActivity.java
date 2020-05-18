@@ -142,6 +142,7 @@ public class ChatActivity extends AppCompatActivity {
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(false);
         chatView.setLayoutManager(layoutManager);
+        chatView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         chatView.setAdapter(adapter);
 
