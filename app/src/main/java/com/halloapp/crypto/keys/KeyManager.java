@@ -186,7 +186,7 @@ public class KeyManager {
 
         boolean shouldUpdateChains = ephemeralKeyId != latestStoredEphemeralKeyId;
         if (shouldUpdateChains) {
-            skipInboundKeys(peerUserId, previousChainLength - latestStoredChainIndex - 1, latestStoredEphemeralKeyId, latestPreviousChainLength, latestStoredChainIndex);
+            skipInboundKeys(peerUserId, previousChainLength - latestStoredChainIndex, latestStoredEphemeralKeyId, latestPreviousChainLength, latestStoredChainIndex);
 
             updateInboundChainAndRootKey(peerUserId, encryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
             encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
