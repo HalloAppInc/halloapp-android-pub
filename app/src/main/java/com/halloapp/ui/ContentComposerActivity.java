@@ -481,6 +481,12 @@ public class ContentComposerActivity extends AppCompatActivity {
                 if (!mediaItem.file.delete()) {
                     Log.e("failed to delete temporary file " + mediaItem.file.getAbsolutePath());
                 }
+                final File croppedFile = ContentComposerViewModel.getCropFile(mediaItem.file);
+                if (croppedFile.exists()) {
+                    if (!croppedFile.delete()) {
+                        Log.e("failed to delete temporary file " + croppedFile.getAbsolutePath());
+                    }
+                }
             }
             return null;
         }
