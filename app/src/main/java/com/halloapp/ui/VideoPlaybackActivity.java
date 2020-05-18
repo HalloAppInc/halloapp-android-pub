@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
@@ -140,9 +141,15 @@ public class VideoPlaybackActivity extends AppCompatActivity {
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, "hallo");
             mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(getIntent().getData());
 
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.CONTENT_TYPE_MOVIE)
+                    .build();
+
             player = new SimpleExoPlayer.Builder(this).build();
             player.setPlayWhenReady(true);
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
+            player.setAudioAttributes(audioAttributes, true);
             playerView.setPlayer(player);
         }
         boolean haveStartPosition = startWindow != C.INDEX_UNSET;
