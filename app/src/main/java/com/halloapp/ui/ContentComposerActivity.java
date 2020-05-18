@@ -340,7 +340,7 @@ public class ContentComposerActivity extends AppCompatActivity {
 
         @Override
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
-            final View view = getLayoutInflater().inflate(R.layout.post_composer_media_pager_item, container, false);
+            final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
             final Media mediaItem = media.get(position);
