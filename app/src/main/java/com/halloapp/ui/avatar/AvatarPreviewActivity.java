@@ -2,14 +2,12 @@ package com.halloapp.ui.avatar;
 
 import android.app.Application;
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,7 +51,6 @@ import java.io.OutputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class AvatarPreviewActivity extends AppCompatActivity {
@@ -89,16 +86,12 @@ public class AvatarPreviewActivity extends AppCompatActivity {
 
         final View progressView = findViewById(R.id.progress);
 
-        final ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        if (uris != null) {
+        final Uri uri = getIntent().getData();
+        if (uri != null) {
             progressView.setVisibility(View.VISIBLE);
-            if (uris.size() > 1) {
-                Log.w("AvatarPreviewActivity got too many uris: " + uris.size());
-                uris.subList(1, uris.size()).clear();
-            }
             setButton.setEnabled(false);
 
-            viewModel = new ViewModelProvider(this, new AvatarPreviewViewModelFactory(getApplication(), uris.get(0))).get(AvatarPreviewViewModel.class);
+            viewModel = new ViewModelProvider(this, new AvatarPreviewViewModelFactory(getApplication(), uri)).get(AvatarPreviewViewModel.class);
             viewModel.media.observe(this, mediaItem -> {
                 progressView.setVisibility(View.GONE);
                 if (mediaItem != null) {
@@ -115,6 +108,7 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             });
         } else {
             Log.e("AvatarPreviewActivity no uris provided");
+            finish();
         }
     }
 

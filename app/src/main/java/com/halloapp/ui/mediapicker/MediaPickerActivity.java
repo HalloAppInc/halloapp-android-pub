@@ -278,17 +278,19 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_CONTENT);
     }
 
-    private void startAvatarPreview(@NonNull ArrayList<Uri> uris) {
+    private void startAvatarPreview(@NonNull Uri uri) {
         final Intent intent = new Intent(this, AvatarPreviewActivity.class);
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        intent.setData(uri);
         startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
     }
 
     private void handleSelection(@NonNull ArrayList<Uri> uris) {
         if (pickerPurpose == PICKER_PURPOSE_SEND) {
+            Preconditions.checkState(uris.size() > 0);
             startContentComposer(uris);
         } else if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
-            startAvatarPreview(uris);
+            Preconditions.checkState(uris.size() == 1);
+            startAvatarPreview(uris.get(0));
         }
     }
 
