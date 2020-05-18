@@ -2,7 +2,6 @@ package com.halloapp.ui;
 
 import android.app.Application;
 import android.content.ContentResolver;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
