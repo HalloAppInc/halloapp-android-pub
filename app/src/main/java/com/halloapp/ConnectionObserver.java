@@ -52,7 +52,7 @@ public class ConnectionObserver implements Connection.Observer {
         new TransferPendingItemsTask(context).execute();
         HalloApp.sendPushTokenFromFirebase();
         new RequestExpirationInfoTask(Connection.getInstance(), context).execute();
-        PresenceLoader.getInstance(Connection.getInstance()).resetSubscriptions();
+        PresenceLoader.getInstance(Connection.getInstance()).onReconnect();
     }
 
     @Override

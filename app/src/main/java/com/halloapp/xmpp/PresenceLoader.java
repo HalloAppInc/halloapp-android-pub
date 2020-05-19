@@ -5,6 +5,7 @@ import android.view.View;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.ForegroundChat;
 import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
@@ -53,7 +54,22 @@ public class PresenceLoader extends ViewDataLoader<View, Long, String> {
         mld.postValue(lastSeen);
     }
 
-    public void resetSubscriptions() {
-        this.map.clear();
+    public void onReconnect() {
+        Log.d("PresenceLoader resetting subscriptions");
+        UserId keepUserId = null;
+        MutableLiveData<Long> keepMld = null;
+        for (UserId userId : map.keySet()) {
+            if (ForegroundChat.getInstance().isForegroundChatId(userId.rawId())) {
+                keepUserId = userId;
+                keepMld = map.get(keepUserId);
+                break;
+            }
+        }
+        map.clear();
+        if (keepUserId != null) {
+            Log.d("PresenceLoader maintaining subscription to " + keepUserId);
+            map.put(keepUserId, keepMld);
+            connection.subscribePresence(keepUserId);
+        }
     }
 }
