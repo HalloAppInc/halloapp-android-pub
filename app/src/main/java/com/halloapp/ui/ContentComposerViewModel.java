@@ -46,6 +46,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
     final Map<File, Parcelable> cropStates = new HashMap<>();
 
 
+    static File getCropFile(@NonNull File file) {
+        return new File(file.getAbsolutePath() + "-crop");
+    }
+
     ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
         super(application);
         if (uris != null) {
@@ -63,6 +67,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     }
 
+    @Override
     protected void onCleared() {
         final List<Media> mediaList = media.getValue();
         if (mediaList != null) {
@@ -70,12 +75,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     }
 
-    List<Media> getMedia() {
+    @Nullable List<Media> getMedia() {
         return media.getValue();
-    }
-
-    public static File getCropFile(@NonNull File file) {
-        return new File(file.getAbsolutePath() + "-crop");
     }
 
     private void loadUris(@NonNull Collection<Uri> uris) {
@@ -83,8 +84,14 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void prepareContent(@Nullable String chatId, @Nullable String text) {
+        new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 
+    private @Nullable List<Media> getSendMediaList() {
         final List<Media> mediaList = getMedia();
+        if (mediaList == null) {
+            return null;
+        }
         final List<Media> sendMediaList = new ArrayList<>();
         for (Media media : mediaList) {
             final Parcelable cropState = cropStates.get(media.file);
@@ -96,7 +103,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             }
             sendMediaList.add(sendMedia);
         }
-        new PrepareContentTask(getApplication(), chatId, text, sendMediaList, contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        return sendMediaList;
     }
 
     public static class Factory implements ViewModelProvider.Factory {
