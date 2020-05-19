@@ -126,13 +126,14 @@ public class ChatMessageElement implements ExtensionElement {
     }
 
     Message getMessage(Jid from, String id) {
-        if (this.chatMessage == null) {
+        if (Constants.ENCRYPTION_TURNED_ON) {
             try {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
                 this.chatMessage = readEncodedEntry(dec);
             } catch (Exception e) {
-                Log.e("Failed to decrypt message", e);
+                Log.e("Failed to decrypt message, falling back to plaintext", e);
+                Log.sendErrorReport("Decryption failure");
             }
         }
         final Message message = new Message(0,
