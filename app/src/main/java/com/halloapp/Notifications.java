@@ -52,10 +52,6 @@ public class Notifications {
 
     private static Notifications instance;
 
-    public static final String EXTRA_NOTIFICATION_NAV_TARGET = "notification_nav_target";
-    public static final String NOTIFICATION_NAV_TARGET_FEED = "feed";
-    public static final String NOTIFICATION_NAV_TARGET_MESSAGES = "messages";
-
     private static final int NOTIFICATION_REQUEST_CODE_FEED = 1;
     private static final int NOTIFICATION_REQUEST_CODE_MESSAGES = 2;
 
@@ -260,7 +256,7 @@ public class Notifications {
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                parentIntent.putExtra(EXTRA_NOTIFICATION_NAV_TARGET, NOTIFICATION_NAV_TARGET_MESSAGES);
+                parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
                 stackBuilder.addNextIntent(parentIntent);
                 stackBuilder.addNextIntent(contentIntent);
 
@@ -283,7 +279,7 @@ public class Notifications {
             if (chatsIds.size() > 1) {
                 final Intent contentIntent = new Intent(context, MainActivity.class);
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                contentIntent.putExtra(EXTRA_NOTIFICATION_NAV_TARGET, NOTIFICATION_NAV_TARGET_MESSAGES);
+                contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
                 builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
             } else {
                 final String chatId = chatsIds.get(0);
@@ -292,7 +288,7 @@ public class Notifications {
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                parentIntent.putExtra(EXTRA_NOTIFICATION_NAV_TARGET, NOTIFICATION_NAV_TARGET_MESSAGES);
+                parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
                 stackBuilder.addNextIntent(parentIntent);
                 stackBuilder.addNextIntent(contentIntent);
                 builder.setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
@@ -415,7 +411,7 @@ public class Notifications {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         final Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        contentIntent.putExtra(EXTRA_NOTIFICATION_NAV_TARGET, NOTIFICATION_NAV_TARGET_FEED);
+        contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
         builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;

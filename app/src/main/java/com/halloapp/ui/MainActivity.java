@@ -57,6 +57,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
+    public static final String EXTRA_NAV_TARGET = "nav_target";
+    public static final String NAV_TARGET_FEED = "feed";
+    public static final String NAV_TARGET_MESSAGES = "messages";
+
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
 
@@ -320,30 +324,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void processIntent(Intent intent) {
-        Log.i("MainActivity.processIntent " + intent.getAction() + " " + intent.getStringExtra(Notifications.EXTRA_NOTIFICATION_NAV_TARGET));
-        if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            if (uri != null) {
-                final Intent composerIntent = new Intent(this, ContentComposerActivity.class);
-                composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
-                startActivity(composerIntent);
-            }
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
-            final ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            if (uris != null && !uris.isEmpty()) {
-                final Intent composerIntent = new Intent(this, ContentComposerActivity.class);
-                composerIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                startActivity(composerIntent);
-            }
-        } else {
-            final String extraNotificationNavTarget = intent.getStringExtra(Notifications.EXTRA_NOTIFICATION_NAV_TARGET);
-            if (Notifications.NOTIFICATION_NAV_TARGET_FEED.equals(extraNotificationNavTarget)) {
-                final BottomNavigationView navView = findViewById(R.id.nav_view);
-                navView.setSelectedItemId(R.id.navigation_home);
-            } else if (Notifications.NOTIFICATION_NAV_TARGET_MESSAGES.equals(extraNotificationNavTarget)) {
-                final BottomNavigationView navView = findViewById(R.id.nav_view);
-                navView.setSelectedItemId(R.id.navigation_messages);
-            }
+        Log.i("MainActivity.processIntent " + intent.getAction() + " " + intent.getStringExtra(EXTRA_NAV_TARGET));
+        final String extraNotificationNavTarget = intent.getStringExtra(EXTRA_NAV_TARGET);
+        if (NAV_TARGET_FEED.equals(extraNotificationNavTarget)) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_home);
+        } else if (NAV_TARGET_MESSAGES.equals(extraNotificationNavTarget)) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_messages);
         }
     }
 }

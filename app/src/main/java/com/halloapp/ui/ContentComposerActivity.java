@@ -43,15 +43,16 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.ClippedBitmapDrawable;
+import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.PostEditText;
-import com.halloapp.widget.ContentPhotoView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ContentComposerActivity extends AppCompatActivity {
@@ -106,7 +107,18 @@ public class ContentComposerActivity extends AppCompatActivity {
 
         final View progressView = findViewById(R.id.progress);
 
-        final ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        final ArrayList<Uri> uris;
+        if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
+            final Uri uri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
+            if (uri != null) {
+                uris = new ArrayList<>(Collections.singleton(uri));
+            } else {
+                uris = null;
+            }
+        } else {
+            uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        }
+
         if (uris != null) {
             progressView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
@@ -183,11 +195,21 @@ public class ContentComposerActivity extends AppCompatActivity {
                 contentItem.addToStorage(ContentDb.getInstance(getBaseContext()));
                 setResult(RESULT_OK);
                 finish();
+
+                if (Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                        Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+                    final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
             }
         });
         if (viewModel.chatName != null) {
             setTitle("");
             viewModel.chatName.getLiveData().observe(this, this::setTitle);
+        } else {
+            setTitle(R.string.new_post);
         }
     }
 
