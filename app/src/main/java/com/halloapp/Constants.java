@@ -1,10 +1,12 @@
 package com.halloapp;
 
+import android.text.format.DateUtils;
+
 public class Constants {
 
     public static final String USER_AGENT = "HalloApp/Android" + BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
-    public static final long POSTS_EXPIRATION = 31 * 24 * 60 * 60 * 1000L;
-    public static final long RETRACT_COMMENT_ALLOWED_TIME = 60 * 60 * 1000L;
+    public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
+    public static final long RETRACT_COMMENT_ALLOWED_TIME = DateUtils.HOUR_IN_MILLIS;
     public static final int MAX_TEXT_LENGTH = 32000;
     public static final int MAX_IMAGE_DIMENSION = 1600;
     public static final int MAX_POST_MEDIA_ITEMS = 10;
