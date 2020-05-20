@@ -14,6 +14,7 @@ import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.util.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -96,6 +97,7 @@ public class CryptoUtil {
 
     public static void verify(byte[] signature, byte[] message, PublicEdECKey key) throws GeneralSecurityException {
         if (!sign.cryptoSignVerifyDetached(signature, message, message.length, key.getKeyMaterial())) {
+            Log.sendErrorReport("Invalid signature");
             throw new GeneralSecurityException("Invalid signature");
         }
     }

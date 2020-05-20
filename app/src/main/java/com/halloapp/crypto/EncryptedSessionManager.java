@@ -96,7 +96,6 @@ public class EncryptedSessionManager {
             PublicEdECKey peerIdentityKey = new PublicEdECKey(identityKeyBytes);
             PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
 
-            // TODO(jack): Log signature verification failures
             byte[] signature = signedPreKeyProto.getSignature().toByteArray();
             CryptoUtil.verify(signature, signedPreKeyBytes, peerIdentityKey);
 

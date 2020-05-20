@@ -159,6 +159,7 @@ public class ChatMessageElement implements ExtensionElement {
             return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
         } catch (Exception e) {
             Log.e("Failed to encrypt", e);
+            Log.sendErrorReport("Encryption failure");
         }
         return "";
     }

@@ -614,7 +614,6 @@ public class Connection {
             final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
             final UserId recipientUserId = new UserId(message.chatId);
             try {
-                // TODO(jack): keys should be stored for use until the message send is successful
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
                 xmppMessage.setStanzaId(message.id);
                 xmppMessage.addExtension(new ChatMessageElement(
