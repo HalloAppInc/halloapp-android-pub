@@ -220,6 +220,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 }
             }
             cache.remove(userId.rawId());
+            try {
+                ContactsDb.getInstance(context).updateContactAvatarInfo(new ContactsDb.ContactAvatarInfo(userId, System.currentTimeMillis(), hash)).get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e("failed to update avatar", e);
+            }
         }
     }
 }
