@@ -24,5 +24,5 @@ public class Constants {
     public static final int VIDEO_RESOLUTION_H265 = 480;
     public static final int AUDIO_BITRATE = 96000;
 
-    public static final boolean ENCRYPTION_TURNED_ON = false;
+    public static final boolean ENCRYPTION_TURNED_ON = true;
 }
