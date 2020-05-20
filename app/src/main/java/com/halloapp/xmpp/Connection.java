@@ -430,7 +430,7 @@ public class Connection {
                 Log.e("connection: download keys: no connection");
                 return null;
             }
-            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(connection.getXMPPServiceDomain(), userIdToJid(userId).toString());
+            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(connection.getXMPPServiceDomain(), userIdToJid(userId).toString(), userId);
             try {
                 final WhisperKeysResponseIq response = connection.createStanzaCollectorAndSend(downloadIq).nextResultOrThrow();
                 Log.d("connection: response after downloading keys " + response.toString());
