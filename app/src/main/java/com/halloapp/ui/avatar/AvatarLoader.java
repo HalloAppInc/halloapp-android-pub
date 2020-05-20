@@ -115,14 +115,13 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         ContactsDb contactsDb = ContactsDb.getInstance(context);
         ContactsDb.ContactAvatarInfo contact = contactsDb.getContactAvatarInfo(userId);
 
-        boolean needsNewContact = contact == null;
-        if (needsNewContact) {
+        if (contact == null) {
             Log.i("Making new contact for user " + userId);
             contact = new ContactsDb.ContactAvatarInfo(userId, 0, null);
         }
 
         long currentTimeMs = System.currentTimeMillis();
-        if (currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
+        if (true || currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) { // testing-only
             try {
                 PubSubItem item = null;
                 try {
@@ -156,12 +155,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 Log.w("Failed getting avatar", e);
             } finally {
                 contact.avatarCheckTimestamp = System.currentTimeMillis();
-                // Check whether contact was added during fetch
-                if (needsNewContact && contactsDb.getContactAvatarInfo(userId) == null) {
-                    contactsDb.insertContactAvatarInfo(contact);
-                } else {
-                    contactsDb.updateContactAvatarInfo(contact);
-                }
+                contactsDb.updateContactAvatarInfo(contact);
             }
         }
 

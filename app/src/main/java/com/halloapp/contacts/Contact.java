@@ -20,20 +20,19 @@ public class Contact {
 
     public Contact(long rowId,
                    long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,
-                   @Nullable String halloName, @Nullable String normalizedPhone,
-                   @Nullable UserId userId, boolean friend) {
+                   @Nullable String normalizedPhone, @Nullable UserId userId, boolean friend) {
         this.rowId = rowId;
         this.addressBookId = addressBookId;
         this.addressBookName = addressBookName;
         this.addressBookPhone = addressBookPhone;
-        this.halloName = halloName;
         this.normalizedPhone = normalizedPhone;
         this.userId = userId;
         this.friend = friend;
     }
 
-    public Contact(@NonNull UserId userId, @NonNull String name) {
-        this(0, 0, name, null, null, null, userId, true);
+    public Contact(@NonNull UserId userId, @Nullable String name, @Nullable String halloName) {
+        this(0, 0, name, null, null, userId, true);
+        this.halloName = halloName;
     }
 
     public @Nullable String getRawUserId() {
