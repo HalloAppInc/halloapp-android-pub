@@ -121,7 +121,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         }
 
         long currentTimeMs = System.currentTimeMillis();
-        if (true || currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) { // testing-only
+        if (currentTimeMs - contact.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
             try {
                 PubSubItem item = null;
                 try {
