@@ -47,6 +47,7 @@ public class ChatMessageElement implements ExtensionElement {
     private final PublicEdECKey identityKey;
     private final Integer oneTimePreKeyId;
     private final byte[] encryptedBytes;
+    private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId, PublicEdECKey identityKey, Integer oneTimePreKeyId) {
         this.chatMessage = messageToChatMessage(message);
@@ -130,7 +131,10 @@ public class ChatMessageElement implements ExtensionElement {
             try {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, identityKey, ephemeralKey, ephemeralKeyId, oneTimePreKeyId);
-                this.chatMessage = readEncodedEntry(dec);
+                chatMessage = readEncodedEntry(dec);
+                if (!plaintextChatMessage.equals(chatMessage)) {
+                    Log.sendErrorReport("Decrypted message does not match plaintext");
+                }
             } catch (Exception e) {
                 Log.e("Failed to decrypt message, falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure");
@@ -303,8 +307,13 @@ public class ChatMessageElement implements ExtensionElement {
                     } catch (Exception e) {
                         Log.w("Failed to read encrypted entry", e);
                     }
-                } else if (chatMessageElement == null && name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
-                    chatMessageElement = new ChatMessageElement(readEncodedEntryString(Xml.readText(parser)), timestamp);
+                } else if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
+                    ChatMessage chatMessage = readEncodedEntryString(Xml.readText(parser));
+                    if (chatMessageElement == null) {
+                        chatMessageElement = new ChatMessageElement(chatMessage, timestamp);
+                    } else {
+                        chatMessageElement.plaintextChatMessage = chatMessage;
+                    }
                 } else if (name.equals("chatmessage")) { // TODO (ds): remove
                     Xml.skip(parser);
                 }
