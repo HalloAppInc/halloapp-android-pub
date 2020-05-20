@@ -620,8 +620,6 @@ public class Connection {
                 xmppMessage.addExtension(new ChatMessageElement(
                         message,
                         recipientUserId,
-                        sessionSetupInfo.ephemeralKey,
-                        sessionSetupInfo.ephemeralKeyId,
                         sessionSetupInfo.identityKey,
                         sessionSetupInfo.oneTimePreKeyId));
                 ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));

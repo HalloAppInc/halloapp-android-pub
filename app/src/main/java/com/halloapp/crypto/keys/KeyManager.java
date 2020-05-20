@@ -11,6 +11,7 @@ import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,7 +121,13 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, PublicEdECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
+    public void receiveSessionSetup(UserId peerUserId, byte[] message, PublicEdECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
+        byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
+        byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
+
+        int ephemeralKeyId = ByteBuffer.wrap(ephemeralKeyIdBytes).getInt();
+        PublicXECKey publicEphemeralKey = new PublicXECKey(ephemeralKeyBytes);
+
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
 
         byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtil.convertPublicEdToX(initiatorPublicIdentityKey));

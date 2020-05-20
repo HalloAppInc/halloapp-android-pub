@@ -23,7 +23,7 @@ public class EncryptedSessionManager {
     private final EncryptedKeyStore encryptedKeyStore;
     private final MessageCipher messageCipher;
 
-    private static final SessionSetupInfo nullInfo = new SessionSetupInfo(null, null, null, null);
+    private static final SessionSetupInfo nullInfo = new SessionSetupInfo(null, null);
 
     private static EncryptedSessionManager instance = null;
 
@@ -49,14 +49,14 @@ public class EncryptedSessionManager {
         return messageCipher.convertForWire(message, peerUserId);
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, PublicEdECKey identityKey, PublicXECKey ephemeralKey, Integer ephemeralKeyId, Integer oneTimePreKeyId) throws Exception {
+    public byte[] decryptMessage(byte[] message, UserId peerUserId, PublicEdECKey identityKey, Integer oneTimePreKeyId) throws Exception {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-            keyManager.receiveSessionSetup(peerUserId, ephemeralKey, ephemeralKeyId, identityKey, oneTimePreKeyId);
+            keyManager.receiveSessionSetup(peerUserId, message, identityKey, oneTimePreKeyId);
         }
         encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
         encryptedKeyStore.setPeerResponded(peerUserId, true);
 
-        return messageCipher.convertFromWire(message, peerUserId, ephemeralKey, ephemeralKeyId);
+        return messageCipher.convertFromWire(message, peerUserId);
     }
 
     public void sendMessage(final @NonNull Message message) {
@@ -72,17 +72,8 @@ public class EncryptedSessionManager {
     }
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
-        if (!Constants.ENCRYPTION_TURNED_ON) {
+        if (!Constants.ENCRYPTION_TURNED_ON || encryptedKeyStore.getPeerResponded(peerUserId)) {
             return nullInfo;
-        }
-
-        if (encryptedKeyStore.getPeerResponded(peerUserId)) {
-            return new SessionSetupInfo(
-                    XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
-                    encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
-                    null,
-                    null
-            );
         }
 
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
@@ -123,8 +114,6 @@ public class EncryptedSessionManager {
         }
 
         return new SessionSetupInfo(
-                XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)),
-                encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId),
                 encryptedKeyStore.getMyPublicEd25519IdentityKey(),
                 encryptedKeyStore.getPeerOneTimePreKeyId(peerUserId)
         );

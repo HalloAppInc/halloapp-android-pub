@@ -22,17 +22,23 @@ class MessageCipher {
     private static final int COUNTER_SIZE_BYTES = 4;
 
     private final KeyManager keyManager;
+    private final EncryptedKeyStore encryptedKeyStore;
 
     MessageCipher() {
         this.keyManager = KeyManager.getInstance();
+        this.encryptedKeyStore = EncryptedKeyStore.getInstance();
     }
 
-    byte[] convertFromWire(byte[] message, UserId peerUserId, PublicXECKey ephemeralKey, Integer ephemeralKeyId) throws Exception {
-        byte[] previousChainLengthBytes = Arrays.copyOfRange(message, 0, 4);
-        byte[] currentChainIndexBytes = Arrays.copyOfRange(message, 4, 8);
-        byte[] encryptedMessage = Arrays.copyOfRange(message, 8, message.length - 32);
+    byte[] convertFromWire(byte[] message, UserId peerUserId) throws Exception {
+        byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
+        byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
+        byte[] previousChainLengthBytes = Arrays.copyOfRange(message, 36, 40);
+        byte[] currentChainIndexBytes = Arrays.copyOfRange(message, 40, 44);
+        byte[] encryptedMessage = Arrays.copyOfRange(message, 44, message.length - 32);
         byte[] receivedHmac = Arrays.copyOfRange(message, message.length - 32, message.length);
 
+        PublicXECKey ephemeralKey = new PublicXECKey(ephemeralKeyBytes);
+        int ephemeralKeyId = ByteBuffer.wrap(ephemeralKeyIdBytes).getInt();
         int previousChainLength = ByteBuffer.wrap(previousChainLengthBytes).getInt();
         int currentChainIndex = ByteBuffer.wrap(currentChainIndexBytes).getInt();
 
@@ -76,9 +82,11 @@ class MessageCipher {
 
         CryptoUtil.nullify(outboundMessageKey, aesKey, hmacKey, iv);
 
+        byte[] ephemeralKeyBytes = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)).getKeyMaterial();
+        byte[] ephemeralKeyIdBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId)).array();
         byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
         byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
 
-        return CryptoUtil.concat(previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
+        return CryptoUtil.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
     }
 }
