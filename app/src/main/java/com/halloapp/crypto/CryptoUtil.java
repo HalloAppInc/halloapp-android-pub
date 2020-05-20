@@ -97,7 +97,6 @@ public class CryptoUtil {
 
     public static void verify(byte[] signature, byte[] message, PublicEdECKey key) throws GeneralSecurityException {
         if (!sign.cryptoSignVerifyDetached(signature, message, message.length, key.getKeyMaterial())) {
-            Log.sendErrorReport("Invalid signature");
             throw new GeneralSecurityException("Invalid signature");
         }
     }

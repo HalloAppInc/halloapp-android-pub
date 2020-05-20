@@ -61,14 +61,14 @@ public class EncryptedSessionManager {
 
     public void sendMessage(final @NonNull Message message) {
         final UserId recipientUserId = new UserId(message.chatId);
-        final SessionSetupInfo sessionSetupInfo;
         try {
-            sessionSetupInfo = EncryptedSessionManager.getInstance().setUpSession(recipientUserId);
+            SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId);
+            connection.sendMessage(message, sessionSetupInfo);
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
-            return;
+            Log.sendErrorReport("Failed to get session setup info");
+            connection.sendMessage(message, nullInfo);
         }
-        connection.sendMessage(message, sessionSetupInfo);
     }
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
