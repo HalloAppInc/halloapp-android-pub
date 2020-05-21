@@ -224,6 +224,14 @@ public class CommentsActivity extends AppCompatActivity {
                 getResources().getDimensionPixelSize(R.dimen.swipe_delete_icon_margin)) {
 
             @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder.getItemViewType() == ITEM_TYPE_POST) {
+                    return makeMovementFlags(0, 0);
+                }
+                return super.getMovementFlags(recyclerView, viewHolder);
+            }
+
+            @Override
             public boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {
                 final Comment comment = ((ViewHolder)viewHolder).comment;
                 return comment != null && comment.commentSenderUserId.isMe() && !comment.isRetracted();
