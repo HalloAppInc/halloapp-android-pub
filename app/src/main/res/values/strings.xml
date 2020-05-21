@@ -25,7 +25,7 @@
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
     <string name="registration_code_invalid">Invalid registration code, try again</string>
     <string name="registration_failed">Failed to register phone number, try again</string>
-    <string name="registration_failed_no_friends">We are currently in beta and by invitation only. Please have one of your friends who is a HalloApp user to invite you.</string>
+    <string name="registration_failed_no_friends">We are currently in beta and by invitation only. Please have one of your friends who is a HalloApp user invite you.</string>
     <string name="type_a_post_hint">Type a post</string>
     <string name="type_a_caption_hint">Type a caption</string>
     <string name="type_a_message_hint">Type a message</string>
