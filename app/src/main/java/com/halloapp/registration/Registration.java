@@ -62,7 +62,11 @@ public class Registration {
             requestJson.put("phone", phone);
             connection.getOutputStream().write(requestJson.toString().getBytes());
 
-            inStream = connection.getInputStream();
+            final int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("Registration.requestRegistration responseCode:" + responseCode);
+            }
+            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
             final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
             final String result = responseJson.optString("result");
             final String normalizedPhone = responseJson.optString("phone");
@@ -76,8 +80,10 @@ public class Registration {
             }
             return new RegistrationRequestResult(phone);
         } catch (IOException e) {
+            Log.e("Registration.requestRegistration", e);
             return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK);
         } catch (JSONException e) {
+            Log.e("Registration.requestRegistration", e);
             return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER);
         } finally {
             FileUtils.closeSilently(inStream);
@@ -110,7 +116,11 @@ public class Registration {
             requestJson.put("name", name);
             connection.getOutputStream().write(requestJson.toString().getBytes());
 
-            inStream = connection.getInputStream();
+            final int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("Registration.verifyRegistration responseCode:" + responseCode);
+            }
+            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
             final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
             final String result = responseJson.optString("result");
             final String normalizedPhone = responseJson.optString("phone");
@@ -126,8 +136,10 @@ public class Registration {
             }
             return new RegistrationVerificationResult(uid, password, phone);
         } catch (IOException e) {
+            Log.e("Registration.verifyRegistration", e);
             return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
         } catch (JSONException e) {
+            Log.e("Registration.verifyRegistration", e);
             return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
         } finally {
             FileUtils.closeSilently(inStream);
@@ -140,13 +152,14 @@ public class Registration {
     public static class RegistrationRequestResult {
 
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL})
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS})
         @interface Result {}
         public static final int RESULT_OK = 0;
         public static final int RESULT_FAILED_NETWORK = 1;
         public static final int RESULT_FAILED_SERVER = 2;
         public static final int RESULT_FAILED_SERVER_SMS_FAIL = 3; // Sending the SMS failed
         public static final int RESULT_FAILED_SERVER_CANNOT_ENROLL = 4; // Error during the enroll function. This one does not make much sense.
+        public static final int RESULT_FAILED_SERVER_NO_FRIENDS = 5; // The Phone number is not in any existing users contacts. We don't let users create accounts if they are not going to have any friends. Note this error is not returned for 555 phone numbers.
 
         public final String phone;
         public final @Result int result;
@@ -167,6 +180,8 @@ public class Registration {
                 return RESULT_FAILED_SERVER_SMS_FAIL;
             } else if ("cannot_enroll".equals(error)) {
                 return RESULT_FAILED_SERVER_CANNOT_ENROLL;
+            } else if ("no_friends".equals(error)) {
+                return RESULT_FAILED_SERVER_NO_FRIENDS;
             }
             return RESULT_FAILED_SERVER;
         }

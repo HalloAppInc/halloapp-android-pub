@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -26,6 +27,7 @@ import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
@@ -89,7 +91,15 @@ public class RegistrationRequestActivity extends AppCompatActivity {
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
                 startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
             } else {
-                CenterToast.show(this, R.string.registration_failed);
+                if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NO_FRIENDS) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationRequestActivity.this)
+                        .setMessage(getBaseContext().getString(R.string.registration_failed_no_friends))
+                        .setPositiveButton(R.string.ok, null)
+                        .setCancelable(true);
+                    builder.show();
+                } else {
+                    CenterToast.show(this, R.string.registration_failed);
+                }
                 nextButton.setVisibility(View.VISIBLE);
                 phoneNumberEditText.setEnabled(true);
                 countryCodePicker.setCcpClickable(true);
