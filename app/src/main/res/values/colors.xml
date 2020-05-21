@@ -14,6 +14,7 @@
     <color name="tab_inactive">#a1a1a1</color>
     <color name="media_placeholder">#f6f6f6</color>
     <color name="gallery_placeholder">#eeeeee</color>
+    <color name="seen_comment_background">#f0f0f0</color>
     <color name="card_background">@color/cardview_light_background</color>
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>

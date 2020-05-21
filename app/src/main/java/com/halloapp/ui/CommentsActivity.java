@@ -269,11 +269,6 @@ public class CommentsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_REPLY_USER_ID, replyUserId == null ? null : replyUserId.rawId());
@@ -373,7 +368,7 @@ public class CommentsActivity extends AppCompatActivity {
                 return false;
             });
 
-            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.window_background : R.color.card_background));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
 
             replyButton.setOnClickListener(v -> {
                 updateReplyIndicator(comment.commentSenderUserId, comment.commentId);
