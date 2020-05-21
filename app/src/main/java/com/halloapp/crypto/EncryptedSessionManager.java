@@ -1,29 +1,29 @@
 package com.halloapp.crypto;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Message;
-import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
+import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
+import java.security.GeneralSecurityException;
+
 public class EncryptedSessionManager {
     private final Connection connection;
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
     private final MessageCipher messageCipher;
-
-    private static final SessionSetupInfo nullInfo = new SessionSetupInfo(null, null);
 
     private static EncryptedSessionManager instance = null;
 
@@ -49,9 +49,12 @@ public class EncryptedSessionManager {
         return messageCipher.convertForWire(message, peerUserId);
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, PublicEdECKey identityKey, Integer oneTimePreKeyId) throws Exception {
+    public byte[] decryptMessage(byte[] message, UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws Exception {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-            keyManager.receiveSessionSetup(peerUserId, message, identityKey, oneTimePreKeyId);
+            if (sessionSetupInfo == null) {
+                throw new GeneralSecurityException("Cannot set up session without identity key");
+            }
+            keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
         }
         encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
         encryptedKeyStore.setPeerResponded(peerUserId, true);
@@ -67,13 +70,13 @@ public class EncryptedSessionManager {
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
-            connection.sendMessage(message, nullInfo);
+            connection.sendMessage(message, null);
         }
     }
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
         if (!Constants.ENCRYPTION_TURNED_ON || encryptedKeyStore.getPeerResponded(peerUserId)) {
-            return nullInfo;
+            return null;
         }
 
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
@@ -90,7 +93,7 @@ public class EncryptedSessionManager {
                 // TODO(jack): Once encryption is turned on for all clients this probably should be removed [stops repeated key requests]
                 encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
-                return nullInfo;
+                return null;
             }
 
             PublicEdECKey peerIdentityKey = new PublicEdECKey(identityKeyBytes);

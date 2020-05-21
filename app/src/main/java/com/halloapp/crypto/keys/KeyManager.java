@@ -1,5 +1,6 @@
 package com.halloapp.crypto.keys;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
@@ -7,6 +8,7 @@ import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.crypto.CryptoUtil;
+import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
@@ -131,22 +133,22 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, byte[] message, PublicEdECKey initiatorPublicIdentityKey, @Nullable Integer oneTimePreKeyId) throws Exception {
+    public void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws Exception {
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
 
         int ephemeralKeyId = ByteBuffer.wrap(ephemeralKeyIdBytes).getInt();
         PublicXECKey publicEphemeralKey = new PublicXECKey(ephemeralKeyBytes);
 
-        encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, initiatorPublicIdentityKey);
+        encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, sessionSetupInfo.identityKey);
 
-        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtil.convertPublicEdToX(initiatorPublicIdentityKey));
+        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtil.convertPublicEdToX(sessionSetupInfo.identityKey));
         byte[] b = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
         byte[] c = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
 
         byte[] masterSecret;
-        if (oneTimePreKeyId != null) {
-            byte[] d = CryptoUtil.ecdh(encryptedKeyStore.removeOneTimePreKeyById(oneTimePreKeyId), publicEphemeralKey);
+        if (sessionSetupInfo.oneTimePreKeyId != null) {
+            byte[] d = CryptoUtil.ecdh(encryptedKeyStore.removeOneTimePreKeyById(sessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
             masterSecret = CryptoUtil.concat(a, b, c, d);
             CryptoUtil.nullify(d);
         } else {

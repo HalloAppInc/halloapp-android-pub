@@ -607,7 +607,7 @@ public class Connection {
         });
     }
 
-    public void sendMessage(final @NonNull Message message, final @NonNull SessionSetupInfo sessionSetupInfo) {
+    public void sendMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send message, no connection");
@@ -621,8 +621,7 @@ public class Connection {
                 xmppMessage.addExtension(new ChatMessageElement(
                         message,
                         recipientUserId,
-                        sessionSetupInfo.identityKey,
-                        sessionSetupInfo.oneTimePreKeyId));
+                        sessionSetupInfo));
                 ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
                 Log.i("connection: sending message " + message.id + " to " + recipientJid);
                 connection.sendStanza(xmppMessage);

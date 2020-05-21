@@ -3,6 +3,7 @@ package com.halloapp.xmpp;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -11,8 +12,8 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Container;
 import com.halloapp.proto.MediaType;
@@ -40,26 +41,23 @@ public class ChatMessageElement implements ExtensionElement {
     private ChatMessage chatMessage;
     private final long timestamp;
     private final UserId recipientUserId;
-    private final PublicEdECKey identityKey;
-    private final Integer oneTimePreKeyId;
+    private final SessionSetupInfo sessionSetupInfo;
     private final byte[] encryptedBytes;
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
 
-    ChatMessageElement(@NonNull Message message, UserId recipientUserId, PublicEdECKey identityKey, Integer oneTimePreKeyId) {
+    ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
         this.chatMessage = messageToChatMessage(message);
         this.timestamp = 0;
         this.recipientUserId = recipientUserId;
-        this.identityKey = identityKey;
-        this.oneTimePreKeyId = oneTimePreKeyId;
+        this.sessionSetupInfo = sessionSetupInfo;
         this.encryptedBytes = null;
     }
 
-    private ChatMessageElement(byte[] encryptedBytes, PublicEdECKey identityKey, Integer oneTimePreKeyId, long timestamp) {
+    private ChatMessageElement(byte[] encryptedBytes, SessionSetupInfo sessionSetupInfo, long timestamp) {
         this.chatMessage = null;
         this.timestamp = timestamp;
         this.recipientUserId = null;
-        this.identityKey = identityKey;
-        this.oneTimePreKeyId = oneTimePreKeyId;
+        this.sessionSetupInfo = sessionSetupInfo;
         this.encryptedBytes = encryptedBytes;
     }
 
@@ -67,8 +65,7 @@ public class ChatMessageElement implements ExtensionElement {
         this.chatMessage = chatMessage;
         this.timestamp = timestamp;
         this.recipientUserId = null;
-        this.identityKey = null;
-        this.oneTimePreKeyId = null;
+        this.sessionSetupInfo = null;
         this.encryptedBytes = null;
     }
 
@@ -97,12 +94,14 @@ public class ChatMessageElement implements ExtensionElement {
 
         if (Constants.ENCRYPTION_TURNED_ON) {
             xml.halfOpenElement(ELEMENT_ENCRYPTED);
-            if (identityKey != null) {
-                xml.attribute(ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(identityKey.getKeyMaterial(), Base64.NO_WRAP));
+
+            if (sessionSetupInfo != null) {
+                xml.attribute(ATTRIBUTE_IDENTITY_KEY, Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
+                if (sessionSetupInfo.oneTimePreKeyId != null) {
+                    xml.attribute(ATTRIBUTE_ONE_TIME_PRE_KEY_ID, sessionSetupInfo.oneTimePreKeyId.toString());
+                }
             }
-            if (oneTimePreKeyId != null) {
-                xml.attribute(ATTRIBUTE_ONE_TIME_PRE_KEY_ID, oneTimePreKeyId.toString());
-            }
+
             xml.rightAngleBracket();
             xml.append(getEncryptedEntryString());
             xml.closeElement(ELEMENT_ENCRYPTED);
@@ -116,7 +115,7 @@ public class ChatMessageElement implements ExtensionElement {
         if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
             try {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
-                final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, identityKey, oneTimePreKeyId);
+                final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, sessionSetupInfo);
                 chatMessage = readEncodedEntry(dec);
                 if (!plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
@@ -256,7 +255,7 @@ public class ChatMessageElement implements ExtensionElement {
         final String encryptedEntry = Xml.readText(parser);
         final byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);
 
-        return new ChatMessageElement(bytes, identityKey, oneTimePreKeyId, timestamp);
+        return new ChatMessageElement(bytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp);
     }
 
     public static class Provider extends ExtensionElementProvider<ChatMessageElement> {
