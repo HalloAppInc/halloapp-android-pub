@@ -279,6 +279,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public long getLastSeenCommentRowId(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        return postsDb.getLastSeenCommentRowId(postSenderUserId, postId);
+    }
+
+    @WorkerThread
     @NonNull List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
         return postsDb.getComments(postSenderUserId, postId, start, count);
     }

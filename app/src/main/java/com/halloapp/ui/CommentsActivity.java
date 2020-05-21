@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -125,8 +126,6 @@ public class CommentsActivity extends AppCompatActivity {
         final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
-        ContentDb.getInstance(this).setCommentsSeen(userId, postId);
-
         final View replyIndicator = findViewById(R.id.reply_indicator);
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
@@ -134,6 +133,8 @@ public class CommentsActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), userId, postId)).get(CommentsViewModel.class);
         viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {
         }));
+
+        viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));
 
         viewModel.replyContact.observe(this, contact -> {
             if (contact == null) {
@@ -260,6 +261,11 @@ public class CommentsActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_REPLY_USER_ID, replyUserId == null ? null : replyUserId.rawId());
@@ -305,6 +311,7 @@ public class CommentsActivity extends AppCompatActivity {
         final View replyButton;
         final View retractButton;
         final RecyclerView mediaGallery;
+        final CardView cardView;
 
         Comment comment;
 
@@ -318,6 +325,7 @@ public class CommentsActivity extends AppCompatActivity {
             replyButton = v.findViewById(R.id.reply);
             retractButton = v.findViewById(R.id.retract);
             mediaGallery = v.findViewById(R.id.media);
+            cardView = v.findViewById(R.id.comment);
             if (mediaGallery != null) {
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
                 mediaGallery.setLayoutManager(layoutManager);
@@ -325,7 +333,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
         }
 
-        void bindTo(final @NonNull Comment comment) {
+        void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId) {
 
             this.comment = comment;
 
@@ -356,6 +364,8 @@ public class CommentsActivity extends AppCompatActivity {
                 textLimits.put(comment.rowId, limit);
                 return false;
             });
+
+            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.window_background : R.color.card_background));
 
             replyButton.setOnClickListener(v -> {
                 updateReplyIndicator(comment.commentSenderUserId, comment.commentId);
@@ -476,6 +486,7 @@ public class CommentsActivity extends AppCompatActivity {
     private class CommentsAdapter extends AdapterWithLifecycle<ViewHolder> {
 
         final AsyncPagedListDiffer<Comment> differ;
+        private long lastSeenCommentRowId;
 
         CommentsAdapter() {
             setHasStableIds(true);
@@ -501,6 +512,13 @@ public class CommentsActivity extends AppCompatActivity {
             };
 
             differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build());
+        }
+
+        public void setLastSeenCommentRowId(long rowId) {
+            if (lastSeenCommentRowId != rowId) {
+                lastSeenCommentRowId = rowId;
+                notifyDataSetChanged();
+            }
         }
 
         void submitList(@Nullable PagedList<Comment> pagedList) {
@@ -561,7 +579,7 @@ public class CommentsActivity extends AppCompatActivity {
             if (position == 0) {
                 holder.bindTo(viewModel.post.getValue());
             } else {
-                holder.bindTo(Preconditions.checkNotNull(getItem(position)));
+                holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId);
             }
         }
     }

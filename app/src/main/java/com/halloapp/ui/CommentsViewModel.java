@@ -21,10 +21,12 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.util.ComputableLiveData;
 
 class CommentsViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Comment>> commentList;
+    final ComputableLiveData<Long> lastSeenCommentRowId;
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
@@ -87,6 +89,15 @@ class CommentsViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
+
+        lastSeenCommentRowId = new ComputableLiveData<Long>() {
+            @Override
+            protected Long compute() {
+                long rowId = contentDb.getLastSeenCommentRowId(postSenderUserId, postId);
+                contentDb.setCommentsSeen(postSenderUserId, postId);
+                return rowId;
+            }
+        };
 
         dataSourceFactory = new CommentsDataSource.Factory(contentDb, postSenderUserId, postId);
         commentList = new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();

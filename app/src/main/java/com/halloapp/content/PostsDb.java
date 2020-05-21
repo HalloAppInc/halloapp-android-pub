@@ -584,6 +584,21 @@ class PostsDb {
     }
 
     @WorkerThread
+    long getLastSeenCommentRowId(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT MAX(" + CommentsTable._ID + ") FROM " + CommentsTable.TABLE_NAME + " " +
+                "WHERE " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_POST_ID + "=? AND " + CommentsTable.COLUMN_SEEN + "=1";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {postSenderUserId.rawId(), postId})) {
+            if (cursor.moveToNext()) {
+                return cursor.isNull(0) ? -1 : cursor.getLong(0);
+            } else {
+                return -1;
+            }
+        }
+    }
+
+    @WorkerThread
     @NonNull List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
         final String sql =
                 "WITH RECURSIVE " +
