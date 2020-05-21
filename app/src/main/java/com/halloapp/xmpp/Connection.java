@@ -404,18 +404,20 @@ public class Connection {
         });
     }
 
-    public void uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
-        executor.execute(() -> {
+    public Future<Boolean> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
+        return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: upload keys: no connection");
-                return;
+                return Boolean.FALSE;
             }
             final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(connection.getXMPPServiceDomain(), identityKey, signedPreKey, oneTimePreKeys);
             try {
                 final IQ response = connection.createStanzaCollectorAndSend(uploadIq).nextResultOrThrow();
                 Log.d("connection: response after uploading keys " + response.toString());
+                return Boolean.TRUE;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot upload keys", e);
+                return Boolean.FALSE;
             }
         });
     }

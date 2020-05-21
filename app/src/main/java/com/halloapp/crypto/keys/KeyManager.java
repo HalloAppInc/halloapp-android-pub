@@ -1,6 +1,7 @@
 package com.halloapp.crypto.keys;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
@@ -16,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class KeyManager {
 
@@ -42,6 +45,7 @@ public class KeyManager {
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
+    @WorkerThread
     public void ensureKeysUploaded(Connection connection) {
         if (!Constants.ENCRYPTION_TURNED_ON) {
             return;
@@ -72,10 +76,16 @@ public class KeyManager {
                 oneTimePreKeys.add(toAdd.toByteArray());
             }
 
-            // TODO(jack): Check for success
-            connection.uploadKeys(identityKeyProto.toByteArray(), signedPreKeyProto.toByteArray(), oneTimePreKeys);
-
-            encryptedKeyStore.setKeysUploaded(true);
+            Future<Boolean> success = connection.uploadKeys(identityKeyProto.toByteArray(), signedPreKeyProto.toByteArray(), oneTimePreKeys);
+            try {
+                if (success.get()) {
+                    encryptedKeyStore.setKeysUploaded(true);
+                } else {
+                    Log.e("Key upload failed");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e("Exception awaiting key upload result", e);
+            }
         } else {
             Log.i("Keys were already uploaded");
         }
