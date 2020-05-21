@@ -83,7 +83,7 @@ public class EncryptedKeyStore {
     public void init(Context context) {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
-                sharedPreferences = getSharedPreferences(context, ENC_PREF_FILE_NAME);
+                sharedPreferences = getSharedPreferences(context);
             } catch (Exception e) {
                 Log.e("Failed to init encrypted key store", e);
             }
@@ -448,11 +448,11 @@ public class EncryptedKeyStore {
         return stringToBytes(stored);
     }
 
-    private static SharedPreferences getSharedPreferences(Context context, String fileName) throws Exception {
+    private static SharedPreferences getSharedPreferences(Context context) throws Exception {
         if (Build.VERSION.SDK_INT >= 23) {
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // TODO(jack): Is default master key okay?
             return EncryptedSharedPreferences.create(
-                    fileName,
+                    EncryptedKeyStore.ENC_PREF_FILE_NAME,
                     masterKeyAlias,
                     context,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
@@ -460,7 +460,7 @@ public class EncryptedKeyStore {
             );
         } else {
             // TODO(jack): remove once androidx.security supports back to API 21
-            return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+            return context.getSharedPreferences(EncryptedKeyStore.ENC_PREF_FILE_NAME, Context.MODE_PRIVATE);
         }
     }
 

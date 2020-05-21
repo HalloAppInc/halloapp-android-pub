@@ -1,5 +1,7 @@
 package com.halloapp.crypto.keys;
 
+import androidx.annotation.NonNull;
+
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 
@@ -58,6 +60,7 @@ public class MessageKey {
         return currentChainIndex;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "MessageKey [ekid=" + ephemeralKeyId + "; pcl=" + previousChainLength + "; cci=" + currentChainIndex + "]";
