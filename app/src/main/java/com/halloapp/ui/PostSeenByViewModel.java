@@ -23,7 +23,8 @@ import java.util.List;
 public class PostSeenByViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
-    final ComputableLiveData<List<Contact>> contactsList;
+    final ComputableLiveData<List<Contact>> seenByList;
+    final ComputableLiveData<List<Contact>> friendsList;
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
     private final ContentDb contentDb;
@@ -52,7 +53,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         }
 
         private void invalidateContacts() {
-            mainHandler.post(contactsList::invalidate);
+            mainHandler.post(seenByList::invalidate);
         }
     };
 
@@ -60,7 +61,8 @@ public class PostSeenByViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsChanged() {
-            mainHandler.post(contactsList::invalidate);
+            mainHandler.post(seenByList::invalidate);
+            mainHandler.post(friendsList::invalidate);
         }
 
         @Override
@@ -77,7 +79,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance(application);
         contactsDb.addObserver(contactsObserver);
 
-        contactsList = new ComputableLiveData<List<Contact>>() {
+        seenByList = new ComputableLiveData<List<Contact>>() {
 
             @Override
             protected List<Contact> compute() {
@@ -87,6 +89,13 @@ public class PostSeenByViewModel extends AndroidViewModel {
                     contacts.add(contactsDb.getContact(userId));
                 }
                 return contacts;
+            }
+        };
+
+        friendsList = new ComputableLiveData<List<Contact>>() {
+            @Override
+            protected List<Contact> compute() {
+                return contactsDb.getFriends();
             }
         };
 

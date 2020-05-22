@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
@@ -34,13 +35,16 @@ import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.xmpp.Connection;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PostSeenByActivity extends AppCompatActivity {
 
     public static final String EXTRA_POST_ID = "post_id";
 
-    private final SeenByAdapter adapter = new SeenByAdapter();
+    private final ContactsAdapter adapter = new ContactsAdapter();
     private PostSeenByViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
     private AvatarLoader avatarLoader;
@@ -61,7 +65,8 @@ public class PostSeenByActivity extends AppCompatActivity {
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         viewModel = new ViewModelProvider(this, new PostSeenByViewModel.Factory(getApplication(), postId)).get(PostSeenByViewModel.class);
-        viewModel.contactsList.getLiveData().observe(this, adapter::setContacts);
+        viewModel.seenByList.getLiveData().observe(this, adapter::setSeenBy);
+        viewModel.friendsList.getLiveData().observe(this, adapter::setFriends);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
@@ -187,31 +192,144 @@ public class PostSeenByActivity extends AppCompatActivity {
         }
     }
 
-    private class SeenByAdapter extends RecyclerView.Adapter<SeenByAdapter.ViewHolder> {
+    interface ListItem {
 
-        private List<Contact> contacts;
+        int getType();
+    }
 
-        public void setContacts(List<Contact> contacts) {
-            this.contacts = contacts;
+    static class ContactListItem implements ListItem {
+        final @NonNull Contact contact;
+
+        ContactListItem(@NonNull Contact contact) {
+            this.contact = contact;
+        }
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_CONTACT;
+        }
+    }
+
+    static class HeaderListItem implements ListItem {
+        final String title;
+
+        HeaderListItem(String title) {
+            this.title = title;
+        }
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_HEADER;
+        }
+    }
+
+    static class EmptyListItem implements ListItem {
+        final String text;
+
+        EmptyListItem(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_EMPTY;
+        }
+    }
+
+    private class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
+
+        static final int VIEW_TYPE_HEADER = 0;
+        static final int VIEW_TYPE_CONTACT = 1;
+        static final int VIEW_TYPE_EMPTY = 2;
+
+        private List<Contact> seenBy;
+        private List<Contact> friends;
+
+        private final List<ListItem> listItems = new ArrayList<>();
+
+        void setSeenBy(List<Contact> seenBy) {
+            this.seenBy = seenBy;
+            createListItems();
             notifyDataSetChanged();
+        }
+
+        void setFriends(List<Contact> friends) {
+            this.friends = friends;
+            notifyDataSetChanged();
+            createListItems();
+        }
+
+        private void createListItems() {
+            listItems.clear();
+            listItems.add(new HeaderListItem(getString(R.string.seen_by)));
+            final Set<UserId> seenByUserIds = new HashSet<>();
+            if (seenBy == null || seenBy.isEmpty()) {
+                listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
+            } else {
+                for (Contact contact : seenBy) {
+                    listItems.add(new ContactListItem(contact));
+                    seenByUserIds.add(contact.userId);
+                }
+            }
+            if (friends != null && !friends.isEmpty()) {
+                boolean headerAdded = false;
+                for (Contact contact : friends) {
+                    if (!seenByUserIds.contains(contact.userId)) {
+                        if (!headerAdded) {
+                            listItems.add(new HeaderListItem(getString(R.string.other_friends)));
+                            headerAdded = true;
+                        }
+                        listItems.add(new ContactListItem(contact));
+                    }
+                }
+            }
+        }
+
+
+        @Override
+        public int getItemViewType(int position) {
+            return listItems.get(position).getType();
         }
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_item, parent, false));
+            switch (viewType) {
+                case VIEW_TYPE_HEADER: {
+                    return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_header_item, parent, false));
+                }
+                case VIEW_TYPE_CONTACT: {
+                    return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_contact_item, parent, false));
+                }
+                case VIEW_TYPE_EMPTY: {
+                    return new EmptyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_empty_item, parent, false));
+                }
+            }
+            throw new IllegalStateException("unknown item type");
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bindTo(contacts.get(position));
+            //noinspection unchecked
+            holder.bindTo(listItems.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return contacts == null ? 0 : contacts.size();
+            return listItems.size();
         }
 
-        private class ViewHolder extends RecyclerView.ViewHolder {
+        private class ViewHolder<LI extends ListItem> extends RecyclerView.ViewHolder {
+
+            ViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
+
+
+            void bindTo(LI listItem) {
+            }
+        }
+
+        private class ContactViewHolder extends ViewHolder<ContactListItem> {
 
             final ImageView avatarView;
             final TextView nameView;
@@ -219,7 +337,7 @@ public class PostSeenByActivity extends AppCompatActivity {
 
             Contact contact;
 
-            ViewHolder(@NonNull View itemView) {
+            ContactViewHolder(@NonNull View itemView) {
                 super(itemView);
                 avatarView = itemView.findViewById(R.id.avatar);
                 nameView = itemView.findViewById(R.id.name);
@@ -244,10 +362,38 @@ public class PostSeenByActivity extends AppCompatActivity {
                 menuView.setVisibility(View.INVISIBLE); // TODO (ds): uncomment when blocking is implemented
             }
 
-            void bindTo(@NonNull Contact contact) {
-                this.contact = contact;
-                avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
+            @Override
+            void bindTo(@NonNull ContactListItem item) {
+                contact = item.contact;
+                avatarLoader.load(avatarView, Preconditions.checkNotNull(item.contact.userId));
                 nameView.setText(contact.getDisplayName());
+            }
+        }
+
+        private class HeaderViewHolder extends ViewHolder<HeaderListItem> {
+
+            final TextView titleView;
+
+            HeaderViewHolder(@NonNull View itemView) {
+                super(itemView);
+                titleView = itemView.findViewById(R.id.title);
+            }
+
+            @Override
+            void bindTo(@NonNull HeaderListItem item) {
+                titleView.setText(item.title);
+            }
+        }
+
+        private class EmptyViewHolder extends ViewHolder<EmptyListItem> {
+
+            EmptyViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
+
+            @Override
+            void bindTo(@NonNull EmptyListItem item) {
+                ((TextView)itemView).setText(item.text);
             }
         }
     }

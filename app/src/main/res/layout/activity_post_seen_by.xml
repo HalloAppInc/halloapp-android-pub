@@ -33,45 +33,23 @@
         android:paddingBottom="16dp"
         app:ltvLimit="3"
         app:ltvStep="12"
-        app:layout_constraintBottom_toTopOf="@+id/seen_by_container"
+        app:layout_constraintBottom_toTopOf="@+id/seen_by_list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/media"
         app:ltvReadMore="@string/read_more"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
 
-    <LinearLayout
-        android:id="@+id/seen_by_container"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/seen_by_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/card_background"
-        android:orientation="vertical"
+        android:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:singleLine="true"
-            android:textAlignment="gravity"
-            android:textDirection="locale"
-            android:textAppearance="?textAppearanceListItem"
-            android:textColor="?android:attr/textColorSecondary"
-            android:text="@string/seen_by" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/post_actions_separator" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/seen_by_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/text"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
