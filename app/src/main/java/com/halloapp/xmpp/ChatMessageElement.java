@@ -27,6 +27,8 @@ import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
 
+import java.security.GeneralSecurityException;
+
 public class ChatMessageElement implements ExtensionElement {
 
     static final String NAMESPACE = "halloapp:chat:messages";
@@ -120,7 +122,7 @@ public class ChatMessageElement implements ExtensionElement {
                 if (!plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
                 }
-            } catch (Exception e) {
+            } catch (GeneralSecurityException e) {
                 Log.e("Failed to decrypt message, falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure");
                 chatMessage = plaintextChatMessage;
@@ -157,7 +159,7 @@ public class ChatMessageElement implements ExtensionElement {
             byte[] encodedEntry = getEncodedEntry();
             byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
             return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
-        } catch (Exception e) {
+        } catch (GeneralSecurityException e) {
             Log.e("Failed to encrypt", e);
             Log.sendErrorReport("Encryption failure");
         }

@@ -16,6 +16,8 @@ import com.halloapp.xmpp.Connection;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +95,7 @@ public class KeyManager {
         }
     }
 
-    public void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws Exception {
+    public void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws GeneralSecurityException {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
         encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
@@ -133,7 +135,7 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws Exception {
+    public void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
 
@@ -177,7 +179,7 @@ public class KeyManager {
         CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
     }
 
-    public MessageKey getNextOutboundMessageKey(UserId peerUserId) throws Exception {
+    public MessageKey getNextOutboundMessageKey(UserId peerUserId) throws GeneralSecurityException {
         int ephemeralKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
         int previousChainLength = encryptedKeyStore.getOutboundPreviousChainLength(peerUserId);
         int currentChainIndex = encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId);
@@ -189,11 +191,11 @@ public class KeyManager {
         return new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
     }
 
-    private byte[] getNextInboundMessageKey(UserId peerUserId) throws Exception {
+    private byte[] getNextInboundMessageKey(UserId peerUserId) throws GeneralSecurityException {
         return getNextMessageKey(peerUserId, false);
     }
 
-    public byte[] getInboundMessageKey(UserId peerUserId, PublicXECKey ephemeralKey, int ephemeralKeyId, int previousChainLength, int currentChainIndex) throws Exception {
+    public byte[] getInboundMessageKey(UserId peerUserId, PublicXECKey ephemeralKey, int ephemeralKeyId, int previousChainLength, int currentChainIndex) throws GeneralSecurityException {
         int latestStoredEphemeralKeyId = encryptedKeyStore.getInboundEphemeralKeyId(peerUserId);
         int latestPreviousChainLength = encryptedKeyStore.getInboundPreviousChainLength(peerUserId);
         int latestStoredChainIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId);
@@ -236,7 +238,7 @@ public class KeyManager {
         return messageKey;
     }
 
-    private void skipInboundKeys(UserId peerUserId, int count, int ephemeralKeyId, int previousChainLength, int startIndex) throws Exception {
+    private void skipInboundKeys(UserId peerUserId, int count, int ephemeralKeyId, int previousChainLength, int startIndex) throws GeneralSecurityException {
         Log.i("skipping " + count + " inbound keys");
         for (int i=0; i<count; i++) {
             byte[] inboundMessageKey = getNextInboundMessageKey(peerUserId);
@@ -245,7 +247,7 @@ public class KeyManager {
         }
     }
 
-    private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws Exception {
+    private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws GeneralSecurityException {
         byte[] chainKey = isOutbound ? encryptedKeyStore.getOutboundChainKey(peerUserId) : encryptedKeyStore.getInboundChainKey(peerUserId);
 
         byte[] messageKey = CryptoUtil.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
@@ -262,15 +264,15 @@ public class KeyManager {
         return messageKey;
     }
 
-    public void updateOutboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws Exception {
+    public void updateOutboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws GeneralSecurityException {
         updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, true);
     }
 
-    public void updateInboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws Exception {
+    public void updateInboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws GeneralSecurityException {
         updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, false);
     }
 
-    private void updateChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws Exception {
+    private void updateChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws GeneralSecurityException {
         byte[] ephemeralSecret = CryptoUtil.ecdh(myEphemeral, peerEphemeral);
 
         byte[] output = CryptoUtil.hkdf(ephemeralSecret, encryptedKeyStore.getRootKey(peerUserId), HKDF_ROOT_KEY_INFO, 64);

@@ -26,7 +26,7 @@ class MessageCipher {
         this.encryptedKeyStore = EncryptedKeyStore.getInstance();
     }
 
-    byte[] convertFromWire(byte[] message, UserId peerUserId) throws Exception {
+    byte[] convertFromWire(byte[] message, UserId peerUserId) throws GeneralSecurityException {
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
         byte[] previousChainLengthBytes = Arrays.copyOfRange(message, 36, 40);
@@ -61,7 +61,7 @@ class MessageCipher {
         return ret;
     }
 
-    byte[] convertForWire(byte[] message, UserId peerUserId) throws Exception {
+    byte[] convertForWire(byte[] message, UserId peerUserId) throws GeneralSecurityException {
         MessageKey messageKey = keyManager.getNextOutboundMessageKey(peerUserId);
         byte[] outboundMessageKey = messageKey.getKeyMaterial();
 

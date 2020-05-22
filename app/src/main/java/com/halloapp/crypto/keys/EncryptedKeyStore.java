@@ -16,6 +16,8 @@ import com.halloapp.crypto.CryptoUtil;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -448,9 +450,9 @@ public class EncryptedKeyStore {
         return stringToBytes(stored);
     }
 
-    private static SharedPreferences getSharedPreferences(Context context) throws Exception {
+    private static SharedPreferences getSharedPreferences(Context context) throws GeneralSecurityException, IOException {
         if (Build.VERSION.SDK_INT >= 23) {
-            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // TODO(jack): Is default master key okay?
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
             return EncryptedSharedPreferences.create(
                     EncryptedKeyStore.ENC_PREF_FILE_NAME,
                     masterKeyAlias,

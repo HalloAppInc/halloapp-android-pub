@@ -3,6 +3,7 @@ package com.halloapp.crypto;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Message;
@@ -18,6 +19,7 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import java.security.GeneralSecurityException;
+import java.util.concurrent.ExecutionException;
 
 public class EncryptedSessionManager {
     private final Connection connection;
@@ -45,11 +47,11 @@ public class EncryptedSessionManager {
         this.messageCipher = messageCipher;
     }
 
-    public byte[] encryptMessage(byte[] message, UserId peerUserId) throws Exception {
+    public byte[] encryptMessage(byte[] message, UserId peerUserId) throws GeneralSecurityException {
         return messageCipher.convertForWire(message, peerUserId);
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws Exception {
+    public byte[] decryptMessage(byte[] message, UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
             if (sessionSetupInfo == null) {
                 throw new GeneralSecurityException("Cannot set up session without identity key");
@@ -74,7 +76,7 @@ public class EncryptedSessionManager {
         }
     }
 
-    private SessionSetupInfo setUpSession(UserId peerUserId) throws Exception {
+    private SessionSetupInfo setUpSession(UserId peerUserId) throws GeneralSecurityException, InvalidProtocolBufferException, ExecutionException, InterruptedException {
         if (!Constants.ENCRYPTION_TURNED_ON || encryptedKeyStore.getPeerResponded(peerUserId)) {
             return null;
         }
