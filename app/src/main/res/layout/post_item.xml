@@ -88,10 +88,11 @@
                 android:orientation="vertical">
             </com.halloapp.widget.SeenDetectorLayout>
 
-            <FrameLayout
+            <LinearLayout
                 android:id="@+id/post_footer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
         </LinearLayout>
 

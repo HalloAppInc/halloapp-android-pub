@@ -5,12 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:parentTag="LinearLayout"
+    tools:orientation="vertical">
 
     <com.halloapp.widget.MediaViewPager
         android:id="@+id/media_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:layout_height="192dp"/>
 
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/media_pager_indicator"
