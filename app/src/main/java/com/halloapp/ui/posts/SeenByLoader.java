@@ -26,7 +26,7 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
 
     @MainThread
     public void load(@NonNull AvatarsLayout view, @NonNull String postId) {
-        final Callable<List<UserId>> loader = () -> contentDb.getPostSeenBy(postId);
+        final Callable<List<UserId>> loader = () -> contentDb.getPostSeenByUsers(postId);
         final ViewDataLoader.Displayer<AvatarsLayout, List<UserId>> displayer = new ViewDataLoader.Displayer<AvatarsLayout, List<UserId>>() {
 
             @Override
@@ -40,6 +40,5 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
             }
         };
         load(view, loader, displayer, postId, cache);
-
     }
 }

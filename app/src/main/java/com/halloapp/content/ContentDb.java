@@ -235,8 +235,13 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<UserId> getPostSeenBy(@NonNull String postId) {
-        return postsDb.getPostSeenBy(postId);
+    public @NonNull List<UserId> getPostSeenByUsers(@NonNull String postId) {
+        return postsDb.getPostSeenByUsers(postId);
+    }
+
+    @WorkerThread
+    public @NonNull List<SeenByInfo> getPostSeenByInfos(@NonNull String postId) {
+        return postsDb.getPostSeenByInfos(postId);
     }
 
     public void addComment(@NonNull Comment comment) {

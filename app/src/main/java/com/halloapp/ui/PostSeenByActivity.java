@@ -31,6 +31,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.xmpp.Connection;
@@ -48,6 +49,7 @@ public class PostSeenByActivity extends AppCompatActivity {
     private PostSeenByViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
     private AvatarLoader avatarLoader;
+    private TimestampRefresher timestampRefresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,9 @@ public class PostSeenByActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
+        timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
     }
 
     @Override
@@ -199,9 +204,11 @@ public class PostSeenByActivity extends AppCompatActivity {
 
     static class ContactListItem implements ListItem {
         final @NonNull Contact contact;
+        final long timestamp;
 
-        ContactListItem(@NonNull Contact contact) {
+        ContactListItem(@NonNull Contact contact, long timestamp) {
             this.contact = contact;
+            this.timestamp = timestamp;
         }
 
         @Override
@@ -242,13 +249,13 @@ public class PostSeenByActivity extends AppCompatActivity {
         static final int VIEW_TYPE_CONTACT = 1;
         static final int VIEW_TYPE_EMPTY = 2;
 
-        private List<Contact> seenBy;
+        private List<PostSeenByViewModel.SeenByContact> seenByContacts;
         private List<Contact> friends;
 
         private final List<ListItem> listItems = new ArrayList<>();
 
-        void setSeenBy(List<Contact> seenBy) {
-            this.seenBy = seenBy;
+        void setSeenBy(List<PostSeenByViewModel.SeenByContact> seenByContacts) {
+            this.seenByContacts = seenByContacts;
             createListItems();
             notifyDataSetChanged();
         }
@@ -263,12 +270,12 @@ public class PostSeenByActivity extends AppCompatActivity {
             listItems.clear();
             listItems.add(new HeaderListItem(getString(R.string.seen_by)));
             final Set<UserId> seenByUserIds = new HashSet<>();
-            if (seenBy == null || seenBy.isEmpty()) {
+            if (seenByContacts == null || seenByContacts.isEmpty()) {
                 listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
             } else {
-                for (Contact contact : seenBy) {
-                    listItems.add(new ContactListItem(contact));
-                    seenByUserIds.add(contact.userId);
+                for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
+                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
+                    seenByUserIds.add(seenByContact.contact.userId);
                 }
             }
             if (friends != null && !friends.isEmpty()) {
@@ -279,7 +286,7 @@ public class PostSeenByActivity extends AppCompatActivity {
                             listItems.add(new HeaderListItem(getString(R.string.other_friends)));
                             headerAdded = true;
                         }
-                        listItems.add(new ContactListItem(contact));
+                        listItems.add(new ContactListItem(contact, -1));
                     }
                 }
             }
@@ -333,6 +340,7 @@ public class PostSeenByActivity extends AppCompatActivity {
 
             final ImageView avatarView;
             final TextView nameView;
+            final TextView timeView;
             final View menuView;
 
             Contact contact;
@@ -341,6 +349,7 @@ public class PostSeenByActivity extends AppCompatActivity {
                 super(itemView);
                 avatarView = itemView.findViewById(R.id.avatar);
                 nameView = itemView.findViewById(R.id.name);
+                timeView = itemView.findViewById(R.id.time);
                 menuView = itemView.findViewById(R.id.menu);
                 menuView.setOnClickListener(v -> {
                     final PopupMenu menu = new PopupMenu(menuView.getContext(), menuView);
@@ -359,7 +368,7 @@ public class PostSeenByActivity extends AppCompatActivity {
                     });
                     menu.show();
                 });
-                menuView.setVisibility(View.INVISIBLE); // TODO (ds): uncomment when blocking is implemented
+                menuView.setVisibility(View.GONE); // TODO (ds): uncomment when blocking is implemented
             }
 
             @Override
@@ -367,6 +376,12 @@ public class PostSeenByActivity extends AppCompatActivity {
                 contact = item.contact;
                 avatarLoader.load(avatarView, Preconditions.checkNotNull(item.contact.userId));
                 nameView.setText(contact.getDisplayName());
+                if (item.timestamp >= 0) {
+                    TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - item.timestamp);
+                    timestampRefresher.scheduleTimestampRefresh(item.timestamp);
+                } else {
+                    timeView.setText("");
+                }
             }
         }
 

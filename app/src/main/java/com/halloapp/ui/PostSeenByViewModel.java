@@ -15,6 +15,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.content.SeenByInfo;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
 public class PostSeenByViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
-    final ComputableLiveData<List<Contact>> seenByList;
+    final ComputableLiveData<List<SeenByContact>> seenByList;
     final ComputableLiveData<List<Contact>> friendsList;
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
@@ -79,16 +80,16 @@ public class PostSeenByViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance(application);
         contactsDb.addObserver(contactsObserver);
 
-        seenByList = new ComputableLiveData<List<Contact>>() {
+        seenByList = new ComputableLiveData<List<SeenByContact>>() {
 
             @Override
-            protected List<Contact> compute() {
-                final List<UserId> userIds = contentDb.getPostSeenBy(postId);
-                final List<Contact> contacts = new ArrayList<>(userIds.size());
-                for (UserId userId : userIds) {
-                    contacts.add(contactsDb.getContact(userId));
+            protected List<SeenByContact> compute() {
+                final List<SeenByInfo> seenByInfos = contentDb.getPostSeenByInfos(postId);
+                final List<SeenByContact> seenByContacts = new ArrayList<>(seenByInfos.size());
+                for (SeenByInfo seenByInfo : seenByInfos) {
+                    seenByContacts.add(new SeenByContact(contactsDb.getContact(seenByInfo.userId), seenByInfo.timestamp));
                 }
-                return contacts;
+                return seenByContacts;
             }
         };
 
@@ -111,6 +112,16 @@ public class PostSeenByViewModel extends AndroidViewModel {
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
         contactsDb.removeObserver(contactsObserver);
+    }
+
+    static class SeenByContact {
+        public final Contact contact;
+        public final long timestamp;
+
+        SeenByContact(Contact contact, long timestamp) {
+            this.contact = contact;
+            this.timestamp = timestamp;
+        }
     }
 
     public static class Factory implements ViewModelProvider.Factory {

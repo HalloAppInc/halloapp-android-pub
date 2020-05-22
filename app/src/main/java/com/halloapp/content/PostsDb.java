@@ -720,7 +720,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<UserId> getPostSeenBy(@NonNull String postId) {
+    @NonNull List<UserId> getPostSeenByUsers(@NonNull String postId) {
         final List<UserId> users = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(SeenTable.TABLE_NAME,
@@ -733,6 +733,22 @@ class PostsDb {
         }
         Log.i("ContentDb.getSeenBy: users.size=" + users.size());
         return users;
+    }
+
+    @WorkerThread
+    @NonNull List<SeenByInfo> getPostSeenByInfos(@NonNull String postId) {
+        final List<SeenByInfo> seenByInfos = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(SeenTable.TABLE_NAME,
+                new String [] {SeenTable.COLUMN_SEEN_BY_USER_ID, SeenTable.COLUMN_TIMESTAMP},
+                SeenTable.COLUMN_POST_ID + "=?",
+                new String [] {postId}, null, null, SeenTable._ID + " DESC")) {
+            while (cursor.moveToNext()) {
+                seenByInfos.add(new SeenByInfo(new UserId(cursor.getString(0)), cursor.getLong(1)));
+            }
+        }
+        Log.i("ContentDb.getSeenBy: seenByInfos.size=" + seenByInfos.size());
+        return seenByInfos;
     }
 
     @WorkerThread
