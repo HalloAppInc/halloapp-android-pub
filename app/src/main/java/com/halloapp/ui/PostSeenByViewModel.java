@@ -44,15 +44,15 @@ public class PostSeenByViewModel extends AndroidViewModel {
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            invalidateContacts();
+            invalidateSeenBy();
         }
 
         @Override
         public void onFeedCleanup() {
-            invalidateContacts();
+            invalidateSeenBy();
         }
 
-        private void invalidateContacts() {
+        private void invalidateSeenBy() {
             mainHandler.post(seenByList::invalidate);
         }
     };
@@ -95,7 +95,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         friendsList = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
-                return contactsDb.getFriends();
+                return Contact.sort(contactsDb.getFriends());
             }
         };
 

@@ -7,6 +7,11 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.text.Collator;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 public class Contact {
 
     final long rowId;
@@ -51,5 +56,19 @@ public class Contact {
             internationalPhone = addressBookPhone;
         }
         return BidiFormatter.getInstance().unicodeWrap(internationalPhone, false);
+    }
+
+    public static List<Contact> sort(@NonNull List<Contact> contacts) {
+        Collator collator = Collator.getInstance(Locale.getDefault());
+        Collections.sort(contacts, (o1, o2) -> {
+            boolean alpha1 = Character.isAlphabetic(o1.getDisplayName().codePointAt(0));
+            boolean alpha2 = Character.isAlphabetic(o2.getDisplayName().codePointAt(0));
+            if (alpha1 == alpha2) {
+                return collator.compare(o1.getDisplayName(), o2.getDisplayName());
+            } else {
+                return alpha1 ? -1 : 1;
+            }
+        });
+        return contacts;
     }
 }
