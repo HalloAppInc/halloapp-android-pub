@@ -131,7 +131,7 @@ public class AvatarsLayout extends FrameLayout {
         } else {
             setMeasuredDimension(
                     avatarSize + (int)((visibleChildCount - 1) * (2f * avatarSize / 3f)) + getPaddingLeft() + getPaddingRight(),
-                    avatarSize +  + getPaddingTop() + getPaddingBottom());
+                    avatarSize + getPaddingTop() + getPaddingBottom());
         }
     }
 

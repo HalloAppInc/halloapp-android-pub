@@ -6,6 +6,45 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.halloapp.widget.AvatarsLayout
+        android:id="@+id/seen_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="end|bottom"
+        android:paddingTop="2dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:alPaddingColor="@color/card_background"
+        app:alPaddingSize="1dp"
+        app:alElevation="0dp"
+        app:alAvatarSize="28dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <ImageButton
+        style="?actionButtonStyle"
+        android:id="@+id/seen_button"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="end|bottom"
+        android:paddingTop="2dp"
+        android:paddingBottom="14dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:src="@drawable/ic_seen_by"
+        android:contentDescription="@string/seen_by"
+        android:visibility="gone"
+        tools:visibility="gone"/>
+
+    <View
+        android:id="@+id/post_actions_separator"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/post_actions_separator"/>
+
     <FrameLayout
         android:id="@+id/comment_content"
         android:layout_width="match_parent"
@@ -185,17 +224,6 @@
                 android:id="@+id/comments_indicator" />
 
         </LinearLayout>
-
-        <ImageButton
-            style="?actionButtonStyle"
-            android:id="@+id/actions"
-            android:contentDescription="@string/options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_more"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

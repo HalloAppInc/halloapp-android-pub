@@ -33,7 +33,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="0dp"
-        android:paddingBottom="0dp"
+        android:paddingBottom="4dp"
         android:textAppearance="?textAppearanceListItemSmall"
         android:textSize="@dimen/post_text_size"
         android:lineSpacingMultiplier="1.1"
@@ -44,22 +44,6 @@
     <Space
         android:id="@+id/footer_spacing"
         android:layout_width="0dp"
-        android:layout_height="12dp"
-        android:visibility="visible"/>
-
-    <com.halloapp.widget.AvatarsLayout
-        android:id="@+id/seen_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:paddingTop="2dp"
-        android:paddingBottom="12dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="20dp"
-        app:alPaddingColor="@color/card_background"
-        app:alPaddingSize="1dp"
-        app:alElevation="0dp"
-        app:alAvatarSize="28dp"
-        android:visibility="gone"/>
+        android:layout_height="8dp"/>
 
 </merge>

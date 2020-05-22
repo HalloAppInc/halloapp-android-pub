@@ -3,7 +3,10 @@ package com.halloapp.ui;
 import android.graphics.Outline;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -12,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -36,6 +41,7 @@ public class PostSeenByActivity extends AppCompatActivity {
     public static final String EXTRA_POST_ID = "post_id";
 
     private final SeenByAdapter adapter = new SeenByAdapter();
+    private PostSeenByViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
     private AvatarLoader avatarLoader;
 
@@ -54,13 +60,19 @@ public class PostSeenByActivity extends AppCompatActivity {
 
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
-        final PostSeenByViewModel viewModel = new ViewModelProvider(this, new PostSeenByViewModel.Factory(getApplication(), postId)).get(PostSeenByViewModel.class);
+        viewModel = new ViewModelProvider(this, new PostSeenByViewModel.Factory(getApplication(), postId)).get(PostSeenByViewModel.class);
         viewModel.contactsList.getLiveData().observe(this, adapter::setContacts);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
 
         viewModel.post.getLiveData().observe(this, this::showPost);
+
+        viewModel.postDeleted.observe(this, deleted -> {
+            if (Boolean.TRUE.equals(deleted)) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -74,6 +86,39 @@ public class PostSeenByActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.post_seen_by_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (item.getItemId()) {
+            case R.id.retract: {
+                onRetractPost();
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    private void onRetractPost() {
+        final Post post = viewModel.post.getLiveData().getValue();
+        if (post != null) {
+            new AlertDialog.Builder(this)
+                    .setMessage(getString(R.string.retract_post_confirmation))
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.yes, (dialog, which) ->
+                            ContentDb.getInstance(this).retractPost(post))
+                    .setNegativeButton(R.string.no, null)
+                    .show();
+        }
     }
 
     private void showPost(@NonNull Post post) {
@@ -92,6 +137,8 @@ public class PostSeenByActivity extends AppCompatActivity {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
+                    (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
             textView.setText(post.text);
         }
     }

@@ -40,7 +40,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final MediaViewPager mediaPagerView;
     private final CircleIndicator mediaPagerIndicator;
     private final LimitingTextView textView;
-    private final View postActionsSeparator;
     private final MediaPagerAdapter mediaPagerAdapter;
     private final View footer;
     final View footerSpacing;
@@ -64,7 +63,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         textView = itemView.findViewById(R.id.text);
-        postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
         footer = itemView.findViewById(R.id.post_footer);
 
@@ -166,17 +164,14 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         if (TextUtils.isEmpty(post.text)) {
             textView.setVisibility(View.GONE);
-            postActionsSeparator.setVisibility(post.seenByCount == 0 ? View.GONE : View.VISIBLE);
         } else {
             textView.setVisibility(View.VISIBLE);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
                     (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
-            postActionsSeparator.setVisibility(View.VISIBLE);
         }
 
         if (post.isRetracted()) {
             footer.setVisibility(View.GONE);
-            postActionsSeparator.setVisibility(View.GONE);
         } else {
             footer.setVisibility(View.VISIBLE);
         }

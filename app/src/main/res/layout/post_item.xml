@@ -88,12 +88,6 @@
                 android:orientation="vertical">
             </com.halloapp.widget.SeenDetectorLayout>
 
-            <View
-                android:id="@+id/post_actions_separator"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/post_actions_separator"/>
-
             <FrameLayout
                 android:id="@+id/post_footer"
                 android:layout_width="match_parent"

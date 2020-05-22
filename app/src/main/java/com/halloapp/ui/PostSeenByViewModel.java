@@ -6,6 +6,7 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,6 +24,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
     final ComputableLiveData<List<Contact>> contactsList;
+    final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
@@ -30,6 +32,14 @@ public class PostSeenByViewModel extends AndroidViewModel {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+            final Post post = PostSeenByViewModel.this.post.getLiveData().getValue();
+            if (post != null && post.senderUserId.equals(senderUserId) && post.id.equals(postId)) {
+                postDeleted.postValue(true);
+            }
+        }
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {

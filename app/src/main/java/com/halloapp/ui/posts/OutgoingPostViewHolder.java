@@ -31,6 +31,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
     private final View viewCommentsButton;
     private final View viewCommentsIndicator;
     private final AvatarsLayout seenIndicator;
+    private final View seenButton;
     private final View firstCommentContent;
     private final ImageView firstCommentAvatar;
     private final TextView firstCommentName;
@@ -45,6 +46,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         viewCommentsButton = itemView.findViewById(R.id.view_comments);
         viewCommentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
+        seenButton = itemView.findViewById(R.id.seen_button);
         firstCommentContent = itemView.findViewById(R.id.comment_content);
         firstCommentAvatar = itemView.findViewById(R.id.comment_avatar);
         firstCommentName = itemView.findViewById(R.id.comment_name);
@@ -64,11 +66,13 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         addCommentButton.setOnClickListener(commentsClickListener);
         viewCommentsButton.setOnClickListener(commentsClickListener);
 
-        seenIndicator.setOnClickListener(v1 -> {
+        final View.OnClickListener seenClickListener = v -> {
             final Intent intent = new Intent(itemView.getContext(), PostSeenByActivity.class);
             intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, post.id);
             parent.startActivity(intent);
-        });
+        };
+        seenIndicator.setOnClickListener(seenClickListener);
+        seenButton.setOnClickListener(seenClickListener);
 
         itemView.findViewById(R.id.comment_reply).setOnClickListener(v -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
@@ -78,25 +82,6 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             intent.putExtra(CommentsActivity.EXTRA_REPLY_COMMENT_ID, post.firstComment.commentId);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, true);
             parent.startActivity(intent);
-        });
-
-        itemView.findViewById(R.id.actions).setOnClickListener(v -> {
-            final PopupMenu menu = new PopupMenu(itemView.getContext(), v);
-            final MenuInflater menuInflater = new MenuInflater(itemView.getContext());
-            menuInflater.inflate(R.menu.outgoing_post_menu, menu.getMenu());
-            menu.setOnMenuItemClickListener(item -> {
-                //noinspection SwitchStatementWithTooFewBranches
-                switch (item.getItemId()) {
-                    case R.id.retract: {
-                        onRetractPost();
-                        return true;
-                    }
-                    default: {
-                        return false;
-                    }
-                }
-            });
-            menu.show();
         });
     }
 
@@ -116,7 +101,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);
-            footerSpacing.setVisibility(View.GONE);
+            seenButton.setVisibility(View.GONE);
             seenIndicator.setContentDescription(itemView.getContext().getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
             seenIndicator.setAvatarCount(Math.min(post.seenByCount, MAX_SEEN_BY_AVATARS));
             if (seenIndicator.getChildCount() == MAX_SEEN_BY_AVATARS) {
@@ -126,8 +111,9 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             parent.getSeenByLoader().load(seenIndicator, post.id);
         } else {
             seenIndicator.setVisibility(View.GONE);
-            footerSpacing.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
+            seenButton.setVisibility(View.VISIBLE);
         }
+        footerSpacing.setVisibility(View.GONE);
 
         viewCommentsIndicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.GONE);
 
