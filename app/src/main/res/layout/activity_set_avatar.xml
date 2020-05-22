@@ -58,6 +58,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="1"
             android:layout_margin="4dp"
+            android:textColor="@android:color/white"
             android:backgroundTint="@android:color/black"
             android:text="@string/set_avatar_reset" />
 
