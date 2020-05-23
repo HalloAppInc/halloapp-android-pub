@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.util.Rtl;
+
 public class LinearSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
     private final LinearLayoutManager layoutManager;
@@ -23,8 +25,15 @@ public class LinearSpacingItemDecoration extends RecyclerView.ItemDecoration {
         if (layoutManager.getOrientation() == RecyclerView.HORIZONTAL) {
             final RecyclerView.Adapter adapter = parent.getAdapter();
             if (adapter != null) {
-                outRect.left = position * spacing / adapter.getItemCount();
-                outRect.right = spacing - (position + 1) * spacing / adapter.getItemCount();
+                final int start = position * spacing / adapter.getItemCount();
+                final int end = spacing - (position + 1) * spacing / adapter.getItemCount();
+                if (Rtl.isRtl(parent.getContext())) {
+                    outRect.right = start;
+                    outRect.left = end;
+                } else {
+                    outRect.left = start;
+                    outRect.right = end;
+                }
             }
         } else {
             if (position > 0) {
