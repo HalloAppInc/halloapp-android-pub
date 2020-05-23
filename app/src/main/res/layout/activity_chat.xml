@@ -124,6 +124,8 @@
                     android:padding="2dp"
                     android:ellipsize="end"
                     android:maxLines="2"
+                    android:textDirection="locale"
+                    android:textAlignment="gravity"
                     app:layout_constraintStart_toEndOf="@+id/reply_media_icon"
                     app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
                     app:layout_constraintTop_toBottomOf="@+id/reply_name"
