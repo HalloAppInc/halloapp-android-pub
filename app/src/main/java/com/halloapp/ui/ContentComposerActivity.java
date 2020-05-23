@@ -39,6 +39,7 @@ import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.CenterToast;
@@ -183,6 +184,7 @@ public class ContentComposerActivity extends AppCompatActivity {
             } else {
                 mediaList.setVisibility(View.VISIBLE);
                 mediaListAdapter.setMedia(media);
+                setCurrentItem(0, false);
             }
             if (uris != null && media.size() != uris.size()) {
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
@@ -242,7 +244,7 @@ public class ContentComposerActivity extends AppCompatActivity {
             cropMenuItem.setVisible(false);
         } else {
             deleteMenuItem.setVisible(media.size() > 0);
-            cropMenuItem.setVisible(media.size() > mediaPager.getCurrentItem() && media.get(mediaPager.getCurrentItem()).type == Media.MEDIA_TYPE_IMAGE);
+            cropMenuItem.setVisible(media.size() > getCurrentItem() && media.get(getCurrentItem()).type == Media.MEDIA_TYPE_IMAGE);
         }
         return true;
     }
@@ -251,7 +253,7 @@ public class ContentComposerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.crop: {
-                final int currentItem = mediaPager.getCurrentItem();
+                final int currentItem = getCurrentItem();
                 final List<Media> media = viewModel.media.getValue();
                 if (media != null && media.size() > currentItem) {
                     final Media mediaItem = media.get(currentItem);
@@ -313,7 +315,7 @@ public class ContentComposerActivity extends AppCompatActivity {
     }
 
     private void deleteCurrentItem() {
-        final int currentItem = mediaPager.getCurrentItem();
+        final int currentItem = getCurrentItem();
         final List<Media> media = viewModel.media.getValue();
         if (media == null) {
             return;
@@ -322,7 +324,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         mediaPagerAdapter.setMedia(media);
         mediaListAdapter.setMedia(media);
         if (!media.isEmpty()) {
-            mediaPager.setCurrentItem(currentItem > media.size() ? media.size() - 1 : currentItem);
+            setCurrentItem(currentItem > media.size() ? media.size() - 1 : currentItem, true);
         } else {
             editText.setHint(R.string.type_a_post_hint);
             editText.requestFocus();
@@ -353,7 +355,7 @@ public class ContentComposerActivity extends AppCompatActivity {
             final Object tag = ((View) object).getTag();
             for (Media mediaItem : media) {
                 if (mediaItem.equals(tag)) {
-                    return index;
+                    return Rtl.isRtl(mediaPager.getContext()) ? media.size() - 1 - index : index;
                 }
                 index++;
             }
@@ -365,7 +367,8 @@ public class ContentComposerActivity extends AppCompatActivity {
             final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
-            final Media mediaItem = media.get(position);
+            final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
+
             view.setTag(mediaItem);
 
             if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
@@ -409,6 +412,17 @@ public class ContentComposerActivity extends AppCompatActivity {
         }
     }
 
+    void setCurrentItem(int position, boolean smoothScroll) {
+        mediaPager.setCurrentItem(Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - position : position, smoothScroll);
+    }
+
+    int getCurrentItem() {
+        if (mediaPagerAdapter.getCount() == 0) {
+            return 0;
+        }
+        return Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - mediaPager.getCurrentItem() : mediaPager.getCurrentItem();
+    }
+
     private class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.ViewHolder> {
 
         final List<Media> media = new ArrayList<>();
@@ -431,7 +445,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             holder.bind(media.get(position));
-            holder.thumbnailView.setOnClickListener(v -> mediaPager.setCurrentItem(position));
+            holder.thumbnailView.setOnClickListener(v -> setCurrentItem(position, true));
         }
 
         @Override
