@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
@@ -147,6 +148,42 @@ public class ContentComposerActivity extends AppCompatActivity {
         mediaList.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.details_media_list_spacing)));
         mediaListAdapter = new MediaListAdapter();
         mediaList.setAdapter(mediaListAdapter);
+
+        final ItemTouchHelper.Callback ithCallback = new ItemTouchHelper.Callback() {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+
+                final List<Media> mediaList = viewModel.getMedia();
+                if (mediaList == null) {
+                    return false;
+                }
+                Media media = mediaList.remove(viewHolder.getAdapterPosition());
+                mediaList.add(target.getAdapterPosition(), media);
+
+                mediaPagerAdapter.setMedia(mediaList);
+                setCurrentItem(target.getAdapterPosition(), false);
+
+                media = mediaListAdapter.media.remove(viewHolder.getAdapterPosition());
+                mediaListAdapter.media.add(target.getAdapterPosition(), media);
+
+                mediaListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.START | ItemTouchHelper.END);
+            }
+        };
+
+        final ItemTouchHelper ith = new ItemTouchHelper(ithCallback);
+        ith.attachToRecyclerView(mediaList);
 
         mediaPager = findViewById(R.id.media_pager);
         mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
@@ -444,8 +481,14 @@ public class ContentComposerActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bind(media.get(position));
-            holder.thumbnailView.setOnClickListener(v -> setCurrentItem(position, true));
+            final Media mediaItem = media.get(position);
+            holder.bind(mediaItem);
+            holder.thumbnailView.setOnClickListener(v -> {
+                final int mediaPos = media.indexOf(mediaItem);
+                if (mediaPos >= 0) {
+                    setCurrentItem(mediaPos, true);
+                }
+            });
         }
 
         @Override
