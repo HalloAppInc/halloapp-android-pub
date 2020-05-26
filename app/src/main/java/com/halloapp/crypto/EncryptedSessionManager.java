@@ -53,7 +53,7 @@ public class EncryptedSessionManager {
 
     public byte[] decryptMessage(byte[] message, UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-            if (sessionSetupInfo == null) {
+            if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
                 throw new GeneralSecurityException("Cannot set up session without identity key");
             }
             keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);

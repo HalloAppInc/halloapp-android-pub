@@ -202,7 +202,11 @@ public class KeyManager {
 
         if (ephemeralKeyId < latestStoredEphemeralKeyId || (ephemeralKeyId == latestStoredEphemeralKeyId && currentChainIndex < latestStoredChainIndex)) {
             Log.i("KeyManager retrieving stored message key");
-            return encryptedKeyStore.removeSkippedMessageKey(peerUserId, ephemeralKeyId, currentChainIndex);
+            byte[] messageKey = encryptedKeyStore.removeSkippedMessageKey(peerUserId, ephemeralKeyId, currentChainIndex);
+            if (messageKey == null) {
+                throw new GeneralSecurityException("Old message key not found");
+            }
+            return messageKey;
         }
 
         boolean shouldUpdateChains = ephemeralKeyId != latestStoredEphemeralKeyId;
