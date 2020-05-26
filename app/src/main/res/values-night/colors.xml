@@ -10,6 +10,7 @@
     <color name="gallery_placeholder">#424242</color>
     <color name="seen_comment_background">#383838</color>
     <color name="card_background">@color/cardview_dark_background</color>
+    <color name="reply_background">#4b4b4b</color>
     <color name="reply_indicator_background">#606060</color>
     <color name="text_post_thumbnail_color">#ffffffff</color>
     <color name="message_background_incoming">#424242</color>

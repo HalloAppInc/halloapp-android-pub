@@ -10,7 +10,7 @@
         android:color="@color/message_background_incoming"/>
 
     <solid
-        android:color="@color/card_background" />
+        android:color="@color/reply_background" />
 
 </shape>
 
