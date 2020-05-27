@@ -133,23 +133,27 @@ public class PostSeenByActivity extends AppCompatActivity {
 
     private void showPost(@NonNull Post post) {
         final RecyclerView mediaGallery = findViewById(R.id.media);
-        if (post.media.isEmpty()) {
-            mediaGallery.setVisibility(View.GONE);
-        } else {
+        final TextView textView = findViewById(R.id.text);
+
+        final boolean hasMedia = !post.media.isEmpty();
+        final boolean hasText = !TextUtils.isEmpty(post.text);
+
+        if (hasMedia) {
+            textView.setVisibility(View.GONE);
             final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
             mediaGallery.setLayoutManager(layoutManager);
             mediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.details_media_list_spacing)));
             mediaGallery.setAdapter(new MediaAdapter(post.media));
-        }
-
-        final TextView textView = findViewById(R.id.text);
-        if (TextUtils.isEmpty(post.text)) {
-            textView.setVisibility(View.GONE);
-        } else {
+        } else if (hasText) {
+            mediaGallery.setVisibility(View.GONE);
             textView.setVisibility(View.VISIBLE);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
                     (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
             textView.setText(post.text);
+        } else {
+            Log.e("Post has neither media nor text");
+            mediaGallery.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
         }
     }
 
