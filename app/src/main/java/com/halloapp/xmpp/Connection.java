@@ -237,14 +237,6 @@ public class Connection {
 
         pubSubHelper = new PubSubHelper(connection);
 
-        try {
-            connection.sendStanza(new Presence(Presence.Type.available));
-        } catch (SmackException.NotConnectedException | InterruptedException e) {
-            Log.e("connection: cannot send presence", e);
-            disconnectInBackground();
-            return;
-        }
-
         observer.onConnected();
 
         Log.i("connection: connected");

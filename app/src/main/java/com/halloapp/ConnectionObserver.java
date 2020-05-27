@@ -49,6 +49,7 @@ public class ConnectionObserver implements Connection.Observer {
             }
         });
 
+        Connection.getInstance().updatePresence(ForegroundObserver.getInstance().isInForeground());
         new TransferPendingItemsTask(context).execute();
         HalloApp.sendPushTokenFromFirebase();
         new RequestExpirationInfoTask(Connection.getInstance(), context).execute();
