@@ -16,6 +16,7 @@ import com.halloapp.R;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.xmpp.Connection;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -66,6 +67,18 @@ public class SettingsActivity extends AppCompatActivity {
                 CenterToast.show(requireContext(), R.string.send_logs);
                 requireActivity().finish();
                 return false;
+            });
+
+            final Preference hostPreference = Preconditions.checkNotNull(findPreference("use_debug_host"));
+            hostPreference.setVisible(BuildConfig.DEBUG);
+            hostPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Connection connection = Connection.getInstance();
+                    connection.disconnect();
+                    connection.connect(getContext());
+                    return true;
+                }
             });
 
             final Preference debugPreference = Preconditions.checkNotNull(findPreference("debug"));

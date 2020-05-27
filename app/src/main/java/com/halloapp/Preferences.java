@@ -19,6 +19,7 @@ public class Preferences {
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
+    private static final String PREF_KEY_USE_DEBUG_HOST = "use_debug_host";
 
     private final Context context;
     private SharedPreferences preferences;
@@ -90,5 +91,10 @@ public class Preferences {
     @WorkerThread
     public boolean getNotifyComments() {
         return getPreferences().getBoolean(PREF_KEY_NOTIFY_COMMENTS, true);
+    }
+
+    @WorkerThread
+    public boolean getUseDebugHost() {
+        return getPreferences().getBoolean(PREF_KEY_USE_DEBUG_HOST, false);
     }
 }

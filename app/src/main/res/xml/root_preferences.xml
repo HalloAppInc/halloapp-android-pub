@@ -21,6 +21,12 @@
             app:key="send_logs"
             app:title="@string/send_logs" />
 
+        <SwitchPreferenceCompat
+            app:key="use_debug_host"
+            app:title="Use debug host"
+            app:defaultValue="false"
+            app:isPreferenceVisible="false" />
+
         <Preference
             app:key="debug"
             app:title="DEBUG"

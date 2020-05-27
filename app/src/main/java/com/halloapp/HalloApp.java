@@ -72,7 +72,7 @@ public class HalloApp extends Application {
     }
 
     private void connect() {
-        Connection.getInstance().connect(Me.getInstance(this));
+        Connection.getInstance().connect(this);
         Log.setUser(Me.getInstance(this));
     }
 

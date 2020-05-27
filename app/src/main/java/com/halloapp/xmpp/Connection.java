@@ -1,5 +1,6 @@
 package com.halloapp.xmpp;
 
+import android.content.Context;
 import android.os.HandlerThread;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.core.util.Pair;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
@@ -29,7 +31,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.NamedElement;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.roster.Roster;
@@ -67,7 +68,8 @@ public class Connection {
     private static Connection instance;
 
     public static final String XMPP_DOMAIN = "s.halloapp.net";
-    public static final String HOST = "s.halloapp.net";
+    private static final String HOST = "s.halloapp.net";
+    private static final String DEBUG_HOST = "s-test.halloapp.net";
     private static final int PORT = 5222;
     private static final int CONNECTION_TIMEOUT = 20_000;
     private static final int REPLY_TIMEOUT = 20_000;
@@ -78,6 +80,7 @@ public class Connection {
     private @Nullable XMPPTCPConnection connection;
     private PubSubHelper pubSubHelper;
     private Me me;
+    private Preferences preferences;
     private Observer observer;
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
@@ -125,9 +128,10 @@ public class Connection {
         this.observer = observer;
     }
 
-    public void connect(final @NonNull Me me) {
+    public void connect(final @NonNull Context context) {
         executor.execute(() -> {
-            this.me = me;
+            this.me = Me.getInstance(context);
+            this.preferences = Preferences.getInstance(context);
             connectInBackground();
         });
     }
@@ -171,12 +175,13 @@ public class Connection {
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
         ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
 
+        final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
         try {
             final XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                     .setUsernameAndPassword(me.getUser(), me.getPassword())
                     .setResource("android")
                     .setXmppDomain(XMPP_DOMAIN)
-                    .setHost(HOST)
+                    .setHost(host)
                     .setConnectTimeout(CONNECTION_TIMEOUT)
                     .setSendPresence(false)
                     .setSecurityMode(ConnectionConfiguration.SecurityMode.required)

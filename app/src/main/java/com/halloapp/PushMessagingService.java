@@ -24,6 +24,6 @@ public class PushMessagingService extends FirebaseMessagingService {
             Log.d("PushMessagingService: Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
-        Connection.getInstance().connect(Me.getInstance(getApplicationContext()));
+        Connection.getInstance().connect(getApplicationContext());
     }
 }

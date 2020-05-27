@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
@@ -174,9 +175,10 @@ public class RegistrationVerificationActivity extends AppCompatActivity {
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
             final Registration.RegistrationVerificationResult result = Registration.getInstance().verifyRegistration(phone, code, Me.getInstance(viewModel.getApplication()).getName());
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
-                final Me me = Me.getInstance(viewModel.getApplication());
+                Context context = viewModel.getApplication();
+                final Me me = Me.getInstance(context);
                 me.saveRegistration(Preconditions.checkNotNull(result.user), Preconditions.checkNotNull(result.password), Preconditions.checkNotNull(result.phone));
-                Connection.getInstance().connect(me);
+                Connection.getInstance().connect(context);
             }
             return result;
         }
