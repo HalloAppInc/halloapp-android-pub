@@ -13,7 +13,7 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         app:contentPvCornerColor="@color/window_background"
-        app:contentPvCornerRadius="8dp"
+        app:contentPvCornerRadius="10dp"
         tools:src="@mipmap/ic_launcher" />
 
     <ImageView
