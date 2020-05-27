@@ -1002,7 +1002,7 @@ public class Connection {
         }
     }
 
-    static class HalloConnectionListener implements ConnectionListener {
+    class HalloConnectionListener implements ConnectionListener {
 
         @Override
         public void connected(XMPPConnection connection) {
@@ -1017,11 +1017,13 @@ public class Connection {
         @Override
         public void connectionClosed() {
             Log.i("connection: onClosed");
+            observer.onDisconnected();
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.w("connection: onConnectedOnError", e);
+            observer.onDisconnected();
         }
     }
 }

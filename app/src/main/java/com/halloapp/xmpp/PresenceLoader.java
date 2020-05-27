@@ -59,13 +59,20 @@ public class PresenceLoader extends ViewDataLoader<View, Long, String> {
         }
     }
 
+    public void onDisconnect() {
+        Log.d("PresenceLoader marking all as unknown");
+        for (UserId userId : map.keySet()) {
+            MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
+            mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_UNKNOWN));
+        }
+    }
+
     public void onReconnect() {
         Log.d("PresenceLoader resetting subscriptions");
         UserId keepUserId = null;
         MutableLiveData<PresenceState> keepMld = null;
         for (UserId userId : map.keySet()) {
             MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
-            mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_UNKNOWN));
             if (ForegroundChat.getInstance().isForegroundChatId(userId.rawId())) {
                 keepUserId = userId;
                 keepMld = mld;

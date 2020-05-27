@@ -57,6 +57,7 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onDisconnected() {
+        PresenceLoader.getInstance(Connection.getInstance()).onDisconnect();
     }
 
     @Override
