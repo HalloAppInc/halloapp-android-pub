@@ -246,11 +246,13 @@ public class ChatActivity extends AppCompatActivity {
                 replyNameView.setText(contact.getDisplayName());
             }
             PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
-            presenceLoader.getLastSeenLiveData(contact.userId).observe(this, lastSeen -> {
-                if (lastSeen == null) {
+            presenceLoader.getLastSeenLiveData(contact.userId).observe(this, presenceState -> {
+                if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
                     toolbar.setSubtitle(null);
-                } else {
-                    toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, lastSeen * 1000L));
+                } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
+                    toolbar.setSubtitle(getString(R.string.online));
+                } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
+                    toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
                 }
             });
         });
