@@ -5,6 +5,7 @@
     <color name="color_action_bar">#303030</color>
     <color name="color_link">#aad0ff</color>
     <color name="window_background">#303030</color>
+    <color name="post_actions_separator">#e6000000</color>
     <color name="tab_active">#dddddd</color>
     <color name="media_placeholder">#303030</color>
     <color name="gallery_placeholder">#424242</color>
