@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Size;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,10 +45,15 @@ import com.halloapp.widget.CropPhotoView;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -215,9 +221,9 @@ public class AvatarPreviewActivity extends AppCompatActivity {
                 final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                 try {
                     TranscodeResult transcodeResult = transcode(media.file, outFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
-                    uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
+                    String avatarId = uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
-                    avatarLoader.reportMyAvatarChanged();
+                    avatarLoader.reportMyAvatarChanged(avatarId);
                 } catch (IOException | NoSuchAlgorithmException e) {
                     Log.e("failed to transcode image", e);
                     return false;
@@ -306,27 +312,23 @@ public class AvatarPreviewActivity extends AppCompatActivity {
             return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
         }
 
-        public void uploadAvatar(File file, Connection connection, final TranscodeResult transcodeResult) {
-            final MediaUploadIq.Urls urls;
-            try {
-                urls = connection.requestMediaUpload().get();
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("upload avatar", e);
-                return;
-            }
-            if (urls == null) {
-                Log.e("upload avatar: failed to get urls");
-                return;
-            }
-
-            final Uploader.UploadListener uploadListener = percent -> true;
-            try {
-                Uploader.run(file, null, Media.MEDIA_TYPE_UNKNOWN, urls.putUrl, uploadListener);
-                connection.publishAvatarMetadata(transcodeResult.hash, urls.getUrl, transcodeResult.byteCount, transcodeResult.height, transcodeResult.width);
+        @WorkerThread
+        public String uploadAvatar(File file, Connection connection, final TranscodeResult transcodeResult) {
+            try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];
+                int c;
+                while ((c = fileInputStream.read(buf)) != -1) {
+                    baos.write(buf, 0, c);
+                }
+                String base64 = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+                return connection.setAvatar(base64, transcodeResult.byteCount, transcodeResult.width, transcodeResult.height).get();
             } catch (IOException e) {
-                Log.e("upload avatar", e);
-                return;
+                Log.e("Failed to get base64", e);
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e("Avatar upload interrupted", e);
             }
+            return null;
         }
     }
 

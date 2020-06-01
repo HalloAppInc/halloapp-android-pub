@@ -231,6 +231,11 @@ public class ContactsSync {
                     Log.i("ContactsSync.performContactSync: update normalized phone for " + contact.addressBookName + " to " + contact.normalizedPhone);
                     contactUpdated = true;
                 }
+                if (!Objects.equals(contact.avatarId, contactsSyncResult.avatarId)) {
+                    contact.avatarId = contactsSyncResult.avatarId;
+                    Log.i("ContactsSync.performContactSync: update avatar id for " + contact.addressBookName + " to " + contact.avatarId);
+                    contactUpdated = true;
+                }
                 if (contactUpdated) {
                     updatedContacts.add(contact);
                 }

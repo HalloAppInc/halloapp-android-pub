@@ -23,7 +23,6 @@ import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
-import com.halloapp.xmpp.PublishedAvatarMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +145,7 @@ public class ConnectionObserver implements Connection.Observer {
     public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId) {
         final List<ContactsDb.NormalizedPhoneData> normalizedPhoneDataList = new ArrayList<>(protocolContacts.size());
         for (ContactInfo contact : protocolContacts) {
-            normalizedPhoneDataList.add(new ContactsDb.NormalizedPhoneData(contact.normalizedPhone, new UserId(contact.userId), "friends".equals(contact.role)));
+            normalizedPhoneDataList.add(new ContactsDb.NormalizedPhoneData(contact.normalizedPhone, new UserId(contact.userId), "friends".equals(contact.role), contact.avatarId));
         }
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
@@ -164,17 +163,6 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId) {
-        AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
-            if (pam.getHash() != null) {
-                avatarLoader.reportAvatarMetadataUpdate(metadataUserId, pam.getHash(), pam.getUrl());
-            }
-            Connection.getInstance().sendAck(ackId);
-        });
-    }
-
-    @Override
     public void onLowOneTimePreKeyCountReceived(int count) {
         Log.i("OTPK count down to " + count + "; replenishing");
         Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
@@ -187,5 +175,11 @@ public class ConnectionObserver implements Connection.Observer {
             protoKeys.add(protoKey.toByteArray());
         }
         Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
+    }
+
+    @Override
+    public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {
+        AvatarLoader.getInstance(Connection.getInstance(), context).reportAvatarUpdate(userId, avatarId);
+        Connection.getInstance().sendAck(ackId);
     }
 }

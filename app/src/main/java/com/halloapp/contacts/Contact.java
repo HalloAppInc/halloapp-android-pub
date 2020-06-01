@@ -20,23 +20,25 @@ public class Contact {
     public @Nullable String addressBookPhone; // phone from address book
     public @Nullable String halloName; // from server
     public @Nullable String normalizedPhone; // phone from server contact sync
+    public @Nullable String avatarId; // from server
     public @Nullable UserId userId;
     public boolean friend;
 
     public Contact(long rowId,
                    long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,
-                   @Nullable String normalizedPhone, @Nullable UserId userId, boolean friend) {
+                   @Nullable String normalizedPhone, @Nullable String avatarId, @Nullable UserId userId, boolean friend) {
         this.rowId = rowId;
         this.addressBookId = addressBookId;
         this.addressBookName = addressBookName;
         this.addressBookPhone = addressBookPhone;
         this.normalizedPhone = normalizedPhone;
+        this.avatarId = avatarId;
         this.userId = userId;
         this.friend = friend;
     }
 
     public Contact(@NonNull UserId userId, @Nullable String name, @Nullable String halloName) {
-        this(0, 0, name, null, null, userId, true);
+        this(0, 0, name, null, null, null, userId, false);
         this.halloName = halloName;
     }
 

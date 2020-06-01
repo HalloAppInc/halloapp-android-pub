@@ -15,11 +15,13 @@ public class ContactInfo {
     private static final String ELEMENT_ROLE = "role";
     private static final String ELEMENT_RAW = "raw";
     private static final String ELEMENT_NORMALIZED = "normalized";
+    private static final String ELEMENT_AVATAR_ID = "avatarid";
 
     public String userId;
     public String role;
     public String phone;
     public String normalizedPhone;
+    public String avatarId;
 
     ContactInfo(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -35,6 +37,8 @@ public class ContactInfo {
                 role = Xml.readText(parser);
             } else if (ELEMENT_USER_ID.equals(name)) {
                 userId = Xml.readText(parser);
+            } else if (ELEMENT_AVATAR_ID.equals(name)) {
+                avatarId = Xml.readText(parser);
             } else {
                 Xml.skip(parser);
             }

@@ -40,7 +40,6 @@ import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.EventElementType;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
-import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
@@ -53,7 +52,6 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,8 +110,8 @@ public class Connection {
         void onIncomingMessageReceived(@NonNull Message message);
         void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
-        void onAvatarMetadataReceived(@NonNull UserId metadataUserId, @NonNull PublishedAvatarMetadata pam, @NonNull String ackId);
         void onLowOneTimePreKeyCountReceived(int count);
+        void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId);
         void onUserNamesReceived(@NonNull Map<UserId, String> names);
     }
 
@@ -170,10 +168,12 @@ public class Connection {
         ProviderManager.addExtensionProvider(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE, new SeenReceiptElement.Provider());
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addExtensionProvider(WhisperKeysLowCountMessage.ELEMENT, WhisperKeysLowCountMessage.NAMESPACE, new WhisperKeysLowCountMessage.Provider());
+        ProviderManager.addExtensionProvider(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE, new AvatarChangeMessage.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
         ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
+        ProviderManager.addIQProvider(AvatarIq.ELEMENT, AvatarIq.NAMESPACE, new AvatarIq.Provider());
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
         try {
@@ -459,39 +459,35 @@ public class Connection {
         });
     }
 
-    public void publishAvatarMetadata(String hash, String url, int numBytes, int height, int width) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot update avatar metadata, no connection");
-                return;
-            }
-            try {
-                final PublishedAvatarMetadata metadata = new PublishedAvatarMetadata(hash, url, numBytes, height, width);
-                final SimplePayload payload = new SimplePayload(metadata.toXml());
-                final PayloadItem<SimplePayload> item = new PayloadItem<>(PublishedAvatarMetadata.AVATAR_ID, payload);
-                pubSubHelper.publishItem(getMyAvatarMetadataNodeId(), item);
-                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-
-                //observer.onOutgoingPostSent(post.postId);
-            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                Log.w("connection: cannot update avatar metadata", e);
-            }
-        });
-    }
-
-    public Future<PubSubItem> getMostRecentAvatarMetadata(UserId userId) {
+    public Future<String> setAvatar(String base64, long numBytes, int width, int height) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot get avatar metadata, no connection");
+                Log.e("connection: cannot update avatar, no connection");
                 return null;
             }
             try {
-                List<PubSubItem> items = pubSubHelper.getItems(userId.isMe() ? getMyAvatarMetadataNodeId() : getAvatarMetadataNodeId(userIdToJid(userId)), Collections.singleton(PublishedAvatarMetadata.AVATAR_ID));
-                if (items.size() > 0) {
-                    return items.get(0);
-                }
+                final AvatarIq avatarIq = new AvatarIq(connection.getXMPPServiceDomain(), base64, numBytes, height, width);
+                final AvatarIq response = connection.createStanzaCollectorAndSend(avatarIq).nextResultOrThrow();
+                return response.avatarId;
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
-                Log.w("connection: cannot get avatar metadata", e);
+                Log.w("connection: cannot update avatar", e);
+            }
+            return null;
+        });
+    }
+
+    public Future<String> getAvatarId(UserId userId) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot update avatar, no connection");
+                return null;
+            }
+            try {
+                final AvatarIq setAvatarIq = new AvatarIq(connection.getXMPPServiceDomain(), userId);
+                final AvatarIq response = connection.createStanzaCollectorAndSend(setAvatarIq).nextResultOrThrow();
+                return response.avatarId;
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot update avatar", e);
             }
             return null;
         });
@@ -785,13 +781,6 @@ public class Connection {
         return !posts.isEmpty() || !comments.isEmpty();
     }
 
-    private boolean processMetadataPubSubItems(@NonNull UserId metadataUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
-        Preconditions.checkNotNull(connection);
-        final List<PublishedAvatarMetadata> pams = PublishedAvatarMetadata.getAvatarMetadatas(items);
-        observer.onAvatarMetadataReceived(metadataUserId, pams.get(0), ackId);
-        return true;
-    }
-
     private void parseFeedHistoryItems(UserId feedUserId, List<PubSubItem> items, Collection<Post> posts, Collection<Comment> comments) {
         final List<PublishedEntry> entries = PublishedEntry.getEntries(items);
         for (PublishedEntry entry : entries) {
@@ -860,18 +849,9 @@ public class Connection {
         return nodeId.startsWith("feed-");
     }
 
-    private static boolean isMetadataNodeId(@NonNull String nodeId) {
-        return nodeId.startsWith("metadata-");
-    }
-
     private UserId getFeedUserId(@NonNull String nodeId) {
         Preconditions.checkArgument(isFeedNodeId(nodeId));
         return getUserId(nodeId.substring("feed-".length()));
-    }
-
-    private UserId getMetadataUserId(@NonNull String nodeId) {
-        Preconditions.checkArgument(isMetadataNodeId(nodeId));
-        return getUserId(nodeId.substring("metadata-".length()));
     }
 
     private static String getNodeId(@NonNull String prefix, @NonNull Jid jid) {
@@ -937,9 +917,6 @@ public class Connection {
                         if (isFeedNodeId(node)) {
                             Log.i("connection: got feed pubsub " + msg);
                             handled = processFeedPubSubItems(getFeedUserId(node), itemsElem.getItems(), msg.getStanzaId());
-                        } else if (isMetadataNodeId(node)) {
-                            Log.i("connection: got metadata pubsub " + msg);
-                            handled = processMetadataPubSubItems(getMetadataUserId(node), itemsElem.getItems(), msg.getStanzaId());
                         }
                     }
                 }
@@ -988,6 +965,14 @@ public class Connection {
                     if (whisperKeysLowCountMessage != null) {
                         Log.i("connection: got low otp count " + msg + " count: " + whisperKeysLowCountMessage.count);
                         observer.onLowOneTimePreKeyCountReceived(whisperKeysLowCountMessage.count);
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final AvatarChangeMessage avatarChangeMessage = packet.getExtension(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE);
+                    if (avatarChangeMessage != null) {
+                        Log.i("connection: got avatar change message " + msg);
+                        observer.onAvatarChangeMessageReceived(avatarChangeMessage.userId, avatarChangeMessage.avatarId, packet.getStanzaId());
                         handled = true;
                     }
                 }
