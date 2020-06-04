@@ -30,7 +30,9 @@ public class HalloApp extends Application {
         super.onCreate();
         Log.i("halloapp: onCreate");
 
-        if (BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+        } else {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyDeath()

@@ -31,7 +31,8 @@ public class Log {
 
     public static void i(String msg, Throwable tr) {
         long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/I/halloApp: " + msg + "\n" + tr.getMessage());
+        FirebaseCrashlytics.getInstance().log(threadID + "/I/halloApp: " + msg + "\n" +
+                tr.getMessage());
     }
 
     public static void w(String msg) {
@@ -41,7 +42,8 @@ public class Log {
 
     public static void w(String msg, Throwable tr) {
         long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/W/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
+        FirebaseCrashlytics.getInstance().log(threadID + "/W/halloApp: " + msg + "\n" +
+                android.util.Log.getStackTraceString(tr));
     }
 
     public static void e(String msg) {
@@ -51,7 +53,8 @@ public class Log {
 
     public static void e(String msg, Throwable tr) {
         long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/E/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
+        FirebaseCrashlytics.getInstance().log(threadID + "/E/halloApp: " + msg + "\n" +
+                android.util.Log.getStackTraceString(tr));
     }
 
     public static void sendErrorReport(String msg) {
@@ -72,7 +75,6 @@ public class Log {
             }
         }
         Throwable e = new ConstructedException(msg, stackTrace);
-
         FirebaseCrashlytics.getInstance().recordException(e);
     }
 
@@ -97,7 +99,8 @@ public class Log {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            FirebaseCrashlytics.getInstance().setCustomKey("user", me.getUser());
+            String user = me.getUser();
+            FirebaseCrashlytics.getInstance().setCustomKey("user", user);
             return null;
         }
     }
