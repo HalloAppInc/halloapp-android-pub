@@ -85,7 +85,6 @@ public class ChatActivity extends AppCompatActivity {
     private AvatarLoader avatarLoader;
     private ReplyLoader replyLoader;
     private TimestampRefresher timestampRefresher;
-    private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private String replyPostId;
     private int replyPostMediaIndex;
@@ -556,6 +555,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private final MessageViewHolder.MessageViewHolderParent messageViewHolderParent = new MessageViewHolder.MessageViewHolderParent() {
+        private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
         @Override
         public AvatarLoader getAvatarLoader() {
@@ -614,7 +614,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         @Override
-        LongSparseArray<Integer> getTextLimits() {
+        public LongSparseArray<Integer> getTextLimits() {
             return textLimits;
         }
     };

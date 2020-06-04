@@ -1,6 +1,5 @@
 package com.halloapp.ui.posts;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -18,7 +17,6 @@ import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
-import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -105,13 +103,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         });
 
         textView.setOnReadMoreListener((view, limit) -> {
-            final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
-            intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
-            intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
-            intent.putExtra(CommentsActivity.EXTRA_NO_POST_LENGTH_LIMIT, true);
-            parent.startActivity(intent);
-            return true;
+            parent.getTextLimits().put(post.rowId, limit);
+            return false;
         });
     }
 
@@ -143,8 +136,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
 
+        Integer textLimit = parent.getTextLimits().get(post.rowId);
         if (post.media.isEmpty()) {
-            textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
+            if (textLimit != null) {
+                textView.setLineLimit(textLimit);
+            } else {
+                textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
+            }
         } else {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
             mediaPagerAdapter.setContentId(post.id);
@@ -157,9 +155,12 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
-            textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
+            if (textLimit != null) {
+                textView.setLineLimit(textLimit);
+            } else {
+                textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
+            }
         }
-        textView.setLineStep(0);
         textView.setText(post.text);
 
         if (TextUtils.isEmpty(post.text)) {

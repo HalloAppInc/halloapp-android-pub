@@ -46,7 +46,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         abstract ReplyLoader getReplyLoader();
-        abstract LongSparseArray<Integer> getTextLimits();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {

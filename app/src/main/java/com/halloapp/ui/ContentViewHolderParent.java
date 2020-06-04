@@ -14,6 +14,7 @@ public interface ContentViewHolderParent {
     ContactLoader getContactLoader();
     SeenByLoader getSeenByLoader();
     LongSparseArray<Integer> getMediaPagerPositionMap();
+    LongSparseArray<Integer> getTextLimits();
     TimestampRefresher getTimestampRefresher();
     void startActivity(Intent intent);
 }

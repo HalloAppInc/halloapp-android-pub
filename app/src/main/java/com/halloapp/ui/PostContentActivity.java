@@ -86,6 +86,7 @@ public class PostContentActivity extends AppCompatActivity {
     private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
         private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+        private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
         @Override
         public AvatarLoader getAvatarLoader() {
@@ -115,6 +116,11 @@ public class PostContentActivity extends AppCompatActivity {
         @Override
         public LongSparseArray<Integer> getMediaPagerPositionMap() {
             return mediaPagerPositionMap;
+        }
+
+        @Override
+        public LongSparseArray<Integer> getTextLimits() {
+            return textLimits;
         }
 
         @Override

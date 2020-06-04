@@ -58,6 +58,7 @@ public class PostsFragment extends Fragment {
     private final Stack<View> recycledMediaViews = new Stack<>();
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+    private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -171,6 +172,11 @@ public class PostsFragment extends Fragment {
             @Override
             public LongSparseArray<Integer> getMediaPagerPositionMap() {
                 return mediaPagerPositionMap;
+            }
+
+            @Override
+            public LongSparseArray<Integer> getTextLimits() {
+                return textLimits;
             }
 
             @Override
