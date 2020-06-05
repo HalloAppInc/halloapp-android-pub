@@ -23,6 +23,7 @@ import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
+import com.halloapp.xmpp.WhisperKeysMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,18 +164,23 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onLowOneTimePreKeyCountReceived(int count) {
-        Log.i("OTPK count down to " + count + "; replenishing");
-        Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
-        List<byte[]> protoKeys = new ArrayList<>();
-        for (OneTimePreKey otpk : keys) {
-            com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
-                    .setId(otpk.id)
-                    .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
-                    .build();
-            protoKeys.add(protoKey.toByteArray());
+    public void onWhisperKeysMessage(WhisperKeysMessage message) {
+        if (message.count != null) {
+            int count = message.count;
+            Log.i("OTPK count down to " + count + "; replenishing");
+            Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
+            List<byte[]> protoKeys = new ArrayList<>();
+            for (OneTimePreKey otpk : keys) {
+                com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
+                        .setId(otpk.id)
+                        .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
+                        .build();
+                protoKeys.add(protoKey.toByteArray());
+            }
+            Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
+        } else if (message.userId != null) {
+            KeyManager.getInstance().tearDownSession(message.userId);
         }
-        Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
     }
 
     @Override

@@ -17,7 +17,6 @@ import com.halloapp.xmpp.Connection;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,6 +92,27 @@ public class KeyManager {
         } else {
             Log.i("Keys were already uploaded");
         }
+    }
+
+    public void tearDownSession(UserId peerUserId) {
+        encryptedKeyStore.clearSessionAlreadySetUp(peerUserId);
+        encryptedKeyStore.clearPeerResponded(peerUserId);
+        // TODO(jack): Clear skipped message keys
+        encryptedKeyStore.clearPeerPublicIdentityKey(peerUserId);
+        encryptedKeyStore.clearPeerSignedPreKey(peerUserId);
+        encryptedKeyStore.clearPeerOneTimePreKey(peerUserId);
+        encryptedKeyStore.clearPeerOneTimePreKeyId(peerUserId);
+        encryptedKeyStore.clearRootKey(peerUserId);
+        encryptedKeyStore.clearOutboundChainKey(peerUserId);
+        encryptedKeyStore.clearInboundChainKey(peerUserId);
+        encryptedKeyStore.clearInboundEphemeralKey(peerUserId);
+        encryptedKeyStore.clearOutboundEphemeralKey(peerUserId);
+        encryptedKeyStore.clearInboundEphemeralKeyId(peerUserId);
+        encryptedKeyStore.clearOutboundEphemeralKeyId(peerUserId);
+        encryptedKeyStore.clearInboundPreviousChainLength(peerUserId);
+        encryptedKeyStore.clearOutboundPreviousChainLength(peerUserId);
+        encryptedKeyStore.clearInboundCurrentChainIndex(peerUserId);
+        encryptedKeyStore.clearOutboundCurrentChainIndex(peerUserId);
     }
 
     public void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws GeneralSecurityException {

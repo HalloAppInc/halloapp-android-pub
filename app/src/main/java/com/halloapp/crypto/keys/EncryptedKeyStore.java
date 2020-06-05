@@ -108,6 +108,10 @@ public class EncryptedKeyStore {
         sharedPreferences.edit().putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded).apply();
     }
 
+    public void clearSessionAlreadySetUp(UserId peerUserId) {
+        sharedPreferences.edit().remove(getSessionAlreadySetUpPrefKey(peerUserId)).apply();
+    }
+
     private String getSessionAlreadySetUpPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_SESSION_ALREADY_SET_UP_SUFFIX;
     }
@@ -118,6 +122,10 @@ public class EncryptedKeyStore {
 
     public void setPeerResponded(UserId peerUserId, boolean responded) {
         sharedPreferences.edit().putBoolean(getPeerRespondedPrefKey(peerUserId), responded).apply();
+    }
+
+    public void clearPeerResponded(UserId peerUserId) {
+        sharedPreferences.edit().remove(getPeerRespondedPrefKey(peerUserId)).apply();
     }
 
     private String getPeerRespondedPrefKey(UserId peerUserId) {
@@ -247,6 +255,10 @@ public class EncryptedKeyStore {
         return new PublicXECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
     }
 
+    public void clearPeerPublicIdentityKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getPeerPublicIdentityKeyPrefKey(peerUserId)).apply();
+    }
+
     public String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_IDENTITY_KEY_SUFFIX;
     }
@@ -259,6 +271,10 @@ public class EncryptedKeyStore {
         return new PublicXECKey(retrieveBytes(getPeerSignedPreKeyPrefKey(peerUserId)));
     }
 
+    public void clearPeerSignedPreKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getPeerSignedPreKeyPrefKey(peerUserId)).apply();
+    }
+
     private String getPeerSignedPreKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_SIGNED_PRE_KEY_SUFFIX;
     }
@@ -269,6 +285,10 @@ public class EncryptedKeyStore {
 
     public PublicXECKey getPeerOneTimePreKey(UserId peerUserId) {
         return new PublicXECKey(retrieveBytes(getPeerOneTimePreKeyPrefKey(peerUserId)));
+    }
+
+    public void clearPeerOneTimePreKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getPeerOneTimePreKeyPrefKey(peerUserId)).apply();
     }
 
     private String getPeerOneTimePreKeyPrefKey(UserId peerUserId) {
@@ -287,6 +307,10 @@ public class EncryptedKeyStore {
         return ret;
     }
 
+    public void clearPeerOneTimePreKeyId(UserId peerUserId) {
+        sharedPreferences.edit().remove(getPeerOneTimePreKeyIdPrefKey(peerUserId)).apply();
+    }
+
     private String getPeerOneTimePreKeyIdPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_ONE_TIME_PRE_KEY_ID_SUFFIX;
     }
@@ -297,6 +321,10 @@ public class EncryptedKeyStore {
 
     public byte[] getRootKey(UserId peerUserId) {
         return retrieveBytes(getRootKeyPrefKey(peerUserId));
+    }
+
+    public void clearRootKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getRootKeyPrefKey(peerUserId)).apply();
     }
 
     private String getRootKeyPrefKey(UserId peerUserId) {
@@ -311,6 +339,10 @@ public class EncryptedKeyStore {
         return retrieveBytes(getOutboundChainKeyPrefKey(peerUserId));
     }
 
+    public void clearOutboundChainKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getOutboundChainKeyPrefKey(peerUserId)).apply();
+    }
+
     private String getOutboundChainKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_CHAIN_KEY_SUFFIX;
     }
@@ -321,6 +353,10 @@ public class EncryptedKeyStore {
 
     public byte[] getInboundChainKey(UserId peerUserId) {
         return retrieveBytes(getInboundChainKeyPrefKey(peerUserId));
+    }
+
+    public void clearInboundChainKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getInboundChainKeyPrefKey(peerUserId)).apply();
     }
 
     private String getInboundChainKeyPrefKey(UserId peerUserId) {
@@ -335,6 +371,10 @@ public class EncryptedKeyStore {
         return new PublicXECKey(retrieveCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId)));
     }
 
+    public void clearInboundEphemeralKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getInboundEphemeralKeyPrefKey(peerUserId)).apply();
+    }
+
     private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_EPHEMERAL_KEY_SUFFIX;
     }
@@ -345,6 +385,10 @@ public class EncryptedKeyStore {
 
     public PrivateXECKey getOutboundEphemeralKey(UserId peerUserId) {
         return new PrivateXECKey(retrieveCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId)));
+    }
+
+    public void clearOutboundEphemeralKey(UserId peerUserId) {
+        sharedPreferences.edit().remove(getOutboundEphemeralKeyPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundEphemeralKeyPrefKey(UserId peerUserId) {
@@ -359,6 +403,10 @@ public class EncryptedKeyStore {
         return sharedPreferences.getInt(getInboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
+    public void clearInboundEphemeralKeyId(UserId peerUserId) {
+        sharedPreferences.edit().remove(getInboundEphemeralKeyIdPrefKey(peerUserId)).apply();
+    }
+
     private String getInboundEphemeralKeyIdPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_EPHEMERAL_KEY_ID_SUFFIX;
     }
@@ -369,6 +417,10 @@ public class EncryptedKeyStore {
 
     public int getOutboundEphemeralKeyId(UserId peerUserId) {
         return sharedPreferences.getInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), -1);
+    }
+
+    public void clearOutboundEphemeralKeyId(UserId peerUserId) {
+        sharedPreferences.edit().remove(getOutboundEphemeralKeyIdPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundEphemeralKeyIdPrefKey(UserId peerUserId) {
@@ -383,6 +435,10 @@ public class EncryptedKeyStore {
         return sharedPreferences.getInt(getInboundPreviousChainLengthPrefKey(peerUserId), 0);
     }
 
+    public void clearInboundPreviousChainLength(UserId peerUserId) {
+        sharedPreferences.edit().remove(getInboundPreviousChainLengthPrefKey(peerUserId)).apply();
+    }
+
     private String getInboundPreviousChainLengthPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX;
     }
@@ -393,6 +449,10 @@ public class EncryptedKeyStore {
 
     public int getOutboundPreviousChainLength(UserId peerUserId) {
         return sharedPreferences.getInt(getOutboundPreviousChainLengthPrefKey(peerUserId), 0);
+    }
+
+    public void clearOutboundPreviousChainLength(UserId peerUserId) {
+        sharedPreferences.edit().remove(getOutboundPreviousChainLengthPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundPreviousChainLengthPrefKey(UserId peerUserId) {
@@ -407,6 +467,10 @@ public class EncryptedKeyStore {
         return sharedPreferences.getInt(getInboundCurrentChainIndexPrefKey(peerUserId), 0);
     }
 
+    public void clearInboundCurrentChainIndex(UserId peerUserId) {
+        sharedPreferences.edit().remove(getInboundCurrentChainIndexPrefKey(peerUserId)).apply();
+    }
+
     private String getInboundCurrentChainIndexPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_CURRENT_CHAIN_INDEX_SUFFIX;
     }
@@ -417,6 +481,10 @@ public class EncryptedKeyStore {
 
     public int getOutboundCurrentChainIndex(UserId peerUserId) {
         return sharedPreferences.getInt(getOutboundCurrentChainIndexPrefKey(peerUserId), 0);
+    }
+
+    public void clearOutboundCurrentChainIndex(UserId peerUserId) {
+        sharedPreferences.edit().remove(getOutboundCurrentChainIndexPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundCurrentChainIndexPrefKey(UserId peerUserId) {

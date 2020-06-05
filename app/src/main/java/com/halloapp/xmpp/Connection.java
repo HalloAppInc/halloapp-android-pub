@@ -110,7 +110,7 @@ public class Connection {
         void onIncomingMessageReceived(@NonNull Message message);
         void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
-        void onLowOneTimePreKeyCountReceived(int count);
+        void onWhisperKeysMessage(@NonNull WhisperKeysMessage message);
         void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId);
         void onUserNamesReceived(@NonNull Map<UserId, String> names);
     }
@@ -167,7 +167,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(DeliveryReceiptElement.ELEMENT, DeliveryReceiptElement.NAMESPACE, new DeliveryReceiptElement.Provider());
         ProviderManager.addExtensionProvider(SeenReceiptElement.ELEMENT, SeenReceiptElement.NAMESPACE, new SeenReceiptElement.Provider());
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
-        ProviderManager.addExtensionProvider(WhisperKeysLowCountMessage.ELEMENT, WhisperKeysLowCountMessage.NAMESPACE, new WhisperKeysLowCountMessage.Provider());
+        ProviderManager.addExtensionProvider(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE, new WhisperKeysMessage.Provider());
         ProviderManager.addExtensionProvider(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE, new AvatarChangeMessage.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
@@ -961,10 +961,10 @@ public class Connection {
                     }
                 }
                 if (!handled) {
-                    final WhisperKeysLowCountMessage whisperKeysLowCountMessage = packet.getExtension(WhisperKeysLowCountMessage.ELEMENT, WhisperKeysLowCountMessage.NAMESPACE);
-                    if (whisperKeysLowCountMessage != null) {
-                        Log.i("connection: got low otp count " + msg + " count: " + whisperKeysLowCountMessage.count);
-                        observer.onLowOneTimePreKeyCountReceived(whisperKeysLowCountMessage.count);
+                    final WhisperKeysMessage whisperKeysMessage = packet.getExtension(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE);
+                    if (whisperKeysMessage != null) {
+                        Log.i("connection: got whisper keys message " + msg);
+                        observer.onWhisperKeysMessage(whisperKeysMessage);
                         handled = true;
                     }
                 }
