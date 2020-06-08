@@ -112,7 +112,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
                 imageView0.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(imageView0.getContext(), R.color.dim_facepile_avatar_0)));
                 final ImageView imageView1 = (ImageView)seenIndicator.getChildAt(1);
                 imageView1.setImageTintMode(PorterDuff.Mode.OVERLAY);
-                imageView1.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(imageView0.getContext(), R.color.dim_facepile_avatar_1)));
+                imageView1.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(imageView0.getContext(), R.color.dim_facepile_avatar_0)));
             } else {
                 if (seenIndicator.getChildCount() > 0) {
                     final ImageView imageView = (ImageView)seenIndicator.getChildAt(0);
