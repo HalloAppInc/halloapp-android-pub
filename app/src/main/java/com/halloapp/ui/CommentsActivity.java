@@ -359,7 +359,13 @@ public class CommentsActivity extends AppCompatActivity {
                 retractButton.setVisibility(View.GONE);
             } else {
                 commentView.setText(comment.text);
-                commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceNormal);
+
+                if (StringUtils.isFewEmoji(comment.text)) {
+                    commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceFewEmoji);
+                } else {
+                    commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceNormal);
+                }
+
                 replyButton.setVisibility(View.VISIBLE);
                 retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
             }

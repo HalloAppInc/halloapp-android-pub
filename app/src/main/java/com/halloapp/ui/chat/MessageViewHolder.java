@@ -1,6 +1,7 @@
 package com.halloapp.ui.chat;
 
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
@@ -22,6 +22,7 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Rtl;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.LimitingTextView;
@@ -133,6 +134,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 parent.getTextLimits().put(message.rowId, limit);
                 return false;
             });
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(StringUtils.isFewEmoji(message.text) ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
             textView.setText(message.text);
 
             if (TextUtils.isEmpty(message.text)) {

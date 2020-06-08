@@ -27,4 +27,6 @@
     <dimen name="reply_thumb_size">56dp</dimen>
     <dimen name="post_text_size">16sp</dimen>
     <dimen name="post_text_size_large">20sp</dimen>
+    <dimen name="message_text_size">16sp</dimen>
+    <dimen name="message_text_size_few_emoji">32sp</dimen>
 </resources>

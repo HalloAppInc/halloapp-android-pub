@@ -63,7 +63,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:textAppearance="?textAppearanceListItemSmall"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/message_text_size"
                     android:lineSpacingMultiplier="1.1"
                     android:autoLink="web"
                     app:ltvReadMore="@string/read_more"
