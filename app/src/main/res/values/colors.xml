@@ -31,4 +31,6 @@
     <color name="avatar_crop_overlay">#c4c4c4c4</color>
     <color name="change_avatar_background">#B5B5B5</color>
     <color name="ic_launcher_background">#FF4500</color>
+    <color name="dim_facepile_avatar_0">#80ffffff</color>
+    <color name="dim_facepile_avatar_1">#40ffffff</color>
 </resources>
