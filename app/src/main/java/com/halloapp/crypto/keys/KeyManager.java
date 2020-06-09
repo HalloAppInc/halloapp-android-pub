@@ -95,9 +95,10 @@ public class KeyManager {
     }
 
     public void tearDownSession(UserId peerUserId) {
+        Log.i("KeyManager tearing down session with user " + peerUserId);
         encryptedKeyStore.clearSessionAlreadySetUp(peerUserId);
         encryptedKeyStore.clearPeerResponded(peerUserId);
-        // TODO(jack): Clear skipped message keys
+        encryptedKeyStore.clearSkippedMessageKeys(peerUserId);
         encryptedKeyStore.clearPeerPublicIdentityKey(peerUserId);
         encryptedKeyStore.clearPeerSignedPreKey(peerUserId);
         encryptedKeyStore.clearPeerOneTimePreKey(peerUserId);

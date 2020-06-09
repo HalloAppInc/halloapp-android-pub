@@ -39,7 +39,7 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
     private static final String PREF_KEY_KEYS_UPLOADED = "keys_uploaded";
-    private static final String PREF_KEY_MESSAGE_KEY_SET = "message_key_set";
+    private static final String PREF_KEY_MESSAGE_KEY_SET_PREFIX = "message_key_set";
 
     private static final String PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX = "one_time_pre_key";
     private static final String PREF_KEY_MESSAGE_KEY_PREFIX = "message_key";
@@ -210,7 +210,8 @@ public class EncryptedKeyStore {
     }
 
     public byte[] removeSkippedMessageKey(UserId peerUserId, int ephemeralKeyId, int chainIndex) {
-        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(PREF_KEY_MESSAGE_KEY_SET, new HashSet<>());
+        String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
+        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(messageKeySetPrefKey, new HashSet<>());
 
         String prefKey = getMessageKeyPrefKey(peerUserId, ephemeralKeyId, chainIndex);
         if (!messageKeyPrefKeys.remove(prefKey)) {
@@ -224,7 +225,7 @@ public class EncryptedKeyStore {
             return null;
         }
 
-        sharedPreferences.edit().putStringSet(PREF_KEY_MESSAGE_KEY_SET, messageKeyPrefKeys).apply();
+        sharedPreferences.edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
 
         return stringToBytes(messageKeyString);
     }
@@ -232,15 +233,34 @@ public class EncryptedKeyStore {
     // TODO(jack): Clear out old keys after some threshold
     public void storeSkippedMessageKey(UserId peerUserId, MessageKey messageKey) {
         Log.i("Storing skipped message key " + messageKey + " for user " + peerUserId);
-        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(PREF_KEY_MESSAGE_KEY_SET, new HashSet<>());
+        String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
+        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(messageKeySetPrefKey, new HashSet<>());
 
         String keyPrefKey = getMessageKeyPrefKey(peerUserId, messageKey.getEphemeralKeyId(), messageKey.getCurrentChainIndex());
         messageKeyPrefKeys.add(keyPrefKey);
 
         sharedPreferences.edit()
                 .putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial()))
-                .putStringSet(PREF_KEY_MESSAGE_KEY_SET, messageKeyPrefKeys)
+                .putStringSet(messageKeySetPrefKey, messageKeyPrefKeys)
                 .apply();
+    }
+
+    public void clearSkippedMessageKeys(UserId peerUserId) {
+        String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
+        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(messageKeySetPrefKey, new HashSet<>());
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(messageKeySetPrefKey);
+
+        for (String prefKey : messageKeyPrefKeys) {
+            editor.remove(prefKey);
+        }
+
+        editor.apply();
+    }
+
+    private String getMessageKeySetPrefKey(UserId peerUserId) {
+        return PREF_KEY_MESSAGE_KEY_SET_PREFIX + "/" + peerUserId.rawId();
     }
 
     private String getMessageKeyPrefKey(UserId peerUserId, int ephemeralKeyId, int currentChainIndex) {
