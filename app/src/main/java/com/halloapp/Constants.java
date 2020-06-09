@@ -15,6 +15,7 @@ public class Constants {
     public static final long MAX_VIDEO_BITRATE = 8000000L;
     public static final int MEDIA_POST_LINE_LIMIT = 3;
     public static final int TEXT_POST_LINE_LIMIT = 12;
+    public static final int POST_LINE_LIMIT_TOLERANCE = 3;
     public static final int MAX_AVATAR_DIMENSION = 250;
     public static final int MAX_NAME_LENGTH = 25;
 

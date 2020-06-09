@@ -136,14 +136,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
 
-        Integer textLimit = parent.getTextLimits().get(post.rowId);
-        if (post.media.isEmpty()) {
-            if (textLimit != null) {
-                textView.setLineLimit(textLimit);
-            } else {
-                textView.setLineLimit(Constants.TEXT_POST_LINE_LIMIT);
-            }
-        } else {
+        if (!post.media.isEmpty()) {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
@@ -155,12 +148,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
-            if (textLimit != null) {
-                textView.setLineLimit(textLimit);
-            } else {
-                textView.setLineLimit(Constants.MEDIA_POST_LINE_LIMIT);
-            }
         }
+        final Integer textLimit = parent.getTextLimits().get(post.rowId);
+        textView.setLineLimit(textLimit != null ? textLimit :
+                (post.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
+        textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
         textView.setText(post.text);
 
         if (TextUtils.isEmpty(post.text)) {

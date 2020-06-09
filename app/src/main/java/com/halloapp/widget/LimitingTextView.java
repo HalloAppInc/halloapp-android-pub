@@ -23,6 +23,7 @@ public class LimitingTextView extends AppCompatTextView {
 
     private int lineLimit = 12;
     private int lineStep = 12;
+    private int lineLimitTolerance = 0; // don't cut off the text when "text lines count" <= lineLimit + lineLimitTolerance; this prevents the situation when only 1-2 lines are hidden by "read more"
     private SpannableString readMoreText;
     private final SpannableStringBuilder truncatedText = new SpannableStringBuilder();
     private CharSequence originalText;
@@ -66,7 +67,7 @@ public class LimitingTextView extends AppCompatTextView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         final Layout layout = getLayout();
-        if (lineLimit != Integer.MAX_VALUE && layout.getLineCount() > lineLimit + lineStep / 2 && (lastMeasureWidth != widthMeasureSpec || lastMeasureHeight != heightMeasureSpec)) {
+        if (lineLimit != Integer.MAX_VALUE && layout.getLineCount() > lineLimit + lineLimitTolerance && (lastMeasureWidth != widthMeasureSpec || lastMeasureHeight != heightMeasureSpec)) {
             truncated = true;
             lastMeasureWidth = widthMeasureSpec;
             lastMeasureHeight = heightMeasureSpec;
@@ -102,6 +103,13 @@ public class LimitingTextView extends AppCompatTextView {
      * */
     public void setLineLimit(int lineLimit) {
         this.lineLimit = lineLimit;
+    }
+
+    /*
+     * call this before setting text
+     * */
+    public void setLineLimitTolerance(int lineLimitTolerance) {
+        this.lineLimitTolerance = lineLimitTolerance;
     }
 
     public void setText(CharSequence text, BufferType type) {

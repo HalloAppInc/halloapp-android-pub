@@ -352,6 +352,7 @@ public class CommentsActivity extends AppCompatActivity {
 
             final Integer textLimit = textLimits.get(comment.rowId);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
+            commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
             if (TextUtils.isEmpty(comment.text)) {
                 commentView.setText(getString(R.string.comment_retracted_placeholder));
                 commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceRetracted);
@@ -420,6 +421,7 @@ public class CommentsActivity extends AppCompatActivity {
 
             final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
+            commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(POST_TEXT_LIMITS_ID, limit);
                 return false;

@@ -130,6 +130,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             final Integer textLimit = parent.getTextLimits().get(message.rowId);
             textView.setLineLimit(textLimit != null ? textLimit :
                     (message.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
+            textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
             textView.setOnReadMoreListener((view, limit) -> {
                 parent.getTextLimits().put(message.rowId, limit);
                 return false;
