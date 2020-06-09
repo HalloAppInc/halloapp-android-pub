@@ -164,7 +164,7 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onWhisperKeysMessage(WhisperKeysMessage message) {
+    public void onWhisperKeysMessage(WhisperKeysMessage message, @NonNull String ackId) {
         if (message.count != null) {
             int count = message.count;
             Log.i("OTPK count down to " + count + "; replenishing");
@@ -178,8 +178,10 @@ public class ConnectionObserver implements Connection.Observer {
                 protoKeys.add(protoKey.toByteArray());
             }
             Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
+            Connection.getInstance().sendAck(ackId);
         } else if (message.userId != null) {
             KeyManager.getInstance().tearDownSession(message.userId);
+            Connection.getInstance().sendAck(ackId);
         }
     }
 

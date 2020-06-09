@@ -110,7 +110,7 @@ public class Connection {
         void onIncomingMessageReceived(@NonNull Message message);
         void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
-        void onWhisperKeysMessage(@NonNull WhisperKeysMessage message);
+        void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId);
         void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId);
         void onUserNamesReceived(@NonNull Map<UserId, String> names);
     }
@@ -964,7 +964,7 @@ public class Connection {
                     final WhisperKeysMessage whisperKeysMessage = packet.getExtension(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE);
                     if (whisperKeysMessage != null) {
                         Log.i("connection: got whisper keys message " + msg);
-                        observer.onWhisperKeysMessage(whisperKeysMessage);
+                        observer.onWhisperKeysMessage(whisperKeysMessage, packet.getStanzaId());
                         handled = true;
                     }
                 }
