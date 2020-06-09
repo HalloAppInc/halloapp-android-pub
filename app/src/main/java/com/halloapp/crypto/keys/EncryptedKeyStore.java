@@ -39,6 +39,7 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
     private static final String PREF_KEY_KEYS_UPLOADED = "keys_uploaded";
+    private static final String PREF_KEY_KEYS_VERSION = "keys_version";
     private static final String PREF_KEY_MESSAGE_KEY_SET_PREFIX = "message_key_set";
 
     private static final String PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX = "one_time_pre_key";
@@ -98,6 +99,14 @@ public class EncryptedKeyStore {
 
     public void setKeysUploaded(boolean uploaded) {
         sharedPreferences.edit().putBoolean(PREF_KEY_KEYS_UPLOADED, uploaded).apply();
+    }
+
+    public int getKeysVersion() {
+        return sharedPreferences.getInt(PREF_KEY_KEYS_VERSION, 0);
+    }
+
+    public void setKeysVersion(int version) {
+        sharedPreferences.edit().putInt(PREF_KEY_KEYS_VERSION, version).apply();
     }
 
     public boolean getSessionAlreadySetUp(UserId peerUserId) {

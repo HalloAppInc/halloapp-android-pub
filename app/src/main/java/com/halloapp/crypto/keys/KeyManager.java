@@ -31,6 +31,8 @@ public class KeyManager {
     private static final byte[] HKDF_INPUT_MESSAGE_KEY = new byte[]{1};
     private static final byte[] HKDF_INPUT_CHAIN_KEY = new byte[]{2};
 
+    private static final int KEYS_VERSION = 1;
+
     private EncryptedKeyStore encryptedKeyStore;
 
     public static KeyManager getInstance() {
@@ -52,6 +54,11 @@ public class KeyManager {
     public void ensureKeysUploaded(Connection connection) {
         if (!Constants.ENCRYPTION_TURNED_ON) {
             return;
+        }
+
+        if (encryptedKeyStore.getKeysVersion() < KEYS_VERSION) {
+            Log.i("KeyManager keys version outdated; clearing key store");
+            encryptedKeyStore.clearAll();
         }
 
         if (!encryptedKeyStore.getKeysUploaded()) {
@@ -83,6 +90,7 @@ public class KeyManager {
             try {
                 if (success.get()) {
                     encryptedKeyStore.setKeysUploaded(true);
+                    encryptedKeyStore.setKeysVersion(KEYS_VERSION);
                 } else {
                     Log.e("Key upload failed");
                 }
