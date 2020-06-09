@@ -42,7 +42,7 @@
                 android:paddingEnd="14dp"
                 android:paddingBottom="9dp"
                 android:textAppearance="?textAppearanceListItemSmall"
-                android:textSize="16sp"
+                android:textSize="@dimen/message_text_size"
                 app:ltvReadMore="@string/read_more"
                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
 

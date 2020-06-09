@@ -4,7 +4,11 @@ import android.text.TextUtils;
 
 import com.halloapp.Constants;
 
+import java.text.BreakIterator;
+
 public class StringUtils {
+
+    private static final int EMOJI_LIMIT = 3;
 
     public static String preparePostText(final String text) {
         if (TextUtils.isEmpty(text)) {
@@ -30,5 +34,28 @@ public class StringUtils {
             ret[i] = (byte)Integer.parseInt(b, 16);
         }
         return ret;
+    }
+
+    public static boolean isFewEmoji(String text) {
+        BreakIterator breakIterator = BreakIterator.getCharacterInstance();
+        breakIterator.setText(text);
+        int count = 0;
+        while (breakIterator.next() != BreakIterator.DONE) {
+            count++;
+        }
+
+        if (count > EMOJI_LIMIT) {
+            return false;
+        }
+
+        int codePointCount = Character.codePointCount(text, 0, text.length());
+        for (int i=0; i<codePointCount; i++) {
+            int codePoint = Character.codePointAt(text, i);
+            int type = Character.getType(codePoint);
+            if (type != Character.OTHER_SYMBOL && type != Character.SURROGATE && type != Character.FORMAT && type != Character.NON_SPACING_MARK) {
+                return false;
+            }
+        }
+        return true;
     }
 }
