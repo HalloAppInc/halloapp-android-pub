@@ -37,6 +37,10 @@ public class StringUtils {
     }
 
     public static boolean isFewEmoji(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return false;
+        }
+
         BreakIterator breakIterator = BreakIterator.getCharacterInstance();
         breakIterator.setText(text);
         int count = 0;
