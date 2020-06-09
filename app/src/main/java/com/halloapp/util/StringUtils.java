@@ -42,10 +42,9 @@ public class StringUtils {
         int count = 0;
         while (breakIterator.next() != BreakIterator.DONE) {
             count++;
-        }
-
-        if (count > EMOJI_LIMIT) {
-            return false;
+            if (count > EMOJI_LIMIT) {
+                return false;
+            }
         }
 
         int codePointCount = Character.codePointCount(text, 0, text.length());
