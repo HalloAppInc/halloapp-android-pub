@@ -20,41 +20,38 @@ public class Log {
     }
 
     public static void d(String msg) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/D/halloApp: " + msg);
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/D/halloApp: " + msg);
     }
 
     public static void i(String msg) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/I/halloApp: " + msg);
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/I/halloApp: " + msg);
     }
 
     public static void i(String msg, Throwable tr) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/I/halloApp: " + msg + "\n" +
-                tr.getMessage());
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/I/halloApp: " + msg + "\n" + tr.getMessage());
     }
 
     public static void w(String msg) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/W/halloApp: " + msg);
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/W/halloApp: " + msg);
     }
 
     public static void w(String msg, Throwable tr) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/W/halloApp: " + msg + "\n" +
-                android.util.Log.getStackTraceString(tr));
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/W/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
     }
 
     public static void e(String msg) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/E/halloApp: " + msg);
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/E/halloApp: " + msg);
     }
 
     public static void e(String msg, Throwable tr) {
-        long threadID = Thread.currentThread().getId();
-        FirebaseCrashlytics.getInstance().log(threadID + "/E/halloApp: " + msg + "\n" +
-                android.util.Log.getStackTraceString(tr));
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/E/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
     }
 
     public static void sendErrorReport(String msg) {
