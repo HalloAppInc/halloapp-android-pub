@@ -105,6 +105,7 @@ public class KeyManager {
     public void tearDownSession(UserId peerUserId) {
         Log.i("KeyManager tearing down session with user " + peerUserId);
         encryptedKeyStore.clearSessionAlreadySetUp(peerUserId);
+        encryptedKeyStore.clearLastDownloadAttempt(peerUserId);
         encryptedKeyStore.clearPeerResponded(peerUserId);
         encryptedKeyStore.clearSkippedMessageKeys(peerUserId);
         encryptedKeyStore.clearPeerPublicIdentityKey(peerUserId);

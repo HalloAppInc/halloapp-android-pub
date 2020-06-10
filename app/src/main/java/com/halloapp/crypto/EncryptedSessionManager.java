@@ -22,6 +22,8 @@ import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutionException;
 
 public class EncryptedSessionManager {
+    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 60 * 60 * 1000; // one hour
+
     private final Connection connection;
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
@@ -82,6 +84,14 @@ public class EncryptedSessionManager {
         }
 
         if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
+            // TODO(jack): Reconsider once encryption is fully deployed
+            long now = System.currentTimeMillis();
+            if (now - encryptedKeyStore.getLastDownloadAttempt(peerUserId) < MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS) {
+                Log.i("EncryptedSessionManager last download attempt too recent for " + peerUserId);
+                return null;
+            }
+            encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
+
             WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).get();
             IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
             SignedPreKey signedPreKeyProto = SignedPreKey.parseFrom(keysIq.signedPreKey);
@@ -91,9 +101,6 @@ public class EncryptedSessionManager {
 
             if (identityKeyBytes == null || identityKeyBytes.length == 0 || signedPreKeyBytes == null || signedPreKeyBytes.length == 0) {
                 Log.i("Did not get any keys for peer " + peerUserId);
-
-                // TODO(jack): Once encryption is turned on for all clients this probably should be removed [stops repeated key requests]
-                encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
                 return null;
             }

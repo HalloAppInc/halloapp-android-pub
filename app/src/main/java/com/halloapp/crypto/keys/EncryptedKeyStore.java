@@ -40,10 +40,11 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
     private static final String PREF_KEY_KEYS_UPLOADED = "keys_uploaded";
     private static final String PREF_KEY_KEYS_VERSION = "keys_version";
-    private static final String PREF_KEY_MESSAGE_KEY_SET_PREFIX = "message_key_set";
 
     private static final String PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX = "one_time_pre_key";
     private static final String PREF_KEY_MESSAGE_KEY_PREFIX = "message_key";
+    private static final String PREF_KEY_MESSAGE_KEY_SET_PREFIX = "message_key_set";
+    private static final String PREF_KEY_LAST_DOWNLOAD_ATTEMPT_SUFFIX = "last_download_attempt";
 
     private static final String PREF_KEY_SESSION_ALREADY_SET_UP_SUFFIX = "session_already_set_up";
     private static final String PREF_KEY_PEER_RESPONDED_SUFFIX = "peer_responded";
@@ -123,6 +124,22 @@ public class EncryptedKeyStore {
 
     private String getSessionAlreadySetUpPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_SESSION_ALREADY_SET_UP_SUFFIX;
+    }
+
+    public long getLastDownloadAttempt(UserId peerUserId) {
+        return sharedPreferences.getLong(getLastDownloadAttemptPrefKey(peerUserId), 0);
+    }
+
+    public void setLastDownloadAttempt(UserId peerUserId, long lastDownloadAttempt) {
+        sharedPreferences.edit().putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt).apply();
+    }
+
+    public void clearLastDownloadAttempt(UserId peerUserId) {
+        sharedPreferences.edit().remove(getLastDownloadAttemptPrefKey(peerUserId)).apply();
+    }
+
+    private String getLastDownloadAttemptPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_LAST_DOWNLOAD_ATTEMPT_SUFFIX;
     }
 
     public boolean getPeerResponded(UserId peerUserId) {
