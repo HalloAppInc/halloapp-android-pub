@@ -218,10 +218,17 @@ public class AvatarPreviewActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (media != null) {
-                final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
+                final File tmpFile = FileStore.getInstance(application).getTmpFile("avatar");
                 try {
-                    TranscodeResult transcodeResult = transcode(media.file, outFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
-                    String avatarId = uploadAvatar(outFile, Connection.getInstance(), transcodeResult);
+                    TranscodeResult transcodeResult = transcode(media.file, tmpFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
+                    String avatarId = uploadAvatar(tmpFile, Connection.getInstance(), transcodeResult);
+                    if (avatarId == null) {
+                        return false;
+                    }
+
+                    final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
+                    FileUtils.copyFile(tmpFile, outFile);
+
                     AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged(avatarId);
                 } catch (IOException | NoSuchAlgorithmException e) {
