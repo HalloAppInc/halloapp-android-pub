@@ -1,24 +1,19 @@
 package com.halloapp.ui.posts;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
-import android.text.TextUtils;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
-import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
@@ -151,16 +146,6 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         } else {
             firstCommentContent.setVisibility(View.GONE);
         }
-    }
-
-    private void onRetractPost() {
-        final Context context = itemView.getContext();
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(context.getString(R.string.retract_post_confirmation));
-        builder.setCancelable(true);
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(context).retractPost(post));
-        builder.setNegativeButton(R.string.no, null);
-        builder.show();
     }
 }
 
