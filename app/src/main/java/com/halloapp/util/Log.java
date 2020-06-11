@@ -4,13 +4,12 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.halloapp.Me;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import io.fabric.sdk.android.Fabric;
 
 public class Log {
 
@@ -21,59 +20,38 @@ public class Log {
     }
 
     public static void d(String msg) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.DEBUG, TAG, msg);
-        } else {
-            android.util.Log.d(TAG, msg);
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/D/halloApp: " + msg);
     }
 
     public static void i(String msg) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.INFO, TAG, msg);
-        } else {
-            android.util.Log.i(TAG, msg);
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/I/halloApp: " + msg);
     }
 
     public static void i(String msg, Throwable tr) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.INFO, TAG, msg + '\n' + tr.getMessage());
-        } else {
-            android.util.Log.i(TAG, msg + " " + tr.getMessage());
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/I/halloApp: " + msg + "\n" + tr.getMessage());
     }
 
     public static void w(String msg) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.WARN, TAG, msg);
-        } else {
-            android.util.Log.w(TAG, msg);
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/W/halloApp: " + msg);
     }
 
     public static void w(String msg, Throwable tr) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.WARN, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
-        } else {
-            android.util.Log.w(TAG, msg, tr);
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/W/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
     }
 
     public static void e(String msg) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.ERROR, TAG, msg);
-        } else {
-            android.util.Log.e(TAG, msg);
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/E/halloApp: " + msg);
     }
 
     public static void e(String msg, Throwable tr) {
-        if (Fabric.isInitialized()) {
-            Crashlytics.log(android.util.Log.ERROR, TAG, msg + '\n' + android.util.Log.getStackTraceString(tr));
-        } else {
-            android.util.Log.e(TAG, msg, tr);
-        }
+        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
+                "/E/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
     }
 
     public static void sendErrorReport(String msg) {
@@ -94,10 +72,7 @@ public class Log {
             }
         }
         Throwable e = new ConstructedException(msg, stackTrace);
-
-        if (Fabric.isInitialized()) {
-            Crashlytics.logException(e);
-        }
+        FirebaseCrashlytics.getInstance().recordException(e);
     }
 
     private static class ConstructedException extends Throwable {
@@ -121,9 +96,8 @@ public class Log {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (Fabric.isInitialized()) {
-                Crashlytics.setString("user", me.getUser());
-            }
+            String user = me.getUser();
+            FirebaseCrashlytics.getInstance().setCustomKey("user", user);
             return null;
         }
     }

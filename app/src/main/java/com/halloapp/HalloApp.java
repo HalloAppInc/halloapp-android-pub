@@ -14,7 +14,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
@@ -22,8 +22,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
-
-import io.fabric.sdk.android.Fabric;
 
 public class HalloApp extends Application {
 
@@ -33,7 +31,7 @@ public class HalloApp extends Application {
         Log.i("halloapp: onCreate");
 
         if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
         } else {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
