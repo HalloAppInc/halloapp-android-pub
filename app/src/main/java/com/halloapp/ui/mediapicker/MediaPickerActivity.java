@@ -169,17 +169,15 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
                         CenterToast.show(this, R.string.bad_image);
                     } else {
                         final ArrayList<Uri> uris = new ArrayList<>();
-                        if (uris.isEmpty()) {
-                            final ClipData clipData = data.getClipData();
-                            if (clipData != null) {
-                                for (int i = 0; i < clipData.getItemCount(); i++) {
-                                    uris.add(clipData.getItemAt(i).getUri());
-                                }
-                            } else {
-                                final Uri uri = data.getData();
-                                if (uri != null) {
-                                    uris.add(uri);
-                                }
+                        final ClipData clipData = data.getClipData();
+                        if (clipData != null) {
+                            for (int i = 0; i < clipData.getItemCount(); i++) {
+                                uris.add(clipData.getItemAt(i).getUri());
+                            }
+                        } else {
+                            final Uri uri = data.getData();
+                            if (uri != null) {
+                                uris.add(uri);
                             }
                         }
                         if (!uris.isEmpty()) {
