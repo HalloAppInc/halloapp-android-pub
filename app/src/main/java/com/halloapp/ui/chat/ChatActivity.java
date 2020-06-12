@@ -72,6 +72,8 @@ public class ChatActivity extends AppCompatActivity {
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
+    private static final int REQUEST_CODE_COMPOSE = 1;
+
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
 
@@ -429,7 +431,24 @@ public class ChatActivity extends AppCompatActivity {
         final Intent intent = new Intent(this, MediaPickerActivity.class);
         intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_SEND);
         intent.putExtra(MediaPickerActivity.EXTRA_CHAT_ID, chatId);
-        startActivity(intent);
+        intent.putExtra(MediaPickerActivity.EXTRA_REPLY_POST_ID, replyPostId);
+        intent.putExtra(MediaPickerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
+        startActivityForResult(intent, REQUEST_CODE_COMPOSE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_COMPOSE: {
+                if (resultCode == RESULT_OK) {
+                    replyPostId = null;
+                    replyPostMediaIndex = -1;
+                    updatePostReply(null);
+                }
+                break;
+            }
+        }
     }
 
     private static final DiffUtil.ItemCallback<Message> DIFF_CALLBACK = new DiffUtil.ItemCallback<Message>() {

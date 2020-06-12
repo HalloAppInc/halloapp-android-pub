@@ -20,6 +20,7 @@ import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -60,6 +62,8 @@ import java.util.List;
 public class ContentComposerActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
+    public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
@@ -70,6 +74,10 @@ public class ContentComposerActivity extends AppCompatActivity {
     private MediaListAdapter mediaListAdapter;
     private RecyclerView mediaList;
     private DrawDelegateView drawDelegateView;
+    private View replyContainer;
+
+    private String replyPostId;
+    private int replyPostMediaIndex;
 
     private static final int REQUEST_CODE_CROP = 1;
 
@@ -142,6 +150,17 @@ public class ContentComposerActivity extends AppCompatActivity {
             });
         }
 
+        if (savedInstanceState == null) {
+            replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        } else {
+            replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        }
+        if (replyPostId != null) {
+            editText.requestFocus();
+        }
+
         mediaList = findViewById(R.id.media_list);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaList.getContext(), RecyclerView.HORIZONTAL, false);
         mediaList.setLayoutManager(layoutManager);
@@ -208,7 +227,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
@@ -246,9 +265,85 @@ public class ContentComposerActivity extends AppCompatActivity {
         });
         if (viewModel.chatName != null) {
             setTitle("");
-            viewModel.chatName.getLiveData().observe(this, this::setTitle);
+            viewModel.chatName.getLiveData().observe(this, name -> {
+                this.setTitle(name);
+                if (replyPostId != null) {
+                    final TextView replyNameView = findViewById(R.id.reply_name);
+                    replyNameView.setText(name);
+                }
+            });
         } else {
             setTitle(R.string.new_post);
+        }
+
+        replyContainer = findViewById(R.id.reply_container);
+        if (viewModel.replyPost != null) {
+            viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
+        } else {
+            replyContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void updatePostReply(@Nullable Post post) {
+        if (post == null) {
+            replyContainer.setVisibility(View.GONE);
+        } else {
+            replyContainer.setVisibility(View.VISIBLE);
+            final TextView replyTextView = findViewById(R.id.reply_text);
+            replyTextView.setText(post.text);
+            final ImageView replyMediaIconView = findViewById(R.id.reply_media_icon);
+            final ImageView replyMediaThumbView = findViewById(R.id.reply_media_thumb);
+            if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
+                replyMediaThumbView.setVisibility(View.VISIBLE);
+                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
+                    }
+                });
+                replyMediaThumbView.setClipToOutline(true);
+                final Media media = post.media.get(replyPostMediaIndex);
+                fullThumbnailLoader.load(replyMediaThumbView, media);
+                replyMediaIconView.setVisibility(View.VISIBLE);
+                switch (media.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
+                        if (TextUtils.isEmpty(post.text)) {
+                            replyTextView.setText(R.string.photo);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_video);
+                        if (TextUtils.isEmpty(post.text)) {
+                            replyTextView.setText(R.string.video);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
+                        break;
+                    }
+                }
+            } else {
+                replyMediaThumbView.setVisibility(View.GONE);
+                replyMediaIconView.setVisibility(View.GONE);
+            }
+            findViewById(R.id.reply_close).setOnClickListener(v -> {
+                replyPostId = null;
+                replyPostMediaIndex = -1;
+                replyContainer.setVisibility(View.GONE);
+            });
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (replyPostId != null) {
+            outState.putString(EXTRA_REPLY_POST_ID, replyPostId);
+            outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }
     }
 

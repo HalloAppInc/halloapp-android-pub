@@ -49,6 +49,8 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
 
     public static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
     public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_REPLY_POST_ID = "reply_id";
+    public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
     public static final int PICKER_PURPOSE_SEND = 1;
     public static final int PICKER_PURPOSE_AVATAR = 2;
@@ -272,6 +274,8 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         final Intent intent = new Intent(this, ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, getIntent().getStringExtra(EXTRA_CHAT_ID));
+        intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
+        intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_CONTENT);
     }
 

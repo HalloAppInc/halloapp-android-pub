@@ -2,11 +2,17 @@ package com.halloapp.ui;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.graphics.Outline;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Size;
+import android.view.View;
+import android.view.ViewOutlineProvider;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +23,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
@@ -42,7 +50,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
     final MutableLiveData<List<Media>> media = new MutableLiveData<>();
     final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
     final ComputableLiveData<String> chatName;
+    final ComputableLiveData<Post> replyPost;
 
+    private final String replyPostId;
+    private final int replyPostMediaIndex;
+
+    private final ContentDb contentDb;
     final Map<File, Parcelable> cropStates = new HashMap<>();
 
 
@@ -50,8 +63,11 @@ public class ContentComposerViewModel extends AndroidViewModel {
         return new File(file.getAbsolutePath() + "-crop");
     }
 
-    ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
+    ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
+        contentDb = ContentDb.getInstance(application);
+        this.replyPostId = replyPostId;
+        this.replyPostMediaIndex = replyPostMediaIndex;
         if (uris != null) {
             loadUris(uris);
         }
@@ -64,6 +80,16 @@ public class ContentComposerViewModel extends AndroidViewModel {
             };
         } else {
             chatName = null;
+        }
+        if (replyPostId != null) {
+            replyPost = new ComputableLiveData<Post>() {
+                @Override
+                protected Post compute() {
+                    return contentDb.getPost(new UserId(chatId), replyPostId);
+                }
+            };
+        } else {
+            replyPost = null;
         }
     }
 
@@ -84,7 +110,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void prepareContent(@Nullable String chatId, @Nullable String text) {
-        new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), contentItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private @Nullable List<Media> getSendMediaList() {
@@ -111,18 +137,22 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final Application application;
         private final String chatId;
         private final Collection<Uri> uris;
+        private final String replyId;
+        private final int replyPostMediaIndex;
 
-        Factory(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris) {
+        Factory(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris, @Nullable String replyId, int replyPostMediaIndex) {
             this.application = application;
             this.chatId = chatId;
             this.uris = uris;
+            this.replyId = replyId;
+            this.replyPostMediaIndex = replyPostMediaIndex;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContentComposerViewModel(application, chatId, uris);
+                return (T) new ContentComposerViewModel(application, chatId, uris, replyId, replyPostMediaIndex);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -174,13 +204,17 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final List<Media> media;
         private final Application application;
         private final MutableLiveData<ContentItem> contentItem;
+        private final String replyPostId;
+        private final int replyPostMediaIndex;
 
-        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @NonNull MutableLiveData<ContentItem> contentItem) {
+        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
             this.chatId = chatId;
             this.application = application;
             this.text = text;
             this.media = media;
             this.contentItem = contentItem;
+            this.replyPostId = replyPostId;
+            this.replyPostMediaIndex = replyPostMediaIndex;
         }
 
         @Override
@@ -188,7 +222,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
             final ContentItem contentItem = chatId == null ?
                     new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, null, -1);
+                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex);
             if (media != null) {
                 for (Media media : media) {
                     final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
