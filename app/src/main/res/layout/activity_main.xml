@@ -49,13 +49,13 @@
 
         <com.leinardi.android.speeddial.SpeedDialOverlayLayout
             android:id="@+id/overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/speed_dial"
+            app:layout_constraintEnd_toEndOf="@id/speed_dial"
+            app:layout_constraintTop_toTopOf="@id/speed_dial"
+            app:layout_constraintBottom_toBottomOf="@id/speed_dial"
             app:clickable_overlay="true"
             android:background="@android:color/transparent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />

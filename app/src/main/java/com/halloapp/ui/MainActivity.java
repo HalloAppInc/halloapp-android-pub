@@ -3,13 +3,13 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -260,6 +260,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // Allow dismissal of FAB menu on scroll
+        if (fabView.isOpen()) {
+            if (ev.getX() < fabView.getX()
+                    || ev.getX() < fabView.getX() + fabView.getWidth()
+                    || ev.getY() > fabView.getY() + fabView.getHeight()
+                    || ev.getY() < fabView.getY()) {
+                fabView.close();
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
