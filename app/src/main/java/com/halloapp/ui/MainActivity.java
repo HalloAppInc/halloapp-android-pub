@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // Allow dismissal of FAB menu on scroll
         if (fabView.isOpen()) {
             if (ev.getX() < fabView.getX()
-                    || ev.getX() < fabView.getX() + fabView.getWidth()
+                    || ev.getX() > fabView.getX() + fabView.getWidth()
                     || ev.getY() > fabView.getY() + fabView.getHeight()
                     || ev.getY() < fabView.getY()) {
                 fabView.close();
