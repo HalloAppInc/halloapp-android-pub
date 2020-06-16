@@ -413,6 +413,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable Message getMessage(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        return messagesDb.getMessage(chatId, senderUserId, messageId);
+    }
+
+    @WorkerThread
     @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
         return messagesDb.getMessages(chatId, startRowId, count, after);
     }

@@ -122,10 +122,15 @@ public class ChatMessageElement implements ExtensionElement {
                 if (!plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
                 }
-            } catch (GeneralSecurityException e) {
+            } catch (GeneralSecurityException | ArrayIndexOutOfBoundsException e) {
                 Log.e("Failed to decrypt message, falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure");
                 chatMessage = plaintextChatMessage;
+
+                if (Constants.REREQUESTS_ENABLED) {
+                    Log.i("Rerequesting message " + id);
+                    Connection.getInstance().sendRerequest(from, id);
+                }
             }
         }
         final Message message = new Message(0,

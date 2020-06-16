@@ -135,6 +135,10 @@ public class EncryptedSessionManager {
         return protoKeys;
     }
 
+    public PublicEdECKey getPublicIdentityKey() {
+        return encryptedKeyStore.getMyPublicEd25519IdentityKey();
+    }
+
     private SessionSetupInfo setUpSession(UserId peerUserId) throws GeneralSecurityException, InvalidProtocolBufferException, ExecutionException, InterruptedException {
         if (!Constants.ENCRYPTION_TURNED_ON || encryptedKeyStore.getPeerResponded(peerUserId)) {
             return null;

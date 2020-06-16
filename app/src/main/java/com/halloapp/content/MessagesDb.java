@@ -485,9 +485,9 @@ class MessagesDb {
                     RepliesTable.COLUMN_POST_ID + "," +
                     RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
-            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + chatId + " AND " +
-                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=" + senderUserId.rawId() + " AND " +
-                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=" + messageId;
+            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId + "\" AND " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=\"" + senderUserId.rawId() + "\" AND " +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=\"" + messageId + "\"";
         Message message = null;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {

@@ -2,6 +2,7 @@ package com.halloapp.xmpp;
 
 import android.content.Context;
 import android.os.HandlerThread;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -109,6 +111,7 @@ public class Connection {
         void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId);
         void onIncomingMessageReceived(@NonNull Message message);
         void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull String stanzaId);
         void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
         void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId);
         void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId);
@@ -169,6 +172,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addExtensionProvider(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE, new WhisperKeysMessage.Provider());
         ProviderManager.addExtensionProvider(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE, new AvatarChangeMessage.Provider());
+        ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
@@ -624,6 +628,23 @@ public class Connection {
         });
     }
 
+    public void sendRerequest(final @NonNull Jid originalSender, final @NonNull String messageId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+            try {
+                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(originalSender);
+                String encodedIdentityKey = Base64.encodeToString(EncryptedSessionManager.getInstance().getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
+                xmppMessage.addExtension(new RerequestElement(messageId, encodedIdentityKey));
+                Log.i("connection: sending rerequest for " + messageId + " to " + originalSender);
+                connection.sendStanza(xmppMessage);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send message", e);
+            }
+        });
+    }
 
     public void sendAck(final @NonNull String id) {
         executor.execute(() -> {
@@ -973,6 +994,14 @@ public class Connection {
                     if (avatarChangeMessage != null) {
                         Log.i("connection: got avatar change message " + msg);
                         observer.onAvatarChangeMessageReceived(avatarChangeMessage.userId, avatarChangeMessage.avatarId, packet.getStanzaId());
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final RerequestElement rerequest = packet.getExtension(RerequestElement.ELEMENT, RerequestElement.NAMESPACE);
+                    if (rerequest != null) {
+                        Log.i("connection: got rerequest message " + msg);
+                        observer.onMessageRerequest(getUserId(packet.getFrom()), rerequest.id, packet.getStanzaId());
                         handled = true;
                     }
                 }

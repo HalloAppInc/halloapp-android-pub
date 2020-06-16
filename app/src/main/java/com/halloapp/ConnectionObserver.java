@@ -139,6 +139,15 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
+    public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
+        Message message = ContentDb.getInstance(context).getMessage(peerUserId.rawId(), UserId.ME, messageId);
+        if (message != null) {
+            EncryptedSessionManager.getInstance().sendMessage(message);
+        }
+        Connection.getInstance().sendAck(stanzaId);
+    }
+
+    @Override
     public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId) {
         final List<ContactsDb.NormalizedPhoneData> normalizedPhoneDataList = new ArrayList<>(protocolContacts.size());
         for (ContactInfo contact : protocolContacts) {
