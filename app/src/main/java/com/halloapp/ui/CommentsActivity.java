@@ -56,6 +56,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.PostEditText;
+import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
 
@@ -86,6 +87,7 @@ public class CommentsActivity extends AppCompatActivity {
     private PostEditText editText;
 
     private ItemTouchHelper itemTouchHelper;
+    private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
 
     private static final long POST_TEXT_LIMITS_ID = -1;
     private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
@@ -122,6 +124,8 @@ public class CommentsActivity extends AppCompatActivity {
         commentsView.setLayoutManager(layoutManager);
 
         commentsView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
+
+        keyboardScrollHelper = new RecyclerViewKeyboardScrollHelper(commentsView);
 
         final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
@@ -336,7 +340,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
         }
 
-        void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId) {
+        void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
 
             this.comment = comment;
 
@@ -378,6 +382,7 @@ public class CommentsActivity extends AppCompatActivity {
             cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
 
             replyButton.setOnClickListener(v -> {
+                keyboardScrollHelper.setAnchorForKeyboardChange(position);
                 updateReplyIndicator(comment.commentSenderUserId, comment.commentId);
                 editText.requestFocus();
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
@@ -590,7 +595,7 @@ public class CommentsActivity extends AppCompatActivity {
             if (position == 0) {
                 holder.bindTo(viewModel.post.getValue());
             } else {
-                holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId);
+                holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId, position);
             }
         }
     }
