@@ -115,4 +115,8 @@
         <item name="android:windowExitAnimation">@anim/comments_history_out</item>
     </style>
 
+    <style name="TextAppearance.BottomNavigationView" parent="@style/TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">10sp</item>
+    </style>
+
 </resources>
