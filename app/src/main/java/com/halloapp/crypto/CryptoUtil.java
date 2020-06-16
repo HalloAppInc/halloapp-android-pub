@@ -14,6 +14,7 @@ import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.util.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -56,11 +57,21 @@ public class CryptoUtil {
     }
 
     public static byte[] hkdf(@NonNull byte[] ikm, @Nullable byte[] salt, @Nullable byte[] info, int len) throws GeneralSecurityException {
-        return Hkdf.computeHkdf("HMACSHA256", ikm, salt, info, len);
+        try {
+            return Hkdf.computeHkdf("HMACSHA256", ikm, salt, info, len);
+        } catch (GeneralSecurityException e) {
+            Log.e("Hkdf security exception during computation");
+            throw e;
+        }
     }
 
     public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) throws InvalidKeyException {
-        return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
+        try {
+            return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
+        } catch (InvalidKeyException e) {
+            Log.e("Invalid key during ECDH");
+            throw e;
+        }
     }
 
     public static byte[] hmac(byte[] key, byte[] input) {
@@ -96,6 +107,7 @@ public class CryptoUtil {
 
     public static void verify(byte[] signature, byte[] message, PublicEdECKey key) throws GeneralSecurityException {
         if (!sign.cryptoSignVerifyDetached(signature, message, message.length, key.getKeyMaterial())) {
+            Log.w("Invalid Ed signature");
             throw new GeneralSecurityException("Invalid signature");
         }
     }

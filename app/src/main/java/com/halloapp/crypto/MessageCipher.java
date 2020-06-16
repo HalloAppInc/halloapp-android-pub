@@ -6,6 +6,7 @@ import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.keys.XECKey;
+import com.halloapp.util.Log;
 
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -47,6 +48,7 @@ class MessageCipher {
 
         byte[] calculatedHmac = CryptoUtil.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
+            Log.e("HMAC does not match; rejecting");
             throw new GeneralSecurityException("HMAC mismatch");
         }
 
