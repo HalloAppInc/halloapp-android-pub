@@ -32,7 +32,7 @@ public class RecyclerViewKeyboardScrollHelper {
     public RecyclerViewKeyboardScrollHelper(@NonNull RecyclerView recyclerView) {
         if (!(recyclerView.getLayoutManager() instanceof LinearLayoutManager)) {
             if (BuildConfig.DEBUG) {
-                throw new IllegalArgumentException("LinearKeyboardScrollController only supports LinearLayoutManagers");
+                throw new IllegalArgumentException("RecyclerViewKeyboardScrollHelper only supports LinearLayoutManagers");
             }
             return;
         }
