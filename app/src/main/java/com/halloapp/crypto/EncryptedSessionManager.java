@@ -93,6 +93,11 @@ public class EncryptedSessionManager {
             encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
 
             WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).get();
+            if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
+                Log.i("EncryptedSessionManager no whisper keys returned");
+                return null;
+            }
+
             IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
             SignedPreKey signedPreKeyProto = SignedPreKey.parseFrom(keysIq.signedPreKey);
 
