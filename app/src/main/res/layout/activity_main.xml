@@ -48,6 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="0dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             app:elevation="0dp"
             android:background="?android:attr/windowBackground"
             app:itemIconTint="@drawable/nav_item_foreground"

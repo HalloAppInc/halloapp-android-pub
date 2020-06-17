@@ -22,8 +22,8 @@
     <color name="post_actions_separator">#1a000000</color>
     <color name="badge_text">#ffffff</color>
     <color name="badge_background">#ff4500</color>
-    <color name="tab_active">#414141</color>
-    <color name="tab_inactive">#a1a1a1</color>
+    <color name="tab_active">@color/color_secondary</color>
+    <color name="tab_inactive">@color/black_30</color>
     <color name="media_placeholder">#f6f6f6</color>
     <color name="gallery_placeholder">#eeeeee</color>
     <color name="seen_comment_background">#f0f0f0</color>
