@@ -1,5 +1,7 @@
 package com.halloapp.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -11,6 +13,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.util.Log;
@@ -19,6 +22,7 @@ import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
 
 public class SettingsActivity extends AppCompatActivity {
+    private static final String SUPPORT_EMAIL_URI = "mailto:android-support@halloapp.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,11 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.sendErrorReport(getString(R.string.send_logs));
                 CenterToast.show(requireContext(), R.string.send_logs);
                 requireActivity().finish();
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse(SUPPORT_EMAIL_URI));
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_logs_subject));
+                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_logs_text, Me.getInstance(requireContext()).getUser()));
+                startActivity(intent);
                 return false;
             });
 
@@ -76,7 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Connection connection = Connection.getInstance();
                     connection.disconnect();
-                    connection.connect(getContext());
+                    connection.connect(requireContext());
                     return true;
                 }
             });
