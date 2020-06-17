@@ -15,10 +15,13 @@ import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import java.security.GeneralSecurityException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 public class EncryptedSessionManager {
@@ -28,6 +31,7 @@ public class EncryptedSessionManager {
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
     private final MessageCipher messageCipher;
+    private final ConcurrentMap<UserId, AutoCloseLock> lockMap = new ConcurrentHashMap<>();
 
     private static EncryptedSessionManager instance = null;
 
@@ -49,26 +53,40 @@ public class EncryptedSessionManager {
         this.messageCipher = messageCipher;
     }
 
+    // Should be used in a try-with-resources block for auto-release
+    private AutoCloseLock acquireLock(UserId userId) throws InterruptedException {
+        lockMap.putIfAbsent(userId, new AutoCloseLock());
+        return Preconditions.checkNotNull(lockMap.get(userId)).lock();
+    }
+
     public byte[] encryptMessage(byte[] message, UserId peerUserId) throws GeneralSecurityException {
-        return messageCipher.convertForWire(message, peerUserId);
+        try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
+            return messageCipher.convertForWire(message, peerUserId);
+        } catch (InterruptedException e) {
+            throw new GeneralSecurityException("Interrupted during encryption", e);
+        }
     }
 
     public byte[] decryptMessage(byte[] message, UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
-        if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-            if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
-                throw new GeneralSecurityException("Cannot set up session without identity key");
+        try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
+            if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
+                if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
+                    throw new GeneralSecurityException("Cannot set up session without identity key");
+                }
+                keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
             }
-            keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
-        }
-        encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
-        encryptedKeyStore.setPeerResponded(peerUserId, true);
+            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+            encryptedKeyStore.setPeerResponded(peerUserId, true);
 
-        return messageCipher.convertFromWire(message, peerUserId);
+            return messageCipher.convertFromWire(message, peerUserId);
+        } catch (InterruptedException e) {
+            throw new GeneralSecurityException("Interrupted during decryption", e);
+        }
     }
 
     public void sendMessage(final @NonNull Message message) {
         final UserId recipientUserId = new UserId(message.chatId);
-        try {
+        try (AutoCloseLock autoCloseLock = acquireLock(recipientUserId)) {
             SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId);
             connection.sendMessage(message, sessionSetupInfo);
         } catch (Exception e) {
