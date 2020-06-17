@@ -30,4 +30,9 @@
     <dimen name="message_text_size">16sp</dimen>
     <dimen name="message_text_size_few_emoji">32sp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">52dp</dimen>
+
+    <!-- Message Bubbles -->
+    <dimen name="message_bubble_corner_radius">20dp</dimen>
+    <dimen name="message_bubble_corner_sequence_radius">6dp</dimen>
+    <dimen name="message_vertical_margin">1dp</dimen>
 </resources>

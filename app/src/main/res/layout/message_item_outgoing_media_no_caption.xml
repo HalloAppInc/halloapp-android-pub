@@ -13,9 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="64dp"
-        android:paddingTop="8dp"
+        android:paddingTop="@dimen/message_vertical_margin"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="@dimen/message_vertical_margin">
 
         <FrameLayout
             android:id="@+id/content"

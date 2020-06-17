@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -106,8 +107,34 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage) {
+    private static @DrawableRes int getMessageBackground(@NonNull Context context, @NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {
+        boolean outgoing = message.isOutgoing();
+        if (mergeWithNext && mergeWithPrev) {
+            return outgoing ? R.drawable.message_background_outgoing_mid : R.drawable.message_background_incoming_mid;
+        }
+        if (mergeWithNext) {
+            return outgoing ? R.drawable.message_background_outgoing_start : R.drawable.message_background_incoming_start;
+        }
+        if (mergeWithPrev) {
+            return outgoing ? R.drawable.message_background_outgoing_end : R.drawable.message_background_incoming_end;
+        }
+        return outgoing ? R.drawable.message_background_outgoing : R.drawable.message_background_incoming;
+    }
+
+    private static boolean shouldMergeBubbles(@Nullable Message msg1, @Nullable Message msg2) {
+        if (msg1 == null || msg2 == null) {
+            return false;
+        }
+        return msg1.isOutgoing() == msg2.isOutgoing();
+    }
+
+    void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage, @Nullable Message nextMessage) {
         this.message = message;
+
+        boolean mergeWithNext = shouldMergeBubbles(message, nextMessage);
+        boolean mergeWithPrev = shouldMergeBubbles(message, prevMessage);
+
+        contentView.setBackgroundResource(getMessageBackground(contentView.getContext(), message, mergeWithNext, mergeWithPrev));
 
         if (statusView != null) {
             statusView.setImageResource(getStatusImageResource(message.state));

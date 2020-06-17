@@ -20,7 +20,7 @@
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>
-    <color name="message_background_incoming">#eeeeee</color>
+    <color name="message_background_incoming">#ffffff</color>
     <color name="message_background_outgoing">#d6e4fa</color>
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">#35529f</color>

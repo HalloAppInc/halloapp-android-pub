@@ -134,7 +134,7 @@ public class ChatActivity extends AppCompatActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         final RecyclerView chatView = findViewById(R.id.chat);
-        Preconditions.checkNotNull((SimpleItemAnimator)chatView.getItemAnimator()).setSupportsChangeAnimations(false);
+        Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         findViewById(R.id.send).setOnClickListener(v -> sendMessage());
         findViewById(R.id.media).setOnClickListener(v -> pickMedia());
@@ -195,6 +195,7 @@ public class ChatActivity extends AppCompatActivity {
                     scrollUpOnDataLoaded = false;
                     chatView.scrollToPosition(0);
                     newMessagesView.setVisibility(View.GONE);
+                    adapter.notifyDataSetChanged();
                 } else if (newIncomingMessage) {
                     final View childView = layoutManager.getChildAt(0);
                     final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
@@ -569,7 +570,17 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
             final Message message = Preconditions.checkNotNull(getItem(position));
-            holder.bindTo(message, firstUnseenMessageRowId == message.rowId ? newMessageCount : 0, position < getItemCount() - 1 ? getItem(position+1) : null);
+            holder.bindTo(
+                    message,
+                    firstUnseenMessageRowId == message.rowId
+                            ? newMessageCount
+                            : 0,
+                    position < getItemCount() - 1
+                            ? getItem(position + 1)
+                            : null,
+                    position >= 1
+                            ? getItem(position - 1)
+                            : null);
         }
     }
 
