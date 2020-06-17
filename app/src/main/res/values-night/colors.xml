@@ -25,6 +25,7 @@
 
     <color name="chat_message_preview">@color/white_70</color>
     <color name="empty_chat_placeholder">@color/white_30</color>
+    <color name="post_timestamp">@color/white_30</color>
 
     <!-- Text Colors -->
     <color name="primary_text">@color/white_87</color>
