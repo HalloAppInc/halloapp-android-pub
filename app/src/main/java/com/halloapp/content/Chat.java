@@ -10,7 +10,6 @@ public class Chat {
     public final long firstUnseenMessageRowId;
 
     public String name;
-    public String info;
 
     public Chat(
             long rowId,

@@ -155,7 +155,8 @@ public class ChatsFragment extends Fragment {
                     });
                 } else {
                     viewModel.messageLoader.cancel(itemView);
-                    infoView.setText(chat.info);
+                    infoView.setText(getText(R.string.empty_chat_placeholder));
+                    infoView.setTextColor(getResources().getColor(R.color.empty_chat_placeholder));
                     timeView.setText("");
                     statusView.setVisibility(View.GONE);
                     mediaIcon.setVisibility(View.GONE);
@@ -226,7 +227,7 @@ public class ChatsFragment extends Fragment {
                 } else {
                     text = message.text;
                 }
-
+                infoView.setTextColor(getResources().getColor(R.color.chat_message_preview));
                 infoView.setText(text);
             }
         }

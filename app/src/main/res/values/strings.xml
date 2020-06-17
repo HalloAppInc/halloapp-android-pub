@@ -33,6 +33,7 @@
     <string name="set_avatar_done">Done</string>
     <string name="set_avatar_reset">Reset</string>
     <string name="new_post">New post</string>
+    <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
     <string name="posts_empty">Your posts will appear here</string>
     <string name="invalid_phone_number">Invalid phone number</string>
     <plurals name="time_diff_minutes">

@@ -22,6 +22,9 @@
     <color name="home_navigation_divider">#292929</color>
     <color name="old_comments_indicator">#33FFFFFF</color>
 
+    <color name="chat_message_preview">@color/white_70</color>
+    <color name="empty_chat_placeholder">@color/white_30</color>
+
     <!-- Text Colors -->
     <color name="primary_text">@color/white_87</color>
     <color name="secondary_text">@color/white_54</color>

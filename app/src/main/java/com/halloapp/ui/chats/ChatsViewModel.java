@@ -120,7 +120,6 @@ public class ChatsViewModel extends AndroidViewModel {
                         chats.add(chat);
                     }
                     chat.name = friend.getDisplayName();
-                    chat.info = friend.getDisplayPhone();
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name)) {
