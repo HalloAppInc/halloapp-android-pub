@@ -3,6 +3,8 @@
     <bool name="light_system_bars">true</bool>
     <color name="color_primary">#ff4500</color>
     <color name="color_primary_dark">#757575</color>
+    <color name="color_secondary">#2962ff</color>
+    <color name="color_secondary_70_alpha">#B32962ff</color>
     <color name="color_accent">#ff4500</color>
     <color name="color_link">#ff33b5e5</color>
     <color name="color_action_bar">#f6f6f6</color>
@@ -37,4 +39,6 @@
     <color name="pager_indicator_color_selected">@color/color_primary</color>
     <!-- Indicator alpha is controlled by animation pager_indicator.xml -->
     <color name="pager_indicator_color_unselected">@color/color_primary</color>
+    <color name="old_comments_indicator">#33000000</color>
+    <color name="new_comments_indicator">@color/color_secondary_70_alpha</color>
 </resources>

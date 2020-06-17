@@ -20,4 +20,5 @@
     <color name="message_text_outgoing">#202020</color>
     <color name="change_avatar_background">#424242</color>
     <color name="home_navigation_divider">#292929</color>
+    <color name="old_comments_indicator">#33FFFFFF</color>
 </resources>

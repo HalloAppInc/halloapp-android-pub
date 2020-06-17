@@ -7,7 +7,7 @@
         android:height="6dp" />
 
     <solid
-        android:color="#33999999" />
+        android:color="@color/old_comments_indicator" />
 
     <padding
         android:left="8dp"
