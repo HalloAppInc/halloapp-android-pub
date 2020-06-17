@@ -1,8 +1,11 @@
 package com.halloapp.crypto;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
@@ -20,10 +23,17 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * The public-facing interface for Signal protocol. All production calls to code related to
+ * the Signal protocol should be routed through this class.
+ */
 public class EncryptedSessionManager {
     private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 60 * 60 * 1000; // one hour
 
@@ -51,6 +61,10 @@ public class EncryptedSessionManager {
         this.keyManager = keyManager;
         this.encryptedKeyStore = encryptedKeyStore;
         this.messageCipher = messageCipher;
+    }
+
+    public void init(Context context) {
+        encryptedKeyStore.init(context);
     }
 
     // Should be used in a try-with-resources block for auto-release
@@ -94,6 +108,31 @@ public class EncryptedSessionManager {
             Log.sendErrorReport("Failed to get session setup info");
             connection.sendMessage(message, null);
         }
+    }
+
+    public void tearDownSession(final @NonNull UserId peerUserId) {
+        try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
+            keyManager.tearDownSession(peerUserId);
+        } catch (InterruptedException e) {
+            Log.e("Interrupted trying to tear down session", e);
+        }
+    }
+
+    public void ensureKeysUploaded(Connection connection) {
+        keyManager.ensureKeysUploaded(connection);
+    }
+
+    public List<byte[]> getFreshOneTimePreKeyProtos() {
+        Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
+        List<byte[]> protoKeys = new ArrayList<>();
+        for (OneTimePreKey otpk : keys) {
+            com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
+                    .setId(otpk.id)
+                    .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
+                    .build();
+            protoKeys.add(protoKey.toByteArray());
+        }
+        return protoKeys;
     }
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws GeneralSecurityException, InvalidProtocolBufferException, ExecutionException, InterruptedException {

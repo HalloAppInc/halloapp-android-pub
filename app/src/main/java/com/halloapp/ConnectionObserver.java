@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
-import com.google.protobuf.ByteString;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
@@ -13,9 +12,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
-import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.KeyManager;
-import com.halloapp.crypto.keys.OneTimePreKey;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -28,7 +25,6 @@ import com.halloapp.xmpp.WhisperKeysMessage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class ConnectionObserver implements Connection.Observer {
@@ -43,7 +39,7 @@ public class ConnectionObserver implements Connection.Observer {
     public void onConnected() {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
-                KeyManager.getInstance().ensureKeysUploaded(Connection.getInstance());
+                EncryptedSessionManager.getInstance().ensureKeysUploaded(Connection.getInstance());
             } catch (Exception e) {
                 Log.e("Failed to ensure keys uploaded", e);
             }
@@ -168,19 +164,11 @@ public class ConnectionObserver implements Connection.Observer {
         if (message.count != null) {
             int count = message.count;
             Log.i("OTPK count down to " + count + "; replenishing");
-            Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
-            List<byte[]> protoKeys = new ArrayList<>();
-            for (OneTimePreKey otpk : keys) {
-                com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
-                        .setId(otpk.id)
-                        .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
-                        .build();
-                protoKeys.add(protoKey.toByteArray());
-            }
+            List<byte[]> protoKeys = EncryptedSessionManager.getInstance().getFreshOneTimePreKeyProtos();
             Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
             Connection.getInstance().sendAck(ackId);
         } else if (message.userId != null) {
-            KeyManager.getInstance().tearDownSession(message.userId);
+            EncryptedSessionManager.getInstance().tearDownSession(message.userId);
             Connection.getInstance().sendAck(ackId);
         }
     }
