@@ -27,6 +27,12 @@ public class MediaPagerAdapter extends PagerAdapter {
     private List<Media> media;
     private String contentId;
 
+    private boolean overrideMediaPadding = false;
+    private int mediaInsetLeft;
+    private int mediaInsetRight;
+    private int mediaInsetBottom;
+    private int mediaInsetTop;
+
     public interface MediaPagerAdapterParent {
         Stack<View> getRecycledMediaViews();
         DrawDelegateView getDrawDelegateView();
@@ -46,6 +52,15 @@ public class MediaPagerAdapter extends PagerAdapter {
 
     public void setMedia(@NonNull List<Media> media) {
         this.media = media;
+        notifyDataSetChanged();
+    }
+
+    public void setMediaInset(int leftInsetPx, int topInsetPx, int rightInsetPx, int bottomInsetPx) {
+        overrideMediaPadding = true;
+        this.mediaInsetLeft = leftInsetPx;
+        this.mediaInsetRight = rightInsetPx;
+        this.mediaInsetBottom = bottomInsetPx;
+        this.mediaInsetTop = topInsetPx;
         notifyDataSetChanged();
     }
 
@@ -72,6 +87,9 @@ public class MediaPagerAdapter extends PagerAdapter {
             view = LayoutInflater.from(container.getContext()).inflate(R.layout.media_pager_item, container, false);
         } else {
             view = parent.getRecycledMediaViews().pop();
+        }
+        if (overrideMediaPadding) {
+            view.setPadding(mediaInsetLeft, mediaInsetTop, mediaInsetRight, mediaInsetBottom);
         }
         final Media mediaItem = media.get(Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position);
         view.setTag(mediaItem);

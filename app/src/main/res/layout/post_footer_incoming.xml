@@ -28,12 +28,16 @@
             android:background="?selectableItemBackground"
             android:orientation="horizontal">
 
+            <ImageView
+                style="@style/PostButtonIcon"
+                android:src="@drawable/ic_feed_comment"/>
+
+
             <TextView
                 style="@style/PostButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableStart="@drawable/ic_feed_comment"
                 android:text="@string/comment" />
 
             <View
@@ -41,7 +45,7 @@
                 android:id="@+id/comments_indicator" />
         </LinearLayout>
 
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/message"
             style="?actionButtonStyle"
             android:layout_width="0dp"
@@ -49,15 +53,18 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground">
 
+            <ImageView
+                style="@style/PostButtonIcon"
+                android:src="@drawable/ic_feed_message"/>
+
             <TextView
                 style="@style/PostButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableStart="@drawable/ic_feed_message"
                 android:text="@string/message" />
 
-        </FrameLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </merge>

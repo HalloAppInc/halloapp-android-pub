@@ -136,8 +136,12 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
 
+        final boolean noCaption = TextUtils.isEmpty(post.text);
+
         if (!post.media.isEmpty()) {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
+            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
+            mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, noCaption ? 0 : defaultMediaInset);
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
             if (post.media.size() > 1) {
@@ -155,7 +159,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
         textView.setText(post.text);
 
-        if (TextUtils.isEmpty(post.text)) {
+        if (noCaption) {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
