@@ -38,7 +38,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final MediaViewPager mediaPagerView;
     private final CircleIndicator mediaPagerIndicator;
     private final LimitingTextView textView;
-    private final MediaPagerAdapter mediaPagerAdapter;
+    protected final MediaPagerAdapter mediaPagerAdapter;
     private final View footer;
     final View footerSpacing;
 
@@ -140,8 +140,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         if (!post.media.isEmpty()) {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
-            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, noCaption ? 0 : defaultMediaInset);
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
             if (post.media.size() > 1) {

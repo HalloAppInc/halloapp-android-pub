@@ -55,10 +55,13 @@ public class IncomingPostViewHolder extends PostViewHolder {
             commentsIndicator.setVisibility(View.GONE);
         }
 
+        final int defaultMediaInset = commentsIndicator.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
         if (TextUtils.isEmpty(post.text)) {
+            mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
             postActionsSeparator.setVisibility(View.GONE);
             footerSpacing.setVisibility(View.GONE);
         } else {
+            mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
             postActionsSeparator.setVisibility(View.VISIBLE);
             footerSpacing.setVisibility(View.VISIBLE);
         }
