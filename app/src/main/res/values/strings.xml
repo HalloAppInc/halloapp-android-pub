@@ -17,7 +17,7 @@
     <string name="gallery_post">Gallery</string>
     <string name="text_post">Text</string>
     <string name="bad_image">Unsupported media type</string>
-    <string name="time_diff_now">now</string>
+    <string name="time_diff_now">Now</string>
     <string name="phone_number_hint">Phone number</string>
     <string name="request_registration_title">Welcome to HalloApp</string>
     <string name="reverify_registration_title">Please, re-verify your phone number</string>

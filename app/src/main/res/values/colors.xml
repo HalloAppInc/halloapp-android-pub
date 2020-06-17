@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- General Colors -->
+    <color name="black_87">#DF000000</color>
+    <color name="black_54">#8A000000</color>
+    <color name="white_87">#DFFFFFFF</color>
+    <color name="white_54">#8AFFFFFF</color>
+
     <bool name="light_system_bars">true</bool>
     <color name="color_primary">#ff4500</color>
     <color name="color_primary_dark">#757575</color>
@@ -36,9 +42,16 @@
     <color name="dim_facepile_avatar_0">#80ffffff</color>
     <color name="dim_facepile_avatar_1">#40ffffff</color>
     <color name="home_navigation_divider">#FFFFFF</color>
+
+    <color name="unread_indicator">@color/color_secondary</color>
+
     <color name="pager_indicator_color_selected">@color/color_primary</color>
     <!-- Indicator alpha is controlled by animation pager_indicator.xml -->
     <color name="pager_indicator_color_unselected">@color/color_primary</color>
     <color name="old_comments_indicator">#33000000</color>
     <color name="new_comments_indicator">@color/color_secondary_70_alpha</color>
+
+    <!-- Text Colors -->
+    <color name="primary_text">@color/black_87</color>
+    <color name="secondary_text">@color/black_54</color>
 </resources>

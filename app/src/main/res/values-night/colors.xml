@@ -21,4 +21,8 @@
     <color name="change_avatar_background">#424242</color>
     <color name="home_navigation_divider">#292929</color>
     <color name="old_comments_indicator">#33FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="primary_text">@color/white_87</color>
+    <color name="secondary_text">@color/white_54</color>
 </resources>

@@ -3,6 +3,7 @@ package com.halloapp.ui.chats;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -128,7 +130,7 @@ public class ChatsFragment extends Fragment {
 
             void bindTo(@NonNull Chat chat) {
                 this.chat = chat;
-                TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - chat.timestamp);
+                timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
                 avatarLoader.load(avatarView, new UserId(chat.chatId));
                 nameView.setText(chat.name);
                 if (chat.lastMessageRowId >= 0) {
@@ -161,7 +163,9 @@ public class ChatsFragment extends Fragment {
                 if (chat.newMessageCount > 0) {
                     newMessagesView.setVisibility(View.VISIBLE);
                     newMessagesView.setText(String.format(Locale.getDefault(), "%d", chat.newMessageCount));
+                    timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
                 } else {
+                    timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.secondary_text));
                     newMessagesView.setVisibility(View.GONE);
                 }
             }
