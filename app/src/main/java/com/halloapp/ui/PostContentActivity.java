@@ -2,6 +2,8 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
@@ -161,7 +164,18 @@ public class PostContentActivity extends AppCompatActivity {
 
         postViewGroup = findViewById(R.id.post);
 
-        findViewById(R.id.content).setOnClickListener(v -> finishAfterTransition());
+        View content = findViewById(R.id.content);
+        content.setOnClickListener(v -> finishAfterTransition());
+
+        final Drawable overlay = content.getBackground();
+
+        ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
+            content.setPadding(0, insets.getSystemWindowInsetTop(), 0, insets.getSystemWindowInsetBottom());
+            InsetDrawable insetDrawable =
+                    new InsetDrawable(overlay, insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom());
+            content.setBackground(insetDrawable);
+            return ViewCompat.onApplyWindowInsets(v, insets);
+        });
 
         final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));

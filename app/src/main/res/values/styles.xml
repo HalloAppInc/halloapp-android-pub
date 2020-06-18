@@ -10,6 +10,7 @@
         <item name="actionBarStyle">@style/ActionBar</item>
         <item name="actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="actionModeBackground">@color/window_background</item>
+        <item name="useLightSystemBars">@bool/light_system_bars</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
@@ -58,8 +59,9 @@
     <style name="AppTheme.PostContentActivity" parent="AppTheme.Popup.NoActionBar">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="android:navigationBarColor">@color/color_primary_dark</item>
-        <item name="android:statusBarColor">@color/color_primary_dark</item>
+        <item name="android:navigationBarColor">@color/dimmed_window_overlay</item>
+        <item name="android:statusBarColor">@color/dimmed_window_overlay</item>
+        <item name="useLightSystemBars">false</item>
     </style>
 
     <style name="ActionBar" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
