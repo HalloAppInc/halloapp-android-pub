@@ -66,7 +66,9 @@ public class SettingsActivity extends AppCompatActivity {
                 StrictMode.setThreadPolicy(threadPolicy);
             }
 
-            Preconditions.checkNotNull((Preference)findPreference("send_logs")).setOnPreferenceClickListener(preference -> {
+            final Preference sendLogsPreference = Preconditions.checkNotNull((findPreference("send_logs")));
+            sendLogsPreference.setVisible(!BuildConfig.DEBUG);
+            sendLogsPreference.setOnPreferenceClickListener(preference -> {
                 Log.sendErrorReport(getString(R.string.send_logs));
                 CenterToast.show(requireContext(), R.string.send_logs);
                 requireActivity().finish();
