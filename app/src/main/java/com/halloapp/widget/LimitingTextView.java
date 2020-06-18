@@ -2,6 +2,7 @@ package com.halloapp.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -13,9 +14,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 
@@ -52,7 +55,7 @@ public class LimitingTextView extends AppCompatTextView {
         lineLimit = a.getInt(R.styleable.LimitingTextView_ltvLimit, lineLimit);
         lineStep = a.getInt(R.styleable.LimitingTextView_ltvStep, lineStep);
         readMoreText = new SpannableString("… " + a.getText(R.styleable.LimitingTextView_ltvReadMore));
-        readMoreText.setSpan(new ReadMoreSpan(), 2, readMoreText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        readMoreText.setSpan(new ReadMoreSpan(ContextCompat.getColor(getContext(), R.color.read_more_link)), 2, readMoreText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         a.recycle();
 
         setMovementMethod(LinkMovementMethod.getInstance());
@@ -135,6 +138,12 @@ public class LimitingTextView extends AppCompatTextView {
 
     class ReadMoreSpan extends ClickableSpan {
 
+        private @ColorInt int spanColor;
+
+        public ReadMoreSpan(@ColorInt int color) {
+            this.spanColor = color;
+        }
+
         @Override
         public void onClick(@NonNull View widget) {
             onReadMore();
@@ -142,8 +151,9 @@ public class LimitingTextView extends AppCompatTextView {
 
         @Override
         public void updateDrawState(@NonNull TextPaint ds) {
-            ds.setColor(ds.linkColor);
+            ds.setColor(spanColor);
             ds.setUnderlineText(false);
+            ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         }
     }
 }

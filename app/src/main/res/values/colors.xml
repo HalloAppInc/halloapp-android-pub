@@ -17,6 +17,7 @@
     <color name="color_secondary_70_alpha">#B32962ff</color>
     <color name="color_accent">#ff4500</color>
     <color name="color_link">#ff33b5e5</color>
+    <color name="read_more_link">#ff277ffa</color>
     <color name="color_action_bar">#f6f6f6</color>
     <color name="window_background">#F3F2EF</color>
     <color name="dimmed_window_overlay">#80000000</color>
