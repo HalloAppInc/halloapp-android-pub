@@ -128,13 +128,24 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         return msg1.isOutgoing() == msg2.isOutgoing();
     }
 
+    private void updateBubbleMerging(boolean mergeWithPrev, boolean mergeWithNext) {
+        contentView.setBackgroundResource(getMessageBackground(contentView.getContext(), message, mergeWithNext, mergeWithPrev));
+        View contentParent = (contentView.getParent() instanceof View) ? (View) contentView.getParent() : null;
+        if (contentParent != null) {
+            contentParent.setPadding(
+                    contentParent.getPaddingLeft(),
+                    contentParent.getResources().getDimensionPixelSize(mergeWithPrev ? R.dimen.message_vertical_separator_sequence : R.dimen.message_vertical_separator),
+                    contentParent.getPaddingRight(),
+                    contentParent.getPaddingBottom());
+        }
+    }
+
     void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage, @Nullable Message nextMessage) {
         this.message = message;
 
-        boolean mergeWithNext = shouldMergeBubbles(message, nextMessage);
         boolean mergeWithPrev = shouldMergeBubbles(message, prevMessage);
-
-        contentView.setBackgroundResource(getMessageBackground(contentView.getContext(), message, mergeWithNext, mergeWithPrev));
+        boolean mergeWithNext = shouldMergeBubbles(message, nextMessage);
+        updateBubbleMerging(mergeWithPrev, mergeWithNext);
 
         if (statusView != null) {
             statusView.setImageResource(getStatusImageResource(message.state));
