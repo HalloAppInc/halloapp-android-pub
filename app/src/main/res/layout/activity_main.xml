@@ -18,6 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
+            app:titleTextAppearance="@style/TextAppearance.Toolbar.Title"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
             app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar" />
 

@@ -128,4 +128,8 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+    <style name="TextAppearance.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">22sp</item>
+    </style>
+
 </resources>
