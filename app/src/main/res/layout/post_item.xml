@@ -32,8 +32,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     tools:src="@color/color_primary_dark"/>
 
                 <TextView
@@ -46,6 +46,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:textAppearance="?textAppearanceListItem"
+                    android:textSize="17sp"
                     android:fontFamily="sans-serif-medium"
                     android:textDirection="locale"
                     android:textAlignment="gravity"
