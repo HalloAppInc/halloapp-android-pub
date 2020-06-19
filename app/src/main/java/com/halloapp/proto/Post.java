@@ -14,6 +14,7 @@ public  final class Post extends
   private Post() {
     media_ = emptyProtobufList();
     text_ = "";
+    mentions_ = emptyProtobufList();
   }
   public static final int MEDIA_FIELD_NUMBER = 1;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Media> media_;
@@ -53,9 +54,10 @@ public  final class Post extends
     return media_.get(index);
   }
   private void ensureMediaIsMutable() {
-    if (!media_.isModifiable()) {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Media> tmp = media_;
+    if (!tmp.isModifiable()) {
       media_ =
-          com.google.protobuf.GeneratedMessageLite.mutableCopy(media_);
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
      }
   }
 
@@ -153,6 +155,100 @@ public  final class Post extends
     checkByteStringIsUtf8(value);
     text_ = value.toStringUtf8();
     
+  }
+
+  public static final int MENTIONS_FIELD_NUMBER = 3;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Mention> mentions_;
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.Mention> getMentionsList() {
+    return mentions_;
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.MentionOrBuilder> 
+      getMentionsOrBuilderList() {
+    return mentions_;
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  @java.lang.Override
+  public int getMentionsCount() {
+    return mentions_.size();
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.Mention getMentions(int index) {
+    return mentions_.get(index);
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  public com.halloapp.proto.MentionOrBuilder getMentionsOrBuilder(
+      int index) {
+    return mentions_.get(index);
+  }
+  private void ensureMentionsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Mention> tmp = mentions_;
+    if (!tmp.isModifiable()) {
+      mentions_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  private void setMentions(
+      int index, com.halloapp.proto.Mention value) {
+    value.getClass();
+  ensureMentionsIsMutable();
+    mentions_.set(index, value);
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  private void addMentions(com.halloapp.proto.Mention value) {
+    value.getClass();
+  ensureMentionsIsMutable();
+    mentions_.add(value);
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  private void addMentions(
+      int index, com.halloapp.proto.Mention value) {
+    value.getClass();
+  ensureMentionsIsMutable();
+    mentions_.add(index, value);
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  private void addAllMentions(
+      java.lang.Iterable<? extends com.halloapp.proto.Mention> values) {
+    ensureMentionsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, mentions_);
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  private void clearMentions() {
+    mentions_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  private void removeMentions(int index) {
+    ensureMentionsIsMutable();
+    mentions_.remove(index);
   }
 
   public static com.halloapp.proto.Post parseFrom(
@@ -401,6 +497,108 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.Mention> getMentionsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getMentionsList());
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    @java.lang.Override
+    public int getMentionsCount() {
+      return instance.getMentionsCount();
+    }/**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.Mention getMentions(int index) {
+      return instance.getMentions(index);
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder setMentions(
+        int index, com.halloapp.proto.Mention value) {
+      copyOnWrite();
+      instance.setMentions(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder setMentions(
+        int index, com.halloapp.proto.Mention.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMentions(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder addMentions(com.halloapp.proto.Mention value) {
+      copyOnWrite();
+      instance.addMentions(value);
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder addMentions(
+        int index, com.halloapp.proto.Mention value) {
+      copyOnWrite();
+      instance.addMentions(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder addMentions(
+        com.halloapp.proto.Mention.Builder builderForValue) {
+      copyOnWrite();
+      instance.addMentions(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder addMentions(
+        int index, com.halloapp.proto.Mention.Builder builderForValue) {
+      copyOnWrite();
+      instance.addMentions(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder addAllMentions(
+        java.lang.Iterable<? extends com.halloapp.proto.Mention> values) {
+      copyOnWrite();
+      instance.addAllMentions(values);
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder clearMentions() {
+      copyOnWrite();
+      instance.clearMentions();
+      return this;
+    }
+    /**
+     * <code>repeated .proto.Mention mentions = 3;</code>
+     */
+    public Builder removeMentions(int index) {
+      copyOnWrite();
+      instance.removeMentions(index);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:proto.Post)
   }
   @java.lang.Override
@@ -420,10 +618,12 @@ public  final class Post extends
             "media_",
             com.halloapp.proto.Media.class,
             "text_",
+            "mentions_",
+            com.halloapp.proto.Mention.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\u0208" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0002\u0000\u0001\u001b\u0002\u0208" +
+              "\u0003\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

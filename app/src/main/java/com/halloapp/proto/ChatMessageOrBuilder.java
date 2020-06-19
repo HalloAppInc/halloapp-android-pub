@@ -50,4 +50,18 @@ public interface ChatMessageOrBuilder extends
    * @return The feedPostMediaIndex.
    */
   int getFeedPostMediaIndex();
+
+  /**
+   * <code>repeated .proto.Mention mentions = 5;</code>
+   */
+  java.util.List<com.halloapp.proto.Mention> 
+      getMentionsList();
+  /**
+   * <code>repeated .proto.Mention mentions = 5;</code>
+   */
+  com.halloapp.proto.Mention getMentions(int index);
+  /**
+   * <code>repeated .proto.Mention mentions = 5;</code>
+   */
+  int getMentionsCount();
 }

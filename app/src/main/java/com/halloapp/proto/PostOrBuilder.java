@@ -32,4 +32,18 @@ public interface PostOrBuilder extends
    */
   com.google.protobuf.ByteString
       getTextBytes();
+
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  java.util.List<com.halloapp.proto.Mention> 
+      getMentionsList();
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  com.halloapp.proto.Mention getMentions(int index);
+  /**
+   * <code>repeated .proto.Mention mentions = 3;</code>
+   */
+  int getMentionsCount();
 }
