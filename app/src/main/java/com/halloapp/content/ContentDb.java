@@ -38,6 +38,7 @@ public class ContentDb {
     private final ContentDbObservers observers = new ContentDbObservers();
     private final ContentDbHelper databaseHelper;
 
+    private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
     private final PostsDb postsDb;
 
@@ -98,8 +99,9 @@ public class ContentDb {
 
     private ContentDb(final @NonNull Context context) {
         databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
-        messagesDb = new MessagesDb(databaseHelper, FileStore.getInstance(context));
-        postsDb = new PostsDb(databaseHelper, FileStore.getInstance(context));
+        mentionsDb = new MentionsDb(databaseHelper);
+        messagesDb = new MessagesDb(mentionsDb, databaseHelper, FileStore.getInstance(context));
+        postsDb = new PostsDb(mentionsDb, databaseHelper, FileStore.getInstance(context));
     }
 
     public void addObserver(@NonNull Observer observer) {

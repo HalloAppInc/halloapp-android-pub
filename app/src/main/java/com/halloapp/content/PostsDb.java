@@ -16,6 +16,7 @@ import com.halloapp.FileStore;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
+import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.media.MediaUtils;
@@ -29,10 +30,12 @@ import java.util.List;
 
 class PostsDb {
 
+    private final MentionsDb mentionsDb;
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
 
-    PostsDb(ContentDbHelper databaseHelper, FileStore fileStore) {
+    PostsDb(MentionsDb mentionsDb, ContentDbHelper databaseHelper, FileStore fileStore) {
+        this.mentionsDb = mentionsDb;
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
     }
@@ -84,6 +87,7 @@ class PostsDb {
             }
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
+        mentionsDb.addMentions(post);
         Log.i("ContentDb.addPost: added " + post);
     }
 
@@ -119,6 +123,9 @@ class PostsDb {
                         new String[]{post.senderUserId.rawId(), post.id});
                 db.delete(MediaTable.TABLE_NAME,
                         MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'",
+                        new String[]{Long.toString(post.rowId)});
+                db.delete(MentionsTable.TABLE_NAME,
+                        MentionsTable.COLUMN_PARENT_ROW_ID + "=? AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'",
                         new String[]{Long.toString(post.rowId)});
                 for (Media media : post.media) {
                     if (media.file != null) {
@@ -275,6 +282,7 @@ class PostsDb {
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        mentionsDb.addMentions(comment);
         Log.i("ContentDb.addComment: added " + comment);
     }
 
@@ -408,11 +416,13 @@ class PostsDb {
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "c.comment_count" + ", " +
                 "c.seen_comment_count" + ", " +
+                "fc.first_comment_row_id" + ", " +
                 "fc.first_comment_id" + ", " +
                 "fc.first_comment_user_id" + ", " +
                 "fc.first_comment_text" + ", " +
                 "fc.first_comment_timestamp" + ", " +
                 "s.seen_by_count" + " " +
+
             "FROM " + PostsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -437,6 +447,7 @@ class PostsDb {
                 "AS c ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=c." + CommentsTable.COLUMN_POST_SENDER_USER_ID + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=c." + CommentsTable.COLUMN_POST_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
+                    CommentsTable._ID + " AS first_comment_row_id," +
                     CommentsTable.COLUMN_POST_SENDER_USER_ID + "," +
                     CommentsTable.COLUMN_POST_ID + "," +
                     CommentsTable.COLUMN_TIMESTAMP + " AS first_comment_timestamp," +
@@ -464,6 +475,7 @@ class PostsDb {
                 if (lastRowId != rowId) {
                     lastRowId = rowId;
                     if (post != null) {
+                        mentionsDb.fillMentions(post);
                         posts.add(post);
                     }
                     post = new Post(
@@ -476,20 +488,21 @@ class PostsDb {
                             cursor.getString(6));
                     post.commentCount = cursor.getInt(14);
                     post.unseenCommentCount = post.commentCount - cursor.getInt(15);
-                    final String firstCommentId = cursor.getString(16);
+                    final String firstCommentId = cursor.getString(17);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(0,
+                        post.firstComment = new Comment(cursor.getLong(16),
                                 post.senderUserId,
                                 post.id,
-                                new UserId(cursor.getString(17)),
+                                new UserId(cursor.getString(18)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(19),
+                                cursor.getLong(20),
                                 true,
                                 true,
-                                cursor.getString(18));
+                                cursor.getString(19));
+                        mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(20);
+                    post.seenByCount = cursor.getInt(21);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
@@ -505,6 +518,7 @@ class PostsDb {
                 }
             }
             if (post != null && cursor.getCount() < count) {
+                mentionsDb.fillMentions(post);
                 posts.add(post);
             }
         }
@@ -564,6 +578,7 @@ class PostsDb {
                             cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
+                    mentionsDb.fillMentions(post);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
@@ -623,6 +638,7 @@ class PostsDb {
                         cursor.getInt(6) == 1,
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
+                mentionsDb.fillMentions(comment);
                 comments.add(comment);
             }
         }
@@ -664,6 +680,7 @@ class PostsDb {
                 "LIMIT " + limit;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
+
                 final Comment comment = new Comment(
                         cursor.getLong(0),
                         new UserId(cursor.getString(1)),
@@ -811,6 +828,7 @@ class PostsDb {
                             cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
+                    mentionsDb.fillMentions(post);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(post).media.add(new Media(

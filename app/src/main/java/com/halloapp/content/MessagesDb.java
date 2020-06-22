@@ -34,10 +34,12 @@ import java.util.List;
 
 class MessagesDb {
 
+    private final MentionsDb mentionsDb;
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
 
-    MessagesDb(ContentDbHelper databaseHelper, FileStore fileStore) {
+    MessagesDb(MentionsDb mentionsDb, ContentDbHelper databaseHelper, FileStore fileStore) {
+        this.mentionsDb = mentionsDb;
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
     }
@@ -88,6 +90,7 @@ class MessagesDb {
                 }
                 mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
+            mentionsDb.addMentions(message);
             if (message.replyPostId != null) {
                 final ContentValues replyPostValues = new ContentValues();
                 replyPostValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
@@ -109,7 +112,10 @@ class MessagesDb {
                         }
                     }
                 }
-                db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyPostValues, SQLiteDatabase.CONFLICT_IGNORE);
+                long id = db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyPostValues, SQLiteDatabase.CONFLICT_IGNORE);
+                if (replyPost != null && replyPost.mentions.size() > 0) {
+                    mentionsDb.addReplyPreviewMentions(id, replyPost.mentions);
+                }
             }
             final int updatedRowsCount;
             try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
@@ -258,6 +264,7 @@ class MessagesDb {
                 db.delete(MediaTable.TABLE_NAME,
                         MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'",
                         new String[]{Long.toString(message.rowId)});
+
                 for (Media media : message.media) {
                     if (media.file != null) {
                         if (!media.file.delete()) {
@@ -348,6 +355,7 @@ class MessagesDb {
                             cursor.getString(6),
                             cursor.getString(14),
                             cursor.getInt(15));
+                    mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -427,6 +435,7 @@ class MessagesDb {
                             cursor.getString(6),
                             cursor.getString(14),
                             cursor.getInt(15));
+                    mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -502,6 +511,7 @@ class MessagesDb {
                             cursor.getString(6),
                             cursor.getString(14),
                             cursor.getInt(15));
+                    mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -591,6 +601,7 @@ class MessagesDb {
                             cursor.getString(6),
                             cursor.getString(14),
                             cursor.getInt(15));
+                    mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -687,6 +698,7 @@ class MessagesDb {
                             cursor.getString(6),
                             cursor.getString(16),
                             cursor.getInt(17));
+                    mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(7)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
@@ -714,16 +726,20 @@ class MessagesDb {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(RepliesTable.TABLE_NAME,
                 new String [] {
+                        RepliesTable._ID,
                         RepliesTable.COLUMN_TEXT,
                         RepliesTable.COLUMN_MEDIA_TYPE,
                         RepliesTable.COLUMN_MEDIA_PREVIEW_FILE},
                 RepliesTable.COLUMN_MESSAGE_ROW_ID + "=?",
                 new String [] {String.valueOf(messageRowId)}, null, null, null)) {
             if (cursor.moveToNext()) {
-                return new ReplyPreview(
-                        cursor.getString(0),
-                        cursor.getInt(1),
-                        fileStore.getMediaFile(cursor.getString(2)));
+                ReplyPreview replyPreview = new ReplyPreview(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        fileStore.getMediaFile(cursor.getString(3)));
+                mentionsDb.fillMentions(replyPreview);
+                return replyPreview;
             }
         }
         return null;

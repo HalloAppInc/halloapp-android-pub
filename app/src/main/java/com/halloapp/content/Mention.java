@@ -16,13 +16,22 @@ public class Mention {
         return builder.build();
     }
 
+    public long rowId;
+
+    public int index;
+    public UserId userId;
+    public String fallbackName;
+
     public Mention(int index, UserId userId, String fallbackName) {
         this.index = index;
         this.userId = userId;
         this.fallbackName=  fallbackName;
     }
 
-    public int index;
-    public UserId userId;
-    public String fallbackName;
+    public Mention(long rowId, int index, String rawUserId, String name) {
+        this.rowId = rowId;
+        this.index = index;
+        this.userId = new UserId(rawUserId);
+        this.fallbackName = name;
+    }
 }

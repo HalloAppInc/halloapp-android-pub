@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
+import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
@@ -22,7 +23,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -123,6 +124,22 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_PARENT_ROW_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + MentionsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + MentionsTable.TABLE_NAME + " ("
+                + MentionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + MentionsTable.COLUMN_PARENT_TABLE + " TEXT NOT NULL,"
+                + MentionsTable.COLUMN_PARENT_ROW_ID + " INTEGER,"
+                + MentionsTable.COLUMN_MENTION_INDEX + " INTEGER,"
+                + MentionsTable.COLUMN_MENTION_NAME + " TEXT,"
+                + MentionsTable.COLUMN_MENTION_USER_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MentionsTable.INDEX_MENTION_KEY);
+        db.execSQL("CREATE INDEX " + MentionsTable.INDEX_MENTION_KEY + " ON " + MentionsTable.TABLE_NAME + "("
+                + MentionsTable.COLUMN_PARENT_TABLE + ", "
+                + MentionsTable.COLUMN_PARENT_ROW_ID
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + CommentsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + CommentsTable.TABLE_NAME + " ("
                 + CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -177,6 +194,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 + "END;");
@@ -185,6 +203,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TRIGGER " + MessagesTable.TRIGGER_DELETE + " AFTER DELETE ON " + MessagesTable.TABLE_NAME + " "
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
                 + "END;");
 
         observers.notifyDbCreated();
@@ -208,6 +227,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 14: {
                 upgradeFromVersion14(db);
+                // fall through
+            }
+            case 15: {
+                upgradeFromVersion15(db);
                 // fall through
             }
 
@@ -312,6 +335,24 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion15(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + MentionsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + MentionsTable.TABLE_NAME + " ("
+                + MentionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + MentionsTable.COLUMN_PARENT_TABLE + " TEXT NOT NULL,"
+                + MentionsTable.COLUMN_PARENT_ROW_ID + " INTEGER,"
+                + MentionsTable.COLUMN_MENTION_INDEX + " INTEGER,"
+                + MentionsTable.COLUMN_MENTION_NAME + " TEXT,"
+                + MentionsTable.COLUMN_MENTION_USER_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MentionsTable.INDEX_MENTION_KEY);
+        db.execSQL("CREATE INDEX " + MentionsTable.INDEX_MENTION_KEY + " ON " + MentionsTable.TABLE_NAME + "("
+                + MentionsTable.COLUMN_PARENT_TABLE + ", "
+                + MentionsTable.COLUMN_PARENT_ROW_ID
+                + ");");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
