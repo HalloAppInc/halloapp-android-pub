@@ -19,6 +19,7 @@ public abstract class ContentItem {
 
     public final String text;
     public final List<Media> media = new ArrayList<>();
+    public final List<Mention> mentions = new ArrayList<>();
 
     public ContentItem(
             long rowId,

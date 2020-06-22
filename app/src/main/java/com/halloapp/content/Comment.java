@@ -8,6 +8,8 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Comment {
@@ -24,6 +26,8 @@ public class Comment {
     public boolean seen;
 
     public final String text;
+
+    public final List<Mention> mentions = new ArrayList<>();
 
     public Comment(
             long rowId,

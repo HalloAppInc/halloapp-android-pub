@@ -15,6 +15,7 @@ import com.halloapp.Preferences;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.EncryptedSessionManager;
@@ -515,6 +516,9 @@ public class Connection {
                 for (Media media : post.media) {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
+                for (Mention mention : post.mentions) {
+                    entry.mentions.add(new PublishedEntry.Mention(mention.index, mention.userId, mention.fallbackName));
+                }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
                 pubSubHelper.publishItem(getMyFeedNodeId(), item);
@@ -567,6 +571,9 @@ public class Connection {
                         comment.text,
                         comment.postId,
                         comment.parentCommentId);
+                for (Mention mention : comment.mentions) {
+                    entry.mentions.add(new PublishedEntry.Mention(mention.index, mention.userId, mention.fallbackName));
+                }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
                 pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
@@ -767,6 +774,9 @@ public class Connection {
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
+                    for (PublishedEntry.Mention mention : entry.mentions) {
+                        post.mentions.add(new Mention(mention.index, mention.userId, mention.pushName));
+                    }
                     posts.add(post);
                 } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
                     final Comment comment = new Comment(0,
@@ -780,6 +790,9 @@ public class Connection {
                             false,
                             entry.text
                     );
+                    for (PublishedEntry.Mention mention : entry.mentions) {
+                        comment.mentions.add(new Mention(mention.index, mention.userId, mention.pushName));
+                    }
                     comments.add(comment);
                 }
             }

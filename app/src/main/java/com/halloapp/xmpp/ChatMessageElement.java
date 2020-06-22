@@ -10,6 +10,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
@@ -151,6 +152,9 @@ public class ChatMessageElement implements ExtensionElement {
                     item.getWidth(),
                     item.getHeight()));
         }
+        for (com.halloapp.proto.Mention item : chatMessage.getMentionsList()) {
+            message.mentions.add(Mention.parseFromProto(item));
+        }
 
         return message;
     }
@@ -192,6 +196,9 @@ public class ChatMessageElement implements ExtensionElement {
             mediaBuilder.setPlaintextHash(ByteString.copyFrom(media.sha256hash));
             mediaBuilder.setDownloadUrl(media.url);
             chatMessageBuilder.addMedia(mediaBuilder.build());
+        }
+        for (Mention mention : message.mentions) {
+            chatMessageBuilder.addMentions(Mention.toProto(mention));
         }
         if (message.text != null) {
             chatMessageBuilder.setText(message.text);
