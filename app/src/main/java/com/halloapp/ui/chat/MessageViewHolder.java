@@ -109,9 +109,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    private static @DrawableRes int getMessageBackground(@NonNull Context context, @NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {
+    private static @DrawableRes int getMessageBackground(@NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {
         boolean outgoing = message.isOutgoing();
-        if (mergeWithNext && mergeWithPrev) {
+        // Disable corner changing for now till we can polish them later
+        /*if (mergeWithNext && mergeWithPrev) {
             return outgoing ? R.drawable.message_background_outgoing_mid : R.drawable.message_background_incoming_mid;
         }
         if (mergeWithNext) {
@@ -119,7 +120,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
         if (mergeWithPrev) {
             return outgoing ? R.drawable.message_background_outgoing_end : R.drawable.message_background_incoming_end;
-        }
+        }*/
         return outgoing ? R.drawable.message_background_outgoing : R.drawable.message_background_incoming;
     }
 
@@ -131,7 +132,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     }
 
     private void updateBubbleMerging(boolean mergeWithPrev, boolean mergeWithNext) {
-        contentView.setBackgroundResource(getMessageBackground(contentView.getContext(), message, mergeWithNext, mergeWithPrev));
+        contentView.setBackgroundResource(getMessageBackground(message, mergeWithNext, mergeWithPrev));
         View contentParent = (contentView.getParent() instanceof View) ? (View) contentView.getParent() : null;
         if (contentParent != null) {
             contentParent.setPadding(

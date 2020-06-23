@@ -14,6 +14,7 @@
     <color name="color_primary">#ff4500</color>
     <color name="color_primary_dark">#757575</color>
     <color name="color_secondary">#2962ff</color>
+    <color name="color_secondary_40_alpha">#662962ff</color>
     <color name="color_secondary_70_alpha">#B32962ff</color>
     <color name="color_accent">#ff4500</color>
     <color name="color_link">#ff33b5e5</color>
@@ -35,9 +36,9 @@
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>
     <color name="message_background_incoming">#ffffff</color>
-    <color name="message_background_outgoing">#d6e4fa</color>
+    <color name="message_background_outgoing">#f4e0d8</color>
     <color name="message_text_incoming">#de000000</color>
-    <color name="message_text_outgoing">#35529f</color>
+    <color name="message_text_outgoing">#de000000</color>
     <color name="contacts_list_item_header_text_color">#4575e5</color>
     <color name="search_highlight">#ff33b5e5</color>
     <color name="swipe_delete_background">#d93025</color>
@@ -59,6 +60,9 @@
     <color name="chat_message_preview">@color/black_70</color>
     <color name="empty_chat_placeholder">@color/black_30</color>
     <color name="post_timestamp">@color/black_30</color>
+
+    <color name="message_state_sent">@color/color_secondary_40_alpha</color>
+    <color name="message_state_read">@color/color_secondary</color>
 
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>
