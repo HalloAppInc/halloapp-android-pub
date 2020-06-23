@@ -26,7 +26,6 @@
         app:ci_drawable="@drawable/pager_item_indicator_selected"
         app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
         app:ci_animator="@animator/pager_indicator"
-        android:layout_marginBottom="8dp"
         android:layoutDirection="ltr"/>
 
     <com.halloapp.widget.LimitingTextView
@@ -37,6 +36,7 @@
         android:paddingEnd="16dp"
         android:paddingTop="0dp"
         android:paddingBottom="4dp"
+        android:layout_marginTop="8dp"
         android:textAppearance="?textAppearanceListItemSmall"
         android:textSize="@dimen/post_text_size"
         android:lineSpacingMultiplier="1.1"

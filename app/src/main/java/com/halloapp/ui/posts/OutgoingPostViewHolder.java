@@ -3,6 +3,7 @@ package com.halloapp.ui.posts;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -123,7 +124,11 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             seenIndicator.setVisibility(View.GONE);
             seenButton.setVisibility(View.VISIBLE);
         }
-        footerSpacing.setVisibility(View.GONE);
+        if (TextUtils.isEmpty(post.text)) {
+            footerSpacing.setVisibility(View.VISIBLE);
+        } else {
+            footerSpacing.setVisibility(View.GONE);
+        }
 
         viewCommentsIndicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.GONE);
 

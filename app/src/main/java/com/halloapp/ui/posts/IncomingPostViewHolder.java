@@ -70,7 +70,9 @@ public class IncomingPostViewHolder extends PostViewHolder {
             return;
         }
         final int defaultMediaInset = commentsIndicator.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-        mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, TextUtils.isEmpty(post.text) ? 0 : defaultMediaInset);
+        final boolean emptyText = TextUtils.isEmpty(post.text);
+        final boolean hasPager = post.media.size() > 1;
+        mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, (emptyText && !hasPager) ? 0 : defaultMediaInset);
     }
 }
 
