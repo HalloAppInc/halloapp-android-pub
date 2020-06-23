@@ -36,6 +36,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final View contentView;
     private final ImageView statusView;
     private final TextView dateView;
+    private final TextView timestampView;
     private final TextView newMessagesSeparator;
     private final LimitingTextView textView;
     private final MediaViewPager mediaPagerView;
@@ -72,6 +73,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         contentView = itemView.findViewById(R.id.content);
         statusView = itemView.findViewById(R.id.status);
         dateView = itemView.findViewById(R.id.date);
+        timestampView = itemView.findViewById(R.id.timestamp);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
@@ -182,6 +184,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 textView.setVisibility(View.VISIBLE);
                 textView.setTextColor(ContextCompat.getColor(textView.getContext(), message.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
             }
+        }
+
+        if (timestampView != null) {
+            timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), message.timestamp));
         }
 
         if (prevMessage == null || !TimeUtils.isSameDay(message.timestamp, prevMessage.timestamp)) {

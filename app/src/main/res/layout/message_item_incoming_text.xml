@@ -15,8 +15,7 @@
         android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingTop="@dimen/message_vertical_separator_sequence"
-        android:paddingEnd="64dp"
-        android:paddingBottom="@dimen/message_vertical_separator_sequence">
+        android:paddingEnd="64dp">
 
         <LinearLayout
             android:id="@+id/content"
@@ -48,4 +47,11 @@
 
         </LinearLayout>
     </FrameLayout>
+
+    <include
+        layout="@layout/message_timestamp_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"/>
+
 </LinearLayout>

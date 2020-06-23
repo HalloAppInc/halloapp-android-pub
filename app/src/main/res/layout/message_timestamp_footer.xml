@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:paddingEnd="25dp"
+        android:paddingStart="25dp"
+        android:textSize="11sp"
+        android:paddingBottom="@dimen/message_vertical_separator_sequence"
+        tools:text="11:49 PM"/>
+
+</FrameLayout>

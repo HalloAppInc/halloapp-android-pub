@@ -61,6 +61,10 @@ public class TimeFormatter {
         }
     }
 
+    public static String formatMessageTime(@NonNull Context context, long timestamp) {
+        return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
+    }
+
     public static void setTimeDiffText(@NonNull TextView textView, long timeDiff) {
         textView.setText(formatTimeDiff(textView.getContext(), timeDiff, false));
         textView.setContentDescription(formatTimeDiff(textView.getContext(), timeDiff, true));
