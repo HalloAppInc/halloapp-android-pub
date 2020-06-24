@@ -140,8 +140,10 @@ public class ConnectionObserver implements Connection.Observer {
 
     @Override
     public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
-        Message message = ContentDb.getInstance(context).getMessage(peerUserId.rawId(), UserId.ME, messageId);
-        if (message != null) {
+        ContentDb contentDb = ContentDb.getInstance(context);
+        Message message = contentDb.getMessage(peerUserId.rawId(), UserId.ME, messageId);
+        if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
+            contentDb.setMessageRerequestCount(peerUserId.rawId(), UserId.ME, messageId, message.rerequestCount + 1);
             EncryptedSessionManager.getInstance().sendMessage(message);
         }
         Connection.getInstance().sendAck(stanzaId);

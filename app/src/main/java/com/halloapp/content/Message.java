@@ -19,6 +19,7 @@ public class Message extends ContentItem {
 
     public final String chatId;
     public final @State int state;
+    public final int rerequestCount;
 
     public final String replyPostId;
     public final int replyPostMediaIndex;
@@ -42,12 +43,14 @@ public class Message extends ContentItem {
             @State int state,
             String text,
             String replyPostId,
-            int replyPostMediaIndex) {
+            int replyPostMediaIndex,
+            int rerequestCount) {
         super(rowId, senderUserId, messageId, timestamp, text);
         this.chatId = chatId;
         this.state = state;
         this.replyPostId = TextUtils.isEmpty(replyPostId) ? null : replyPostId;
         this.replyPostMediaIndex = replyPostMediaIndex;
+        this.rerequestCount = rerequestCount;
     }
 
     @Override

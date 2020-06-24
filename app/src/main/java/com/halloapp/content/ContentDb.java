@@ -381,6 +381,12 @@ public class ContentDb {
         });
     }
 
+    public void setMessageRerequestCount(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.setMessageRerequestCount(chatId, senderUserId, messageId, count);
+        });
+    }
+
     public void setMessageTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);

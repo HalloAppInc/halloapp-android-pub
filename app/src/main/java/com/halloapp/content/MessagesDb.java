@@ -185,8 +185,25 @@ class MessagesDb {
     }
 
     @WorkerThread
+    void setMessageRerequestCount(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
+        Log.i("MessagesDb.setMessageRerequestCount: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId + " count=" + count);
+        final ContentValues values = new ContentValues();
+        values.put(MessagesTable.COLUMN_REREQUEST_COUNT, count);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    new String [] {chatId, senderUserId.rawId(), messageId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("MessagesDb.setMessageRerequestCount: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     void setMessageTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-        Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId);
+        Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + " senderUserId=" + senderUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, senderUserId.isMe() ? Message.STATE_OUTGOING_SENT : Message.STATE_INCOMING_RECEIVED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -302,6 +319,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -353,21 +371,22 @@ class MessagesDb {
                             cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6),
-                            cursor.getString(14),
-                            cursor.getInt(15));
+                            cursor.getString(15),
+                            cursor.getInt(16),
+                            cursor.getInt(7));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13)));
+                            cursor.getInt(13),
+                            cursor.getInt(14)));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -392,6 +411,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -433,21 +453,22 @@ class MessagesDb {
                             cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6),
-                            cursor.getString(14),
-                            cursor.getInt(15));
+                            cursor.getString(15),
+                            cursor.getInt(16),
+                            cursor.getInt(7));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13)));
+                            cursor.getInt(13),
+                            cursor.getInt(14)));
                 }
             }
         }
@@ -466,6 +487,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -509,21 +531,22 @@ class MessagesDb {
                             cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6),
-                            cursor.getString(14),
-                            cursor.getInt(15));
+                            cursor.getString(15),
+                            cursor.getInt(16),
+                            cursor.getInt(7));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13)));
+                            cursor.getInt(13),
+                            cursor.getInt(14)));
                 }
             }
         }
@@ -548,6 +571,7 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -599,21 +623,22 @@ class MessagesDb {
                             cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6),
-                            cursor.getString(14),
-                            cursor.getInt(15));
+                            cursor.getString(15),
+                            cursor.getInt(16),
+                            cursor.getInt(7));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13)));
+                            cursor.getInt(13),
+                            cursor.getInt(14)));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -641,6 +666,7 @@ class MessagesDb {
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -696,21 +722,22 @@ class MessagesDb {
                             cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6),
-                            cursor.getString(16),
-                            cursor.getInt(17));
+                            cursor.getString(17),
+                            cursor.getInt(18),
+                            cursor.getInt(7));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
-                            cursor.getBlob(11),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             cursor.getBlob(12),
-                            cursor.getInt(13),
+                            cursor.getBlob(13),
                             cursor.getInt(14),
-                            cursor.getInt(15)));
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
                 }
             }
             if (message != null) {

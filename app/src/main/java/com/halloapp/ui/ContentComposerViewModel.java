@@ -253,7 +253,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
             final ContentItem contentItem = chatId == null ?
                     new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex);
+                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, 0);
             if (media != null) {
                 for (Media media : media) {
                     final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));

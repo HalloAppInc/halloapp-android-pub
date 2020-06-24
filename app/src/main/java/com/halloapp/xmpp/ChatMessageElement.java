@@ -128,7 +128,7 @@ public class ChatMessageElement implements ExtensionElement {
                 Log.sendErrorReport("Decryption failure");
                 chatMessage = plaintextChatMessage;
 
-                if (Constants.REREQUESTS_ENABLED) {
+                if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
                     Connection.getInstance().sendRerequest(from, id);
                 }
@@ -142,7 +142,8 @@ public class ChatMessageElement implements ExtensionElement {
                 chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),
-                chatMessage.getFeedPostMediaIndex());
+                chatMessage.getFeedPostMediaIndex(),
+                0);
         for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(
                     fromProtoMediaType(item.getType()),

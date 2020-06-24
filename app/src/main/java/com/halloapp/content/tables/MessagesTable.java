@@ -18,4 +18,5 @@ public final class MessagesTable implements BaseColumns {
     public static final String COLUMN_TIMESTAMP = "timestamp";
     public static final String COLUMN_STATE = "state";
     public static final String COLUMN_TEXT = "text";
+    public static final String COLUMN_REREQUEST_COUNT = "rerequest_count";
 }

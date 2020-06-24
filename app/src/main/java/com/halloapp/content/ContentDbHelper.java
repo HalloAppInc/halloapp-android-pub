@@ -23,7 +23,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 17;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -67,7 +67,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_TIMESTAMP + " INTEGER,"
                 + MessagesTable.COLUMN_STATE + " INTEGER,"
-                + MessagesTable.COLUMN_TEXT + " TEXT"
+                + MessagesTable.COLUMN_TEXT + " TEXT,"
+                + MessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
@@ -233,6 +234,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion15(db);
                 // fall through
             }
+            case 16: {
+                upgradeFromVersion16(db);
+                // fall through
+            }
 
             break;
             default: {
@@ -353,6 +358,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MentionsTable.COLUMN_PARENT_TABLE + ", "
                 + MentionsTable.COLUMN_PARENT_ROW_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion16(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

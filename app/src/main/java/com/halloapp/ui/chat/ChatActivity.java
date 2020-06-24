@@ -423,7 +423,8 @@ public class ChatActivity extends AppCompatActivity {
                 Message.STATE_INITIAL,
                 messageText,
                 replyPostId,
-                replyPostMediaIndex);
+                replyPostMediaIndex,
+                0);
         replyPostId = null;
         replyPostMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
