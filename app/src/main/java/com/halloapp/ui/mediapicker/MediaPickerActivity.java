@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -332,6 +333,7 @@ public class MediaPickerActivity extends AppCompatActivity implements EasyPermis
         view.startAnimation(animation);
 
         adapter.notifyDataSetChanged();
+        Log.i("photo was selected: "+!selectedItems.isEmpty());
         updateActionMode();
     }
 

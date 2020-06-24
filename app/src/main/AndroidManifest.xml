@@ -48,7 +48,6 @@
 
         <activity android:name=".ui.chat.ChatActivity"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
         <activity
