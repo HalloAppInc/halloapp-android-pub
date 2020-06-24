@@ -17,17 +17,14 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
@@ -67,7 +64,6 @@ import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Stack;
 
 public class ChatActivity extends AppCompatActivity {
@@ -94,9 +90,10 @@ public class ChatActivity extends AppCompatActivity {
 
     private String replyPostId;
     private int replyPostMediaIndex;
+
     private DrawDelegateView drawDelegateView;
     private final Stack<View> recycledMediaViews = new Stack<>();
-    private ActionMode actionMode;
+
     private boolean scrollUpOnDataLoaded;
     private boolean scrollToNewMessageOnDataLoaded = true;
 
@@ -114,9 +111,11 @@ public class ChatActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_chat);
+
         final Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
@@ -251,14 +250,11 @@ public class ChatActivity extends AppCompatActivity {
             PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
             presenceLoader.getLastSeenLiveData(contact.userId).observe(this, presenceState -> {
                 if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
-                    Preconditions.checkNotNull(getSupportActionBar()).setSubtitle(null);
-//                    toolbar.setSubtitle(null);
+                    toolbar.setSubtitle(null);
                 } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
-                    Preconditions.checkNotNull(getSupportActionBar()).setSubtitle("Online");
-//                    toolbar.setSubtitle(getString(R.string.online));
+                    toolbar.setSubtitle(getString(R.string.online));
                 } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
-                    Preconditions.checkNotNull(getSupportActionBar()).setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
-//                    toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
+                    toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
                 }
             });
         });
@@ -478,7 +474,7 @@ public class ChatActivity extends AppCompatActivity {
         static final int VIEW_TYPE_INCOMING_MEDIA = 5;
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
-//        private list<
+
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
 
@@ -585,47 +581,8 @@ public class ChatActivity extends AppCompatActivity {
                     position >= 1
                             ? getItem(position - 1)
                             : null);
-            holder.itemView.setOnClickListener(v -> updateActionMode());
-
         }
     }
-
-    private void updateActionMode() {
-        if (actionMode == null) {
-            actionMode = startSupportActionMode(new ActionMode.Callback() {
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    getMenuInflater().inflate(R.menu.clipboard, menu);
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return true;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    Log.i("click action mode: "+item.getItemId());
-                    Log.i("R.id.delete: "+R.id.delete);
-                    switch (item.getItemId()) {
-                        case R.id.delete:
-                            Log.i("delete happens");
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    actionMode = null;
-                }
-            });
-        }
-
-    }
-
 
     private final MessageViewHolder.MessageViewHolderParent messageViewHolderParent = new MessageViewHolder.MessageViewHolderParent() {
         private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
