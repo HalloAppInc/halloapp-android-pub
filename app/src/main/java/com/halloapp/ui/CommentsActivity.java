@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,9 +45,11 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -56,7 +59,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
-import com.halloapp.widget.PostEditText;
+import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
@@ -81,13 +84,13 @@ public class CommentsActivity extends AppCompatActivity {
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
 
-
     private CommentsViewModel viewModel;
 
     private String replyCommentId;
     private UserId replyUserId;
 
-    private PostEditText editText;
+    private MentionableEntry editText;
+    private MentionPickerView mentionPickerView;
 
     private ItemTouchHelper itemTouchHelper;
     private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
@@ -123,6 +126,8 @@ public class CommentsActivity extends AppCompatActivity {
         final RecyclerView commentsView = findViewById(R.id.comments);
         commentsView.setItemAnimator(null);
 
+        mentionPickerView = findViewById(R.id.mention_picker_view);
+
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         commentsView.setLayoutManager(layoutManager);
 
@@ -153,6 +158,9 @@ public class CommentsActivity extends AppCompatActivity {
                 } else {
                     replyIndicatorText.setText(getString(R.string.reply_to_contact, contact.getDisplayName()));
                 }
+                if (editText != null && TextUtils.isEmpty(editText.getText()) && !contact.userId.isMe()) {
+                    editText.appendMention(contact);
+                }
             }
         });
 
@@ -162,17 +170,25 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.post.observe(this, post -> adapter.notifyDataSetChanged());
+        viewModel.mentionableContacts.getLiveData().observe(this, contacts -> {
+            mentionPickerView.setMentionableContacts(contacts);
+        });
+
+        viewModel.post.observe(this, post -> {
+            adapter.notifyDataSetChanged();
+            viewModel.mentionableContacts.invalidate();
+        });
         viewModel.loadPost(userId, postId);
 
         replyIndicatorCloseButton.setOnClickListener(v -> resetReplyIndicator());
 
         commentsView.setAdapter(adapter);
-
         editText = findViewById(R.id.entry);
+        editText.setMentionPickerView(mentionPickerView);
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+            final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
+            final String postText = StringUtils.preparePostText(textWithMentions.first);
             if (TextUtils.isEmpty(postText)) {
                 Log.w("CommentsActivity: cannot send empty comment");
                 return;
@@ -188,6 +204,13 @@ public class CommentsActivity extends AppCompatActivity {
                     false,
                     true,
                     postText);
+            comment.mentions.clear();
+            for (Mention mention : textWithMentions.second) {
+                if (mention.index < 0 || mention.index >= postText.length()) {
+                    continue;
+                }
+                comment.mentions.add(mention);
+            }
             ContentDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addComment(comment);
             editText.setText(null);
             final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));

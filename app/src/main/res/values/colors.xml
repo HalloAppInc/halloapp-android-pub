@@ -50,6 +50,8 @@
     <color name="dim_facepile_avatar_1">#40ffffff</color>
     <color name="home_navigation_divider">#FFFFFF</color>
 
+    <color name="mention_color">@color/color_secondary</color>
+
     <color name="unread_indicator">@color/color_secondary</color>
 
     <color name="pager_indicator_color_selected">@color/color_primary</color>

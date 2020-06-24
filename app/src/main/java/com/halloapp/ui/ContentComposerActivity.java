@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,10 +38,13 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -52,8 +57,8 @@ import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MediaViewPager;
+import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.PlaceholderDrawable;
-import com.halloapp.widget.PostEditText;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,7 +75,8 @@ public class ContentComposerActivity extends AppCompatActivity {
     private MediaThumbnailLoader fullThumbnailLoader;
     private MediaThumbnailLoader smallThumbnailLoader;
     private TextContentLoader textContentLoader;
-    private PostEditText editText;
+    private MentionableEntry editText;
+    private MentionPickerView mentionPickerView;
     private MediaViewPager mediaPager;
     private MediaPagerAdapter mediaPagerAdapter;
     private MediaListAdapter mediaListAdapter;
@@ -106,16 +112,19 @@ public class ContentComposerActivity extends AppCompatActivity {
         smallThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         textContentLoader = new TextContentLoader(this);
 
+        mentionPickerView = findViewById(R.id.mention_picker_view);
         editText = findViewById(R.id.entry);
+        editText.setMentionPickerView(mentionPickerView);
 
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+            final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
+            final String postText = StringUtils.preparePostText(textAndMentions.first);
             if (TextUtils.isEmpty(postText) && viewModel.getMedia() == null) {
                 Log.w("ContentComposerActivity: cannot send empty content");
                 return;
             }
-            viewModel.prepareContent(getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim());
+            viewModel.prepareContent(getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
         });
 
         final View progressView = findViewById(R.id.progress);
@@ -250,6 +259,12 @@ public class ContentComposerActivity extends AppCompatActivity {
             }
             sendButton.setEnabled(true);
             invalidateOptionsMenu();
+        });
+        viewModel.mentionableContacts.getLiveData().observe(this, new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> contacts) {
+                mentionPickerView.setMentionableContacts(contacts);
+            }
         });
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {

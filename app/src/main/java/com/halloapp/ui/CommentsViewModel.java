@@ -4,34 +4,47 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.goterl.lazycode.lazysodium.interfaces.Hash;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 class CommentsViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Comment>> commentList;
     final ComputableLiveData<Long> lastSeenCommentRowId;
+    final ComputableLiveData<List<Contact>> mentionableContacts;
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
     private final ContentDb contentDb;
+    private final ContactsDb contactsDb;
+
     private final UserId postSenderUserId;
     private final String postId;
     private final CommentsDataSource.Factory dataSourceFactory;
@@ -81,6 +94,18 @@ class CommentsViewModel extends AndroidViewModel {
         }
     };
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+        @Override
+        public void onContactsChanged() {
+            mentionableContacts.invalidate();
+        }
+
+        @Override
+        public void onContactsReset() {
+
+        }
+    };
+
     private CommentsViewModel(@NonNull Application application, @NonNull UserId postSenderUserId, @NonNull String postId) {
         super(application);
 
@@ -89,6 +114,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
+        contactsDb = ContactsDb.getInstance(application);
 
         lastSeenCommentRowId = new ComputableLiveData<Long>() {
             @Override
@@ -101,11 +127,61 @@ class CommentsViewModel extends AndroidViewModel {
 
         dataSourceFactory = new CommentsDataSource.Factory(contentDb, postSenderUserId, postId);
         commentList = new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
+
+        mentionableContacts = new ComputableLiveData<List<Contact>>() {
+            @Override
+            protected List<Contact> compute() {
+                HashSet<UserId> contactSet = new HashSet<>();
+                HashMap<UserId, String> mentionSet = new HashMap<>();
+                if (!postSenderUserId.isMe()) {
+                    // Allow mentioning poster
+                    contactSet.add(postSenderUserId);
+                } else {
+                    // Otherwise we can mention everyone in our friends since they should be able to see our post
+                    List<Contact> friends = contactsDb.getFriends();
+                    for(Contact contact : friends) {
+                        contactSet.add(contact.userId);
+                    }
+                }
+                Post parentPost = post.getValue();
+                if (parentPost != null) {
+                    // Allow mentioning every mention from the post
+                    for (Mention mention : parentPost.mentions) {
+                        if (!mention.userId.isMe()) {
+                            mentionSet.put(mention.userId, mention.fallbackName);
+                            contactSet.add(mention.userId);
+                        }
+                    }
+                }
+                // Allow mentioning everyone who has commented on the post
+                PagedList<Comment> comments = commentList.getValue();
+                if (comments != null) {
+                    for (Comment comment : comments) {
+                        if (!comment.commentSenderUserId.isMe()) {
+                            contactSet.add(comment.commentSenderUserId);
+                        }
+                    }
+                }
+                List<Contact> contactList = new ArrayList<>();
+                for (UserId userId : contactSet) {
+                    Contact contact = contactsDb.getContact(userId);
+                    String mentionName = mentionSet.get(userId);
+                    if (!TextUtils.isEmpty(mentionName)) {
+                        contact.fallbackName = mentionName;
+                    }
+                    contactList.add(contact);
+                }
+                Contact.sort(contactList);
+                return contactList;
+            }
+        };
+        contactsDb.addObserver(contactsObserver);
     }
 
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+        contactsDb.removeObserver(contactsObserver);
     }
 
     void loadReplyUser(@NonNull UserId userId) {
