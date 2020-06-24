@@ -6,17 +6,21 @@ import android.view.View;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.ReplyPreview;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.ui.mentions.TextContent;
 import com.halloapp.util.ViewDataLoader;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
@@ -43,28 +47,40 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
             }
             final ReplyPreview replyPreview = contentDb.getReplyPreview(message.rowId);
             if (replyPreview == null) {
-                return new Result(name, null, Media.MEDIA_TYPE_UNKNOWN, null);
+                return new Result(name, null, null, Media.MEDIA_TYPE_UNKNOWN, null);
             }
             Bitmap thumb = null;
             if (replyPreview.file != null) {
                 thumb = MediaUtils.decodeImage(replyPreview.file, dimensionLimit);
             }
-            return new Result(name, replyPreview.text, replyPreview.mediaType, thumb);
+            return new Result(name, replyPreview.text, replyPreview.mentions, replyPreview.mediaType, thumb);
         };
         load(view, loader, displayer, message.rowId, cache);
     }
 
-    static class Result {
+    static class Result implements TextContent {
         final String name;
         final String text;
         final Bitmap thumb;
         final @Media.MediaType int mediaType;
+        final @Nullable List<Mention> mentions;
 
-        Result(String name, String text, @Media.MediaType int mediaType, Bitmap thumb) {
+        Result(String name, String text, @Nullable List<Mention> mentions, @Media.MediaType int mediaType, Bitmap thumb) {
             this.name = name;
             this.thumb = thumb;
             this.mediaType = mediaType;
+            this.mentions = mentions;
             this.text = text;
+        }
+
+        @Override
+        public List<Mention> getMentions() {
+            return mentions;
+        }
+
+        @Override
+        public String getText() {
+            return text;
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
+import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
 
 import java.io.IOException;
@@ -106,6 +107,11 @@ public class Me {
             this.name.postValue(name);
         }
         return name;
+    }
+
+    @WorkerThread
+    public synchronized boolean isMe(@NonNull UserId userId) {
+        return userId.isMe() || userId.rawId().equals(getUser());
     }
 
     @WorkerThread

@@ -19,6 +19,7 @@ public class Contact {
     public @Nullable String addressBookName; // name from address book
     public @Nullable String addressBookPhone; // phone from address book
     public @Nullable String halloName; // from server
+    public @Nullable String fallbackName; // Not stored
     public @Nullable String normalizedPhone; // phone from server contact sync
     public @Nullable String avatarId; // from server
     public @Nullable UserId userId;
@@ -47,7 +48,19 @@ public class Contact {
     }
 
     public String getDisplayName() {
-        return TextUtils.isEmpty(addressBookName) ? (TextUtils.isEmpty(halloName) ? getDisplayPhone() : ("~" + halloName)) : addressBookName;
+        if (!TextUtils.isEmpty(addressBookName)) {
+            return addressBookName;
+        }
+        if (!TextUtils.isEmpty(halloName)) {
+            return "~" + halloName;
+        }
+        if (!TextUtils.isEmpty(fallbackName)) {
+            return "~" + fallbackName;
+        }
+        if (normalizedPhone != null) {
+            return getDisplayPhone();
+        }
+        return null;
     }
 
     public @Nullable String getDisplayPhone() {

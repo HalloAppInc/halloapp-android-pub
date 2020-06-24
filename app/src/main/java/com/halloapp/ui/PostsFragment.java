@@ -31,6 +31,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
@@ -52,6 +53,7 @@ public class PostsFragment extends Fragment {
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private SeenByLoader seenByLoader;
+    private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
 
     private DrawDelegateView drawDelegateView;
@@ -85,6 +87,7 @@ public class PostsFragment extends Fragment {
         contactLoader = new ContactLoader(requireContext());
         seenByLoader = new SeenByLoader(requireContext());
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
+        textContentLoader = new TextContentLoader(requireContext());
         ContactsDb.getInstance(requireContext()).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -157,6 +160,11 @@ public class PostsFragment extends Fragment {
             @Override
             public SeenByLoader getSeenByLoader() {
                 return seenByLoader;
+            }
+
+            @Override
+            public TextContentLoader getTextContentLoader() {
+                return textContentLoader;
             }
 
             @Override

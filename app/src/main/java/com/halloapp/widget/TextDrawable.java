@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 public class TextDrawable extends Drawable {
 
-    private final String text;
+    private final CharSequence text;
     private final int textSizeMax;
     private final int textSizeMin;
     private final int padding;
@@ -25,7 +25,7 @@ public class TextDrawable extends Drawable {
     private int width;
     private int height;
 
-    public TextDrawable(String text, int textSizeMax, int textSizeMin, int padding, int color) {
+    public TextDrawable(CharSequence text, int textSizeMax, int textSizeMin, int padding, int color) {
         this.text = text;
         this.textSizeMax = textSizeMax;
         this.textSizeMin = textSizeMin;
@@ -62,7 +62,7 @@ public class TextDrawable extends Drawable {
                 return;
             }
             final int textLimit = (height - padding * 2) * (width - padding * 2) / (textSizeMin * textSizeMin);
-            final String truncatedText = textLimit < text.length() ? text.substring(0, textLimit) : text;
+            final CharSequence truncatedText = textLimit < text.length() ? text.subSequence(0, textLimit) : text;
             final float textSizeStep = Math.max((textSizeMax - textSizeMin) / 16, 1);
             textPaint.setTextSize(textSizeMax);
             do {

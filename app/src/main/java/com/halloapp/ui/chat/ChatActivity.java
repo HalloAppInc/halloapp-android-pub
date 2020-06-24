@@ -51,6 +51,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -86,6 +87,7 @@ public class ChatActivity extends AppCompatActivity {
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private ReplyLoader replyLoader;
+    private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
 
     private String replyPostId;
@@ -121,6 +123,7 @@ public class ChatActivity extends AppCompatActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(this);
         replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
+        textContentLoader = new TextContentLoader(this);
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -355,7 +358,7 @@ public class ChatActivity extends AppCompatActivity {
         if (post != null) {
             replyContainer.setVisibility(View.VISIBLE);
             final TextView replyTextView = findViewById(R.id.reply_text);
-            replyTextView.setText(post.text);
+            textContentLoader.load(replyTextView, post);
             final ImageView replyMediaIconView = findViewById(R.id.reply_media_icon);
             final ImageView replyMediaThumbView = findViewById(R.id.reply_media_thumb);
             if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
@@ -601,6 +604,11 @@ public class ChatActivity extends AppCompatActivity {
         public SeenByLoader getSeenByLoader() {
             Preconditions.checkState(false, "messageViewHolderParent.getSeenByLoader call not expected");
             return null;
+        }
+
+        @Override
+        public TextContentLoader getTextContentLoader() {
+            return textContentLoader;
         }
 
         @Override

@@ -80,7 +80,11 @@ class ReplyContainer {
                     } else {
                         nameView.setText(result.name);
                     }
-                    textView.setText(result.text);
+                    if (result.mentions != null) {
+                        parent.getTextContentLoader().load(textView, result);
+                    } else {
+                        textView.setText(result.text);
+                    }
                     switch (result.mediaType) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             mediaIconView.setVisibility(View.VISIBLE);

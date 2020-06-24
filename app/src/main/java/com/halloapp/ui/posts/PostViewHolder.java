@@ -155,7 +155,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         textView.setLineLimit(textLimit != null ? textLimit :
                 (post.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
         textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-        textView.setText(post.text);
+        if (post.text != null) {
+            parent.getTextContentLoader().load(textView, post);
+        } else {
+            textView.setText("");
+        }
 
         if (noCaption) {
             textView.setVisibility(View.GONE);

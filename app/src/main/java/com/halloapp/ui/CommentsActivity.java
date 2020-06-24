@@ -47,6 +47,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -76,8 +77,10 @@ public class CommentsActivity extends AppCompatActivity {
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
+    private ContactLoader contactLoader;
+    private TextContentLoader textContentLoader;
+
 
     private CommentsViewModel viewModel;
 
@@ -203,6 +206,7 @@ public class CommentsActivity extends AppCompatActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        textContentLoader = new TextContentLoader(this);
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -363,7 +367,7 @@ public class CommentsActivity extends AppCompatActivity {
                 replyButton.setVisibility(View.GONE);
                 retractButton.setVisibility(View.GONE);
             } else {
-                commentView.setText(comment.text);
+                textContentLoader.load(commentView, comment);
 
                 if (StringUtils.isFewEmoji(comment.text)) {
                     commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceFewEmoji);
@@ -433,7 +437,7 @@ public class CommentsActivity extends AppCompatActivity {
             });
 
             commentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
-            commentView.setText(post.text);
+            textContentLoader.load(commentView, post);
         }
 
         private class PostMediaItemViewHolder extends RecyclerView.ViewHolder {

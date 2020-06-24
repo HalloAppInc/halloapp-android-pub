@@ -9,12 +9,18 @@ import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import java.util.Objects;
 
 public class Post extends ContentItem {
 
     public final @TransferredState int transferred;
     public @SeenState int seen;
+
+    @Override
+    public List<Mention> getMentions() {
+        return mentions;
+    }
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SEEN_NO, SEEN_YES_PENDING, SEEN_YES})

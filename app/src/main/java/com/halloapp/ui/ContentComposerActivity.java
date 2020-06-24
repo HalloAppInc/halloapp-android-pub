@@ -40,6 +40,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -68,6 +69,7 @@ public class ContentComposerActivity extends AppCompatActivity {
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private MediaThumbnailLoader smallThumbnailLoader;
+    private TextContentLoader textContentLoader;
     private PostEditText editText;
     private MediaViewPager mediaPager;
     private MediaPagerAdapter mediaPagerAdapter;
@@ -102,6 +104,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         smallThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
+        textContentLoader = new TextContentLoader(this);
 
         editText = findViewById(R.id.entry);
 
@@ -290,7 +293,7 @@ public class ContentComposerActivity extends AppCompatActivity {
         } else {
             replyContainer.setVisibility(View.VISIBLE);
             final TextView replyTextView = findViewById(R.id.reply_text);
-            replyTextView.setText(post.text);
+            textContentLoader.load(replyTextView, post);
             final ImageView replyMediaIconView = findViewById(R.id.reply_media_icon);
             final ImageView replyMediaThumbView = findViewById(R.id.reply_media_thumb);
             if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {

@@ -25,7 +25,7 @@ public class Mention {
     public Mention(int index, UserId userId, String fallbackName) {
         this.index = index;
         this.userId = userId;
-        this.fallbackName=  fallbackName;
+        this.fallbackName = fallbackName;
     }
 
     public Mention(long rowId, int index, String rawUserId, String name) {

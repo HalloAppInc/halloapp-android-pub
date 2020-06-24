@@ -31,6 +31,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
@@ -53,6 +54,7 @@ public class PostContentActivity extends AppCompatActivity {
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private SeenByLoader seenByLoader;
+    private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
 
     private DrawDelegateView drawDelegateView;
@@ -104,6 +106,11 @@ public class PostContentActivity extends AppCompatActivity {
         @Override
         public SeenByLoader getSeenByLoader() {
             return seenByLoader;
+        }
+
+        @Override
+        public TextContentLoader getTextContentLoader() {
+            return textContentLoader;
         }
 
         @Override
@@ -188,6 +195,7 @@ public class PostContentActivity extends AppCompatActivity {
         contactLoader = new ContactLoader(this);
         seenByLoader = new SeenByLoader(this);
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        textContentLoader = new TextContentLoader(this);
         ContactsDb.getInstance(this).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> updatePost());

@@ -138,7 +138,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
             parent.getAvatarLoader().load(firstCommentAvatar, firstComment.commentSenderUserId);
 
-            firstCommentText.setText(firstComment.text);
+            parent.getTextContentLoader().load(firstCommentText, firstComment);
 
             if (firstComment.commentSenderUserId.isMe()) {
                 firstCommentName.setText(firstCommentName.getContext().getString(R.string.me));

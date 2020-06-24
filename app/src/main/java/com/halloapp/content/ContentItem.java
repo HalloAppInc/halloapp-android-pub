@@ -5,12 +5,13 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.UserId;
+import com.halloapp.ui.mentions.TextContent;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ContentItem {
+public abstract class ContentItem implements TextContent {
 
     public long rowId;
     public final UserId senderUserId;
@@ -66,5 +67,15 @@ public abstract class ContentItem {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<Mention> getMentions() {
+        return mentions;
+    }
+
+    @Override
+    public String getText() {
+        return text;
     }
 }

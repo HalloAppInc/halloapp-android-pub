@@ -311,10 +311,11 @@ public class ContactsDb {
             if (!TextUtils.isEmpty(halloName)) {
                 contact = new Contact(userId, null, halloName);
             } else {
-                contact = new Contact(userId, context.getString(R.string.unknown_contact), null);
+                contact = new Contact(userId, null, null);
+                contact.fallbackName = context.getString(R.string.unknown_contact);
             }
         } else if (TextUtils.isEmpty(contact.addressBookName) && TextUtils.isEmpty(contact.addressBookPhone) && TextUtils.isEmpty(contact.halloName)) {
-            contact.addressBookName = context.getString(R.string.unknown_contact);
+            contact.fallbackName = context.getString(R.string.unknown_contact);
         }
         return contact;
     }

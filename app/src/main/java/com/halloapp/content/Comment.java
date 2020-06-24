@@ -7,12 +7,13 @@ import androidx.annotation.NonNull;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
+import com.halloapp.ui.mentions.TextContent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Comment {
+public class Comment implements TextContent {
 
     public long rowId;
     public final UserId postSenderUserId;
@@ -97,4 +98,13 @@ public class Comment {
                 seen == comment.seen;
     }
 
+    @Override
+    public List<Mention> getMentions() {
+        return mentions;
+    }
+
+    @Override
+    public String getText() {
+        return text;
+    }
 }

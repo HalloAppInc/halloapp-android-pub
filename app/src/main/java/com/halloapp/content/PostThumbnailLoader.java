@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
@@ -11,19 +12,25 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.TextDrawable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, String> {
 
     private final Context context;
     private final ContentDb contentDb;
+    private final ContactsDb contactsDb;
     private final LruCache<String, Drawable> cache;
 
     private final int dimensionLimit;
@@ -40,6 +47,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
         this.dimensionLimit = dimensionLimit;
         this.context = context.getApplicationContext();
         contentDb = ContentDb.getInstance(context);
+        contactsDb = ContactsDb.getInstance(context);
 
         textSizeMax = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_max_text_size);
         textSizeMin = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_min_text_size);
@@ -74,7 +82,19 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
                 return null;
             }
             if (post.media.isEmpty()) {
-                return new TextDrawable(post.text, textSizeMax, textSizeMin, textPadding, textColor);
+                CharSequence text = post.text;
+                if (!post.mentions.isEmpty()) {
+                    List<Mention> ret = new ArrayList<>();
+                    for (Mention mention : post.mentions) {
+                        Contact contact = contactsDb.getContact(mention.userId);
+                        if (!TextUtils.isEmpty(mention.fallbackName)) {
+                            contact.fallbackName = mention.fallbackName;
+                        }
+                        ret.add(new Mention(mention.index, mention.userId, contact.getDisplayName()));
+                    }
+                    text = MentionsFormatter.insertMentions(text, ret);
+                }
+                return new TextDrawable(text, textSizeMax, textSizeMin, textPadding, textColor);
             } else {
                 final Media media = post.media.get(0);
                 Bitmap bitmap = null;
