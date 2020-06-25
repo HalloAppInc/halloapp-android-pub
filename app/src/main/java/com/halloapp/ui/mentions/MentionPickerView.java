@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.ChangeBounds;
 import androidx.transition.Transition;
 
 import com.halloapp.R;
@@ -39,6 +38,8 @@ public class MentionPickerView extends FrameLayout {
     private OnMentionListener listener;
 
     private RecyclerView recyclerView;
+
+    private boolean showing = false;
 
     public interface OnMentionListener {
         void onMention(@NonNull Contact contact);
@@ -74,8 +75,6 @@ public class MentionPickerView extends FrameLayout {
             }
         });
     }
-
-    boolean showing = false;
 
     public void show() {
         if (showing) {
