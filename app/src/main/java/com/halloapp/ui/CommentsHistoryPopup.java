@@ -27,7 +27,6 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
-import com.halloapp.content.Comment;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.util.ListFormatter;
@@ -71,7 +70,7 @@ public class CommentsHistoryPopup {
     };
 
     public interface OnItemClickListener {
-        void onItemClicked(@NonNull HomeViewModel.CommentsGroup commentsGroup);
+        void onItemClicked(@NonNull HomeViewModel.SocialActivity commentsGroup);
     }
 
     public CommentsHistoryPopup(Context context, PostThumbnailLoader postThumbnailLoader, View anchorView) {
@@ -118,8 +117,8 @@ public class CommentsHistoryPopup {
         this.clickListener = clickListener;
     }
 
-    public void setCommentHistory(@Nullable HomeViewModel.CommentsHistory commentsHistory) {
-        if (commentsHistory == null || commentsHistory.commentGroups.size() == 0) {
+    public void setCommentHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
+        if (socialHistory == null || socialHistory.socialActivity.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             titleView.setVisibility(View.GONE);
             listView.setVisibility(View.GONE);
@@ -128,8 +127,8 @@ public class CommentsHistoryPopup {
             emptyView.setVisibility(View.GONE);
             titleView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.VISIBLE);
-            adapter.setComments(commentsHistory.commentGroups);
-            adapter.setContacts(commentsHistory.contacts);
+            adapter.setComments(socialHistory.socialActivity);
+            adapter.setContacts(socialHistory.contacts);
         }
     }
 
@@ -200,11 +199,11 @@ public class CommentsHistoryPopup {
 
     private class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
 
-        private List<HomeViewModel.CommentsGroup> commentGroups;
+        private List<HomeViewModel.SocialActivity> commentGroups;
         private Map<UserId, Contact> contacts;
         private boolean contactsInvalidated;
 
-        void setComments(@NonNull List<HomeViewModel.CommentsGroup> commentGroups) {
+        void setComments(@NonNull List<HomeViewModel.SocialActivity> commentGroups) {
             this.commentGroups = commentGroups;
             notifyDataSetChanged();
         }
@@ -263,46 +262,59 @@ public class CommentsHistoryPopup {
                 thumbnailView.setClipToOutline(true);
             }
 
-            void bind(HomeViewModel.CommentsGroup commentsGroup, Map<UserId, Contact> contacts) {
+            void bind(HomeViewModel.SocialActivity commentsGroup, Map<UserId, Contact> contacts) {
 
                 postThumbnailLoader.load(thumbnailView, commentsGroup.postSenderUserId, commentsGroup.postId);
 
-                unseenIndicatorView.setVisibility(commentsGroup.comments.get(0).seen ? View.GONE : View.VISIBLE);
+                unseenIndicatorView.setVisibility(commentsGroup.seen ? View.GONE : View.VISIBLE);
 
                 final List<String> names = new ArrayList<>();
                 final Set<UserId> userIdSet = new HashSet<>();
-                long timestamp = 0;
-                for (Comment comment : commentsGroup.comments) {
-                    if (userIdSet.contains(comment.commentSenderUserId)) {
+                long timestamp = commentsGroup.timestamp;
+                for (UserId userId : commentsGroup.involvedUsers) {
+                    if (userIdSet.contains(userId)) {
                         continue;
                     }
-                    userIdSet.add(comment.commentSenderUserId);
-                    final Contact contact = contacts.get(comment.commentSenderUserId);
+                    userIdSet.add(userId);
+                    final Contact contact = contacts.get(userId);
                     if (contact != null) {
                         names.add(contact.getDisplayName());
-                    }
-                    if (comment.timestamp > timestamp) {
-                        timestamp = comment.timestamp;
                     }
                 }
                 TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - timestamp);
 
-                if (commentsGroup.postSenderUserId.isMe()) {
-                    infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
-                            R.string.commented_on_your_post_1,
-                            R.string.commented_on_your_post_2,
-                            R.string.commented_on_your_post_3,
-                            R.plurals.commented_on_your_post_4, names)));
-                } else {
-                    final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
-                    if (userIdSet.size() == 1 && userIdSet.iterator().next().equals(commentsGroup.postSenderUserId)) {
-                        infoView.setText(Html.fromHtml(infoView.getContext().getResources().getString(R.string.commented_on_own_post, contact.getDisplayName())));
-                    } else {
+                if (commentsGroup.action == HomeViewModel.SocialActivity.Action.TYPE_COMMENT) {
+                    if (commentsGroup.postSenderUserId.isMe()) {
                         infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
-                                R.string.commented_on_someones_post_1,
-                                R.string.commented_on_someones_post_2,
-                                R.string.commented_on_someones_post_3,
-                                R.plurals.commented_on_someones_post_4, names, contact.getDisplayName())));
+                                R.string.commented_on_your_post_1,
+                                R.string.commented_on_your_post_2,
+                                R.string.commented_on_your_post_3,
+                                R.plurals.commented_on_your_post_4, names)));
+                    } else {
+                        final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
+                        if (userIdSet.size() == 1 && userIdSet.iterator().next().equals(commentsGroup.postSenderUserId)) {
+                            infoView.setText(Html.fromHtml(infoView.getContext().getResources().getString(R.string.commented_on_own_post, contact.getDisplayName())));
+                        } else {
+                            infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
+                                    R.string.commented_on_someones_post_1,
+                                    R.string.commented_on_someones_post_2,
+                                    R.string.commented_on_someones_post_3,
+                                    R.plurals.commented_on_someones_post_4, names, contact.getDisplayName())));
+                        }
+                    }
+                } else if (commentsGroup.action == HomeViewModel.SocialActivity.Action.TYPE_MENTION_IN_POST) {
+                    final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
+                    infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_their_post, contact.getDisplayName())));
+                } else if (commentsGroup.action == HomeViewModel.SocialActivity.Action.TYPE_MENTION_IN_COMMENT) {
+                    if (commentsGroup.postSenderUserId.isMe()) {
+                        infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_your_post, names.get(0))));
+                    } else {
+                        final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
+                        if (commentsGroup.involvedUsers.get(0).equals(commentsGroup.postSenderUserId)) {
+                            infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_own_post, contact.getDisplayName())));
+                        } else {
+                            infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_someones_post, names.get(0), contact.getDisplayName())));
+                        }
                     }
                 }
 

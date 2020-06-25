@@ -60,6 +60,15 @@ public abstract class ContentItem implements TextContent {
         return true;
     }
 
+    public boolean doesMention(@NonNull UserId userId) {
+        for (Mention mention : mentions) {
+            if (mention.userId.equals(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isTransferFailed() {
         for (Media mediaItem : media) {
             if (mediaItem.transferred == Media.TRANSFERRED_FAILURE) {

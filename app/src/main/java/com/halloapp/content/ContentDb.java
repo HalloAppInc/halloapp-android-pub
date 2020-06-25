@@ -296,6 +296,22 @@ public class ContentDb {
     }
 
     /*
+     * Returns posts that the userid is mentioned in
+     * */
+    @WorkerThread
+    public @NonNull List<Post> getMentionedPosts(@NonNull UserId userId, int limit) {
+        return postsDb.getMentionedPosts(userId, limit);
+    }
+
+    /*
+     * Returns comments the userid is mentioned in
+     */
+    @WorkerThread
+    public @NonNull List<Comment> getMentionedComments(@NonNull UserId userId, int limit) {
+        return postsDb.getMentionedComments(userId, limit);
+    }
+
+    /*
      * returns "important" comments only
      * */
     @WorkerThread

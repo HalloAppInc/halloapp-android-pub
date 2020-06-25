@@ -11,12 +11,14 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mentions.MentionsFormatter;
+import com.halloapp.ui.mentions.MentionsLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;
@@ -29,6 +31,7 @@ import java.util.concurrent.Callable;
 public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, String> {
 
     private final Context context;
+    private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     private final LruCache<String, Drawable> cache;
@@ -46,6 +49,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
 
         this.dimensionLimit = dimensionLimit;
         this.context = context.getApplicationContext();
+        me = Me.getInstance(context);
         contentDb = ContentDb.getInstance(context);
         contactsDb = ContactsDb.getInstance(context);
 
@@ -84,14 +88,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
             if (post.media.isEmpty()) {
                 CharSequence text = post.text;
                 if (!post.mentions.isEmpty()) {
-                    List<Mention> ret = new ArrayList<>();
-                    for (Mention mention : post.mentions) {
-                        Contact contact = contactsDb.getContact(mention.userId);
-                        if (!TextUtils.isEmpty(mention.fallbackName)) {
-                            contact.fallbackName = mention.fallbackName;
-                        }
-                        ret.add(new Mention(mention.index, mention.userId, contact.getDisplayName()));
-                    }
+                    List<Mention> ret = MentionsLoader.loadMentionNames(me, contactsDb, post.mentions);
                     text = MentionsFormatter.insertMentions(text, ret);
                 }
                 return new TextDrawable(text, textSizeMax, textSizeMin, textPadding, textColor);

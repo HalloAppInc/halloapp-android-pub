@@ -10,6 +10,7 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.core.util.Pair;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -646,6 +647,122 @@ class PostsDb {
         return comments;
     }
 
+    @WorkerThread
+    @NonNull List<Post> getMentionedPosts(@NonNull UserId mentionedUserId, int limit) {
+        List<Post> mentionedPosts = new ArrayList<>();
+        final String sql =
+                "SELECT " +
+                        MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "," +
+                        MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "," +
+                        MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "," +
+                        "p." + PostsTable._ID + "," +
+                        "p." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        "p." + PostsTable.COLUMN_POST_ID + "," +
+                        "p." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        "p." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        "p." + PostsTable.COLUMN_SEEN + "," +
+                        "p." + PostsTable.COLUMN_TEXT + "," +
+                        "m." + MediaTable._ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "FROM " + MentionsTable.TABLE_NAME + " " +
+                        "LEFT JOIN " + PostsTable.TABLE_NAME + " " +
+                        "AS p ON " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "=p." + PostsTable._ID + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        "AS m ON p." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? LIMIT " + limit;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{mentionedUserId.rawId(), PostsTable.TABLE_NAME})) {
+            Post post = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(3);
+                if (post == null || rowId != post.rowId) {
+                    post = new Post(
+                            rowId,
+                            new UserId(cursor.getString(4)),
+                            cursor.getString(5),
+                            cursor.getLong(6),
+                            cursor.getInt(7),
+                            cursor.getInt(8),
+                            cursor.getString(9));
+                    mentionsDb.fillMentions(post);
+                    mentionedPosts.add(post);
+                }
+                if (!cursor.isNull(7)) {
+                    Preconditions.checkNotNull(post).media.add(new Media(
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
+                            null,
+                            null,
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
+                }
+            }
+        }
+        return mentionedPosts;
+    }
+
+    @WorkerThread
+    @NonNull List<Comment> getMentionedComments(@NonNull UserId mentionedUserId, int limit) {
+        List<Comment> mentionedComments = new ArrayList<>();
+        final String sql =
+                "SELECT " +
+                        "c." + CommentsTable._ID + ", " +
+                        "c." + CommentsTable.COLUMN_POST_SENDER_USER_ID + ", " +
+                        "c." + CommentsTable.COLUMN_POST_ID + ", " +
+                        "c." + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", " +
+                        "c." + CommentsTable.COLUMN_COMMENT_ID + ", " +
+                        "c." + CommentsTable.COLUMN_PARENT_ID + ", " +
+                        "c." + CommentsTable.COLUMN_TIMESTAMP + ", " +
+                        "c." + CommentsTable.COLUMN_TRANSFERRED + ", " +
+                        "c." + CommentsTable.COLUMN_TEXT + ", " +
+                        "c." + CommentsTable.COLUMN_SEEN + ", " +
+                        MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "," +
+                        MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "," +
+                        MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + " " +
+                        "FROM " + MentionsTable.TABLE_NAME + " " +
+                        "LEFT JOIN " + CommentsTable.TABLE_NAME + " " +
+                        "AS c ON " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "=c." + CommentsTable._ID + " " +
+                        "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? LIMIT " + limit;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{mentionedUserId.rawId(), CommentsTable.TABLE_NAME})) {
+            while (cursor.moveToNext()) {
+
+                final Comment comment = new Comment(
+                        cursor.getLong(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        new UserId(cursor.getString(3)),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getLong(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getInt(9) == 1,
+                        cursor.getString(8));
+                mentionsDb.fillMentions(comment);
+                mentionedComments.add(comment);
+            }
+        }
+        return mentionedComments;
+    }
+
     /*
     * returns "important" comments only
     * */
@@ -692,6 +809,7 @@ class PostsDb {
                         cursor.getInt(7) == 1,
                         cursor.getInt(9) == 1,
                         cursor.getString(8));
+                mentionsDb.fillMentions(comment);
                 comments.add(comment);
             }
         }

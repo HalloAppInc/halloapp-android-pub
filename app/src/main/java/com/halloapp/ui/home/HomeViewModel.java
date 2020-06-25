@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,9 +34,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
-    final ComputableLiveData<CommentsHistory> commentsHistory;
+    final ComputableLiveData<SocialHistory> socialHistory;
 
     private final ContentDb contentDb;
+    private final ContactsDb contactsDb;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
     private final PostsDataSource.Factory dataSourceFactory;
@@ -50,6 +53,9 @@ public class HomeViewModel extends AndroidViewModel {
             } else {
                 pendingIncoming.set(true);
                 invalidatePosts();
+                if (post.doesMention(UserId.ME)) {
+                    invalidateCommentHistory();
+                }
             }
         }
 
@@ -67,6 +73,10 @@ public class HomeViewModel extends AndroidViewModel {
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
             invalidatePosts();
+        }
+
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+            invalidateCommentHistory();
         }
 
         @Override
@@ -106,7 +116,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         private void invalidateCommentHistory() {
-            mainHandler.post(commentsHistory::invalidate);
+            mainHandler.post(socialHistory::invalidate);
         }
     };
 
@@ -115,14 +125,15 @@ public class HomeViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
+        contactsDb = ContactsDb.getInstance(getApplication());
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, false);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
-        commentsHistory = new ComputableLiveData<CommentsHistory>() {
+        socialHistory = new ComputableLiveData<SocialHistory>() {
             @Override
-            protected CommentsHistory compute() {
-                return loadCommentHistory();
+            protected SocialHistory compute() {
+                return loadSocialHistory();
             }
         };
     }
@@ -147,82 +158,157 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
+    private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActivity> seenOut, @NonNull List<SocialActivity> unseenOut) {
+        for (Comment comment : mentionedComments) {
+            SocialActivity activity = SocialActivity.fromMentionedComment(comment);
+            if (activity.seen) {
+                seenOut.add(activity);
+            } else {
+                unseenOut.add(activity);
+            }
+        }
+    }
+
+    private void processMentionedPosts(@NonNull List<Post> mentionedPosts, @NonNull List<SocialActivity> seenOut, @NonNull List<SocialActivity> unseenOut) {
+        for (Post post : mentionedPosts) {
+            SocialActivity activity = SocialActivity.fromMentionedPost(post);
+            if (activity.seen){
+                seenOut.add(activity);
+            } else {
+                unseenOut.add(activity);
+            }
+        }
+    }
+
     @WorkerThread
-    private CommentsHistory loadCommentHistory() {
+    private SocialHistory loadSocialHistory() {
+        final HashSet<Comment> comments = new HashSet<>(ContentDb.getInstance(getApplication()).getIncomingCommentsHistory(250));
+        final List<Post> mentionedPosts = ContentDb.getInstance(getApplication()).getMentionedPosts(UserId.ME, 50);
+        final List<Comment> mentionedComments = ContentDb.getInstance(getApplication()).getMentionedComments(UserId.ME, 50);
 
-        final List<Comment> comments = ContentDb.getInstance(getApplication()).getIncomingCommentsHistory(250);
+        for (Comment mentionedComment : mentionedComments) {
+            comments.remove(mentionedComment);
+        }
 
-        final Map<Pair<UserId, String>, CommentsGroup> unseenComments = new HashMap<>();
-        final List<CommentsGroup> seenComments = new ArrayList<>();
-        CommentsGroup lastSeenCommentGroup = null;
+        final Map<Pair<UserId, String>, SocialActivity> unseenComments = new HashMap<>();
+        final List<SocialActivity> seenComments = new ArrayList<>();
+        final List<SocialActivity> seenMentions = new ArrayList<>();
+        final List<SocialActivity> unseenMentions = new ArrayList<>();
+        SocialActivity lastActivity = null;
         for (Comment comment : comments) {
             if (comment.seen) {
-                if (lastSeenCommentGroup == null || !lastSeenCommentGroup.postId.equals(comment.postId) || !lastSeenCommentGroup.postSenderUserId.equals(comment.postSenderUserId)) {
-                    if (lastSeenCommentGroup != null) {
-                        seenComments.add(lastSeenCommentGroup);
-                    }
-                    lastSeenCommentGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
+                if (lastActivity == null || !lastActivity.postId.equals(comment.postId) || !lastActivity.postSenderUserId.equals(comment.postSenderUserId)) {
+                    lastActivity = new SocialActivity(SocialActivity.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
+                    lastActivity.seen = true;
+                    seenComments.add(lastActivity);
                 }
-                lastSeenCommentGroup.comments.add(comment);
+                lastActivity.involvedUsers.add(comment.commentSenderUserId);
+                if (comment.timestamp > lastActivity.timestamp) {
+                    lastActivity.timestamp = comment.timestamp;
+                }
             } else {
                 final Pair<UserId, String> postKey = Pair.create(comment.postSenderUserId, comment.postId);
-                CommentsGroup commentsGroup = unseenComments.get(postKey);
+                SocialActivity commentsGroup = unseenComments.get(postKey);
                 if (commentsGroup == null) {
-                    commentsGroup = new CommentsGroup(comment.postSenderUserId, comment.postId);
+                    commentsGroup = new SocialActivity(SocialActivity.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
+                    commentsGroup.seen = false;
                     unseenComments.put(postKey, commentsGroup);
                 }
-                commentsGroup.comments.add(comment);
-                if (commentsGroup.timestamp < comment.timestamp) {
+                commentsGroup.involvedUsers.add(comment.commentSenderUserId);
+                if (comment.timestamp > commentsGroup.timestamp) {
                     commentsGroup.timestamp = comment.timestamp;
                 }
             }
         }
-        if (lastSeenCommentGroup != null) {
-            seenComments.add(lastSeenCommentGroup);
-        }
 
-        final ArrayList<CommentsGroup> commentGroups = new ArrayList<>(unseenComments.values());
-        Collections.sort(commentGroups, ((o1, o2) -> -Long.compare(o1.timestamp, o2.timestamp)));
-        commentGroups.addAll(seenComments);
+        processMentionedComments(mentionedComments, seenMentions, unseenMentions);
+        processMentionedPosts(mentionedPosts, seenMentions, unseenMentions);
+
+        final ArrayList<SocialActivity> socialActivity = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
+        socialActivity.addAll(seenMentions);
+        socialActivity.addAll(unseenMentions);
+        socialActivity.addAll(unseenComments.values());
+        socialActivity.addAll(seenComments);
+
+        Collections.sort(socialActivity, ((o1, o2) -> {
+            if (o1.seen != o2.seen) {
+                return o1.seen ? 1 : -1;
+            }
+            return -Long.compare(o1.timestamp, o2.timestamp);
+        }));
 
         final Map<UserId, Contact> contacts = new HashMap<>();
         for (Comment comment : comments) {
             if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
-                final Contact contact = ContactsDb.getInstance(getApplication()).getContact(comment.commentSenderUserId);
+                final Contact contact = contactsDb.getContact(comment.commentSenderUserId);
                 contacts.put(comment.commentSenderUserId, contact);
             }
             if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
-                final Contact contact = ContactsDb.getInstance(getApplication()).getContact(comment.postSenderUserId);
+                final Contact contact = contactsDb.getContact(comment.postSenderUserId);
                 contacts.put(comment.postSenderUserId, contact);
             }
         }
-        return new CommentsHistory(commentGroups, unseenComments.size(), contacts);
+        for (Post post : mentionedPosts) {
+            if (!post.senderUserId.isMe() && !contacts.containsKey(post.senderUserId)) {
+                final Contact contact = contactsDb.getContact(post.senderUserId);
+                contacts.put(post.senderUserId, contact);
+            }
+        }
+        return new SocialHistory(socialActivity, unseenMentions.size() + unseenComments.size(), contacts);
     }
 
-    public static class CommentsGroup {
+    public static class SocialActivity {
+
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST})
+        public @interface Action {
+            int TYPE_COMMENT = 0;
+            int TYPE_MENTION_IN_POST = 1;
+            int TYPE_MENTION_IN_COMMENT = 2;
+        }
 
         public final UserId postSenderUserId;
         public final String postId;
 
+        public boolean seen;
+
         public long timestamp;
 
-        public final List<Comment> comments = new ArrayList<>();
+        public final @Action int action;
 
+        public final List<UserId> involvedUsers = new ArrayList<>();
 
-        CommentsGroup(@NonNull UserId postSenderUserId, @NonNull String postId) {
-            this.postSenderUserId = postSenderUserId;
-            this.postId = postId;
+        public static SocialActivity fromMentionedPost(@NonNull Post post) {
+            SocialActivity activity = new SocialActivity(Action.TYPE_MENTION_IN_POST, post.senderUserId, post.id);
+            activity.timestamp = post.timestamp;
+            activity.seen = post.seen != Post.SEEN_NO;
+            activity.involvedUsers.add(post.senderUserId);
+            return activity;
         }
+
+        public static SocialActivity fromMentionedComment(@NonNull Comment comment) {
+            SocialActivity activity = new SocialActivity(Action.TYPE_MENTION_IN_COMMENT, comment.postSenderUserId, comment.postId);
+            activity.timestamp = comment.timestamp;
+            activity.seen = comment.seen;
+            activity.involvedUsers.add(comment.commentSenderUserId);
+            return activity;
+        }
+
+        SocialActivity(@Action int action, UserId postSenderUserId, String postId) {
+            this.action = action;
+            this.postId = postId;
+            this.postSenderUserId = postSenderUserId;
+        }
+
     }
 
-    public static class CommentsHistory {
+    public static class SocialHistory {
 
-        public final List<CommentsGroup> commentGroups;
+        public final List<SocialActivity> socialActivity;
         public final Map<UserId, Contact> contacts;
         public final int unseenCount;
 
-        CommentsHistory(@NonNull List<CommentsGroup> commentGroups, int unseenCount, @NonNull Map<UserId, Contact> contacts) {
-            this.commentGroups = commentGroups;
+        SocialHistory(@NonNull List<SocialActivity> socialActivity, int unseenCount, @NonNull Map<UserId, Contact> contacts) {
+            this.socialActivity = socialActivity;
             this.unseenCount = unseenCount;
             this.contacts = contacts;
         }

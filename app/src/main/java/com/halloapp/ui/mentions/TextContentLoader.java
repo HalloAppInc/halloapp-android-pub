@@ -42,23 +42,7 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
             return;
         }
         
-        final Callable<List<Mention>> loader = () -> {
-            List<Mention> ret = new ArrayList<>();
-            for (Mention mention : mentions) {
-                Contact contact = contactsDb.getContact(mention.userId);
-                String mentionText;
-                if (mention.userId.isMe()) {
-                    mentionText = me.getName();
-                } else {
-                    if (!TextUtils.isEmpty(mention.fallbackName)) {
-                        contact.fallbackName = mention.fallbackName;
-                    }
-                    mentionText = contact.getDisplayName();
-                }
-                ret.add(new Mention(mention.index, mention.userId, mentionText));
-            }
-            return ret;
-        };
+        final Callable<List<Mention>> loader = () -> MentionsLoader.loadMentionNames(me, contactsDb, mentions);
         final ViewDataLoader.Displayer<TextView, List<Mention>> displayer = new ViewDataLoader.Displayer<TextView, List<Mention>>() {
 
             @Override

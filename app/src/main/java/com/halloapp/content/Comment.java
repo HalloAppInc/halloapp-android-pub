@@ -75,6 +75,11 @@ public class Comment implements TextContent {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(rowId);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

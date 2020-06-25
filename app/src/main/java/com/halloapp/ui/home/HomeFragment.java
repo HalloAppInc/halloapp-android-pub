@@ -94,9 +94,9 @@ public class HomeFragment extends PostsFragment {
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
-        viewModel.commentsHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
+        viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
-                updateCommentHistory(commentHistoryData);
+                updateSocialHistory(commentHistoryData);
             }
         });
 
@@ -118,7 +118,7 @@ public class HomeFragment extends PostsFragment {
         commentHistoryPopup = new CommentsHistoryPopup(requireContext(), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
         commentHistoryPopup.setOnItemClickListener(commentsGroup -> {
             commentHistoryPopup.dismiss();
-            final HomeViewModel.CommentsHistory commentHistoryData = viewModel.commentsHistory.getLiveData().getValue();
+            final HomeViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();
             if (commentHistoryData != null) {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);
                 intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, commentsGroup.postSenderUserId.rawId());
@@ -148,7 +148,7 @@ public class HomeFragment extends PostsFragment {
                 getResources().getColor(R.color.badge_background),
                 getResources().getColor(R.color.window_background),
                 getResources().getDimension(R.dimen.badge));
-        updateCommentHistory(viewModel.commentsHistory.getLiveData().getValue());
+        updateSocialHistory(viewModel.socialHistory.getLiveData().getValue());
         notificationsMenuItem.setIcon(notificationDrawable);
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -169,8 +169,8 @@ public class HomeFragment extends PostsFragment {
         }
     }
 
-    private void updateCommentHistory(@Nullable HomeViewModel.CommentsHistory commentsHistory) {
-        notificationDrawable.setBadge((commentsHistory == null || commentsHistory.unseenCount == 0) ? "" : "•");
-        commentHistoryPopup.setCommentHistory(commentsHistory);
+    private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
+        notificationDrawable.setBadge((socialHistory == null || socialHistory.unseenCount == 0) ? "" : "•");
+        commentHistoryPopup.setCommentHistory(socialHistory);
     }
 }
