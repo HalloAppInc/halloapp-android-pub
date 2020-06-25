@@ -14,12 +14,9 @@ import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.View;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
-import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Mention;
 import com.halloapp.ui.mentions.MentionPickerView;
@@ -188,7 +185,22 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
     }
 
     public Pair<String, List<Mention>> getTextWithMentions() {
-        Editable editable = getText();
+        Editable editable = Editable.Factory.getInstance().newEditable(getText());
+        replaceMentionsWithPlaceholders(editable);
+        return new Pair<>(Preconditions.checkNotNull(editable).toString(), extractMentionsFromPlaceholders(editable));
+    }
+
+    private List<Mention> extractMentionsFromPlaceholders(@NonNull Editable editable) {
+        PlaceholderSpan[] placeholderSpans = editable.getSpans(0, editable.length(), PlaceholderSpan.class);
+        List<Mention> mentions = new ArrayList<>();
+        for (PlaceholderSpan span : placeholderSpans) {
+            int index = editable.getSpanStart(span);
+            mentions.add(new Mention(index, span.contact.userId, span.contact.halloName));
+        }
+        return mentions;
+    }
+
+    private void replaceMentionsWithPlaceholders(@NonNull Editable editable) {
         MentionSpan[] spans = editable.getSpans(0, editable.length(), MentionSpan.class);
         for (MentionSpan span : spans) {
             int start = editable.getSpanStart(span);
@@ -198,13 +210,6 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
             placeHolder.setSpan(new PlaceholderSpan(span.contact), 0, placeHolder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             editable.replace(start, end, placeHolder);
         }
-        PlaceholderSpan[] placeholderSpans = editable.getSpans(0, editable.length(), PlaceholderSpan.class);
-        List<Mention> mentions = new ArrayList<>();
-        for (PlaceholderSpan span : placeholderSpans) {
-            int index = editable.getSpanStart(span);
-            mentions.add(new Mention(index, span.contact.userId, span.contact.halloName));
-        }
-        return new Pair<>(Preconditions.checkNotNull(editable).toString(), mentions);
     }
 
     private CharSequence createMentionPlaceholder(@NonNull Contact contact) {
