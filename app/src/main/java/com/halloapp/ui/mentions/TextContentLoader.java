@@ -47,7 +47,7 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
             for (Mention mention : mentions) {
                 Contact contact = contactsDb.getContact(mention.userId);
                 String mentionText;
-                if (me.isMe(mention.userId)) {
+                if (mention.userId.isMe()) {
                     mentionText = me.getName();
                 } else {
                     if (!TextUtils.isEmpty(mention.fallbackName)) {

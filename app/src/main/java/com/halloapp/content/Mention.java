@@ -1,17 +1,22 @@
 package com.halloapp.content;
 
+import android.text.TextUtils;
+
 import com.halloapp.contacts.UserId;
+import com.halloapp.xmpp.Connection;
 
 public class Mention {
 
     public static Mention parseFromProto(com.halloapp.proto.Mention protoMention) {
-        return new Mention(protoMention.getIndex(), new UserId(protoMention.getUserId()), protoMention.getName());
+        return new Mention(protoMention.getIndex(), Connection.getInstance().getUserId(protoMention.getUserId()), protoMention.getName());
     }
 
     public static com.halloapp.proto.Mention toProto(Mention mention) {
         com.halloapp.proto.Mention.Builder builder = com.halloapp.proto.Mention.newBuilder();
         builder.setIndex(mention.index);
-        builder.setName(mention.fallbackName);
+        if (!TextUtils.isEmpty(mention.fallbackName)) {
+            builder.setName(mention.fallbackName);
+        }
         builder.setUserId(mention.userId.rawId());
         return builder.build();
     }

@@ -110,11 +110,6 @@ public class Me {
     }
 
     @WorkerThread
-    public synchronized boolean isMe(@NonNull UserId userId) {
-        return userId.isMe() || userId.rawId().equals(getUser());
-    }
-
-    @WorkerThread
     public synchronized void saveName(@NonNull String name) {
         Log.i("Me.saveName: " + name);
         if (!getPreferences().edit().putString(PREF_KEY_NAME, name).commit()) {

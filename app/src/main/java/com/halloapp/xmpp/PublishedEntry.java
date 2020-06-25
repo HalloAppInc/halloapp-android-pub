@@ -54,7 +54,7 @@ public class PublishedEntry {
     final String feedItemId;
     final String parentCommentId;
     final List<Media> media = new ArrayList<>();
-    final List<Mention> mentions = new ArrayList<>();
+    final List<com.halloapp.proto.Mention> mentions = new ArrayList<>();
 
     public static class Media {
 
@@ -105,18 +105,6 @@ public class PublishedEntry {
                     Log.e("PublishedEntry: invalid height", ex);
                 }
             }
-        }
-    }
-
-    public static class Mention {
-        final UserId userId;
-        final String pushName;
-        final int index;
-
-        public Mention(int index, @NonNull UserId userId, @Nullable String pushName) {
-            this.index = index;
-            this.userId = userId;
-            this.pushName = pushName;
         }
     }
 
@@ -255,7 +243,7 @@ public class PublishedEntry {
                     postBuilder.setText(text);
                 }
                 if (!mentions.isEmpty()) {
-                    postBuilder.addAllMentions(getMentionProtos());
+                    postBuilder.addAllMentions(mentions);
                 }
                 containerBuilder.setPost(postBuilder.build());
                 break;
@@ -270,7 +258,7 @@ public class PublishedEntry {
                     commentBuilder.setText(text);
                 }
                 if (!mentions.isEmpty()) {
-                    commentBuilder.addAllMentions(getMentionProtos());
+                    commentBuilder.addAllMentions(mentions);
                 }
                 containerBuilder.setComment(commentBuilder.build());
                 break;
@@ -297,20 +285,6 @@ public class PublishedEntry {
             mediaList.add(mediaBuilder.build());
         }
         return mediaList;
-    }
-
-    private List<com.halloapp.proto.Mention> getMentionProtos() {
-        List<com.halloapp.proto.Mention> mentionsList = new ArrayList<>();
-        for (PublishedEntry.Mention mention : mentions) {
-            com.halloapp.proto.Mention.Builder mentionBuilder = com.halloapp.proto.Mention.newBuilder();
-            mentionBuilder.setUserId(mention.userId.rawId());
-            if (mention.pushName != null) {
-                mentionBuilder.setName(mention.pushName);
-            }
-            mentionBuilder.setIndex(mention.index);
-            mentionsList.add(mentionBuilder.build());
-        }
-        return mentionsList;
     }
 
     private MediaType getProtoMediaType(@NonNull String s) {
@@ -347,16 +321,6 @@ public class PublishedEntry {
         return ret;
     }
 
-    private static List<Mention> fromMentionsProtos(List<com.halloapp.proto.Mention> mentionsList) {
-        List<Mention> ret = new ArrayList<>();
-        for (com.halloapp.proto.Mention mention : mentionsList) {
-            ret.add(new Mention(
-                    mention.getIndex(),
-                    new UserId(mention.getUserId()), mention.getName()));
-        }
-        return ret;
-    }
-
     private static Builder readEncodedEntryString(String entry) {
         return readEncodedEntry(Base64.decode(entry, Base64.NO_WRAP));
     }
@@ -371,14 +335,14 @@ public class PublishedEntry {
                 builder.type(ENTRY_FEED);
                 builder.text(post.getText());
                 builder.media(fromMediaProtos(post.getMediaList()));
-                builder.mentions(fromMentionsProtos(post.getMentionsList()));
+                builder.mentions(post.getMentionsList());
             } else if (container.hasComment()) {
                 Comment comment = container.getComment();
                 builder.type(ENTRY_COMMENT);
                 builder.feedItemId(comment.getFeedPostId());
                 builder.parentCommentId(comment.getParentCommentId());
                 builder.text(comment.getText());
-                builder.mentions(fromMentionsProtos(comment.getMentionsList()));
+                builder.mentions(comment.getMentionsList());
             } else {
                 Log.i("Unknown encoded entry type");
             }
@@ -409,7 +373,7 @@ public class PublishedEntry {
         String feedItemId;
         String parentCommentId;
         List<Media> media;
-        List<Mention> mentions;
+        List<com.halloapp.proto.Mention> mentions;
 
         Builder type(@EntryType int type) {
             this.type = type;
@@ -446,7 +410,7 @@ public class PublishedEntry {
             return this;
         }
 
-        Builder mentions(List<Mention> mentions) {
+        Builder mentions(List<com.halloapp.proto.Mention> mentions) {
             this.mentions = mentions;
             return this;
         }

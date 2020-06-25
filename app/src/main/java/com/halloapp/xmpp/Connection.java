@@ -517,7 +517,7 @@ public class Connection {
                     entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
                 }
                 for (Mention mention : post.mentions) {
-                    entry.mentions.add(new PublishedEntry.Mention(mention.index, mention.userId, mention.fallbackName));
+                    entry.mentions.add(Mention.toProto(mention));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
@@ -572,7 +572,7 @@ public class Connection {
                         comment.postId,
                         comment.parentCommentId);
                 for (Mention mention : comment.mentions) {
-                    entry.mentions.add(new PublishedEntry.Mention(mention.index, mention.userId, mention.fallbackName));
+                    entry.mentions.add(Mention.toProto(mention));
                 }
                 final SimplePayload payload = new SimplePayload(entry.toXml());
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
@@ -774,8 +774,8 @@ public class Connection {
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
-                    for (PublishedEntry.Mention mention : entry.mentions) {
-                        post.mentions.add(new Mention(mention.index, mention.userId, mention.pushName));
+                    for (com.halloapp.proto.Mention mention : entry.mentions) {
+                        post.mentions.add(Mention.parseFromProto(mention));
                     }
                     posts.add(post);
                 } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
@@ -790,8 +790,8 @@ public class Connection {
                             false,
                             entry.text
                     );
-                    for (PublishedEntry.Mention mention : entry.mentions) {
-                        comment.mentions.add(new Mention(mention.index, mention.userId, mention.pushName));
+                    for (com.halloapp.proto.Mention mention : entry.mentions) {
+                        comment.mentions.add(Mention.parseFromProto(mention));
                     }
                     comments.add(comment);
                 }
@@ -851,7 +851,7 @@ public class Connection {
         }
     }
 
-    private UserId getUserId(@NonNull String user) {
+    public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
     }
 
