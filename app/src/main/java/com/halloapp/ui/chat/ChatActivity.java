@@ -1,8 +1,12 @@
 package com.halloapp.ui.chat;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
@@ -90,6 +95,7 @@ public class ChatActivity extends HalloActivity {
     private ReplyLoader replyLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
+    private ActionMode actionMode;
 
     private String replyPostId;
     private int replyPostMediaIndex;
@@ -99,7 +105,6 @@ public class ChatActivity extends HalloActivity {
 
     private boolean scrollUpOnDataLoaded;
     private boolean scrollToNewMessageOnDataLoaded = true;
-
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
     @Override
@@ -586,7 +591,53 @@ public class ChatActivity extends HalloActivity {
                     position >= 1
                             ? getItem(position - 1)
                             : null);
+            TextView textView = holder.itemView.findViewById(R.id.text);
+            if (actionMode == null && textView != null) {
+                textView.setOnLongClickListener(v -> updateActionMode(textView, holder.itemView));
+            }
         }
+    }
+
+    private boolean updateActionMode(TextView text, View itemView) {
+        if (actionMode == null) {
+            itemView.setBackgroundColor(getResources().getColor(R.color.color_secondary_40_alpha));
+            actionMode = startSupportActionMode(new ActionMode.Callback() {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    getMenuInflater().inflate(R.menu.clipboard, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return true;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.copy:
+                            AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+                                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clipData = ClipData.newPlainText("text", text.getText().toString());
+                                clipboardManager.setPrimaryClip(clipData);
+                            });
+                            actionMode.finish();
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    itemView.setBackgroundColor(getResources().getColor(R.color.window_background));
+                    actionMode = null;
+                }
+            });
+        }
+        return true;
+
     }
 
     private final MessageViewHolder.MessageViewHolderParent messageViewHolderParent = new MessageViewHolder.MessageViewHolderParent() {
