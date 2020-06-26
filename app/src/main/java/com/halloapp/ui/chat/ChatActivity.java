@@ -94,6 +94,7 @@ public class ChatActivity extends AppCompatActivity {
     private ReplyLoader replyLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
+    private ActionMode actionMode;
 
     private String replyPostId;
     private int replyPostMediaIndex;
@@ -103,11 +104,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private boolean scrollUpOnDataLoaded;
     private boolean scrollToNewMessageOnDataLoaded = true;
-    private View prevSelectedText = null;
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
-    private ClipboardManager clipboardManager;
-    private ActionMode actionMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -602,7 +600,6 @@ public class ChatActivity extends AppCompatActivity {
     private boolean updateActionMode(TextView text, View itemView) {
         if (actionMode == null) {
             itemView.setBackgroundColor(getResources().getColor(R.color.color_secondary_40_alpha));
-            prevSelectedText = itemView;
             actionMode = startSupportActionMode(new ActionMode.Callback() {
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -620,7 +617,7 @@ public class ChatActivity extends AppCompatActivity {
                     switch (item.getItemId()) {
                         case R.id.copy:
                             AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
-                                clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clipData = ClipData.newPlainText("text", text.getText().toString());
                                 clipboardManager.setPrimaryClip(clipData);
                             });
@@ -633,9 +630,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
-                    if (prevSelectedText != null){
-                        prevSelectedText.setBackgroundColor(getResources().getColor(R.color.window_background));
-                    }
+                    itemView.setBackgroundColor(getResources().getColor(R.color.window_background));
                     actionMode = null;
                 }
             });
