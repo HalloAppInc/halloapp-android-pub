@@ -112,17 +112,19 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             //noinspection SwitchStatementWithTooFewBranches
             switch (requestCode) {
                 case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                    new AppSettingsDialog.Builder(this)
-                            .setRationale(getString(R.string.contacts_permission_rationale_denied))
-                            .build().show();
+                    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+                        new AppSettingsDialog.Builder(this)
+                                .setRationale(getString(R.string.contacts_permission_rationale_denied))
+                                .build().show();
+                    } else {
+                        tryStartSync();
+                    }
                     break;
                 }
             }
-        }
     }
 
     private void tryStartSync() {
