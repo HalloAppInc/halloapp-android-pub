@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
@@ -43,7 +42,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final CircleIndicator mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
-    private ActionMode actionMode;
 
     private final MessageViewHolderParent parent;
     private Message message;
