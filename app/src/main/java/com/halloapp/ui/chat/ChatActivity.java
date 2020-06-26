@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.AsyncTask;
@@ -65,12 +64,9 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.DrawDelegateView;
-import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.PostEditText;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceLoader;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -138,6 +134,7 @@ public class ChatActivity extends AppCompatActivity {
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
+
         chatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
 
         editText = findViewById(R.id.entry);
@@ -488,6 +485,7 @@ public class ChatActivity extends AppCompatActivity {
         static final int VIEW_TYPE_INCOMING_MEDIA = 5;
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
+
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
 
@@ -594,14 +592,14 @@ public class ChatActivity extends AppCompatActivity {
                     position >= 1
                             ? getItem(position - 1)
                             : null);
-            TextView text = holder.itemView.findViewById(R.id.text);
-            if (actionMode == null && text != null) {
-                text.setOnLongClickListener(v -> updateActionMode(text, position, holder.itemView));
+            TextView textView = holder.itemView.findViewById(R.id.text);
+            if (actionMode == null && textView != null) {
+                textView.setOnLongClickListener(v -> updateActionMode(textView, holder.itemView));
             }
         }
     }
 
-    private boolean updateActionMode(TextView text, int position, View itemView) {
+    private boolean updateActionMode(TextView text, View itemView) {
         if (actionMode == null) {
             itemView.setBackgroundColor(getResources().getColor(R.color.color_secondary_40_alpha));
             prevSelectedText = itemView;
@@ -620,15 +618,11 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     switch (item.getItemId()) {
-                        case R.id.delete:
-                            Log.i("delete happens");
-                            return true;
                         case R.id.copy:
                             AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
                                 clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clipData = ClipData.newPlainText("text", text.getText().toString());
                                 clipboardManager.setPrimaryClip(clipData);
-                                Log.i("copy happens");
                             });
                             actionMode.finish();
                             return true;
@@ -639,8 +633,9 @@ public class ChatActivity extends AppCompatActivity {
 
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
-                    if (prevSelectedText != null)
-                        prevSelectedText.setBackgroundColor(Color.parseColor("#F3F2EF"));
+                    if (prevSelectedText != null){
+                        prevSelectedText.setBackgroundColor(getResources().getColor(R.color.window_background));
+                    }
                     actionMode = null;
                 }
             });

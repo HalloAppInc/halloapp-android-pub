@@ -3,8 +3,6 @@ package com.halloapp.ui.chat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,7 +22,6 @@ import com.halloapp.content.Message;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.util.Log;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -82,9 +79,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
-        contentView.setOnClickListener(v->{
-            Log.i("contentview responds to the listenr");
-        });
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));

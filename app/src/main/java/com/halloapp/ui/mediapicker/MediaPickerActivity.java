@@ -30,7 +30,6 @@ import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
-import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
