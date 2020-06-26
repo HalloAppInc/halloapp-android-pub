@@ -27,6 +27,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -78,9 +79,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                if (result != null) {
-                    view.setImageBitmap(result);
-                }
+                view.setImageBitmap(result != null ? result : getDefaultAvatar());
             }
 
             @Override
@@ -92,16 +91,18 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @WorkerThread
-    public Bitmap getAvatar(@NonNull UserId userId) {
+    @NonNull public Bitmap getAvatar(@NonNull UserId userId) {
         Bitmap avatar = cache.get(userId.rawId());
         if (avatar != null) {
             return avatar;
         }
+
         avatar = getAvatarImpl(userId);
         if (avatar != null) {
             cache.put(userId.rawId(), avatar);
         }
-        return avatar;
+
+        return avatar != null ? avatar : getDefaultAvatar();
     }
 
     @WorkerThread
@@ -130,7 +131,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
                 if (TextUtils.isEmpty(avatarId)) {
                     Log.i("AvatarLoader: no avatar id " + avatarId);
-                    return getDefaultAvatar();
+                    return null;
                 }
 
                 if (!avatarFile.exists() || !avatarId.equals(contactAvatarInfo.avatarId)) {
@@ -138,21 +139,26 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
                     contactAvatarInfo.avatarId = contact.avatarId;
                 }
-            } catch (IOException e) {
-                Log.w("Failed getting avatar", e);
-            } finally {
                 contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+            } catch (InterruptedIOException e) {
+                Log.w("AvatarLoader: Interrupted during avatar fetch", e);
+                contactAvatarInfo.avatarCheckTimestamp = 0;
+                contactAvatarInfo.avatarId = null;
+            } catch (IOException e) {
+                Log.w("AvatarLoader: Failed getting avatar", e);
+                contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+            } finally {
                 contactsDb.updateContactAvatarInfo(contactAvatarInfo);
             }
         }
 
         if (!avatarFile.exists()) {
-            return getDefaultAvatar();
+            return null;
         }
         return BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
     }
 
-    private Bitmap getDefaultAvatar() {
+    @NonNull private Bitmap getDefaultAvatar() {
         if (defaultAvatar == null) {
             Drawable drawable = context.getDrawable(R.drawable.avatar_person);
             defaultAvatar = drawableToBitmap(drawable);
