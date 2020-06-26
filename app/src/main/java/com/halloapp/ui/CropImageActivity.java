@@ -18,7 +18,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-public class CropImageActivity extends AppCompatActivity {
+public class CropImageActivity extends HalloActivity {
 
     public static final String EXTRA_OUTPUT = "output";
     public static final String EXTRA_STATE = "state";

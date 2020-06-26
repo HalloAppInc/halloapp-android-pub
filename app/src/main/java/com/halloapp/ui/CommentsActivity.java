@@ -66,7 +66,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
-public class CommentsActivity extends AppCompatActivity {
+public class CommentsActivity extends HalloActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";

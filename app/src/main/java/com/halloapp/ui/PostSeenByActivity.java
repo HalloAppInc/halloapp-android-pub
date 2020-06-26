@@ -41,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PostSeenByActivity extends AppCompatActivity {
+public class PostSeenByActivity extends HalloActivity {
 
     public static final String EXTRA_POST_ID = "post_id";
 

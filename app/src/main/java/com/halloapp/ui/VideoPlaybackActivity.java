@@ -23,7 +23,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.halloapp.R;
 import com.halloapp.util.Log;
 
-public class VideoPlaybackActivity extends AppCompatActivity {
+public class VideoPlaybackActivity extends HalloActivity {
 
     private PlayerView playerView;
     private SimpleExoPlayer player;

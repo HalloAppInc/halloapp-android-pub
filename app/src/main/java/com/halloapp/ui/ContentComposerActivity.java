@@ -65,7 +65,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContentComposerActivity extends AppCompatActivity {
+public class ContentComposerActivity extends HalloActivity {
 
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";

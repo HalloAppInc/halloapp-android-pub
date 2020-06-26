@@ -30,7 +30,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
 
-public class RegistrationVerificationActivity extends AppCompatActivity {
+public class RegistrationVerificationActivity extends HalloActivity {
 
     public static final String EXTRA_PHONE_NUMBER = "phone_number";
 

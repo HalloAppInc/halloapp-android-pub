@@ -37,7 +37,7 @@ import com.halloapp.widget.CenterToast;
 import com.hbb20.CountryCodePicker;
 
 
-public class RegistrationRequestActivity extends AppCompatActivity {
+public class RegistrationRequestActivity extends HalloActivity {
 
     public static final String EXTRA_RE_VERIFY = "reverify";
 

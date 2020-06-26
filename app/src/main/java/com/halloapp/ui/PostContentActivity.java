@@ -44,7 +44,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.util.Stack;
 
-public class PostContentActivity extends AppCompatActivity {
+public class PostContentActivity extends HalloActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";

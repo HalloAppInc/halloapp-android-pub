@@ -16,7 +16,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 
-public class AppExpirationActivity extends AppCompatActivity {
+public class AppExpirationActivity extends HalloActivity {
 
     public static final String EXTRA_DAYS_LEFT = "days_left";
 

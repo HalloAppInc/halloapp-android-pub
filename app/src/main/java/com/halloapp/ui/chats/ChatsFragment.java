@@ -26,6 +26,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.AdapterWithLifecycle;
+import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
@@ -39,7 +40,7 @@ import com.halloapp.xmpp.Connection;
 import java.util.List;
 import java.util.Locale;
 
-public class ChatsFragment extends Fragment {
+public class ChatsFragment extends HalloFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());

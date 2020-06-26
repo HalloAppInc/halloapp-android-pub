@@ -34,7 +34,7 @@ import com.halloapp.xmpp.Connection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class UserNameActivity extends AppCompatActivity {
+public class UserNameActivity extends HalloActivity {
 
     private EditText nameEditText;
 

@@ -29,6 +29,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
+import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -45,7 +46,7 @@ import java.util.Set;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MediaPickerActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class MediaPickerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
     public static final String EXTRA_CHAT_ID = "chat_id";

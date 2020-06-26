@@ -21,7 +21,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends HalloActivity {
     private static final String SUPPORT_EMAIL_URI = "mailto:android-support@halloapp.com";
 
     @Override

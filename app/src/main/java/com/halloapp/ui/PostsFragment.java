@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class PostsFragment extends Fragment {
+public class PostsFragment extends HalloFragment {
 
     protected final PostsAdapter adapter = new PostsAdapter();
 
