@@ -22,9 +22,14 @@ import java.util.List;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class InitialSyncActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class InitialSyncActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+
+    private View infoView;
+    private View loadingView;
+    private View errorView;
+    private View retryView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +51,10 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
         });
         checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        final View infoView = findViewById(R.id.info);
-        final View loadingView = findViewById(R.id.loading);
-        final View errorView = findViewById(R.id.error);
-        final View retryView = findViewById(R.id.retry);
+        infoView = findViewById(R.id.info);
+        loadingView = findViewById(R.id.loading);
+        errorView = findViewById(R.id.error);
+        retryView = findViewById(R.id.retry);
 
         retryView.setOnClickListener(v -> {
             infoView.setVisibility(View.VISIBLE);
@@ -73,10 +78,7 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
                                     ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
                                     finish();
                                 } else if (workInfo.getState().isFinished()) {
-                                    infoView.setVisibility(View.GONE);
-                                    loadingView.setVisibility(View.GONE);
-                                    errorView.setVisibility(View.VISIBLE);
-                                    retryView.setVisibility(View.VISIBLE);
+                                    showRetryState();
                                 }
                                 break;
                             }
@@ -85,6 +87,13 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
                 });
 
         tryStartSync();
+    }
+
+    private void showRetryState() {
+        infoView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+        retryView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -125,6 +134,16 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
                     break;
                 }
             }
+    }
+
+    @Override
+    public void onRationaleAccepted(int requestCode) {
+
+    }
+
+    @Override
+    public void onRationaleDenied(int requestCode) {
+        showRetryState();
     }
 
     private void tryStartSync() {
