@@ -21,9 +21,9 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
 
-public class CryptoUtil {
+public class CryptoUtils {
     // not instantiable
-    private CryptoUtil() {}
+    private CryptoUtils() {}
 
     private static final LazySodiumAndroid lazySodium = new LazySodiumAndroid(new SodiumAndroid(), StandardCharsets.UTF_8);
     private static final Sign.Native sign = lazySodium;
@@ -84,7 +84,7 @@ public class CryptoUtil {
         byte[] publicKey = new byte[Sign.ED25519_PUBLICKEYBYTES];
         byte[] privateKey = new byte[Sign.ED25519_SECRETKEYBYTES];
         sign.cryptoSignKeypair(publicKey, privateKey);
-        return CryptoUtil.concat(publicKey, privateKey);
+        return CryptoUtils.concat(publicKey, privateKey);
     }
 
     public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) {

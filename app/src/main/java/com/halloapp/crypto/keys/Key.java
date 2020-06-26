@@ -1,6 +1,6 @@
 package com.halloapp.crypto.keys;
 
-import com.halloapp.crypto.CryptoUtil;
+import com.halloapp.crypto.CryptoUtils;
 
 public abstract class Key {
     private final byte[] key;
@@ -21,7 +21,7 @@ public abstract class Key {
      * contains the key material and we can access it, so we delete it.
      */
     public void destroyKeyMaterial() {
-        CryptoUtil.nullify(key);
+        CryptoUtils.nullify(key);
     }
     @Override
     protected void finalize() throws Throwable {

@@ -175,7 +175,7 @@ public class EncryptedSessionManager {
             PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
 
             byte[] signature = signedPreKeyProto.getSignature().toByteArray();
-            CryptoUtil.verify(signature, signedPreKeyBytes, peerIdentityKey);
+            CryptoUtils.verify(signature, signedPreKeyBytes, peerIdentityKey);
 
             OneTimePreKey oneTimePreKey = null;
             if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {

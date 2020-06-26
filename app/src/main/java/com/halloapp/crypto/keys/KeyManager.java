@@ -7,7 +7,7 @@ import androidx.annotation.WorkerThread;
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.contacts.UserId;
-import com.halloapp.crypto.CryptoUtil;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.proto.IdentityKey;
 import com.halloapp.proto.SignedPreKey;
@@ -69,7 +69,7 @@ public class KeyManager {
                     .build();
 
             PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
-            byte[] signature = CryptoUtil.sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
+            byte[] signature = CryptoUtils.sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
 
             SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
                     .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
@@ -136,20 +136,20 @@ public class KeyManager {
         PrivateXECKey privateEphemeralKey = XECKey.generatePrivateKey();
         PrivateXECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
 
-        byte[] a = CryptoUtil.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
-        byte[] b = CryptoUtil.ecdh(privateEphemeralKey, CryptoUtil.convertPublicEdToX(recipientPublicIdentityKey));
-        byte[] c = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicSignedPreKey);
+        byte[] a = CryptoUtils.ecdh(myPrivateIdentityKey, recipientPublicSignedPreKey);
+        byte[] b = CryptoUtils.ecdh(privateEphemeralKey, CryptoUtils.convertPublicEdToX(recipientPublicIdentityKey));
+        byte[] c = CryptoUtils.ecdh(privateEphemeralKey, recipientPublicSignedPreKey);
 
         byte[] masterSecret;
         if (recipientPublicOneTimePreKey != null) {
-            byte[] d = CryptoUtil.ecdh(privateEphemeralKey, recipientPublicOneTimePreKey.publicXECKey);
-            masterSecret = CryptoUtil.concat(a, b, c, d);
-            CryptoUtil.nullify(d);
+            byte[] d = CryptoUtils.ecdh(privateEphemeralKey, recipientPublicOneTimePreKey.publicXECKey);
+            masterSecret = CryptoUtils.concat(a, b, c, d);
+            CryptoUtils.nullify(d);
         } else {
-            masterSecret = CryptoUtil.concat(a, b, c);
+            masterSecret = CryptoUtils.concat(a, b, c);
         }
 
-        byte[] output = CryptoUtil.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
+        byte[] output = CryptoUtils.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
         byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
         byte[] outboundChainKey = Arrays.copyOfRange(output, 32, 64);
         byte[] inboundChainKey = Arrays.copyOfRange(output, 64, 96);
@@ -162,7 +162,7 @@ public class KeyManager {
         encryptedKeyStore.setOutboundEphemeralKey(peerUserId, privateEphemeralKey);
         encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, firstId);
 
-        CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
+        CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
     }
 
     public void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
@@ -174,20 +174,20 @@ public class KeyManager {
 
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, sessionSetupInfo.identityKey);
 
-        byte[] a = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtil.convertPublicEdToX(sessionSetupInfo.identityKey));
-        byte[] b = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
-        byte[] c = CryptoUtil.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
+        byte[] a = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtils.convertPublicEdToX(sessionSetupInfo.identityKey));
+        byte[] b = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
+        byte[] c = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
 
         byte[] masterSecret;
         if (sessionSetupInfo.oneTimePreKeyId != null) {
-            byte[] d = CryptoUtil.ecdh(encryptedKeyStore.removeOneTimePreKeyById(sessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
-            masterSecret = CryptoUtil.concat(a, b, c, d);
-            CryptoUtil.nullify(d);
+            byte[] d = CryptoUtils.ecdh(encryptedKeyStore.removeOneTimePreKeyById(sessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
+            masterSecret = CryptoUtils.concat(a, b, c, d);
+            CryptoUtils.nullify(d);
         } else {
-            masterSecret = CryptoUtil.concat(a, b, c);
+            masterSecret = CryptoUtils.concat(a, b, c);
         }
 
-        byte[] output = CryptoUtil.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
+        byte[] output = CryptoUtils.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
         byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
 
         // NOTE: Order switched so that keys match appropriately
@@ -206,7 +206,7 @@ public class KeyManager {
 
         updateOutboundChainAndRootKey(peerUserId, myEphemeralKey, publicEphemeralKey);
 
-        CryptoUtil.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
+        CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
     }
 
     public MessageKey getNextOutboundMessageKey(UserId peerUserId) throws GeneralSecurityException {
@@ -284,8 +284,8 @@ public class KeyManager {
     private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws GeneralSecurityException {
         byte[] chainKey = isOutbound ? encryptedKeyStore.getOutboundChainKey(peerUserId) : encryptedKeyStore.getInboundChainKey(peerUserId);
 
-        byte[] messageKey = CryptoUtil.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
-        byte[] newChainKey = CryptoUtil.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
+        byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
+        byte[] newChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
 
         if (isOutbound) {
             encryptedKeyStore.setOutboundChainKey(peerUserId, newChainKey);
@@ -293,7 +293,7 @@ public class KeyManager {
             encryptedKeyStore.setInboundChainKey(peerUserId, newChainKey);
         }
 
-        CryptoUtil.nullify(chainKey, newChainKey);
+        CryptoUtils.nullify(chainKey, newChainKey);
 
         return messageKey;
     }
@@ -307,9 +307,9 @@ public class KeyManager {
     }
 
     private void updateChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws GeneralSecurityException {
-        byte[] ephemeralSecret = CryptoUtil.ecdh(myEphemeral, peerEphemeral);
+        byte[] ephemeralSecret = CryptoUtils.ecdh(myEphemeral, peerEphemeral);
 
-        byte[] output = CryptoUtil.hkdf(ephemeralSecret, encryptedKeyStore.getRootKey(peerUserId), HKDF_ROOT_KEY_INFO, 64);
+        byte[] output = CryptoUtils.hkdf(ephemeralSecret, encryptedKeyStore.getRootKey(peerUserId), HKDF_ROOT_KEY_INFO, 64);
         byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
         byte[] chainKey = Arrays.copyOfRange(output, 32, 64);
 
@@ -320,7 +320,7 @@ public class KeyManager {
             encryptedKeyStore.setInboundChainKey(peerUserId, chainKey);
         }
 
-        CryptoUtil.nullify(ephemeralSecret, output, rootKey, chainKey);
+        CryptoUtils.nullify(ephemeralSecret, output, rootKey, chainKey);
     }
 
 }

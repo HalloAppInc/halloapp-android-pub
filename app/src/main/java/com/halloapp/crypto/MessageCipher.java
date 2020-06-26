@@ -46,7 +46,7 @@ class MessageCipher {
         byte[] hmacKey = Arrays.copyOfRange(inboundMessageKey, 32, 64);
         byte[] iv = Arrays.copyOfRange(inboundMessageKey, 64, 80);
 
-        byte[] calculatedHmac = CryptoUtil.hmac(hmacKey, encryptedMessage);
+        byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
             Log.e("HMAC does not match; rejecting");
             throw new GeneralSecurityException("HMAC mismatch");
@@ -58,7 +58,7 @@ class MessageCipher {
         c.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
         byte[] ret =  c.doFinal(encryptedMessage);
 
-        CryptoUtil.nullify(inboundMessageKey, aesKey, hmacKey, iv);
+        CryptoUtils.nullify(inboundMessageKey, aesKey, hmacKey, iv);
 
         return ret;
     }
@@ -77,15 +77,15 @@ class MessageCipher {
         c.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
         byte[] encryptedContents = c.doFinal(message);
 
-        byte[] hmac = CryptoUtil.hmac(hmacKey, encryptedContents);
+        byte[] hmac = CryptoUtils.hmac(hmacKey, encryptedContents);
 
-        CryptoUtil.nullify(outboundMessageKey, aesKey, hmacKey, iv);
+        CryptoUtils.nullify(outboundMessageKey, aesKey, hmacKey, iv);
 
         byte[] ephemeralKeyBytes = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)).getKeyMaterial();
         byte[] ephemeralKeyIdBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId)).array();
         byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
         byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
 
-        return CryptoUtil.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
+        return CryptoUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
     }
 }
