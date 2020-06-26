@@ -31,6 +31,8 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
     private View errorView;
     private View retryView;
 
+    private boolean syncInFlight = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,6 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
             errorView.setVisibility(View.GONE);
             retryView.setVisibility(View.GONE);
             tryStartSync();
-
         });
 
         final ContactsSync contactsSync = ContactsSync.getInstance(this);
@@ -78,6 +79,7 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
                                     ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
                                     finish();
                                 } else if (workInfo.getState().isFinished()) {
+                                    syncInFlight = false;
                                     showRetryState();
                                 }
                                 break;
@@ -94,6 +96,12 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.VISIBLE);
         retryView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        tryStartSync();
     }
 
     @Override
@@ -151,12 +159,13 @@ public class InitialSyncActivity extends AppCompatActivity implements EasyPermis
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
                     REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
-        } else {
+        } else if (!syncInFlight) {
             startSync();
         }
     }
 
     private void startSync() {
+        syncInFlight = true;
         ContactsSync.getInstance(this).startContactsSync(true);
     }
 }
