@@ -41,12 +41,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class CommentsHistoryPopup {
+public class SocialHistoryPopup {
 
     private final Context context;
     private final PopupWindow popupWindow;
     private final View anchorView;
-    private final CommentsAdapter adapter = new CommentsAdapter();
+    private final SocialEventsAdapter adapter = new SocialEventsAdapter();
     private final PostThumbnailLoader postThumbnailLoader;
     private final RecyclerView listView;
     private final View emptyView;
@@ -73,7 +73,7 @@ public class CommentsHistoryPopup {
         void onItemClicked(@NonNull HomeViewModel.SocialActionEvent commentsGroup);
     }
 
-    public CommentsHistoryPopup(Context context, PostThumbnailLoader postThumbnailLoader, View anchorView) {
+    public SocialHistoryPopup(Context context, PostThumbnailLoader postThumbnailLoader, View anchorView) {
 
         this.context = context;
         this.anchorView = anchorView;
@@ -117,7 +117,7 @@ public class CommentsHistoryPopup {
         this.clickListener = clickListener;
     }
 
-    public void setCommentHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
+    public void setSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
         if (socialHistory == null || socialHistory.socialActionEvent.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             titleView.setVisibility(View.GONE);
@@ -127,7 +127,7 @@ public class CommentsHistoryPopup {
             emptyView.setVisibility(View.GONE);
             titleView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.VISIBLE);
-            adapter.setComments(socialHistory.socialActionEvent);
+            adapter.setEvents(socialHistory.socialActionEvent);
             adapter.setContacts(socialHistory.contacts);
         }
     }
@@ -171,9 +171,9 @@ public class CommentsHistoryPopup {
 
         final ContactsDb contactsDb;
         final Set<UserId> userIds;
-        final WeakReference<CommentsAdapter> adapterRef;
+        final WeakReference<SocialEventsAdapter> adapterRef;
 
-        RefreshContactsTask(ContactsDb contactsDb, CommentsAdapter adapter) {
+        RefreshContactsTask(ContactsDb contactsDb, SocialEventsAdapter adapter) {
             this.contactsDb = contactsDb;
             this.userIds = new HashSet<>(adapter.contacts.keySet());
             this.adapterRef = new WeakReference<>(adapter);
@@ -190,21 +190,21 @@ public class CommentsHistoryPopup {
 
         @Override
         protected void onPostExecute(final Map<UserId, Contact> contacts) {
-            final CommentsAdapter adapter = adapterRef.get();
+            final SocialEventsAdapter adapter = adapterRef.get();
             if (adapter != null) {
                 adapter.setContacts(contacts);
             }
         }
     }
 
-    private class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
+    private class SocialEventsAdapter extends RecyclerView.Adapter<SocialEventsAdapter.ViewHolder> {
 
-        private List<HomeViewModel.SocialActionEvent> commentGroups;
+        private List<HomeViewModel.SocialActionEvent> socialEvents;
         private Map<UserId, Contact> contacts;
         private boolean contactsInvalidated;
 
-        void setComments(@NonNull List<HomeViewModel.SocialActionEvent> commentGroups) {
-            this.commentGroups = commentGroups;
+        void setEvents(@NonNull List<HomeViewModel.SocialActionEvent> socialEvents) {
+            this.socialEvents = socialEvents;
             notifyDataSetChanged();
         }
 
@@ -215,7 +215,7 @@ public class CommentsHistoryPopup {
         }
 
         void reset() {
-            this.commentGroups = null;
+            this.socialEvents = null;
             this.contacts = null;
             this.contactsInvalidated = false;
             notifyDataSetChanged();
@@ -232,12 +232,12 @@ public class CommentsHistoryPopup {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bind(commentGroups.get(position), contacts);
+            holder.bind(socialEvents.get(position), contacts);
         }
 
         @Override
         public int getItemCount() {
-            return commentGroups == null ? 0 : commentGroups.size();
+            return socialEvents == null ? 0 : socialEvents.size();
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder {
@@ -262,16 +262,16 @@ public class CommentsHistoryPopup {
                 thumbnailView.setClipToOutline(true);
             }
 
-            void bind(HomeViewModel.SocialActionEvent commentsGroup, Map<UserId, Contact> contacts) {
+            void bind(HomeViewModel.SocialActionEvent socialEvent, Map<UserId, Contact> contacts) {
 
-                postThumbnailLoader.load(thumbnailView, commentsGroup.postSenderUserId, commentsGroup.postId);
+                postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
 
-                unseenIndicatorView.setVisibility(commentsGroup.seen ? View.GONE : View.VISIBLE);
+                unseenIndicatorView.setVisibility(socialEvent.seen ? View.GONE : View.VISIBLE);
 
                 final List<String> names = new ArrayList<>();
                 final Set<UserId> userIdSet = new HashSet<>();
-                long timestamp = commentsGroup.timestamp;
-                for (UserId userId : commentsGroup.involvedUsers) {
+                long timestamp = socialEvent.timestamp;
+                for (UserId userId : socialEvent.involvedUsers) {
                     if (userIdSet.contains(userId)) {
                         continue;
                     }
@@ -283,16 +283,16 @@ public class CommentsHistoryPopup {
                 }
                 TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - timestamp);
 
-                if (commentsGroup.action == HomeViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
-                    if (commentsGroup.postSenderUserId.isMe()) {
+                if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
+                    if (socialEvent.postSenderUserId.isMe()) {
                         infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
                                 R.string.commented_on_your_post_1,
                                 R.string.commented_on_your_post_2,
                                 R.string.commented_on_your_post_3,
                                 R.plurals.commented_on_your_post_4, names)));
                     } else {
-                        final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
-                        if (userIdSet.size() == 1 && userIdSet.iterator().next().equals(commentsGroup.postSenderUserId)) {
+                        final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
+                        if (userIdSet.size() == 1 && userIdSet.iterator().next().equals(socialEvent.postSenderUserId)) {
                             infoView.setText(Html.fromHtml(infoView.getContext().getResources().getString(R.string.commented_on_own_post, contact.getDisplayName())));
                         } else {
                             infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
@@ -302,15 +302,15 @@ public class CommentsHistoryPopup {
                                     R.plurals.commented_on_someones_post_4, names, contact.getDisplayName())));
                         }
                     }
-                } else if (commentsGroup.action == HomeViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_POST) {
-                    final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
+                } else if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_POST) {
+                    final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
                     infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_their_post, contact.getDisplayName())));
-                } else if (commentsGroup.action == HomeViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_COMMENT) {
-                    if (commentsGroup.postSenderUserId.isMe()) {
+                } else if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_COMMENT) {
+                    if (socialEvent.postSenderUserId.isMe()) {
                         infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_your_post, names.get(0))));
                     } else {
-                        final Contact contact = Preconditions.checkNotNull(contacts.get(commentsGroup.postSenderUserId));
-                        if (commentsGroup.involvedUsers.get(0).equals(commentsGroup.postSenderUserId)) {
+                        final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
+                        if (socialEvent.involvedUsers.get(0).equals(socialEvent.postSenderUserId)) {
                             infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_own_post, contact.getDisplayName())));
                         } else {
                             infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_someones_post, names.get(0), contact.getDisplayName())));
@@ -320,7 +320,7 @@ public class CommentsHistoryPopup {
 
                 itemView.setOnClickListener(v -> {
                     if (clickListener != null) {
-                        clickListener.onItemClicked(commentsGroup);
+                        clickListener.onItemClicked(socialEvent);
                     }
                 });
             }

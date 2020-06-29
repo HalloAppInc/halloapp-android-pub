@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
-import com.halloapp.ui.CommentsHistoryPopup;
+import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -32,7 +32,7 @@ public class HomeFragment extends PostsFragment {
 
     private HomeViewModel viewModel;
     private BadgedDrawable notificationDrawable;
-    private CommentsHistoryPopup commentHistoryPopup;
+    private SocialHistoryPopup socialHistoryPopup;
     private PostThumbnailLoader postThumbnailLoader;
 
     private boolean scrollUpOnDataLoaded;
@@ -115,9 +115,9 @@ public class HomeFragment extends PostsFragment {
 
         postsView.setAdapter(adapter);
 
-        commentHistoryPopup = new CommentsHistoryPopup(requireContext(), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
-        commentHistoryPopup.setOnItemClickListener(commentsGroup -> {
-            commentHistoryPopup.dismiss();
+        socialHistoryPopup = new SocialHistoryPopup(requireContext(), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
+        socialHistoryPopup.setOnItemClickListener(commentsGroup -> {
+            socialHistoryPopup.dismiss();
             final HomeViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();
             if (commentHistoryData != null) {
                 final Intent intent = new Intent(getContext(), CommentsActivity.class);
@@ -134,7 +134,7 @@ public class HomeFragment extends PostsFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        commentHistoryPopup.destroy();
+        socialHistoryPopup.destroy();
     }
 
     @Override
@@ -158,8 +158,8 @@ public class HomeFragment extends PostsFragment {
         //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.notifications: {
-                if (!commentHistoryPopup.isShowing() && getView() != null) {
-                    commentHistoryPopup.show(getView().getHeight() * 9 / 10);
+                if (!socialHistoryPopup.isShowing() && getView() != null) {
+                    socialHistoryPopup.show(getView().getHeight() * 9 / 10);
                 }
                 return true;
             }
@@ -171,6 +171,6 @@ public class HomeFragment extends PostsFragment {
 
     private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
         notificationDrawable.setBadge((socialHistory == null || socialHistory.unseenCount == 0) ? "" : "•");
-        commentHistoryPopup.setCommentHistory(socialHistory);
+        socialHistoryPopup.setSocialHistory(socialHistory);
     }
 }
