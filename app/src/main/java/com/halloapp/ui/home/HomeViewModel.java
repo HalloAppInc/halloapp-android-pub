@@ -54,7 +54,7 @@ public class HomeViewModel extends AndroidViewModel {
                 pendingIncoming.set(true);
                 invalidatePosts();
                 if (post.doesMention(UserId.ME)) {
-                    invalidateCommentHistory();
+                    invalidateSocialHistory();
                 }
             }
         }
@@ -62,7 +62,7 @@ public class HomeViewModel extends AndroidViewModel {
         @Override
         public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidatePosts();
-            invalidateCommentHistory();
+            invalidateSocialHistory();
         }
 
         @Override
@@ -76,46 +76,46 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-            invalidateCommentHistory();
+            invalidateSocialHistory();
         }
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
             invalidatePosts();
             if (comment.isIncoming()) {
-                invalidateCommentHistory();
+                invalidateSocialHistory();
             }
         }
 
         @Override
         public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
             invalidatePosts();
-            invalidateCommentHistory();
+            invalidateSocialHistory();
         }
 
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
             invalidatePosts();
-            invalidateCommentHistory();
+            invalidateSocialHistory();
         }
 
         @Override
         public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
             invalidatePosts();
-            invalidateCommentHistory();
+            invalidateSocialHistory();
         }
 
         @Override
         public void onFeedCleanup() {
             invalidatePosts();
-            invalidateCommentHistory();
+            invalidateSocialHistory();
         }
 
         private void invalidatePosts() {
             mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
 
-        private void invalidateCommentHistory() {
+        private void invalidateSocialHistory() {
             mainHandler.post(socialHistory::invalidate);
         }
     };
@@ -158,9 +158,9 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-    private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActivity> seenOut, @NonNull List<SocialActivity> unseenOut) {
+    private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut) {
         for (Comment comment : mentionedComments) {
-            SocialActivity activity = SocialActivity.fromMentionedComment(comment);
+            SocialActionEvent activity = SocialActionEvent.fromMentionedComment(comment);
             if (activity.seen) {
                 seenOut.add(activity);
             } else {
@@ -169,9 +169,9 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-    private void processMentionedPosts(@NonNull List<Post> mentionedPosts, @NonNull List<SocialActivity> seenOut, @NonNull List<SocialActivity> unseenOut) {
+    private void processMentionedPosts(@NonNull List<Post> mentionedPosts, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut) {
         for (Post post : mentionedPosts) {
-            SocialActivity activity = SocialActivity.fromMentionedPost(post);
+            SocialActionEvent activity = SocialActionEvent.fromMentionedPost(post);
             if (activity.seen){
                 seenOut.add(activity);
             } else {
@@ -190,15 +190,15 @@ public class HomeViewModel extends AndroidViewModel {
             comments.remove(mentionedComment);
         }
 
-        final Map<Pair<UserId, String>, SocialActivity> unseenComments = new HashMap<>();
-        final List<SocialActivity> seenComments = new ArrayList<>();
-        final List<SocialActivity> seenMentions = new ArrayList<>();
-        final List<SocialActivity> unseenMentions = new ArrayList<>();
-        SocialActivity lastActivity = null;
+        final Map<Pair<UserId, String>, SocialActionEvent> unseenComments = new HashMap<>();
+        final List<SocialActionEvent> seenComments = new ArrayList<>();
+        final List<SocialActionEvent> seenMentions = new ArrayList<>();
+        final List<SocialActionEvent> unseenMentions = new ArrayList<>();
+        SocialActionEvent lastActivity = null;
         for (Comment comment : comments) {
             if (comment.seen) {
                 if (lastActivity == null || !lastActivity.postId.equals(comment.postId) || !lastActivity.postSenderUserId.equals(comment.postSenderUserId)) {
-                    lastActivity = new SocialActivity(SocialActivity.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
+                    lastActivity = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
                     lastActivity.seen = true;
                     seenComments.add(lastActivity);
                 }
@@ -208,9 +208,9 @@ public class HomeViewModel extends AndroidViewModel {
                 }
             } else {
                 final Pair<UserId, String> postKey = Pair.create(comment.postSenderUserId, comment.postId);
-                SocialActivity commentsGroup = unseenComments.get(postKey);
+                SocialActionEvent commentsGroup = unseenComments.get(postKey);
                 if (commentsGroup == null) {
-                    commentsGroup = new SocialActivity(SocialActivity.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
+                    commentsGroup = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
                     commentsGroup.seen = false;
                     unseenComments.put(postKey, commentsGroup);
                 }
@@ -224,13 +224,13 @@ public class HomeViewModel extends AndroidViewModel {
         processMentionedComments(mentionedComments, seenMentions, unseenMentions);
         processMentionedPosts(mentionedPosts, seenMentions, unseenMentions);
 
-        final ArrayList<SocialActivity> socialActivity = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
-        socialActivity.addAll(seenMentions);
-        socialActivity.addAll(unseenMentions);
-        socialActivity.addAll(unseenComments.values());
-        socialActivity.addAll(seenComments);
+        final ArrayList<SocialActionEvent> socialActionEvent = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
+        socialActionEvent.addAll(seenMentions);
+        socialActionEvent.addAll(unseenMentions);
+        socialActionEvent.addAll(unseenComments.values());
+        socialActionEvent.addAll(seenComments);
 
-        Collections.sort(socialActivity, ((o1, o2) -> {
+        Collections.sort(socialActionEvent, ((o1, o2) -> {
             if (o1.seen != o2.seen) {
                 return o1.seen ? 1 : -1;
             }
@@ -254,10 +254,10 @@ public class HomeViewModel extends AndroidViewModel {
                 contacts.put(post.senderUserId, contact);
             }
         }
-        return new SocialHistory(socialActivity, unseenMentions.size() + unseenComments.size(), contacts);
+        return new SocialHistory(socialActionEvent, unseenMentions.size() + unseenComments.size(), contacts);
     }
 
-    public static class SocialActivity {
+    public static class SocialActionEvent {
 
         @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST})
         public @interface Action {
@@ -277,23 +277,23 @@ public class HomeViewModel extends AndroidViewModel {
 
         public final List<UserId> involvedUsers = new ArrayList<>();
 
-        public static SocialActivity fromMentionedPost(@NonNull Post post) {
-            SocialActivity activity = new SocialActivity(Action.TYPE_MENTION_IN_POST, post.senderUserId, post.id);
+        public static SocialActionEvent fromMentionedPost(@NonNull Post post) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_POST, post.senderUserId, post.id);
             activity.timestamp = post.timestamp;
             activity.seen = post.seen != Post.SEEN_NO;
             activity.involvedUsers.add(post.senderUserId);
             return activity;
         }
 
-        public static SocialActivity fromMentionedComment(@NonNull Comment comment) {
-            SocialActivity activity = new SocialActivity(Action.TYPE_MENTION_IN_COMMENT, comment.postSenderUserId, comment.postId);
+        public static SocialActionEvent fromMentionedComment(@NonNull Comment comment) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_COMMENT, comment.postSenderUserId, comment.postId);
             activity.timestamp = comment.timestamp;
             activity.seen = comment.seen;
             activity.involvedUsers.add(comment.commentSenderUserId);
             return activity;
         }
 
-        SocialActivity(@Action int action, UserId postSenderUserId, String postId) {
+        SocialActionEvent(@Action int action, UserId postSenderUserId, String postId) {
             this.action = action;
             this.postId = postId;
             this.postSenderUserId = postSenderUserId;
@@ -303,12 +303,12 @@ public class HomeViewModel extends AndroidViewModel {
 
     public static class SocialHistory {
 
-        public final List<SocialActivity> socialActivity;
+        public final List<SocialActionEvent> socialActionEvent;
         public final Map<UserId, Contact> contacts;
         public final int unseenCount;
 
-        SocialHistory(@NonNull List<SocialActivity> socialActivity, int unseenCount, @NonNull Map<UserId, Contact> contacts) {
-            this.socialActivity = socialActivity;
+        SocialHistory(@NonNull List<SocialActionEvent> socialActionEvent, int unseenCount, @NonNull Map<UserId, Contact> contacts) {
+            this.socialActionEvent = socialActionEvent;
             this.unseenCount = unseenCount;
             this.contacts = contacts;
         }
