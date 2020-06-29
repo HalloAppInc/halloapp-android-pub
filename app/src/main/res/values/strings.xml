@@ -104,6 +104,8 @@
     <string name="failed_to_load_media">Failed to load media</string>
     <string name="settings">Settings</string>
     <string name="send_logs">Send logs</string>
+    <string name="settings_block_list">Blocked users</string>
+    <string name="settings_privacy">Privacy</string>
     <string name="help">Help</string>
     <string name="notify_posts">Posts</string>
     <string name="notify_comments">Comments</string>
@@ -200,4 +202,8 @@
     <string name="other_friends">Friends who didn\'t see your post yet</string>
     <string name="email_logs_subject">HalloApp Android</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %s\n</string>
+    <string name="unblock">Unblock</string>
+    <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
+    <string name="cancel">Cancel</string>
+    <string name="empty_block_list">No blocked contacts</string>
 </resources>

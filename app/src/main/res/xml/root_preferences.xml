@@ -15,6 +15,13 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/settings_privacy">
+
+        <Preference app:key="block_list"
+            app:title="@string/settings_block_list"/>
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/help">
 
         <Preference

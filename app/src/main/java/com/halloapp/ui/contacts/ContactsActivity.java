@@ -1,6 +1,7 @@
 package com.halloapp.ui.contacts;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -19,7 +20,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,9 +29,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.contacts.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.Connection;
@@ -39,8 +39,10 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -49,10 +51,23 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    private static final String EXTRA_SHOW_INVITE = "show_invite_option";
+    private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
+    public static final String RESULT_SELECTED_ID = "selected_contact";
+
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
     private ContactsViewModel viewModel;
     private TextView emptyView;
+
+    public static Intent createBlocklistContactPicker(@NonNull Context context, @Nullable List<UserId> disabledUserIds) {
+        Intent intent = new Intent(context, ContactsActivity.class);
+        intent.putExtra(EXTRA_SHOW_INVITE, false);
+        if (disabledUserIds != null) {
+            intent.putParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS, new ArrayList<>(disabledUserIds));
+        }
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +92,12 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
         viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
+
+        boolean showInviteOption = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE, true);
+        adapter.setInviteVisible(showInviteOption);
+
+        List<UserId> excludedUsers = getIntent().getParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS);
+        adapter.setExcludedUsers(excludedUsers);
 
         loadContacts();
     }
@@ -173,9 +194,30 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         private CharSequence filterText;
         private List<String> filterTokens;
 
+        private boolean showInviteOption;
+
+        private Set<UserId> excludedUsers;
+
         void setContacts(@NonNull List<Contact> contacts) {
-            this.contacts = contacts;
+            if (excludedUsers != null) {
+                this.contacts = new ArrayList<>(contacts.size());
+                for (Contact contact : contacts) {
+                    if (!excludedUsers.contains(contact.userId)) {
+                        this.contacts.add(contact);
+                    }
+                }
+            } else {
+                this.contacts = contacts;
+            }
             getFilter().filter(filterText);
+        }
+
+        void setExcludedUsers(@Nullable List<UserId> excludedContacts) {
+            if (excludedContacts != null) {
+                this.excludedUsers = new HashSet<>(excludedContacts);
+            } else {
+                this.excludedUsers = null;
+            }
         }
 
         void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
@@ -204,9 +246,13 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             }
         }
 
+        protected void setInviteVisible(boolean visible) {
+            showInviteOption = visible;
+        }
+
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + (TextUtils.isEmpty(filterText) ? 1 : 0);
+            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0);
         }
 
         @NonNull
@@ -334,7 +380,9 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
             itemView.setOnClickListener(v -> {
-                startActivity(new Intent(v.getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, Preconditions.checkNotNull(contact.userId).rawId()));
+                Intent result = new Intent();
+                result.putExtra(RESULT_SELECTED_ID,  Preconditions.checkNotNull(contact.userId).rawId());
+                setResult(RESULT_OK, result);
                 finish();
             });
         }
