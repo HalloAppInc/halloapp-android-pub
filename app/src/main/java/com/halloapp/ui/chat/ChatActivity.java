@@ -77,8 +77,8 @@ public class ChatActivity extends HalloActivity {
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
-
-    private static final int REQUEST_CODE_COMPOSE = 1;
+    public static final String EXTRA_SELECTED_MESSAGE_ROW_ID = "selected_message_row_id";
+    public static final String EXTRA_COPY_TEXT = "copy_text";
 
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
@@ -98,6 +98,8 @@ public class ChatActivity extends HalloActivity {
 
     private String replyPostId;
     private int replyPostMediaIndex;
+    private long selectedMessageRowId = -1;
+    private String copyText;
 
     private DrawDelegateView drawDelegateView;
     private final Stack<View> recycledMediaViews = new Stack<>();
@@ -161,6 +163,11 @@ public class ChatActivity extends HalloActivity {
         } else {
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+            selectedMessageRowId = savedInstanceState.getLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
+            copyText = savedInstanceState.getString(EXTRA_COPY_TEXT);
+            if (selectedMessageRowId != -1) {
+                updateActionMode(copyText);
+            }
         }
         if (replyPostId != null) {
             editText.requestFocus();
@@ -316,6 +323,9 @@ public class ChatActivity extends HalloActivity {
             outState.putString(EXTRA_REPLY_POST_ID, replyPostId);
             outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }
+
+        outState.putLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
+        outState.putString(EXTRA_COPY_TEXT, copyText);
     }
 
     @Override
@@ -590,16 +600,12 @@ public class ChatActivity extends HalloActivity {
                     position >= 1
                             ? getItem(position - 1)
                             : null);
-//            TextView textView = holder.itemView.findViewById(R.id.text);
-//            if (actionMode == null && textView != null) {
-//                textView.setOnLongClickListener(v -> updateActionMode(textView, holder.itemView));
-//            }
         }
     }
 
-    private boolean updateActionMode(TextView text, View itemView) {
+    private boolean updateActionMode(String text) {
         if (actionMode == null) {
-            itemView.setBackgroundColor(getResources().getColor(R.color.color_secondary_40_alpha));
+            copyText = text;
             actionMode = startSupportActionMode(new ActionMode.Callback() {
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -618,7 +624,7 @@ public class ChatActivity extends HalloActivity {
                         case R.id.copy:
                             AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
                                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                ClipData clipData = ClipData.newPlainText("text", text.getText().toString());
+                                ClipData clipData = ClipData.newPlainText(getString(R.string.copy_text), text);
                                 clipboardManager.setPrimaryClip(clipData);
                             });
                             actionMode.finish();
@@ -630,17 +636,44 @@ public class ChatActivity extends HalloActivity {
 
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
-                    itemView.setBackgroundColor(getResources().getColor(R.color.window_background));
+                    selectedMessageRowId = -1;
+                    adapter.notifyDataSetChanged();
                     actionMode = null;
                 }
             });
         }
         return true;
-
     }
 
     private final MessageViewHolder.MessageViewHolderParent messageViewHolderParent = new MessageViewHolder.MessageViewHolderParent() {
         private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
+
+        @Override
+        public void onItemLongClicked(String text, long messageRowId) {
+            selectedMessageRowId = messageRowId;
+            updateActionMode(text);
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public long getSelectedMessageRowId() {
+            return selectedMessageRowId;
+        }
+        
+        @Override
+        public boolean actionModeSaved(){
+            return actionModeSaved;
+        }
+
+        @Override
+        public String getCopyText(){return copyText;}
+
+        @Override boolean actionModeSaved(){
+            return actionModeSaved;
+        }
+
+        @Override
+        public String getCopyText(){return copyText;}
 
         @Override
         public AvatarLoader getAvatarLoader() {
@@ -707,5 +740,7 @@ public class ChatActivity extends HalloActivity {
         public LongSparseArray<Integer> getTextLimits() {
             return textLimits;
         }
+
+
     };
 }
