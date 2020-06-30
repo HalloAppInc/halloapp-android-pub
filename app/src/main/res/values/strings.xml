@@ -200,4 +200,6 @@
     <string name="other_friends">Friends who didn\'t see your post yet</string>
     <string name="email_logs_subject">HalloApp Android</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %s\n</string>
+    <string name="share">Share</string>
+    <string name="write_description">Write a description</string>
 </resources>

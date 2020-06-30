@@ -27,7 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-            app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar" />
+            app:theme="@style/ActionBarBlueMenuText" />
 
         <ProgressBar
             android:id="@+id/progress"
@@ -38,47 +38,130 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
+            android:orientation="vertical"
             android:id="@+id/media_container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/media_list"
+            app:layout_constraintBottom_toTopOf="@+id/footer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="4:5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="10dp">
 
-                <com.halloapp.widget.MediaViewPager
-                    android:id="@+id/media_pager"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.halloapp.widget.MediaViewPager
+                        android:id="@+id/media_pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:layout_height="150dp"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="@dimen/content_composer_button_margins"
+                        android:translationY="@dimen/content_composer_button_offset"
+                        app:layout_anchor="@id/media_pager"
+                        app:layout_anchorGravity="bottom|left">
+
+                        <TextView
+                            android:id="@+id/media_index"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/media_index_background"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_marginRight="@dimen/content_composer_button_margins"
+                            android:visibility="gone"/>
+
+                        <ImageButton
+                            android:id="@+id/add_media"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/ic_media_add"
+                            android:background="@drawable/media_add_button"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginRight="@dimen/content_composer_button_margins"
+                        android:translationY="@dimen/content_composer_button_offset"
+                        app:layout_anchor="@id/media_pager"
+                        app:layout_anchorGravity="bottom|right">
+
+                        <ImageButton
+                            android:id="@+id/delete"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/ic_media_delete"
+                            android:background="@drawable/media_edit_button"
+                            android:visibility="gone"/>
+
+                        <ImageButton
+                            android:id="@+id/crop"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/ic_media_crop"
+                            android:background="@drawable/media_edit_button"
+                            android:layout_marginLeft="@dimen/content_composer_button_margins"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                <me.relex.circleindicator.CircleIndicator
+                    android:id="@+id/media_pager_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="8dp"
+                    android:layout_gravity="center_horizontal"
+                    app:ci_width="5dp"
+                    app:ci_height="5dp"
+                    app:ci_margin="4dp"
+                    app:ci_drawable="@drawable/pager_item_indicator_selected"
+                    app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+                    app:ci_animator="@animator/pager_indicator"
+                    android:layoutDirection="ltr"/>
+
+                <com.halloapp.widget.MentionableEntry
+                    android:id="@+id/entry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
-            </FrameLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/write_description"
+                    android:importantForAutofill="no"
+                    android:gravity="top"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:paddingStart="8dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="10dp"/>
+                </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/media_list"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/details_media_list_height"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:clipToPadding="false"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/footer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/media_container" />
+            </androidx.cardview.widget.CardView>
+        </ScrollView>
 
         <com.halloapp.ui.mentions.MentionPickerView
             android:id="@+id/mention_picker_view"
@@ -99,7 +182,7 @@
             android:paddingBottom="4dp"
             android:elevation="3dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/media_list"
+            app:layout_constraintTop_toBottomOf="@+id/media_container"
             app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -183,40 +266,6 @@
                     app:layout_constraintTop_toTopOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <com.halloapp.widget.MentionableEntry
-                android:id="@+id/entry"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/type_a_caption_hint"
-                android:importantForAutofill="no"
-                android:inputType="textCapSentences|textMultiLine"
-                android:maxLines="6"
-                android:paddingStart="8dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/send"
-                app:layout_constraintTop_toBottomOf="@+id/reply_container"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <ImageButton
-                android:id="@+id/send"
-                style="?actionButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:contentDescription="@string/send"
-                android:src="@drawable/ic_send"
-                app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintTop_toBottomOf="@+id/reply_container"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/entry" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -79,6 +79,12 @@
         <item name="elevation">0dp</item>
     </style>
 
+    <style name="ActionBarBlueMenuText" parent="ActionBar">
+        <item name="android:actionMenuTextColor">@color/color_secondary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
+    </style>
+
     <style name="PostButton">
         <item name="android:gravity">center</item>
         <item name="android:textSize">15sp</item>
@@ -94,6 +100,30 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginEnd">8dp</item>
     </style>
+
+    <!--style name="ShapeAppearanceOverlay.RoundedButton">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+        <item name="android:background">@color/window_background</item>
+    </style-->
+
+    <!--style name="ModifyMediaActionButton" parent="@style/Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.RoundedButton</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">30dp</item>
+
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:minWidth">30dp</item>
+        <item name="android:minHeight">30dp</item>
+    </style-->
 
     <style name="CommentsIndicator">
         <item name="android:layout_width">6dp</item>
