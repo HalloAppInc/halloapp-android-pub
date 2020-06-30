@@ -130,26 +130,11 @@ public class ContentComposerActivity extends HalloActivity {
         mediaIndexView = findViewById(R.id.media_index);
         addMediaButton = findViewById(R.id.add_media);
 
-        cropPictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cropItem(getCurrentItem());
-            }
-        });
+        cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
-        deletePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteItem(getCurrentItem());
-            }
-        });
+        deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
 
-        addMediaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openMediaPicker();
-            }
-        });
+        addMediaButton.setOnClickListener(view -> openMediaPicker());
 
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
@@ -173,7 +158,8 @@ public class ContentComposerActivity extends HalloActivity {
             addMediaButton.setVisibility(View.VISIBLE);
         } else {
             progressView.setVisibility(View.GONE);
-            editText.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
+            editText.setMinimumHeight(
+                    getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
             editText.requestFocus();
             editText.setHint(R.string.type_a_post_hint);
             editText.setPreImeListener((keyCode, event) -> {
@@ -258,7 +244,8 @@ public class ContentComposerActivity extends HalloActivity {
             }
             invalidateOptionsMenu();
             updateMediaButtons();
-            mediaPager.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+            mediaPager.setMaxAspectRatio(
+                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
         });
         viewModel.mentionableContacts.getLiveData().observe(this, new Observer<List<Contact>>() {
             @Override
@@ -392,7 +379,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem shareMenuItem = menu.findItem(R.id.share);
-        final List<Media> media = viewModel.media.getValue();
+        @Nullable final List<Media> media = viewModel.media.getValue();
         if ((media == null || media.size() == 0) && TextUtils.isEmpty(editText.getText())) {
             shareMenuItem.setVisible(false);
         } else {
@@ -403,7 +390,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     public void cropItem(final int currentItem) {
-        final List<Media> media = viewModel.media.getValue();
+        @Nullable final List<Media> media = viewModel.media.getValue();
         if (media != null && media.size() > currentItem) {
             final Media mediaItem = media.get(currentItem);
             final Intent intent = new Intent(this, CropImageActivity.class);
@@ -418,12 +405,14 @@ public class ContentComposerActivity extends HalloActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.share: {
-                final String postText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+                final String postText = StringUtils.preparePostText(
+                        Preconditions.checkNotNull(editText.getText()).toString());
                 if (TextUtils.isEmpty(postText) && viewModel.getMedia() == null) {
                     Log.w("ContentComposerActivity: cannot send empty content");
                 } else {
                     final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
-                    viewModel.prepareContent(getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
+                    viewModel.prepareContent(
+                            getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
                 }
             }
             default: {
@@ -468,12 +457,15 @@ public class ContentComposerActivity extends HalloActivity {
             imageView.setImageDrawable(null);
             fullThumbnailLoader.load(imageView, displayMedia);
         }
-        final List<Media> media = viewModel.media.getValue();
-        mediaPager.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+        @Nullable final List<Media> media = viewModel.media.getValue();
+        if (media != null) {
+            mediaPager.setMaxAspectRatio(
+                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+        }
     }
 
     private void deleteItem(final int currentItem) {
-        final List<Media> media = viewModel.media.getValue();
+        @Nullable final List<Media> media = viewModel.media.getValue();
         if (media == null) {
             return;
         }
@@ -486,7 +478,8 @@ public class ContentComposerActivity extends HalloActivity {
         } else {
             editText.setHint(R.string.type_a_post_hint);
             editText.requestFocus();
-            final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+            final InputMethodManager imm = Preconditions.checkNotNull(
+                    (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.showSoftInput(editText,0);
         }
         if (media.size() <= 1) {
@@ -495,24 +488,25 @@ public class ContentComposerActivity extends HalloActivity {
             mediaPagerIndicator.setVisibility(View.VISIBLE);
             mediaPagerIndicator.setViewPager(mediaPager);
         }
-        mediaPager.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+        mediaPager.setMaxAspectRatio(
+                Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
         invalidateOptionsMenu();
         updateMediaButtons();
     }
 
     private void updateMediaButtons() {
-        final List<Media> mediaList = viewModel.getMedia();
-        final int mediaSize = mediaList.size();
+        @Nullable final List<Media> media = viewModel.getMedia();
         final int currentItem = getCurrentItem();
         Log.e(String.format("updateMediaButtons currentItem: %d", currentItem));
-        if (mediaSize <= 1) {
+        if (media == null || media.size() <= 1) {
             mediaIndexView.setVisibility(View.GONE);
         } else {
-            mediaIndexView.setText(String.format("%d / %d", currentItem + 1, mediaSize));
+            mediaIndexView.setText(String.format("%d / %d", currentItem + 1, media.size()));
             mediaIndexView.setVisibility(View.VISIBLE);
         }
-        if (mediaSize > 0) {
-            Media mediaItem = mediaList.get(currentItem);
+        if (media != null && !media.isEmpty()) {
+            Media mediaItem = media.get(currentItem);
+            addMediaButton.setVisibility(View.VISIBLE);
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
                 cropPictureButton.setVisibility(View.VISIBLE);
@@ -520,6 +514,7 @@ public class ContentComposerActivity extends HalloActivity {
                 cropPictureButton.setVisibility(View.GONE);
             }
         } else {
+            addMediaButton.setVisibility(View.GONE);
             cropPictureButton.setVisibility(View.GONE);
             deletePictureButton.setVisibility(View.GONE);
         }
@@ -554,7 +549,8 @@ public class ContentComposerActivity extends HalloActivity {
             final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
-            final int currentPosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
+            final int currentPosition =
+                    Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
             final Media mediaItem = media.get(currentPosition);
 
             view.setTag(mediaItem);
