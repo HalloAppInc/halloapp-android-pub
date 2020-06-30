@@ -64,10 +64,18 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
                 for (MentionSpan span : spans) {
                     int start = s.getSpanStart(span);
                     int end = s.getSpanEnd(span);
-                    if (!span.getDisplayText().equals(s.subSequence(start, end).toString())) {
+                    String displayText = span.getDisplayText();
+                    String newSpanRange = s.subSequence(start, end).toString();
+                    if (!displayText.equals(s.subSequence(start, end).toString())) {
                         // span changed
-                        s.delete(start, end);
-                        setSelection(start);
+                        if (newSpanRange.contains(displayText)) {
+                            s.removeSpan(span);
+                            int newStart = start + newSpanRange.indexOf(displayText);
+                            s.setSpan(span, newStart, newStart + displayText.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        } else {
+                            s.delete(start, end);
+                            setSelection(start);
+                        }
                     }
                 }
             }
@@ -207,7 +215,7 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
             int end = editable.getSpanEnd(span);
             editable.removeSpan(span);
             SpannableString placeHolder = new SpannableString("@");
-            placeHolder.setSpan(new PlaceholderSpan(span.contact), 0, placeHolder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            placeHolder.setSpan(new PlaceholderSpan(span.contact), 0, placeHolder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             editable.replace(start, end, placeHolder);
         }
     }
@@ -215,7 +223,7 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
     private CharSequence createMentionPlaceholder(@NonNull Contact contact) {
         String mentionText = "@" + contact.getDisplayName();
         SpannableString mentionString = new SpannableString(mentionText);
-        mentionString.setSpan(new MentionSpan(mentionText, contact), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mentionString.setSpan(new MentionSpan(mentionText, contact), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         return new SpannedString(mentionString);
     }
 
@@ -225,6 +233,7 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
             return;
         }
         text.append(createMentionPlaceholder(contact));
+        text.append(" ");
     }
 
     private static class PlaceholderSpan {
