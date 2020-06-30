@@ -224,13 +224,13 @@ public class HomeViewModel extends AndroidViewModel {
         processMentionedComments(mentionedComments, seenMentions, unseenMentions);
         processMentionedPosts(mentionedPosts, seenMentions, unseenMentions);
 
-        final ArrayList<SocialActionEvent> socialActionEvent = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
-        socialActionEvent.addAll(seenMentions);
-        socialActionEvent.addAll(unseenMentions);
-        socialActionEvent.addAll(unseenComments.values());
-        socialActionEvent.addAll(seenComments);
+        final ArrayList<SocialActionEvent> socialActionEvents = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
+        socialActionEvents.addAll(seenMentions);
+        socialActionEvents.addAll(unseenMentions);
+        socialActionEvents.addAll(unseenComments.values());
+        socialActionEvents.addAll(seenComments);
 
-        Collections.sort(socialActionEvent, ((o1, o2) -> {
+        Collections.sort(socialActionEvents, ((o1, o2) -> {
             if (o1.seen != o2.seen) {
                 return o1.seen ? 1 : -1;
             }
@@ -238,23 +238,20 @@ public class HomeViewModel extends AndroidViewModel {
         }));
 
         final Map<UserId, Contact> contacts = new HashMap<>();
-        for (Comment comment : comments) {
-            if (!comment.commentSenderUserId.isMe() && !contacts.containsKey(comment.commentSenderUserId)) {
-                final Contact contact = contactsDb.getContact(comment.commentSenderUserId);
-                contacts.put(comment.commentSenderUserId, contact);
+        for (SocialActionEvent event : socialActionEvents) {
+            if (!event.postSenderUserId.isMe() && !contacts.containsKey(event.postSenderUserId)) {
+                final Contact contact = contactsDb.getContact(event.postSenderUserId);
+                contacts.put(event.postSenderUserId, contact);
             }
-            if (!comment.postSenderUserId.isMe() && !contacts.containsKey(comment.postSenderUserId)) {
-                final Contact contact = contactsDb.getContact(comment.postSenderUserId);
-                contacts.put(comment.postSenderUserId, contact);
-            }
-        }
-        for (Post post : mentionedPosts) {
-            if (!post.senderUserId.isMe() && !contacts.containsKey(post.senderUserId)) {
-                final Contact contact = contactsDb.getContact(post.senderUserId);
-                contacts.put(post.senderUserId, contact);
+            for (UserId involvedUser : event.involvedUsers) {
+                if (involvedUser.isMe() || contacts.containsKey(involvedUser)) {
+                    continue;
+                }
+                final Contact contact = contactsDb.getContact(involvedUser);
+                contacts.put(involvedUser, contact);
             }
         }
-        return new SocialHistory(socialActionEvent, unseenMentions.size() + unseenComments.size(), contacts);
+        return new SocialHistory(socialActionEvents, unseenMentions.size() + unseenComments.size(), contacts);
     }
 
     public static class SocialActionEvent {
