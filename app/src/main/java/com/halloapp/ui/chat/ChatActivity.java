@@ -591,10 +591,10 @@ public class ChatActivity extends HalloActivity {
                     position >= 1
                             ? getItem(position - 1)
                             : null);
-            TextView textView = holder.itemView.findViewById(R.id.text);
-            if (actionMode == null && textView != null) {
-                textView.setOnLongClickListener(v -> updateActionMode(textView, holder.itemView));
-            }
+//            TextView textView = holder.itemView.findViewById(R.id.text);
+//            if (actionMode == null && textView != null) {
+//                textView.setOnLongClickListener(v -> updateActionMode(textView, holder.itemView));
+//            }
         }
     }
 
