@@ -140,7 +140,7 @@
 
         <activity android:name=".ui.CropImageActivity"
             android:theme="@style/AppTheme.Black"
-            android:label="@string/crop"/>
+            android:label="@string/edit"/>
 
         <receiver
             android:name=".registration.SmsVerificationReceiver"

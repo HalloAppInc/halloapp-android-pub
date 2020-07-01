@@ -123,6 +123,9 @@ public class CropImageOptions implements Parcelable {
   /** the color of the corner line */
   public int borderCornerColor;
 
+  /** the optional border radius on rectangle shape */
+  public float borderRadius;
+
   /** the thickness of the guidelines lines. (in pixels) */
   public float guidelinesThickness;
 
@@ -249,6 +252,7 @@ public class CropImageOptions implements Parcelable {
     borderCornerOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, dm);
     borderCornerLength = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, dm);
     borderCornerColor = Color.WHITE;
+    borderRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0, dm);
 
     guidelinesThickness = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, dm);
     guidelinesColor = Color.argb(170, 255, 255, 255);
@@ -307,6 +311,7 @@ public class CropImageOptions implements Parcelable {
     borderCornerOffset = in.readFloat();
     borderCornerLength = in.readFloat();
     borderCornerColor = in.readInt();
+    borderRadius = in.readFloat();
     guidelinesThickness = in.readFloat();
     guidelinesColor = in.readInt();
     backgroundColor = in.readInt();
@@ -359,6 +364,7 @@ public class CropImageOptions implements Parcelable {
     dest.writeFloat(borderCornerOffset);
     dest.writeFloat(borderCornerLength);
     dest.writeInt(borderCornerColor);
+    dest.writeFloat(borderRadius);
     dest.writeFloat(guidelinesThickness);
     dest.writeInt(guidelinesColor);
     dest.writeInt(backgroundColor);

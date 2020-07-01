@@ -252,4 +252,5 @@
     <string name="invite_action">Invite</string>
     <string name="invite_already_a_user_subtitle">Already a HalloApp user</string>
     <string name="invite_invalid_phone_number">Invalid phone number</string>
+    <string name="edit">Edit</string>
 </resources>

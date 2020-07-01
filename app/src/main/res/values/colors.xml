@@ -55,6 +55,7 @@
     <color name="dim_facepile_avatar_1">#40ffffff</color>
     <color name="home_navigation_divider">#FFFFFF</color>
     <color name="feed_notification_icon">@color/black_80</color>
+    <color name="crop_done">#69a1ff</color>
 
     <color name="mention_color">@color/color_secondary</color>
 

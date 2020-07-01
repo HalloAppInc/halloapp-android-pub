@@ -67,6 +67,7 @@
         <attr name="cropBorderCornerOffset" format="dimension"/>
         <attr name="cropBorderCornerLength" format="dimension"/>
         <attr name="cropBorderCornerColor" format="color"/>
+        <attr name="cropBorderRadius" format="dimension"/>
         <attr name="cropGuidelinesThickness" format="dimension"/>
         <attr name="cropGuidelinesColor" format="color"/>
         <attr name="cropBackgroundColor" format="color"/>

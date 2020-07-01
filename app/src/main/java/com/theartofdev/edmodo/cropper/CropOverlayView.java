@@ -17,6 +17,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -81,6 +83,9 @@ public class CropOverlayView extends View {
 
   /** the length of the border corner to draw */
   private float mBorderCornerLength;
+
+  /** the optional border radius on rectangle shape */
+  private  float mBorderRadius;
 
   /** The initial crop window padding from image borders */
   private float mInitialCropWindowPaddingRatio;
@@ -422,6 +427,7 @@ public class CropOverlayView extends View {
     mBorderCornerLength = options.borderCornerLength;
     mBorderCornerPaint =
         getNewPaintOrNull(options.borderCornerThickness, options.borderCornerColor);
+    mBorderRadius = options.borderRadius;
 
     mGuidelinePaint = getNewPaintOrNull(options.guidelinesThickness, options.guidelinesColor);
 
@@ -615,10 +621,22 @@ public class CropOverlayView extends View {
 
     if (mCropShape == CropImageView.CropShape.RECTANGLE) {
       if (!isNonStraightAngleRotated() || Build.VERSION.SDK_INT <= 17) {
-        canvas.drawRect(left, top, right, rect.top, mBackgroundPaint);
-        canvas.drawRect(left, rect.bottom, right, bottom, mBackgroundPaint);
-        canvas.drawRect(left, rect.top, rect.left, rect.bottom, mBackgroundPaint);
-        canvas.drawRect(rect.right, rect.top, right, rect.bottom, mBackgroundPaint);
+
+        if (mBorderRadius == 0) {
+          canvas.drawRect(left, top, right, rect.top, mBackgroundPaint);
+          canvas.drawRect(left, rect.bottom, right, bottom, mBackgroundPaint);
+          canvas.drawRect(left, rect.top, rect.left, rect.bottom, mBackgroundPaint);
+          canvas.drawRect(rect.right, rect.top, right, rect.bottom, mBackgroundPaint);
+        } else {
+          float w = mBorderPaint.getStrokeWidth();
+          rect.inset(w / 2, w / 2);
+
+          mPath.reset();
+          mPath.addRoundRect(rect, mBorderRadius, mBorderRadius, Path.Direction.CW);
+          mPath.setFillType(Path.FillType.INVERSE_WINDING);
+          canvas.drawPath(mPath, mBackgroundPaint);
+        }
+
       } else {
         mPath.reset();
         mPath.moveTo(mBoundsPoints[0], mBoundsPoints[1]);
@@ -713,7 +731,14 @@ public class CropOverlayView extends View {
 
       if (mCropShape == CropImageView.CropShape.RECTANGLE) {
         // Draw rectangle crop window border.
-        canvas.drawRect(rect, mBorderPaint);
+        if (mBorderRadius == 0) {
+          canvas.drawRect(rect, mBorderPaint);
+        } else {
+          mPath.reset();
+          mPath.addRoundRect(rect, mBorderRadius, mBorderRadius, Path.Direction.CW);
+          mPath.setFillType(Path.FillType.WINDING);
+          canvas.drawPath(mPath, mBorderPaint);
+        }
       } else {
         // Draw circular crop window border
         canvas.drawOval(rect, mBorderPaint);

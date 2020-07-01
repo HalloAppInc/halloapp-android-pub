@@ -250,6 +250,9 @@ public class CropImageView extends FrameLayout {
           options.borderCornerColor =
               ta.getInteger(
                   R.styleable.CropImageView_cropBorderCornerColor, options.borderCornerColor);
+          options.borderRadius =
+              ta.getDimension(
+                  R.styleable.CropImageView_cropBorderRadius, options.borderRadius);
           options.guidelinesThickness =
               ta.getDimension(
                   R.styleable.CropImageView_cropGuidelinesThickness, options.guidelinesThickness);
