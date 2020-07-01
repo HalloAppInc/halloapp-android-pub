@@ -414,6 +414,7 @@ public class ContentComposerActivity extends HalloActivity {
                     viewModel.prepareContent(
                             getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
                 }
+                return true;
             }
             default: {
                 return super.onOptionsItemSelected(item);
@@ -497,7 +498,6 @@ public class ContentComposerActivity extends HalloActivity {
     private void updateMediaButtons() {
         @Nullable final List<Media> media = viewModel.getMedia();
         final int currentItem = getCurrentItem();
-        Log.e(String.format("updateMediaButtons currentItem: %d", currentItem));
         if (media == null || media.size() <= 1) {
             mediaIndexView.setVisibility(View.GONE);
         } else {
