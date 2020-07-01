@@ -169,34 +169,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             statusView.setImageResource(getStatusImageResource(message.state));
         }
 
-        if (statusView != null) {
-            statusView.setImageResource(getStatusImageResource(message.state));
-        }
-
-        if (statusView != null) {
-            statusView.setImageResource(getStatusImageResource(message.state));
-        }
-
-        if(parent.getSelectedPosition() == position){
-            itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
-        }else{
-            itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.window_background));
-        }
-
-        if (statusView != null) {
-            statusView.setImageResource(getStatusImageResource(message.state));
-        }
-
-        if(parent.getSelectedPosition() == position){
-            itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
-        } else {
-            itemView.setBackgroundColor(0);
-        }
-
-        if (statusView != null) {
-            statusView.setImageResource(getStatusImageResource(message.state));
-        }
-
         if (!message.media.isEmpty()) {
             mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(message.media)));
             mediaPagerAdapter.setMedia(message.media);

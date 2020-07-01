@@ -80,6 +80,8 @@ public class ChatActivity extends HalloActivity {
     public static final String EXTRA_SELECTED_MESSAGE_ROW_ID = "selected_message_row_id";
     public static final String EXTRA_COPY_TEXT = "copy_text";
 
+    private static final int REQUEST_CODE_COMPOSE = 1;
+
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
 
@@ -659,21 +661,6 @@ public class ChatActivity extends HalloActivity {
         public long getSelectedMessageRowId() {
             return selectedMessageRowId;
         }
-        
-        @Override
-        public boolean actionModeSaved(){
-            return actionModeSaved;
-        }
-
-        @Override
-        public String getCopyText(){return copyText;}
-
-        @Override boolean actionModeSaved(){
-            return actionModeSaved;
-        }
-
-        @Override
-        public String getCopyText(){return copyText;}
 
         @Override
         public AvatarLoader getAvatarLoader() {
