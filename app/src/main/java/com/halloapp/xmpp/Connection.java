@@ -498,6 +498,43 @@ public class Connection {
         });
     }
 
+    public Future<List<UserId>> getBlockList() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get blocklist, no connection");
+                return null;
+            }
+            final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK);
+            final PrivacyListsResponseIq response = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            final PrivacyList list = response.getPrivacyList(PrivacyList.Type.BLOCK);
+            return list == null ? null : list.userIds;
+        });
+    }
+
+    public Future<Boolean> blockUsers(@NonNull Collection<UserId> users) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot block users, no connection");
+                return false;
+            }
+            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, users, null);
+            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            return true;
+        });
+    }
+
+    public Future<Boolean> unblockUsers(@NonNull Collection<UserId> users) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: unblock users, no connection");
+                return false;
+            }
+            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, null, users);
+            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            return true;
+        });
+    }
+
     public void sendPost(final @NonNull Post post) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
