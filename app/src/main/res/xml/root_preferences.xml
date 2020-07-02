@@ -20,6 +20,9 @@
         <Preference app:key="block_list"
             app:title="@string/settings_block_list"/>
 
+        <Preference app:key="feed_privacy"
+            app:title="Feed privacy"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/help">

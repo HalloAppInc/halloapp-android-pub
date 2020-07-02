@@ -34,7 +34,7 @@ public class PrivacyList implements ExtensionElement {
     public @Type String type;
 
     @StringDef({Type.ALL, Type.EXCEPT, Type.ONLY, Type.MUTE, Type.BLOCK, Type.INVALID})
-    @interface Type {
+    public @interface Type {
         String INVALID = "invalid";
         String ALL = "all"; // All mutually connected people
         String EXCEPT = "except"; // Blacklist

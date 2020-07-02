@@ -133,4 +133,9 @@
         <item name="android:textSize">22sp</item>
     </style>
 
+    <style name="Widget.Button.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="colorSecondary">@color/fab_background</item>
+        <item name="colorOnSurface">@android:color/white</item>
+    </style>
+
 </resources>

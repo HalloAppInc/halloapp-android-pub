@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/options_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:visibility="gone">
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/setting_feed_privacy_title"/>
+    
+    <RadioGroup
+        android:layout_marginTop="8dp"
+        android:id="@+id/list_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:layout_marginStart="8dp">
+
+        <RadioButton
+            android:id="@+id/radio_all"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:textSize="16sp"
+            android:paddingEnd="8dp"
+            android:text="@string/setting_feed_all"/>
+
+        <RadioButton
+            android:id="@+id/radio_except"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/setting_feed_except"/>
+
+        <RadioButton
+            android:id="@+id/radio_only"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/setting_feed_only"/>
+
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button"
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/save"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list_group"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"/>
+
+    <TextView
+        android:id="@+id/error_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/feed_privacy_fail_to_load"
+        android:visibility="gone"/>
+</FrameLayout>

@@ -56,8 +56,16 @@
             android:label="@string/select_contact"/>
 
         <activity
+            android:name=".ui.contacts.MultipleContactPickerActivity"
+            android:label="@string/select_contact"/>
+
+        <activity
             android:name=".ui.privacy.BlockListActivity"
             android:label="@string/settings_block_list"/>
+
+        <activity
+            android:name=".ui.privacy.FeedPrivacyActivity"
+            android:label="Feed privacy"/>
 
         <activity
             android:name=".ui.ContentComposerActivity"

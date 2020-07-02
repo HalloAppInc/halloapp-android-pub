@@ -20,7 +20,7 @@ public class PrivacyListsResponseIq extends IQ {
 
     static final String ELEMENT_PRIVACY_LIST = "privacy_list";
 
-    private @PrivacyList.Type String activeType;
+    final @PrivacyList.Type String activeType;
 
     public Map<String, PrivacyList> resultMap = new HashMap<>();
 

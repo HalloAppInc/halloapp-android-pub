@@ -16,7 +16,9 @@ import com.halloapp.Debug;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.privacy.BlockListActivity;
+import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
@@ -70,6 +72,13 @@ public class SettingsActivity extends HalloActivity {
             final Preference blocklistPreference = Preconditions.checkNotNull((findPreference("block_list")));
             blocklistPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), BlockListActivity.class);
+                startActivity(intent);
+                return false;
+            });
+
+            final Preference feedPrivacyPreference = Preconditions.checkNotNull((findPreference("feed_privacy")));
+            feedPrivacyPreference.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent(requireContext(), FeedPrivacyActivity.class);
                 startActivity(intent);
                 return false;
             });

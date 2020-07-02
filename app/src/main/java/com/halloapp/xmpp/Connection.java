@@ -20,6 +20,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -496,6 +497,32 @@ public class Connection {
                 Log.w("connection: cannot update avatar", e);
             }
             return null;
+        });
+    }
+
+    public Future<FeedPrivacy> getFeedPrivacy() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get feed privacy, no connection");
+                return null;
+            }
+            final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(connection.getXMPPServiceDomain(), PrivacyList.Type.ONLY, PrivacyList.Type.EXCEPT);
+            final PrivacyListsResponseIq response = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            final PrivacyList exceptList = response.getPrivacyList(PrivacyList.Type.EXCEPT);
+            final PrivacyList onlyList = response.getPrivacyList(PrivacyList.Type.ONLY);
+            return new FeedPrivacy(response.activeType, exceptList == null ? null : exceptList.userIds, onlyList == null ? null : onlyList.userIds);
+        });
+    }
+
+    public Future<Boolean> setFeedPrivacy(@PrivacyList.Type String activeList, List<UserId> addedUsers, List<UserId> deletedUsers) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot block users, no connection");
+                return false;
+            }
+            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), activeList, addedUsers, deletedUsers);
+            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            return true;
         });
     }
 

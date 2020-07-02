@@ -107,6 +107,8 @@
     <string name="send_logs">Send logs</string>
     <string name="settings_block_list">Blocked users</string>
     <string name="settings_privacy">Privacy</string>
+    <string name="contact_selection_subtitle">%d contacts selected</string>
+    <string name="no_contacts_selected_subtitle">No contacts selected</string>
     <string name="help">Help</string>
     <string name="notify_posts">Posts</string>
     <string name="notify_comments">Comments</string>
@@ -122,6 +124,8 @@
     <string name="block">Block</string>
     <string name="play">Play</string>
     <string name="new_posts">New posts</string>
+    <string name="alert_discard_changes_message">Discard changes?</string>
+    <string name="action_discard">Discard</string>
     <string name="new_post_notification">New post from %s</string>
     <plurals name="new_posts_notification">
         <item quantity="one">%d new post from %s</item>
@@ -207,4 +211,14 @@
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <string name="cancel">Cancel</string>
     <string name="empty_block_list">No blocked contacts</string>
+    <string name="save">Save</string>
+    <string name="contact_picker_feed_except_title">Hide posts from…</string>
+    <string name="contact_picker_feed_only_title">Share posts with…</string>
+    <string name="setting_feed_privacy_title">Who can see my posts</string>
+    <string name="setting_feed_all">My contacts</string>
+    <string name="setting_feed_only">Only share with…</string>
+    <string name="setting_feed_except">My contacts except…</string>
+    <string name="feed_privacy_fail_to_load">Failed to load privacy settings</string>
+    <string name="feed_privacy_update_success">Setting updated successfully</string>
+    <string name="feed_privacy_update_failure">Failed to update setting</string>
 </resources>
