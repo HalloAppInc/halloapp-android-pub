@@ -2,6 +2,8 @@
     <dimen name="badge">13dp</dimen>
     <dimen name="action_bar_elevation">4dp</dimen>
     <dimen name="media_pager_margin">8dp</dimen>
+    <dimen name="media_pager_left_padding">36dp</dimen>
+    <dimen name="media_pager_right_padding">36dp</dimen>
     <dimen name="comment_media_list_spacing">4dp</dimen>
     <dimen name="comment_media_list_height">72dp</dimen>
     <dimen name="comment_media_list_corner_radius">4dp</dimen>
@@ -31,7 +33,10 @@
     <dimen name="message_text_size_few_emoji">32sp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">52dp</dimen>
     <dimen name="media_pager_child_padding">8dp</dimen>
+    <dimen name="content_composer_button_margins">16dp</dimen>
+    <dimen name="content_composer_button_offset">-16dp</dimen>
     <dimen name="mention_picker_elevation">2dp</dimen>
+    <dimen name="type_post_edit_minimum_hight">265dp</dimen>
 
     <!-- Message Bubbles -->
     <dimen name="message_bubble_corner_radius">20dp</dimen>

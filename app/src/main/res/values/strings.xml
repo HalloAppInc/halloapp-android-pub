@@ -28,7 +28,7 @@
     <string name="registration_failed">Failed to register phone number, try again</string>
     <string name="registration_failed_no_friends">We are currently in beta and by invitation only. Please have one of your friends who is a HalloApp user invite you.</string>
     <string name="type_a_post_hint">Type a post</string>
-    <string name="type_a_caption_hint">Type a caption</string>
+    <string name="write_description">Write a description</string>
     <string name="type_a_message_hint">Type a message</string>
     <string name="send">Send</string>
     <string name="set_avatar_done">Done</string>
@@ -207,6 +207,7 @@
     <string name="other_friends">Friends who didn\'t see your post yet</string>
     <string name="email_logs_subject">HalloApp Android</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %s\n</string>
+    <string name="share">Share</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <string name="cancel">Cancel</string>
