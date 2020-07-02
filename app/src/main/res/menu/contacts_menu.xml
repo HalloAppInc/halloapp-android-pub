@@ -13,4 +13,9 @@
         android:title="@string/refresh_contacts"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/invite_friends"
+        android:title="@string/invite_friends"
+        app:showAsAction="never"/>
+
 </menu>

@@ -26,12 +26,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.Connection;
@@ -136,6 +138,10 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 ContactsSync.getInstance(this).startContactsSync(true);
                 return true;
             }
+            case R.id.invite_friends: {
+                onInviteFriends();
+                return true;
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
@@ -156,6 +162,21 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 loadContacts();
                 break;
             }
+        }
+    }
+
+    private void onInviteFriends() {
+        if (Constants.INVITES_ENABLED) {
+            final Intent intent = new Intent(this, InviteFriendsActivity.class);
+            startActivity(intent);
+        } else {
+            final Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_text));
+            intent.setType("text/plain");
+            startActivity(Intent.createChooser(intent, getText(R.string.share_via)));
+
         }
     }
 
@@ -427,12 +448,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         InviteViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(v -> {
-                final Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_text));
-                intent.setType("text/plain");
-                startActivity(Intent.createChooser(intent, getText(R.string.share_via)));
+                onInviteFriends();
             });
         }
     }

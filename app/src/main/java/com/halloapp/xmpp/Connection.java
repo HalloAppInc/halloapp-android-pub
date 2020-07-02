@@ -56,6 +56,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +178,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
+        ProviderManager.addIQProvider(InvitesResponseIq.ELEMENT, InvitesResponseIq.NAMESPACE, new InvitesResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
         ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
@@ -560,6 +562,43 @@ public class Connection {
             final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, null, users);
             connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
             return true;
+        });
+    }
+
+    public Future<Integer> getAvailableInviteCount() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: can't check invite count, no connection");
+                return null;
+            }
+            final InvitesRequestIq requestIq = InvitesRequestIq.createGetInviteIq();
+            requestIq.setTo(connection.getXMPPServiceDomain());
+            requestIq.setFrom(connection.getUser());
+            IQ responseIq = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            if (responseIq instanceof InvitesResponseIq) {
+                return ((InvitesResponseIq) responseIq).invitesLeft;
+            }
+            return null;
+        });
+    }
+
+    public Future<Integer> sendInvite(@NonNull String phoneNumber) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: can't invite, no connection");
+                return null;
+            }
+            final InvitesRequestIq requestIq = InvitesRequestIq.createSendInviteIq(Collections.singleton(phoneNumber));
+            requestIq.setTo(connection.getXMPPServiceDomain());
+            InvitesResponseIq responseIq = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            if (!responseIq.successfulInvites.isEmpty()) {
+                return InvitesResponseIq.Result.SUCCESS;
+            } else {
+                for (String phone : responseIq.failedInvites.keySet()) {
+                    return responseIq.failedInvites.get(phone);
+                }
+            }
+            return InvitesResponseIq.Result.UNKNOWN;
         });
     }
 

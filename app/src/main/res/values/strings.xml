@@ -201,6 +201,7 @@
     <string name="counter">%d/%d</string>
     <string name="failed_set_name">Failed to set name, try again later</string>
     <string name="name_updated">Name updated</string>
+    <string name="try_again">Try again</string>
     <string name="crop">Crop</string>
     <string name="flip">Flip</string>
     <string name="no_one_seen_your_post">No one saw your post :(</string>
@@ -222,4 +223,15 @@
     <string name="feed_privacy_fail_to_load">Failed to load privacy settings</string>
     <string name="feed_privacy_update_success">Setting updated successfully</string>
     <string name="feed_privacy_update_failure">Failed to update setting</string>
+    <string name="invite_failed_internet">Failed to send invite, check your internet and try again</string>
+    <string name="invite_failed_no_invites">Sorry you\'re out of invites, try again later</string>
+    <string name="invite_failed_invalid_number">That phone number is invalid</string>
+    <string name="invite_failed_existing_user">Your friend is already on HalloApp!</string>
+    <string name="invite_failed_unknown">Failed to send invite</string>
+    <string name="invite_creation_in_progress">Creating invite…</string>
+    <string name="invite_info_fetch_internet">Failed to retrieve invite info, check your internet and try again</string>
+    <string name="invite_phone_number_empty_toast">Phone number is too short</string>
+    <string name="invites_remaining">Invites left</string>
+    <string name="invite_phone_entry_caption">Send an invite to…</string>
+    <string name="invite_friends_title">Invite friends</string>
 </resources>
