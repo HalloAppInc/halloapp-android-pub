@@ -18,14 +18,18 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
@@ -39,40 +43,49 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class ContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class MultipleContactPickerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
-    private static final String EXTRA_SHOW_INVITE = "show_invite_option";
-    private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
-    public static final String RESULT_SELECTED_ID = "selected_contact";
+    private static final String EXTRA_TITLE_RES = "title_res";
+    private static final String EXTRA_SELECTED_IDS = "selected_ids";
+    public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
     private ContactsViewModel viewModel;
     private TextView emptyView;
 
-    public static Intent createBlocklistContactPicker(@NonNull Context context, @Nullable List<UserId> disabledUserIds) {
-        Intent intent = new Intent(context, ContactsActivity.class);
-        intent.putExtra(EXTRA_SHOW_INVITE, false);
-        if (disabledUserIds != null) {
-            intent.putParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS, new ArrayList<>(disabledUserIds));
+    private HashSet<UserId> initialSelectedContacts;
+    private HashSet<UserId> selectedContacts;
+
+    private @DrawableRes int selectionIcon;
+
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds) {
+        return newPickerIntent(context, selectedIds, 0);
+    }
+
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title) {
+        Intent intent = new Intent(context, MultipleContactPickerActivity.class);
+        if (selectedIds != null) {
+            intent.putParcelableArrayListExtra(EXTRA_SELECTED_IDS, new ArrayList<>(selectedIds));
         }
+        intent.putExtra(EXTRA_TITLE_RES, title);
         return intent;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts);
+        setContentView(R.layout.activity_multi_contact_picker);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -88,18 +101,66 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 adapter::getSectionName));
         listView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
+        FloatingActionButton fab = findViewById(R.id.saveFab);
+        fab.setOnClickListener(v -> {
+            saveResult();
+        });
         emptyView = findViewById(android.R.id.empty);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
         viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
 
-        boolean showInviteOption = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE, true);
-        adapter.setInviteVisible(showInviteOption);
+        ArrayList<UserId> preselected = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
+        if (preselected != null) {
+            selectedContacts = new HashSet<>(preselected);
+        } else {
+            selectedContacts = new HashSet<>();
+        }
+        initialSelectedContacts = new HashSet<>(selectedContacts);
 
-        List<UserId> excludedUsers = getIntent().getParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS);
-        adapter.setExcludedUsers(excludedUsers);
-
+        @StringRes int title = getIntent().getIntExtra(EXTRA_TITLE_RES, 0);
+        if (title != 0) {
+            setTitle(title);
+        }
+        selectionIcon = R.drawable.ic_check;
         loadContacts();
+    }
+
+    private boolean didSelectionChange() {
+        for (UserId id : initialSelectedContacts) {
+            if (!selectedContacts.contains(id)) {
+                return true;
+            }
+        }
+        if (initialSelectedContacts.size() != selectedContacts.size()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (didSelectionChange()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.alert_discard_changes_message);
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+                finish();
+            });
+            builder.create().show();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void updateTitle() {
+        if (getSupportActionBar() != null) {
+            if (selectedContacts == null || selectedContacts.size() == 0) {
+                getSupportActionBar().setSubtitle(getString(R.string.no_contacts_selected_subtitle));
+            } else {
+                getSupportActionBar().setSubtitle(getString(R.string.contact_selection_subtitle, selectedContacts.size()));
+            }
+        }
     }
 
     @Override
@@ -126,6 +187,13 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             }
         });
         return true;
+    }
+
+    private void saveResult() {
+        Intent i = new Intent();
+        i.putParcelableArrayListExtra(EXTRA_RESULT_SELECTED_IDS, new ArrayList<>(selectedContacts));
+        setResult(RESULT_OK, i);
+        finish();
     }
 
     @Override
@@ -184,40 +252,17 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
     }
 
-    private static final int ITEM_TYPE_CONTACT = 0;
-    private static final int ITEM_TYPE_INVITE = 1;
-
-    private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
+    private class ContactsAdapter extends RecyclerView.Adapter<ContactsActivity.ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
 
         private List<Contact> contacts = new ArrayList<>();
         private List<Contact> filteredContacts;
         private CharSequence filterText;
         private List<String> filterTokens;
 
-        private boolean showInviteOption;
-
-        private Set<UserId> excludedUsers;
-
         void setContacts(@NonNull List<Contact> contacts) {
-            if (excludedUsers != null) {
-                this.contacts = new ArrayList<>(contacts.size());
-                for (Contact contact : contacts) {
-                    if (!excludedUsers.contains(contact.userId)) {
-                        this.contacts.add(contact);
-                    }
-                }
-            } else {
-                this.contacts = contacts;
-            }
+            this.contacts = contacts;
             getFilter().filter(filterText);
-        }
-
-        void setExcludedUsers(@Nullable List<UserId> excludedContacts) {
-            if (excludedContacts != null) {
-                this.excludedUsers = new HashSet<>(excludedContacts);
-            } else {
-                this.excludedUsers = null;
-            }
+            updateTitle();
         }
 
         void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
@@ -228,31 +273,21 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         @Override
-        public int getItemViewType(int position) {
-            return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+        public @NonNull
+        ContactsActivity.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_select_item, parent, false));
         }
 
         @Override
-        public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return viewType == ITEM_TYPE_CONTACT ?
-                    new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false)) :
-                    new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ContactsActivity.ViewHolder holder, int position) {
             if (position < getFilteredContactsCount()) {
                 holder.bindTo(filteredContacts.get(position), filterTokens);
             }
         }
 
-        protected void setInviteVisible(boolean visible) {
-            showInviteOption = visible;
-        }
-
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0);
+            return getFilteredContactsCount();
         }
 
         @NonNull
@@ -356,21 +391,13 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         return filterTokens;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        void bindTo(@NonNull Contact contact, List<String> filterTokens) {
-        }
-    }
-
-    class ContactViewHolder extends ViewHolder {
+    class ContactViewHolder extends ContactsActivity.ViewHolder {
 
         final private ImageView avatarView;
         final private TextView nameView;
         final private TextView phoneView;
+        final private ImageView selectionView;
 
         private Contact contact;
 
@@ -379,16 +406,34 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
+            selectionView = itemView.findViewById(R.id.selection_indicator);
             itemView.setOnClickListener(v -> {
-                Intent result = new Intent();
-                result.putExtra(RESULT_SELECTED_ID,  Preconditions.checkNotNull(contact.userId).rawId());
-                setResult(RESULT_OK, result);
-                finish();
+                if (contact == null) {
+                    return;
+                }
+                if (selectedContacts.contains(contact.userId)) {
+                    selectedContacts.remove(contact.userId);
+                } else {
+                    selectedContacts.add(contact.userId);
+                }
+                updateSelectionIcon();
+                updateTitle();
             });
+        }
+
+        private void updateSelectionIcon() {
+            boolean selected = selectedContacts.contains(contact.userId);
+            if (selected) {
+                selectionView.setImageResource(selectionIcon);
+            } else {
+                selectionView.setImageDrawable(null);
+            }
+            selectionView.setSelected(selected);
         }
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
             this.contact = contact;
+           updateSelectionIcon();
             avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
             if (filterTokens != null && !filterTokens.isEmpty()) {
                 SpannableString formattedName = null;
@@ -419,21 +464,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 nameView.setText(contact.getDisplayName());
             }
             phoneView.setText(contact.getDisplayPhone());
-        }
-    }
-
-    class InviteViewHolder extends ViewHolder {
-
-        InviteViewHolder(@NonNull View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(v -> {
-                final Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_text));
-                intent.setType("text/plain");
-                startActivity(Intent.createChooser(intent, getText(R.string.share_via)));
-            });
         }
     }
 }

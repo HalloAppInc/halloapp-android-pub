@@ -42,11 +42,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final CircleIndicator mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
-
     private final MessageViewHolderParent parent;
     private Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
+        abstract void onItemLongClicked(String text, long messageRowId);
+        abstract long getSelectedMessageRowId();
         abstract ReplyLoader getReplyLoader();
     }
 
@@ -77,6 +78,15 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
+
+        if (textView != null) {
+            textView.setOnLongClickListener(v -> {
+                if (parent.getSelectedMessageRowId() == -1) {
+                    parent.onItemLongClicked(textView.getText().toString(), message.rowId);
+                }
+                return true;
+            });
+        }
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));
@@ -148,6 +158,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         boolean mergeWithPrev = shouldMergeBubbles(message, prevMessage);
         boolean mergeWithNext = shouldMergeBubbles(message, nextMessage);
         updateBubbleMerging(mergeWithPrev, mergeWithNext);
+
+        if (parent.getSelectedMessageRowId() == message.rowId) {
+            itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
+        } else {
+            itemView.setBackgroundColor(0);
+        }
 
         if (statusView != null) {
             statusView.setImageResource(getStatusImageResource(message.state));

@@ -38,6 +38,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
@@ -63,6 +64,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
+    private static final int REQUEST_CODE_SELECT_CONTACT = 3;
 
     private SpeedDialView fabView;
 
@@ -153,7 +155,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
                 public boolean onMainActionSelected() {
-                    startActivity(new Intent(getBaseContext(), ContactsActivity.class));
+                    startActivityForResult(new Intent(getBaseContext(), ContactsActivity.class), REQUEST_CODE_SELECT_CONTACT);
                     return true;
                 }
 
@@ -325,6 +327,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 }
                 break;
             }
+            case REQUEST_CODE_SELECT_CONTACT:
+                if (result == RESULT_OK) {
+                    String rawId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
+                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, rawId));
+                }
+                break;
         }
     }
 

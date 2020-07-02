@@ -20,6 +20,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -175,6 +176,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE, new AvatarChangeMessage.Provider());
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
+        ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
         ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
@@ -495,6 +497,69 @@ public class Connection {
                 Log.w("connection: cannot update avatar", e);
             }
             return null;
+        });
+    }
+
+    public Future<FeedPrivacy> getFeedPrivacy() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get feed privacy, no connection");
+                return null;
+            }
+            final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(connection.getXMPPServiceDomain(), PrivacyList.Type.ONLY, PrivacyList.Type.EXCEPT);
+            final PrivacyListsResponseIq response = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            final PrivacyList exceptList = response.getPrivacyList(PrivacyList.Type.EXCEPT);
+            final PrivacyList onlyList = response.getPrivacyList(PrivacyList.Type.ONLY);
+            return new FeedPrivacy(response.activeType, exceptList == null ? null : exceptList.userIds, onlyList == null ? null : onlyList.userIds);
+        });
+    }
+
+    public Future<Boolean> setFeedPrivacy(@PrivacyList.Type String activeList, List<UserId> addedUsers, List<UserId> deletedUsers) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot block users, no connection");
+                return false;
+            }
+            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), activeList, addedUsers, deletedUsers);
+            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            return true;
+        });
+    }
+
+    public Future<List<UserId>> getBlockList() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get blocklist, no connection");
+                return null;
+            }
+            final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK);
+            final PrivacyListsResponseIq response = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            final PrivacyList list = response.getPrivacyList(PrivacyList.Type.BLOCK);
+            return list == null ? null : list.userIds;
+        });
+    }
+
+    public Future<Boolean> blockUsers(@NonNull Collection<UserId> users) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot block users, no connection");
+                return false;
+            }
+            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, users, null);
+            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            return true;
+        });
+    }
+
+    public Future<Boolean> unblockUsers(@NonNull Collection<UserId> users) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: unblock users, no connection");
+                return false;
+            }
+            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, null, users);
+            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+            return true;
         });
     }
 

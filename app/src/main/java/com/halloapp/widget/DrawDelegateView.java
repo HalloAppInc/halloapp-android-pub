@@ -55,6 +55,13 @@ public class DrawDelegateView extends View {
             return;
         }
         this.delegateView = delegateView;
+        recomputeOffsets();
+    }
+
+    private void recomputeOffsets() {
+        if (delegateView == null) {
+            return;
+        }
         final int[] thisLocation = new int[2];
         getLocationInWindow(thisLocation);
         final int[] childLocation = new int[2];
@@ -110,6 +117,14 @@ public class DrawDelegateView extends View {
             canvas.translate(x, y);
             delegateView.draw(canvas);
             canvas.translate(-x, -y);
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (changed) {
+            recomputeOffsets();
         }
     }
 }

@@ -26,7 +26,6 @@ public class SystemUiVisibility {
                 (Build.VERSION.SDK_INT >= 23 && useLightSystemBars ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : 0) |
                 (Build.VERSION.SDK_INT >= 26 && useLightSystemBars ? View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : 0) |
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
     }
 
