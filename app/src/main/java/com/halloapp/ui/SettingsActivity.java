@@ -56,7 +56,7 @@ public class SettingsActivity extends HalloActivity {
         return true;
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
+    public static class SettingsFragment extends HalloPreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
