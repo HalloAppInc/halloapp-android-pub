@@ -3,8 +3,6 @@
     <item
         android:drawable="@drawable/ic_crop_white"
         android:width="18dp"
-        android:height="18dp"
-        />
+        android:height="18dp" />
 
-</layer-list
-    >
+</layer-list>

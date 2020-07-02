@@ -290,7 +290,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void openMediaPicker() {
-        // TODO: integrate better with the picker
+        // TODO(Vasil): integrate better with the picker
         finish();
     }
 
@@ -380,13 +380,8 @@ public class ContentComposerActivity extends HalloActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem shareMenuItem = menu.findItem(R.id.share);
         @Nullable final List<Media> media = viewModel.media.getValue();
-        if ((media == null || media.size() == 0) && TextUtils.isEmpty(editText.getText())) {
-            shareMenuItem.setVisible(false);
-        } else {
-            shareMenuItem.setVisible(true);
-        }
+        shareMenuItem.setVisible((media != null && !media.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
         return true;
-
     }
 
     public void cropItem(final int currentItem) {
@@ -470,7 +465,7 @@ public class ContentComposerActivity extends HalloActivity {
         if (media == null) {
             return;
         }
-        // TODO: Can we potentially leak a file?
+        // TODO(Vasil): Can we potentially leak a file?
         media.remove(currentItem);
         mediaPagerAdapter.setMedia(media);
         mediaPagerAdapter.notifyDataSetChanged();
@@ -549,8 +544,7 @@ public class ContentComposerActivity extends HalloActivity {
             final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
             final View playButton = view.findViewById(R.id.play);
-            final int currentPosition =
-                    Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
+            final int currentPosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
             final Media mediaItem = media.get(currentPosition);
 
             view.setTag(mediaItem);
