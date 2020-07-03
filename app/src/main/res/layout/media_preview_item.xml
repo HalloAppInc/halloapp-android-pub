@@ -2,16 +2,17 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:layout_width="@dimen/media_gallery_grid_size"
-    tools:layout_height="@dimen/media_gallery_grid_size">
+    android:layout_width="65dp"
+    android:layout_height="80dp"
+    android:padding="3dp"
+    >
 
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:scaleType="fitCenter"
+        android:layout_gravity="center"
         android:adjustViewBounds="true"/>
 
     <ImageView

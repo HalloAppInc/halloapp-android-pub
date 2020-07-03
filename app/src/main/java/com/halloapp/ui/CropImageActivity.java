@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -118,6 +119,8 @@ public class CropImageActivity extends HalloActivity {
             } else {
                 cropImageView.setImageUriAsync(Uri.fromFile(selected.original.file));
             }
+
+            adapter.notifyDataSetChanged();
         });
     }
 
@@ -126,7 +129,7 @@ public class CropImageActivity extends HalloActivity {
 
         mediaListView = findViewById(R.id.media_list);
         mediaListView.setLayoutManager(linearManager);
-        mediaListView.addItemDecoration(new LinearSpacingItemDecoration(linearManager, getResources().getDimensionPixelSize(R.dimen.details_media_list_spacing)));
+        mediaListView.addItemDecoration(new LinearSpacingItemDecoration(linearManager, getResources().getDimensionPixelSize(R.dimen.media_crop_preview_list_spacing)));
 
         adapter = new MediaListAdapter();
         mediaListView.setAdapter(adapter);
@@ -263,6 +266,7 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.ViewHolder> {
+        private final int WHITE_20 = Color.argb(51, 255,255,255);
         private final List<CropImageViewModel.MediaModel> dataset = new ArrayList<>();
 
         MediaListAdapter() {
@@ -298,6 +302,12 @@ public class CropImageActivity extends HalloActivity {
                 holder.thumbnailView.setContentDescription(getString(R.string.photo));
             }
 
+            if (viewModel.getSelectedPosition() == position) {
+                holder.itemView.setBackgroundColor(Color.WHITE);
+            } else {
+                holder.itemView.setBackgroundColor(WHITE_20);
+            }
+
             holder.thumbnailView.setOnClickListener(v -> {
                 if (media.type == Media.MEDIA_TYPE_VIDEO || viewModel.getSelectedPosition() == position) {
                     return;
@@ -325,11 +335,20 @@ public class CropImageActivity extends HalloActivity {
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder {
+
             final ImageView thumbnailView;
             final ImageView typeIndicator;
 
             ViewHolder(@NonNull View v) {
                 super(v);
+
+                v.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
+                    }
+                });
+                v.setClipToOutline(true);
 
                 thumbnailView = v.findViewById(R.id.thumbnail);
                 thumbnailView.setOutlineProvider(new ViewOutlineProvider() {
