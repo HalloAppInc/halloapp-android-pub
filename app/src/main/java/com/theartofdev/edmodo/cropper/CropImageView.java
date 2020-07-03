@@ -1370,12 +1370,11 @@ public class CropImageView extends FrameLayout {
     bundle.putInt("DEGREES_ROTATED", mDegreesRotated);
     bundle.putParcelable("INITIAL_CROP_RECT", mCropOverlayView.getInitialCropWindowRect());
 
-    BitmapUtils.RECT.set(mCropOverlayView.getCropWindowRect());
-
+    RectF rcrop = new RectF(mCropOverlayView.getCropWindowRect());
     mImageMatrix.invert(mImageInverseMatrix);
-    mImageInverseMatrix.mapRect(BitmapUtils.RECT);
+    mImageInverseMatrix.mapRect(rcrop);
 
-    bundle.putParcelable("CROP_WINDOW_RECT", BitmapUtils.RECT);
+    bundle.putParcelable("CROP_WINDOW_RECT", rcrop);
     bundle.putString("CROP_SHAPE", mCropOverlayView.getCropShape().name());
     bundle.putBoolean("CROP_AUTO_ZOOM_ENABLED", mAutoZoomEnabled);
     bundle.putInt("CROP_MAX_ZOOM", mMaxZoom);
