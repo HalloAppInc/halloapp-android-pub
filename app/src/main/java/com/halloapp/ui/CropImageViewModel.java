@@ -30,7 +30,6 @@ public class CropImageViewModel extends AndroidViewModel {
     private final MutableLiveData<MediaModel> selected = new MutableLiveData<>();
 
     private boolean clearOnDestroy = false;
-    private int initialSelect = -1;
 
     public CropImageViewModel(Application application) {
         super(application);
@@ -41,7 +40,15 @@ public class CropImageViewModel extends AndroidViewModel {
             return;
         }
 
-        new LoadMediaTask(getApplication(), mediaData, selected, initialSelect, uris, state).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadMediaTask(getApplication(), mediaData, selected, -1, uris, state).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void loadMediaData(Collection<Uri> uris, Bundle state, int position) {
+        if (uris == null) {
+            return;
+        }
+
+        new LoadMediaTask(getApplication(), mediaData, selected, position, uris, state).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public LiveData<List<MediaModel>> getMediaData() {
@@ -96,12 +103,8 @@ public class CropImageViewModel extends AndroidViewModel {
     public void select(int position) {
         List<MediaModel> models = mediaData.getValue();
 
-        if (models != null) {
-            if (0 <= position && position < models.size()) {
-                selected.postValue(models.get(position));
-            }
-        } else {
-            initialSelect = position;
+        if (models != null && 0 <= position && position < models.size()) {
+            selected.postValue(models.get(position));
         }
     }
 
@@ -122,7 +125,7 @@ public class CropImageViewModel extends AndroidViewModel {
         }
     }
 
-    public void updateCrop(MediaModel m) {
+    public void update(MediaModel m) {
         new UpdateCropTask(mediaData, m);
     }
 
@@ -158,15 +161,15 @@ public class CropImageViewModel extends AndroidViewModel {
         private final MutableLiveData<MediaModel> selected;
         private final Collection<Uri> uris;
         private final Bundle state;
-        private int initialSelect;
+        private int position;
 
-        LoadMediaTask(@NonNull Application application, @NonNull MutableLiveData<List<MediaModel>> mediaData, @NonNull MutableLiveData<MediaModel> selected, int initialSelect, @NonNull Collection<Uri> uris, Bundle state) {
+        LoadMediaTask(@NonNull Application application, @NonNull MutableLiveData<List<MediaModel>> mediaData, @NonNull MutableLiveData<MediaModel> selected, int position, @NonNull Collection<Uri> uris, Bundle state) {
             this.application = application;
             this.mediaData = mediaData;
             this.selected = selected;
             this.uris = uris;
             this.state = state;
-            this.initialSelect = initialSelect;
+            this.position = position;
         }
 
         protected Media mediaFromFile(@Media.MediaType int type, File f) {
@@ -230,14 +233,13 @@ public class CropImageViewModel extends AndroidViewModel {
             super.onPostExecute(result);
 
             mediaData.postValue(result);
-
             syncWithSelected(result);
         }
 
         private void syncWithSelected(List<MediaModel> result) {
             if (selected.getValue() == null) {
-                if (0 <= initialSelect && initialSelect < result.size()) {
-                    selected.postValue(result.get(initialSelect));
+                if (0 <= position && position < result.size()) {
+                    selected.postValue(result.get(position));
                 }
             } else {
                 Uri uri = selected.getValue().uri;

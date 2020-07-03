@@ -6,7 +6,6 @@ import android.graphics.Outline;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,8 +41,6 @@ import java.util.List;
 public class CropImageActivity extends HalloActivity {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
-
-//    public static final String EXTRA_OUTPUT = "output";
     public static final String EXTRA_STATE = "state";
 
     private CropImageView cropImageView;
@@ -71,8 +68,7 @@ public class CropImageActivity extends HalloActivity {
         ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
         Bundle state = getIntent().getParcelableExtra(EXTRA_STATE);
 
-        viewModel.select(getIntent().getIntExtra(EXTRA_SELECTED, 0));
-        viewModel.loadMediaData(uris, state);
+        viewModel.loadMediaData(uris, state, getIntent().getIntExtra(EXTRA_SELECTED, 0));
     }
 
     private void setupEditView() {
@@ -84,27 +80,28 @@ public class CropImageActivity extends HalloActivity {
                 CenterToast.show(this, R.string.failed_to_load_media);
                 finish();
             } else {
-//                final Parcelable state = getIntent().getParcelableExtra(EXTRA_STATE);
-//                if (state == null) {
-//                    Rect rect = cropImageView.getWholeImageRect();
-//                    final int w;
-//                    final int h;
-//                    if (cropImageView.getRotatedDegrees() % 180 == 0) {
-//                        w = rect.width();
-//                        h = rect.height();
-//                    } else {
-//                        w = rect.height();
-//                        h = rect.width();
-//                    }
-//                    final Rect cropRect;
-//                    if (h > Constants.MAX_IMAGE_ASPECT_RATIO * w) {
-//                        int padding = (int) ((h - Constants.MAX_IMAGE_ASPECT_RATIO * w) / 2);
-//                        cropRect = new Rect(0, padding, w, h - padding);
-//                    } else {
-//                        cropRect = new Rect(0, 0, w, h);
-//                    }
-//                    cropImageView.setCropRect(cropRect);
-//                }
+                if (selected == null || selected.state == null) {
+                    Rect rect = cropImageView.getWholeImageRect();
+                    final int w, h;
+
+                    if (cropImageView.getRotatedDegrees() % 180 == 0) {
+                        w = rect.width();
+                        h = rect.height();
+                    } else {
+                        w = rect.height();
+                        h = rect.width();
+                    }
+
+                    final Rect cropRect;
+                    if (h > Constants.MAX_IMAGE_ASPECT_RATIO * w) {
+                        int padding = (int) ((h - Constants.MAX_IMAGE_ASPECT_RATIO * w) / 2);
+                        cropRect = new Rect(0, padding, w, h - padding);
+                    } else {
+                        cropRect = new Rect(0, 0, w, h);
+                    }
+
+                    cropImageView.setCropRect(cropRect);
+                }
             }
         });
 
@@ -113,14 +110,14 @@ public class CropImageActivity extends HalloActivity {
                 return;
             }
 
-            cropImageView.clearImage();
-            if (model.state != null) {
-                cropImageView.onRestoreInstanceState(model.state);
-            } else {
-                cropImageView.setImageUriAsync(Uri.fromFile(model.original.file));
-            }
-
             selected = model;
+
+            if (selected.state != null) {
+                cropImageView.clearImage();
+                cropImageView.onRestoreInstanceState(selected.state);
+            } else {
+                cropImageView.setImageUriAsync(Uri.fromFile(selected.original.file));
+            }
         });
     }
 
@@ -183,7 +180,7 @@ public class CropImageActivity extends HalloActivity {
         findViewById(R.id.done).setOnClickListener(v -> {
             cropImageView.setOnCropImageCompleteListener((view, result) -> {
                 selected.state = cropImageView.onSaveInstanceState();
-                viewModel.updateCrop(selected);
+                viewModel.update(selected);
 
                 prepareResult();
                 finish();
@@ -226,9 +223,13 @@ public class CropImageActivity extends HalloActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
+    public void onBackPressed() {
         prepareResult();
-        onBackPressed();
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
         return true;
     }
 
@@ -283,8 +284,8 @@ public class CropImageActivity extends HalloActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MediaListAdapter.ViewHolder holder, int position) {
-            CropImageViewModel.MediaModel model = dataset.get(position);
-            Media media = model.state == null ? model.original : model.edit;
+            final CropImageViewModel.MediaModel model = dataset.get(position);
+            final Media media = model.state == null ? model.original : model.edit;
 
             mediaLoader.load(holder.thumbnailView, media, new Displayer(media));
 
@@ -303,13 +304,10 @@ public class CropImageActivity extends HalloActivity {
                 }
 
                 if (selected != null) {
-                    Parcelable state = cropImageView.onSaveInstanceState();
+                    selected.state = cropImageView.onSaveInstanceState();
 
                     cropImageView.setOnCropImageCompleteListener((view, result) -> {
-                        selected.state = state;
-//                        selected.state = cropImageView.onSaveInstanceState();
-
-                        viewModel.updateCrop(selected);
+                        viewModel.update(selected);
                         viewModel.select(position);
                     });
 
