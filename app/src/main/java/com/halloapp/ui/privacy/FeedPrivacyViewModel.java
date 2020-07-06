@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
@@ -18,20 +19,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class FeedPrivacyViewModel extends AndroidViewModel {
 
+    private BgWorkers bgWorkers;
     private Connection connection;
-
-    private Executor executor = Executors.newSingleThreadExecutor();
 
     final ComputableLiveData<FeedPrivacy> feedPrivacy;
 
     public FeedPrivacyViewModel(@NonNull Application application) {
         super(application);
 
+        bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
 
         feedPrivacy = new ComputableLiveData<FeedPrivacy>() {
@@ -110,7 +109,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
                 return savingLiveData;
             }
         }
-        executor.execute(() -> {
+        bgWorkers.execute(() -> {
             boolean result = false;
             try {
                 result = connection.setFeedPrivacy(newSetting, addedUsers, deletedUsers).get();

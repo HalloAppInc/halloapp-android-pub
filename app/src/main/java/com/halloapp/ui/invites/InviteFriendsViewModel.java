@@ -7,21 +7,19 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.InvitesResponseIq;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class InviteFriendsViewModel extends AndroidViewModel {
 
+    private BgWorkers bgWorkers;
     private Connection connection;
-
-    private Executor executor;
 
     ComputableLiveData<Integer> inviteCountData;
 
@@ -29,7 +27,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
     public InviteFriendsViewModel(@NonNull Application application) {
         super(application);
-        executor = Executors.newSingleThreadExecutor();
+        bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
 
         inviteCountData = new ComputableLiveData<Integer>() {
@@ -51,7 +49,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
     public LiveData<Integer> sendInvite(@NonNull String phoneNumber) {
         MutableLiveData<Integer> inviteResult = new MutableLiveData<>();
-        executor.execute(() -> {
+        bgWorkers.execute(() -> {
             Future<Integer> resultFuture = connection.sendInvite(phoneNumber);
             try {
                 inviteResult.postValue(resultFuture.get());

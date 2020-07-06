@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.Connection;
 
@@ -18,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class BlockListViewModel extends AndroidViewModel {
 
@@ -27,14 +26,16 @@ public class BlockListViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Boolean> inProgress;
 
-    final ContactsDb contactsDb;
-
-    private Executor executor;
+    private final BgWorkers bgWorkers;
+    private final Connection connection;
+    private final ContactsDb contactsDb;
 
     public BlockListViewModel(@NonNull Application application) {
         super(application);
-        executor = Executors.newSingleThreadExecutor();
+        bgWorkers = BgWorkers.getInstance();
+        connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance(application);
+
         blockList = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
@@ -65,9 +66,9 @@ public class BlockListViewModel extends AndroidViewModel {
     @MainThread
     public void unblockContact(@NonNull UserId userId) {
         inProgress.setValue(true);
-        executor.execute(() -> {
+        bgWorkers.execute(() -> {
             try {
-                Connection.getInstance().unblockUsers(Collections.singleton(userId)).get();
+                connection.unblockUsers(Collections.singleton(userId)).get();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -77,9 +78,9 @@ public class BlockListViewModel extends AndroidViewModel {
 
     public void blockContact(@NonNull UserId userId) {
         inProgress.setValue(true);
-        executor.execute(() -> {
+        bgWorkers.execute(() -> {
             try {
-                Connection.getInstance().blockUsers(Collections.singleton(userId)).get();
+                connection.blockUsers(Collections.singleton(userId)).get();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
