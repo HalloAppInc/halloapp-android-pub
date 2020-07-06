@@ -146,6 +146,12 @@ public class FeedPrivacyActivity extends HalloActivity {
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
     private void showDiscardChangesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.alert_discard_changes_message);
