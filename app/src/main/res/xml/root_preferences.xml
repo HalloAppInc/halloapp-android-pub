@@ -21,7 +21,7 @@
             app:title="@string/settings_block_list"/>
 
         <Preference app:key="feed_privacy"
-            app:title="Feed privacy"/>
+            app:title="@string/settings_feed_privacy"/>
 
     </PreferenceCategory>
 

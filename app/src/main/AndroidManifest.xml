@@ -65,7 +65,7 @@
 
         <activity
             android:name=".ui.privacy.FeedPrivacyActivity"
-            android:label="Feed privacy"/>
+            android:label="@string/settings_feed_privacy"/>
 
         <activity
             android:name=".ui.profile.ViewProfileActivity" />
