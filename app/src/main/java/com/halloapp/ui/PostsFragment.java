@@ -131,6 +131,10 @@ public class PostsFragment extends HalloFragment {
         }
     };
 
+    protected boolean shouldOpenProfileOnNamePress() {
+        return true;
+    }
+
     protected class PostsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
         final List<View> headers = new ArrayList<>();
@@ -205,6 +209,11 @@ public class PostsFragment extends HalloFragment {
             @Override
             public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
                 PostsFragment.this.startActivity(intent, options.toBundle());
+            }
+
+            @Override
+            public boolean openProfileOnNamePress() {
+                return shouldOpenProfileOnNamePress();
             }
         };
 

@@ -1,7 +1,6 @@
 package com.halloapp.ui.profile;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
@@ -17,13 +16,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.ui.PostsFragment;
@@ -41,8 +38,19 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends PostsFragment {
 
     private static final int CODE_CHANGE_AVATAR = 1;
+    private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
     private ImageView avatarView;
+
+    private UserId profileUserId;
+
+    public static ProfileFragment newProfileFragment(@NonNull UserId userId) {
+        ProfileFragment profileFragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_SELECTED_PROFILE_USER_ID, userId.rawId());
+        profileFragment.setArguments(args);
+        return profileFragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +76,16 @@ public class ProfileFragment extends PostsFragment {
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
-        final ProfileViewModel viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        profileUserId = UserId.ME;
+        Bundle args = getArguments();
+        if (args != null) {
+            String extraUserId = args.getString(ARG_SELECTED_PROFILE_USER_ID);
+            if (extraUserId != null) {
+                profileUserId = new UserId(extraUserId);
+            }
+        }
+
+        final ProfileViewModel viewModel = new ViewModelProvider(this, new ProfileViewModel.Factory(requireActivity().getApplication(), profileUserId)).get(ProfileViewModel.class);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
 
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
@@ -78,36 +95,51 @@ public class ProfileFragment extends PostsFragment {
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
         final TextView phoneView = headerView.findViewById(R.id.phone);
-        final LoadProfileInfoTask loadProfileInfoTask = new LoadProfileInfoTask(Me.getInstance(requireContext()));
-        loadProfileInfoTask.phone.observe(getViewLifecycleOwner(), phone -> phoneView.setText(
-                BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null))));
-        loadProfileInfoTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        Me.getInstance(requireContext()).name.observe(getViewLifecycleOwner(), nameView::setText);
-        AsyncTask.execute(() -> Me.getInstance(requireContext()).getName());
+        final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
+        final View changeNameView = headerView.findViewById(R.id.change_name);
+        viewModel.getPhone().observe(getViewLifecycleOwner(), phone -> {
+            if (phone == null) {
+                phoneView.setVisibility(View.GONE);
+            } else {
+                phoneView.setVisibility(View.VISIBLE);
+                phoneView.setText(
+                        BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null)));
+            }
+        });
+        viewModel.getName().observe(getViewLifecycleOwner(), nameView::setText);
 
         avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance(Connection.getInstance(), requireContext()).load(avatarView, UserId.ME);
+        AvatarLoader.getInstance(Connection.getInstance(), requireContext()).load(avatarView, profileUserId);
 
-        final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
-        final View.OnClickListener changeAvatarListener = v -> {
-            Log.d("ProfileFragment request change avatar");
-            final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
-            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
-            startActivityForResult(intent, CODE_CHANGE_AVATAR);
-        };
-        changeAvatarView.setOnClickListener(changeAvatarListener);
-        avatarView.setOnClickListener(changeAvatarListener);
+        if (profileUserId.isMe()) {
+            final View.OnClickListener changeAvatarListener = v -> {
+                Log.d("ProfileFragment request change avatar");
+                final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
+                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
+                startActivityForResult(intent, CODE_CHANGE_AVATAR);
+            };
+            changeAvatarView.setOnClickListener(changeAvatarListener);
+            avatarView.setOnClickListener(changeAvatarListener);
 
-        final View.OnClickListener changeNameListener = v -> startActivity(new Intent(getContext(), UserNameActivity.class));
-        headerView.findViewById(R.id.name).setOnClickListener(changeNameListener);
-        headerView.findViewById(R.id.change_name).setOnClickListener(changeNameListener);
+            final View.OnClickListener changeNameListener = v -> startActivity(new Intent(getContext(), UserNameActivity.class));
+            headerView.findViewById(R.id.name).setOnClickListener(changeNameListener);
+            changeNameView.setOnClickListener(changeNameListener);
+        } else {
+            changeAvatarView.setVisibility(View.GONE);
+            changeNameView.setVisibility(View.GONE);
+            phoneView.setVisibility(View.GONE);
+        }
 
         adapter.addHeader(headerView);
 
         postsView.setAdapter(adapter);
 
         return root;
+    }
+
+    @Override
+    protected boolean shouldOpenProfileOnNamePress() {
+        return false;
     }
 
     @Override
@@ -121,7 +153,9 @@ public class ProfileFragment extends PostsFragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.profile_menu, menu);
+        if (profileUserId.isMe()) {
+            inflater.inflate(R.menu.profile_menu, menu);
+        }
         super.onCreateOptionsMenu(menu,inflater);
     }
 
@@ -136,22 +170,6 @@ public class ProfileFragment extends PostsFragment {
             default: {
                 return super.onOptionsItemSelected(item);
             }
-        }
-    }
-
-    private static class LoadProfileInfoTask extends AsyncTask<Void, Void, Void> {
-
-        final Me me;
-        final MutableLiveData<String> phone = new MutableLiveData<>() ;
-
-        LoadProfileInfoTask(@NonNull Me me) {
-            this.me = me;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            phone.postValue(me.getPhone());
-            return null;
         }
     }
 

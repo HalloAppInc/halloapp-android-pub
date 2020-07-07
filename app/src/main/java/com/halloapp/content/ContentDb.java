@@ -218,17 +218,17 @@ public class ContentDb {
 
     @WorkerThread
     public @NonNull List<Post> getUnseenPosts(long timestamp, int count) {
-        return getPosts(timestamp, count, false, false, true);
+        return getPosts(timestamp, count, false, null, true);
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly) {
-        return getPosts(timestamp, count, after, outgoingOnly, false);
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId) {
+        return getPosts(timestamp, count, after, senderUserId, false);
     }
 
     @WorkerThread
-    private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
-        return postsDb.getPosts(timestamp, count, after, outgoingOnly, unseenOnly);
+    private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, boolean unseenOnly) {
+        return postsDb.getPosts(timestamp, count, after, senderUserId, unseenOnly);
     }
 
     @WorkerThread

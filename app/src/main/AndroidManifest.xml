@@ -67,6 +67,9 @@
             android:name=".ui.privacy.FeedPrivacyActivity"
             android:label="Feed privacy"/>
 
+        <activity
+            android:name=".ui.profile.ViewProfileActivity" />
+
         <activity android:name=".ui.invites.InviteFriendsActivity"
             android:label="@string/invite_friends_title"
             android:windowSoftInputMode="adjustResize"/>

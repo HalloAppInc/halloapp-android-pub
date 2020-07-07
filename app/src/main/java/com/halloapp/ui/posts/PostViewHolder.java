@@ -1,5 +1,6 @@
 package com.halloapp.ui.posts;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -14,12 +15,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.LimitingTextView;
@@ -46,6 +49,9 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     Post post;
 
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
+        public boolean openProfileOnNamePress() {
+            return true;
+        }
     }
 
     PostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
@@ -118,6 +124,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {
             parent.getContactLoader().load(nameView, post.senderUserId);
+            if (parent.openProfileOnNamePress()) {
+                nameView.setOnClickListener(v -> {
+                    parent.startActivity(ViewProfileActivity.viewProfile(v.getContext(), post.senderUserId));
+                });
+            } else {
+                nameView.setClickable(false);
+            }
         }
         if (post.transferred == Post.TRANSFERRED_NO) {
             if (post.isTransferFailed()) {

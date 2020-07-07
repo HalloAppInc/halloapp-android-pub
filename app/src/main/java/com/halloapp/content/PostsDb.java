@@ -379,10 +379,11 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, boolean outgoingOnly, boolean unseenOnly) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
+        String[] selectionArgs = null;
         if (timestamp == null) {
             where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime();
         } else {
@@ -393,8 +394,9 @@ class PostsDb {
             }
         }
 
-        if (outgoingOnly) {
-            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''";
+        if (senderUserId != null) {
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
+            selectionArgs = new String[] {senderUserId.rawId()};
         }
         if (unseenOnly) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0";
@@ -467,7 +469,7 @@ class PostsDb {
             "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
             "LIMIT " + count;
 
-        try (final Cursor cursor = db.rawQuery(sql, null)) {
+        try (final Cursor cursor = db.rawQuery(sql, selectionArgs)) {
 
             long lastRowId = -1;
             Post post = null;
