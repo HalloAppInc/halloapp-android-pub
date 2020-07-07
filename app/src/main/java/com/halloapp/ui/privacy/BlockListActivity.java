@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
@@ -70,6 +71,12 @@ public class BlockListActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_blocklist);
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
+        }
 
         avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
         viewModel = new ViewModelProvider(this).get(BlockListViewModel.class);
