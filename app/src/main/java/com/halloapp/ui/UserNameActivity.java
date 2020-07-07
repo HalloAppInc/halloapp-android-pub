@@ -113,12 +113,6 @@ public class UserNameActivity extends HalloActivity {
         Log.i("UserNameActivity.onDestroy");
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
     private void sendName() {
         final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
         if (TextUtils.isEmpty(name)) {

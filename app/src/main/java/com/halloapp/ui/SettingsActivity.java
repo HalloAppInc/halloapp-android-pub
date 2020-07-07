@@ -7,16 +7,13 @@ import android.os.StrictMode;
 import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Log;
@@ -48,12 +45,6 @@ public class SettingsActivity extends HalloActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("SettingsActivity.onDestroy");
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     public static class SettingsFragment extends HalloPreferenceFragment {

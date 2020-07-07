@@ -17,7 +17,6 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
@@ -131,12 +130,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public void onDestroy() {
         super.onDestroy();
         thumbnailLoader.destroy();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     @Override

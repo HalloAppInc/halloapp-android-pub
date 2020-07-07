@@ -29,4 +29,10 @@ public class HalloActivity extends AppCompatActivity {
             super.startActivityForResult(intent, requestCode);
         });
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

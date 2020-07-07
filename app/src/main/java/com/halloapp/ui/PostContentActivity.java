@@ -17,7 +17,6 @@ import android.view.WindowManager;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
@@ -213,12 +212,6 @@ public class PostContentActivity extends HalloActivity {
         contactLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance(this).removeObserver(contactsObserver);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     private void showPost(@Nullable Post post) {

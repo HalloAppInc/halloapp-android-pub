@@ -105,12 +105,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contacts_menu, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);

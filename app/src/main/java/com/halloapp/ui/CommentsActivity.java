@@ -20,7 +20,6 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
@@ -304,12 +303,6 @@ public class CommentsActivity extends HalloActivity {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_REPLY_USER_ID, replyUserId == null ? null : replyUserId.rawId());
         outState.putString(KEY_REPLY_COMMENT_ID, replyCommentId);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     @Override

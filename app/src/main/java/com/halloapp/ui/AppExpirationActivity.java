@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.util.Log;
@@ -49,12 +47,6 @@ public class AppExpirationActivity extends HalloActivity {
                 CenterToast.show(AppExpirationActivity.this, R.string.app_expiration_no_play_store);
             }
         });
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     public static void open(Context context, int daysLeft) {

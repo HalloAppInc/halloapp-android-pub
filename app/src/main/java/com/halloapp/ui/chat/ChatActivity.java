@@ -331,12 +331,6 @@ public class ChatActivity extends HalloActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
             final UserId userId = new UserId(chatId);

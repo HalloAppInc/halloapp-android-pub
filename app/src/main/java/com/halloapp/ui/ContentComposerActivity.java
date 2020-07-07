@@ -1,10 +1,8 @@
 package com.halloapp.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,7 +12,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,11 +26,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -51,14 +45,11 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
-import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.CenterToast;
-import com.halloapp.widget.ClippedBitmapDrawable;
 import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
-import com.halloapp.widget.PlaceholderDrawable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -363,12 +354,6 @@ public class ContentComposerActivity extends HalloActivity {
         Log.d("ContentComposerActivity: onDestroy");
         fullThumbnailLoader.destroy();
         smallThumbnailLoader.destroy();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     @Override

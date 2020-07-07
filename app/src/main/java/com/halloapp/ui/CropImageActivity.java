@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -95,12 +94,6 @@ public class CropImageActivity extends HalloActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("ImageCropActivity: onDestroy");
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     @Override

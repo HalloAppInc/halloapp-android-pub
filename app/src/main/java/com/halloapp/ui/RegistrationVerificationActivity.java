@@ -15,7 +15,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -128,12 +127,6 @@ public class RegistrationVerificationActivity extends HalloActivity {
         super.onDestroy();
         Log.i("RegistrationVerificationActivity.onDestroy");
         SmsVerificationManager.getInstance().removeObserver(smsVerificationObserver);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     private void startVerification(@NonNull String phone, @NonNull String code) {

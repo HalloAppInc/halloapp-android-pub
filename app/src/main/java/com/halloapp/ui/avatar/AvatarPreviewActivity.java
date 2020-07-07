@@ -21,7 +21,6 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,7 +33,6 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.media.Uploader;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
@@ -44,17 +42,13 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.CropPhotoView;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.MediaUploadIq;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -124,12 +118,6 @@ public class AvatarPreviewActivity extends HalloActivity {
         super.onDestroy();
         Log.d("AvatarPreviewActivity: onDestroy");
         mediaThumbnailLoader.destroy();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     @Override
