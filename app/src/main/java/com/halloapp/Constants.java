@@ -27,6 +27,6 @@ public class Constants {
 
     public static final boolean ENCRYPTION_TURNED_ON = true;
     public static final boolean REREQUEST_SEND_ENABLED = true;
-    public static final boolean INVITES_ENABLED = false;
+    public static final boolean INVITES_ENABLED = true;
     public static final int MAX_REREQUESTS_PER_MESSAGE = 1;
 }
