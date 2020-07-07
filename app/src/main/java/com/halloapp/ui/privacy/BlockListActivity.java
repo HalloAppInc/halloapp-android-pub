@@ -100,15 +100,18 @@ public class BlockListActivity extends HalloActivity {
                 content.setVisibility(View.GONE);
             }
         });
-        viewModel.blockList.getLiveData().observe(this, this::setBlockedContacts);
+        viewModel.getBlockList().observe(this, this::setBlockedContacts);
+        viewModel.fetchBlockList();
     }
 
-    private void setBlockedContacts(List<Contact> contacts) {
+    private void setBlockedContacts(@Nullable List<Contact> contacts) {
         blockedUsers.clear();
-        for (Contact contact : contacts) {
-            blockedUsers.add(contact.userId);
+        if (contacts != null) {
+            for (Contact contact : contacts) {
+                blockedUsers.add(contact.userId);
+            }
         }
-        emptyContainer.setVisibility(contacts.isEmpty() ? View.VISIBLE : View.GONE);
+        emptyContainer.setVisibility(blockedUsers.isEmpty() ? View.VISIBLE : View.GONE);
         adapter.setBlockedContacts(contacts);
     }
 

@@ -9,41 +9,39 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.privacy.FeedPrivacy;
-import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.PrivacyList;
+import com.halloapp.xmpp.privacy.PrivacyList;
+import com.halloapp.xmpp.privacy.PrivacyListApi;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class FeedPrivacyViewModel extends AndroidViewModel {
 
-    private BgWorkers bgWorkers;
     private Connection connection;
+    private PrivacyListApi privacyListApi;
 
-    final ComputableLiveData<FeedPrivacy> feedPrivacy;
+    private MutableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     public FeedPrivacyViewModel(@NonNull Application application) {
         super(application);
 
-        bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
+        privacyListApi = new PrivacyListApi(connection);
+    }
 
-        feedPrivacy = new ComputableLiveData<FeedPrivacy>() {
-            @Override
-            protected FeedPrivacy compute() {
-                try {
-                    return connection.getFeedPrivacy().get();
-                } catch (ExecutionException | InterruptedException e) {
-                    Log.e("FeedPrivacyViewModel failed to get feed privacy", e);
-                }
-                return null;
-            }
-        };
+    @NonNull
+    public LiveData<FeedPrivacy> getFeedPrivacy() {
+        if (feedPrivacyLiveData == null) {
+            feedPrivacyLiveData = new MutableLiveData<>();
+            privacyListApi.getFeedPrivacy().onResponse(result -> {
+                feedPrivacyLiveData.postValue(result);
+            }).onError(exception -> {
+                feedPrivacyLiveData.postValue(null);
+            });
+        }
+        return feedPrivacyLiveData;
     }
 
     private void diffList(@NonNull List<UserId> oldList, @NonNull List<UserId> newList, List<UserId> addedUsers, List<UserId> deletedUsers) {
@@ -62,7 +60,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
     }
 
     public boolean hasChanges(@PrivacyList.Type String newSetting, @NonNull List<UserId> userIds) {
-        FeedPrivacy privacy = feedPrivacy.getLiveData().getValue();
+        FeedPrivacy privacy = feedPrivacyLiveData.getValue();
         if (privacy == null) {
             return false;
         }
@@ -84,10 +82,11 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
         return true;
     }
 
+    @NonNull
     public LiveData<Boolean> savePrivacy(@PrivacyList.Type String newSetting, @NonNull List<UserId> userIds) {
         MutableLiveData<Boolean> savingLiveData = new MutableLiveData<>();
-        FeedPrivacy privacy = feedPrivacy.getLiveData().getValue();
-        if (privacy == null) {
+        FeedPrivacy feedPrivacy = feedPrivacyLiveData.getValue();
+        if (feedPrivacy == null) {
             savingLiveData.setValue(Boolean.TRUE);
             return savingLiveData;
         }
@@ -97,28 +96,23 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
             case PrivacyList.Type.ALL:
                 break;
             case PrivacyList.Type.EXCEPT:
-                diffList(privacy.exceptList, userIds, addedUsers, deletedUsers);
+                diffList(feedPrivacy.exceptList, userIds, addedUsers, deletedUsers);
                 break;
             case PrivacyList.Type.ONLY:
-                diffList(privacy.onlyList, userIds, addedUsers, deletedUsers);
+                diffList(feedPrivacy.onlyList, userIds, addedUsers, deletedUsers);
                 break;
         }
-        if (newSetting.equals(privacy.activeList)) {
+        if (newSetting.equals(feedPrivacy.activeList)) {
             if (addedUsers.isEmpty() && deletedUsers.isEmpty()) {
                 savingLiveData.setValue(Boolean.TRUE);
                 return savingLiveData;
             }
         }
-        bgWorkers.execute(() -> {
-            boolean result = false;
-            try {
-                result = connection.setFeedPrivacy(newSetting, addedUsers, deletedUsers).get();
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("FeedPrivacyViewModel/savePrivacy failed", e);
-                savingLiveData.setValue(Boolean.FALSE);
-            }
-            savingLiveData.postValue(result);
-        });
+        privacyListApi.setFeedPrivacy(newSetting, addedUsers, deletedUsers)
+                .onError(e -> {
+                    savingLiveData.postValue(Boolean.FALSE);
+                })
+                .onResponse(savingLiveData::postValue);
         return savingLiveData;
     }
 

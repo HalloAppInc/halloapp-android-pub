@@ -1,5 +1,6 @@
-package com.halloapp.xmpp;
+package com.halloapp.xmpp.privacy;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 
 import com.halloapp.contacts.UserId;
@@ -28,8 +29,8 @@ public class PrivacyList implements ExtensionElement {
     static final String TYPE_ADD = "add";
     static final String TYPE_DELETE = "delete";
 
-    final Map<UserId, String> typeMap = new HashMap<>();
-    final List<UserId> userIds = new ArrayList<>();
+    public final Map<UserId, String> typeMap = new HashMap<>();
+    public final List<UserId> userIds = new ArrayList<>();
 
     public @Type String type;
 
@@ -73,6 +74,11 @@ public class PrivacyList implements ExtensionElement {
                 Xml.skip(parser);
             }
         }
+    }
+
+    @NonNull
+    public List<UserId> getUserIds() {
+        return userIds;
     }
 
     @Override

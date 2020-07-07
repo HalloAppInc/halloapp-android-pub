@@ -20,15 +20,19 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
-import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
+import com.halloapp.xmpp.util.BackgroundObservable;
+import com.halloapp.xmpp.util.Observable;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackFuture;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -79,6 +83,8 @@ public class Connection {
 
     public static final String FEED_THREAD_ID = "feed";
 
+    private BgWorkers bgWorkers;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
     private PubSubHelper pubSubHelper;
@@ -92,7 +98,7 @@ public class Connection {
         if (instance == null) {
             synchronized(Connection.class) {
                 if (instance == null) {
-                    instance = new Connection();
+                    instance = new Connection(BgWorkers.getInstance());
                 }
             }
         }
@@ -121,11 +127,13 @@ public class Connection {
         void onUserNamesReceived(@NonNull Map<UserId, String> names);
     }
 
-    private Connection() {
+    private Connection(BgWorkers bgWorkers) {
+        this.bgWorkers = bgWorkers;
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
         SmackConfiguration.DEBUG = BuildConfig.DEBUG;
         Roster.setRosterLoadedAtLoginDefault(false);
+
     }
 
     public void setObserver(@NonNull Observer observer) {
@@ -502,69 +510,6 @@ public class Connection {
         });
     }
 
-    public Future<FeedPrivacy> getFeedPrivacy() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot get feed privacy, no connection");
-                return null;
-            }
-            final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(connection.getXMPPServiceDomain(), PrivacyList.Type.ONLY, PrivacyList.Type.EXCEPT);
-            final PrivacyListsResponseIq response = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            final PrivacyList exceptList = response.getPrivacyList(PrivacyList.Type.EXCEPT);
-            final PrivacyList onlyList = response.getPrivacyList(PrivacyList.Type.ONLY);
-            return new FeedPrivacy(response.activeType, exceptList == null ? null : exceptList.userIds, onlyList == null ? null : onlyList.userIds);
-        });
-    }
-
-    public Future<Boolean> setFeedPrivacy(@PrivacyList.Type String activeList, List<UserId> addedUsers, List<UserId> deletedUsers) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot block users, no connection");
-                return false;
-            }
-            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), activeList, addedUsers, deletedUsers);
-            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            return true;
-        });
-    }
-
-    public Future<List<UserId>> getBlockList() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot get blocklist, no connection");
-                return null;
-            }
-            final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK);
-            final PrivacyListsResponseIq response = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            final PrivacyList list = response.getPrivacyList(PrivacyList.Type.BLOCK);
-            return list == null ? null : list.userIds;
-        });
-    }
-
-    public Future<Boolean> blockUsers(@NonNull Collection<UserId> users) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot block users, no connection");
-                return false;
-            }
-            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, users, null);
-            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            return true;
-        });
-    }
-
-    public Future<Boolean> unblockUsers(@NonNull Collection<UserId> users) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: unblock users, no connection");
-                return false;
-            }
-            final SetPrivacyListIq requestIq = new SetPrivacyListIq(connection.getXMPPServiceDomain(), PrivacyList.Type.BLOCK, null, users);
-            connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            return true;
-        });
-    }
-
     public Future<Integer> getAvailableInviteCount() {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
@@ -737,6 +682,28 @@ public class Connection {
                 Log.e("connection: cannot send message", e);
             }
         });
+    }
+
+    public <T extends IQ> Observable<T> sendRequestIq(@NonNull IQ iq) {
+        BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send iq " + iq + ", no connection");
+                iqResponse.setException(new SmackException.NotConnectedException());
+                return;
+            }
+            iq.setTo(connection.getXMPPServiceDomain());
+            SmackFuture<IQ, Exception> futureResponse = connection.sendIqRequestAsync(iq);
+            futureResponse.onSuccess(resultIq -> {
+                try {
+                    iqResponse.setResponse((T) resultIq);
+                } catch (ClassCastException e) {
+                    iqResponse.setException(e);
+                }
+            });
+            futureResponse.onError(iqResponse::setException);
+        });
+        return iqResponse;
     }
 
     public void sendRerequest(final @NonNull Jid originalSender, final @NonNull String messageId) {

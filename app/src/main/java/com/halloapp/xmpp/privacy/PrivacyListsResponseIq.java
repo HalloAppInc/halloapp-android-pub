@@ -1,4 +1,4 @@
-package com.halloapp.xmpp;
+package com.halloapp.xmpp.privacy;
 
 import androidx.annotation.Nullable;
 
@@ -20,11 +20,11 @@ public class PrivacyListsResponseIq extends IQ {
 
     static final String ELEMENT_PRIVACY_LIST = "privacy_list";
 
-    final @PrivacyList.Type String activeType;
+    public final @PrivacyList.Type String activeType;
 
     public Map<String, PrivacyList> resultMap = new HashMap<>();
 
-    public PrivacyListsResponseIq(XmlPullParser parser) throws IOException, XmlPullParserException {
+    protected PrivacyListsResponseIq(XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);
 
         activeType = parser.getAttributeValue(null, "active_type");

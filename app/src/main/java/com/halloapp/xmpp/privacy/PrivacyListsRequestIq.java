@@ -1,7 +1,6 @@
-package com.halloapp.xmpp;
+package com.halloapp.xmpp.privacy;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,9 +16,8 @@ public class PrivacyListsRequestIq extends IQ {
 
     private List<String> requestedTypes = new ArrayList<>();
 
-    public PrivacyListsRequestIq(Jid to, @PrivacyList.Type String... types) {
+    protected PrivacyListsRequestIq(@PrivacyList.Type String... types) {
         super(ELEMENT, NAMESPACE);
-        setTo(to);
         setType(Type.get);
         requestedTypes.addAll(Arrays.asList(types));
     }

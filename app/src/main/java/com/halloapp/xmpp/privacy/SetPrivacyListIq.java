@@ -1,13 +1,12 @@
-package com.halloapp.xmpp;
+package com.halloapp.xmpp.privacy;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.contacts.UserId;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.XmlStringBuilder;
-import org.jxmpp.jid.Jid;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,9 +22,8 @@ public class SetPrivacyListIq extends IQ {
     private List<UserId> usersAdd = new ArrayList<>();
     private List<UserId> usersDelete = new ArrayList<>();
 
-    protected SetPrivacyListIq(@NonNull Jid to, @PrivacyList.Type String listType, @Nullable Collection<UserId> usersToAdd, @Nullable Collection<UserId> usersToDelete) {
+    protected SetPrivacyListIq(@PrivacyList.Type String listType, @Nullable Collection<UserId> usersToAdd, @Nullable Collection<UserId> usersToDelete) {
         super(ELEMENT, NAMESPACE);
-        setTo(to);
         setType(Type.set);
         this.type = listType;
         if (usersToAdd != null) {

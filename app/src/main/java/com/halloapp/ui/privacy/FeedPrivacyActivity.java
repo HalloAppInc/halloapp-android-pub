@@ -20,7 +20,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
-import com.halloapp.xmpp.PrivacyList;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +83,7 @@ public class FeedPrivacyActivity extends HalloActivity {
         TextView errorView = findViewById(R.id.error_msg);
 
         viewModel = new ViewModelProvider(this).get(FeedPrivacyViewModel.class);
-        viewModel.feedPrivacy.getLiveData().observe(this, feedPrivacy -> {
+        viewModel.getFeedPrivacy().observe(this, feedPrivacy -> {
             progressSpinner.setVisibility(View.GONE);
             if (feedPrivacy == null) {
                 errorView.setVisibility(View.VISIBLE);
@@ -100,7 +100,7 @@ public class FeedPrivacyActivity extends HalloActivity {
         View update = findViewById(R.id.save);
         update.setOnClickListener(v -> {
             selectedType = getSelectedType();
-            FeedPrivacy feedPrivacy = viewModel.feedPrivacy.getLiveData().getValue();
+            FeedPrivacy feedPrivacy = viewModel.getFeedPrivacy().getValue();
             if (selectedType != null && feedPrivacy != null) {
                 List<UserId> currentList = getCurrentList();
                 if (viewModel.hasChanges(selectedType, currentList)) {
