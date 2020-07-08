@@ -1,6 +1,5 @@
 package com.halloapp.ui.posts;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -15,7 +14,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
@@ -49,7 +47,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     Post post;
 
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
-        public boolean openProfileOnNamePress() {
+        public boolean shouldOpenProfileOnNamePress() {
             return true;
         }
     }
@@ -124,7 +122,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {
             parent.getContactLoader().load(nameView, post.senderUserId);
-            if (parent.openProfileOnNamePress()) {
+            if (parent.shouldOpenProfileOnNamePress()) {
                 nameView.setOnClickListener(v -> {
                     parent.startActivity(ViewProfileActivity.viewProfile(v.getContext(), post.senderUserId));
                 });

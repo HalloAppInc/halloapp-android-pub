@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -212,8 +211,8 @@ public class PostsFragment extends HalloFragment {
             }
 
             @Override
-            public boolean openProfileOnNamePress() {
-                return shouldOpenProfileOnNamePress();
+            public boolean shouldOpenProfileOnNamePress() {
+                return PostsFragment.this.shouldOpenProfileOnNamePress();
             }
         };
 
