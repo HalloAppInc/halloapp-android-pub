@@ -22,9 +22,9 @@ class MessageCipher {
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
 
-    MessageCipher() {
-        this.keyManager = KeyManager.getInstance();
-        this.encryptedKeyStore = EncryptedKeyStore.getInstance();
+    MessageCipher(KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
+        this.keyManager = keyManager;
+        this.encryptedKeyStore = encryptedKeyStore;
     }
 
     byte[] convertFromWire(byte[] message, UserId peerUserId) throws GeneralSecurityException {

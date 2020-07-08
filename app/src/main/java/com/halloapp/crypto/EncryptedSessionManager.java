@@ -49,18 +49,19 @@ public class EncryptedSessionManager {
         if (instance == null) {
             synchronized (EncryptedSessionManager.class) {
                 if (instance == null) {
-                    instance = new EncryptedSessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance(), new MessageCipher());
+                    instance = new EncryptedSessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private EncryptedSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore, MessageCipher messageCipher) {
+    private EncryptedSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
         this.connection = connection;
         this.keyManager = keyManager;
         this.encryptedKeyStore = encryptedKeyStore;
-        this.messageCipher = messageCipher;
+
+        this.messageCipher = new MessageCipher(keyManager, encryptedKeyStore);
     }
 
     public void init(Context context) {
@@ -123,7 +124,7 @@ public class EncryptedSessionManager {
     }
 
     public List<byte[]> getFreshOneTimePreKeyProtos() {
-        Set<OneTimePreKey> keys = EncryptedKeyStore.getInstance().getNewBatchOfOneTimePreKeys();
+        Set<OneTimePreKey> keys = encryptedKeyStore.getNewBatchOfOneTimePreKeys();
         List<byte[]> protoKeys = new ArrayList<>();
         for (OneTimePreKey otpk : keys) {
             com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
