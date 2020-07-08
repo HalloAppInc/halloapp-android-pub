@@ -137,6 +137,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
 
+        private final Registration registration = Registration.getInstance();
+
         private final MutableLiveData<Registration.RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
 
         public RegistrationVerificationViewModel(@NonNull Application application) {
@@ -166,7 +168,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            final Registration.RegistrationVerificationResult result = Registration.getInstance().verifyRegistration(phone, code, Me.getInstance(viewModel.getApplication()).getName());
+            final Registration.RegistrationVerificationResult result = viewModel.registration.verifyRegistration(phone, code, Me.getInstance(viewModel.getApplication()).getName());
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
                 Context context = viewModel.getApplication();
                 final Me me = Me.getInstance(context);

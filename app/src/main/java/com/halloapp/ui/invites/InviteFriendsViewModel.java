@@ -29,7 +29,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
         super(application);
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
-
+        
         inviteCountData = new ComputableLiveData<Integer>() {
             @Override
             protected Integer compute() {

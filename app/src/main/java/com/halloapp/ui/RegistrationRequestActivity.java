@@ -186,6 +186,8 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     public static class RegistrationRequestViewModel extends AndroidViewModel {
 
+        private final Registration registration = Registration.getInstance();
+
         private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
 
         public RegistrationRequestViewModel(@NonNull Application application) {
@@ -216,7 +218,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         @Override
         protected Registration.RegistrationRequestResult doInBackground(Void... voids) {
             Me.getInstance(viewModel.getApplication()).saveName(name);
-            return Registration.getInstance().requestRegistration(phone);
+            return viewModel.registration.requestRegistration(phone);
         }
 
         @Override
