@@ -10,6 +10,7 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.UserId;
@@ -84,13 +85,13 @@ public class Connection {
     public static final String FEED_THREAD_ID = "feed";
 
     private BgWorkers bgWorkers;
+    private ConnectionObservers connectionObservers;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private @Nullable XMPPTCPConnection connection;
     private PubSubHelper pubSubHelper;
     private Me me;
     private Preferences preferences;
-    private Observer observer;
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
 
@@ -98,7 +99,7 @@ public class Connection {
         if (instance == null) {
             synchronized(Connection.class) {
                 if (instance == null) {
-                    instance = new Connection(BgWorkers.getInstance());
+                    instance = new Connection(BgWorkers.getInstance(), ConnectionObservers.getInstance());
                 }
             }
         }
@@ -127,17 +128,13 @@ public class Connection {
         void onUserNamesReceived(@NonNull Map<UserId, String> names);
     }
 
-    private Connection(BgWorkers bgWorkers) {
+    private Connection(BgWorkers bgWorkers, ConnectionObservers connectionObservers) {
         this.bgWorkers = bgWorkers;
+        this.connectionObservers = connectionObservers;
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
         SmackConfiguration.DEBUG = BuildConfig.DEBUG;
         Roster.setRosterLoadedAtLoginDefault(false);
-
-    }
-
-    public void setObserver(@NonNull Observer observer) {
-        this.observer = observer;
     }
 
     public void connect(final @NonNull Context context) {
@@ -217,7 +214,7 @@ public class Connection {
                     .build();
             connection = new XMPPTCPConnection(config, () -> {
                 clientExpired();
-                observer.onClientVersionExpired();
+                connectionObservers.notifyClientVersionExpired();
             });
             connection.setReplyTimeout(REPLY_TIMEOUT);
             connection.setUseStreamManagement(false);
@@ -248,7 +245,7 @@ public class Connection {
             Log.e("connection: cannot login", e);
             disconnectInBackground();
             if ("not-authorized".equals(e.getSASLFailure().getSASLErrorString())) {
-                observer.onLoginFailed();
+                connectionObservers.notifyLoginFailed();
             }
             return;
         } catch (XMPPException | SmackException | IOException | InterruptedException e) {
@@ -259,7 +256,7 @@ public class Connection {
 
         pubSubHelper = new PubSubHelper(connection);
 
-        observer.onConnected();
+        connectionObservers.notifyConnected();
 
         Log.i("connection: connected");
     }
@@ -285,7 +282,7 @@ public class Connection {
             connection.disconnect();
         }
         connection = null;
-        observer.onDisconnected();
+        connectionObservers.notifyDisconnected();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -572,7 +569,7 @@ public class Connection {
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
                 pubSubHelper.publishItem(getMyFeedNodeId(), item);
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-                observer.onOutgoingPostSent(post.id);
+                connectionObservers.notifyOutgoingPostSent(post.id);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
             }
@@ -598,7 +595,7 @@ public class Connection {
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
                 pubSubHelper.retractItem(getMyFeedNodeId(), item);
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-                observer.onOutgoingPostSent(postId);
+                connectionObservers.notifyOutgoingPostSent(postId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot retract post", e);
             }
@@ -627,7 +624,7 @@ public class Connection {
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
                 pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
-                observer.onOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
+                connectionObservers.notifyOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send comment", e);
             }
@@ -653,7 +650,7 @@ public class Connection {
                 final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
                 pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
-                observer.onOutgoingCommentSent(postSenderUserId, postId, commentId);
+                connectionObservers.notifyOutgoingCommentSent(postSenderUserId, postId, commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot retract comment", e);
             }
@@ -675,7 +672,7 @@ public class Connection {
                         message,
                         recipientUserId,
                         sessionSetupInfo));
-                ackHandlers.put(xmppMessage.getStanzaId(), () -> observer.onOutgoingMessageSent(message.chatId, message.id));
+                ackHandlers.put(xmppMessage.getStanzaId(), () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
                 Log.i("connection: sending message " + message.id + " to " + recipientJid);
                 connection.sendStanza(xmppMessage);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
@@ -752,7 +749,7 @@ public class Connection {
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
                 message.addExtension(new SeenReceiptElement(FEED_THREAD_ID, postId));
-                ackHandlers.put(message.getStanzaId(), () -> observer.onIncomingPostSeenReceiptSent(senderUserId, postId));
+                ackHandlers.put(message.getStanzaId(), () -> connectionObservers.notifyIncomingPostSeenReceiptSent(senderUserId, postId));
                 Log.i("connection: sending post seen receipt " + postId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
@@ -772,7 +769,7 @@ public class Connection {
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
                 message.addExtension(new SeenReceiptElement(senderUserId.rawId().equals(chatId) ? null : chatId, messageId));
-                ackHandlers.put(message.getStanzaId(), () -> observer.onIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
+                ackHandlers.put(message.getStanzaId(), () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
                 Log.i("connection: sending message seen receipt " + messageId + " to " + recipientJid);
                 connection.sendStanza(message);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
@@ -878,10 +875,10 @@ public class Connection {
             }
         }
         if (!names.isEmpty()) {
-            observer.onUserNamesReceived(names);
+            connectionObservers.notifyUserNamesReceived(names);
         }
         if (!posts.isEmpty() || !comments.isEmpty()) {
-            observer.onIncomingFeedItemsReceived(posts, comments, ackId);
+            connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
         }
         return !posts.isEmpty() || !comments.isEmpty();
     }
@@ -1029,7 +1026,7 @@ public class Connection {
                     final ChatMessageElement chatMessage = packet.getExtension(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE);
                     if (chatMessage != null) {
                         Log.i("connection: got chat message " + msg);
-                        observer.onIncomingMessageReceived(chatMessage.getMessage(packet.getFrom(), packet.getStanzaId()));
+                        connectionObservers.notifyIncomingMessageReceived(chatMessage.getMessage(packet.getFrom(), packet.getStanzaId()));
                         handled = true;
                     }
                 }
@@ -1039,7 +1036,7 @@ public class Connection {
                         Log.i("connection: got delivery receipt " + msg);
                         final String threadId = deliveryReceipt.getThreadId();
                         final UserId userId = getUserId(packet.getFrom());
-                        observer.onOutgoingMessageDelivered(threadId == null ? userId.rawId() : threadId, userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
+                        connectionObservers.notifyOutgoingMessageDelivered(threadId == null ? userId.rawId() : threadId, userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1050,9 +1047,9 @@ public class Connection {
                         final String threadId = seenReceipt.getThreadId();
                         final UserId userId = getUserId(packet.getFrom());
                         if (FEED_THREAD_ID.equals(threadId)) {
-                            observer.onOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                            connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         } else {
-                            observer.onOutgoingMessageSeen(threadId == null ? userId.rawId() : threadId, userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                            connectionObservers.notifyOutgoingMessageSeen(threadId == null ? userId.rawId() : threadId, userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         }
                         handled = true;
                     }
@@ -1061,7 +1058,7 @@ public class Connection {
                     final ContactList contactList = packet.getExtension(ContactList.ELEMENT, ContactList.NAMESPACE);
                     if (contactList != null) {
                         Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
-                        observer.onContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
+                        connectionObservers.notifyContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1069,7 +1066,7 @@ public class Connection {
                     final WhisperKeysMessage whisperKeysMessage = packet.getExtension(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE);
                     if (whisperKeysMessage != null) {
                         Log.i("connection: got whisper keys message " + msg);
-                        observer.onWhisperKeysMessage(whisperKeysMessage, packet.getStanzaId());
+                        connectionObservers.notifyWhisperKeysMessage(whisperKeysMessage, packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1077,7 +1074,7 @@ public class Connection {
                     final AvatarChangeMessage avatarChangeMessage = packet.getExtension(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE);
                     if (avatarChangeMessage != null) {
                         Log.i("connection: got avatar change message " + msg);
-                        observer.onAvatarChangeMessageReceived(avatarChangeMessage.userId, avatarChangeMessage.avatarId, packet.getStanzaId());
+                        connectionObservers.notifyAvatarChangeMessageReceived(avatarChangeMessage.userId, avatarChangeMessage.avatarId, packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1085,7 +1082,7 @@ public class Connection {
                     final RerequestElement rerequest = packet.getExtension(RerequestElement.ELEMENT, RerequestElement.NAMESPACE);
                     if (rerequest != null) {
                         Log.i("connection: got rerequest message " + msg);
-                        observer.onMessageRerequest(getUserId(packet.getFrom()), rerequest.id, packet.getStanzaId());
+                        connectionObservers.notifyMessageRerequest(getUserId(packet.getFrom()), rerequest.id, packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1112,13 +1109,13 @@ public class Connection {
         @Override
         public void connectionClosed() {
             Log.i("connection: onClosed");
-            observer.onDisconnected();
+            connectionObservers.notifyDisconnected();
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.w("connection: onConnectedOnError", e);
-            observer.onDisconnected();
+            connectionObservers.notifyDisconnected();
         }
     }
 }

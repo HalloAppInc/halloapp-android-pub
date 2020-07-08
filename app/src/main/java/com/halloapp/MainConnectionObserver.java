@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class ConnectionObserver implements Connection.Observer {
+public class MainConnectionObserver implements Connection.Observer {
 
     private final Context context;
 
-    ConnectionObserver(@NonNull Context context) {
+    MainConnectionObserver(@NonNull Context context) {
         this.context = context.getApplicationContext();
     }
 
