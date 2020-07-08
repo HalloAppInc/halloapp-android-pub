@@ -58,7 +58,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             AvatarLoader.getInstance(context),
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),
-                            PresenceLoader.getInstance(Connection.getInstance()),
+                            PresenceLoader.getInstance(),
                             ForegroundObserver.getInstance(),
                             EncryptedSessionManager.getInstance());
                 }
@@ -228,6 +228,11 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onUserNamesReceived(@NonNull Map<UserId, String> names) {
         contactsDb.updateUserNames(names);
+    }
+
+    @Override
+    public void onPresenceReceived(UserId user, Long lastSeen) {
+        presenceLoader.reportPresence(user, lastSeen);
     }
 
     @Override

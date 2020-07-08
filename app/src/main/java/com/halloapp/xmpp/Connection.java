@@ -126,6 +126,7 @@ public class Connection {
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
         public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
         public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
+        public void onPresenceReceived(UserId user, Long lastSeen) {}
     }
 
     private Connection(BgWorkers bgWorkers, ConnectionObservers connectionObservers) {
@@ -993,8 +994,7 @@ public class Connection {
             }
             final PresenceStanza presence = (PresenceStanza) packet;
             Log.i("connection: got presence " + presence);
-            PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.this);
-            presenceLoader.reportPresence(getUserId(packet.getFrom()), ((PresenceStanza) packet).lastSeen);
+            connectionObservers.notifyPresenceReceived(getUserId(packet.getFrom()), ((PresenceStanza) packet).lastSeen);
         }
     }
 

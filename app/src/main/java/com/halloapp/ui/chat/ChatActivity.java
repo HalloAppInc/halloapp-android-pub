@@ -65,7 +65,6 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.PostEditText;
-import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -90,9 +89,11 @@ public class ChatActivity extends HalloActivity {
 
     private String chatId;
 
+    private AvatarLoader avatarLoader;
+    private PresenceLoader presenceLoader;
+
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
-    private AvatarLoader avatarLoader;
     private ReplyLoader replyLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
@@ -132,8 +133,9 @@ public class ChatActivity extends HalloActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(this);
         replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
-        textContentLoader = new TextContentLoader(this);
         avatarLoader = AvatarLoader.getInstance(this);
+        presenceLoader = PresenceLoader.getInstance();
+        textContentLoader = new TextContentLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
@@ -264,7 +266,6 @@ public class ChatActivity extends HalloActivity {
                 final TextView replyNameView = findViewById(R.id.reply_name);
                 replyNameView.setText(contact.getDisplayName());
             }
-            PresenceLoader presenceLoader = PresenceLoader.getInstance(Connection.getInstance());
             presenceLoader.getLastSeenLiveData(contact.userId).observe(this, presenceState -> {
                 if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
                     toolbar.setSubtitle(null);

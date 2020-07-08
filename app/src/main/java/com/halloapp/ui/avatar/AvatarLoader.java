@@ -37,7 +37,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private static AvatarLoader instance;
 
-    private final Connection connection;
     private final Context context;
     private final LruCache<String, Bitmap> cache;
 
@@ -47,15 +46,14 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(Connection.getInstance(), context);
+                    instance = new AvatarLoader(context);
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Connection connection, @NonNull Context context) {
-        this.connection = connection;
+    private AvatarLoader(@NonNull Context context) {
         this.context = context.getApplicationContext();
 
         // Use 1/8th of the available memory for memory cache

@@ -198,4 +198,12 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyPresenceReceived(UserId userId, Long lastSeen) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onPresenceReceived(userId, lastSeen);
+            }
+        }
+    }
+
 }

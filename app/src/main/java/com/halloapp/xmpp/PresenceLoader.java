@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.view.View;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -9,23 +7,22 @@ import com.halloapp.ForegroundChat;
 import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.ViewDataLoader;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PresenceLoader extends ViewDataLoader<View, Long, String> {
+public class PresenceLoader {
 
     private static PresenceLoader instance;
 
     private final Connection connection;
     private final Map<UserId, MutableLiveData<PresenceState>> map = new HashMap<>();
 
-    public static PresenceLoader getInstance(Connection connection) {
+    public static PresenceLoader getInstance() {
         if (instance == null) {
             synchronized (PresenceLoader.class) {
                 if (instance == null) {
-                    instance = new PresenceLoader(connection);
+                    instance = new PresenceLoader(Connection.getInstance());
                 }
             }
         }
