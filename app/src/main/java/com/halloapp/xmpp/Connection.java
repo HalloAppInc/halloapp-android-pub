@@ -121,7 +121,7 @@ public class Connection {
         void onIncomingMessageReceived(@NonNull Message message);
         void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull String stanzaId);
-        void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId);
+        void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId);
         void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId);
         void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId);
         void onUserNamesReceived(@NonNull Map<UserId, String> names);
@@ -1061,7 +1061,7 @@ public class Connection {
                     final ContactList contactList = packet.getExtension(ContactList.ELEMENT, ContactList.NAMESPACE);
                     if (contactList != null) {
                         Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
-                        observer.onContactsChanged(contactList.contacts, packet.getStanzaId());
+                        observer.onContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
                         handled = true;
                     }
                 }

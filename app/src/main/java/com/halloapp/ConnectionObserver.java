@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -150,7 +151,7 @@ public class ConnectionObserver implements Connection.Observer {
     }
 
     @Override
-    public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull String ackId) {
+    public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull List<String> contactHashes, @NonNull String ackId) {
         final List<ContactsDb.NormalizedPhoneData> normalizedPhoneDataList = new ArrayList<>(protocolContacts.size());
         for (ContactInfo contact : protocolContacts) {
             normalizedPhoneDataList.add(new ContactsDb.NormalizedPhoneData(contact.normalizedPhone, new UserId(contact.userId), "friends".equals(contact.role), contact.avatarId));
@@ -158,6 +159,9 @@ public class ConnectionObserver implements Connection.Observer {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
                 ContactsDb.getInstance(context).updateNormalizedPhoneData(normalizedPhoneDataList).get();
+                if (!contactHashes.isEmpty()) {
+                    ContactsSync.getInstance(context).startContactSync(contactHashes);
+                }
                 Connection.getInstance().sendAck(ackId);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ConnectionObserver.onContactsChanged", e);

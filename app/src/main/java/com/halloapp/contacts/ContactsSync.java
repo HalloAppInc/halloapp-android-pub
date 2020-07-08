@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Base64;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -25,7 +26,10 @@ import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +43,7 @@ public class ContactsSync {
     private static final String INCREMENTAL_CONTACT_SYNC_WORK_ID = "contact-sync-incremental";
 
     private static final String WORKER_PARAM_FULL_SYNC = "full_sync";
+    private static final String WORKER_PARAM_CONTACT_HASHES = "contact_hashes";
 
     private static final int CONTACT_SYNC_BATCH_SIZE = 128;
 
@@ -94,16 +99,33 @@ public class ContactsSync {
         WorkManager.getInstance(context).cancelUniqueWork(FULL_CONTACT_SYNC_WORK_ID);
     }
 
-    public void startContactsSync(boolean fullSync) {
-        final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).build();
+    private void startContactsSyncInternal(boolean fullSync, String[] contactHashes) {
+        final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).putStringArray(WORKER_PARAM_CONTACT_HASHES, contactHashes).build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
         lastSyncRequestId = workRequest.getId();
         WorkManager.getInstance(context).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
-    @WorkerThread
-    private ListenableWorker.Result performContactSync(boolean fullSync) {
+    public void startContactsSync(boolean fullSync) {
+        startContactsSyncInternal(fullSync, new String[]{});
+    }
 
+    public void startContactSync(@NonNull List<String> contactHashes) {
+        if (contactHashes.isEmpty()) {
+            Log.w("startContactSync called with empty hash list");
+            return;
+        }
+
+        String[] arr = new String[contactHashes.size()];
+        for (int i=0; i<contactHashes.size(); i++) {
+            arr[i] = contactHashes.get(i);
+        }
+
+        startContactsSyncInternal(false, arr);
+    }
+
+    @WorkerThread
+    private ListenableWorker.Result performContactSync(boolean fullSync, @NonNull List<String> contactHashes) {
         Log.i("ContactsSync.performContactSync");
         final ContactsDb.AddressBookSyncResult syncResult;
         try {
@@ -121,10 +143,11 @@ public class ContactsSync {
         final ListenableWorker.Result result;
         if (fullSync ||
                 preferences.getRequireFullContactsSync() ||
-                preferences.getLastContactsSyncTime() <= 0) {
+                preferences.getLastContactsSyncTime() <= 0 ||
+                contactHashes.contains("")) {
             result = performFullContactSync();
         } else {
-            result = performIncrementalContactSync(syncResult);
+            result = performIncrementalContactSync(syncResult, getHashSyncContacts(contactHashes));
         }
 
         if (ListenableWorker.Result.failure().equals(result)) {
@@ -138,8 +161,44 @@ public class ContactsSync {
         return result;
     }
 
+    private List<Contact> getHashSyncContacts(@NonNull List<String> contactHashStrings) {
+        List<Contact> contactsToSync = new ArrayList<>();
+        List<byte[]> contactHashes = new ArrayList<>();
+        for (String contactHashString : contactHashStrings) {
+            contactHashes.add(Base64.decode(contactHashString, Base64.DEFAULT));
+        }
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("ContactsSync.performHashContactSync: failed to get digest for sha256", e);
+            return contactsToSync;
+        }
+        List<Contact> allContacts = ContactsDb.getInstance(context).getAllContacts();
+        for (Contact contact : allContacts) {
+            String normalizedPhone = contact.normalizedPhone;
+            if (normalizedPhone != null) {
+                byte[] bytes = messageDigest.digest(normalizedPhone.getBytes());
+                for (byte[] contactHash : contactHashes) {
+                    boolean isMatch = true;
+                    for (int i=0; i<contactHash.length; i++) {
+                        if (bytes[i] != contactHash[i]) {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+                    if (isMatch) {
+                        contactsToSync.add(contact);
+                        break;
+                    }
+                }
+            }
+        }
+        return contactsToSync;
+    }
+
     @WorkerThread
-    private ListenableWorker.Result performIncrementalContactSync(@NonNull ContactsDb.AddressBookSyncResult addressBookSyncResult) {
+    private ListenableWorker.Result performIncrementalContactSync(@NonNull ContactsDb.AddressBookSyncResult addressBookSyncResult, @NonNull List<Contact> hashSyncContacts) {
         if (!addressBookSyncResult.removed.isEmpty()) {
             try {
                 Connection.getInstance().syncContacts(null, addressBookSyncResult.removed,
@@ -149,7 +208,7 @@ public class ContactsSync {
                 return ListenableWorker.Result.failure();
             }
         }
-        final ArrayList<Contact> contacts = new ArrayList<>();
+        final ArrayList<Contact> contacts = new ArrayList<>(hashSyncContacts);
         contacts.addAll(addressBookSyncResult.updated);
         contacts.addAll(addressBookSyncResult.added);
         if (contacts.isEmpty()) {
@@ -268,7 +327,12 @@ public class ContactsSync {
 
         @Override
         public @NonNull Result doWork() {
-            final Result result = ContactsSync.getInstance(getApplicationContext()).performContactSync(getInputData().getBoolean(WORKER_PARAM_FULL_SYNC, true));
+            boolean fullSync = getInputData().getBoolean(WORKER_PARAM_FULL_SYNC, true);
+            String[] contactHashes = getInputData().getStringArray(WORKER_PARAM_CONTACT_HASHES);
+            if (contactHashes == null) {
+                contactHashes = new String[]{};
+            }
+            final Result result = ContactsSync.getInstance(getApplicationContext()).performContactSync(fullSync, Arrays.asList(contactHashes));
             if  (!Result.success().equals(result)) {
                 Log.sendErrorReport("ContactsSync failed");
             }

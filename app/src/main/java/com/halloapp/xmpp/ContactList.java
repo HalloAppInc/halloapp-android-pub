@@ -1,5 +1,6 @@
 package com.halloapp.xmpp;
 
+import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -17,8 +18,10 @@ public class ContactList implements ExtensionElement {
     static final String ELEMENT = "contact_list";
 
     private static final String ELEMENT_CONTACT = "contact";
+    private static final String ELEMENT_CONTACT_HASH = "contact_hash";
 
     final List<ContactInfo> contacts = new ArrayList<>();
+    final List<String> contactHashes = new ArrayList<>();
 
     ContactList(XmlPullParser parser) throws IOException, XmlPullParserException {
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -28,6 +31,9 @@ public class ContactList implements ExtensionElement {
             final String name = parser.getName();
             if (ELEMENT_CONTACT.equals(name)) {
                 contacts.add(new ContactInfo(parser));
+            } else if (ELEMENT_CONTACT_HASH.equals(name)) {
+                String hash = Xml.readText(parser);
+                contactHashes.add(hash);
             } else {
                 Xml.skip(parser);
             }
