@@ -43,6 +43,8 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_VERIFICATION = 1;
 
+    private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
+
     private RegistrationRequestViewModel registrationRequestViewModel;
 
     private CountryCodePicker countryCodePicker;
@@ -180,7 +182,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         countryCodePicker.setCcpClickable(false);
         Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
 
-        SmsVerificationManager.getInstance().start(getApplicationContext());
+        smsVerificationManager.start(getApplicationContext());
         registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber(), name);
     }
 

@@ -35,6 +35,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     private static final int CODE_LENGTH = 6;
 
+    private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
+
     private RegistrationVerificationViewModel registrationVerificationViewModel;
 
     private TextView codeEditText;
@@ -115,18 +117,18 @@ public class RegistrationVerificationActivity extends HalloActivity {
         });
         codeEditText.requestFocus();
 
-        final String lastSmsCode = SmsVerificationManager.getInstance().getLastReceivedCode();
+        final String lastSmsCode = smsVerificationManager.getLastReceivedCode();
         if (!TextUtils.isEmpty(lastSmsCode)) {
             codeEditText.setText(lastSmsCode);
         }
-        SmsVerificationManager.getInstance().addObserver(smsVerificationObserver);
+        smsVerificationManager.addObserver(smsVerificationObserver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i("RegistrationVerificationActivity.onDestroy");
-        SmsVerificationManager.getInstance().removeObserver(smsVerificationObserver);
+        smsVerificationManager.removeObserver(smsVerificationObserver);
     }
 
     private void startVerification(@NonNull String phone, @NonNull String code) {

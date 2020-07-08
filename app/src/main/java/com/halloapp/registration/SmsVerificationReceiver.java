@@ -12,6 +12,8 @@ import com.halloapp.util.Log;
 
 public class SmsVerificationReceiver extends BroadcastReceiver {
 
+    private SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {
@@ -32,9 +34,9 @@ public class SmsVerificationReceiver extends BroadcastReceiver {
                     Log.i("SmsVerificationReceiver: got message " + message);
                     final String code = parseSmsMessage(message);
                     if (code != null) {
-                        SmsVerificationManager.getInstance().notifyVerificationSmsReceived(code);
+                        smsVerificationManager.notifyVerificationSmsReceived(code);
                     } else {
-                        SmsVerificationManager.getInstance().notifyVerificationSmsFailed();
+                        smsVerificationManager.notifyVerificationSmsFailed();
                     }
                     break;
                 case CommonStatusCodes.TIMEOUT:
