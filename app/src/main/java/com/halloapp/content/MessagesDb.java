@@ -495,6 +495,8 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "m." + MediaTable.COLUMN_ENC_KEY + ", " +
+                "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
                 "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
@@ -508,6 +510,8 @@ class MessagesDb {
                     MediaTable.COLUMN_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_ENC_KEY + ", " +
+                    MediaTable.COLUMN_SHA256_HASH + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
@@ -531,8 +535,8 @@ class MessagesDb {
                             cursor.getLong(4),
                             cursor.getInt(5),
                             cursor.getString(6),
-                            cursor.getString(15),
-                            cursor.getInt(16),
+                            cursor.getString(17),
+                            cursor.getInt(18),
                             cursor.getInt(7));
                     mentionsDb.fillMentions(message);
                 }
@@ -542,8 +546,8 @@ class MessagesDb {
                             cursor.getInt(9),
                             cursor.getString(10),
                             fileStore.getMediaFile(cursor.getString(11)),
-                            null,
-                            null,
+                            cursor.getBlob(15),
+                            cursor.getBlob(16),
                             cursor.getInt(12),
                             cursor.getInt(13),
                             cursor.getInt(14)));
