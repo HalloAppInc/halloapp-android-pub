@@ -41,6 +41,6 @@
     <!-- Message Bubbles -->
     <dimen name="message_bubble_corner_radius">20dp</dimen>
     <dimen name="message_bubble_corner_sequence_radius">6dp</dimen>
-    <dimen name="message_vertical_separator_sequence">1dp</dimen>
+    <dimen name="message_vertical_separator_sequence">2dp</dimen>
     <dimen name="message_vertical_separator">6dp</dimen>
 </resources>

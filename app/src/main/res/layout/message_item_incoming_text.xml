@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="16dp"
-        android:paddingTop="@dimen/message_vertical_separator_sequence"
         android:paddingEnd="64dp">
 
         <LinearLayout

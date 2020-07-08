@@ -13,7 +13,6 @@
         android:paddingStart="25dp"
         android:textColor="@color/post_timestamp"
         android:textSize="10sp"
-        android:paddingBottom="@dimen/message_vertical_separator_sequence"
         tools:text="11:49 PM"/>
 
 </FrameLayout>
