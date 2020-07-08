@@ -62,8 +62,8 @@
         <item quantity="other">%d days ago</item>
     </plurals>
     <plurals name="max_post_media_items">
-        <item quantity="one">Cannot post more than %d media at a time</item>
-        <item quantity="other">Cannot post more than %d media at a time</item>
+        <item quantity="one">You can select up to %d item per post</item>
+        <item quantity="other">You can select up to %d items per post</item>
     </plurals>
     <string name="contacts_permission_rationale">To connect with your friends and family we need a permission to access contacts on your device</string>
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need a permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>

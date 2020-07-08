@@ -119,6 +119,7 @@
 
         <activity
             android:name=".ui.mediapicker.MediaPickerActivity"
+            android:theme="@style/AppTheme.MediaPickerActivity"
             android:label="@string/gallery"/>
 
         <activity
