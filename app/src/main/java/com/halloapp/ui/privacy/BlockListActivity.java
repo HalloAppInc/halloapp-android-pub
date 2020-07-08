@@ -17,8 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,12 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.UserId;
-import com.halloapp.content.ContentDb;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.util.Preconditions;
-import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +74,7 @@ public class BlockListActivity extends HalloActivity {
             actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
         }
 
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        avatarLoader = AvatarLoader.getInstance(this);
         viewModel = new ViewModelProvider(this).get(BlockListViewModel.class);
 
         RecyclerView recyclerView = findViewById(R.id.block_list_recyclerview);

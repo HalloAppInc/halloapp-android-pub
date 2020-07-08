@@ -43,11 +43,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private Bitmap defaultAvatar;
 
-    public static AvatarLoader getInstance(@NonNull Connection connection, @NonNull Context context) {
+    public static AvatarLoader getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(connection, context);
+                    instance = new AvatarLoader(Connection.getInstance(), context);
                 }
             }
         }

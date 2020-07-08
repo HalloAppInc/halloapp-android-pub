@@ -28,126 +28,182 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MainConnectionObserver implements Connection.Observer {
+public class MainConnectionObserver extends Connection.Observer {
+
+    private static MainConnectionObserver instance;
 
     private final Context context;
 
-    MainConnectionObserver(@NonNull Context context) {
+    private Me me;
+    private ContentDb contentDb;
+    private Connection connection;
+    private ContactsDb contactsDb;
+    private AvatarLoader avatarLoader;
+    private Notifications notifications;
+    private ForegroundChat foregroundChat;
+    private PresenceLoader presenceLoader;
+    private ForegroundObserver foregroundObserver;
+    private EncryptedSessionManager encryptedSessionManager;
+
+    public static MainConnectionObserver getInstance(@NonNull Context context) {
+        if (instance == null) {
+            synchronized (MainConnectionObserver.class) {
+                if (instance == null) {
+                    instance = new MainConnectionObserver(
+                            context,
+                            Me.getInstance(context),
+                            ContentDb.getInstance(context),
+                            Connection.getInstance(),
+                            ContactsDb.getInstance(context),
+                            AvatarLoader.getInstance(context),
+                            Notifications.getInstance(context),
+                            ForegroundChat.getInstance(),
+                            PresenceLoader.getInstance(Connection.getInstance()),
+                            ForegroundObserver.getInstance(),
+                            EncryptedSessionManager.getInstance());
+                }
+            }
+        }
+        return instance;
+    }
+
+
+    MainConnectionObserver(
+            @NonNull Context context,
+            @NonNull Me me,
+            @NonNull ContentDb contentDb,
+            @NonNull Connection connection,
+            @NonNull ContactsDb contactsDb,
+            @NonNull AvatarLoader avatarLoader,
+            @NonNull Notifications notifications,
+            @NonNull ForegroundChat foregroundChat,
+            @NonNull PresenceLoader presenceLoader,
+            @NonNull ForegroundObserver foregroundObserver,
+            @NonNull EncryptedSessionManager encryptedSessionManager) {
         this.context = context.getApplicationContext();
+
+        this.me = me;
+        this.contentDb = contentDb;
+        this.connection = connection;
+        this.contactsDb = contactsDb;
+        this.avatarLoader = avatarLoader;
+        this.notifications = notifications;
+        this.foregroundChat = foregroundChat;
+        this.presenceLoader = presenceLoader;
+        this.foregroundObserver = foregroundObserver;
+        this.encryptedSessionManager = encryptedSessionManager;
     }
 
     @Override
     public void onConnected() {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
-                EncryptedSessionManager.getInstance().ensureKeysUploaded(Connection.getInstance());
+                encryptedSessionManager.ensureKeysUploaded();
             } catch (Exception e) {
                 Log.e("Failed to ensure keys uploaded", e);
             }
         });
 
-        Connection.getInstance().updatePresence(ForegroundObserver.getInstance().isInForeground());
+        connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
         HalloApp.sendPushTokenFromFirebase();
-        new RequestExpirationInfoTask(Connection.getInstance(), context).execute();
-        PresenceLoader.getInstance(Connection.getInstance()).onReconnect();
+        new RequestExpirationInfoTask(connection, context).execute();
+        presenceLoader.onReconnect();
     }
 
     @Override
     public void onDisconnected() {
-        PresenceLoader.getInstance(Connection.getInstance()).onDisconnect();
+        presenceLoader.onDisconnect();
     }
 
     @Override
     public void onLoginFailed() {
-        Me.getInstance(context).resetRegistration();
-        if (ForegroundObserver.getInstance().isInForeground()) {
+        me.resetRegistration();
+        if (foregroundObserver.isInForeground()) {
             RegistrationRequestActivity.reVerify(context);
         } else {
-            Notifications.getInstance(context).showLoginFailedNotification();
+            notifications.showLoginFailedNotification();
         }
     }
 
     @Override
     public void onClientVersionExpired() {
-        if (ForegroundObserver.getInstance().isInForeground()) {
+        if (foregroundObserver.isInForeground()) {
             AppExpirationActivity.open(context, 0);
         } else {
-            Notifications.getInstance(context).showExpirationNotification(0);
+            notifications.showExpirationNotification(0);
         }
     }
 
     @Override
     public void onOutgoingPostSent(@NonNull String postId) {
-        ContentDb.getInstance(context).setPostTransferred(UserId.ME, postId);
+        contentDb.setPostTransferred(UserId.ME, postId);
     }
 
     @Override
     public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comments, @NonNull String ackId) {
-        ContentDb.getInstance(context).addFeedItems(posts, comments, () -> Connection.getInstance().sendAck(ackId));
+        contentDb.addFeedItems(posts, comments, () -> connection.sendAck(ackId));
     }
 
     @Override
     public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {
-        ContentDb.getInstance(context).setOutgoingPostSeen(seenByUserId, postId, timestamp, () -> Connection.getInstance().sendAck(ackId));
+        contentDb.setOutgoingPostSeen(seenByUserId, postId, timestamp, () -> connection.sendAck(ackId));
     }
 
     @Override
     public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
-        ContentDb.getInstance(context).setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
+        contentDb.setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
     }
 
     @Override
     public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
-        ContentDb.getInstance(context).setPostSeenReceiptSent(senderUserId, postId);
+        contentDb.setPostSeenReceiptSent(senderUserId, postId);
     }
 
     @Override
     public void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {
-        ContentDb.getInstance(context).setMessageTransferred(chatId, UserId.ME, messageId);
+        contentDb.setMessageTransferred(chatId, UserId.ME, messageId);
     }
 
     @Override
     public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
-        ContentDb.getInstance(context).setOutgoingMessageDelivered(chatId, userId, id, timestamp, () -> Connection.getInstance().sendAck(stanzaId));
+        contentDb.setOutgoingMessageDelivered(chatId, userId, id, timestamp, () -> connection.sendAck(stanzaId));
     }
 
     @Override
     public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
-        ContentDb.getInstance(context).setOutgoingMessageSeen(chatId, userId, id, timestamp, () -> Connection.getInstance().sendAck(stanzaId));
+        contentDb.setOutgoingMessageSeen(chatId, userId, id, timestamp, () -> connection.sendAck(stanzaId));
     }
 
     @Override
     public void onIncomingMessageReceived(@NonNull Message message) {
-        final boolean isMessageForForegroundChat = ForegroundChat.getInstance().isForegroundChatId(message.chatId);
+        final boolean isMessageForForegroundChat = foregroundChat.isForegroundChatId(message.chatId);
         final Runnable completionRunnable = () -> {
-            final Connection connection = Connection.getInstance();
             if (isMessageForForegroundChat) {
                 connection.sendMessageSeenReceipt(message.chatId, message.senderUserId, message.id);
             }
             connection.sendAck(message.id);
         };
         if (message.isRetracted()) {
-            ContentDb.getInstance(context).retractMessage(message, completionRunnable);
+            contentDb.retractMessage(message, completionRunnable);
         } else {
-            ContentDb.getInstance(context).addMessage(message, !isMessageForForegroundChat, completionRunnable);
+            contentDb.addMessage(message, !isMessageForForegroundChat, completionRunnable);
         }
     }
 
     @Override
     public void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-        ContentDb.getInstance(context).setMessageSeenReceiptSent(chatId, senderUserId, messageId);
+        contentDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
     }
 
     @Override
     public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
-        ContentDb contentDb = ContentDb.getInstance(context);
         Message message = contentDb.getMessage(peerUserId.rawId(), UserId.ME, messageId);
         if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
             contentDb.setMessageRerequestCount(peerUserId.rawId(), UserId.ME, messageId, message.rerequestCount + 1);
-            EncryptedSessionManager.getInstance().sendMessage(message);
+            encryptedSessionManager.sendMessage(message);
         }
-        Connection.getInstance().sendAck(stanzaId);
+        connection.sendAck(stanzaId);
     }
 
     @Override
@@ -158,11 +214,11 @@ public class MainConnectionObserver implements Connection.Observer {
         }
         AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
             try {
-                ContactsDb.getInstance(context).updateNormalizedPhoneData(normalizedPhoneDataList).get();
+                contactsDb.updateNormalizedPhoneData(normalizedPhoneDataList).get();
                 if (!contactHashes.isEmpty()) {
                     ContactsSync.getInstance(context).startContactSync(contactHashes);
                 }
-                Connection.getInstance().sendAck(ackId);
+                connection.sendAck(ackId);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ConnectionObserver.onContactsChanged", e);
             }
@@ -171,7 +227,7 @@ public class MainConnectionObserver implements Connection.Observer {
 
     @Override
     public void onUserNamesReceived(@NonNull Map<UserId, String> names) {
-        ContactsDb.getInstance(context).updateUserNames(names);
+        contactsDb.updateUserNames(names);
     }
 
     @Override
@@ -179,18 +235,18 @@ public class MainConnectionObserver implements Connection.Observer {
         if (message.count != null) {
             int count = message.count;
             Log.i("OTPK count down to " + count + "; replenishing");
-            List<byte[]> protoKeys = EncryptedSessionManager.getInstance().getFreshOneTimePreKeyProtos();
-            Connection.getInstance().uploadMoreOneTimePreKeys(protoKeys);
-            Connection.getInstance().sendAck(ackId);
+            List<byte[]> protoKeys = encryptedSessionManager.getFreshOneTimePreKeyProtos();
+            connection.uploadMoreOneTimePreKeys(protoKeys);
+            connection.sendAck(ackId);
         } else if (message.userId != null) {
-            EncryptedSessionManager.getInstance().tearDownSession(message.userId);
-            Connection.getInstance().sendAck(ackId);
+            encryptedSessionManager.tearDownSession(message.userId);
+            connection.sendAck(ackId);
         }
     }
 
     @Override
     public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {
-        AvatarLoader.getInstance(Connection.getInstance(), context).reportAvatarUpdate(userId, avatarId);
-        Connection.getInstance().sendAck(ackId);
+        avatarLoader.reportAvatarUpdate(userId, avatarId);
+        connection.sendAck(ackId);
     }
 }

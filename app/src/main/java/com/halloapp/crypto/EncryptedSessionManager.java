@@ -119,7 +119,7 @@ public class EncryptedSessionManager {
         }
     }
 
-    public void ensureKeysUploaded(Connection connection) {
+    public void ensureKeysUploaded() {
         keyManager.ensureKeysUploaded(connection);
     }
 

@@ -31,7 +31,6 @@ import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.xmpp.Connection;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -109,7 +108,7 @@ public class ProfileFragment extends PostsFragment {
         viewModel.getName().observe(getViewLifecycleOwner(), nameView::setText);
 
         avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance(Connection.getInstance(), requireContext()).load(avatarView, profileUserId);
+        AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
 
         if (profileUserId.isMe()) {
             final View.OnClickListener changeAvatarListener = v -> {
@@ -146,7 +145,7 @@ public class ProfileFragment extends PostsFragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CODE_CHANGE_AVATAR && resultCode == RESULT_OK) {
-            AvatarLoader.getInstance(Connection.getInstance(), getContext()).load(avatarView, UserId.ME);
+            AvatarLoader.getInstance(getContext()).load(avatarView, UserId.ME);
             adapter.notifyDataSetChanged();
         }
     }

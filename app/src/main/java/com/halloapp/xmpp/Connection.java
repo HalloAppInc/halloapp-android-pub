@@ -106,26 +106,26 @@ public class Connection {
         return instance;
     }
 
-    public interface Observer {
-        void onConnected();
-        void onDisconnected();
-        void onLoginFailed();
-        void onClientVersionExpired();
-        void onOutgoingPostSent(@NonNull String postId);
-        void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId);
-        void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId);
-        void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId);
-        void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId);
-        void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId);
-        void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId);
-        void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId);
-        void onIncomingMessageReceived(@NonNull Message message);
-        void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
-        void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull String stanzaId);
-        void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId);
-        void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId);
-        void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId);
-        void onUserNamesReceived(@NonNull Map<UserId, String> names);
+    public static abstract class Observer {
+        public void onConnected() {}
+        public void onDisconnected() {}
+        public void onLoginFailed() {}
+        public void onClientVersionExpired() {}
+        public void onOutgoingPostSent(@NonNull String postId) {}
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
+        public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {}
+        public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
+        public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {}
+        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
+        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
+        public void onIncomingMessageReceived(@NonNull Message message) {}
+        public void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull String stanzaId) {}
+        public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
+        public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
+        public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
+        public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
     }
 
     private Connection(BgWorkers bgWorkers, ConnectionObservers connectionObservers) {

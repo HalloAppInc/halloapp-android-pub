@@ -3,7 +3,6 @@ package com.halloapp.ui.chats;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +33,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +40,7 @@ import java.util.Locale;
 public class ChatsFragment extends HalloFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(getContext());
     private ChatsViewModel viewModel;
 
     @Override

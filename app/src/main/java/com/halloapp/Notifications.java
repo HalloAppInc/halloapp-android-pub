@@ -37,7 +37,6 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,7 +95,7 @@ public class Notifications {
     private Notifications(Context context) {
         this.context = context.getApplicationContext();
         this.preferences = Preferences.getInstance(context);
-        this.avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), context);
+        this.avatarLoader = AvatarLoader.getInstance(context);
         this.contactsDb = ContactsDb.getInstance(context);
     }
 

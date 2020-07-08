@@ -25,7 +25,6 @@ import androidx.transition.Transition;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +32,7 @@ import java.util.List;
 
 public class MentionPickerView extends FrameLayout {
 
-    protected final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
+    protected final AvatarLoader avatarLoader = AvatarLoader.getInstance(getContext());
 
     private OnMentionListener listener;
 

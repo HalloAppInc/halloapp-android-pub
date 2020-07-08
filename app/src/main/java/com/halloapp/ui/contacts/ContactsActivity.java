@@ -36,7 +36,6 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.xmpp.Connection;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
@@ -58,7 +57,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     public static final String RESULT_SELECTED_ID = "selected_contact";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
     private ContactsViewModel viewModel;
     private TextView emptyView;
 

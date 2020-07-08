@@ -39,7 +39,6 @@ import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
-import com.halloapp.xmpp.Connection;
 
 import java.util.Stack;
 
@@ -193,7 +192,7 @@ public class PostContentActivity extends HalloActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(this);
         seenByLoader = new SeenByLoader(this);
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        avatarLoader = AvatarLoader.getInstance(this);
         textContentLoader = new TextContentLoader(this);
         ContactsDb.getInstance(this).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

@@ -33,7 +33,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.LinearSpacingItemDecoration;
-import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -70,7 +69,7 @@ public class PostSeenByActivity extends HalloActivity {
         viewModel.friendsList.getLiveData().observe(this, adapter::setFriends);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        avatarLoader = AvatarLoader.getInstance(this);
 
         viewModel.post.getLiveData().observe(this, this::showPost);
 

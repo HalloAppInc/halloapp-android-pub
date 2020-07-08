@@ -133,7 +133,7 @@ public class ChatActivity extends HalloActivity {
         contactLoader = new ContactLoader(this);
         replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         textContentLoader = new TextContentLoader(this);
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        avatarLoader = AvatarLoader.getInstance(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 

@@ -38,7 +38,6 @@ import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
-import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +84,7 @@ public class PostsFragment extends HalloFragment {
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(requireContext());
         seenByLoader = new SeenByLoader(requireContext());
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), getContext());
+        avatarLoader = AvatarLoader.getInstance(getContext());
         textContentLoader = new TextContentLoader(requireContext());
         ContactsDb.getInstance(requireContext()).addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

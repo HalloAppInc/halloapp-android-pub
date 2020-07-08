@@ -38,7 +38,6 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.xmpp.Connection;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
@@ -60,7 +59,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
     private ContactsViewModel viewModel;
     private TextView emptyView;
 

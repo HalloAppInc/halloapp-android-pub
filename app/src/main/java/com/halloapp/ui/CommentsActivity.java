@@ -61,7 +61,6 @@ import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
-import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
@@ -227,7 +226,7 @@ public class CommentsActivity extends HalloActivity {
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
-        avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), this);
+        avatarLoader = AvatarLoader.getInstance(this);
         textContentLoader = new TextContentLoader(this);
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

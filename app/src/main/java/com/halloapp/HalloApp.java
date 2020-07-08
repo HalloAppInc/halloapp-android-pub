@@ -40,7 +40,7 @@ public class HalloApp extends Application {
                     .build());
         }
 
-        ConnectionObservers.getInstance().addObserver(new MainConnectionObserver(this));
+        ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ContentDb.getInstance(this).addObserver(MainContentDbObserver.getInstance(this));
         ContactsDb.getInstance(this).addObserver(new ContactsDb.Observer() {
 

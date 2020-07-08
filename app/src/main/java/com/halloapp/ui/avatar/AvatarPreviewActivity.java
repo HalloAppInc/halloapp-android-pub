@@ -218,7 +218,7 @@ public class AvatarPreviewActivity extends HalloActivity {
                     final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
                     FileUtils.copyFile(tmpFile, outFile);
 
-                    AvatarLoader avatarLoader = AvatarLoader.getInstance(Connection.getInstance(), AvatarPreviewActivity.this);
+                    AvatarLoader avatarLoader = AvatarLoader.getInstance(AvatarPreviewActivity.this);
                     avatarLoader.reportMyAvatarChanged(avatarId);
                 } catch (IOException | NoSuchAlgorithmException e) {
                     Log.e("failed to transcode image", e);
