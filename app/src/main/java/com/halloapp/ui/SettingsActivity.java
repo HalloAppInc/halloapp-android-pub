@@ -11,6 +11,7 @@ import androidx.preference.Preference;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
+import com.halloapp.LogProvider;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
@@ -23,7 +24,8 @@ import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
 
 public class SettingsActivity extends HalloActivity {
-    private static final String SUPPORT_EMAIL_URI = "mailto:android-support@halloapp.com";
+    public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
+    private static final String SUPPORT_EMAIL_URI = "mailto:" + SUPPORT_EMAIL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,18 +85,22 @@ public class SettingsActivity extends HalloActivity {
             });
 
             final Preference sendLogsPreference = Preconditions.checkNotNull((findPreference("send_logs")));
-            sendLogsPreference.setVisible(!BuildConfig.DEBUG);
             sendLogsPreference.setOnPreferenceClickListener(preference -> {
                 Log.sendErrorReport(getString(R.string.send_logs));
                 CenterToast.show(requireContext(), R.string.send_logs);
                 requireActivity().finish();
 
-                String uri = SUPPORT_EMAIL_URI
-                        + "?subject=" + Uri.encode(getString(R.string.email_logs_subject))
-                        + "&body=" + Uri.encode(getString(R.string.email_logs_text, Me.getInstance(requireContext()).getUser()));
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse(uri));
-                startActivity(intent);
+                if (BuildConfig.DEBUG) {
+                    LogProvider.openLogIntent(requireContext());
+                } else {
+                    String uri = SUPPORT_EMAIL_URI
+                            + "?subject=" + Uri.encode(getString(R.string.email_logs_subject))
+                            + "&body=" + Uri.encode(getString(R.string.email_logs_text, Me.getInstance(requireContext()).getUser()));
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse(uri));
+                    startActivity(intent);
+                }
+
                 return false;
             });
 
