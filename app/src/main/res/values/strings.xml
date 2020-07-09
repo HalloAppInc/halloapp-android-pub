@@ -193,6 +193,8 @@
     <string name="search">Search</string>
     <string name="contact_search_empty">Nothing found for \'%s\'</string>
     <string name="invite_friends">Invite friends</string>
+    <string name="invite_a_friend">Invite a friend</string>
+    <string name="send_invite_to">Send invite to…</string>
     <string name="invite_text">Hey,\n\nHalloApp is a fast, simple and secure app that I use to share what I care about with friends and family.\n\nGet it for free at\nhttps://halloapp.net/dl/</string>
     <string name="share_via">Share via…</string>
     <string name="name_hint">Your name</string>

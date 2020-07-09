@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -17,13 +16,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.contacts.DeviceContactsActivity;
 import com.halloapp.xmpp.InvitesResponseIq;
-import com.hbb20.CountryCodePicker;
 
 public class InviteFriendsActivity extends HalloActivity {
 
-    private CountryCodePicker countryCodePicker;
-    private EditText phoneNumberEditText;
+    private static final int REQUEST_CODE_PICK_CONTACT = 1;
 
     private InviteFriendsViewModel viewModel;
 
@@ -45,26 +43,9 @@ public class InviteFriendsActivity extends HalloActivity {
         View progress = findViewById(R.id.progress);
         View errorView = findViewById(R.id.error);
 
-        phoneNumberEditText = findViewById(R.id.phone_number);
-        countryCodePicker = findViewById(R.id.ccp);
-        countryCodePicker.registerCarrierNumberEditText(phoneNumberEditText);
-
         Button sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
-            String phone = countryCodePicker.getFullNumber();
-            if (!countryCodePicker.isValidFullNumber()) {
-                showErrorDialog(InvitesResponseIq.Result.INVALID_NUMBER);
-                return;
-            }
-            ProgressDialog dialog = ProgressDialog.show(this, null, getString(R.string.invite_creation_in_progress));
-            viewModel.sendInvite(phone).observe(this, nullableResult -> {
-                dialog.cancel();
-                if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
-                    showErrorDialog(nullableResult);
-                } else {
-                    onSuccessfulInvite(phone);
-                }
-            });
+            startActivityForResult(DeviceContactsActivity.createInvitePickerIntent(this), REQUEST_CODE_PICK_CONTACT);
         });
 
         View tryAgain = findViewById(R.id.try_again);
@@ -101,11 +82,22 @@ public class InviteFriendsActivity extends HalloActivity {
 
     }
 
+    private void sendInvite(String phone) {
+        ProgressDialog dialog = ProgressDialog.show(this, null, getString(R.string.invite_creation_in_progress));
+        viewModel.sendInvite(phone).observe(this, nullableResult -> {
+            dialog.cancel();
+            if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
+                showErrorDialog(nullableResult);
+            } else {
+                onSuccessfulInvite(phone);
+            }
+        });
+    }
+
     private void onSuccessfulInvite(String phone) {
         Uri mUri = Uri.parse("smsto:" + phone);
         Intent mIntent = new Intent(Intent.ACTION_SENDTO, mUri);
         mIntent.putExtra("sms_body", getString(R.string.invite_text));
-        phoneNumberEditText.setText("");
         startActivity(Intent.createChooser(mIntent, "Invite"));
     }
 
@@ -135,5 +127,20 @@ public class InviteFriendsActivity extends HalloActivity {
         dialog.show();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_PICK_CONTACT: {
+                if (resultCode == RESULT_OK && data != null) {
+                    String number = data.getStringExtra(DeviceContactsActivity.RESULT_SELECTED_NUMBER);
+                    if (number != null) {
+                        sendInvite(data.getStringExtra(DeviceContactsActivity.RESULT_SELECTED_NUMBER));
+                    }
+                }
+                break;
+            }
+        }
+    }
 
 }
