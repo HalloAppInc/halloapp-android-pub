@@ -1,6 +1,8 @@
 package com.halloapp.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Outline;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.collection.LongSparseArray;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -440,7 +443,7 @@ public class CommentsActivity extends HalloActivity {
                 mediaGallery.setVisibility(View.GONE);
             } else {
                 mediaGallery.setVisibility(View.VISIBLE);
-                mediaGallery.setAdapter(new MediaAdapter(post.media));
+                mediaGallery.setAdapter(new MediaAdapter(post));
             }
 
             final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
@@ -465,9 +468,10 @@ public class CommentsActivity extends HalloActivity {
         private class MediaAdapter extends RecyclerView.Adapter<PostMediaItemViewHolder> {
 
             final List<Media> media;
-
-            MediaAdapter(List<Media> media) {
-                this.media = media;
+            final Post post;
+            MediaAdapter(Post post) {
+                this.post = post;
+                this.media = post.media;
             }
 
             @NonNull
@@ -491,6 +495,20 @@ public class CommentsActivity extends HalloActivity {
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 imageView.setAdjustViewBounds(true);
                 mediaThumbnailLoader.load(imageView, media.get(position));
+                imageView.setOnClickListener(v -> {
+                    final Intent intent = new Intent(imageView.getContext(), PostContentActivity.class);
+                    intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
+                    intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
+                    intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, position);
+                    if (imageView.getContext() instanceof Activity) {
+                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(CommentsActivity.this, imageView, imageView.getTransitionName());
+                        startActivity(intent, options.toBundle());
+                    } else {
+                        startActivity(intent);
+                    }
+                });
+
+                imageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, position));
             }
 
             @Override
