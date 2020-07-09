@@ -28,6 +28,10 @@
     <PreferenceCategory app:title="@string/help">
 
         <Preference
+            app:key="invite_friends"
+            app:title="@string/invite_a_friend"/>
+
+        <Preference
             app:key="send_logs"
             app:title="@string/send_logs" />
 

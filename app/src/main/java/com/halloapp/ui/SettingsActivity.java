@@ -14,6 +14,7 @@ import com.halloapp.Debug;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Log;
@@ -74,6 +75,12 @@ public class SettingsActivity extends HalloActivity {
                 return false;
             });
 
+            final Preference inviteFriends = Preconditions.checkNotNull((findPreference("invite_friends")));
+            inviteFriends.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent(requireContext(), InviteFriendsActivity.class);
+                startActivity(intent);
+                return false;
+            });
 
             final Preference sendLogsPreference = Preconditions.checkNotNull((findPreference("send_logs")));
             sendLogsPreference.setVisible(!BuildConfig.DEBUG);
