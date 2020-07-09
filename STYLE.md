@@ -64,6 +64,22 @@ the code they describe
   - Use `@WorkerThread` for anything that must not happen on the UI thread (i.e. disk read)
   - Use `@MainThread` for anything that must happen on the UI thread (i.e. touching views)
 
+## Singletons
+
+- When using singletons, only use `getInstance` in:
+  - ViewModels
+  - Activities
+  - Fragments
+  - Views
+  - Services
+  - Broadcast Receivers 
+  - `getInstance` calls for other singletons
+- If you need to access a singleton from elsewhere, use dependency injection and pass the dependency down.
+
+- Don't intersperse `getInstance` calls whenever you need them, instead add a field. (see sample below)
+- Group singletons together and order them by length. Tie break with alphabetical order
+  
+
 ## Other
 
 - All checked exceptions should be explicitly mentioned in a catch block
@@ -87,6 +103,9 @@ public abstract class TestActivity extends HalloActivity {
     private static final int REQUEST_CODE_TEST = 1;
 
     private final String input;
+
+    private final SingletonFoo singletonFoo = SingletonFoo.getInstance();
+    private final SingletonFooTwo singletonFooTwo = SingletonFooTwo.getInstance();
 
     public TestActivity(String input) {
         this.input = input;
