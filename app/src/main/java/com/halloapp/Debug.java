@@ -26,8 +26,10 @@ import com.halloapp.util.Log;
 import com.halloapp.util.StringUtils;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
+import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class Debug {
@@ -45,6 +47,7 @@ public class Debug {
     private static final String DEBUG_MENU_REMOVE_AVATAR = "Remove avatar";
     private static final String DEBUG_MENU_TEST_KEYS = "Test keys";
     private static final String DEBUG_MENU_CLEAR_KEY_STORE = "Clear key store";
+    private static final String DEBUG_MENU_CREATE_GROUP = "Create group";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
 
@@ -63,6 +66,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_REMOVE_AVATAR);
         menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
+        menu.getMenu().add(DEBUG_MENU_CREATE_GROUP);
         menu.setOnMenuItemClickListener(item -> {
             Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
             switch (item.getTitle().toString()) {
@@ -150,6 +154,12 @@ public class Debug {
                         } catch (Exception e) {
                             Log.w("DEBUG failed to clear key store");
                         }
+                    });
+                    break;
+                }
+                case DEBUG_MENU_CREATE_GROUP: {
+                    AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+                        new GroupsApi(Connection.getInstance()).createGroup("NAME", Collections.singletonList(new UserId("1000000000000000002")));
                     });
                     break;
                 }

@@ -25,6 +25,8 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.groups.GroupResponseIq;
+import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
 import com.halloapp.xmpp.util.Observable;
@@ -189,6 +191,8 @@ public class Connection {
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
         ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
         ProviderManager.addIQProvider(AvatarIq.ELEMENT, AvatarIq.NAMESPACE, new AvatarIq.Provider());
+        ProviderManager.addIQProvider(GroupResponseIq.ELEMENT, GroupResponseIq.NAMESPACE, new GroupResponseIq.Provider());
+        ProviderManager.addIQProvider(GroupsListResponseIq.ELEMENT, GroupsListResponseIq.NAMESPACE, new GroupsListResponseIq.Provider());
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
         try {
