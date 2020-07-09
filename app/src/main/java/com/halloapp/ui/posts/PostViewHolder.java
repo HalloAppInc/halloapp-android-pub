@@ -144,7 +144,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             progressView.setVisibility(View.GONE);
             statusView.setVisibility(View.GONE);
         }
-        TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
+        TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
 
         final boolean noCaption = TextUtils.isEmpty(post.text);

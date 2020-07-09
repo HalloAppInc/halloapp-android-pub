@@ -65,6 +65,28 @@ public class TimeFormatter {
         return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
     }
 
+    public static String formatRelativePostTime(@NonNull Context context, long timestamp) {
+        final long currentTime = System.currentTimeMillis();
+        final long timeDiff = currentTime - timestamp;
+        final long seconds = timeDiff / 1000L;
+        if (seconds < 60) {
+            return context.getString(R.string.time_diff_now);
+        }
+        if (TimeUtils.isSameDay(currentTime, timestamp)) {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
+        } else if (TimeUtils.isSameWeek(currentTime, timestamp)) {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);
+        } else {
+            return formatTimeDiff(context, timeDiff, false);
+        }
+    }
+
+    public static void setTimePostsFormat(@NonNull TextView textView, long timeStamp) {
+        String text = formatRelativePostTime(textView.getContext(), timeStamp);
+        textView.setText(text);
+        textView.setContentDescription(text);
+    }
+
     public static void setTimeDiffText(@NonNull TextView textView, long timeDiff) {
         textView.setText(formatTimeDiff(textView.getContext(), timeDiff, false));
         textView.setContentDescription(formatTimeDiff(textView.getContext(), timeDiff, true));

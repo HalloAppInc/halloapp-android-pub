@@ -373,7 +373,7 @@ public class CommentsActivity extends HalloActivity {
                 contactLoader.load(nameView, comment.commentSenderUserId);
             }
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
-            TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - comment.timestamp);
+            TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             final Integer textLimit = textLimits.get(comment.rowId);
@@ -436,7 +436,7 @@ public class CommentsActivity extends HalloActivity {
                 contactLoader.load(nameView, post.senderUserId);
             }
             progressView.setVisibility(post.transferred != Post.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
-            TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - post.timestamp);
+            TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 
             if (post.media.isEmpty()) {

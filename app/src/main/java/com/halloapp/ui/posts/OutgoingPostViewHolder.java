@@ -146,7 +146,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
                 parent.getContactLoader().load(firstCommentName, firstComment.commentSenderUserId);
             }
 
-            TimeFormatter.setTimeDiffText(firstCommentTimestamp, System.currentTimeMillis() - firstComment.timestamp);
+            TimeFormatter.setTimePostsFormat(firstCommentTimestamp, firstComment.timestamp);
             parent.getTimestampRefresher().scheduleTimestampRefresh(firstComment.timestamp);
         } else {
             firstCommentContent.setVisibility(View.GONE);
