@@ -469,6 +469,7 @@ public class CommentsActivity extends HalloActivity {
 
             final List<Media> media;
             final Post post;
+
             MediaAdapter(Post post) {
                 this.post = post;
                 this.media = post.media;
