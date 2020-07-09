@@ -499,6 +499,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         public final static int SPAN_COUNT_DAY_SMALL = 4;
         public final static int SPAN_COUNT_MONTH = 5;
 
+        public final static int BLOCK_SIZE_DAY_LARGE = 5;
+
         public final static int TYPE_HEADER = 1;
         public final static int TYPE_ITEM = 2;
 

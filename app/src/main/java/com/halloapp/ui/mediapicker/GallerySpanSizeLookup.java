@@ -18,6 +18,32 @@ public class GallerySpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
         return (GridLayoutManager) view.getLayoutManager();
     }
 
+    private int getPositionFromHeader(int position) {
+        final MediaPickerActivity.MediaItemsAdapter adapter = getAdapter();
+
+        for (int i = position; i >= 0; --i) {
+            if (adapter.getItemViewType(i) == MediaPickerActivity.MediaItemsAdapter.TYPE_HEADER) {
+                return position - i - 1;
+            }
+        }
+
+        return position;
+    }
+
+    /**
+     * The day layout with large thumbnails consists of blocks of up to 5 items.
+     * Two items sit on the first row and three on the second.
+     */
+    private int getSpanSizeInDayLargeBlock(int position) {
+        final int positionInBlock = getPositionFromHeader(position) % MediaPickerActivity.MediaItemsAdapter.BLOCK_SIZE_DAY_LARGE;
+
+        if (positionInBlock < 2) {
+            return MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE / 2;
+        } else {
+            return MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE / 3;
+        }
+    }
+
     @Override
     public int getSpanSize(int position) {
         final MediaPickerActivity.MediaItemsAdapter adapter = getAdapter();
@@ -28,19 +54,7 @@ public class GallerySpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
         }
 
         if (adapter.getGridLayout() == MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_LARGE) {
-            int relative = 0;
-            for (int i = position; i >= 0; --i) {
-                if (adapter.getItemViewType(i) == MediaPickerActivity.MediaItemsAdapter.TYPE_HEADER) {
-                    relative = (position - i - 1) % 5;
-                    break;
-                }
-            }
-
-            if (relative < 2) {
-                return 3;
-            } else {
-                return 2;
-            }
+            return getSpanSizeInDayLargeBlock(position);
         }
 
         return 1;
