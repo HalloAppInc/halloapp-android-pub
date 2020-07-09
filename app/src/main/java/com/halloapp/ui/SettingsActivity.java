@@ -81,10 +81,12 @@ public class SettingsActivity extends HalloActivity {
                 Log.sendErrorReport(getString(R.string.send_logs));
                 CenterToast.show(requireContext(), R.string.send_logs);
                 requireActivity().finish();
+
+                String uri = SUPPORT_EMAIL_URI
+                        + "?subject=" + Uri.encode(getString(R.string.email_logs_subject))
+                        + "&body=" + Uri.encode(getString(R.string.email_logs_text, Me.getInstance(requireContext()).getUser()));
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse(SUPPORT_EMAIL_URI));
-                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_logs_subject));
-                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_logs_text, Me.getInstance(requireContext()).getUser()));
+                intent.setData(Uri.parse(uri));
                 startActivity(intent);
                 return false;
             });
