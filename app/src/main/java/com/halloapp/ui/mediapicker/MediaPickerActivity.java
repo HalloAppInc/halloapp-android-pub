@@ -82,7 +82,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;
     private GalleryThumbnailLoader thumbnailLoader;
-    private PopupWindow popupPreview;
+    private MediaPickerPreview preview;
 
     private final ArrayList<Long> selectedItems = new ArrayList<>();
     private ActionMode actionMode;
@@ -138,6 +138,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 updateActionMode();
             }
         }
+
+        preview = new MediaPickerPreview(this);
 
         setupZoom(mediaView);
         requestPermissions();
@@ -424,59 +426,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     }
 
-    private void displayPreview(@NonNull GalleryItem galleryItem, View view) {
-        Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
-
-        final ViewOutlineProvider vop = new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                int radius = getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_radius);
-                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
-            }
-        };
-
-        View content = LayoutInflater.from(this).inflate(R.layout.media_popup_preview, null);
-        ImageView iv = content.findViewById(R.id.image);
-        VideoView vv = content.findViewById(R.id.video);
-
-        iv.setOutlineProvider(vop);
-        iv.setClipToOutline(true);
-        vv.setOutlineProvider(vop);
-        vv.setClipToOutline(true);
-
-        if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
-            vv.setVisibility(View.GONE);
-            iv.setVisibility(View.VISIBLE);
-            iv.setImageURI(uri);
-        } else if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
-            vv.setVisibility(View.VISIBLE);
-            iv.setVisibility(View.GONE);
-            vv.setVideoURI(uri);
-            vv.start();
-        }
-
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        popupPreview = new PopupWindow(content, width, height, true);
-
-        popupPreview.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null)); // to workaround popup doesn't dismiss on api 21 devices
-        popupPreview.setAnimationStyle(R.style.CommentsHistoryAnimation);
-        popupPreview.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-        // Dim Background
-        final View rootView = popupPreview.getContentView().getRootView();
-        final WindowManager wm = Preconditions.checkNotNull((WindowManager)getSystemService(Context.WINDOW_SERVICE));
-        final WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) rootView.getLayoutParams();
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        layoutParams.dimAmount = 0.7f;
-        wm.updateViewLayout(rootView, layoutParams);
-    }
-
-    private void hidePreview() {
-        popupPreview.dismiss();
-        popupPreview = null;
-    }
-
     private static final DiffUtil.ItemCallback<GalleryItem> DIFF_CALLBACK = new DiffUtil.ItemCallback<GalleryItem>() {
 
         @Override
@@ -642,13 +591,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 thumbnailView.setOnClickListener(v12 -> onItemClicked(galleryItem, thumbnailFrame));
 
                 thumbnailView.setOnLongClickListener(v1 -> {
-                    displayPreview(galleryItem, thumbnailFrame);
+                    preview.show(galleryItem, thumbnailFrame);
                     return true;
                 });
 
                 thumbnailView.setOnTouchListener((view, motionEvent) -> {
-                    if (popupPreview != null && motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        hidePreview();
+                    if (preview.isShowing() && motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        preview.hide();
                         return true;
                     }
 
