@@ -3,10 +3,12 @@ package com.halloapp.ui;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
+import android.media.browse.MediaBrowser;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -51,6 +53,7 @@ import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -80,7 +83,6 @@ public class ContentComposerActivity extends HalloActivity {
 
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
-    private MediaThumbnailLoader smallThumbnailLoader;
     private TextContentLoader textContentLoader;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
@@ -99,6 +101,8 @@ public class ContentComposerActivity extends HalloActivity {
     private String chatId;
     private String replyPostId;
     private int replyPostMediaIndex;
+
+    private int expectedMediaCount;
 
     private boolean prevEditEmpty;
 
@@ -124,7 +128,6 @@ public class ContentComposerActivity extends HalloActivity {
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
-        smallThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         textContentLoader = new TextContentLoader(this);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
@@ -146,14 +149,14 @@ public class ContentComposerActivity extends HalloActivity {
 
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
-            final Uri uri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
+            final Uri uri = getIntent().getParcelableExtra(CropImageActivity.EXTRA_MEDIA);
             if (uri != null) {
                 uris = new ArrayList<>(Collections.singleton(uri));
             } else {
                 uris = null;
             }
         } else {
-            uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            uris = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
         }
 
         if (uris != null) {
@@ -235,6 +238,7 @@ public class ContentComposerActivity extends HalloActivity {
 
         drawDelegateView = findViewById(R.id.draw_delegate);
 
+        expectedMediaCount = (uris != null) ? uris.size() : 0;
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, uris, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         viewModel.media.observe(this, media -> {
@@ -249,9 +253,9 @@ public class ContentComposerActivity extends HalloActivity {
             } else {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);
                 mediaPagerIndicator.setViewPager(mediaPager);
-                setCurrentItem(0, false);
             }
-            if (uris != null && media.size() != uris.size()) {
+            if (media.size() != expectedMediaCount) {
+                // NOTE(Vasil): The following line violates strict thread file loading policy.
                 CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
             }
             invalidateOptionsMenu();
@@ -385,7 +389,6 @@ public class ContentComposerActivity extends HalloActivity {
         super.onDestroy();
         Log.d("ContentComposerActivity: onDestroy");
         fullThumbnailLoader.destroy();
-        smallThumbnailLoader.destroy();
     }
     @Override
     public void onStart() {
@@ -442,13 +445,39 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     public void cropItem(final int currentItem) {
-        final List<Media> media = viewModel.media.getValue();
-        if (media != null && media.size() > currentItem) {
-            final Media mediaItem = media.get(currentItem);
+        @Nullable final List<Media> media = viewModel.media.getValue();
+        @Nullable final Map<Media, Uri> mediaUriMap = viewModel.getMediaUriMap();
+        if (media != null && mediaUriMap != null && media.size() > currentItem) {
+//                    intent.setData(Uri.fromFile(mediaItem.file));
+//                    intent.putExtra(CropImageActivity.EXTRA_STATE, viewModel.cropStates.get(mediaItem.file));
+//                    intent.putExtra(CropImageActivity.EXTRA_OUTPUT, Uri.fromFile(ContentComposerViewModel.getCropFile(mediaItem.file)));
+
+            final Bundle state = new Bundle();
+            final ArrayList<Uri> uris = new ArrayList<>(media.size());
+            int index = 0;
+            int relativeIndex = 0;
+
+            for (final Media mediaItem : media) {
+                @Nullable final Uri uri = mediaUriMap.get(mediaItem);
+                if (uri != null) {
+                    Log.d(String.format("ContentComposerActivity: cropItem uri %s", uri.toString()));
+                    if (index == currentItem) {
+                        relativeIndex = uris.size();
+                    }
+                    uris.add(uri);
+                    state.putParcelable(uri.toString(), viewModel.cropStates.get(mediaItem));
+                } else {
+                    // Should never happen
+                    Log.e("ContentComposerActivity: Could not resolve the external uri for media item " + mediaItem.file.getAbsolutePath());
+                }
+                index++;
+            }
+
             final Intent intent = new Intent(this, CropImageActivity.class);
-            intent.setData(Uri.fromFile(mediaItem.file));
-            intent.putExtra(CropImageActivity.EXTRA_STATE, viewModel.cropStates.get(mediaItem.file));
-            intent.putExtra(CropImageActivity.EXTRA_OUTPUT, Uri.fromFile(ContentComposerViewModel.getCropFile(mediaItem.file)));
+            intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
+            intent.putExtra(CropImageActivity.EXTRA_SELECTED, relativeIndex);
+            intent.putExtra(CropImageActivity.EXTRA_STATE, state);
+
             startActivityForResult(intent, REQUEST_CODE_CROP);
         }
     }
@@ -488,36 +517,75 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void onCropped(@NonNull final Intent data) {
-        if (data.getData() == null || data.getData().getPath() == null) {
-            return;
+        // TODO(stefan): Integrate with the updated CropImageActivity results
+        final ArrayList<Uri> uris = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+        final int currentItem = data.getIntExtra(CropImageActivity.EXTRA_SELECTED, getCurrentItem());
+        final Bundle states = data.getParcelableExtra(CropImageActivity.EXTRA_STATE);
+
+        if (uris != null) {
+            @Nullable final List<Media> media = viewModel.media.getValue();
+            @Nullable final Map<Media, Uri> mediaUriMap = viewModel.getMediaUriMap();
+            if (media != null && !media.isEmpty() && mediaUriMap != null) {
+                // Clean old data
+                for (final Media mediaItem : media) {
+                    @Nullable final Uri uri = mediaUriMap.get(media);
+                    if (uri != null) {
+                        final File origFile = new File(FileUtils.generateTempMediaFileName(uri, null));
+                        final File editFile = new File(FileUtils.generateTempMediaFileName(uri, "edit"));
+                        fullThumbnailLoader.remove(origFile);
+                        fullThumbnailLoader.remove(editFile);
+                        // TODO(Vasil): clean video elements here.
+
+                        @Nullable final Parcelable editState = states.getParcelable(uri.toString());
+                        if (editState != null) {
+                            viewModel.cropStates.put(mediaItem, editState);
+                        }
+                    }
+                }
+                if (0 <= currentItem && currentItem < media.size()) {
+                    setCurrentItem(currentItem, false);
+                }
+            }
+
+            final View progressView = findViewById(R.id.progress);
+            progressView.setVisibility(View.VISIBLE);
+            mediaPager.setVisibility(View.GONE);
+            expectedMediaCount = (uris != null) ? uris.size() : 0;
+            viewModel.loadUris(uris);
+
+            /*for (final Uri uri : uris) {
+                final File origFile = new File(data.getData().getPath());
+                final File cropFile = ContentComposerViewModel.getCropFile(origFile);
+                fullThumbnailLoader.remove(origFile);
+                fullThumbnailLoader.remove(cropFile);
+                viewModel.cropStates.put(origFile, data.getParcelableExtra(CropImageActivity.EXTRA_STATE));
+                mediaPagerAdapter.notifyDataSetChanged();
+                View view = mediaPager.findViewWithTag(origFile);
+                if (view == null) {
+                    view = mediaPager.findViewWithTag(cropFile);
+                }
+                if (view instanceof ImageView) {
+                    final ImageView imageView = (ImageView) view;
+                    final Media displayMedia = new Media(0, Media.MEDIA_TYPE_IMAGE, null, cropFile, null, null, 0, 0, Media.TRANSFERRED_NO);
+                    imageView.setImageDrawable(null);
+                    fullThumbnailLoader.load(imageView, displayMedia);
+                }
+            }*/
         }
-        final File origFile = new File(data.getData().getPath());
-        final File cropFile = ContentComposerViewModel.getCropFile(origFile);
-        smallThumbnailLoader.remove(origFile);
-        smallThumbnailLoader.remove(cropFile);
-        fullThumbnailLoader.remove(origFile);
-        fullThumbnailLoader.remove(cropFile);
-        viewModel.cropStates.put(origFile, data.getParcelableExtra(CropImageActivity.EXTRA_STATE));
-        mediaPagerAdapter.notifyDataSetChanged();
-        View view = mediaPager.findViewWithTag(origFile);
-        if (view == null) {
-            view = mediaPager.findViewWithTag(cropFile);
-        }
-        if (view instanceof ImageView) {
-            final ImageView imageView = (ImageView)view;
-            final Media displayMedia = new Media(0, Media.MEDIA_TYPE_IMAGE, null, cropFile, null, null, 0, 0, Media.TRANSFERRED_NO);
-            imageView.setImageDrawable(null);
-            fullThumbnailLoader.load(imageView, displayMedia);
-        }
-        final List<Media> media = viewModel.media.getValue();
+
+        /*@Nullable final List<Media> media = viewModel.media.getValue();
         if (media != null) {
-            updateAspectRatioForMedia(media);
-        }
+            mediaPager.setMaxAspectRatio(
+                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+            if (0 <= currentItem && currentItem < media.size()) {
+                setCurrentItem(currentItem, false);
+            }
+        }*/
     }
 
     private void deleteItem(final int currentItem) {
-        final List<Media> media = viewModel.media.getValue();
-        if (media == null || media.isEmpty() || media.size() <= currentItem) {
+        @Nullable final List<Media> media = viewModel.media.getValue();
+        if (media == null || currentItem < 0 || media.size() <= currentItem) {
             return;
         }
 
@@ -529,7 +597,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         // TODO(Vasil): Can we potentially leak a file?
-        media.remove(currentItem);
+        viewModel.deleteMediaItem(currentItem);
         mediaPagerAdapter.setMedia(media);
         mediaPagerAdapter.notifyDataSetChanged();
         if (!media.isEmpty()) {

@@ -2,17 +2,11 @@ package com.halloapp.ui;
 
 import android.app.Application;
 import android.content.ContentResolver;
-import android.graphics.Outline;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
-import android.text.TextUtils;
 import android.util.Size;
-import android.view.View;
-import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
-import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
@@ -37,7 +30,6 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 
 import java.io.File;
@@ -51,6 +43,8 @@ import java.util.Map;
 public class ContentComposerViewModel extends AndroidViewModel {
 
     final MutableLiveData<List<Media>> media = new MutableLiveData<>();
+    final MutableLiveData<Map<Media, Uri>> mediaUriMap = new MutableLiveData<>();
+
     final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
     final ComputableLiveData<String> chatName;
     final ComputableLiveData<Post> replyPost;
@@ -61,7 +55,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
-    final Map<File, Parcelable> cropStates = new HashMap<>();
+    final Map<Media, Parcelable> cropStates = new HashMap<>();
 
 
     static File getCropFile(@NonNull File file) {
@@ -134,12 +128,28 @@ public class ContentComposerViewModel extends AndroidViewModel {
         return media.getValue();
     }
 
-    private void loadUris(@NonNull Collection<Uri> uris) {
-        new LoadContentUrisTask(getApplication(), uris, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    @NonNull Map<Media, Uri> getMediaUriMap() {
+        return mediaUriMap.getValue();
+    }
+
+    void loadUris(@NonNull Collection<Uri> uris) {
+        new LoadContentUrisTask(getApplication(), uris, media, mediaUriMap).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void prepareContent(@Nullable String chatId, @Nullable String text, @Nullable List<Mention> mentions) {
         new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    void deleteMediaItem(final int index) {
+        @Nullable List<Media> mediaList = media.getValue();
+        @Nullable Map<Media, Uri> mediaUriMap = getMediaUriMap();
+        if (mediaList != null && 0 <= index && index < mediaList.size()) {
+            Media media = mediaList.get(index);
+            if (mediaUriMap != null) {
+                mediaUriMap.remove(media);
+            }
+            mediaList.remove(index);
+        }
     }
 
     private @Nullable List<Media> getSendMediaList() {
@@ -149,7 +159,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
         final List<Media> sendMediaList = new ArrayList<>();
         for (Media media : mediaList) {
-            final Parcelable cropState = cropStates.get(media.file);
+            final Parcelable cropState = cropStates.get(media);
             final Media sendMedia;
             if (cropState != null) {
                 sendMedia = new Media(0, media.type, null, getCropFile(media.file), null, null, 0, 0, Media.TRANSFERRED_NO);
@@ -187,42 +197,62 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     }
 
-    static class LoadContentUrisTask extends AsyncTask<Void, Void, List<Media>> {
+    protected static class UriMediaData {
+        List<Media> media;
+        Map<Media, Uri> mediaUriMap;
+    }
+
+    static class LoadContentUrisTask extends AsyncTask<Void, Void, UriMediaData> {
 
         private final Collection<Uri> uris;
         private final Application application;
         private final MutableLiveData<List<Media>> media;
+        private final MutableLiveData<Map<Media, Uri>> mediaUriMap;
 
-        LoadContentUrisTask(@NonNull Application application, @NonNull Collection<Uri> uris, @NonNull MutableLiveData<List<Media>> media) {
+        LoadContentUrisTask(@NonNull Application application,
+                            @NonNull Collection<Uri> uris,
+                            @NonNull MutableLiveData<List<Media>> media,
+                            @NonNull MutableLiveData<Map<Media, Uri>> mediaUriMap) {
             this.application = application;
             this.uris = uris;
             this.media = media;
+            this.mediaUriMap = mediaUriMap;
         }
 
         @Override
-        protected List<Media> doInBackground(Void... voids) {
-            final List<Media> media = new ArrayList<>();
+        protected UriMediaData doInBackground(Void... voids) {
+            final UriMediaData data = new UriMediaData();
+            data.media = new ArrayList<>();
+            data.mediaUriMap = new HashMap<>();
             final ContentResolver contentResolver = application.getContentResolver();
             for (Uri uri : uris) {
                 @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
-                final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
-                FileUtils.uriToFile(application, uri, file);
-                final Size size = MediaUtils.getDimensions(file, mediaType);
+                // TODO(Vasil): Use standard naming scheme instead of random names.
+                //final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());;
+                final String originalName = FileUtils.generateTempMediaFileName(uri, null);
+                final File originalFile = FileStore.getInstance(application).getTmpFile(originalName);
+                if (!originalFile.exists()) {
+                    FileUtils.uriToFile(application, uri, originalFile);
+                }
+                final Size size = MediaUtils.getDimensions(originalFile, mediaType);
                 if (size != null) {
-                    final Media mediaItem = Media.createFromFile(mediaType, file);
+                    final Media mediaItem = Media.createFromFile(mediaType, originalFile);
                     mediaItem.width = size.getWidth();
                     mediaItem.height = size.getHeight();
-                    media.add(mediaItem);
+                    data.media.add(mediaItem);
+                    data.mediaUriMap.put(mediaItem, uri);
                 } else {
+                    // TODO(Vasil): Don't we leak the file we created above? Who is going to delete it?
                     Log.e("PostComposerActivity: failed to load " + uri);
                 }
             }
-            return media;
+            return data;
         }
 
         @Override
-        protected void onPostExecute(List<Media> media) {
-            this.media.postValue(media);
+        protected void onPostExecute(UriMediaData data) {
+            this.media.postValue(data.media);
+            this.mediaUriMap.postValue(data.mediaUriMap);
         }
     }
 

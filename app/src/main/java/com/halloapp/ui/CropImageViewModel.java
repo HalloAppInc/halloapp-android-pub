@@ -193,8 +193,11 @@ public class CropImageViewModel extends AndroidViewModel {
             final FileStore store = FileStore.getInstance(application);
 
             for (Uri uri : uris) {
-                final String originalName = Base64.encodeToString(uri.toString().getBytes(), Base64.URL_SAFE);
-                final String editName = originalName + "-edit";
+                // TODO(Vasil): refactor this code to share it between the picker/composer/cropper views.
+                //final String originalName = Base64.encodeToString(uri.toString().getBytes(), Base64.URL_SAFE);
+                //final String editName = originalName + "-edit";
+                final String originalName = FileUtils.generateTempMediaFileName(uri, null);
+                final String editName = FileUtils.generateTempMediaFileName(uri, "edit");
 
                 final File original = store.getTmpFile(originalName);
                 final File edit = store.getTmpFile(editName);
