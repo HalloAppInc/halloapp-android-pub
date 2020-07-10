@@ -44,7 +44,7 @@ public class PrivacyListApi {
     public Observable<List<UserId>> getBlockList() {
         final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(PrivacyList.Type.BLOCK);
         Observable<PrivacyListsResponseIq> iqResponse = connection.sendRequestIq(requestIq);
-        return Observable.map(iqResponse, response -> {
+        return iqResponse.map(response -> {
             final PrivacyList list = response.getPrivacyList(PrivacyList.Type.BLOCK);
             return list == null ? null : list.getUserIds();
         });
@@ -53,7 +53,7 @@ public class PrivacyListApi {
     public Observable<FeedPrivacy> getFeedPrivacy() {
         final PrivacyListsRequestIq requestIq = new PrivacyListsRequestIq(PrivacyList.Type.ONLY, PrivacyList.Type.EXCEPT);
         Observable<PrivacyListsResponseIq> iqResponse = connection.sendRequestIq(requestIq);
-        return Observable.map(iqResponse, response -> {
+        return iqResponse.map(response -> {
             final PrivacyList exceptList = response.getPrivacyList(PrivacyList.Type.EXCEPT);
             final PrivacyList onlyList = response.getPrivacyList(PrivacyList.Type.ONLY);
             return new FeedPrivacy(response.activeType, exceptList == null ? null : exceptList.userIds, onlyList == null ? null : onlyList.userIds);
@@ -62,6 +62,6 @@ public class PrivacyListApi {
 
     public Observable<Boolean> setFeedPrivacy(@PrivacyList.Type String activeList, List<UserId> addedUsers, List<UserId> deletedUsers) {
         final SetPrivacyListIq requestIq = new SetPrivacyListIq(activeList, addedUsers, deletedUsers);
-        return Observable.map(connection.sendRequestIq(requestIq), input -> true);
+        return connection.sendRequestIq(requestIq).map(input -> true);
     }
 }

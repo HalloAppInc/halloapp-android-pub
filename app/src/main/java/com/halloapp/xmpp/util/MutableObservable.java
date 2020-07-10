@@ -2,7 +2,7 @@ package com.halloapp.xmpp.util;
 
 import androidx.annotation.Nullable;
 
-public class MutableObservable<T> implements Observable<T> {
+public class MutableObservable<T> extends Observable<T> {
 
     private T response;
 
