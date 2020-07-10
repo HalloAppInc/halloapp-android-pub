@@ -194,7 +194,6 @@
     <string name="contact_search_empty">Nothing found for \'%s\'</string>
     <string name="invite_friends">Invite friends</string>
     <string name="invite_a_friend">Invite a friend</string>
-    <string name="send_invite_to">Send invite to…</string>
     <string name="invite_text">Hey,\n\nHalloApp is a fast, simple and secure app that I use to share what I care about with friends and family.\n\nGet it for free at\nhttps://halloapp.net/dl/</string>
     <string name="share_via">Share via…</string>
     <string name="name_hint">Your name</string>
@@ -234,8 +233,13 @@
     <string name="invite_failed_unknown">Failed to send invite</string>
     <string name="invite_creation_in_progress">Creating invite…</string>
     <string name="invite_info_fetch_internet">Failed to retrieve invite info, check your internet and try again</string>
-    <string name="invite_phone_number_empty_toast">Phone number is too short</string>
-    <string name="invites_remaining">Invites left</string>
-    <string name="invite_phone_entry_caption">Send an invite to…</string>
+    <string name="invite_confirmation_message">Use one of your invites to invite %s?</string>
+    <plurals name="invites_remaining">
+        <item quantity="one">You have %s invite remaining this week</item>
+        <item quantity="other">You have %s invites remaining this week</item>
+    </plurals>
+    <string name="no_invites_remaining">More invites coming this Monday!</string>
     <string name="invite_friends_title">Invite friends</string>
+    <string name="invite_action">Invite</string>
+    <string name="invite_already_a_user_subtitle">Already a HalloApp user</string>
 </resources>

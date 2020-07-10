@@ -70,14 +70,13 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
         if (id == null) {
             return null;
         }
-        try (InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(),
-                ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id))) {
-
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
+        try (InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), contactUri)) {
             if (inputStream != null) {
                 photo = BitmapFactory.decodeStream(inputStream);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("DeviceAvatarLoader/getAddressBookPhoto failed to get photo", e);
         }
         return photo;
     }

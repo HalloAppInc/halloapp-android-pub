@@ -18,7 +18,7 @@ public class ContactsSectionItemDecoration extends RecyclerView.ItemDecoration {
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Rect tmpRect = new Rect();
 
-    ContactsSectionItemDecoration(float headerWidth, float headerHeight, float textSize, int textColor, @NonNull SectionCallback sectionCallback) {
+    public ContactsSectionItemDecoration(float headerWidth, float headerHeight, float textSize, int textColor, @NonNull SectionCallback sectionCallback) {
         this.headerWidth = headerWidth;
         this.headerHeight = headerHeight;
         this.sectionCallback = sectionCallback;

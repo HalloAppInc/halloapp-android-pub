@@ -435,7 +435,7 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public List<Contact> getNonUsers() {
+    public List<Contact> getAllUsers() {
         final List<Contact> contacts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
@@ -448,12 +448,13 @@ public class ContactsDb {
                         ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_FRIEND
                 },
-                ContactsTable.COLUMN_USER_ID +  " IS NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
+                ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
             final Set<String> addressIdSet = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String addressBookIdStr = cursor.getString(1);
                 if (addressBookIdStr != null && addressIdSet.add(addressBookIdStr)) {
+                    final String userIdStr = cursor.getString(6);
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),
@@ -461,7 +462,7 @@ public class ContactsDb {
                             cursor.getString(3),
                             cursor.getString(4),
                             cursor.getString(5),
-                            null,
+                            userIdStr == null ? null : new UserId(userIdStr),
                             cursor.getInt(7) == 1);
                     contacts.add(contact);
                 }

@@ -56,10 +56,6 @@
             android:label="@string/select_contact"/>
 
         <activity
-            android:name=".ui.contacts.DeviceContactsActivity"
-            android:label="@string/select_contact"/>
-
-        <activity
             android:name=".ui.contacts.MultipleContactPickerActivity"
             android:label="@string/select_contact"/>
 
