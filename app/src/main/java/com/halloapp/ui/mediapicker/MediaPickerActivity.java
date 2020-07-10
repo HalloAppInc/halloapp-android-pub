@@ -1,24 +1,41 @@
 package com.halloapp.ui.mediapicker;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Outline;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,14 +50,15 @@ import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.BlueToast;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.GridSpacingItemDecoration;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -64,8 +82,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;
     private GalleryThumbnailLoader thumbnailLoader;
+    private MediaPickerPreview preview;
 
-    private final Set<Long> selectedItems = new LinkedHashSet<>();
+    private final ArrayList<Long> selectedItems = new ArrayList<>();
     private ActionMode actionMode;
     private int pickerPurpose = PICKER_PURPOSE_SEND;
 
@@ -92,14 +111,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
         mediaView.setLayoutManager(layoutManager);
-        mediaView.getViewTreeObserver().addOnGlobalLayoutListener(() ->
-                layoutManager.setSpanCount((mediaView.getWidth() - mediaView.getPaddingLeft() - mediaView.getPaddingRight()) /
-                        getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_size)));
-
-        mediaView.addItemDecoration(new GridSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing)));
 
         adapter = new MediaItemsAdapter();
         mediaView.setAdapter(adapter);
+
+        mediaView.addItemDecoration(new GridSpacingItemDecoration(getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing)));
+
+        layoutManager.setSpanCount(MediaItemsAdapter.SPAN_COUNT_DAY_SMALL);
+        layoutManager.setSpanSizeLookup(new GallerySpanSizeLookup(mediaView));
 
         viewModel = new ViewModelProvider(this, new MediaPickerViewModelFactory(getApplication(), pickerPurpose != PICKER_PURPOSE_AVATAR)).get(MediaPickerViewModel.class);
         viewModel.mediaList.observe(this, mediaItems -> {
@@ -120,11 +139,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             }
         }
 
-        final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
-                    REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);
-        }
+        preview = new MediaPickerPreview(this);
+
+        setupZoom(mediaView);
+        requestPermissions();
     }
 
     public void onDestroy() {
@@ -198,6 +216,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     }
 
+    private void requestPermissions() {
+        final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
+                    REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -264,6 +290,20 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupZoom(RecyclerView mediaView) {
+        mediaView.setItemAnimator(new ZoomAnimator());
+
+        final ScaleGestureDetector zoomDetector = new ScaleGestureDetector(this, new ZoomDetectorListener(mediaView));
+        mediaView.setOnTouchListener((View view, MotionEvent motionEvent) -> {
+            if (motionEvent.getPointerCount() > 1) {
+                return zoomDetector.onTouchEvent(motionEvent);
+            }
+
+            return false;
+        });
+    }
+
     private void startContentComposer(@NonNull ArrayList<Uri> uris) {
         final Intent intent = new Intent(this, ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
@@ -290,17 +330,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void onItemClicked(@NonNull GalleryItem galleryItem, View view) {
-        if (selectedItems.isEmpty()) {
+        if (selectedItems.isEmpty()  && pickerPurpose == PICKER_PURPOSE_AVATAR) {
             final ArrayList<Uri> uris = new ArrayList<>(1);
             uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
             handleSelection(uris);
         } else {
             handleMultiSelection(galleryItem, view);
         }
-    }
-
-    private void onItemLongClicked(@NonNull GalleryItem galleryItem, View view) {
-        handleMultiSelection(galleryItem, view);
     }
 
     private void handleMultiSelection(@NonNull GalleryItem galleryItem, View view) {
@@ -310,7 +346,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final float animateScale;
         if (!selectedItems.remove(galleryItem.id)) {
             if (selectedItems.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
-                CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
+                BlueToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
+
                 return;
             }
             selectedItems.add(galleryItem.id);
@@ -372,9 +409,19 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                         actionMode = null;
                     }
                 });
+
+                TextView tv = (TextView) getLayoutInflater().inflate(R.layout.media_action_mode_title, null);
+                actionMode.setCustomView(tv);
             }
             if (actionMode != null) {
-                actionMode.setTitle(String.format(Locale.getDefault(), "%d", selectedItems.size()));
+                TextView tv = (TextView) actionMode.getCustomView();
+                tv.setText(String.format(Locale.getDefault(), "%d", selectedItems.size()));
+
+                if (selectedItems.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
+                    tv.setTextColor(getResources().getColor(R.color.color_accent));
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
             }
         }
     }
@@ -392,7 +439,36 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     };
 
-    private class MediaItemsAdapter extends PagedListAdapter<GalleryItem, MediaItemViewHolder> {
+    public class MediaItemsAdapter extends PagedListAdapter<GalleryItem, MediaItemViewHolder> {
+        public final static int LAYOUT_DAY_LARGE = 1;
+        public final static int LAYOUT_DAY_SMALL = 2;
+        public final static int LAYOUT_MONTH = 3;
+
+        public final static int SPAN_COUNT_DAY_LARGE = 6;
+        public final static int SPAN_COUNT_DAY_SMALL = 4;
+        public final static int SPAN_COUNT_MONTH = 5;
+
+        public final static int BLOCK_SIZE_DAY_LARGE = 5;
+
+        public final static int TYPE_HEADER = 1;
+        public final static int TYPE_ITEM = 2;
+
+        private final SimpleDateFormat dayFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
+        private final SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+
+        private  class Pointer {
+            public int type;
+            public int position;
+
+            Pointer(int type, int position) {
+                this.type = type;
+                this.position = position;
+            }
+        }
+
+        private int gridLayout = LAYOUT_DAY_SMALL;
+        private ArrayList<String> headers = new ArrayList<>();
+        private ArrayList<Pointer> pointers = new ArrayList<>();
 
         MediaItemsAdapter() {
             super(DIFF_CALLBACK);
@@ -400,41 +476,138 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         public long getItemId(int position) {
-            return Preconditions.checkNotNull(getItem(position)).id;
+            if (pointers.get(position).type == TYPE_ITEM) {
+                return Preconditions.checkNotNull(getItem(position)).id;
+            } else {
+                // The minus is to avoid accidental collision with item ids
+                return -headers.get(pointers.get(position).position).hashCode();
+            }
+        }
+
+        public int getGridLayout() {
+            return gridLayout;
+        }
+
+        public void setGridLayout(int layout) {
+            gridLayout = layout;
+            buildHeaders(getCurrentList());
+        }
+
+        @Override
+        public int getItemCount() {
+            return pointers.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return pointers.get(position).type;
+        }
+
+        private boolean notSameMonth(GalleryItem l, GalleryItem r) {
+            return l.year != r.year || l.month != r.month;
+        }
+
+        private boolean notSameDay(GalleryItem l, GalleryItem r) {
+            return l.year != r.year || l.month != r.month || l.day != r.day;
+        }
+
+        private boolean shouldAddHeader(int position, GalleryItem current, GalleryItem prev) {
+            return position == 0 ||
+                    (gridLayout == LAYOUT_MONTH && notSameMonth(current, prev)) ||
+                    (gridLayout == LAYOUT_DAY_SMALL && notSameDay(current, prev)) ||
+                    (gridLayout == LAYOUT_DAY_LARGE && notSameDay(current, prev));
+        }
+
+        public void buildHeaders(@Nullable PagedList<GalleryItem> pagedList) {
+            headers.clear();
+            pointers.clear();
+
+            if (pagedList != null) {
+                for (int i = 0; i < pagedList.getLoadedCount(); ++i) {
+                    GalleryItem item = pagedList.get(i);
+
+                    if (shouldAddHeader(i, item, i == 0 ? null : pagedList.get(i - 1))) {
+                        pointers.add(new Pointer(TYPE_HEADER, headers.size()));
+
+                        if (gridLayout == LAYOUT_DAY_LARGE || gridLayout == LAYOUT_DAY_SMALL) {
+                            headers.add(dayFormat.format(new Date(item.date)));
+                        } else {
+                            headers.add(monthFormat.format(new Date(item.date)));
+                        }
+                    }
+
+                    pointers.add(new Pointer(TYPE_ITEM, i));
+                }
+            }
+        }
+
+        @Override
+        public void submitList(@Nullable PagedList<GalleryItem> pagedList) {
+            buildHeaders(pagedList);
+            super.submitList(pagedList);
         }
 
         @Override
         public @NonNull MediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_gallery_item, parent, false));
+            if (viewType == TYPE_ITEM) {
+                return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_gallery_item, parent, false));
+            } else {
+                return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_header, parent, false));
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull MediaItemViewHolder holder, int position) {
-            holder.bindTo(Preconditions.checkNotNull(getItem(position)));
+            if (getItemViewType(position) == TYPE_HEADER) {
+                holder.bindTo(headers.get(pointers.get(position).position));
+            } else {
+                holder.bindTo(Preconditions.checkNotNull(getItem(position)));
+            }
         }
     }
 
     private class MediaItemViewHolder extends RecyclerView.ViewHolder {
 
+        final TextView titleView;
         final ImageView thumbnailView;
         final View thumbnailFrame;
         final ImageView selectionIndicator;
+        final TextView selectionCounter;
         final ImageView typeIndicator;
 
         GalleryItem galleryItem;
 
+        @SuppressLint("ClickableViewAccessibility")
         MediaItemViewHolder(final @NonNull View v) {
             super(v);
             thumbnailView = v.findViewById(R.id.thumbnail);
             thumbnailFrame = v.findViewById(R.id.thumbnail_frame);
             selectionIndicator = v.findViewById(R.id.selection_indicator);
+            selectionCounter = v.findViewById(R.id.selection_counter);
             typeIndicator = v.findViewById(R.id.type_indicator);
+            titleView = v.findViewById(R.id.title);
 
-            thumbnailView.setOnClickListener(v12 -> onItemClicked(galleryItem, thumbnailFrame));
-            thumbnailView.setOnLongClickListener(v1 -> {
-                onItemLongClicked(galleryItem, thumbnailFrame);
-                return true;
-            });
+            if (thumbnailView != null) {
+                thumbnailView.setOnClickListener(v12 -> onItemClicked(galleryItem, thumbnailFrame));
+
+                thumbnailView.setOnLongClickListener(v1 -> {
+                    preview.show(galleryItem, thumbnailFrame);
+                    return true;
+                });
+
+                thumbnailView.setOnTouchListener((view, motionEvent) -> {
+                    if (preview.isShowing() && motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        preview.hide();
+                        return true;
+                    }
+
+                    return false;
+                });
+            }
+        }
+
+        void bindTo(final @NonNull String text) {
+            titleView.setText(text);
         }
 
         void bindTo(final @NonNull GalleryItem galleryItem) {
@@ -447,18 +620,23 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 typeIndicator.setVisibility(View.GONE);
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
-            if (selectedItems.isEmpty()) {
+
+            if (selectedItems.isEmpty() && pickerPurpose == PICKER_PURPOSE_AVATAR) {
+                selectionCounter.setVisibility(View.GONE);
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
                 thumbnailView.setSelected(false);
             } else {
-                selectionIndicator.setVisibility(View.VISIBLE);
                 if (selectedItems.contains(galleryItem.id)) {
-                    selectionIndicator.setImageResource(R.drawable.ic_item_selected);
+                    selectionCounter.setVisibility(View.VISIBLE);
+                    selectionCounter.setText(Integer.toString(selectedItems.indexOf(galleryItem.id) + 1));
+                    selectionIndicator.setVisibility(View.GONE);
                     int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
                     thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
                     thumbnailView.setSelected(true);
                 } else {
+                    selectionCounter.setVisibility(View.GONE);
+                    selectionIndicator.setVisibility(View.VISIBLE);
                     selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
                     thumbnailFrame.setPadding(0, 0, 0, 0);
                     thumbnailView.setSelected(false);

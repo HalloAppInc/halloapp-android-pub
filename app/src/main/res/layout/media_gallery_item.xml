@@ -2,7 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:layout_width="@dimen/media_gallery_grid_size"
     tools:layout_height="@dimen/media_gallery_grid_size">
@@ -35,5 +35,16 @@
         android:layout_gravity="start|top"
         tools:src="@drawable/ic_item_selected"
         tools:ignore="ContentDescription"/> <!-- content description is dynamic and set from the code -->
+
+    <TextView
+        android:id="@+id/selection_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:background="@drawable/ic_item_selected_background"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        />
 
 </FrameLayout>

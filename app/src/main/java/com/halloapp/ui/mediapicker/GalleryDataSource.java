@@ -30,6 +30,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
     private static final String[] MEDIA_PROJECTION = new String[] {
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Files.FileColumns.DATE_ADDED,
             //MediaStore.Files.FileColumns.DURATION
     };
 
@@ -64,7 +65,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
                 null)) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    galleryItems.add(new GalleryItem(cursor.getLong(0), cursor.getInt(1)));
+                    galleryItems.add(new GalleryItem(cursor.getLong(0), cursor.getInt(1), cursor.getLong(2)));
                 }
             }
         } catch (SecurityException ex) {
