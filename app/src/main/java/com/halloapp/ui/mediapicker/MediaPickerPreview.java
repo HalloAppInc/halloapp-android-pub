@@ -3,13 +3,17 @@ package com.halloapp.ui.mediapicker;
 import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Outline;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -23,11 +27,14 @@ import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.R;
-import com.halloapp.util.Log;
+import com.halloapp.media.MediaUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
 
 public class MediaPickerPreview {
     private final Context context;
@@ -53,54 +60,6 @@ public class MediaPickerPreview {
         wm.updateViewLayout(rootView, layoutParams);
     }
 
-    private void setVideo(TextureView view, Uri uri) {
-        final MediaPlayer player = new MediaPlayer();
-
-        view.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int surfaceWidth, int surfaceHeight) {
-                player.setOnVideoSizeChangedListener((mediaPlayer, width, height) -> {
-                    final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-                    DisplayMetrics displayMetrics = new DisplayMetrics();
-                    wm.getDefaultDisplay().getMetrics(displayMetrics);
-
-                    int padding = context.getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_padding);
-                    float scale = Math.min((displayMetrics.widthPixels - padding) / (float) width, (displayMetrics.heightPixels - padding) / (float) height);
-
-                    view.setLayoutParams(new ConstraintLayout.LayoutParams(Math.round(scale * (float) width), Math.round(scale * (float) height)));
-                });
-
-                player.setSurface(new Surface(surfaceTexture));
-
-                try {
-                    player.setDataSource(context, uri);
-                    player.prepare();
-                } catch (IOException e) {
-                    hide();
-                    return;
-                }
-
-                player.setLooping(true);
-                player.start();
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                player.stop();
-                player.release();
-                return true;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-            }
-        });
-    }
-
     public void show(@NonNull GalleryItem galleryItem, View anchor) {
         Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
 
@@ -116,11 +75,11 @@ public class MediaPickerPreview {
         if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
             tv.setVisibility(View.GONE);
             iv.setVisibility(View.VISIBLE);
-            iv.setImageURI(uri);
+            new ImageLoaderTask(iv, uri).execute();
         } else if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
             tv.setVisibility(View.VISIBLE);
             iv.setVisibility(View.GONE);
-            setVideo(tv, uri);
+            new VideoLoaderTask(tv, uri).execute();
         }
 
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -140,5 +99,143 @@ public class MediaPickerPreview {
 
     public boolean isShowing() {
         return popup != null && popup.isShowing();
+    }
+
+    private static class ImageLoaderTask extends AsyncTask<Void, Void, Bitmap> {
+        private WeakReference<ImageView> viewRef;
+        private Uri uri;
+
+        ImageLoaderTask(ImageView view, Uri uri) {
+            viewRef = new WeakReference<>(view);
+            this.uri = uri;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            ImageView view = viewRef.get();
+
+            if (view != null) {
+                try {
+                    InputStream inputStream = view.getContext().getContentResolver().openInputStream(uri);
+                    if (inputStream == null) {
+                        return null;
+                    }
+
+                    ExifInterface exif = new ExifInterface(inputStream);
+                    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1); // to get orientation (e.g. ORIENTATION_ROTATE_90, ORIENTATION_ROTATE_180) –
+                    inputStream.close();
+
+                    final Matrix matrix = MediaUtils.fromOrientation(orientation);
+                    Bitmap bitmap = BitmapFactory.decodeStream(view.getContext().getContentResolver().openInputStream(uri));
+
+                    final Bitmap result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                    if (result != bitmap) {
+                        bitmap.recycle();
+                    }
+
+                    return result;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            ImageView view = viewRef.get();
+
+            if (bitmap != null && view != null) {
+                view.setImageBitmap(bitmap);
+            }
+        }
+    }
+
+    private static class VideoLoaderTask extends AsyncTask<Void, Void, MediaPlayer> {
+        private WeakReference<TextureView> viewRef;
+        private Uri uri;
+
+        VideoLoaderTask(TextureView view, Uri uri) {
+            viewRef = new WeakReference<>(view);
+            this.uri = uri;
+        }
+
+        @Override
+        protected MediaPlayer doInBackground(Void... voids) {
+            final MediaPlayer player = new MediaPlayer();
+            final TextureView view = viewRef.get();
+
+            if (view != null) {
+                try {
+                    player.setDataSource(view.getContext(), uri);
+                } catch (IOException e) {
+                    return null;
+                }
+
+                player.setOnVideoSizeChangedListener((mediaPlayer, width, height) -> {
+                    Log.d("STEFAN", "setOnVideoSizeChangedListener");
+                    final WindowManager wm = (WindowManager) view.getContext().getSystemService(Context.WINDOW_SERVICE);
+                    DisplayMetrics displayMetrics = new DisplayMetrics();
+                    wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+                    int padding = view.getContext().getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_padding);
+                    float scale = Math.min((displayMetrics.widthPixels - padding) / (float) width, (displayMetrics.heightPixels - padding) / (float) height);
+
+                    view.setLayoutParams(new ConstraintLayout.LayoutParams(Math.round(scale * (float) width), Math.round(scale * (float) height)));
+                });
+            }
+
+            return player;
+        }
+
+        private void attachSurface(MediaPlayer player, SurfaceTexture surfaceTexture) {
+            player.setSurface(new Surface(surfaceTexture));
+
+            try {
+                player.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            player.setLooping(true);
+            player.start();
+        }
+
+        @Override
+        protected void onPostExecute(MediaPlayer player) {
+            TextureView view = viewRef.get();
+
+            if (view != null) {
+                Log.d("STEFAN", "onPostExecute");
+                view.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                    @Override
+                    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int surfaceWidth, int surfaceHeight) {
+                        Log.d("STEFAN", "onSurfaceTextureAvailable");
+                        attachSurface(player, surfaceTexture);
+                    }
+
+                    @Override
+                    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+                    }
+
+                    @Override
+                    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+                        player.stop();
+                        player.release();
+                        return true;
+                    }
+
+                    @Override
+                    public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+                    }
+                });
+
+                if (view.isAvailable()) {
+                    attachSurface(player, view.getSurfaceTexture());
+                }
+            }
+        }
     }
 }
