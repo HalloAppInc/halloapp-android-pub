@@ -152,6 +152,29 @@ class MessagesDb {
         return true;
     }
 
+    // TODO(jack): Update name when someone else changes it (XMPP message)
+    @WorkerThread
+    boolean addGroupChat(@NonNull String gid, @NonNull String name) {
+        Log.i("MessagesDb.addGroupChat " + gid);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_CHAT_ID, gid);
+            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, name);
+            db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.addGroupChat: added " + gid);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.addGroupChat: duplicate " + ex.getMessage() + " " + gid);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
     @WorkerThread
     void setMediaTransferred(@NonNull Message message, @NonNull Media media) {
         Log.i("ContentDb.setMediaTransferred: message=" + message + " media=" + media);
@@ -561,7 +584,7 @@ class MessagesDb {
     @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + chatId;
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId + "\"";
         if (startRowId != null) {
             where += " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? "<" : ">") + startRowId;
         }
@@ -882,7 +905,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_TIMESTAMP,
                         ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
                         ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
-                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
+                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID,
+                        ChatsTable.COLUMN_CHAT_NAME},
                 null,
                 null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
@@ -892,7 +916,8 @@ class MessagesDb {
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
-                        cursor.getLong(5));
+                        cursor.getLong(5),
+                        cursor.getString(6));
                 chats.add(chat);
             }
         }
@@ -909,7 +934,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_TIMESTAMP,
                         ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
                         ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
-                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID},
+                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID,
+                        ChatsTable.COLUMN_CHAT_NAME},
                 ChatsTable.COLUMN_CHAT_ID + "=?",
                 new String [] {chatId},
                 null, null, null)) {
@@ -920,7 +946,8 @@ class MessagesDb {
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
-                        cursor.getLong(5));
+                        cursor.getLong(5),
+                        cursor.getString(6));
             }
         }
         return null;

@@ -33,9 +33,12 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.xmpp.privacy.PrivacyList;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
@@ -51,6 +54,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+    private static final int REQUEST_CODE_CREATE_GROUP = 2;
 
     private static final String EXTRA_SHOW_INVITE = "show_invite_option";
     private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
@@ -173,6 +177,10 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
     }
 
+    private void onCreateGroup() {
+        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.new_group_title), REQUEST_CODE_CREATE_GROUP);
+    }
+
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
@@ -188,6 +196,21 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_CREATE_GROUP:
+                if (resultCode == RESULT_OK && data != null) {
+                    List<UserId> userIds = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
+                    startActivity(CreateGroupActivity.newPickerIntent(this, userIds));
+                }
+                finish();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     private void loadContacts() {
         final String[] perms = {Manifest.permission.READ_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
@@ -200,6 +223,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final int ITEM_TYPE_CONTACT = 0;
     private static final int ITEM_TYPE_INVITE = 1;
+    private static final int ITEM_TYPE_GROUP = 2;
 
     private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
 
@@ -243,20 +267,44 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemViewType(int position) {
-            return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+            if (Constants.GROUPS_ENABLED) {
+                if (position == 0) {
+                    return ITEM_TYPE_GROUP;
+                }
+                return position < getFilteredContactsCount() + 1 ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+            } else {
+                return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+            }
         }
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return viewType == ITEM_TYPE_CONTACT ?
-                    new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false)) :
-                    new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item, parent, false));
+            switch (viewType) {
+                case ITEM_TYPE_GROUP: {
+                    return new CreateGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.create_group_item, parent, false));
+                }
+                case ITEM_TYPE_INVITE: {
+                    return new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item, parent, false));
+                }
+                case ITEM_TYPE_CONTACT: {
+                    return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false));
+                }
+                default: {
+                    throw new IllegalArgumentException("Invalid view type " + viewType);
+                }
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (position < getFilteredContactsCount()) {
-                holder.bindTo(filteredContacts.get(position), filterTokens);
+            if (Constants.GROUPS_ENABLED) {
+                if (position > 0 && position < getFilteredContactsCount() + 1) {
+                    holder.bindTo(filteredContacts.get(position - 1), filterTokens);
+                }
+            } else {
+                if (position < getFilteredContactsCount()) {
+                    holder.bindTo(filteredContacts.get(position), filterTokens);
+                }
             }
         }
 
@@ -266,16 +314,17 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0);
+            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0) + (Constants.GROUPS_ENABLED ? 1 : 0);
         }
 
         @NonNull
         @Override
         public String getSectionName(int position) {
-            if (filteredContacts == null || position >= filteredContacts.size()) {
+            int contactsPosition = position - (Constants.GROUPS_ENABLED ? 1 : 0);
+            if (contactsPosition < 0 || filteredContacts == null || contactsPosition >= filteredContacts.size()) {
                 return "";
             }
-            final String name = filteredContacts.get(position).getDisplayName();
+            final String name = filteredContacts.get(contactsPosition).getDisplayName();
             if (TextUtils.isEmpty(name)) {
                 return "";
             }
@@ -442,6 +491,16 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             super(itemView);
             itemView.setOnClickListener(v -> {
                 onInviteFriends();
+            });
+        }
+    }
+
+    class CreateGroupViewHolder extends ViewHolder {
+
+        CreateGroupViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(v -> {
+                onCreateGroup();
             });
         }
     }

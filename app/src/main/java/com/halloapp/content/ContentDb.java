@@ -55,6 +55,7 @@ public class ContentDb {
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onGroupChatAdded(@NonNull String chatId);
         void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts);
@@ -77,6 +78,7 @@ public class ContentDb {
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onGroupChatAdded(@NonNull String chatId) {}
         public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
@@ -370,6 +372,17 @@ public class ContentDb {
             final Post replyPost = message.replyPostId == null ? null : getPost(message.isIncoming() ? UserId.ME : new UserId(message.chatId), message.replyPostId);
             if (messagesDb.addMessage(message, unseen, replyPost)) {
                 observers.notifyMessageAdded(message);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void addGroupChat(@NonNull String gid, @NonNull String name, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.addGroupChat(gid, name)) {
+                observers.notifyGroupChatAdded(gid);
             }
             if (completionRunnable != null) {
                 completionRunnable.run();

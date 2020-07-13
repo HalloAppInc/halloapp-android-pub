@@ -61,6 +61,10 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
+        public void onGroupChatAdded(@NonNull String chatId) {
+            invalidateChats();
+        }
+
         public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
             invalidateMessage(chatId, UserId.ME, messageId);
         }
@@ -116,10 +120,9 @@ public class ChatsViewModel extends AndroidViewModel {
                     }
                     Chat chat = chatsMap.get(friend.userId.rawId());
                     if (chat == null) {
-                        chat = new Chat(-1, friend.userId.rawId(), 0, 0, -1L, -1L);
+                        chat = new Chat(-1, friend.userId.rawId(), 0, 0, -1L, -1L, friend.getDisplayName());
                         chats.add(chat);
                     }
-                    chat.name = friend.getDisplayName();
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name)) {

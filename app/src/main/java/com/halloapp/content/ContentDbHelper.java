@@ -23,7 +23,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -85,7 +85,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_TIMESTAMP + " INTEGER,"
                 + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + " INTEGER,"
                 + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
-                + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1"
+                + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
+                + ChatsTable.COLUMN_CHAT_NAME + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + RepliesTable.TABLE_NAME);
@@ -238,6 +239,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 upgradeFromVersion16(db);
                 // fall through
             }
+            case 17: {
+                upgradeFromVersion17(db);
+                // fall through
+            }
 
             break;
             default: {
@@ -362,6 +367,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion16(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion17(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_CHAT_NAME + " TEXT");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

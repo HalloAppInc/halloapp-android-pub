@@ -96,6 +96,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyGroupChatAdded(@NonNull String gid) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onGroupChatAdded(gid);
+            }
+        }
+    }
+
     void notifyMessageAdded(@NonNull Message message) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

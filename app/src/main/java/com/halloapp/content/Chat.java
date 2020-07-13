@@ -17,12 +17,14 @@ public class Chat {
             long timestamp,
             int newMessageCount,
             long lastMessageRowId,
-            long firstUnseenMessageRowId) {
+            long firstUnseenMessageRowId,
+            String name) {
         this.rowId = rowId;
         this.chatId = chatId;
         this.timestamp = timestamp;
         this.newMessageCount = newMessageCount;
         this.lastMessageRowId = lastMessageRowId;
         this.firstUnseenMessageRowId = firstUnseenMessageRowId;
+        this.name = name;
     }
 }

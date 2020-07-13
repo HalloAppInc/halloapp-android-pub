@@ -51,6 +51,10 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
+        <activity android:name=".ui.groups.CreateGroupActivity"
+            android:label="@string/new_group_title"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
+
         <activity
             android:name=".ui.contacts.ContactsActivity"
             android:label="@string/select_contact"/>

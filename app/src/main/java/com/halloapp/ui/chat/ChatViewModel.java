@@ -23,6 +23,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.Log;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,7 +32,9 @@ public class ChatViewModel extends AndroidViewModel {
     private final String chatId;
 
     final LiveData<PagedList<Message>> messageList;
+    final ComputableLiveData<Boolean> isGroup;
     final ComputableLiveData<Contact> contact;
+    final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Post> replyPost;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
@@ -110,10 +113,24 @@ public class ChatViewModel extends AndroidViewModel {
         dataSourceFactory = new MessagesDataSource.Factory(contentDb, chatId);
         messageList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
+        isGroup = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return chatId.startsWith("g");
+            }
+        };
+
         contact = new ComputableLiveData<Contact>() {
             @Override
             protected Contact compute() {
                 return ContactsDb.getInstance(application).getContact(new UserId(chatId));
+            }
+        };
+
+        name = new ComputableLiveData<String>() {
+            @Override
+            protected String compute() {
+                return ContactsDb.getInstance(application).getContact(new UserId(chatId)).getDisplayName();
             }
         };
 

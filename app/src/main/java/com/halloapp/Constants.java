@@ -18,6 +18,8 @@ public class Constants {
     public static final int POST_LINE_LIMIT_TOLERANCE = 3;
     public static final int MAX_AVATAR_DIMENSION = 250;
     public static final int MAX_NAME_LENGTH = 25;
+    public static final int MAX_GROUP_NAME_LENGTH = 25;
+    public static final int MAX_GROUP_SIZE = 25;
 
     public static final int JPEG_QUALITY = 80;
     public static final int VIDEO_BITRATE = 2000000;
@@ -25,6 +27,7 @@ public class Constants {
     public static final int VIDEO_RESOLUTION_H265 = 480;
     public static final int AUDIO_BITRATE = 96000;
 
+    public static final boolean GROUPS_ENABLED = false;
     public static final boolean ENCRYPTION_TURNED_ON = true;
     public static final boolean REREQUEST_SEND_ENABLED = true;
     public static final boolean INVITES_ENABLED = true;

@@ -261,23 +261,23 @@ public class ChatActivity extends HalloActivity {
                 adapter.setFirstUnseenMessageRowId(chat.firstUnseenMessageRowId);
                 adapter.setNewMessageCount(chat.newMessageCount);
             }
-            ContentDb.getInstance(this).setChatSeen(chatId);
-        });
-        viewModel.contact.getLiveData().observe(this, contact -> {
-            setTitle(contact.getDisplayName());
-            if (replyPostId != null) {
-                final TextView replyNameView = findViewById(R.id.reply_name);
-                replyNameView.setText(contact.getDisplayName());
-            }
-            presenceLoader.getLastSeenLiveData(contact.userId).observe(this, presenceState -> {
-                if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
-                    toolbar.setSubtitle(null);
-                } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
-                    toolbar.setSubtitle(getString(R.string.online));
-                } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
-                    toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
+            viewModel.isGroup.getLiveData().observe(this, isGroup -> {
+                if (isGroup && chat != null) {
+                    setTitle(chat.name);
+                } else {
+                    viewModel.name.getLiveData().observe(this, this::setTitle);
+                    presenceLoader.getLastSeenLiveData(new UserId(chatId)).observe(this, presenceState -> {
+                        if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
+                            toolbar.setSubtitle(null);
+                        } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
+                            toolbar.setSubtitle(getString(R.string.online));
+                        } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
+                            toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
+                        }
+                    });
                 }
             });
+            ContentDb.getInstance(this).setChatSeen(chatId);
         });
         viewModel.deleted.observe(this, deleted -> {
             if (deleted != null && deleted) {
