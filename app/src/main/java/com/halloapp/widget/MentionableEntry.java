@@ -67,9 +67,9 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
                     String displayText = span.getDisplayText();
                     String newSpanRange = s.subSequence(start, end).toString();
                     if (!displayText.equals(s.subSequence(start, end).toString())) {
+                        s.removeSpan(span);
                         // span changed
                         if (newSpanRange.contains(displayText)) {
-                            s.removeSpan(span);
                             int newStart = start + newSpanRange.indexOf(displayText);
                             s.setSpan(span, newStart, newStart + displayText.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                         } else {
