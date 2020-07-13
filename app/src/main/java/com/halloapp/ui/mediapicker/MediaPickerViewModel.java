@@ -88,7 +88,10 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
     public void select(long id) {
         if (selected.getValue() == null) {
-            selected.setValue(Collections.singletonList(id));
+            ArrayList<Long> items = new ArrayList<>();
+            items.add(id);
+
+            selected.setValue(items);
         } else {
             List<Long> list = selected.getValue();
             list.add(id);
