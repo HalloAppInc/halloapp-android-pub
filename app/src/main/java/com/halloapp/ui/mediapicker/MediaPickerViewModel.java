@@ -15,7 +15,6 @@ import androidx.paging.PagedList;
 import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MediaPickerViewModel extends AndroidViewModel {

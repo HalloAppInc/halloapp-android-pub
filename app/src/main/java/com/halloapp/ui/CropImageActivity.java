@@ -27,6 +27,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
@@ -43,6 +44,8 @@ public class CropImageActivity extends HalloActivity {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_STATE = "state";
+
+    private static final int REQUEST_CODE_MORE_MEDIA = 1;
 
     private CropImageView cropImageView;
     private RecyclerView mediaListView;
@@ -70,6 +73,8 @@ public class CropImageActivity extends HalloActivity {
         Bundle state = getIntent().getParcelableExtra(EXTRA_STATE);
 
         viewModel.loadMediaData(uris, state, getIntent().getIntExtra(EXTRA_SELECTED, 0));
+
+        viewModel.getMediaData().observe(this, this::finishWhenNoImages);
     }
 
     private void setupEditView() {
@@ -140,14 +145,24 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupMediaListDragNDrop() {
+        // Drag & drop all views except the last one which contains an add button
         final ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             private int start = -1, end = -1;
+
+            protected boolean isLast(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() == viewHolder.getAdapterPosition() + 1;
+            }
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 if (start == -1) {
                     start = viewHolder.getAdapterPosition();
                 }
+
+                if (isLast(recyclerView, target)) {
+                    return false;
+                }
+
                 end = target.getAdapterPosition();
 
                 adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
@@ -171,7 +186,11 @@ public class CropImageActivity extends HalloActivity {
 
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.START | ItemTouchHelper.END);
+                if (isLast(recyclerView, viewHolder)) {
+                    return 0;
+                } else {
+                    return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.START | ItemTouchHelper.END);
+                }
             }
         });
 
@@ -185,7 +204,10 @@ public class CropImageActivity extends HalloActivity {
                 selected.state = cropImageView.onSaveInstanceState();
                 viewModel.update(selected);
 
-                prepareResult();
+                final Intent intent = new Intent();
+                prepareResults(intent);
+                setResult(RESULT_OK, intent);
+
                 finish();
             });
 
@@ -194,9 +216,7 @@ public class CropImageActivity extends HalloActivity {
         });
     }
 
-    private void prepareResult() {
-        final Intent intent = new Intent();
-
+    private void prepareResults(@NonNull Intent intent) {
         ArrayList<Uri> uris = viewModel.getUris();
         if (uris == null) {
             uris = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
@@ -215,8 +235,6 @@ public class CropImageActivity extends HalloActivity {
         intent.putParcelableArrayListExtra(EXTRA_MEDIA, uris);
         intent.putExtra(EXTRA_STATE, state);
         intent.putExtra(EXTRA_SELECTED, position);
-
-        setResult(RESULT_OK, intent);
     }
 
     @Override
@@ -227,7 +245,10 @@ public class CropImageActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        prepareResult();
+        final Intent intent = new Intent();
+        prepareResults(intent);
+        setResult(RESULT_OK, intent);
+
         super.onBackPressed();
     }
 
@@ -265,7 +286,66 @@ public class CropImageActivity extends HalloActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_MORE_MEDIA) {
+            ArrayList<Uri> uris = data.getParcelableArrayListExtra(EXTRA_MEDIA);
+            Bundle state = data.getParcelableExtra(EXTRA_STATE);
+            viewModel.loadMediaData(uris, state);
+        }
+    }
+
+    private void finishWhenNoImages(List<CropImageViewModel.MediaModel> models) {
+        boolean hasImages = false;
+        for (CropImageViewModel.MediaModel m : models) {
+            if (m.original.type == Media.MEDIA_TYPE_IMAGE) {
+                hasImages = true;
+                break;
+            }
+        }
+
+        if (!hasImages) {
+            final Intent intent = new Intent();
+            prepareResults(intent);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    }
+
+    private void selectMoreImages() {
+        final Intent intent = new Intent(this, MediaPickerActivity.class);
+        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_RESULT);
+
+        prepareResults(intent);
+        startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
+    }
+
+    private void onMediaSelect(@NonNull Media media, int position) {
+        if (media.type == Media.MEDIA_TYPE_VIDEO || viewModel.getSelectedPosition() == position) {
+            return;
+        }
+
+        if (selected != null) {
+            selected.state = cropImageView.onSaveInstanceState();
+
+            cropImageView.setOnCropImageCompleteListener((view, result) -> {
+                viewModel.update(selected);
+                viewModel.select(position);
+            });
+
+            cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
+                    Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
+        } else {
+            viewModel.select(position);
+        }
+    }
+
     private class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.ViewHolder> {
+        private final int VIEW_TYPE_IMAGE = 1;
+        private final int VIEW_TYPE_BUTTON = 2;
+
         private final int WHITE_20 = Color.argb(51, 255,255,255);
         private final List<CropImageViewModel.MediaModel> dataset = new ArrayList<>();
 
@@ -280,62 +360,57 @@ public class CropImageActivity extends HalloActivity {
             notifyDataSetChanged();
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            return dataset.size() == position ? VIEW_TYPE_BUTTON : VIEW_TYPE_IMAGE;
+        }
+
         @NonNull
         @Override
         public MediaListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new MediaListAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_preview_item, parent, false));
+            if (viewType == VIEW_TYPE_IMAGE) {
+                return new MediaListAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_preview_item, parent, false));
+            } else {
+                return new MediaListAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cropper_add_button, parent, false));
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull MediaListAdapter.ViewHolder holder, int position) {
-            final CropImageViewModel.MediaModel model = dataset.get(position);
-            final Media media = model.state == null ? model.original : model.edit;
-
-            mediaLoader.load(holder.thumbnailView, media, new Displayer(media));
-
-            if (media.type == Media.MEDIA_TYPE_VIDEO) {
-                holder.typeIndicator.setImageResource(R.drawable.ic_video);
-                holder.typeIndicator.setVisibility(View.VISIBLE);
-                holder.thumbnailView.setContentDescription(getString(R.string.video));
+            if (position == dataset.size()) {
+                holder.button.setOnClickListener(v -> selectMoreImages());
             } else {
-                holder.typeIndicator.setVisibility(View.GONE);
-                holder.thumbnailView.setContentDescription(getString(R.string.photo));
-            }
+                final CropImageViewModel.MediaModel model = dataset.get(position);
+                final Media media = model.state == null ? model.original : model.edit;
 
-            if (viewModel.getSelectedPosition() == position) {
-                holder.itemView.setBackgroundColor(Color.WHITE);
-            } else {
-                holder.itemView.setBackgroundColor(WHITE_20);
-            }
+                mediaLoader.load(holder.thumbnailView, media, new Displayer(media));
 
-            holder.thumbnailView.setOnClickListener(v -> {
-                if (media.type == Media.MEDIA_TYPE_VIDEO || viewModel.getSelectedPosition() == position) {
-                    return;
-                }
-
-                if (selected != null) {
-                    selected.state = cropImageView.onSaveInstanceState();
-
-                    cropImageView.setOnCropImageCompleteListener((view, result) -> {
-                        viewModel.update(selected);
-                        viewModel.select(position);
-                    });
-
-                    cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
-                            Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
+                if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    holder.typeIndicator.setImageResource(R.drawable.ic_video);
+                    holder.typeIndicator.setVisibility(View.VISIBLE);
+                    holder.thumbnailView.setContentDescription(getString(R.string.video));
                 } else {
-                    viewModel.select(position);
+                    holder.typeIndicator.setVisibility(View.GONE);
+                    holder.thumbnailView.setContentDescription(getString(R.string.photo));
                 }
-            });
+
+                if (viewModel.getSelectedPosition() == position) {
+                    holder.itemView.setBackgroundColor(Color.WHITE);
+                } else {
+                    holder.itemView.setBackgroundColor(WHITE_20);
+                }
+
+                holder.thumbnailView.setOnClickListener(v -> onMediaSelect(media, position));
+            }
         }
 
         @Override
         public int getItemCount() {
-            return dataset.size();
+            return dataset.size() + 1;
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder {
-
+            final ImageView button;
             final ImageView thumbnailView;
             final ImageView typeIndicator;
 
@@ -350,15 +425,19 @@ public class CropImageActivity extends HalloActivity {
                 });
                 v.setClipToOutline(true);
 
-                thumbnailView = v.findViewById(R.id.thumbnail);
-                thumbnailView.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
-                    }
-                });
-                thumbnailView.setClipToOutline(true);
                 typeIndicator = v.findViewById(R.id.type_indicator);
+                thumbnailView = v.findViewById(R.id.thumbnail);
+                if (thumbnailView != null) {
+                    thumbnailView.setOutlineProvider(new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
+                        }
+                    });
+                    thumbnailView.setClipToOutline(true);
+                }
+
+                button = v.findViewById(R.id.button);
             }
         }
 
