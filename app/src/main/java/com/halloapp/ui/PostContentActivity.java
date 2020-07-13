@@ -162,7 +162,8 @@ public class PostContentActivity extends HalloActivity {
         }
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        // Allow showing content under the nav bar, we handle the padding ourselves
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this) | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_post_content);
