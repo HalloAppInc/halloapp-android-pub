@@ -475,6 +475,16 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             setHasStableIds(true);
         }
 
+        @Nullable
+        @Override
+        protected GalleryItem getItem(int position) {
+            if (pointers.get(position).type == TYPE_ITEM) {
+                return super.getItem(pointers.get(position).position);
+            } else {
+                return null;
+            }
+        }
+
         public long getItemId(int position) {
             if (pointers.get(position).type == TYPE_ITEM) {
                 return Preconditions.checkNotNull(getItem(position)).id;
