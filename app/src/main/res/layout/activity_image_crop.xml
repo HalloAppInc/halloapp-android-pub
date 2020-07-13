@@ -62,7 +62,7 @@
             android:textColor="@android:color/white"
             android:backgroundTint="@color/crop_done"
             android:textAllCaps="false"
-            android:text="@string/set_avatar_done"
+            android:text="@string/done"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

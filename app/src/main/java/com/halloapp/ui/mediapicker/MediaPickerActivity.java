@@ -4,16 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Outline;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,15 +16,10 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +35,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
+import com.halloapp.ui.CropImageActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
@@ -72,6 +63,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     public static final int PICKER_PURPOSE_SEND = 1;
     public static final int PICKER_PURPOSE_AVATAR = 2;
+    public static final int PICKER_PURPOSE_RESULT = 3;
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
@@ -79,12 +71,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final int REQUEST_CODE_SET_AVATAR = 4;
     private static final int REQUEST_CODE_TAKE_PHOTO = 5;
 
+    private static final int RESULT_SELECT_MORE = RESULT_FIRST_USER + 1;
+
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;
     private GalleryThumbnailLoader thumbnailLoader;
     private MediaPickerPreview preview;
 
-    private final ArrayList<Long> selectedItems = new ArrayList<>();
     private ActionMode actionMode;
     private int pickerPurpose = PICKER_PURPOSE_SEND;
 
@@ -110,35 +103,37 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         mediaView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
+        layoutManager.setSpanCount(MediaItemsAdapter.SPAN_COUNT_DAY_SMALL);
+        layoutManager.setSpanSizeLookup(new GallerySpanSizeLookup(mediaView));
+
         mediaView.setLayoutManager(layoutManager);
+        mediaView.addItemDecoration(new GridSpacingItemDecoration(getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing)));
 
         adapter = new MediaItemsAdapter();
         mediaView.setAdapter(adapter);
 
-        mediaView.addItemDecoration(new GridSpacingItemDecoration(getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing)));
+        MediaPickerViewModelFactory factory;
+        final boolean includeVideos = pickerPurpose != PICKER_PURPOSE_AVATAR;
+        if (savedInstanceState != null && savedInstanceState.getLongArray(KEY_SELECTED_MEDIA) != null) {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
+        } else if (getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA) != null) {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA));
+        } else {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos);
+        }
 
-        layoutManager.setSpanCount(MediaItemsAdapter.SPAN_COUNT_DAY_SMALL);
-        layoutManager.setSpanSizeLookup(new GallerySpanSizeLookup(mediaView));
-
-        viewModel = new ViewModelProvider(this, new MediaPickerViewModelFactory(getApplication(), pickerPurpose != PICKER_PURPOSE_AVATAR)).get(MediaPickerViewModel.class);
+        viewModel = new ViewModelProvider(this, factory).get(MediaPickerViewModel.class);
         viewModel.mediaList.observe(this, mediaItems -> {
             adapter.submitList(mediaItems);
             progressView.setVisibility(View.GONE);
             emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
         });
+        viewModel.getSelected().observe(this, selected -> {
+            adapter.notifyDataSetChanged();
+            updateActionMode(selected);
+        });
 
         thumbnailLoader = new GalleryThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_size));
-
-        if (savedInstanceState != null) {
-            final long [] selectedItemsArray = savedInstanceState.getLongArray(KEY_SELECTED_MEDIA);
-            if (selectedItemsArray != null) {
-                for (long item : selectedItemsArray) {
-                    selectedItems.add(item);
-                }
-                updateActionMode();
-            }
-        }
-
         preview = new MediaPickerPreview(this);
 
         setupZoom(mediaView);
@@ -148,19 +143,22 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public void onDestroy() {
         super.onDestroy();
         thumbnailLoader.destroy();
+
+        if (pickerPurpose == PICKER_PURPOSE_SEND) {
+            ArrayList<Uri> original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+            if (original != null && original.size() > 0) {
+                viewModel.clean(original);
+            }
+        }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (!selectedItems.isEmpty()) {
-            final long [] selectedItemsArray = new long [selectedItems.size()];
-            int index = 0;
-            for (Long item : selectedItems) {
-                selectedItemsArray[index] = item;
-                index++;
-            }
-            outState.putLongArray(KEY_SELECTED_MEDIA, selectedItemsArray);
+
+        long[] selected = viewModel.getSelectedArray();
+        if (selected != null && selected.length > 0) {
+            outState.putLongArray(KEY_SELECTED_MEDIA, selected);
         }
     }
 
@@ -210,6 +208,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     overridePendingTransition(0, 0);
                     setResult(RESULT_OK);
                     finish();
+                } else if (result == RESULT_SELECT_MORE) {
+                    viewModel.setSelected(getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA));
                 }
                 break;
             }
@@ -306,10 +306,11 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     private void startContentComposer(@NonNull ArrayList<Uri> uris) {
         final Intent intent = new Intent(this, ContentComposerActivity.class);
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, getIntent().getStringExtra(EXTRA_CHAT_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
+
+        prepareResults(intent, uris);
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_CONTENT);
     }
 
@@ -319,6 +320,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
     }
 
+    private void finishWithSelected(@NonNull ArrayList<Uri> uris) {
+        final Intent intent = new Intent();
+        prepareResults(intent, uris);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
     private void handleSelection(@NonNull ArrayList<Uri> uris) {
         if (pickerPurpose == PICKER_PURPOSE_SEND) {
             Preconditions.checkState(uris.size() > 0);
@@ -326,11 +334,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         } else if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
             Preconditions.checkState(uris.size() == 1);
             startAvatarPreview(uris.get(0));
+        } else if (pickerPurpose == PICKER_PURPOSE_RESULT) {
+            Preconditions.checkState(uris.size() > 0);
+            finishWithSelected(uris);
         }
     }
 
     private void onItemClicked(@NonNull GalleryItem galleryItem, View view) {
-        if (selectedItems.isEmpty()  && pickerPurpose == PICKER_PURPOSE_AVATAR) {
+        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
             final ArrayList<Uri> uris = new ArrayList<>(1);
             uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
             handleSelection(uris);
@@ -340,21 +351,18 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void handleMultiSelection(@NonNull GalleryItem galleryItem, View view) {
-        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
-            return;
-        }
         final float animateScale;
-        if (!selectedItems.remove(galleryItem.id)) {
-            if (selectedItems.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
-                BlueToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
+        if (viewModel.isSelected(galleryItem.id)) {
+            animateScale = 1.1f;
+        } else {
+            animateScale = .9f;
 
+            if (viewModel.selectedSize() >= Constants.MAX_POST_MEDIA_ITEMS) {
+                BlueToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 return;
             }
-            selectedItems.add(galleryItem.id);
-            animateScale = .9f;
-        } else {
-            animateScale = 1.1f;
         }
+
         final ScaleAnimation animation = new ScaleAnimation(1f, animateScale, 1f, animateScale,
                 Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
         animation.setDuration(70);
@@ -362,20 +370,15 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         animation.setRepeatMode(Animation.REVERSE);
         view.startAnimation(animation);
 
-        adapter.notifyDataSetChanged();
-        updateActionMode();
-    }
-
-    private void onItemsSelected() {
-        final ArrayList<Uri> uris = new ArrayList<>(selectedItems.size());
-        for (Long item : selectedItems) {
-            uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), item));
+        if (viewModel.isSelected(galleryItem.id)) {
+            viewModel.deselect(galleryItem.id);
+        } else {
+            viewModel.select(galleryItem.id);
         }
-        handleSelection(uris);
     }
 
-    private void updateActionMode() {
-        if (selectedItems.isEmpty()) {
+    private void updateActionMode(List<Long> selected) {
+        if (selected.isEmpty()) {
             if (actionMode != null) {
                 actionMode.finish();
                 actionMode = null;
@@ -386,6 +389,12 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     @Override
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                         getMenuInflater().inflate(R.menu.media_picker_action_mode, menu);
+
+                        if (pickerPurpose == PICKER_PURPOSE_RESULT) {
+                            MenuItem menuItem = menu.findItem(R.id.select);
+                            menuItem.setTitle(R.string.done);
+                        }
+
                         return true;
                     }
 
@@ -397,14 +406,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                         if (item.getItemId() == R.id.select) {
-                            onItemsSelected();
+                            handleSelection(viewModel.getSelectedUris());
                         }
                         return true;
                     }
 
                     @Override
                     public void onDestroyActionMode(ActionMode mode) {
-                        selectedItems.clear();
+                        viewModel.deselectAll();
                         adapter.notifyDataSetChanged();
                         actionMode = null;
                     }
@@ -413,15 +422,34 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 TextView tv = (TextView) getLayoutInflater().inflate(R.layout.media_action_mode_title, null);
                 actionMode.setCustomView(tv);
             }
-            if (actionMode != null) {
-                TextView tv = (TextView) actionMode.getCustomView();
-                tv.setText(String.format(Locale.getDefault(), "%d", selectedItems.size()));
 
-                if (selectedItems.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
-                    tv.setTextColor(getResources().getColor(R.color.color_accent));
-                } else {
-                    tv.setTextColor(Color.BLACK);
+            TextView tv = (TextView) actionMode.getCustomView();
+            tv.setText(String.format(Locale.getDefault(), "%d", selected.size()));
+
+            if (selected.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
+                tv.setTextColor(getResources().getColor(R.color.color_accent));
+            } else {
+                tv.setTextColor(Color.BLACK);
+            }
+        }
+    }
+
+    private void prepareResults(@NonNull Intent intent, @NonNull ArrayList<Uri> uris) {
+        ArrayList<Uri> original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+        Bundle state = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
+
+        intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
+
+        if (original != null) {
+            original.removeAll(uris);
+            viewModel.clean(original);
+
+            if (state != null) {
+                for (Uri uri : original) {
+                    state.remove(uri.toString());
                 }
+
+                intent.putExtra(CropImageActivity.EXTRA_STATE, state);
             }
         }
     }
@@ -631,16 +659,18 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
 
-            if (selectedItems.isEmpty() && pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
                 selectionCounter.setVisibility(View.GONE);
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
                 thumbnailView.setSelected(false);
             } else {
-                if (selectedItems.contains(galleryItem.id)) {
+                if (viewModel.isSelected(galleryItem.id)) {
+                    int index = viewModel.indexOfSelected(galleryItem.id);
                     selectionCounter.setVisibility(View.VISIBLE);
-                    selectionCounter.setText(Integer.toString(selectedItems.indexOf(galleryItem.id) + 1));
+                    selectionCounter.setText(String.format(Locale.getDefault(), "%d", index + 1));
                     selectionIndicator.setVisibility(View.GONE);
+
                     int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
                     thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
                     thumbnailView.setSelected(true);
