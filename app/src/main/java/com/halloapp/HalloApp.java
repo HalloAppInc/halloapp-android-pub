@@ -35,7 +35,7 @@ public class HalloApp extends Application {
         } else {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
-                    .penaltyDeath()
+//                    .penaltyDeath()
                     .penaltyDeathOnNetwork()
                     .build());
         }

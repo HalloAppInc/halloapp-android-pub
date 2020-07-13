@@ -479,7 +479,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         @Override
         protected GalleryItem getItem(int position) {
             if (pointers.get(position).type == TYPE_ITEM) {
-                return super.getItem(pointers.get(position).position);
+                return getCurrentList().get(pointers.get(position).position);
             } else {
                 return null;
             }
