@@ -157,7 +157,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             if (selectedContacts == null || selectedContacts.size() == 0) {
                 getSupportActionBar().setSubtitle(getString(R.string.no_contacts_selected_subtitle));
             } else {
-                getSupportActionBar().setSubtitle(getString(R.string.contact_selection_subtitle, selectedContacts.size()));
+                getSupportActionBar().setSubtitle(getResources().getQuantityString(R.plurals.contact_selection_subtitle, selectedContacts.size(), selectedContacts.size()));
             }
         }
     }
