@@ -244,7 +244,7 @@ public class ContentComposerActivity extends HalloActivity {
                 mediaPager.setVisibility(View.VISIBLE);
                 mediaPager.setOffscreenPageLimit(media.size());
             }
-            mediaPagerAdapter.setmediaPairList(media);
+            mediaPagerAdapter.setMediaPairList(media);
             if (media.size() <= 1) {
                 mediaPagerIndicator.setVisibility(View.GONE);
             } else {
@@ -569,7 +569,7 @@ public class ContentComposerActivity extends HalloActivity {
             fullThumbnailLoader.remove(mediaPair.edit.file);
         }
         viewModel.deleteMediaItem(currentItem);
-        mediaPagerAdapter.setmediaPairList(mediaPairList);
+        mediaPagerAdapter.setMediaPairList(mediaPairList);
         mediaPagerAdapter.notifyDataSetChanged();
         if (!mediaPairList.isEmpty()) {
             setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
@@ -703,7 +703,7 @@ public class ContentComposerActivity extends HalloActivity {
         MediaPagerAdapter() {
         }
 
-        void setmediaPairList(@NonNull List<ContentComposerViewModel.EditMediaPair> mediaPairList) {
+        void setMediaPairList(@NonNull List<ContentComposerViewModel.EditMediaPair> mediaPairList) {
             this.mediaPairList.clear();
             this.mediaPairList.addAll(mediaPairList);
             notifyDataSetChanged();
