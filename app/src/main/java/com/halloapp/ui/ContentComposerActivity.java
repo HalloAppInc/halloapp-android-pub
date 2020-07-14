@@ -48,6 +48,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.Log;
@@ -60,6 +61,7 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
+import com.theartofdev.edmodo.cropper.CropImageOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -268,6 +270,7 @@ public class ContentComposerActivity extends HalloActivity {
             if (contentItem != null) {
                 contentItem.addToStorage(ContentDb.getInstance(getBaseContext()));
                 setResult(RESULT_OK);
+                viewModel.cleanTmpFiles();
                 finish();
 
                 if (Intent.ACTION_SEND.equals(getIntent().getAction()) ||
@@ -309,9 +312,34 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        prepareResult();
+        super.onBackPressed();
+    }
+
     private void openMediaPicker() {
-        // TODO(Vasil): integrate better with the picker
+        prepareResult();
         finish();
+    }
+
+    private void prepareResult() {
+        final Intent intent = new Intent();
+        final ArrayList<Uri> uris = new ArrayList<>();
+        final Bundle editStates = new Bundle();
+
+        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        if (mediaPairList != null) {
+            for (ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
+                uris.add(mediaPair.uri);
+                editStates.putParcelable(mediaPair.uri.toString(), mediaPair.state);
+            }
+        }
+
+        intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
+        intent.putExtra(CropImageActivity.EXTRA_STATE, editStates);
+
+        setResult(MediaPickerActivity.RESULT_SELECT_MORE, intent);
     }
 
     private void updatePostReply(@Nullable Post post) {
@@ -506,10 +534,8 @@ public class ContentComposerActivity extends HalloActivity {
             @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
             if (mediaPairList != null && !mediaPairList.isEmpty()) {
                 for (final ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
-                    fullThumbnailLoader.remove(mediaPair.original.file);
-                    if (mediaPair.edit != null) {
-                        fullThumbnailLoader.remove(mediaPair.edit.file);
-                    }
+                    fullThumbnailLoader.remove(mediaPair.getRelevantMedia().file);
+                    // TODO(Vasil): Clean video data here.
                 }
                 if (0 <= currentItem && currentItem < mediaPairList.size()) {
                     setCurrentItem(currentItem, false);
@@ -522,35 +548,7 @@ public class ContentComposerActivity extends HalloActivity {
             mediaPager.setVisibility(View.GONE);
             expectedMediaCount = (uris != null) ? uris.size() : 0;
             viewModel.loadUris(uris, editStates);
-
-            /*for (final Uri uri : uris) {
-                final File origFile = new File(data.getData().getPath());
-                final File cropFile = ContentComposerViewModel.getCropFile(origFile);
-                fullThumbnailLoader.remove(origFile);
-                fullThumbnailLoader.remove(cropFile);
-                viewModel.cropStates.put(origFile, data.getParcelableExtra(CropImageActivity.EXTRA_STATE));
-                mediaPagerAdapter.notifyDataSetChanged();
-                View view = mediaPager.findViewWithTag(origFile);
-                if (view == null) {
-                    view = mediaPager.findViewWithTag(cropFile);
-                }
-                if (view instanceof ImageView) {
-                    final ImageView imageView = (ImageView) view;
-                    final Media displayMedia = new Media(0, Media.MEDIA_TYPE_IMAGE, null, cropFile, null, null, 0, 0, Media.TRANSFERRED_NO);
-                    imageView.setImageDrawable(null);
-                    fullThumbnailLoader.load(imageView, displayMedia);
-                }
-            }*/
         }
-
-        /*@Nullable final List<Media> media = viewModel.media.getValue();
-        if (media != null) {
-            mediaPager.setMaxAspectRatio(
-                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
-            if (0 <= currentItem && currentItem < media.size()) {
-                setCurrentItem(currentItem, false);
-            }
-        }*/
     }
 
     private void deleteItem(final int currentItem) {

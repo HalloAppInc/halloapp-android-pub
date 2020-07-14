@@ -71,7 +71,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final int REQUEST_CODE_SET_AVATAR = 4;
     private static final int REQUEST_CODE_TAKE_PHOTO = 5;
 
-    private static final int RESULT_SELECT_MORE = RESULT_FIRST_USER + 1;
+    public static final int RESULT_SELECT_MORE = RESULT_FIRST_USER + 1;
 
     private MediaPickerViewModel viewModel;
     private MediaItemsAdapter adapter;

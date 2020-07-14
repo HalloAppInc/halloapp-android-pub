@@ -110,10 +110,6 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        final List<EditMediaPair> mediaPairList = editMedia.getValue();
-        if (mediaPairList != null) {
-            new CleanupTmpFilesTask(mediaPairList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
         contactsDb.removeObserver(contactsObserver);
     }
 
@@ -127,6 +123,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     void prepareContent(@Nullable String chatId, @Nullable String text, @Nullable List<Mention> mentions) {
         new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    void cleanTmpFiles() {
+        final List<EditMediaPair> mediaPairList = editMedia.getValue();
+        if (mediaPairList != null) {
+            new CleanupTmpFilesTask(mediaPairList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     void deleteMediaItem(final int index) {
