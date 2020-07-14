@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +19,7 @@ import com.halloapp.contacts.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.widget.BlueToast;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.Collections;
@@ -106,7 +106,7 @@ public class FeedPrivacyActivity extends HalloActivity {
                 if (viewModel.hasChanges(selectedType, currentList)) {
                     viewModel.savePrivacy(selectedType, currentList).observe(this, done -> {
                         if (done != null) {
-                            Toast.makeText(this, done ? R.string.feed_privacy_update_success : R.string.feed_privacy_update_failure, Toast.LENGTH_SHORT).show();
+                            BlueToast.show(this, done ? R.string.feed_privacy_update_success : R.string.feed_privacy_update_failure);
                             finish();
                         }
                     });

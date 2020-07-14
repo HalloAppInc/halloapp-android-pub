@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -24,12 +23,12 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.StringUtils;
+import com.halloapp.widget.BlueToast;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 
 public class Debug {
@@ -68,7 +67,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_CREATE_GROUP);
         menu.setOnMenuItemClickListener(item -> {
-            Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
+            BlueToast.show(activity, item.getTitle());
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_RESET_REGISTRATION: {
                     new ResetRegistrationTask(activity.getApplication()).execute();
@@ -173,7 +172,7 @@ public class Debug {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
         menu.setOnMenuItemClickListener(item -> {
-            Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
+            BlueToast.show(activity, item.getTitle());
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
                     ContentDb.getInstance(activity).setCommentsSeen(userId, postId, false);
@@ -190,7 +189,7 @@ public class Debug {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
         menu.setOnMenuItemClickListener(item -> {
-            Toast.makeText(activity, item.getTitle(), Toast.LENGTH_SHORT).show();
+            BlueToast.show(activity, item.getTitle());
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
                     try {
