@@ -20,6 +20,7 @@ import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.StringUtils;
@@ -49,6 +50,8 @@ public class Debug {
     private static final String DEBUG_MENU_CREATE_GROUP = "Create group";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
+
+    private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     public static void showDebugMenu(@NonNull Activity activity, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
@@ -147,7 +150,7 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_CLEAR_KEY_STORE: {
-                    AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+                    bgWorkers.execute(() -> {
                         try {
                             EncryptedKeyStore.getInstance().clearAll();
                         } catch (Exception e) {
@@ -157,7 +160,7 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_CREATE_GROUP: {
-                    AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+                    bgWorkers.execute(() -> {
                         new GroupsApi(Connection.getInstance()).createGroup("NAME", Collections.singletonList(new UserId("1000000000000000002")));
                     });
                     break;

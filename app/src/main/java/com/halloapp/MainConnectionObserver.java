@@ -17,6 +17,7 @@ import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -35,6 +36,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final Context context;
 
     private Me me;
+    private BgWorkers bgWorkers;
     private ContentDb contentDb;
     private Connection connection;
     private ContactsDb contactsDb;
@@ -52,6 +54,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     instance = new MainConnectionObserver(
                             context,
                             Me.getInstance(context),
+                            BgWorkers.getInstance(),
                             ContentDb.getInstance(context),
                             Connection.getInstance(),
                             ContactsDb.getInstance(context),
@@ -71,6 +74,7 @@ public class MainConnectionObserver extends Connection.Observer {
     MainConnectionObserver(
             @NonNull Context context,
             @NonNull Me me,
+            @NonNull BgWorkers bgWorkers,
             @NonNull ContentDb contentDb,
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
@@ -83,6 +87,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.context = context.getApplicationContext();
 
         this.me = me;
+        this.bgWorkers = bgWorkers;
         this.contentDb = contentDb;
         this.connection = connection;
         this.contactsDb = contactsDb;
@@ -96,7 +101,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onConnected() {
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+        bgWorkers.execute(() -> {
             try {
                 encryptedSessionManager.ensureKeysUploaded();
             } catch (Exception e) {
@@ -212,7 +217,7 @@ public class MainConnectionObserver extends Connection.Observer {
         for (ContactInfo contact : protocolContacts) {
             normalizedPhoneDataList.add(new ContactsDb.NormalizedPhoneData(contact.normalizedPhone, new UserId(contact.userId), "friends".equals(contact.role), contact.avatarId));
         }
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+        bgWorkers.execute(() -> {
             try {
                 contactsDb.updateNormalizedPhoneData(normalizedPhoneDataList).get();
                 if (!contactHashes.isEmpty()) {

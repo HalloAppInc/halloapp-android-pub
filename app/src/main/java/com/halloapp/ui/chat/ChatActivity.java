@@ -58,6 +58,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -110,6 +111,8 @@ public class ChatActivity extends HalloActivity {
     private boolean scrollUpOnDataLoaded;
     private boolean scrollToNewMessageOnDataLoaded = true;
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+
+    private BgWorkers bgWorkers = BgWorkers.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -619,7 +622,7 @@ public class ChatActivity extends HalloActivity {
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.copy:
-                            AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+                            bgWorkers.execute(() -> {
                                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clipData = ClipData.newPlainText(getString(R.string.copy_text), text);
                                 clipboardManager.setPrimaryClip(clipData);

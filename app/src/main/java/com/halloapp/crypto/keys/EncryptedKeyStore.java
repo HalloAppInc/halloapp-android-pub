@@ -13,6 +13,7 @@ import androidx.security.crypto.MasterKeys;
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.contacts.UserId;
 import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
@@ -68,24 +69,29 @@ public class EncryptedKeyStore {
 
     private static final int ONE_TIME_PRE_KEY_BATCH_COUNT = 20;
 
+    private static EncryptedKeyStore instance;
+
     // TODO(jack): Try moving away from SharedPreferences to avoid Strings in memory with key material
     private SharedPreferences sharedPreferences;
-
-    private static EncryptedKeyStore instance;
+    private BgWorkers bgWorkers;
 
     public static EncryptedKeyStore getInstance() {
         if (instance == null) {
             synchronized (EncryptedKeyStore.class) {
                 if (instance == null) {
-                    instance = new EncryptedKeyStore();
+                    instance = new EncryptedKeyStore(BgWorkers.getInstance());
                 }
             }
         }
         return instance;
     }
 
+    private EncryptedKeyStore(BgWorkers bgWorkers) {
+        this.bgWorkers = bgWorkers;
+    }
+
     public void init(Context context) {
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+        bgWorkers.execute(() -> {
             try {
                 sharedPreferences = getSharedPreferences(context);
             } catch (Exception e) {
