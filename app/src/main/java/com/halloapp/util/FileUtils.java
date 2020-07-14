@@ -130,7 +130,6 @@ public class FileUtils {
         }
     }
 
-    // TODO(Vasil): Should we put these elsewhere?
     public static String generateTempMediaFileName(@NonNull Uri uri, @Nullable String suffix) {
         String baseName = Base64.encodeToString(uri.toString().getBytes(), Base64.URL_SAFE);
         return TextUtils.isEmpty(suffix) ? baseName : String.format("%s-%s", baseName, suffix);
