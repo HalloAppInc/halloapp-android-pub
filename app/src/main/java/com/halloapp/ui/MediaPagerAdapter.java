@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -25,6 +26,7 @@ public class MediaPagerAdapter extends PagerAdapter {
 
     private final MediaPagerAdapterParent parent;
     private final float mediaCornerRadius;
+    private final float maxAspectRatio;
     private List<Media> media;
     private String contentId;
 
@@ -47,8 +49,13 @@ public class MediaPagerAdapter extends PagerAdapter {
     }
 
     public MediaPagerAdapter(@NonNull MediaPagerAdapterParent parent, float mediaCornerRadius) {
+        this(parent, mediaCornerRadius, 0);
+    }
+
+    public MediaPagerAdapter(@NonNull MediaPagerAdapterParent parent, float mediaCornerRadius, float maxAspectRatio) {
         this.parent = parent;
         this.mediaCornerRadius = mediaCornerRadius;
+        this.maxAspectRatio = maxAspectRatio;
     }
 
     public void setMedia(@NonNull List<Media> media) {
@@ -99,6 +106,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         imageView.setCornerRadius(mediaCornerRadius);
         imageView.setSinglePointerDragStartDisabled(true);
         imageView.setDrawDelegate(parent.getDrawDelegateView());
+        imageView.setMaxAspectRatio(maxAspectRatio);
         final ProgressBar progressView = view.findViewById(R.id.media_progress);
         imageView.setProgressView(progressView);
         parent.getMediaThumbnailLoader().load(imageView, mediaItem);

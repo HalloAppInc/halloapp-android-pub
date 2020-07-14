@@ -69,7 +69,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         footer = itemView.findViewById(R.id.post_footer);
 
         if (mediaPagerView != null) {
-            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius));
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), Constants.MAX_IMAGE_ASPECT_RATIO);
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.setPageMargin(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
 

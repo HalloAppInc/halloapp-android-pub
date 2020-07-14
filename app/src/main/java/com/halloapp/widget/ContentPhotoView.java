@@ -101,6 +101,10 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
         this.progressView = progressView;
     }
 
+    public void setMaxAspectRatio(float maxAspectRatio) {
+        this.maxAspectRatio = maxAspectRatio;
+    }
+
     @Override
     public void invalidate() {
         super.invalidate();
@@ -114,8 +118,8 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
         if (bitmap == null) {
             super.setImageBitmap(null);
         } else {
-            final int height = Math.min(bitmap.getHeight(), (int)(bitmap.getWidth() * maxAspectRatio));
-            final int heightPadding =  (bitmap.getHeight() - height) / 2;
+            final int height = computeConstrainedHeight(bitmap.getWidth(), bitmap.getHeight());
+            final int heightPadding = (bitmap.getHeight() - height) / 2;
             final Rect clipRect = new Rect(0, heightPadding, bitmap.getWidth(), heightPadding + height);
             final ClippedBitmapDrawable drawable = new ClippedBitmapDrawable(bitmap, clipRect);
             setImageDrawable(drawable);
@@ -133,6 +137,10 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
         }
     }
 
+    private int computeConstrainedHeight(int width, int height) {
+        return maxAspectRatio > 0 ? Math.min(height, (int) (width * maxAspectRatio)) : height;
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -147,7 +155,10 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
         final int width = getMeasuredWidth();
         final Drawable drawable = getDrawable();
         if (drawable != null && drawable.getIntrinsicWidth() > 0) {
-            final int height = (int) (width * Math.min(maxAspectRatio, 1f * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth()));
+            int drawableWidth = drawable.getIntrinsicWidth();
+            int drawableHeight = computeConstrainedHeight(drawableWidth, drawable.getIntrinsicHeight());
+            float drawableAspectRatio = 1f * drawableHeight / drawableWidth;
+            final int height = (int) (width * drawableAspectRatio);
             setMeasuredDimension(width, height);
         }
     }

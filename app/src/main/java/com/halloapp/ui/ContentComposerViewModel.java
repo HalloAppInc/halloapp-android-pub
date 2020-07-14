@@ -261,7 +261,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {
                                 RectF cropRect = null;
-                                if (media.height > Constants.MAX_IMAGE_ASPECT_RATIO * media.width) {
+                                if (chatId == null && media.height > Constants.MAX_IMAGE_ASPECT_RATIO * media.width) {
                                     final float padding = (media.height - Constants.MAX_IMAGE_ASPECT_RATIO * media.width) / 2;
                                     cropRect = new RectF(0, padding / media.height, 1, 1 - padding / media.height);
                                 }

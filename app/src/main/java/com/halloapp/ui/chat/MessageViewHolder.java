@@ -170,7 +170,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (!message.media.isEmpty()) {
-            mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(message.media)));
+            mediaPagerView.setMaxAspectRatio(Media.getMaxAspectRatio(message.media));
             mediaPagerAdapter.setMedia(message.media);
             if (message.media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);

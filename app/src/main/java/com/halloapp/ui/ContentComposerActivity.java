@@ -80,6 +80,8 @@ public class ContentComposerActivity extends HalloActivity {
     private TextView mediaIndexView;
     private ImageButton addMediaButton;
 
+    @Nullable
+    private String chatId;
     private String replyPostId;
     private int replyPostMediaIndex;
 
@@ -163,9 +165,11 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         if (savedInstanceState == null) {
+            chatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         } else {
+            chatId = savedInstanceState.getString(EXTRA_CHAT_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
@@ -215,7 +219,7 @@ public class ContentComposerActivity extends HalloActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), getIntent().getStringExtra(EXTRA_CHAT_ID), uris, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), chatId, uris, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         viewModel.media.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
@@ -235,8 +239,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
             invalidateOptionsMenu();
             updateMediaButtons();
-            mediaPager.setMaxAspectRatio(
-                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+            updateAspectRatioForMedia(media);
         });
         viewModel.mentionableContacts.getLiveData().observe(this, new Observer<List<Contact>>() {
             @Override
@@ -277,6 +280,15 @@ public class ContentComposerActivity extends HalloActivity {
             viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
         } else {
             replyContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateAspectRatioForMedia(List<Media> media) {
+        if (chatId == null) {
+            mediaPager.setMaxAspectRatio(
+                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+        } else {
+            mediaPager.setMaxAspectRatio(Media.getMaxAspectRatio(media));
         }
     }
 
@@ -346,6 +358,9 @@ public class ContentComposerActivity extends HalloActivity {
             outState.putString(EXTRA_REPLY_POST_ID, replyPostId);
             outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }
+        if (chatId != null) {
+            outState.putString(EXTRA_CHAT_ID, chatId);
+        }
     }
 
     @Override
@@ -366,6 +381,11 @@ public class ContentComposerActivity extends HalloActivity {
         final MenuItem shareMenuItem = menu.findItem(R.id.share);
         @Nullable final List<Media> media = viewModel.media.getValue();
         shareMenuItem.setVisible((media != null && !media.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
+        if (chatId != null) {
+            shareMenuItem.setTitle(R.string.send);
+        } else {
+            shareMenuItem.setTitle(R.string.share);
+        }
         return true;
     }
 
@@ -440,8 +460,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
         @Nullable final List<Media> media = viewModel.media.getValue();
         if (media != null) {
-            mediaPager.setMaxAspectRatio(
-                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+            updateAspectRatioForMedia(media);
         }
     }
 
@@ -469,8 +488,7 @@ public class ContentComposerActivity extends HalloActivity {
             mediaPagerIndicator.setVisibility(View.VISIBLE);
             mediaPagerIndicator.setViewPager(mediaPager);
         }
-        mediaPager.setMaxAspectRatio(
-                Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+        updateAspectRatioForMedia(media);
         invalidateOptionsMenu();
         updateMediaButtons();
     }
@@ -528,6 +546,9 @@ public class ContentComposerActivity extends HalloActivity {
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
+            if (chatId != null) {
+                imageView.setMaxAspectRatio(0);
+            }
             final View playButton = view.findViewById(R.id.play);
             final int currentPosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
             final Media mediaItem = media.get(currentPosition);
@@ -535,7 +556,7 @@ public class ContentComposerActivity extends HalloActivity {
             view.setTag(mediaItem);
 
             if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
