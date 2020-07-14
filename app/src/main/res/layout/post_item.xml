@@ -78,6 +78,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/post_timestamp"
                     android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
                     tools:text="1h"/>
 
             </LinearLayout>
