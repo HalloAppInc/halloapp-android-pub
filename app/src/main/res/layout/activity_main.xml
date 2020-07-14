@@ -85,7 +85,7 @@
             android:contentDescription="@string/add_post"
             app:sdExpansionMode="top"
             app:sdMainFabClosedIconColor="@android:color/white"
-            app:sdMainFabOpenedIconColor="@android:color/black"
+            app:sdMainFabOpenedIconColor="@color/color_primary"
             app:sdMainFabOpenedBackgroundColor="@android:color/white"
             app:sdMainFabClosedBackgroundColor="@color/fab_background"
             app:sdUseReverseAnimationOnClose="true"
