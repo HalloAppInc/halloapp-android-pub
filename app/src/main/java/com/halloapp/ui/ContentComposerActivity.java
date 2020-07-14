@@ -3,12 +3,9 @@ package com.halloapp.ui;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
-import android.media.browse.MediaBrowser;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -53,7 +50,6 @@ import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -65,12 +61,10 @@ import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -159,6 +153,8 @@ public class ContentComposerActivity extends HalloActivity {
             uris = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
         }
 
+        final Bundle editStates = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
+
         if (uris != null) {
             progressView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
@@ -240,14 +236,14 @@ public class ContentComposerActivity extends HalloActivity {
 
         expectedMediaCount = (uris != null) ? uris.size() : 0;
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, uris, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
-        viewModel.media.observe(this, media -> {
+                new ContentComposerViewModel.Factory(getApplication(), chatId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+        viewModel.editMedia.observe(this, media -> {
             progressView.setVisibility(View.GONE);
             if (!media.isEmpty()) {
                 mediaPager.setVisibility(View.VISIBLE);
                 mediaPager.setOffscreenPageLimit(media.size());
             }
-            mediaPagerAdapter.setMedia(media);
+            mediaPagerAdapter.setmediaPairList(media);
             if (media.size() <= 1) {
                 mediaPagerIndicator.setVisibility(View.GONE);
             } else {
@@ -434,8 +430,8 @@ public class ContentComposerActivity extends HalloActivity {
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem shareMenuItem = menu.findItem(R.id.share);
-        final List<Media> media = viewModel.media.getValue();
-        shareMenuItem.setVisible((media != null && !media.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
+        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        shareMenuItem.setVisible((mediaPairList != null && !mediaPairList.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
         if (chatId != null) {
             shareMenuItem.setTitle(R.string.send);
         } else {
@@ -445,37 +441,21 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     public void cropItem(final int currentItem) {
-        @Nullable final List<Media> media = viewModel.media.getValue();
-        @Nullable final Map<Media, Uri> mediaUriMap = viewModel.getMediaUriMap();
-        if (media != null && mediaUriMap != null && media.size() > currentItem) {
-//                    intent.setData(Uri.fromFile(mediaItem.file));
-//                    intent.putExtra(CropImageActivity.EXTRA_STATE, viewModel.cropStates.get(mediaItem.file));
-//                    intent.putExtra(CropImageActivity.EXTRA_OUTPUT, Uri.fromFile(ContentComposerViewModel.getCropFile(mediaItem.file)));
-
+        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        if (mediaPairList != null && mediaPairList.size() > currentItem) {
             final Bundle state = new Bundle();
-            final ArrayList<Uri> uris = new ArrayList<>(media.size());
-            int index = 0;
-            int relativeIndex = 0;
+            final ArrayList<Uri> uris = new ArrayList<>(mediaPairList.size());
 
-            for (final Media mediaItem : media) {
-                @Nullable final Uri uri = mediaUriMap.get(mediaItem);
-                if (uri != null) {
-                    Log.d(String.format("ContentComposerActivity: cropItem uri %s", uri.toString()));
-                    if (index == currentItem) {
-                        relativeIndex = uris.size();
-                    }
-                    uris.add(uri);
-                    state.putParcelable(uri.toString(), viewModel.cropStates.get(mediaItem));
-                } else {
-                    // Should never happen
-                    Log.e("ContentComposerActivity: Could not resolve the external uri for media item " + mediaItem.file.getAbsolutePath());
+            for (final ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
+                uris.add(mediaPair.uri);
+                if (mediaPair.state != null) {
+                    state.putParcelable(mediaPair.uri.toString(), mediaPair.state);
                 }
-                index++;
             }
 
             final Intent intent = new Intent(this, CropImageActivity.class);
             intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
-            intent.putExtra(CropImageActivity.EXTRA_SELECTED, relativeIndex);
+            intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
 
             startActivityForResult(intent, REQUEST_CODE_CROP);
@@ -488,7 +468,7 @@ public class ContentComposerActivity extends HalloActivity {
             case R.id.share: {
                 final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
                 final String postText = StringUtils.preparePostText(textAndMentions.first);
-                if (TextUtils.isEmpty(postText) && viewModel.getMedia() == null) {
+                if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
                     Log.w("ContentComposerActivity: cannot send empty content");
                 } else {
                     viewModel.prepareContent(
@@ -517,41 +497,31 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void onCropped(@NonNull final Intent data) {
-        // TODO(stefan): Integrate with the updated CropImageActivity results
         final ArrayList<Uri> uris = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
         final int currentItem = data.getIntExtra(CropImageActivity.EXTRA_SELECTED, getCurrentItem());
-        final Bundle states = data.getParcelableExtra(CropImageActivity.EXTRA_STATE);
+        final Bundle editStates = data.getParcelableExtra(CropImageActivity.EXTRA_STATE);
 
         if (uris != null) {
-            @Nullable final List<Media> media = viewModel.media.getValue();
-            @Nullable final Map<Media, Uri> mediaUriMap = viewModel.getMediaUriMap();
-            if (media != null && !media.isEmpty() && mediaUriMap != null) {
-                // Clean old data
-                for (final Media mediaItem : media) {
-                    @Nullable final Uri uri = mediaUriMap.get(media);
-                    if (uri != null) {
-                        final File origFile = new File(FileUtils.generateTempMediaFileName(uri, null));
-                        final File editFile = new File(FileUtils.generateTempMediaFileName(uri, "edit"));
-                        fullThumbnailLoader.remove(origFile);
-                        fullThumbnailLoader.remove(editFile);
-                        // TODO(Vasil): clean video elements here.
-
-                        @Nullable final Parcelable editState = states.getParcelable(uri.toString());
-                        if (editState != null) {
-                            viewModel.cropStates.put(mediaItem, editState);
-                        }
+            // Clean old data
+            @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+            if (mediaPairList != null && !mediaPairList.isEmpty()) {
+                for (final ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
+                    fullThumbnailLoader.remove(mediaPair.original.file);
+                    if (mediaPair.edit != null) {
+                        fullThumbnailLoader.remove(mediaPair.edit.file);
                     }
                 }
-                if (0 <= currentItem && currentItem < media.size()) {
+                if (0 <= currentItem && currentItem < mediaPairList.size()) {
                     setCurrentItem(currentItem, false);
                 }
             }
 
+            // Load new data
             final View progressView = findViewById(R.id.progress);
             progressView.setVisibility(View.VISIBLE);
             mediaPager.setVisibility(View.GONE);
             expectedMediaCount = (uris != null) ? uris.size() : 0;
-            viewModel.loadUris(uris);
+            viewModel.loadUris(uris, editStates);
 
             /*for (final Uri uri : uris) {
                 final File origFile = new File(data.getData().getPath());
@@ -584,24 +554,28 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void deleteItem(final int currentItem) {
-        @Nullable final List<Media> media = viewModel.media.getValue();
-        if (media == null || currentItem < 0 || media.size() <= currentItem) {
+        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        if (mediaPairList == null || currentItem < 0 || mediaPairList.size() <= currentItem) {
             return;
         }
 
-        final Media mediaItem = media.get(currentItem);
+        final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentItem);
+        final Media mediaItem = mediaPair.original;
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             final View mediaView = mediaPager.findViewWithTag(mediaItem);
             final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
             releaseVideoPlayer(mediaItem, contentPlayerView);
         }
 
-        // TODO(Vasil): Can we potentially leak a file?
+        fullThumbnailLoader.remove(mediaPair.original.file);
+        if (mediaPair.edit != null) {
+            fullThumbnailLoader.remove(mediaPair.edit.file);
+        }
         viewModel.deleteMediaItem(currentItem);
-        mediaPagerAdapter.setMedia(media);
+        mediaPagerAdapter.setmediaPairList(mediaPairList);
         mediaPagerAdapter.notifyDataSetChanged();
-        if (!media.isEmpty()) {
-            setCurrentItem(currentItem > media.size() ? media.size() - 1 : currentItem, true);
+        if (!mediaPairList.isEmpty()) {
+            setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
         } else {
             editText.setHint(R.string.type_a_post_hint);
             editText.requestFocus();
@@ -609,7 +583,7 @@ public class ContentComposerActivity extends HalloActivity {
                     (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.showSoftInput(editText,0);
         }
-        if (media.size() <= 1) {
+        if (mediaPairList.size() <= 1) {
             mediaPagerIndicator.setVisibility(View.GONE);
         } else {
             mediaPagerIndicator.setVisibility(View.VISIBLE);
@@ -622,16 +596,16 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void updateMediaButtons() {
-        final List<Media> media = viewModel.getMedia();
+        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
         final int currentItem = getCurrentItem();
-        if (media == null || media.size() <= 1) {
+        if (mediaPairList == null || mediaPairList.size() <= 1) {
             mediaIndexView.setVisibility(View.GONE);
         } else {
-            mediaIndexView.setText(String.format("%d / %d", currentItem + 1, media.size()));
+            mediaIndexView.setText(String.format("%d / %d", currentItem + 1, mediaPairList.size()));
             mediaIndexView.setVisibility(View.VISIBLE);
         }
-        if (media != null && !media.isEmpty() && media.size() > currentItem) {
-            final Media mediaItem = media.get(currentItem);
+        if (mediaPairList != null && !mediaPairList.isEmpty()) {
+            final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
             addMediaButton.setVisibility(View.VISIBLE);
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
@@ -727,23 +701,23 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private class MediaPagerAdapter extends PagerAdapter {
-        final List<Media> media = new ArrayList<>();
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = new ArrayList<>();
 
         MediaPagerAdapter() {
         }
 
-        void setMedia(@NonNull List<Media> media) {
-            this.media.clear();
-            this.media.addAll(media);
+        void setmediaPairList(@NonNull List<ContentComposerViewModel.EditMediaPair> mediaPairList) {
+            this.mediaPairList.clear();
+            this.mediaPairList.addAll(mediaPairList);
             notifyDataSetChanged();
         }
 
         public int getItemPosition(@NonNull Object object) {
             int index = 0;
             final Object tag = ((View) object).getTag();
-            for (Media mediaItem : media) {
-                if (mediaItem.equals(tag)) {
-                    return Rtl.isRtl(mediaPager.getContext()) ? media.size() - 1 - index : index;
+            for (ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
+                if (mediaPair.equals(tag)) {
+                    return Rtl.isRtl(mediaPager.getContext()) ? mediaPairList.size() - 1 - index : index;
                 }
                 index++;
             }
@@ -759,10 +733,11 @@ public class ContentComposerActivity extends HalloActivity {
                 imageView.setMaxAspectRatio(0);
                 contentPlayerView.setMaxAspectRatio(0);
             }
-            final int currentPosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
-            final Media mediaItem = media.get(currentPosition);
+            final int currentPosition = Rtl.isRtl(container.getContext()) ? mediaPairList.size() - 1 - position : position;
+            final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentPosition);
+            final Media mediaItem = mediaPair.getRelevantMedia();
 
-            view.setTag(mediaItem);
+            view.setTag(mediaPair);
 
             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                 imageView.setVisibility(View.GONE);
@@ -805,7 +780,7 @@ public class ContentComposerActivity extends HalloActivity {
 
         @Override
         public int getCount() {
-            return media.size();
+            return mediaPairList.size();
         }
 
         @Override
@@ -825,28 +800,4 @@ public class ContentComposerActivity extends HalloActivity {
         return Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - mediaPager.getCurrentItem() : mediaPager.getCurrentItem();
     }
 
-    static class CleanupTmpFilesTask extends AsyncTask<Void, Void, Void> {
-
-        private final List<Media> media;
-
-        CleanupTmpFilesTask(@NonNull List<Media> media) {
-            this.media = media;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            for (Media mediaItem : media) {
-                if (!mediaItem.file.delete()) {
-                    Log.e("failed to delete temporary file " + mediaItem.file.getAbsolutePath());
-                }
-                final File croppedFile = ContentComposerViewModel.getCropFile(mediaItem.file);
-                if (croppedFile.exists()) {
-                    if (!croppedFile.delete()) {
-                        Log.e("failed to delete temporary file " + croppedFile.getAbsolutePath());
-                    }
-                }
-            }
-            return null;
-        }
-    }
 }
