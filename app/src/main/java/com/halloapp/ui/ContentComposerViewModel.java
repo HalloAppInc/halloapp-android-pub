@@ -133,7 +133,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void deleteMediaItem(final int index) {
-        @Nullable List<EditMediaPair> mediaPairList = editMedia.getValue();
+        List<EditMediaPair> mediaPairList = editMedia.getValue();
         if (mediaPairList != null && 0 <= index && index < mediaPairList.size()) {
             final EditMediaPair mediaPair = mediaPairList.get(index);
             mediaPairList.remove(index);
@@ -215,18 +215,18 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     FileUtils.uriToFile(application, uri, originalFile);
                     fileCreated = true;
                 }
-                @Nullable final Size originalSize = MediaUtils.getDimensions(originalFile, mediaType);
+                final Size originalSize = MediaUtils.getDimensions(originalFile, mediaType);
 
                 final String editName = FileUtils.generateTempMediaFileName(uri, "edit");
                 final File editFile = fileStore.getTmpFile(editName);
-                @Nullable final Size editSize = editFile.exists() ? MediaUtils.getDimensions(editFile, mediaType) : null;
+                final Size editSize = editFile.exists() ? MediaUtils.getDimensions(editFile, mediaType) : null;
 
                 if (originalSize != null) {
                     final Media originalItem = Media.createFromFile(mediaType, originalFile);
                     originalItem.width = originalSize.getWidth();
                     originalItem.height = originalSize.getHeight();
 
-                    @Nullable final Media editItem;
+                    final Media editItem;
                     if (editSize != null) {
                         editItem = Media.createFromFile(mediaType, editFile);
                         editItem.width = editSize.getWidth();
@@ -235,7 +235,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                         editItem = null;
                     }
 
-                    @Nullable final Parcelable state = (editStates != null) ? editStates.getParcelable(uri.toString()) : null;
+                    final Parcelable state = (editStates != null) ? editStates.getParcelable(uri.toString()) : null;
                     mediaPairList.add(new EditMediaPair(uri, originalItem, editItem, state));
                 } else {
                     if (fileCreated && originalFile.exists()) {

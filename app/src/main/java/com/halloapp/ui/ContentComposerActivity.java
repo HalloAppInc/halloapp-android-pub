@@ -327,7 +327,7 @@ public class ContentComposerActivity extends HalloActivity {
         final ArrayList<Uri> uris = new ArrayList<>();
         final Bundle editStates = new Bundle();
 
-        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         if (mediaPairList != null) {
             for (ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
                 uris.add(mediaPair.uri);
@@ -457,7 +457,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem shareMenuItem = menu.findItem(R.id.share);
-        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         shareMenuItem.setVisible((mediaPairList != null && !mediaPairList.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
         if (chatId != null) {
             shareMenuItem.setTitle(R.string.send);
@@ -468,7 +468,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     public void cropItem(final int currentItem) {
-        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         if (mediaPairList != null && mediaPairList.size() > currentItem) {
             final Bundle state = new Bundle();
             final ArrayList<Uri> uris = new ArrayList<>(mediaPairList.size());
@@ -530,7 +530,7 @@ public class ContentComposerActivity extends HalloActivity {
 
         if (uris != null) {
             // Clean old data
-            @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+            final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
             if (mediaPairList != null && !mediaPairList.isEmpty()) {
                 for (final ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
                     fullThumbnailLoader.remove(mediaPair.getRelevantMedia().file);
@@ -551,7 +551,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void deleteItem(final int currentItem) {
-        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         if (mediaPairList == null || currentItem < 0 || mediaPairList.size() <= currentItem) {
             return;
         }
@@ -593,7 +593,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void updateMediaButtons() {
-        @Nullable final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
         final int currentItem = getCurrentItem();
         if (mediaPairList == null || mediaPairList.size() <= 1) {
             mediaIndexView.setVisibility(View.GONE);
