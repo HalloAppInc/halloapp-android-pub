@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Base64;
 import android.util.Size;
 
 import androidx.annotation.NonNull;

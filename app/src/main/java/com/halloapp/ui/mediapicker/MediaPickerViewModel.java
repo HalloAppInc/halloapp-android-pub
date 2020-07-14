@@ -3,6 +3,8 @@ package com.halloapp.ui.mediapicker;
 import android.app.Application;
 import android.content.ContentUris;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -12,8 +14,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.FileStore;
+import com.halloapp.ui.CropImageViewModel;
+import com.halloapp.util.FileUtils;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +28,9 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<GalleryItem>> mediaList;
     final MutableLiveData<List<Long>> selected = new MutableLiveData<>();
+
+    public ArrayList<Uri> original;
+    public Bundle state;
 
     public MediaPickerViewModel(@NonNull Application application, boolean includeVideos, @NonNull long[] selected) {
         this(application, includeVideos);
@@ -142,7 +152,37 @@ public class MediaPickerViewModel extends AndroidViewModel {
     }
 
     public void clean(List<Uri> uris) {
-        // TODO(stefan): remove original and edit files from cache folder
+        new CleanupTask(uris).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private class CleanupTask extends AsyncTask<Void, Void, Void> {
+        private final List<Uri> uris;
+
+        CleanupTask(List<Uri> uris) {
+            this.uris = uris;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final FileStore store = FileStore.getInstance(getApplication());
+
+            for (Uri uri : uris) {
+                final String originalName = FileUtils.generateTempMediaFileName(uri, null);
+                final String editName = FileUtils.generateTempMediaFileName(uri, "edit");
+                final File original = store.getTmpFile(originalName);
+                final File edit = store.getTmpFile(editName);
+
+                if (original.exists()) {
+                    original.delete();
+                }
+
+                if (edit.exists()) {
+                    edit.delete();
+                }
+            }
+
+            return null;
+        }
     }
 }
 

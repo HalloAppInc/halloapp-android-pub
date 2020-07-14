@@ -123,6 +123,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         viewModel = new ViewModelProvider(this, factory).get(MediaPickerViewModel.class);
+        viewModel.original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+        viewModel.state = getIntent().getBundleExtra(CropImageActivity.EXTRA_STATE);
         viewModel.mediaList.observe(this, mediaItems -> {
             adapter.submitList(mediaItems);
             progressView.setVisibility(View.GONE);
@@ -145,9 +147,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         thumbnailLoader.destroy();
 
         if (pickerPurpose == PICKER_PURPOSE_SEND) {
-            ArrayList<Uri> original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
-            if (original != null && original.size() > 0) {
-                viewModel.clean(original);
+            if (viewModel.original != null && viewModel.original.size() > 0) {
+                viewModel.clean(viewModel.original);
             }
         }
     }
@@ -209,7 +210,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     setResult(RESULT_OK);
                     finish();
                 } else if (result == RESULT_SELECT_MORE) {
-                    viewModel.setSelected(getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA));
+                    viewModel.original = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+                    viewModel.state = data.getBundleExtra(CropImageActivity.EXTRA_STATE);
+                    viewModel.setSelected(data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA));
                 }
                 break;
             }
@@ -435,8 +438,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void prepareResults(@NonNull Intent intent, @NonNull ArrayList<Uri> uris) {
-        ArrayList<Uri> original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
-        Bundle state = getIntent().getBundleExtra(CropImageActivity.EXTRA_STATE);
+        ArrayList<Uri> original = viewModel.original != null ? (ArrayList<Uri>) viewModel.original.clone() : null;
+        Bundle state = viewModel.state != null ? (Bundle)viewModel.state.clone() : null;
 
         intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
 

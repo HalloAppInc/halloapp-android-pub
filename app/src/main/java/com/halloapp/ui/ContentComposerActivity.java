@@ -61,7 +61,6 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
-import com.theartofdev.edmodo.cropper.CropImageOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
