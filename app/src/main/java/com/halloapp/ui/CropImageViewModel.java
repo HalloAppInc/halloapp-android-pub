@@ -126,7 +126,7 @@ public class CropImageViewModel extends AndroidViewModel {
     }
 
     public void update(MediaModel m) {
-        new UpdateCropTask(mediaData, m);
+        new UpdateCropTask(mediaData, m).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void clearOnDestroy() {
@@ -246,6 +246,7 @@ public class CropImageViewModel extends AndroidViewModel {
 
                 for (MediaModel model : result) {
                     if (model.uri.equals(uri)) {
+                        selected.postValue(model);
                         return;
                     }
                 }

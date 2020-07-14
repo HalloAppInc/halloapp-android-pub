@@ -70,7 +70,7 @@ public class CropImageActivity extends HalloActivity {
         setupButtons();
 
         ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
-        Bundle state = getIntent().getParcelableExtra(EXTRA_STATE);
+        Bundle state = getIntent().getBundleExtra(EXTRA_STATE);
 
         viewModel.loadMediaData(uris, state, getIntent().getIntExtra(EXTRA_SELECTED, 0));
 
@@ -87,26 +87,7 @@ public class CropImageActivity extends HalloActivity {
                 finish();
             } else {
                 if (selected == null || selected.state == null) {
-                    Rect rect = cropImageView.getWholeImageRect();
-                    final int w, h;
-
-                    if (cropImageView.getRotatedDegrees() % 180 == 0) {
-                        w = rect.width();
-                        h = rect.height();
-                    } else {
-                        w = rect.height();
-                        h = rect.width();
-                    }
-
-                    final Rect cropRect;
-                    if (h > Constants.MAX_IMAGE_ASPECT_RATIO * w) {
-                        int padding = (int) ((h - Constants.MAX_IMAGE_ASPECT_RATIO * w) / 2);
-                        cropRect = new Rect(0, padding, w, h - padding);
-                    } else {
-                        cropRect = new Rect(0, 0, w, h);
-                    }
-
-                    cropImageView.setCropRect(cropRect);
+                    setInitialFrame();
                 }
             }
         });
@@ -198,10 +179,14 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupButtons() {
-        findViewById(R.id.reset).setOnClickListener(v -> cropImageView.resetCropRect());
+        findViewById(R.id.reset).setOnClickListener(v -> {
+            cropImageView.resetCropRect();
+            setInitialFrame();
+        });
         findViewById(R.id.done).setOnClickListener(v -> {
             cropImageView.setOnCropImageCompleteListener((view, result) -> {
                 selected.state = cropImageView.onSaveInstanceState();
+                mediaLoader.remove(selected.edit.file);
                 viewModel.update(selected);
 
                 final Intent intent = new Intent();
@@ -224,7 +209,7 @@ public class CropImageActivity extends HalloActivity {
 
         Bundle state = viewModel.getState();
         if (state == null) {
-            state = getIntent().getParcelableExtra(EXTRA_STATE);
+            state = getIntent().getBundleExtra(EXTRA_STATE);
         }
 
         int position = viewModel.getSelectedPosition();
@@ -237,6 +222,29 @@ public class CropImageActivity extends HalloActivity {
         intent.putExtra(EXTRA_SELECTED, position);
     }
 
+    private void setInitialFrame() {
+        Rect rect = cropImageView.getWholeImageRect();
+        final int w, h;
+
+        if (cropImageView.getRotatedDegrees() % 180 == 0) {
+            w = rect.width();
+            h = rect.height();
+        } else {
+            w = rect.height();
+            h = rect.width();
+        }
+
+        final Rect cropRect;
+        if (h > Constants.MAX_IMAGE_ASPECT_RATIO * w) {
+            int padding = (int) ((h - Constants.MAX_IMAGE_ASPECT_RATIO * w) / 2);
+            cropRect = new Rect(0, padding, w, h - padding);
+        } else {
+            cropRect = new Rect(0, 0, w, h);
+        }
+
+        cropImageView.setCropRect(cropRect);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -245,11 +253,20 @@ public class CropImageActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        final Intent intent = new Intent();
-        prepareResults(intent);
-        setResult(RESULT_OK, intent);
+        cropImageView.setOnCropImageCompleteListener((view, result) -> {
+            selected.state = cropImageView.onSaveInstanceState();
+            mediaLoader.remove(selected.edit.file);
+            viewModel.update(selected);
 
-        super.onBackPressed();
+            final Intent intent = new Intent();
+            prepareResults(intent);
+            setResult(RESULT_OK, intent);
+
+            super.onBackPressed();
+        });
+
+        cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
+                Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
     }
 
     @Override
@@ -292,7 +309,8 @@ public class CropImageActivity extends HalloActivity {
 
         if (requestCode == REQUEST_CODE_MORE_MEDIA) {
             ArrayList<Uri> uris = data.getParcelableArrayListExtra(EXTRA_MEDIA);
-            Bundle state = data.getParcelableExtra(EXTRA_STATE);
+            Bundle state = data.getBundleExtra(EXTRA_STATE);
+
             viewModel.loadMediaData(uris, state);
         }
     }
@@ -315,11 +333,20 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void selectMoreImages() {
-        final Intent intent = new Intent(this, MediaPickerActivity.class);
-        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_RESULT);
+        cropImageView.setOnCropImageCompleteListener((view, result) -> {
+            selected.state = cropImageView.onSaveInstanceState();
+            mediaLoader.remove(selected.edit.file);
+            viewModel.update(selected);
 
-        prepareResults(intent);
-        startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
+            final Intent intent = new Intent(this, MediaPickerActivity.class);
+            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_RESULT);
+
+            prepareResults(intent);
+            startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
+        });
+
+        cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
+                Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
     }
 
     private void onMediaSelect(@NonNull Media media, int position) {
@@ -331,6 +358,7 @@ public class CropImageActivity extends HalloActivity {
             selected.state = cropImageView.onSaveInstanceState();
 
             cropImageView.setOnCropImageCompleteListener((view, result) -> {
+                mediaLoader.remove(selected.edit.file);
                 viewModel.update(selected);
                 viewModel.select(position);
             });
@@ -346,7 +374,7 @@ public class CropImageActivity extends HalloActivity {
         private final int VIEW_TYPE_IMAGE = 1;
         private final int VIEW_TYPE_BUTTON = 2;
 
-        private final int WHITE_20 = Color.argb(51, 255,255,255);
+        private final int WHITE_20 = ContextCompat.getColor(getBaseContext(), R.color.white_20);
         private final List<CropImageViewModel.MediaModel> dataset = new ArrayList<>();
 
         MediaListAdapter() {

@@ -436,7 +436,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     private void prepareResults(@NonNull Intent intent, @NonNull ArrayList<Uri> uris) {
         ArrayList<Uri> original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
-        Bundle state = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
+        Bundle state = getIntent().getBundleExtra(CropImageActivity.EXTRA_STATE);
 
         intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
 
