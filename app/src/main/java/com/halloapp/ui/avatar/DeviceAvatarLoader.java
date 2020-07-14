@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
@@ -44,7 +45,7 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
     }
 
     @MainThread
-    public void load(@NonNull ImageView view, String number) {
+    public void load(@NonNull ImageView view, @Nullable String number) {
         final Callable<Bitmap> loader = () -> getAddressBookPhoto(number);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 
@@ -60,7 +61,11 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
                 view.setImageResource(R.drawable.avatar_person);
             }
         };
-        load(view, loader, displayer, number, cache);
+        if (number != null) {
+            load(view, loader, displayer, number, cache);
+        } else {
+            view.setImageResource(R.drawable.avatar_person);
+        }
     }
 
     private Bitmap getAddressBookPhoto(String number) {

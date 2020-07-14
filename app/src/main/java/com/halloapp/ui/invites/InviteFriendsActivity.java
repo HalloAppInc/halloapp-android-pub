@@ -452,7 +452,7 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         }
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
-            if (!sendingEnabled || contact.userId != null) {
+            if (!sendingEnabled || contact.userId != null || contact.normalizedPhone == null) {
                 itemView.setAlpha(0.54f);
                 itemView.setClickable(false);
             } else {
@@ -461,7 +461,9 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
             }
             this.contact = contact;
             if (contact.userId == null) {
-                deviceAvatarLoader.load(avatarView, contact.normalizedPhone);
+                if (contact.normalizedPhone != null) {
+                    deviceAvatarLoader.load(avatarView, contact.normalizedPhone);
+                }
             } else {
                 avatarLoader.load(avatarView, contact.userId);
             }
@@ -497,6 +499,8 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
             }
             if (contact.userId != null) {
                 phoneView.setText(R.string.invite_already_a_user_subtitle);
+            } else if (contact.normalizedPhone == null) {
+                phoneView.setText(R.string.invite_invalid_phone_number);
             } else {
                 phoneView.setText(contact.getDisplayPhone());
             }
