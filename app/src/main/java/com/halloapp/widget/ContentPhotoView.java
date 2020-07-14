@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.widget.ProgressBar;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -27,6 +28,7 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
     private final Paint cornerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private DrawDelegateView drawDelegateView;
+    private ProgressBar progressView;
 
     public ContentPhotoView(Context context) {
         super(context);
@@ -41,6 +43,20 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
     public ContentPhotoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
+    }
+
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+        super.setImageDrawable(drawable);
+        if (drawable instanceof PlaceholderDrawable) {
+            if (progressView != null) {
+                progressView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (progressView != null) {
+                progressView.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -79,6 +95,10 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
 
     public void setDrawDelegate(DrawDelegateView drawDelegateView) {
         this.drawDelegateView = drawDelegateView;
+    }
+
+    public void setProgressView(ProgressBar progressView) {
+        this.progressView = progressView;
     }
 
     @Override

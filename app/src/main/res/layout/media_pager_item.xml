@@ -16,6 +16,13 @@
         app:contentPvCornerRadius="@dimen/message_media_radius"
         tools:src="@mipmap/ic_launcher" />
 
+    <ProgressBar
+        android:id="@+id/media_progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
     <ImageView
         android:id="@+id/play"
         android:layout_width="72dp"

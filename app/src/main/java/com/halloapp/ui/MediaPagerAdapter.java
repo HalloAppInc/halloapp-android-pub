@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
@@ -98,6 +99,8 @@ public class MediaPagerAdapter extends PagerAdapter {
         imageView.setCornerRadius(mediaCornerRadius);
         imageView.setSinglePointerDragStartDisabled(true);
         imageView.setDrawDelegate(parent.getDrawDelegateView());
+        final ProgressBar progressView = view.findViewById(R.id.media_progress);
+        imageView.setProgressView(progressView);
         parent.getMediaThumbnailLoader().load(imageView, mediaItem);
         final View playButton = view.findViewById(R.id.play);
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
