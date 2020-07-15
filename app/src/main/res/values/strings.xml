@@ -105,6 +105,7 @@
     <string name="failed_to_load_media">Failed to load media</string>
     <string name="settings">Settings</string>
     <string name="send_logs">Send logs</string>
+    <string name="privacy_policy">Privacy policy</string>
     <string name="settings_block_list">Blocked users</string>
     <string name="settings_feed_privacy">Feed privacy</string>
     <string name="settings_privacy">Privacy</string>

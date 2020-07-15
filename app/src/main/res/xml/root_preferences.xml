@@ -35,6 +35,10 @@
             app:key="send_logs"
             app:title="@string/send_logs" />
 
+        <Preference
+            app:key="privacy_policy"
+            app:title="@string/privacy_policy" />
+
         <SwitchPreferenceCompat
             app:key="use_debug_host"
             app:title="Use debug host"

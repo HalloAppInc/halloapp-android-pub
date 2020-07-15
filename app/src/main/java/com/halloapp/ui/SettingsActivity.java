@@ -26,6 +26,7 @@ import com.halloapp.xmpp.Connection;
 public class SettingsActivity extends HalloActivity {
     public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
     private static final String SUPPORT_EMAIL_URI = "mailto:" + SUPPORT_EMAIL;
+    private static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy-policy";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,16 @@ public class SettingsActivity extends HalloActivity {
                 }
 
                 return false;
+            });
+
+            final Preference privacyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
+            privacyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL));
+                    startActivity(intent);
+                    return false;
+                }
             });
 
             final Preference hostPreference = Preconditions.checkNotNull(findPreference("use_debug_host"));
