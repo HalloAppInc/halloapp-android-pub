@@ -133,12 +133,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             updateFab(destination.getId());
         });
 
-        final String[] perms = {Manifest.permission.READ_CONTACTS};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
-                    REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
-        }
-
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 && savedInstanceState == null) {
             // The activity was not launched from history
             processIntent(getIntent());
@@ -244,6 +238,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+            } else {
+                final String[] perms = {Manifest.permission.READ_CONTACTS};
+                if (!EasyPermissions.hasPermissions(this, perms)) {
+                    EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
+                            REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
+                }
             }
         });
         checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
