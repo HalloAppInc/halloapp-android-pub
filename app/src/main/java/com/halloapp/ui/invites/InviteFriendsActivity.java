@@ -3,7 +3,6 @@ package com.halloapp.ui.invites;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -38,6 +37,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.InvitesResponseIq;
@@ -257,14 +257,8 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
     }
 
     private void onSuccessfulInvite(String phone) {
-        Uri smsUri = Uri.parse("smsto:" + phone);
-        Intent smsIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
         String inviteText = getString(R.string.invite_text);
-        smsIntent.putExtra("sms_body", inviteText);
-        smsIntent.putExtra("text", inviteText);
-        smsIntent.putExtra(Intent.EXTRA_TEXT, inviteText);
-        smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        Intent chooser = Intent.createChooser(smsIntent, getString(R.string.invite_a_friend));
+        Intent chooser = IntentUtils.createSmsChooserIntent(this, getString(R.string.invite_a_friend), phone, inviteText);
         startActivity(chooser);
     }
 
