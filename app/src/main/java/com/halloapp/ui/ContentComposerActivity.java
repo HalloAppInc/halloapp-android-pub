@@ -541,6 +541,7 @@ public class ContentComposerActivity extends HalloActivity {
                 if (0 <= currentItem && currentItem < mediaPairList.size()) {
                     setCurrentItem(currentItem, false);
                 }
+                mediaPairList.clear();
             }
 
             // Load new data
@@ -668,6 +669,7 @@ public class ContentComposerActivity extends HalloActivity {
             player.setAudioAttributes(audioAttributes, true);
             contentPlayerView.setPlayer(player);
             player.prepare(mediaSource, false, false);
+            Log.d(String.format("ContentComposerActivity: initializeVideoPlayer %s", mediaPair.uri));
 
         }
         if (player != null && shouldAutoPlay != player.getPlayWhenReady()) {
@@ -697,6 +699,7 @@ public class ContentComposerActivity extends HalloActivity {
             player.stop();
             player.release();
             playerMap.remove(mediaPair);
+            Log.d(String.format("ContentComposerActivity: releaseVideoPlayer %s", mediaPair.uri));
         }
     }
 
