@@ -16,13 +16,16 @@ public class MediaUploadIq extends IQ {
 
     final static String ELEMENT = "upload_media";
     final static String NAMESPACE = "ns:upload_media";
+    final static String ATTRIBUTE_FILESIZE = "size";
 
     final Urls urls = new Urls();
+    long fileSize = 0;
 
-    MediaUploadIq(@NonNull Jid to) {
+    MediaUploadIq(@NonNull Jid to, long fileSize) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.get);
         setTo(to);
+        this.fileSize = fileSize;
     }
 
     private MediaUploadIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -34,8 +37,12 @@ public class MediaUploadIq extends IQ {
             }
             final String name = parser.getName();
             if ("media_urls".equals(name)) {
-                urls.putUrl = parser.getAttributeValue(null, "put");
-                urls.getUrl = parser.getAttributeValue(null, "get");
+                if (parser.getAttributeName(0).equals("patch")) {
+                    urls.patchUrl = parser.getAttributeValue(null, "patch");
+                } else {
+                    urls.putUrl = parser.getAttributeValue(null, "put");
+                    urls.getUrl = parser.getAttributeValue(null, "get");
+                }
             } else {
                 Xml.skip(parser);
             }
@@ -44,6 +51,7 @@ public class MediaUploadIq extends IQ {
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+        xml.attribute(ATTRIBUTE_FILESIZE, Long.toString(fileSize));
         xml.rightAngleBracket();
         return xml;
     }
@@ -59,6 +67,7 @@ public class MediaUploadIq extends IQ {
     public static class Urls {
         public String putUrl;
         public String getUrl;
+        public String patchUrl;
     }
 
 

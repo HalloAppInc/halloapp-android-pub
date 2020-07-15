@@ -321,13 +321,13 @@ public class Connection {
         });
     }
 
-    public Future<MediaUploadIq.Urls> requestMediaUpload() {
+    public Future<MediaUploadIq.Urls> requestMediaUpload(long fileSize) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: request media upload: no connection");
                 return null;
             }
-            final MediaUploadIq mediaUploadIq = new MediaUploadIq(connection.getXMPPServiceDomain());
+            final MediaUploadIq mediaUploadIq = new MediaUploadIq(connection.getXMPPServiceDomain(), fileSize);
             try {
                 final MediaUploadIq response = connection.createStanzaCollectorAndSend(mediaUploadIq).nextResultOrThrow();
                 return response.urls;

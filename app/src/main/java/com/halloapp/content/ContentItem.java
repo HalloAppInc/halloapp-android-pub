@@ -38,6 +38,9 @@ public abstract class ContentItem implements TextContent {
     public abstract void addToStorage(@NonNull ContentDb contentDb);
     public abstract void send(@NonNull Connection connection);
     public abstract void setMediaTransferred(@NonNull Media media, @NonNull ContentDb contentDb);
+    public abstract void setPatchUrl(long rowId, @NonNull String url, @NonNull ContentDb contentDb);
+    public abstract String getPatchUrl(long rowId, @NonNull ContentDb contentDb);
+    public abstract @Media.TransferredState int getMediaTransferred(long rowId, @NonNull ContentDb contentDb);
 
     public boolean isOutgoing() {
         return senderUserId.isMe();

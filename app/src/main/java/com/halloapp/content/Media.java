@@ -19,11 +19,13 @@ public class Media {
     public static final int MEDIA_TYPE_VIDEO = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_FAILURE})
+    @IntDef({TRANSFERRED_UNKNOWN, TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_FAILURE, TRANSFERRED_RESUME})
     public @interface TransferredState {}
+    public static final int TRANSFERRED_UNKNOWN = -1;
     public static final int TRANSFERRED_NO = 0;
     public static final int TRANSFERRED_YES = 1;
     public static final int TRANSFERRED_FAILURE = 2;
+    public static final int TRANSFERRED_RESUME = 3;
 
     public long rowId;
     public final @MediaType int type;

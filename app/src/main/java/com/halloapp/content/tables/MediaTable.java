@@ -16,6 +16,7 @@ public final class MediaTable implements BaseColumns {
     public static final String COLUMN_TRANSFERRED = "transferred";
     public static final String COLUMN_URL = "url";
     public static final String COLUMN_FILE = "file";
+    public static final String COLUMN_PATCH_URL = "patch_url";
     public static final String COLUMN_ENC_KEY = "enckey";
     public static final String COLUMN_SHA256_HASH = "sha256hash";
     public static final String COLUMN_WIDTH = "width";

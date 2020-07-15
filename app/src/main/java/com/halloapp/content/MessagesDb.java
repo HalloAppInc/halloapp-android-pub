@@ -242,6 +242,57 @@ class MessagesDb {
     }
 
     @WorkerThread
+    public void setPatchUrl(long rowId, @NonNull String url) {
+        final ContentValues values = new ContentValues();
+        values.put(MediaTable.COLUMN_PATCH_URL, url);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
+                    MediaTable._ID + "=?",
+                    new String[]{Long.toString(rowId)},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            Log.d("Resumable Uploader ContentDb.setPatchUrl =" + url);
+        } catch (SQLiteConstraintException ex) {
+            Log.i("Resumable Uploader MessageDb setPatchUrl: seen duplicate", ex);
+        } catch (SQLException ex) {
+            Log.e("Resumable Uploader MessageDb setPatchUrl: failed " + ex);
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    public String getPatchUrl(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PATCH_URL + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public @Media.TransferredState int getMediaTransferred(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_TRANSFERRED + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return Media.TRANSFERRED_UNKNOWN;
+    }
+
+    @WorkerThread
     void setOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageDelivered: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();

@@ -69,6 +69,20 @@ public class Post extends ContentItem {
     }
 
     @Override
+    public void setPatchUrl(long rowId, @NonNull String url, @NonNull ContentDb contentDb) {
+        contentDb.setPatchUrl(this, rowId, url);
+    }
+    @Override
+    public String getPatchUrl(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getPatchUrl(this, rowId);
+    }
+
+    @Override
+    public @Media.TransferredState int getMediaTransferred(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getMediaTransferred(this, rowId);
+    }
+
+    @Override
     public @NonNull String toString() {
         return "Post {timestamp:" + timestamp + " sender:" + senderUserId + ", id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }

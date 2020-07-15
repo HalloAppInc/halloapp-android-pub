@@ -90,7 +90,7 @@ public class ContentDb {
 
     public static ContentDb getInstance(final @NonNull Context context) {
         if (instance == null) {
-            synchronized(ContentDb.class) {
+            synchronized (ContentDb.class) {
                 if (instance == null) {
                     instance = new ContentDb(context);
                 }
@@ -216,6 +216,46 @@ public class ContentDb {
             }
             observers.notifyPostUpdated(post.senderUserId, post.id);
         });
+    }
+
+    @WorkerThread
+    public void setPatchUrl(@NonNull Post post, long rowId, @NonNull String url) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set patch url in Post: " + post);
+            postsDb.setPatchUrl(rowId, url);
+        });
+    }
+
+    @WorkerThread
+    public void setPatchUrl(@NonNull Message message, long rowId, @NonNull String url) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set patch url in Message: " + message);
+            messagesDb.setPatchUrl(rowId, url);
+        });
+    }
+
+    @WorkerThread
+    public String getPatchUrl(@NonNull Post post, long rowId) {
+        Log.i("Get patch url in Post: " + post);
+        return postsDb.getPatchUrl(rowId);
+    }
+
+    @WorkerThread
+    public String getPatchUrl(@NonNull Message message, long rowId) {
+        Log.i("Get patch url in Message: " + message);
+        return messagesDb.getPatchUrl(rowId);
+    }
+
+    @WorkerThread
+    public @Media.TransferredState int getMediaTransferred(@NonNull Post post, long rowId) {
+        Log.i("Get transferred state from Post: "+ post);
+        return postsDb.getMediaTransferred(rowId);
+    }
+
+    @WorkerThread
+    public @Media.TransferredState int getMediaTransferred(@NonNull Message message, long rowId) {
+        Log.i("Get transferred state from Message: "+ message);
+        return messagesDb.getMediaTransferred(rowId);
     }
 
     @WorkerThread

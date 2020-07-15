@@ -10,7 +10,6 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import androidx.core.util.Pair;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -263,6 +262,58 @@ class PostsDb {
             Log.e("ContentDb.setMediaTransferred: failed", ex);
             throw ex;
         }
+    }
+
+    @WorkerThread
+    public void setPatchUrl(long rowId, @NonNull String url) {
+        final ContentValues values = new ContentValues();
+        values.put(MediaTable.COLUMN_PATCH_URL, url);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MediaTable.TABLE_NAME,
+                    values,
+                    MediaTable._ID + "=?",
+                    new String[]{Long.toString(rowId)},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            Log.d("Resumable Uploader ContentDb.setPatchUrl =" + url);
+        } catch (SQLiteConstraintException ex) {
+            Log.i("Resumable Uploader PostDb setPatchUrl: seen duplicate", ex);
+        } catch (SQLException ex) {
+            Log.e("Resumable Uploader PostDb setPatchUrl: failed " + ex);
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    public String getPatchUrl(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PATCH_URL + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public @Media.TransferredState int getMediaTransferred(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_TRANSFERRED + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return Media.TRANSFERRED_UNKNOWN;
     }
 
     @WorkerThread

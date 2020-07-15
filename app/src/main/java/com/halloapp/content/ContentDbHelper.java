@@ -23,7 +23,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -114,6 +114,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_TRANSFERRED + " INTEGER,"
                 + MediaTable.COLUMN_URL + " TEXT,"
                 + MediaTable.COLUMN_FILE + " FILE,"
+                + MediaTable.COLUMN_PATCH_URL + " TEXT,"
                 + MediaTable.COLUMN_ENC_KEY + " BLOB,"
                 + MediaTable.COLUMN_SHA256_HASH + " BLOB,"
                 + MediaTable.COLUMN_WIDTH + " INTEGER,"
@@ -241,7 +242,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 17: {
                 upgradeFromVersion17(db);
-                // fall through
+            }
+            case 18: {
+                upgradeFromVersion18(db);
             }
 
             break;
@@ -371,6 +374,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion17(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_CHAT_NAME + " TEXT");
+    }
+
+    private void upgradeFromVersion18(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_PATCH_URL + " TEXT");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

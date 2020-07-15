@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -126,5 +127,18 @@ public class FileUtils {
                 }
             }
         }
+    }
+
+    public static byte[] readFileToByteArray(@NonNull File file) throws IOException {
+        FileInputStream in = new FileInputStream(file);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        int c;
+        while ((c = in.read(buf)) != -1) {
+            out.write(buf, 0, c);
+        }
+        in.close();
+        out.close();
+        return out.toByteArray();
     }
 }
