@@ -56,7 +56,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="@dimen/content_composer_frame_border">
 
                     <LinearLayout
                         android:orientation="vertical"

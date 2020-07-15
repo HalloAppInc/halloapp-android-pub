@@ -37,6 +37,8 @@
     <dimen name="media_pager_child_padding">8dp</dimen>
     <dimen name="content_composer_button_margins">16dp</dimen>
     <dimen name="content_composer_button_offset">-16dp</dimen>
+    <dimen name="content_composer_media_border">15dp</dimen>
+    <dimen name="content_composer_frame_border">20dp</dimen>
     <dimen name="mention_picker_elevation">2dp</dimen>
     <dimen name="type_post_edit_minimum_hight">265dp</dimen>
 

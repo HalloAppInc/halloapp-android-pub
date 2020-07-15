@@ -127,6 +127,7 @@
     <string name="options">Options</string>
     <string name="block">Block</string>
     <string name="play">Play</string>
+    <string name="pause">Pause</string>
     <string name="new_posts">New posts</string>
     <string name="alert_discard_changes_message">Discard changes?</string>
     <string name="action_discard">Discard</string>

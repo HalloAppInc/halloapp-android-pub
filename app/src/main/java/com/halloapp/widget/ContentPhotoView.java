@@ -24,7 +24,6 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
     private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
 
     private float cornerRadius;
-    private final Path cornerPath = new Path();
     private final Paint cornerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private DrawDelegateView drawDelegateView;
@@ -64,7 +63,7 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
 
         cornerPaint.setColor(a.getColor(R.styleable.ContentPhotoView_contentPvCornerColor, 0));
         cornerRadius = a.getDimension(R.styleable.ContentPhotoView_contentPvCornerRadius, 0);
-        maxAspectRatio = a.getDimension(R.styleable.ContentPhotoView_contentPvMaxAspectRatio, maxAspectRatio);
+        maxAspectRatio = a.getFloat(R.styleable.ContentPhotoView_contentPvMaxAspectRatio, maxAspectRatio);
 
         a.recycle();
 

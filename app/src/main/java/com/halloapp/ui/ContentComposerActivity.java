@@ -31,6 +31,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -47,6 +57,7 @@ import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.ContentPhotoView;
+import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
@@ -54,7 +65,9 @@ import com.halloapp.widget.MentionableEntry;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -62,6 +75,8 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
+
+    private Map<Media, SimpleExoPlayer> playerMap = new HashMap<Media, SimpleExoPlayer>();
 
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
@@ -206,6 +221,8 @@ public class ContentComposerActivity extends HalloActivity {
             @Override
             public void onPageSelected(int position) {
                 updateMediaButtons();
+                final int currentPosition = Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - position : position;
+                refreshVideoPlayers(currentPosition);
             }
 
             @Override
@@ -370,6 +387,41 @@ public class ContentComposerActivity extends HalloActivity {
         fullThumbnailLoader.destroy();
         smallThumbnailLoader.destroy();
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            Log.d("ContentComposerActivity onStart");
+            initializeAllVideoPlayers();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Util.SDK_INT <= 23) {
+            Log.d("ContentComposerActivity onResume");
+            initializeAllVideoPlayers();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            Log.d("ContentComposerActivity onPause");
+            releaseAllVideoPlayers();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            Log.d("ContentComposerActivity onStop");
+            releaseAllVideoPlayers();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -379,7 +431,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem shareMenuItem = menu.findItem(R.id.share);
-        @Nullable final List<Media> media = viewModel.media.getValue();
+        final List<Media> media = viewModel.media.getValue();
         shareMenuItem.setVisible((media != null && !media.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
         if (chatId != null) {
             shareMenuItem.setTitle(R.string.send);
@@ -390,7 +442,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     public void cropItem(final int currentItem) {
-        @Nullable final List<Media> media = viewModel.media.getValue();
+        final List<Media> media = viewModel.media.getValue();
         if (media != null && media.size() > currentItem) {
             final Media mediaItem = media.get(currentItem);
             final Intent intent = new Intent(this, CropImageActivity.class);
@@ -458,17 +510,25 @@ public class ContentComposerActivity extends HalloActivity {
             imageView.setImageDrawable(null);
             fullThumbnailLoader.load(imageView, displayMedia);
         }
-        @Nullable final List<Media> media = viewModel.media.getValue();
+        final List<Media> media = viewModel.media.getValue();
         if (media != null) {
             updateAspectRatioForMedia(media);
         }
     }
 
     private void deleteItem(final int currentItem) {
-        @Nullable final List<Media> media = viewModel.media.getValue();
-        if (media == null) {
+        final List<Media> media = viewModel.media.getValue();
+        if (media == null || media.isEmpty() || media.size() <= currentItem) {
             return;
         }
+
+        final Media mediaItem = media.get(currentItem);
+        if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+            final View mediaView = mediaPager.findViewWithTag(mediaItem);
+            final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
+            releaseVideoPlayer(mediaItem, contentPlayerView);
+        }
+
         // TODO(Vasil): Can we potentially leak a file?
         media.remove(currentItem);
         mediaPagerAdapter.setMedia(media);
@@ -491,10 +551,11 @@ public class ContentComposerActivity extends HalloActivity {
         updateAspectRatioForMedia(media);
         invalidateOptionsMenu();
         updateMediaButtons();
+        refreshVideoPlayers(getCurrentItem());
     }
 
     private void updateMediaButtons() {
-        @Nullable final List<Media> media = viewModel.getMedia();
+        final List<Media> media = viewModel.getMedia();
         final int currentItem = getCurrentItem();
         if (media == null || media.size() <= 1) {
             mediaIndexView.setVisibility(View.GONE);
@@ -502,8 +563,8 @@ public class ContentComposerActivity extends HalloActivity {
             mediaIndexView.setText(String.format("%d / %d", currentItem + 1, media.size()));
             mediaIndexView.setVisibility(View.VISIBLE);
         }
-        if (media != null && !media.isEmpty()) {
-            Media mediaItem = media.get(currentItem);
+        if (media != null && !media.isEmpty() && media.size() > currentItem) {
+            final Media mediaItem = media.get(currentItem);
             addMediaButton.setVisibility(View.VISIBLE);
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
@@ -515,6 +576,86 @@ public class ContentComposerActivity extends HalloActivity {
             addMediaButton.setVisibility(View.GONE);
             cropPictureButton.setVisibility(View.GONE);
             deletePictureButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void refreshVideoPlayers(int currentPosition) {
+        final List<Media> media = viewModel.getMedia();
+        if (media != null && !media.isEmpty()) {
+            int index = 0;
+            for (Media mediaItem : media) {
+                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                    final View mediaView = mediaPager.findViewWithTag(mediaItem);
+                    if (mediaView != null) {
+                        final ContentPlayerView contentPlayerView = mediaView.findViewById(R.id.video);
+                        if (shouldPlayerBeActive(index, currentPosition)) {
+                            initializeVideoPlayer(mediaItem, contentPlayerView, index == currentPosition);
+                        } else {
+                            releaseVideoPlayer(mediaItem, contentPlayerView);
+                        }
+                    }
+                }
+                index++;
+            }
+        }
+    }
+
+    private boolean shouldPlayerBeActive(int index, int activeIndex) {
+        return Math.abs(index - activeIndex) <= 1;
+    }
+
+    private void initializeAllVideoPlayers() {
+        refreshVideoPlayers(getCurrentItem());
+    }
+
+    private void initializeVideoPlayer(@NonNull Media mediaItem, @NonNull ContentPlayerView contentPlayerView, boolean shouldAutoPlay) {
+        SimpleExoPlayer player = playerMap.get(mediaItem);
+        if (player == null) {
+            final DataSource.Factory dataSourceFactory =
+                    new DefaultDataSourceFactory(getApplicationContext(), "hallo");
+            final MediaSource mediaSource =
+                    new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaItem.file));
+
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.CONTENT_TYPE_MOVIE)
+                    .build();
+
+            player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+            playerMap.put(mediaItem, player);
+            player.setRepeatMode(Player.REPEAT_MODE_ALL);
+            player.setAudioAttributes(audioAttributes, true);
+            contentPlayerView.setPlayer(player);
+            player.prepare(mediaSource, false, false);
+
+        }
+        if (player != null && shouldAutoPlay != player.getPlayWhenReady()) {
+            player.setPlayWhenReady(shouldAutoPlay);
+        }
+    }
+
+    private void releaseAllVideoPlayers() {
+        final List<Media> media = viewModel.getMedia();
+        if (media != null && !media.isEmpty()) {
+            for (Media mediaItem : media) {
+                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                    final View mediaView = mediaPager.findViewWithTag(mediaItem);
+                    final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
+                    releaseVideoPlayer(mediaItem, contentPlayerView);
+                }
+            }
+        }
+    }
+
+    private void releaseVideoPlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView) {
+        if (playerView != null) {
+            playerView.setPlayer(null);
+        }
+        final SimpleExoPlayer player = playerMap.get(mediaItem);
+        if (player != null) {
+            player.stop();
+            player.release();
+            playerMap.remove(mediaItem);
         }
     }
 
@@ -549,33 +690,42 @@ public class ContentComposerActivity extends HalloActivity {
             if (chatId != null) {
                 imageView.setMaxAspectRatio(0);
             }
-            final View playButton = view.findViewById(R.id.play);
+            final ContentPlayerView contentPlayerView = view.findViewById(R.id.video);
             final int currentPosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
             final Media mediaItem = media.get(currentPosition);
 
             view.setTag(mediaItem);
 
-            if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                imageView.setVisibility(View.GONE);
+                contentPlayerView.setVisibility(View.VISIBLE);
+                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                    contentPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+                } else {
+                    contentPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                }
+                if (mediaItem.width > 0) {
+                    contentPlayerView.setAspectRatio(1f * mediaItem.height / mediaItem.width);
+                }
+
+                final int activePosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - getCurrentItem() : getCurrentItem();
+                if (shouldPlayerBeActive(activePosition, currentPosition)) {
+                    initializeVideoPlayer(mediaItem, contentPlayerView, activePosition == currentPosition);
+                }
+            } else {
+                if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
+                    if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    } else {
+                        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    }
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
-            } else {
-                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                fullThumbnailLoader.load(imageView, mediaItem);
+                imageView.setDrawDelegate(drawDelegateView);
             }
-            fullThumbnailLoader.load(imageView, mediaItem);
-            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-                playButton.setVisibility(View.VISIBLE);
-                playButton.setOnClickListener(v -> {
-                    final Intent intent = new Intent(getBaseContext(), VideoPlaybackActivity.class);
-                    intent.setData(Uri.fromFile(mediaItem.file));
-                    startActivity(intent);
-                });
-            } else {
-                playButton.setVisibility(View.GONE);
-            }
-            imageView.setDrawDelegate(drawDelegateView);
+
             container.addView(view);
             return view;
         }

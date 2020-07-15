@@ -13,6 +13,11 @@
         <attr name="contentPvMaxAspectRatio" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="ContentPlayerView">
+        <attr name="contentPlayerVideoCornerRadius" format="dimension" />
+        <attr name="contentPlayerVideoMaxAspectRatio" format="float" />
+    </declare-styleable>
+
     <declare-styleable name="CropPhotoView">
         <attr name="cropPvCornerRadius" format="dimension" />
         <attr name="cropPvCornerColor" format="color" />

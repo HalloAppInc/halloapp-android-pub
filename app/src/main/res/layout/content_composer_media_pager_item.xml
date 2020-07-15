@@ -14,18 +14,18 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         app:contentPvCornerColor="@color/window_background"
-        app:contentPvCornerRadius="10dp"
+        app:contentPvCornerRadius="@dimen/content_composer_media_border"
         tools:src="@mipmap/ic_launcher" />
 
-    <ImageView
-        android:id="@+id/play"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+    <com.halloapp.widget.ContentPlayerView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:tint="@android:color/white"
-        android:alpha="0.5"
-        android:src="@drawable/ic_play"
-        android:contentDescription="@string/play"
-        android:visibility="gone"/>
+        app:show_buffering="when_playing"
+        app:show_shuffle_button="false"
+        android:visibility="gone"
+        app:controller_layout_id="@layout/exo_player_composer_view"
+        app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
