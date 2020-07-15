@@ -175,7 +175,6 @@ public class MediaPickerPreview {
                 }
 
                 player.setOnVideoSizeChangedListener((mediaPlayer, width, height) -> {
-                    Log.d("STEFAN", "setOnVideoSizeChangedListener");
                     final WindowManager wm = (WindowManager) view.getContext().getSystemService(Context.WINDOW_SERVICE);
                     DisplayMetrics displayMetrics = new DisplayMetrics();
                     wm.getDefaultDisplay().getMetrics(displayMetrics);
@@ -208,11 +207,9 @@ public class MediaPickerPreview {
             TextureView view = viewRef.get();
 
             if (view != null) {
-                Log.d("STEFAN", "onPostExecute");
                 view.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
                     @Override
                     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int surfaceWidth, int surfaceHeight) {
-                        Log.d("STEFAN", "onSurfaceTextureAvailable");
                         attachSurface(player, surfaceTexture);
                     }
 

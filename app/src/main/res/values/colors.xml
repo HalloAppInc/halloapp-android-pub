@@ -2,11 +2,11 @@
 <resources>
     <!-- General Colors -->
     <color name="black_87">#DF000000</color>
+    <color name="black_80">#CC000000</color>
     <color name="black_70">#B2000000</color>
     <color name="black_54">#8A000000</color>
-    <color name="black_30">#4C000000</color>
     <color name="black_50">#7F000000</color>
-    <color name="black_80">#CC000000</color>
+    <color name="black_30">#4C000000</color>
     <color name="white_87">#DFFFFFFF</color>
     <color name="white_80">#CCFFFFFF</color>
     <color name="white_70">#B2FFFFFF</color>

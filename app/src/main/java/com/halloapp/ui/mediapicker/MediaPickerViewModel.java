@@ -69,7 +69,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
             try {
                 items.add(ContentUris.parseId(uri));
             } catch (UnsupportedOperationException | NumberFormatException e) {
-                // Ignore, uri not part of gallery
+                Log.e("MediaPickerViewModel: exception uri=" + uri.toString(), e);
             }
         }
         selected.setValue(items);

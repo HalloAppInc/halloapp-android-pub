@@ -196,8 +196,7 @@ public class CropImageActivity extends HalloActivity {
                 finish();
             });
 
-            cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
-                    Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
+            saveCroppedImageAsync();
         });
     }
 
@@ -265,8 +264,7 @@ public class CropImageActivity extends HalloActivity {
             super.onBackPressed();
         });
 
-        cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
-                Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
+        saveCroppedImageAsync();
     }
 
     @Override
@@ -315,6 +313,17 @@ public class CropImageActivity extends HalloActivity {
         }
     }
 
+    private void saveCroppedImageAsync() {
+        cropImageView.saveCroppedImageAsync(
+            Uri.fromFile(selected.edit.file),
+            Bitmap.CompressFormat.JPEG,
+            Constants.JPEG_QUALITY,
+            Constants.MAX_IMAGE_DIMENSION,
+            Constants.MAX_IMAGE_DIMENSION,
+            CropImageView.RequestSizeOptions.RESIZE_INSIDE
+        );
+    }
+
     private void finishWhenNoImages(List<CropImageViewModel.MediaModel> models) {
         boolean hasImages = false;
         for (CropImageViewModel.MediaModel m : models) {
@@ -345,8 +354,7 @@ public class CropImageActivity extends HalloActivity {
             startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
         });
 
-        cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
-                Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
+        saveCroppedImageAsync();
     }
 
     private void onMediaSelect(@NonNull Media media, int position) {
@@ -363,16 +371,15 @@ public class CropImageActivity extends HalloActivity {
                 viewModel.select(position);
             });
 
-            cropImageView.saveCroppedImageAsync(Uri.fromFile(selected.edit.file), Bitmap.CompressFormat.JPEG,
-                    Constants.JPEG_QUALITY, Constants.MAX_IMAGE_DIMENSION, Constants.MAX_IMAGE_DIMENSION, CropImageView.RequestSizeOptions.RESIZE_INSIDE);
+            saveCroppedImageAsync();
         } else {
             viewModel.select(position);
         }
     }
 
     private class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.ViewHolder> {
-        private final int VIEW_TYPE_IMAGE = 1;
-        private final int VIEW_TYPE_BUTTON = 2;
+        private static final int VIEW_TYPE_IMAGE = 1;
+        private static final int VIEW_TYPE_BUTTON = 2;
 
         private final int WHITE_20 = ContextCompat.getColor(getBaseContext(), R.color.white_20);
         private final List<CropImageViewModel.MediaModel> dataset = new ArrayList<>();
