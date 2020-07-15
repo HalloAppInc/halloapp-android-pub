@@ -32,12 +32,12 @@
             app:title="@string/invite_a_friend"/>
 
         <Preference
-            app:key="send_logs"
-            app:title="@string/send_logs" />
-
-        <Preference
             app:key="privacy_policy"
             app:title="@string/privacy_policy" />
+
+        <Preference
+            app:key="terms_of_service"
+            app:title="@string/terms_of_service" />
 
         <SwitchPreferenceCompat
             app:key="use_debug_host"
@@ -49,6 +49,10 @@
             app:key="debug"
             app:title="DEBUG"
             app:isPreferenceVisible="false" />
+
+        <Preference
+            app:key="send_logs"
+            app:title="@string/send_logs" />
 
     </PreferenceCategory>
 

@@ -27,6 +27,7 @@ public class SettingsActivity extends HalloActivity {
     public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
     private static final String SUPPORT_EMAIL_URI = "mailto:" + SUPPORT_EMAIL;
     private static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy-policy";
+    private static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms-of-service";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +111,16 @@ public class SettingsActivity extends HalloActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL));
+                    startActivity(intent);
+                    return false;
+                }
+            });
+
+            final Preference termsOfServicePreference = Preconditions.checkNotNull(findPreference("terms_of_service"));
+            termsOfServicePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(TERMS_OF_SERVICE_URL));
                     startActivity(intent);
                     return false;
                 }
