@@ -71,7 +71,8 @@
     <string name="storage_permission_rationale_denied">Pick media we need a permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
-    <string name="contact_rationale_continue">Continue</string>
+    <string name="contact_rationale_upload">HalloApp uses your addressbook contacts to connect you with your friends and family. We need permission to access your contacts and upload them to our servers in order to make these connections.</string>
+    <string name="contact_rationale_continue">Accept</string>
     <string name="failed_to_initialize">Failed to initialize</string>
     <string name="type_a_comment_hint">Add a comment</string>
     <string name="comments">Comments</string>
