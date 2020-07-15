@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
@@ -608,6 +610,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private class MediaItemViewHolder extends RecyclerView.ViewHolder {
+        final int mediaGallerySelectionRadius = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_radius);
+        private final ViewOutlineProvider vop = new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), mediaGallerySelectionRadius);
+            }
+        };
 
         final TextView titleView;
         final ImageView thumbnailView;
@@ -677,12 +686,18 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
                     thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
                     thumbnailView.setSelected(true);
+
+                    thumbnailView.setOutlineProvider(vop);
+                    thumbnailView.setClipToOutline(true);
                 } else {
                     selectionCounter.setVisibility(View.GONE);
                     selectionIndicator.setVisibility(View.VISIBLE);
                     selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
                     thumbnailFrame.setPadding(0, 0, 0, 0);
                     thumbnailView.setSelected(false);
+
+                    thumbnailView.setOutlineProvider(null);
+                    thumbnailView.setClipToOutline(false);
                 }
             }
 
