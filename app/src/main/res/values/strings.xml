@@ -65,12 +65,13 @@
         <item quantity="one">You can select up to %d item per post</item>
         <item quantity="other">You can select up to %d items per post</item>
     </plurals>
-    <string name="contacts_permission_rationale">To connect with your friends and family we need a permission to access contacts on your device</string>
-    <string name="contacts_permission_rationale_denied">To connect with your friends and family we need a permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="contacts_permission_rationale">To connect with your friends and family we need permission to access contacts on your device</string>
+    <string name="contacts_permission_rationale_denied">To connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="storage_permission_rationale">Pick media we need a permission to access your device storage</string>
     <string name="storage_permission_rationale_denied">Pick media we need a permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
+    <string name="contact_rationale_continue">Continue</string>
     <string name="failed_to_initialize">Failed to initialize</string>
     <string name="type_a_comment_hint">Add a comment</string>
     <string name="comments">Comments</string>

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.WorkInfo;
 
 import com.halloapp.Me;
@@ -30,6 +29,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     private View loadingView;
     private View errorView;
     private View retryView;
+    private View rationaleView;
+    private View continueView;
 
     private boolean syncInFlight = false;
 
@@ -57,38 +58,50 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         loadingView = findViewById(R.id.loading);
         errorView = findViewById(R.id.error);
         retryView = findViewById(R.id.retry);
+        rationaleView = findViewById(R.id.rationale);
+        continueView = findViewById(R.id.cont);
 
         retryView.setOnClickListener(v -> {
-            infoView.setVisibility(View.VISIBLE);
-            loadingView.setVisibility(View.VISIBLE);
-            errorView.setVisibility(View.GONE);
-            retryView.setVisibility(View.GONE);
             tryStartSync();
         });
 
-        final ContactsSync contactsSync = ContactsSync.getInstance(this);
-        contactsSync.cancelContactsSync();
-        contactsSync.getWorkInfoLiveData()
-                .observe(this, workInfos -> {
-                    if (workInfos != null) {
-                        for (WorkInfo workInfo : workInfos) {
-                            if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
-                                if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                                    startActivity(new Intent(getBaseContext(), MainActivity.class));
-                                    LoadPostsHistoryWorker.loadPostsHistory(this);
-                                    ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
-                                    finish();
-                                } else if (workInfo.getState().isFinished()) {
-                                    syncInFlight = false;
-                                    showRetryState();
+        continueView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ContactsSync contactsSync = ContactsSync.getInstance(InitialSyncActivity.this);
+                contactsSync.cancelContactsSync();
+                contactsSync.getWorkInfoLiveData()
+                        .observe(InitialSyncActivity.this, workInfos -> {
+                            if (workInfos != null) {
+                                for (WorkInfo workInfo : workInfos) {
+                                    if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                        if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                            startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                            LoadPostsHistoryWorker.loadPostsHistory(InitialSyncActivity.this);
+                                            ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
+                                            finish();
+                                        } else if (workInfo.getState().isFinished()) {
+                                            syncInFlight = false;
+                                            showRetryState();
+                                        }
+                                        break;
+                                    }
                                 }
-                                break;
                             }
-                        }
-                    }
-                });
+                        });
 
-        tryStartSync();
+                tryStartSync();
+            }
+        });
+    }
+
+    private void showRunningState() {
+        infoView.setVisibility(View.VISIBLE);
+        loadingView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+        retryView.setVisibility(View.GONE);
+        rationaleView.setVisibility(View.GONE);
+        continueView.setVisibility(View.GONE);
     }
 
     private void showRetryState() {
@@ -96,12 +109,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.VISIBLE);
         retryView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        tryStartSync();
+        rationaleView.setVisibility(View.GONE);
+        continueView.setVisibility(View.GONE);
     }
 
     @Override
@@ -166,6 +175,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
 
     private void startSync() {
         syncInFlight = true;
+        showRunningState();
         ContactsSync.getInstance(this).startContactsSync(true);
     }
 }
