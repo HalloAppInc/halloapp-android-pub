@@ -66,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -74,7 +75,8 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
-    private Map<Media, SimpleExoPlayer> playerMap = new HashMap<Media, SimpleExoPlayer>();
+    private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap =
+            new HashMap<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer>();
 
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
@@ -302,12 +304,12 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
-    private void updateAspectRatioForMedia(List<Media> media) {
+    private void updateAspectRatioForMedia(List<ContentComposerViewModel.EditMediaPair> mediaPairList) {
         if (chatId == null) {
             mediaPager.setMaxAspectRatio(
-                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(media)));
+                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList)));
         } else {
-            mediaPager.setMaxAspectRatio(Media.getMaxAspectRatio(media));
+            mediaPager.setMaxAspectRatio(ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList));
         }
     }
 
@@ -532,9 +534,9 @@ public class ContentComposerActivity extends HalloActivity {
             // Clean old data
             final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
             if (mediaPairList != null && !mediaPairList.isEmpty()) {
+                releaseAllVideoPlayers();
                 for (final ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
                     fullThumbnailLoader.remove(mediaPair.getRelevantMedia().file);
-                    // TODO(Vasil): Clean video data here.
                 }
                 if (0 <= currentItem && currentItem < mediaPairList.size()) {
                     setCurrentItem(currentItem, false);
@@ -557,11 +559,10 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentItem);
-        final Media mediaItem = mediaPair.original;
-        if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-            final View mediaView = mediaPager.findViewWithTag(mediaItem);
+        if (mediaPair.original.type == Media.MEDIA_TYPE_VIDEO) {
+            final View mediaView = mediaPager.findViewWithTag(mediaPair);
             final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
-            releaseVideoPlayer(mediaItem, contentPlayerView);
+            releaseVideoPlayer(mediaPair, contentPlayerView);
         }
 
         fullThumbnailLoader.remove(mediaPair.original.file);
@@ -586,7 +587,7 @@ public class ContentComposerActivity extends HalloActivity {
             mediaPagerIndicator.setVisibility(View.VISIBLE);
             mediaPagerIndicator.setViewPager(mediaPager);
         }
-        updateAspectRatioForMedia(media);
+        updateAspectRatioForMedia(mediaPairList);
         invalidateOptionsMenu();
         updateMediaButtons();
         refreshVideoPlayers(getCurrentItem());
@@ -618,18 +619,18 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void refreshVideoPlayers(int currentPosition) {
-        final List<Media> media = viewModel.getMedia();
-        if (media != null && !media.isEmpty()) {
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
+        if (mediaPairList != null && !mediaPairList.isEmpty()) {
             int index = 0;
-            for (Media mediaItem : media) {
-                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-                    final View mediaView = mediaPager.findViewWithTag(mediaItem);
+            for (ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
+                if (mediaPair.original.type == Media.MEDIA_TYPE_VIDEO) {
+                    final View mediaView = mediaPager.findViewWithTag(mediaPair);
                     if (mediaView != null) {
                         final ContentPlayerView contentPlayerView = mediaView.findViewById(R.id.video);
                         if (shouldPlayerBeActive(index, currentPosition)) {
-                            initializeVideoPlayer(mediaItem, contentPlayerView, index == currentPosition);
+                            initializeVideoPlayer(mediaPair, contentPlayerView, index == currentPosition);
                         } else {
-                            releaseVideoPlayer(mediaItem, contentPlayerView);
+                            releaseVideoPlayer(mediaPair, contentPlayerView);
                         }
                     }
                 }
@@ -646,13 +647,15 @@ public class ContentComposerActivity extends HalloActivity {
         refreshVideoPlayers(getCurrentItem());
     }
 
-    private void initializeVideoPlayer(@NonNull Media mediaItem, @NonNull ContentPlayerView contentPlayerView, boolean shouldAutoPlay) {
-        SimpleExoPlayer player = playerMap.get(mediaItem);
+    private void initializeVideoPlayer(@NonNull ContentComposerViewModel.EditMediaPair mediaPair,
+                                       @NonNull ContentPlayerView contentPlayerView,
+                                       boolean shouldAutoPlay) {
+        SimpleExoPlayer player = playerMap.get(mediaPair);
         if (player == null) {
             final DataSource.Factory dataSourceFactory =
                     new DefaultDataSourceFactory(getApplicationContext(), "hallo");
             final MediaSource mediaSource =
-                    new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaItem.file));
+                    new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.original.file));
 
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setUsage(C.USAGE_MEDIA)
@@ -660,7 +663,7 @@ public class ContentComposerActivity extends HalloActivity {
                     .build();
 
             player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
-            playerMap.put(mediaItem, player);
+            playerMap.put(mediaPair, player);
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
             player.setAudioAttributes(audioAttributes, true);
             contentPlayerView.setPlayer(player);
@@ -673,27 +676,27 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void releaseAllVideoPlayers() {
-        final List<Media> media = viewModel.getMedia();
-        if (media != null && !media.isEmpty()) {
-            for (Media mediaItem : media) {
-                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-                    final View mediaView = mediaPager.findViewWithTag(mediaItem);
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
+        if (mediaPairList != null && !mediaPairList.isEmpty()) {
+            for (ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
+                if (mediaPair.original.type == Media.MEDIA_TYPE_VIDEO) {
+                    final View mediaView = mediaPager.findViewWithTag(mediaPair);
                     final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
-                    releaseVideoPlayer(mediaItem, contentPlayerView);
+                    releaseVideoPlayer(mediaPair, contentPlayerView);
                 }
             }
         }
     }
 
-    private void releaseVideoPlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView) {
+    private void releaseVideoPlayer(@NonNull ContentComposerViewModel.EditMediaPair mediaPair, @Nullable ContentPlayerView playerView) {
         if (playerView != null) {
             playerView.setPlayer(null);
         }
-        final SimpleExoPlayer player = playerMap.get(mediaItem);
+        final SimpleExoPlayer player = playerMap.get(mediaPair);
         if (player != null) {
             player.stop();
             player.release();
-            playerMap.remove(mediaItem);
+            playerMap.remove(mediaPair);
         }
     }
 
@@ -748,9 +751,9 @@ public class ContentComposerActivity extends HalloActivity {
                     contentPlayerView.setAspectRatio(1f * mediaItem.height / mediaItem.width);
                 }
 
-                final int activePosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - getCurrentItem() : getCurrentItem();
+                final int activePosition = Rtl.isRtl(container.getContext()) ? mediaPairList.size() - 1 - getCurrentItem() : getCurrentItem();
                 if (shouldPlayerBeActive(activePosition, currentPosition)) {
-                    initializeVideoPlayer(mediaItem, contentPlayerView, activePosition == currentPosition);
+                    initializeVideoPlayer(mediaPair, contentPlayerView, activePosition == currentPosition);
                 }
             } else {
                 if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
