@@ -69,7 +69,7 @@ public class ProfileFragment extends PostsFragment {
 
         final View root = inflater.inflate(R.layout.fragment_profile, container, false);
         final RecyclerView postsView = root.findViewById(R.id.posts);
-        final View emptyView = root.findViewById(android.R.id.empty);
+        final TextView emptyView = root.findViewById(android.R.id.empty);
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
@@ -105,7 +105,12 @@ public class ProfileFragment extends PostsFragment {
                         BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null)));
             }
         });
-        viewModel.getName().observe(getViewLifecycleOwner(), nameView::setText);
+        viewModel.getName().observe(getViewLifecycleOwner(), name -> {
+            nameView.setText(name);
+            if (!profileUserId.isMe()) {
+                emptyView.setText(getString(R.string.contact_profile_empty, name));
+            }
+        });
 
         avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);

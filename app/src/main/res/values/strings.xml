@@ -36,6 +36,7 @@
     <string name="new_post">New post</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
     <string name="posts_empty">Your posts will appear here</string>
+    <string name="contact_profile_empty">%s\'s posts will appear here</string>
     <string name="invalid_phone_number">Invalid phone number</string>
     <plurals name="time_diff_minutes">
         <item quantity="one">%dm</item>

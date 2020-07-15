@@ -367,11 +367,8 @@ public class CommentsActivity extends HalloActivity {
             this.comment = comment;
 
             avatarLoader.load(avatarView, comment.commentSenderUserId);
-            if (comment.isOutgoing()) {
-                nameView.setText(nameView.getContext().getString(R.string.me));
-            } else {
-                contactLoader.load(nameView, comment.commentSenderUserId);
-            }
+            contactLoader.load(nameView, comment.commentSenderUserId);
+
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
@@ -430,11 +427,8 @@ public class CommentsActivity extends HalloActivity {
                 return;
             }
             avatarLoader.load(avatarView, post.senderUserId);
-            if (post.isOutgoing()) {
-                nameView.setText(nameView.getContext().getString(R.string.me));
-            } else {
-                contactLoader.load(nameView, post.senderUserId);
-            }
+            contactLoader.load(nameView, post.senderUserId);
+
             progressView.setVisibility(post.transferred != Post.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);

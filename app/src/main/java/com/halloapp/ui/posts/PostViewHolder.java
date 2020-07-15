@@ -121,14 +121,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {
-            parent.getContactLoader().load(nameView, post.senderUserId);
-            if (parent.shouldOpenProfileOnNamePress()) {
-                nameView.setOnClickListener(v -> {
-                    parent.startActivity(ViewProfileActivity.viewProfile(v.getContext(), post.senderUserId));
-                });
-            } else {
-                nameView.setClickable(false);
-            }
+            parent.getContactLoader().load(nameView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
         }
         if (post.transferred == Post.TRANSFERRED_NO) {
             if (post.isTransferFailed()) {

@@ -140,11 +140,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
             parent.getTextContentLoader().load(firstCommentText, firstComment);
 
-            if (firstComment.commentSenderUserId.isMe()) {
-                firstCommentName.setText(firstCommentName.getContext().getString(R.string.me));
-            } else {
-                parent.getContactLoader().load(firstCommentName, firstComment.commentSenderUserId);
-            }
+            parent.getContactLoader().load(firstCommentName, firstComment.commentSenderUserId);
 
             TimeFormatter.setTimePostsFormat(firstCommentTimestamp, firstComment.timestamp);
             parent.getTimestampRefresher().scheduleTimestampRefresh(firstComment.timestamp);
