@@ -257,10 +257,14 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
     }
 
     private void onSuccessfulInvite(String phone) {
-        Uri mUri = Uri.parse("smsto:" + phone);
-        Intent mIntent = new Intent(Intent.ACTION_SENDTO, mUri);
-        mIntent.putExtra("sms_body", getString(R.string.invite_text));
-        startActivity(Intent.createChooser(mIntent, "Invite"));
+        Uri smsUri = Uri.parse("smsto:" + phone);
+        Intent smsIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
+        String inviteText = getString(R.string.invite_text);
+        smsIntent.putExtra("sms_body", inviteText);
+        smsIntent.putExtra("text", inviteText);
+        smsIntent.putExtra(Intent.EXTRA_TEXT, inviteText);
+        Intent chooser = Intent.createChooser(smsIntent, getString(R.string.invite_a_friend));
+        startActivity(chooser);
     }
 
     private void showErrorDialog(@Nullable @InvitesResponseIq.Result Integer result) {
