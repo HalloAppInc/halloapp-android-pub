@@ -451,9 +451,11 @@ public class ContactsDb {
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
             final Set<String> addressIdSet = new HashSet<>();
+            final Set<String> phoneNumberSet = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String addressBookIdStr = cursor.getString(1);
-                if (addressBookIdStr != null && addressIdSet.add(addressBookIdStr)) {
+                final String phoneNumberStr = cursor.getString(4);
+                if (addressBookIdStr != null && phoneNumberStr != null && addressIdSet.add(addressBookIdStr) && phoneNumberSet.add(phoneNumberStr)) {
                     final String userIdStr = cursor.getString(6);
                     final Contact contact = new Contact(
                             cursor.getLong(0),

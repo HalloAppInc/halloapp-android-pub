@@ -263,6 +263,7 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         smsIntent.putExtra("sms_body", inviteText);
         smsIntent.putExtra("text", inviteText);
         smsIntent.putExtra(Intent.EXTRA_TEXT, inviteText);
+        smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Intent chooser = Intent.createChooser(smsIntent, getString(R.string.invite_a_friend));
         startActivity(chooser);
     }
