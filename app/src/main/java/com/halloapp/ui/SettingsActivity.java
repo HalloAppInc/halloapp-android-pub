@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
@@ -126,8 +127,10 @@ public class SettingsActivity extends HalloActivity {
                 }
             });
 
+            final PreferenceCategory debugCategory = Preconditions.checkNotNull(findPreference("debug"));
+            debugCategory.setVisible(BuildConfig.DEBUG);
+
             final Preference hostPreference = Preconditions.checkNotNull(findPreference("use_debug_host"));
-            hostPreference.setVisible(BuildConfig.DEBUG);
             hostPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -138,8 +141,7 @@ public class SettingsActivity extends HalloActivity {
                 }
             });
 
-            final Preference debugPreference = Preconditions.checkNotNull(findPreference("debug"));
-            debugPreference.setVisible(BuildConfig.DEBUG);
+            final Preference debugPreference = Preconditions.checkNotNull(findPreference("debug_menu"));
             debugPreference.setOnPreferenceClickListener(preference -> {
                 View prefView = getListView().getChildAt(preference.getOrder());
                 Debug.showDebugMenu(requireActivity(), prefView);

@@ -39,20 +39,22 @@
             app:key="terms_of_service"
             app:title="@string/terms_of_service" />
 
-        <SwitchPreferenceCompat
-            app:key="use_debug_host"
-            app:title="Use debug host"
-            app:defaultValue="false"
-            app:isPreferenceVisible="false" />
-
-        <Preference
-            app:key="debug"
-            app:title="DEBUG"
-            app:isPreferenceVisible="false" />
-
         <Preference
             app:key="send_logs"
             app:title="@string/send_logs" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:key="debug" app:title="Debug" app:isPreferenceVisible="false">
+
+        <SwitchPreferenceCompat
+            app:key="use_debug_host"
+            app:title="Use debug host"
+            app:defaultValue="false"/>
+
+        <Preference
+            app:key="debug_menu"
+            app:title="DEBUG MENU"/>
 
     </PreferenceCategory>
 
