@@ -687,10 +687,11 @@ public class ContentComposerActivity extends HalloActivity {
         public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
+            final ContentPlayerView contentPlayerView = view.findViewById(R.id.video);
             if (chatId != null) {
                 imageView.setMaxAspectRatio(0);
+                contentPlayerView.setMaxAspectRatio(0);
             }
-            final ContentPlayerView contentPlayerView = view.findViewById(R.id.video);
             final int currentPosition = Rtl.isRtl(container.getContext()) ? media.size() - 1 - position : position;
             final Media mediaItem = media.get(currentPosition);
 

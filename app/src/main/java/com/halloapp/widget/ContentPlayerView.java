@@ -48,8 +48,16 @@ public class ContentPlayerView extends PlayerView {
         setClipToOutline(true);
     }
 
+    public void setMaxAspectRatio(float maxAspectRatio) {
+        this.maxAspectRatio = maxAspectRatio;
+    }
+
     public void setAspectRatio(float aspectRatio) {
         this.aspectRatio = aspectRatio;
+    }
+
+    private int computeConstrainedHeight(int width, int height) {
+        return maxAspectRatio > 0 ? Math.min(height, (int) (width * maxAspectRatio)) : height;
     }
 
     @Override
@@ -58,7 +66,7 @@ public class ContentPlayerView extends PlayerView {
 
         if (aspectRatio != 0) {
             final int width = getMeasuredWidth();
-            final int height = (int) (width * Math.min(maxAspectRatio, aspectRatio));
+            final int height = computeConstrainedHeight(width, (int) (width * aspectRatio));
             setMeasuredDimension(width, height);
 
             for (int i = 0; i < getChildCount(); i++) {
