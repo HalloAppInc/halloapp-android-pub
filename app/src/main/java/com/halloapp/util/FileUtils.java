@@ -3,8 +3,6 @@ package com.halloapp.util;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -128,10 +126,5 @@ public class FileUtils {
                 }
             }
         }
-    }
-
-    public static String generateTempMediaFileName(@NonNull Uri uri, @Nullable String suffix) {
-        String baseName = Base64.encodeToString(uri.toString().getBytes(), Base64.URL_SAFE);
-        return TextUtils.isEmpty(suffix) ? baseName : String.format("%s-%s", baseName, suffix);
     }
 }

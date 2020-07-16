@@ -1,7 +1,10 @@
 package com.halloapp;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.StrictMode;
+import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +32,11 @@ public class FileStore {
             }
         }
         return instance;
+    }
+
+    public static String fileNameFromUri(@NonNull Uri uri, @Nullable String suffix) {
+        String baseName = Base64.encodeToString(uri.toString().getBytes(), Base64.URL_SAFE);
+        return TextUtils.isEmpty(suffix) ? baseName : String.format("%s-%s", baseName, suffix);
     }
 
     private FileStore(@NonNull Context context) {
@@ -68,6 +76,10 @@ public class FileStore {
 
     public File getTmpFile(@NonNull String name) {
         return new File(getTmpDir(), name);
+    }
+
+    public File getTmpFileForUri(@NonNull Uri uri, @Nullable String suffix) {
+        return getTmpFile(fileNameFromUri(uri, suffix));
     }
 
     public File getImageCaptureFile() {

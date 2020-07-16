@@ -208,8 +208,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             for (Uri uri : uris) {
                 @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
 
-                final String originalName = FileUtils.generateTempMediaFileName(uri, null);
-                final File originalFile = fileStore.getTmpFile(originalName);
+                final File originalFile = fileStore.getTmpFileForUri(uri, null);
                 boolean fileCreated = false;
                 if (!originalFile.exists()) {
                     FileUtils.uriToFile(application, uri, originalFile);
@@ -217,8 +216,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 }
                 final Size originalSize = MediaUtils.getDimensions(originalFile, mediaType);
 
-                final String editName = FileUtils.generateTempMediaFileName(uri, "edit");
-                final File editFile = fileStore.getTmpFile(editName);
+                final File editFile = fileStore.getTmpFileForUri(uri, "edit");
                 final Size editSize = editFile.exists() ? MediaUtils.getDimensions(editFile, mediaType) : null;
 
                 if (originalSize != null) {

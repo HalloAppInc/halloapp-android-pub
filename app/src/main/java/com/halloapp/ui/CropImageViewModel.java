@@ -199,11 +199,8 @@ public class CropImageViewModel extends AndroidViewModel {
             final FileStore store = FileStore.getInstance(application);
 
             for (Uri uri : uris) {
-                final String originalName = FileUtils.generateTempMediaFileName(uri, null);
-                final String editName = FileUtils.generateTempMediaFileName(uri, "edit");
-
-                final File original = store.getTmpFile(originalName);
-                final File edit = store.getTmpFile(editName);
+                final File original = store.getTmpFileForUri(uri, null);
+                final File edit = store.getTmpFileForUri(uri, "edit");
 
                 @Media.MediaType int type = Media.getMediaType(resolver.getType(uri));
 
