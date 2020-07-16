@@ -23,6 +23,7 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MentionableEntry extends PostEditText implements MentionPickerView.OnMentionListener {
@@ -192,7 +193,11 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
         updateMentionFilter(null);
     }
 
+    @NonNull
     public Pair<String, List<Mention>> getTextWithMentions() {
+        if (getText() == null) {
+            return new Pair<>(null, Collections.emptyList());
+        }
         Editable editable = Editable.Factory.getInstance().newEditable(getText());
         replaceMentionsWithPlaceholders(editable);
         return new Pair<>(Preconditions.checkNotNull(editable).toString(), extractMentionsFromPlaceholders(editable));
