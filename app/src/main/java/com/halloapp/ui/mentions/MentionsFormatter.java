@@ -10,6 +10,7 @@ import android.view.View;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.content.Mention;
 import com.halloapp.util.Log;
@@ -19,10 +20,19 @@ import java.util.List;
 
 public class MentionsFormatter {
 
+    interface MentionClickListener {
+        void onMentionClick(View v, Mention mention);
+    }
+
     private static final char MENTION_CHARACTER = '@';
 
     @NonNull
     public static CharSequence insertMentions(@NonNull CharSequence str, @NonNull List<Mention> mentions) {
+        return insertMentions(str, mentions, null);
+    }
+
+    @NonNull
+    public static CharSequence insertMentions(@NonNull CharSequence str, @NonNull List<Mention> mentions, @Nullable MentionClickListener mentionClickListener) {
         Collections.sort(mentions, (o1, o2) -> o1.index - o2.index);
 
         SpannableStringBuilder builder = new SpannableStringBuilder(str);
@@ -32,7 +42,7 @@ public class MentionsFormatter {
                 Log.i("MentionsFormatter/insertMentions invalid mention");
                 continue;
             }
-            builder.replace(mention.index, mention.index + 1, createSpan(mention));
+            builder.replace(mention.index, mention.index + 1, createSpan(mention, mentionClickListener));
         }
         return builder;
     }
@@ -47,20 +57,27 @@ public class MentionsFormatter {
         return true;
     }
 
-    private static CharSequence createSpan(@NonNull Mention mention) {
+    private static CharSequence createSpan(@NonNull Mention mention, @Nullable MentionClickListener mentionClickListener) {
         SpannableString mentionString = new SpannableString("@" + mention.fallbackName);
-        mentionString.setSpan(new MentionSpan(), 0, mentionString.length(),  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        mentionString.setSpan(new MentionSpan(mention, mentionClickListener), 0, mentionString.length(),  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         return mentionString;
     }
 
     static class MentionSpan extends ClickableSpan {
 
-        public MentionSpan(){
+        private final Mention mention;
+        private @Nullable MentionClickListener listener;
+
+        public MentionSpan(@NonNull Mention mention, @Nullable MentionClickListener mentionClickListener){
+            this.mention = mention;
+            this.listener = mentionClickListener;
         }
 
         @Override
         public void onClick(@NonNull View widget) {
-
+            if (listener != null) {
+                listener.onMentionClick(widget, mention);
+            }
         }
 
         @Override

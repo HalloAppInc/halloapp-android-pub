@@ -26,6 +26,7 @@ public class Mention {
     public int index;
     public UserId userId;
     public String fallbackName;
+    public boolean isInAddressBook;
 
     public Mention(int index, UserId userId, String fallbackName) {
         this.index = index;

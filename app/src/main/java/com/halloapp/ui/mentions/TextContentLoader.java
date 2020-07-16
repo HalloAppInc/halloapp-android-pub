@@ -15,6 +15,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Mention;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.ArrayList;
@@ -51,7 +52,11 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
                     view.setText(text);
                     return;
                 }
-                view.setText(MentionsFormatter.insertMentions(text, result));
+                view.setText(MentionsFormatter.insertMentions(text, result, ((v, mention) -> {
+                    if (mention.isInAddressBook || (mention.userId != null && mention.userId.isMe())) {
+                        v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
+                    }
+                })));
             }
 
             @Override

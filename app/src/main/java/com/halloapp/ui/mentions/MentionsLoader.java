@@ -18,6 +18,7 @@ public class MentionsLoader {
         List<Mention> ret = new ArrayList<>();
         for (Mention mention : mentions) {
             String mentionText;
+            boolean inAddressBook = false;
             if (mention.userId.isMe()) {
                 mentionText = me.getName();
             } else {
@@ -25,9 +26,12 @@ public class MentionsLoader {
                 if (!TextUtils.isEmpty(mention.fallbackName)) {
                     contact.fallbackName = mention.fallbackName;
                 }
+                inAddressBook = contact.addressBookName != null;
                 mentionText = contact.getDisplayName();
             }
-            ret.add(new Mention(mention.index, mention.userId, mentionText));
+            Mention updatedMention = new Mention(mention.index, mention.userId, mentionText);
+            updatedMention.isInAddressBook = inAddressBook;
+            ret.add(updatedMention);
         }
         return ret;
     }
