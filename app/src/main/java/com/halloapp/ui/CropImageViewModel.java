@@ -162,7 +162,14 @@ public class CropImageViewModel extends AndroidViewModel {
         private final Bundle state;
         private int position;
 
-        LoadMediaTask(@NonNull Application application, @NonNull MutableLiveData<List<MediaModel>> mediaData, @NonNull MutableLiveData<MediaModel> selected, int position, @NonNull Collection<Uri> uris, Bundle state) {
+        LoadMediaTask(
+                @NonNull Application application,
+                @NonNull MutableLiveData<List<MediaModel>> mediaData,
+                @NonNull MutableLiveData<MediaModel> selected,
+                int position,
+                @NonNull Collection<Uri> uris,
+                Bundle state
+        ) {
             this.application = application;
             this.mediaData = mediaData;
             this.selected = selected;
