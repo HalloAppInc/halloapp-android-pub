@@ -133,14 +133,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
         });
         viewModel.getSelected().observe(this, selected -> {
-            if (selected != null) {
-                for (int i = 0; i < adapter.getItemCount(); ++i) {
-                    if (selected.contains(adapter.getItemId(i))) {
-                        adapter.notifyItemChanged(i);
-                    }
-                }
-            }
-
+            adapter.notifyDataSetChanged();
             updateActionMode(selected);
         });
 
@@ -425,17 +418,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
                     @Override
                     public void onDestroyActionMode(ActionMode mode) {
-                        List<Long> current = viewModel.getSelected().getValue();
                         viewModel.deselectAll();
-
-                        if (current != null) {
-                            for (int i = 0; i < adapter.getItemCount(); ++i) {
-                                if (current.contains(adapter.getItemId(i))) {
-                                    adapter.notifyItemChanged(i);
-                                }
-                            }
-                        }
-
+                        adapter.notifyDataSetChanged();
                         actionMode = null;
                     }
                 });
@@ -654,10 +638,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             titleView = v.findViewById(R.id.title);
 
             if (thumbnailView != null) {
-                thumbnailView.setOnClickListener(v12 -> {
-                    onItemClicked(galleryItem, thumbnailFrame);
-                    adapter.notifyItemChanged(getAdapterPosition());
-                });
+                thumbnailView.setOnClickListener(v12 -> onItemClicked(galleryItem, thumbnailFrame));
 
                 thumbnailView.setOnLongClickListener(v1 -> {
                     preview.show(galleryItem, thumbnailFrame);
