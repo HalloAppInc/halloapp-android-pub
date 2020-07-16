@@ -25,8 +25,10 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.groups.GroupChangeMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.GroupsListResponseIq;
+import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
 import com.halloapp.xmpp.util.Observable;
@@ -127,6 +129,12 @@ public class Connection {
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
         public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
+        public void onGroupMemberChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupMemberLeftReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
+        public void onGroupAdminChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupNameChangeReceived(@NonNull String groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupAvatarChangeReceived(@NonNull String groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupAdminAutoPromoteReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
         public void onPresenceReceived(UserId user, Long lastSeen) {}
     }
@@ -183,6 +191,8 @@ public class Connection {
         ProviderManager.addExtensionProvider(ContactList.ELEMENT, ContactList.NAMESPACE, new ContactList.Provider());
         ProviderManager.addExtensionProvider(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE, new WhisperKeysMessage.Provider());
         ProviderManager.addExtensionProvider(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE, new AvatarChangeMessage.Provider());
+        ProviderManager.addExtensionProvider(GroupChangeMessage.ELEMENT, GroupChangeMessage.NAMESPACE, new GroupChangeMessage.Provider());
+        ProviderManager.addExtensionProvider(MemberElement.ELEMENT, MemberElement.NAMESPACE, new MemberElement.Provider());
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
@@ -1079,6 +1089,43 @@ public class Connection {
                     if (avatarChangeMessage != null) {
                         Log.i("connection: got avatar change message " + msg);
                         connectionObservers.notifyAvatarChangeMessageReceived(avatarChangeMessage.userId, avatarChangeMessage.avatarId, packet.getStanzaId());
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final GroupChangeMessage groupChangeMessage = packet.getExtension(GroupChangeMessage.ELEMENT, GroupChangeMessage.NAMESPACE);
+                    if (groupChangeMessage != null) {
+                        Log.i("connection: got group change message " + msg);
+                        String ackId = packet.getStanzaId();
+                        switch (groupChangeMessage.action) {
+                            case GroupChangeMessage.Action.MODIFY_MEMBERS: {
+                                connectionObservers.notifyGroupMemberChangeReceived(groupChangeMessage.groupId, groupChangeMessage.members, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
+                                break;
+                            }
+                            case GroupChangeMessage.Action.LEAVE: {
+                                connectionObservers.notifyGroupMemberLeftReceived(groupChangeMessage.groupId, groupChangeMessage.members, ackId);
+                                break;
+                            }
+                            case GroupChangeMessage.Action.MODIFY_ADMINS: {
+                                connectionObservers.notifyGroupAdminChangeReceived(groupChangeMessage.groupId, groupChangeMessage.members, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
+                                break;
+                            }
+                            case GroupChangeMessage.Action.CHANGE_NAME: {
+                                connectionObservers.notifyGroupNameChangeReceived(groupChangeMessage.groupId, groupChangeMessage.name, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
+                                break;
+                            }
+                            case GroupChangeMessage.Action.CHANGE_AVATAR: {
+                                connectionObservers.notifyGroupAvatarChangeReceived(groupChangeMessage.groupId, groupChangeMessage.avatarId, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
+                                break;
+                            }
+                            case GroupChangeMessage.Action.AUTO_PROMOTE: {
+                                connectionObservers.notifyGroupAdminAutoPromoteReceived(groupChangeMessage.groupId, groupChangeMessage.members, ackId);
+                                break;
+                            }
+                            default: {
+                                Log.w("connection: unrecognized group change action " + groupChangeMessage.action);
+                            }
+                        }
                         handled = true;
                     }
                 }

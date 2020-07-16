@@ -23,6 +23,7 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
 import com.halloapp.xmpp.WhisperKeysMessage;
+import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -257,6 +258,37 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {
         avatarLoader.reportAvatarUpdate(userId, avatarId);
+        connection.sendAck(ackId);
+    }
+
+    // TODO(jack): Make GroupsDb to store these changes
+    @Override
+    public void onGroupMemberChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onGroupMemberLeftReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onGroupAdminChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onGroupNameChangeReceived(@NonNull String groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onGroupAvatarChangeReceived(@NonNull String groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onGroupAdminAutoPromoteReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         connection.sendAck(ackId);
     }
 }

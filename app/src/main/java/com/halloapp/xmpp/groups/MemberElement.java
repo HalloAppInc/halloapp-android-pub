@@ -4,8 +4,11 @@ import androidx.annotation.StringDef;
 
 import com.halloapp.contacts.UserId;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.Xml;
+import com.halloapp.xmpp.WhisperKeysMessage;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -93,4 +96,11 @@ public class MemberElement implements ExtensionElement {
         return buf;
     }
 
+    public static class Provider extends ExtensionElementProvider<MemberElement> {
+
+        @Override
+        public final MemberElement parse(XmlPullParser parser, int initialDepth) throws Exception {
+            return new MemberElement(parser);
+        }
+    }
 }

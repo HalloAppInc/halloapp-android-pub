@@ -9,6 +9,7 @@ import com.halloapp.content.Post;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.WhisperKeysMessage;
+import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.HashSet;
 import java.util.List;
@@ -194,6 +195,54 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onAvatarChangeMessageReceived(userId, avatarId, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupMemberChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupMemberChangeReceived(groupId, members, sender, senderName, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupMemberLeftReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupMemberLeftReceived(groupId, members, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupAdminChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupAdminChangeReceived(groupId, members, sender, senderName, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupNameChangeReceived(@NonNull String groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupNameChangeReceived(groupId, name, sender, senderName, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupAvatarChangeReceived(@NonNull String groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupAvatarChangeReceived(groupId, avatarId, sender, senderName, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupAdminAutoPromoteReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupAdminAutoPromoteReceived(groupId, members, ackId);
             }
         }
     }
