@@ -9,5 +9,5 @@
     <corners android:radius="30dp" />
 
     <solid
-        android:color="@color/color_primary_70_alpha" />
+        android:color="@color/media_button_background" />
 </shape>

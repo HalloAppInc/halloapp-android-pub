@@ -7,7 +7,7 @@
                 android:height="30dp" />
 
             <solid
-                android:color="@color/color_secondary_40_alpha" />
+                android:color="@color/media_button_background_pressed" />
         </shape>
     </item>
 
@@ -18,7 +18,7 @@
                 android:height="30dp" />
 
             <solid
-                android:color="@color/color_secondary_40_alpha" />
+                android:color="@color/media_button_background_pressed" />
         </shape>
     </item>
 
@@ -29,7 +29,7 @@
                 android:height="30dp" />
 
             <solid
-                android:color="@color/color_secondary" />
+                android:color="@color/media_button_background" />
         </shape>
     </item>
 </selector>

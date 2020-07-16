@@ -73,6 +73,8 @@
 
     <color name="message_state_sent">@color/color_secondary_40_alpha</color>
     <color name="message_state_read">@color/color_secondary</color>
+    <color name="media_button_background">#F3F2EF</color>
+    <color name="media_button_background_pressed">#66F3F2EF</color>
 
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>

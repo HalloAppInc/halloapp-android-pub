@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,14 +18,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
@@ -81,6 +84,7 @@ public class ContentComposerActivity extends HalloActivity {
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
+    private NestedScrollView mediaContainerView;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
     private MediaViewPager mediaPager;
@@ -121,6 +125,16 @@ public class ContentComposerActivity extends HalloActivity {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
+        mediaContainerView = findViewById(R.id.media_container);
+        mediaContainerView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            final ActionBar actionBar = getSupportActionBar();
+            final float elevation = scrollY > 0 ? scrolledElevation : 0;
+            if (actionBar.getElevation() != elevation) {
+                actionBar.setElevation(elevation);
+            }
+        });
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -164,14 +178,17 @@ public class ContentComposerActivity extends HalloActivity {
                 CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
-            editText.setHint(R.string.write_description);
+            editText.setHint(R.string.write_a_description);
+            editText.setOnFocusChangeListener((view, hasFocus) -> {
+                editText.setMinLines(hasFocus ? 2 : 1);
+            });
             addMediaButton.setVisibility(View.VISIBLE);
         } else {
             progressView.setVisibility(View.GONE);
-            editText.setMinimumHeight(
-                    getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
+            editText.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
             editText.requestFocus();
-            editText.setHint(R.string.type_a_post_hint);
+            editText.setHint(R.string.write_a_post);
+            editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, editText.getContext().getResources().getDimension(R.dimen.compose_text_size_large));
             editText.setPreImeListener((keyCode, event) -> {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     finish();
@@ -205,12 +222,17 @@ public class ContentComposerActivity extends HalloActivity {
                 if (prevEditEmpty != TextUtils.isEmpty(charSequence)) {
                     invalidateOptionsMenu();
                 }
+
+                final boolean useLargeText = (charSequence.length() < 180 && mediaPager.getVisibility() == View.GONE);
+                editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
+                        useLargeText ? R.dimen.compose_text_size_large : R.dimen.compose_text_size));
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
         });
+
 
         mediaPager = findViewById(R.id.media_pager);
         mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
@@ -576,11 +598,8 @@ public class ContentComposerActivity extends HalloActivity {
         if (!mediaPairList.isEmpty()) {
             setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
         } else {
-            editText.setHint(R.string.type_a_post_hint);
-            editText.requestFocus();
-            final InputMethodManager imm = Preconditions.checkNotNull(
-                    (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-            imm.showSoftInput(editText,0);
+            openMediaPicker();
+            return;
         }
         if (mediaPairList.size() <= 1) {
             mediaPagerIndicator.setVisibility(View.GONE);
