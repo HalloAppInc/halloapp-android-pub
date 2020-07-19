@@ -7,12 +7,14 @@ import android.graphics.Outline;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.Window;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -45,6 +47,8 @@ public class CropImageActivity extends HalloActivity {
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_STATE = "state";
 
+    public static final String TRANSITION_VIEW_NAME = "crop_image";
+
     private static final int REQUEST_CODE_MORE_MEDIA = 1;
 
     private CropImageView cropImageView;
@@ -53,11 +57,16 @@ public class CropImageActivity extends HalloActivity {
     private MediaListAdapter adapter;
     private MediaThumbnailLoader mediaLoader;
     private CropImageViewModel.MediaModel selected;
+    private boolean transitionStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ImageCropActivity: onCreate");
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setEnterTransition(new Fade());
+        postponeEnterTransition();
 
         setContentView(R.layout.activity_image_crop);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -79,9 +88,15 @@ public class CropImageActivity extends HalloActivity {
 
     private void setupEditView() {
         cropImageView = findViewById(R.id.image);
+        cropImageView.setTransitionName(TRANSITION_VIEW_NAME);
         cropImageView.setMinAspectRatio(1 / Constants.MAX_IMAGE_ASPECT_RATIO);
 
         cropImageView.setOnSetImageUriCompleteListener((view, uri, error) -> {
+            if (!transitionStarted) {
+                transitionStarted = true;
+                startPostponedEnterTransition();
+            }
+
             if (error != null) {
                 CenterToast.show(this, R.string.failed_to_load_media);
                 finish();
@@ -193,7 +208,8 @@ public class CropImageActivity extends HalloActivity {
                 prepareResults(intent);
                 setResult(RESULT_OK, intent);
 
-                finish();
+                cropImageView.setShowCropOverlay(false);
+                finishAfterTransition();
             });
 
             saveCroppedImageAsync();
@@ -261,15 +277,11 @@ public class CropImageActivity extends HalloActivity {
             prepareResults(intent);
             setResult(RESULT_OK, intent);
 
-            super.onBackPressed();
+            cropImageView.setShowCropOverlay(false);
+            finishAfterTransition();
         });
 
         saveCroppedImageAsync();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        return true;
     }
 
     @Override

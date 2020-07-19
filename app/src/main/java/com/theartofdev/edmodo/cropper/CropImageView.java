@@ -1407,6 +1407,13 @@ public class CropImageView extends FrameLayout {
             BitmapUtils.mStateBitmap = null;
             if (stateBitmap != null && !stateBitmap.isRecycled()) {
               setBitmap(stateBitmap, 0, uri, bundle.getInt("LOADED_SAMPLE_SIZE"), 0);
+
+              // NOTE(stefan): Originally CropImageView was not calling a listener only when a cached image is loaded.
+              // The lines below call a listener even in that case, which provides a more consistent behaviour.
+              // CropImageActivity uses that listener to trigger transition animations.
+              if (mOnSetImageUriCompleteListener != null) {
+                mOnSetImageUriCompleteListener.onSetImageUriComplete(this, uri, null);
+              }
             }
           }
           if (mLoadedImageUri == null) {

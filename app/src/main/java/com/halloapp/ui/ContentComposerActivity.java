@@ -1,6 +1,8 @@
 package com.halloapp.ui;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
+import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.Fade;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -111,6 +115,7 @@ public class ContentComposerActivity extends HalloActivity {
     private int expectedMediaCount;
 
     private boolean prevEditEmpty;
+    private boolean cropResultProcessed = false;
 
     private static final int REQUEST_CODE_CROP = 1;
 
@@ -118,6 +123,16 @@ public class ContentComposerActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ContentComposerActivity: onCreate");
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setExitTransition(new Fade());
+
+        setExitSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                sharedElements.put(CropImageActivity.TRANSITION_VIEW_NAME, mediaPagerAdapter.getCurrentView().findViewById(R.id.image));
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -525,7 +540,8 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
 
-            startActivityForResult(intent, REQUEST_CODE_CROP);
+            cropResultProcessed = false;
+            startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, CropImageActivity.TRANSITION_VIEW_NAME).toBundle());
         }
     }
 
@@ -550,13 +566,38 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        // Do it here instead of onActivityResult because onActivityResult is called only after
+        // the animated transition ends.
+        if (resultCode == RESULT_OK && data.hasExtra(CropImageActivity.EXTRA_MEDIA)) {
+            postponeEnterTransition();
+            onCropped(data);
+            cropResultProcessed = true;
+
+            mediaPager.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            mediaPager.getViewTreeObserver().removeOnPreDrawListener(this);
+                            startPostponedEnterTransition();
+                            return true;
+                        }
+                    }
+            );
+        }
+    }
+
+    @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
         //noinspection SwitchStatementWithTooFewBranches
         switch (request) {
             case REQUEST_CODE_CROP: {
-                if (result == RESULT_OK) {
+                if (result == RESULT_OK && !cropResultProcessed) {
                     onCropped(data);
+                    cropResultProcessed = true;
                 }
                 break;
             }
@@ -765,6 +806,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     private class MediaPagerAdapter extends PagerAdapter {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = new ArrayList<>();
+        private View currentView;
 
         MediaPagerAdapter() {
         }
@@ -785,6 +827,16 @@ public class ContentComposerActivity extends HalloActivity {
                 index++;
             }
             return POSITION_NONE;
+        }
+
+        public View getCurrentView() {
+            return currentView;
+        }
+
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            super.setPrimaryItem(container, position, object);
+            currentView = (View)object;
         }
 
         @Override
