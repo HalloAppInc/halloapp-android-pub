@@ -7,6 +7,7 @@
     <color name="black_54">#8A000000</color>
     <color name="black_50">#7F000000</color>
     <color name="black_30">#4C000000</color>
+    <color name="black_20">#33000000</color>
     <color name="white_87">#DFFFFFFF</color>
     <color name="white_80">#CCFFFFFF</color>
     <color name="white_70">#B2FFFFFF</color>
@@ -50,13 +51,16 @@
     <color name="swipe_delete_background">#d93025</color>
     <color name="retract_comment_tint">#80808080</color>
     <color name="avatar_crop_overlay">#c4c4c4c4</color>
-    <color name="change_avatar_background">#B5B5B5</color>
+    <color name="change_avatar_background">@android:color/white</color>
     <color name="ic_launcher_background">#FF4500</color>
     <color name="dim_facepile_avatar_0">#80ffffff</color>
     <color name="dim_facepile_avatar_1">#40ffffff</color>
     <color name="home_navigation_divider">#FFFFFF</color>
     <color name="feed_notification_icon">@color/black_80</color>
     <color name="crop_done">#69a1ff</color>
+    <color name="settings_text_entry_background">@android:color/white</color>
+
+    <color name="settings_header_background">@color/color_secondary</color>
 
     <color name="mention_color">@color/color_secondary</color>
 
@@ -75,6 +79,8 @@
     <color name="message_state_read">@color/color_secondary</color>
     <color name="media_button_background">#F3F2EF</color>
     <color name="media_button_background_pressed">#66F3F2EF</color>
+
+    <color name="button_disabled_background">@color/black_20</color>
 
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>

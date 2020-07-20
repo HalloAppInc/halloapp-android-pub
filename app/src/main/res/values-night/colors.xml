@@ -19,15 +19,20 @@
     <color name="message_background_outgoing">#7196D4</color>
     <color name="message_text_incoming">#efefef</color>
     <color name="message_text_outgoing">#202020</color>
-    <color name="change_avatar_background">#424242</color>
+    <color name="change_avatar_background">@android:color/white</color>
     <color name="home_navigation_divider">#292929</color>
     <color name="old_comments_indicator">#33FFFFFF</color>
+
+    <color name="settings_header_background">#353535</color>
+    <color name="settings_text_entry_background">@color/white_20</color>
 
     <color name="feed_notification_icon">@color/white_80</color>
 
     <color name="chat_message_preview">@color/white_70</color>
     <color name="empty_chat_placeholder">@color/white_30</color>
     <color name="post_timestamp">@color/white_30</color>
+
+    <color name="button_disabled_background">@color/white_20</color>
 
     <!-- Text Colors -->
     <color name="primary_text">@color/white_87</color>

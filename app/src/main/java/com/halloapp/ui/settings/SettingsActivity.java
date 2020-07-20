@@ -1,12 +1,17 @@
-package com.halloapp.ui;
+package com.halloapp.ui.settings;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 
@@ -16,19 +21,29 @@ import com.halloapp.LogProvider;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.contacts.UserId;
+import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.HalloPreferenceFragment;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
 
 public class SettingsActivity extends HalloActivity {
     public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
     private static final String SUPPORT_EMAIL_URI = "mailto:" + SUPPORT_EMAIL;
-    private static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy-policy";
-    private static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms-of-service";
+    private static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
+
+    private SettingsViewModel settingsViewModel;
+
+    private AvatarLoader avatarLoader;
+
+    private ImageView avatarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +54,44 @@ public class SettingsActivity extends HalloActivity {
                 .beginTransaction()
                 .replace(R.id.settings, new SettingsFragment())
                 .commit();
-        final ActionBar actionBar = getSupportActionBar();
+
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
         }
 
+        avatarLoader = AvatarLoader.getInstance(this);
+
+        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
+
+        avatarView = findViewById(R.id.avatar);
+        final TextView nameView = findViewById(R.id.name);
+        final TextView phoneView = findViewById(R.id.phone);
+
+        final View profileContainer = findViewById(R.id.profile_container);
+
+        settingsViewModel.getName().observe(this, nameView::setText);
+        settingsViewModel.getPhone().observe(this, phoneNumber -> {
+            phoneView.setText(StringUtils.formatPhoneNumber(phoneNumber));
+        });
+
+        avatarLoader.load(avatarView, UserId.ME);
+
+        profileContainer.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingsProfile.class));
+        });
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d("SettingsActivity.onDestroy");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        avatarLoader.load(avatarView, UserId.ME);
     }
 
     public static class SettingsFragment extends HalloPreferenceFragment {
@@ -107,21 +148,11 @@ public class SettingsActivity extends HalloActivity {
                 return false;
             });
 
-            final Preference privacyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
-            privacyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            final Preference termsOfServiceAndPolicyPreference = Preconditions.checkNotNull(findPreference("terms_and_policy"));
+            termsOfServiceAndPolicyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL));
-                    startActivity(intent);
-                    return false;
-                }
-            });
-
-            final Preference termsOfServicePreference = Preconditions.checkNotNull(findPreference("terms_of_service"));
-            termsOfServicePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(TERMS_OF_SERVICE_URL));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MAIN_WEBSITE_URL));
                     startActivity(intent);
                     return false;
                 }
@@ -147,6 +178,12 @@ public class SettingsActivity extends HalloActivity {
                 Debug.showDebugMenu(requireActivity(), prefView);
                 return false;
             });
+        }
+
+        @Override
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            setDividerHeight(getResources().getDimensionPixelSize(R.dimen.settings_divider_height));
         }
     }
 }

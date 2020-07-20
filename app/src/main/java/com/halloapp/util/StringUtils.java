@@ -1,6 +1,10 @@
 package com.halloapp.util;
 
+import android.telephony.PhoneNumberUtils;
+import android.text.BidiFormatter;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.halloapp.Constants;
 
@@ -34,6 +38,10 @@ public class StringUtils {
             ret[i] = (byte)Integer.parseInt(b, 16);
         }
         return ret;
+    }
+
+    public static String formatPhoneNumber(@NonNull String phone) {
+        return BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null));
     }
 
     public static boolean isFewEmoji(String text) {

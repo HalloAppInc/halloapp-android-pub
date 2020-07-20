@@ -9,13 +9,4 @@
     <solid
         android:color="@color/change_avatar_background" />
 
-    <stroke
-        android:color="@color/card_background"
-        android:width="2dp"/>
-
-    <padding
-        android:left="10dp"
-        android:top="10dp"
-        android:right="10dp"
-        android:bottom="10dp" />
 </shape>

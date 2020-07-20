@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppThemeBase" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/color_primary</item>
@@ -19,6 +19,15 @@
         <item name="windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Settings" parent="AppTheme">
+        <item name="actionBarStyle">@style/ActionBar.Settings</item>
+        <item name="actionBarTheme">@style/Theme.ActionBar.Settings</item>
+        <item name="colorPrimaryDark">@color/settings_header_background</item>
+        <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Settings.Title</item>
+        <item name="toolbarStyle">@style/Toolbar.Settings</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
     <style name="AppTheme.Black">
@@ -86,11 +95,26 @@
         <item name="android:textColor">@android:color/holo_orange_dark</item>
     </style>
 
+    <style name="Toolbar.Settings" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="titleTextColor">@color/white_87</item>
+        <item name="colorControlNormal">@color/white_87</item>
+    </style>
+
     <style name="ActionBar" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
         <item name="background">@color/color_action_bar</item>
         <item name="backgroundStacked">@color/color_action_bar</item>
         <item name="backgroundSplit">@color/color_action_bar</item>
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="ActionBar.Settings" parent="ActionBar">
+        <item name="background">@color/settings_header_background</item>
+        <item name="backgroundStacked">@color/settings_header_background</item>
+        <item name="backgroundSplit">@color/settings_header_background</item>
+    </style>
+
+    <style name="Theme.ActionBar.Settings" parent="ActionBar">
+        <item name="colorControlNormal">@color/white_87</item>
     </style>
 
     <style name="ActionBarBlack" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
@@ -165,9 +189,17 @@
         <item name="android:textSize">22sp</item>
     </style>
 
+    <style name="TextAppearance.Toolbar.Settings.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/white_87</item>
+    </style>
+
     <style name="Widget.Button.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="colorSecondary">@color/fab_background</item>
         <item name="colorOnSurface">@android:color/white</item>
+    </style>
+
+    <style name="Widget.Button.Secondary" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/secondary_button_color_selector</item>
     </style>
 
 </resources>

@@ -21,14 +21,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteY="48dp" />
 
-    <ImageView
-        android:id="@+id/change_avatar"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/change_avatar_button"
-        app:layout_constraintBottom_toBottomOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="@+id/avatar" />
-
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
@@ -40,18 +32,6 @@
         app:layout_constraintTop_toBottomOf="@+id/avatar"
         app:layout_constraintBottom_toTopOf="@+id/phone"
         tools:text="Ded Pihtov" />
-
-    <ImageView
-        android:id="@+id/change_name"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="6dp"
-        android:src="@drawable/ic_edit"
-        android:tint="?attr/colorControlNormal"
-        android:alpha="0.5"
-        app:layout_constraintBottom_toBottomOf="@+id/name"
-        app:layout_constraintStart_toEndOf="@+id/name"/>
 
     <TextView
         android:id="@+id/phone"

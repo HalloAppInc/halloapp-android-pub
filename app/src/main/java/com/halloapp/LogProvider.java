@@ -16,7 +16,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.ui.SettingsActivity;
+import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.util.Log;
 
 import java.io.ByteArrayOutputStream;

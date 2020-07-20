@@ -2,8 +2,6 @@ package com.halloapp.ui.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
-import android.text.BidiFormatter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,19 +22,15 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.ui.PostsFragment;
-import com.halloapp.ui.SettingsActivity;
-import com.halloapp.ui.UserNameActivity;
+import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-
-import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends PostsFragment {
 
-    private static final int CODE_CHANGE_AVATAR = 1;
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
     private ImageView avatarView;
@@ -94,15 +88,12 @@ public class ProfileFragment extends PostsFragment {
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
         final TextView phoneView = headerView.findViewById(R.id.phone);
-        final ImageView changeAvatarView = headerView.findViewById(R.id.change_avatar);
-        final View changeNameView = headerView.findViewById(R.id.change_name);
         viewModel.getPhone().observe(getViewLifecycleOwner(), phone -> {
             if (phone == null) {
                 phoneView.setVisibility(View.GONE);
             } else {
                 phoneView.setVisibility(View.VISIBLE);
-                phoneView.setText(
-                        BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null)));
+                phoneView.setText(StringUtils.formatPhoneNumber(phone));
             }
         });
         viewModel.getName().observe(getViewLifecycleOwner(), name -> {
@@ -115,22 +106,7 @@ public class ProfileFragment extends PostsFragment {
         avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
 
-        if (profileUserId.isMe()) {
-            final View.OnClickListener changeAvatarListener = v -> {
-                Log.d("ProfileFragment request change avatar");
-                final Intent intent = new Intent(getContext(), MediaPickerActivity.class);
-                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
-                startActivityForResult(intent, CODE_CHANGE_AVATAR);
-            };
-            changeAvatarView.setOnClickListener(changeAvatarListener);
-            avatarView.setOnClickListener(changeAvatarListener);
-
-            final View.OnClickListener changeNameListener = v -> startActivity(new Intent(getContext(), UserNameActivity.class));
-            headerView.findViewById(R.id.name).setOnClickListener(changeNameListener);
-            changeNameView.setOnClickListener(changeNameListener);
-        } else {
-            changeAvatarView.setVisibility(View.GONE);
-            changeNameView.setVisibility(View.GONE);
+        if (!profileUserId.isMe()) {
             phoneView.setVisibility(View.GONE);
         }
 
@@ -142,17 +118,15 @@ public class ProfileFragment extends PostsFragment {
     }
 
     @Override
-    protected boolean shouldOpenProfileOnNamePress() {
-        return false;
+    public void onResume() {
+        super.onResume();
+        AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CODE_CHANGE_AVATAR && resultCode == RESULT_OK) {
-            AvatarLoader.getInstance(getContext()).load(avatarView, UserId.ME);
-            adapter.notifyDataSetChanged();
-        }
+    protected boolean shouldOpenProfileOnNamePress() {
+        return false;
     }
 
     @Override

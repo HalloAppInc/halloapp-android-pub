@@ -109,8 +109,13 @@
             android:label="@string/comments"/>
 
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name=".ui.settings.SettingsActivity"
+            android:theme="@style/AppTheme.Settings"
             android:label="@string/settings"/>
+
+        <activity
+            android:name=".ui.settings.SettingsProfile"
+            android:label="@string/title_profile"/>
 
         <activity
             android:name=".ui.UserNameActivity"
