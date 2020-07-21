@@ -152,7 +152,7 @@ public class Registration {
     public static class RegistrationRequestResult {
 
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS})
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS, RESULT_FAILED_SERVER_NOT_INVITED})
         @interface Result {}
         public static final int RESULT_OK = 0;
         public static final int RESULT_FAILED_NETWORK = 1;
@@ -160,6 +160,7 @@ public class Registration {
         public static final int RESULT_FAILED_SERVER_SMS_FAIL = 3; // Sending the SMS failed
         public static final int RESULT_FAILED_SERVER_CANNOT_ENROLL = 4; // Error during the enroll function. This one does not make much sense.
         public static final int RESULT_FAILED_SERVER_NO_FRIENDS = 5; // The Phone number is not in any existing users contacts. We don't let users create accounts if they are not going to have any friends. Note this error is not returned for 555 phone numbers.
+        public static final int RESULT_FAILED_SERVER_NOT_INVITED = 6; // Phone number trying to register has not been invited using the in-app invites system.
 
         public final String phone;
         public final @Result int result;
@@ -182,6 +183,8 @@ public class Registration {
                 return RESULT_FAILED_SERVER_CANNOT_ENROLL;
             } else if ("no_friends".equals(error)) {
                 return RESULT_FAILED_SERVER_NO_FRIENDS;
+            } else if ("not_invited".equals(error)) {
+                return RESULT_FAILED_SERVER_NOT_INVITED;
             }
             return RESULT_FAILED_SERVER;
         }

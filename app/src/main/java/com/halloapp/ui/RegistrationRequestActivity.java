@@ -93,7 +93,8 @@ public class RegistrationRequestActivity extends HalloActivity {
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
                 startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
             } else {
-                if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NO_FRIENDS) {
+                if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NO_FRIENDS
+                        || result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NOT_INVITED) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationRequestActivity.this)
                         .setMessage(getBaseContext().getString(R.string.registration_failed_no_friends))
                         .setPositiveButton(R.string.ok, null)
