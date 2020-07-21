@@ -280,4 +280,5 @@
         <item quantity="other">%d contacts selected</item>
     </plurals>
     <string name="settings_feed_selected_empty">No contacts selected</string>
+    <string name="settings_version_footer">Version %s</string>
 </resources>

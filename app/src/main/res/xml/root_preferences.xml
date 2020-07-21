@@ -41,6 +41,8 @@
 
     </com.halloapp.widget.HAPreferenceCategory>
 
+    <com.halloapp.ui.settings.SettingsFooterPreference app:key="footer" app:layout="@layout/settings_version_footer"/>
+
     <com.halloapp.widget.HAPreferenceCategory app:key="debug" app:title="Debug" app:isPreferenceVisible="false">
 
         <SwitchPreferenceCompat
