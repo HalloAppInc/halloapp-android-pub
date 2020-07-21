@@ -18,6 +18,7 @@ import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
+import com.halloapp.groups.GroupInfo;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
@@ -56,6 +57,7 @@ public class ContentDb {
         void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onGroupChatAdded(@NonNull String chatId);
+        void onGroupMetadataChanged(@NonNull String gid);
         void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts);
@@ -79,6 +81,7 @@ public class ContentDb {
         public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onGroupChatAdded(@NonNull String chatId) {}
+        public void onGroupMetadataChanged(@NonNull String chatId) {}
         public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
@@ -419,10 +422,43 @@ public class ContentDb {
         });
     }
 
-    public void addGroupChat(@NonNull String gid, @NonNull String name, @Nullable Runnable completionRunnable) {
+    public void addGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.addGroupChat(gid, name)) {
-                observers.notifyGroupChatAdded(gid);
+            if (messagesDb.addGroupChat(groupInfo)) {
+                observers.notifyGroupChatAdded(groupInfo.gid);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void updateGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.updateGroupChat(groupInfo)) {
+                observers.notifyGroupMetadataChanged(groupInfo.gid);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupName(@NonNull String gid, @NonNull String name, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupName(gid, name)) {
+                observers.notifyGroupMetadataChanged(gid);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupAvatar(@NonNull String gid, @NonNull String avatarId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupAvatar(gid, avatarId)) {
+                observers.notifyGroupMetadataChanged(gid);
             }
             if (completionRunnable != null) {
                 completionRunnable.run();
@@ -507,6 +543,11 @@ public class ContentDb {
     @WorkerThread
     public @NonNull List<Chat> getChats() {
         return messagesDb.getChats();
+    }
+
+    @WorkerThread
+    public @NonNull List<Chat> getGroups() {
+        return messagesDb.getGroups();
     }
 
     @WorkerThread

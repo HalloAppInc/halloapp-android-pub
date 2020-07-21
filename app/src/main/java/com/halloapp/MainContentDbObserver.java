@@ -147,6 +147,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
+    public void onGroupMetadataChanged(@NonNull String gid) {
+
+    }
+
+    @Override
     public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
 
     }

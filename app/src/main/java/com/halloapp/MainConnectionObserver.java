@@ -14,6 +14,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.groups.GroupsSync;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -41,6 +42,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private ContentDb contentDb;
     private Connection connection;
     private ContactsDb contactsDb;
+    private GroupsSync groupsSync;
     private AvatarLoader avatarLoader;
     private Notifications notifications;
     private ForegroundChat foregroundChat;
@@ -59,6 +61,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ContentDb.getInstance(context),
                             Connection.getInstance(),
                             ContactsDb.getInstance(context),
+                            GroupsSync.getInstance(context),
                             AvatarLoader.getInstance(context),
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),
@@ -79,6 +82,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ContentDb contentDb,
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
+            @NonNull GroupsSync groupsSync,
             @NonNull AvatarLoader avatarLoader,
             @NonNull Notifications notifications,
             @NonNull ForegroundChat foregroundChat,
@@ -92,6 +96,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.contentDb = contentDb;
         this.connection = connection;
         this.contactsDb = contactsDb;
+        this.groupsSync = groupsSync;
         this.avatarLoader = avatarLoader;
         this.notifications = notifications;
         this.foregroundChat = foregroundChat;
@@ -115,6 +120,7 @@ public class MainConnectionObserver extends Connection.Observer {
         HalloApp.sendPushTokenFromFirebase();
         new RequestExpirationInfoTask(connection, context).execute();
         presenceLoader.onReconnect();
+        groupsSync.startGroupsSync();
     }
 
     @Override
@@ -279,12 +285,12 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onGroupNameChangeReceived(@NonNull String groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        connection.sendAck(ackId);
+        contentDb.setGroupName(groupId, name, () -> connection.sendAck(ackId));
     }
 
     @Override
     public void onGroupAvatarChangeReceived(@NonNull String groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        connection.sendAck(ackId);
+        contentDb.setGroupAvatar(groupId, avatarId, () -> connection.sendAck(ackId));
     }
 
     @Override

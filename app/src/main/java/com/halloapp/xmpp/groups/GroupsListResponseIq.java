@@ -1,6 +1,7 @@
 package com.halloapp.xmpp.groups;
 
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -31,16 +32,15 @@ public class GroupsListResponseIq extends IQ {
                 continue;
             }
             final String elementName = parser.getName();
-            if (MemberElement.ELEMENT.equals(elementName)) {
+            if (GroupResponseIq.ELEMENT.equals(elementName)) {
                 String gid = parser.getAttributeValue("", ATTRIBUTE_GID);
                 String name = parser.getAttributeValue("", ATTRIBUTE_NAME);
                 String description = parser.getAttributeValue("", ATTRIBUTE_DESCRIPTION);
                 String avatar = parser.getAttributeValue("", ATTRIBUTE_AVATAR);
                 GroupInfo groupInfo = new GroupInfo(gid, name, description, avatar, null);
                 groupInfos.add(groupInfo);
-            } else {
-                Xml.skip(parser);
             }
+            Xml.skip(parser);
         }
     }
 

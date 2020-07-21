@@ -23,7 +23,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -86,7 +86,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + " INTEGER,"
                 + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
                 + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
-                + ChatsTable.COLUMN_CHAT_NAME + " TEXT"
+                + ChatsTable.COLUMN_CHAT_NAME + " TEXT,"
+                + ChatsTable.COLUMN_IS_GROUP + " INTEGER DEFAULT 0,"
+                + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
+                + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + RepliesTable.TABLE_NAME);
@@ -246,6 +249,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 18: {
                 upgradeFromVersion18(db);
             }
+            case 19: {
+                upgradeFromVersion19(db);
+            }
 
             break;
             default: {
@@ -378,6 +384,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion18(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_PATCH_URL + " TEXT");
+    }
+
+    private void upgradeFromVersion19(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_IS_GROUP + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT");
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

@@ -103,7 +103,7 @@ public class CreateGroupActivity extends HalloActivity {
             updateProgress.setVisibility(View.VISIBLE);
             groupsApi.createGroup(name, userIds)
                     .onResponse(groupInfo -> {
-                        contentDb.addGroupChat(groupInfo.gid, groupInfo.name, () -> {
+                        contentDb.addGroupChat(groupInfo, () -> {
                             final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
                             intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.gid);
                             startActivity(intent);

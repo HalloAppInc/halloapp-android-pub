@@ -104,6 +104,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyGroupMetadataChanged(@NonNull String gid) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onGroupMetadataChanged(gid);
+            }
+        }
+    }
+
     void notifyMessageAdded(@NonNull Message message) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

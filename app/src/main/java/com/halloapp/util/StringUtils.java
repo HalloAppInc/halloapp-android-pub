@@ -5,6 +5,7 @@ import android.text.BidiFormatter;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 

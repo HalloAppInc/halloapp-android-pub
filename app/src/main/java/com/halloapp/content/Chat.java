@@ -9,6 +9,10 @@ public class Chat {
     public final long lastMessageRowId;
     public final long firstUnseenMessageRowId;
 
+    public final boolean isGroup;
+    public final String groupDescription;
+    public final String groupAvatarId;
+
     public String name;
 
     public Chat(
@@ -18,7 +22,11 @@ public class Chat {
             int newMessageCount,
             long lastMessageRowId,
             long firstUnseenMessageRowId,
-            String name) {
+            String name,
+            boolean isGroup,
+            String groupDescription,
+            String groupAvatarId
+    ) {
         this.rowId = rowId;
         this.chatId = chatId;
         this.timestamp = timestamp;
@@ -26,5 +34,8 @@ public class Chat {
         this.lastMessageRowId = lastMessageRowId;
         this.firstUnseenMessageRowId = firstUnseenMessageRowId;
         this.name = name;
+        this.isGroup = isGroup;
+        this.groupDescription = groupDescription;
+        this.groupAvatarId = groupAvatarId;
     }
 }
