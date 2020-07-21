@@ -88,6 +88,8 @@ public class ChatActivity extends HalloActivity {
     private PostEditText editText;
     private View replyContainer;
 
+    private TextView replyNameView;
+
     private String chatId;
 
     private AvatarLoader avatarLoader;
@@ -149,6 +151,8 @@ public class ChatActivity extends HalloActivity {
                 .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
                 .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)));
         drawDelegateView = findViewById(R.id.draw_delegate);
+
+        replyNameView = findViewById(R.id.reply_name);
 
         final RecyclerView chatView = findViewById(R.id.chat);
         Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -265,7 +269,12 @@ public class ChatActivity extends HalloActivity {
                 if (isGroup && chat != null) {
                     setTitle(chat.name);
                 } else {
-                    viewModel.name.getLiveData().observe(this, this::setTitle);
+                    viewModel.name.getLiveData().observe(this, name -> {
+                        setTitle(name);
+                        if (replyPostId != null) {
+                            replyNameView.setText(name);
+                        }
+                    });
                     presenceLoader.getLastSeenLiveData(new UserId(chatId)).observe(this, presenceState -> {
                         if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
                             toolbar.setSubtitle(null);
