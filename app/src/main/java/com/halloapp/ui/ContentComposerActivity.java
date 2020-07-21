@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
@@ -17,17 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Space;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
@@ -84,7 +86,8 @@ public class ContentComposerActivity extends HalloActivity {
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
-    private NestedScrollView mediaContainerView;
+    private ScrollView mediaContainerView;
+    private ViewTreeObserver.OnScrollChangedListener onScrollChangeListener;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
     private MediaViewPager mediaPager;
@@ -126,15 +129,7 @@ public class ContentComposerActivity extends HalloActivity {
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
         mediaContainerView = findViewById(R.id.media_container);
-        mediaContainerView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            final ActionBar actionBar = getSupportActionBar();
-            final float elevation = scrollY > 0 ? scrolledElevation : 0;
-            if (actionBar.getElevation() != elevation) {
-                actionBar.setElevation(elevation);
-            }
-        });
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -244,6 +239,7 @@ public class ContentComposerActivity extends HalloActivity {
 
             @Override
             public void onPageSelected(int position) {
+                clearEditFocus();
                 updateMediaButtons();
                 final int currentPosition = Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - position : position;
                 refreshVideoPlayers(currentPosition);
@@ -253,6 +249,7 @@ public class ContentComposerActivity extends HalloActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+
         mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
         mediaPagerAdapter = new MediaPagerAdapter();
         mediaPager.setAdapter(mediaPagerAdapter);
@@ -437,11 +434,13 @@ public class ContentComposerActivity extends HalloActivity {
         Log.d("ContentComposerActivity: onDestroy");
         fullThumbnailLoader.destroy();
     }
+
     @Override
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
             Log.d("ContentComposerActivity onStart");
+            initializeOnScrollChangeListener();
             initializeAllVideoPlayers();
         }
     }
@@ -451,6 +450,7 @@ public class ContentComposerActivity extends HalloActivity {
         super.onResume();
         if (Util.SDK_INT <= 23) {
             Log.d("ContentComposerActivity onResume");
+            initializeOnScrollChangeListener();
             initializeAllVideoPlayers();
         }
     }
@@ -460,6 +460,7 @@ public class ContentComposerActivity extends HalloActivity {
         super.onPause();
         if (Util.SDK_INT <= 23) {
             Log.d("ContentComposerActivity onPause");
+            clearOnScrollChangeListener();
             releaseAllVideoPlayers();
         }
     }
@@ -469,6 +470,7 @@ public class ContentComposerActivity extends HalloActivity {
         super.onStop();
         if (Util.SDK_INT > 23) {
             Log.d("ContentComposerActivity onStop");
+            clearOnScrollChangeListener();
             releaseAllVideoPlayers();
         }
     }
@@ -638,6 +640,31 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
+    private void clearEditFocus() {
+        if (editText.hasFocus()) {
+            editText.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
+    }
+
+    private void initializeOnScrollChangeListener() {
+        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
+        onScrollChangeListener = () -> {
+            final ActionBar actionBar = getSupportActionBar();
+            final float elevation = mediaContainerView.getScrollY() > 0 ? scrolledElevation : 0;
+            if (actionBar.getElevation() != elevation) {
+                actionBar.setElevation(elevation);
+            }
+        };
+        onScrollChangeListener.onScrollChanged();
+        mediaContainerView.getViewTreeObserver().addOnScrollChangedListener(onScrollChangeListener);
+    }
+
+    private void clearOnScrollChangeListener() {
+        mediaContainerView.getViewTreeObserver().removeOnScrollChangedListener(onScrollChangeListener);
+    }
+
     private void refreshVideoPlayers(int currentPosition) {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
         if (mediaPairList != null && !mediaPairList.isEmpty()) {
@@ -777,6 +804,7 @@ public class ContentComposerActivity extends HalloActivity {
                 if (shouldPlayerBeActive(activePosition, currentPosition)) {
                     initializeVideoPlayer(mediaPair, contentPlayerView, activePosition == currentPosition);
                 }
+                contentPlayerView.setOnClickListener(v -> clearEditFocus());
             } else {
                 if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
                     if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
@@ -789,6 +817,7 @@ public class ContentComposerActivity extends HalloActivity {
                 }
                 fullThumbnailLoader.load(imageView, mediaItem);
                 imageView.setDrawDelegate(drawDelegateView);
+                imageView.setOnClickListener(v -> clearEditFocus());
             }
 
             container.addView(view);
