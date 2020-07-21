@@ -260,4 +260,24 @@
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
     <string name="failed_create_group">Failed to create group, try again later</string>
+    <plurals name="settings_invite_summary">
+        <item quantity="one">%d invite available</item>
+        <item quantity="other">%d invites available</item>
+    </plurals>
+    <string name="settings_invite_none_summary">No invites available</string>
+    <plurals name="settings_block_list_summary">
+        <item quantity="one">%d contact</item>
+        <item quantity="other">%d contacts</item>
+    </plurals>
+    <string name="settings_block_list_none_summary">None</string>
+    <string name="settings_feed_contacts_summary">My contacts</string>
+    <plurals name="settings_feed_excluded_summary">
+        <item quantity="one">%d contact excluded</item>
+        <item quantity="other">%d contacts excluded</item>
+    </plurals>
+    <plurals name="settings_feed_selected">
+        <item quantity="one">%d contact selected</item>
+        <item quantity="other">%d contacts selected</item>
+    </plurals>
+    <string name="settings_feed_selected_empty">No contacts selected</string>
 </resources>

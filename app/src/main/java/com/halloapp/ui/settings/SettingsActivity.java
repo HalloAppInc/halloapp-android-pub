@@ -33,6 +33,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 public class SettingsActivity extends HalloActivity {
     public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
@@ -91,10 +92,16 @@ public class SettingsActivity extends HalloActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        settingsViewModel.refresh();
         avatarLoader.load(avatarView, UserId.ME);
     }
 
     public static class SettingsFragment extends HalloPreferenceFragment {
+
+        private Preference blocklistPreference;
+        private Preference inviteFriends;
+        private Preference feedPrivacyPreference;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
@@ -107,21 +114,21 @@ public class SettingsActivity extends HalloActivity {
                 StrictMode.setThreadPolicy(threadPolicy);
             }
 
-            final Preference blocklistPreference = Preconditions.checkNotNull((findPreference("block_list")));
+            blocklistPreference = Preconditions.checkNotNull((findPreference("block_list")));
             blocklistPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), BlockListActivity.class);
                 startActivity(intent);
                 return false;
             });
 
-            final Preference feedPrivacyPreference = Preconditions.checkNotNull((findPreference("feed_privacy")));
+            feedPrivacyPreference = Preconditions.checkNotNull((findPreference("feed_privacy")));
             feedPrivacyPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), FeedPrivacyActivity.class);
                 startActivity(intent);
                 return false;
             });
 
-            final Preference inviteFriends = Preconditions.checkNotNull((findPreference("invite_friends")));
+            inviteFriends = Preconditions.checkNotNull((findPreference("invite_friends")));
             inviteFriends.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), InviteFriendsActivity.class);
                 startActivity(intent);
@@ -184,6 +191,46 @@ public class SettingsActivity extends HalloActivity {
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             setDividerHeight(getResources().getDimensionPixelSize(R.dimen.settings_divider_height));
+            SettingsViewModel settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
+            settingsViewModel.getBlockList().observe(getViewLifecycleOwner(), list -> {
+                if (list == null) {
+                    blocklistPreference.setSummary(null);
+                } else if (list.isEmpty()){
+                    blocklistPreference.setSummary(getString(R.string.settings_block_list_none_summary));
+                } else {
+                    blocklistPreference.setSummary(getResources().getQuantityString(R.plurals.settings_block_list_summary, list.size(), list.size()));
+                }
+            });
+            settingsViewModel.getInviteCount().observe(getViewLifecycleOwner(), count -> {
+                if (count == null) {
+                    inviteFriends.setSummary(null);
+                } else if (count == 0){
+                    inviteFriends.setSummary(getString(R.string.settings_invite_none_summary));
+                } else {
+                    inviteFriends.setSummary(getResources().getQuantityString(R.plurals.settings_invite_summary, count, count));
+                }
+            });
+            settingsViewModel.getFeedPrivacy().observe(getViewLifecycleOwner(), feedPrivacy -> {
+                if (feedPrivacy == null) {
+                    feedPrivacyPreference.setSummary(null);
+                } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+                    feedPrivacyPreference.setSummary(getString(R.string.settings_feed_contacts_summary));
+                } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
+                    if (feedPrivacy.exceptList.isEmpty()) {
+                        feedPrivacyPreference.setSummary(getString(R.string.settings_feed_contacts_summary));
+                    } else {
+                        feedPrivacyPreference.setSummary(getResources().getQuantityString(R.plurals.settings_feed_excluded_summary, feedPrivacy.exceptList.size(), feedPrivacy.exceptList.size()));
+                    }
+                } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
+                    if (feedPrivacy.onlyList.isEmpty()) {
+                        feedPrivacyPreference.setSummary(getString(R.string.settings_feed_selected_empty));
+                    } else {
+                        feedPrivacyPreference.setSummary(getResources().getQuantityString(R.plurals.settings_feed_selected, feedPrivacy.onlyList.size(), feedPrivacy.onlyList.size()));
+                    }
+                } else {
+                    feedPrivacyPreference.setSummary(null);
+                }
+            });
         }
     }
 }
