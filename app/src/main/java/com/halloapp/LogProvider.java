@@ -115,8 +115,8 @@ public class LogProvider extends ContentProvider {
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("plain/text");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {SettingsActivity.SUPPORT_EMAIL});
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject) + DEBUG_SUFFIX);
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user) + DEBUG_SUFFIX);
+                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
+                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_FILE_NAME));
                 context.startActivity(intent);
             }
