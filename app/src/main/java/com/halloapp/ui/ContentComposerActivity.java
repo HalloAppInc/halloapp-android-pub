@@ -96,6 +96,8 @@ public class ContentComposerActivity extends HalloActivity {
     private DrawDelegateView drawDelegateView;
     private View replyContainer;
 
+    private boolean calledFromPicker;
+
     private ImageButton deletePictureButton;
     private ImageButton cropPictureButton;
     private TextView mediaIndexView;
@@ -155,14 +157,21 @@ public class ContentComposerActivity extends HalloActivity {
 
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
-            final Uri uri = getIntent().getParcelableExtra(CropImageActivity.EXTRA_MEDIA);
+            calledFromPicker = false;
+            final Uri uri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
             if (uri != null) {
                 uris = new ArrayList<>(Collections.singleton(uri));
             } else {
                 uris = null;
             }
         } else {
-            uris = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+            if (getIntent().hasExtra(CropImageActivity.EXTRA_MEDIA)) {
+                calledFromPicker = true;
+                uris = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+            } else {
+                calledFromPicker = false;
+                uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            }
         }
 
         final Bundle editStates = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
@@ -177,7 +186,7 @@ public class ContentComposerActivity extends HalloActivity {
             editText.setOnFocusChangeListener((view, hasFocus) -> {
                 editText.setMinLines(hasFocus ? 2 : 1);
             });
-            addMediaButton.setVisibility(View.VISIBLE);
+            addMediaButton.setVisibility(calledFromPicker ? View.VISIBLE : View.GONE);
         } else {
             progressView.setVisibility(View.GONE);
             editText.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
@@ -290,7 +299,6 @@ public class ContentComposerActivity extends HalloActivity {
             if (contentItem != null) {
                 contentItem.addToStorage(ContentDb.getInstance(getBaseContext()));
                 setResult(RESULT_OK);
-                viewModel.cleanTmpFiles();
                 finish();
 
                 if (Intent.ACTION_SEND.equals(getIntent().getAction()) ||
@@ -334,12 +342,18 @@ public class ContentComposerActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        prepareResult();
+        if (calledFromPicker) {
+            viewModel.doNotDeleteTempFiles();
+            prepareResult();
+        }
         super.onBackPressed();
     }
 
     private void openMediaPicker() {
-        prepareResult();
+        if (calledFromPicker) {
+            viewModel.doNotDeleteTempFiles();
+            prepareResult();
+        }
         finish();
     }
 
@@ -626,7 +640,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
         if (mediaPairList != null && !mediaPairList.isEmpty()) {
             final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
-            addMediaButton.setVisibility(View.VISIBLE);
+            addMediaButton.setVisibility(calledFromPicker ? View.VISIBLE : View.GONE);
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
                 cropPictureButton.setVisibility(View.VISIBLE);

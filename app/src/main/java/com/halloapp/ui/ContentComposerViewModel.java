@@ -55,6 +55,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
 
+    private boolean shouldDeleteTempFiles = true;
+
     private ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
         @Override
         public void onContactsChanged() {
@@ -110,6 +112,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
+        if (shouldDeleteTempFiles) {
+            cleanTmpFiles();
+        }
         contactsDb.removeObserver(contactsObserver);
     }
 
@@ -126,6 +131,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void cleanTmpFiles() {
+        Log.d("ContentComposerViewModel: cleanTmpFiles");
         final List<EditMediaPair> mediaPairList = editMedia.getValue();
         if (mediaPairList != null) {
             new CleanupTmpFilesTask(mediaPairList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -139,6 +145,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
             mediaPairList.remove(index);
             new CleanupTmpFilesTask(new ArrayList<>(Collections.singleton(mediaPair))).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
+    }
+
+    public void doNotDeleteTempFiles() {
+        shouldDeleteTempFiles = false;
     }
 
     private @Nullable List<Media> getSendMediaList() {
