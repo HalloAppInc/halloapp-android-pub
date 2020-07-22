@@ -539,6 +539,7 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
+            intent.putExtra(CropImageActivity.EXTRA_SHOW_ADD, calledFromPicker);
 
             cropResultProcessed = false;
             startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, CropImageActivity.TRANSITION_VIEW_NAME).toBundle());

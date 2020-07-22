@@ -46,6 +46,7 @@ public class CropImageActivity extends HalloActivity {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_STATE = "state";
+    public static final String EXTRA_SHOW_ADD = "show_add";
 
     public static final String TRANSITION_VIEW_NAME = "crop_image";
 
@@ -141,6 +142,8 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupMediaListDragNDrop() {
+        final boolean showAddBtn = getIntent().getBooleanExtra(EXTRA_SHOW_ADD, true);
+
         // Drag & drop all views except the last one which contains an add button
         final ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             private int start = -1, end = -1;
@@ -155,7 +158,7 @@ public class CropImageActivity extends HalloActivity {
                     start = viewHolder.getAdapterPosition();
                 }
 
-                if (isLast(recyclerView, target)) {
+                if (showAddBtn && isLast(recyclerView, target)) {
                     return false;
                 }
 
@@ -182,7 +185,7 @@ public class CropImageActivity extends HalloActivity {
 
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                if (isLast(recyclerView, viewHolder)) {
+                if (showAddBtn && isLast(recyclerView, viewHolder)) {
                     return 0;
                 } else {
                     return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.START | ItemTouchHelper.END);
@@ -394,6 +397,7 @@ public class CropImageActivity extends HalloActivity {
         private static final int VIEW_TYPE_BUTTON = 2;
 
         private final int WHITE_20 = ContextCompat.getColor(getBaseContext(), R.color.white_20);
+        private final boolean SHOW_ADD_BTN = getIntent().getBooleanExtra(EXTRA_SHOW_ADD, true);
         private final List<CropImageViewModel.MediaModel> dataset = new ArrayList<>();
 
         MediaListAdapter() {
@@ -409,7 +413,7 @@ public class CropImageActivity extends HalloActivity {
 
         @Override
         public int getItemViewType(int position) {
-            return dataset.size() == position ? VIEW_TYPE_BUTTON : VIEW_TYPE_IMAGE;
+            return dataset.size() == position && SHOW_ADD_BTN ? VIEW_TYPE_BUTTON : VIEW_TYPE_IMAGE;
         }
 
         @NonNull
@@ -424,7 +428,7 @@ public class CropImageActivity extends HalloActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MediaListAdapter.ViewHolder holder, int position) {
-            if (position == dataset.size()) {
+            if (position == dataset.size() && SHOW_ADD_BTN) {
                 holder.button.setOnClickListener(v -> selectMoreImages());
             } else {
                 final CropImageViewModel.MediaModel model = dataset.get(position);
@@ -453,7 +457,7 @@ public class CropImageActivity extends HalloActivity {
 
         @Override
         public int getItemCount() {
-            return dataset.size() + 1;
+            return SHOW_ADD_BTN ? dataset.size() + 1 : dataset.size();
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder {
