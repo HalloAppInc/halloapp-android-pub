@@ -38,6 +38,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
         super(application);
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
+        preferences = Preferences.getInstance(application.getApplicationContext());
 
         invitesApi = new InvitesApi(connection);
 
