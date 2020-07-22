@@ -212,7 +212,7 @@ public class SettingsActivity extends HalloActivity {
             });
             settingsViewModel.getFeedPrivacy().observe(getViewLifecycleOwner(), feedPrivacy -> {
                 if (feedPrivacy == null) {
-                    feedPrivacyPreference.setSummary(null);
+                    feedPrivacyPreference.setSummary(" ");
                 } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
                     feedPrivacyPreference.setSummary(getString(R.string.settings_feed_contacts_summary));
                 } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
@@ -228,7 +228,7 @@ public class SettingsActivity extends HalloActivity {
                         feedPrivacyPreference.setSummary(getResources().getQuantityString(R.plurals.settings_feed_selected, feedPrivacy.onlyList.size(), feedPrivacy.onlyList.size()));
                     }
                 } else {
-                    feedPrivacyPreference.setSummary(null);
+                    feedPrivacyPreference.setSummary(" ");
                 }
             });
         }

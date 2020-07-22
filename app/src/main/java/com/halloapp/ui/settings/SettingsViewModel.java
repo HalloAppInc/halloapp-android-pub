@@ -18,6 +18,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.invites.InvitesApi;
+import com.halloapp.xmpp.privacy.PrivacyList;
 import com.halloapp.xmpp.privacy.PrivacyListApi;
 import com.halloapp.xmpp.util.Observable;
 
@@ -68,9 +69,31 @@ public class SettingsViewModel extends AndroidViewModel {
     @MainThread
     public void refresh() {
         phoneNumberLiveData.invalidate();
-        privacyListApi.getFeedPrivacy().onResponse(feedPrivacyLiveData::postValue);
+        fetchFeedPrivacy();
         fetchBlockList();
         fetchInvitesCount();
+    }
+
+    private void fetchFeedPrivacy() {
+        bgWorkers.execute(() -> {
+            String cachedActiveList = preferences.getFeedPrivacyActiveList();
+            FeedPrivacy feedPrivacy;
+            List<UserId> exceptList = null;
+            List<UserId> onlyList = null;
+            if (PrivacyList.Type.EXCEPT.equals(cachedActiveList)) {
+                exceptList = contactsDb.getFeedExclusionList();
+            } else if (PrivacyList.Type.ONLY.equals(cachedActiveList)) {
+                onlyList = contactsDb.getFeedShareList();
+            }
+            feedPrivacy = new FeedPrivacy(cachedActiveList, exceptList, onlyList);
+            feedPrivacyLiveData.postValue(feedPrivacy);
+            privacyListApi.getFeedPrivacy().onResponse(feedPrivacyResponse -> {
+                preferences.setFeedPrivacyActiveList(feedPrivacyResponse.activeList);
+                contactsDb.setFeedExclusionList(feedPrivacyResponse.exceptList);
+                contactsDb.setFeedShareList(feedPrivacyResponse.onlyList);
+                feedPrivacyLiveData.postValue(feedPrivacyResponse);
+            });
+        });
     }
 
     private void fetchInvitesCount() {

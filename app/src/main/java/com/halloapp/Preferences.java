@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 public class Preferences {
 
@@ -21,6 +22,7 @@ public class Preferences {
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
     private static final String PREF_KEY_USE_DEBUG_HOST = "use_debug_host";
     private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
+    private static final String PREF_KEY_FEED_PRIVACY_SETTING = "feed_privacy_setting";
 
     private final Context context;
     private SharedPreferences preferences;
@@ -109,5 +111,17 @@ public class Preferences {
     @WorkerThread
     public boolean getUseDebugHost() {
         return getPreferences().getBoolean(PREF_KEY_USE_DEBUG_HOST, false);
+    }
+
+    @WorkerThread
+    public void setFeedPrivacyActiveList(@PrivacyList.Type String activeList) {
+        if (!getPreferences().edit().putString(PREF_KEY_FEED_PRIVACY_SETTING, activeList).commit()) {
+            Log.e("preferences: failed to set feed privacy active list");
+        }
+    }
+
+    @WorkerThread
+    public @PrivacyList.Type String getFeedPrivacyActiveList() {
+        return getPreferences().getString(PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
     }
 }

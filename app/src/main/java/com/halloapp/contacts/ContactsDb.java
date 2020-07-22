@@ -512,6 +512,77 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    public List<UserId> getFeedExclusionList() {
+        final List<UserId> exclusionList = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(FeedExcludedTable.TABLE_NAME,
+                new String[] { FeedExcludedTable._ID, FeedExcludedTable.COLUMN_USER_ID},
+                null, null, null, null, null
+        )) {
+            final Set<String> userIds = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String userIdStr = cursor.getString(1);
+                if (userIdStr != null && userIds.add(userIdStr)) {
+                    exclusionList.add(new UserId(userIdStr));
+                }
+            }
+        }
+        return exclusionList;
+    }
+
+    @WorkerThread
+    public void setFeedExclusionList(@Nullable List<UserId> feedSelectionList) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        db.delete(FeedExcludedTable.TABLE_NAME, null, null);
+        if (feedSelectionList != null) {
+            for (UserId selectedUser : feedSelectionList) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(FeedExcludedTable.COLUMN_USER_ID, selectedUser.rawId());
+                db.insert(FeedExcludedTable.TABLE_NAME, null, contentValues);
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    @WorkerThread
+    public List<UserId> getFeedShareList() {
+        final List<UserId> shareList = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(FeedSelectedTable.TABLE_NAME,
+                new String[] { FeedSelectedTable._ID, FeedSelectedTable.COLUMN_USER_ID},
+                null, null, null, null, null
+        )) {
+            final Set<String> userIds = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String userIdStr = cursor.getString(1);
+                if (userIdStr != null && userIds.add(userIdStr)) {
+                    shareList.add(new UserId(userIdStr));
+                }
+            }
+        }
+        return shareList;
+    }
+
+    @WorkerThread
+    public void setFeedShareList(@Nullable List<UserId> feedShareList) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        db.delete(FeedSelectedTable.TABLE_NAME, null, null);
+        if (feedShareList != null) {
+            for (UserId selectedUser : feedShareList) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(FeedSelectedTable.COLUMN_USER_ID, selectedUser.rawId());
+                db.insert(FeedSelectedTable.TABLE_NAME, null, contentValues);
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+
+    @WorkerThread
     public void setBlockList(@Nullable List<UserId> blocklist) {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -620,10 +691,30 @@ public class ContactsDb {
         static final String COLUMN_USER_ID = "user_id";
     }
 
+    private static final class FeedExcludedTable implements BaseColumns {
+        private FeedExcludedTable() { }
+
+        static final String TABLE_NAME = "feed_exclude_list";
+
+        static final String INDEX_USER_ID = "feed_excluded_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+    }
+
+    private static final class FeedSelectedTable implements BaseColumns {
+        private FeedSelectedTable() { }
+
+        static final String TABLE_NAME = "feed_selected_list";
+
+        static final String INDEX_USER_ID = "feed_selected_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+    }
+
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 7;
+        private static final int DATABASE_VERSION = 8;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -684,6 +775,9 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + BlocklistTable.INDEX_USER_ID + " ON " + BlocklistTable.TABLE_NAME + " ("
                     + BlocklistTable.COLUMN_USER_ID
                     + ");");
+
+            upgradeFromVersion7(db);
+
         }
 
         @Override
@@ -700,6 +794,9 @@ public class ContactsDb {
                 case 6: {
                     upgradeFromVersion6(db);
                     // fallthrough
+                }
+                case 7: {
+                    upgradeFromVersion7(db);
                 }
 
                 break;
@@ -805,6 +902,30 @@ public class ContactsDb {
             db.execSQL("DROP INDEX IF EXISTS " + BlocklistTable.INDEX_USER_ID);
             db.execSQL("CREATE UNIQUE INDEX " + BlocklistTable.INDEX_USER_ID + " ON " + BlocklistTable.TABLE_NAME + " ("
                     + BlocklistTable.COLUMN_USER_ID
+                    + ");");
+        }
+
+        private void upgradeFromVersion7(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + FeedExcludedTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + FeedExcludedTable.TABLE_NAME + " ("
+                    + FeedExcludedTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + FeedExcludedTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + FeedExcludedTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + FeedExcludedTable.INDEX_USER_ID + " ON " + FeedExcludedTable.TABLE_NAME + " ("
+                    + FeedExcludedTable.COLUMN_USER_ID
+                    + ");");
+
+            db.execSQL("DROP TABLE IF EXISTS " + FeedSelectedTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + FeedSelectedTable.TABLE_NAME + " ("
+                    + FeedSelectedTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + FeedSelectedTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + FeedSelectedTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + FeedSelectedTable.INDEX_USER_ID + " ON " + FeedSelectedTable.TABLE_NAME + " ("
+                    + FeedSelectedTable.COLUMN_USER_ID
                     + ");");
         }
 
