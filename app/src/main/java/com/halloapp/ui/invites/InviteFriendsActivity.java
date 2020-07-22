@@ -40,7 +40,7 @@ import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.xmpp.InvitesResponseIq;
+import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;

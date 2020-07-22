@@ -1,4 +1,4 @@
-package com.halloapp.xmpp;
+package com.halloapp.xmpp.invites;
 
 import androidx.annotation.Nullable;
 

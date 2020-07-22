@@ -29,6 +29,8 @@ import com.halloapp.xmpp.groups.GroupChangeMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.groups.MemberElement;
+import com.halloapp.xmpp.invites.InvitesRequestIq;
+import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
 import com.halloapp.xmpp.util.Observable;
@@ -519,43 +521,6 @@ public class Connection {
                 Log.w("connection: cannot update avatar", e);
             }
             return null;
-        });
-    }
-
-    public Future<Integer> getAvailableInviteCount() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: can't check invite count, no connection");
-                return null;
-            }
-            final InvitesRequestIq requestIq = InvitesRequestIq.createGetInviteIq();
-            requestIq.setTo(connection.getXMPPServiceDomain());
-            requestIq.setFrom(connection.getUser());
-            IQ responseIq = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            if (responseIq instanceof InvitesResponseIq) {
-                return ((InvitesResponseIq) responseIq).invitesLeft;
-            }
-            return null;
-        });
-    }
-
-    public Future<Integer> sendInvite(@NonNull String phoneNumber) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: can't invite, no connection");
-                return null;
-            }
-            final InvitesRequestIq requestIq = InvitesRequestIq.createSendInviteIq(Collections.singleton(phoneNumber));
-            requestIq.setTo(connection.getXMPPServiceDomain());
-            InvitesResponseIq responseIq = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-            if (!responseIq.successfulInvites.isEmpty()) {
-                return InvitesResponseIq.Result.SUCCESS;
-            } else {
-                for (String phone : responseIq.failedInvites.keySet()) {
-                    return responseIq.failedInvites.get(phone);
-                }
-            }
-            return InvitesResponseIq.Result.UNKNOWN;
         });
     }
 

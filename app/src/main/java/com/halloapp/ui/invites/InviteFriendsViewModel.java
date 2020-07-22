@@ -7,13 +7,15 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.InvitesResponseIq;
+import com.halloapp.xmpp.invites.InvitesApi;
+import com.halloapp.xmpp.invites.InvitesResponseIq;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -23,8 +25,11 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
     private BgWorkers bgWorkers;
     private Connection connection;
+    private Preferences preferences;
 
-    ComputableLiveData<Integer> inviteCountData;
+    private final InvitesApi invitesApi;
+
+    MutableLiveData<Integer> inviteCountData;
     ComputableLiveData<List<Contact>> contactList;
 
     public static final int RESPONSE_RETRYABLE = -1;
@@ -33,22 +38,10 @@ public class InviteFriendsViewModel extends AndroidViewModel {
         super(application);
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
-        
-        inviteCountData = new ComputableLiveData<Integer>() {
-            @Override
-            protected Integer compute() {
-                try {
-                    Integer response = connection.getAvailableInviteCount().get();
-                    if (response == null) {
-                        return RESPONSE_RETRYABLE;
-                    }
-                    return response;
-                } catch (ExecutionException | InterruptedException e) {
-                    Log.e("InviteFriendsViewModel/inviteCountData failed to get count");
-                    return RESPONSE_RETRYABLE;
-                }
-            }
-        };
+
+        invitesApi = new InvitesApi(connection);
+
+        inviteCountData = new MutableLiveData<>();
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
@@ -57,10 +50,25 @@ public class InviteFriendsViewModel extends AndroidViewModel {
                 return Contact.sort(ContactsDb.getInstance(application).getAllUsers());
             }
         };
+
+        fetchInvites();
+    }
+
+    private void fetchInvites() {
+        invitesApi.getAvailableInviteCount().onResponse(response -> {
+            if (response == null) {
+                inviteCountData.postValue(RESPONSE_RETRYABLE);
+            } else {
+                preferences.setInvitesRemaining(response);
+                inviteCountData.postValue(response);
+            }
+        }).onError(e -> {
+            inviteCountData.postValue(RESPONSE_RETRYABLE);
+        });
     }
 
     public void refreshInvites() {
-        inviteCountData.invalidate();
+        fetchInvites();
     }
 
     public void refreshContacts() {
@@ -68,7 +76,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
     }
 
     public LiveData<Integer> getInviteCount() {
-        return inviteCountData.getLiveData();
+        return inviteCountData;
     }
 
     public LiveData<List<Contact>> getContactList() {
@@ -77,16 +85,12 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
     public LiveData<Integer> sendInvite(@NonNull String phoneNumber) {
         MutableLiveData<Integer> inviteResult = new MutableLiveData<>();
-        bgWorkers.execute(() -> {
-            Future<Integer> resultFuture = connection.sendInvite(phoneNumber);
-            try {
-                inviteResult.postValue(resultFuture.get());
-                inviteCountData.invalidate();
-                return;
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);
-            }
+        invitesApi.sendInvite(phoneNumber).onResponse(result -> {
+            inviteResult.postValue(result);
+            fetchInvites();
+        }).onError(e -> {
             inviteResult.postValue(InvitesResponseIq.Result.UNKNOWN);
+            Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);
         });
         return inviteResult;
     }
