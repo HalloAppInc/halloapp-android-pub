@@ -511,6 +511,41 @@ public class ContactsDb {
         return contacts;
     }
 
+    @WorkerThread
+    public void setBlockList(@Nullable List<UserId> blocklist) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        db.delete(BlocklistTable.TABLE_NAME, null, null);
+        if (blocklist != null) {
+            for (UserId blockUser : blocklist) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(BlocklistTable.COLUMN_USER_ID, blockUser.rawId());
+                db.insert(BlocklistTable.TABLE_NAME, null, contentValues);
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    @WorkerThread
+    public List<UserId> getBlockList() {
+        final List<UserId> blocklist = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(BlocklistTable.TABLE_NAME,
+                new String[] { BlocklistTable._ID, BlocklistTable.COLUMN_USER_ID},
+                null, null, null, null, null
+                )) {
+            final Set<String> userIds = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String userIdStr = cursor.getString(1);
+                if (userIdStr != null && userIds.add(userIdStr)) {
+                    blocklist.add(new UserId(userIdStr));
+                }
+            }
+        }
+        return blocklist;
+    }
+
     private void notifyContactsChanged() {
         synchronized (observers) {
             for (Observer observer : observers) {
@@ -575,10 +610,20 @@ public class ContactsDb {
         static final String COLUMN_NAME = "name";
     }
 
+    private static final class BlocklistTable implements BaseColumns {
+        private BlocklistTable() { }
+
+        static final String TABLE_NAME = "block_list";
+
+        static final String INDEX_USER_ID = "block_list_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+    }
+
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 6;
+        private static final int DATABASE_VERSION = 7;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -628,6 +673,17 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + NamesTable.INDEX_USER_ID + " ON " + NamesTable.TABLE_NAME + " ("
                     + NamesTable.COLUMN_USER_ID
                     + ");");
+
+            db.execSQL("DROP TABLE IF EXISTS " + BlocklistTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + BlocklistTable.TABLE_NAME + " ("
+                    + BlocklistTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + BlocklistTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + BlocklistTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + BlocklistTable.INDEX_USER_ID + " ON " + BlocklistTable.TABLE_NAME + " ("
+                    + BlocklistTable.COLUMN_USER_ID
+                    + ");");
         }
 
         @Override
@@ -639,6 +695,10 @@ public class ContactsDb {
                 }
                 case 5: {
                     upgradeFromVersion5(db);
+                    // fallthrough
+                }
+                case 6: {
+                    upgradeFromVersion6(db);
                     // fallthrough
                 }
 
@@ -733,6 +793,19 @@ public class ContactsDb {
 
         private void upgradeFromVersion5(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_AVATAR_ID + " TEXT");
+        }
+
+        private void upgradeFromVersion6(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + BlocklistTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + BlocklistTable.TABLE_NAME + " ("
+                    + BlocklistTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + BlocklistTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + BlocklistTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + BlocklistTable.INDEX_USER_ID + " ON " + BlocklistTable.TABLE_NAME + " ("
+                    + BlocklistTable.COLUMN_USER_ID
+                    + ");");
         }
 
         private void deleteDb() {

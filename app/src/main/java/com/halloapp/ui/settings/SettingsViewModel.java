@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.Me;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.util.BgWorkers;
@@ -26,6 +27,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private Me me;
     private BgWorkers bgWorkers;
     private Connection connection;
+    private ContactsDb contactsDb;
 
     private final PrivacyListApi privacyListApi;
 
@@ -40,6 +42,7 @@ public class SettingsViewModel extends AndroidViewModel {
         me = Me.getInstance(application);
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
+        contactsDb = ContactsDb.getInstance(application);
         privacyListApi = new PrivacyListApi(connection);
 
         blockList = new MutableLiveData<>();
@@ -78,7 +81,10 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     private void fetchBlockList() {
-        privacyListApi.getBlockList().onResponse(blockList::postValue);
+        bgWorkers.execute(() -> {
+            List<UserId> blockedUserIds = contactsDb.getBlockList();
+            blockList.postValue(blockedUserIds);
+        });
     }
 
     public LiveData<String> getPhone() {

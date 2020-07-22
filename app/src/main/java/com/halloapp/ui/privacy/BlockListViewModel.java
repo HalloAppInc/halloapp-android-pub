@@ -44,20 +44,17 @@ public class BlockListViewModel extends AndroidViewModel {
 
     @MainThread
     public void fetchBlockList() {
-        Observable<List<Contact>> blockListResponse = privacyListApi.getBlockList().map(ids -> {
-            List<Contact> blockList = new ArrayList<>();
+        privacyListApi.getBlockList().onResponse(ids -> {
+            List<Contact> blockedContacts = new ArrayList<>();
             if (ids != null) {
                 for (UserId userId : ids) {
-                    blockList.add(contactsDb.getContact(userId));
+                    blockedContacts.add(contactsDb.getContact(userId));
                 }
             }
-            return blockList;
-        });
-        blockListResponse.onResponse(list -> {
-            blockList.postValue(list);
+            blockList.postValue(blockedContacts);
             inProgress.postValue(false);
-        });
-        blockListResponse.onError(exception -> {
+            contactsDb.setBlockList(ids);
+        }).onError(exception -> {
             inProgress.postValue(false);
             blockList.postValue(null);
         });

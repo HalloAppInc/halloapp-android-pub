@@ -21,7 +21,8 @@
             app:title="@string/settings_feed_privacy"/>
 
         <Preference app:key="block_list"
-            app:title="@string/settings_block_list"/>
+            app:title="@string/settings_block_list"
+            app:summary=" "/>
 
         <Preference
             app:key="terms_and_policy"

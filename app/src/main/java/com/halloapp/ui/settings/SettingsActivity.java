@@ -194,7 +194,7 @@ public class SettingsActivity extends HalloActivity {
             SettingsViewModel settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
             settingsViewModel.getBlockList().observe(getViewLifecycleOwner(), list -> {
                 if (list == null) {
-                    blocklistPreference.setSummary(null);
+                    blocklistPreference.setSummary(" ");
                 } else if (list.isEmpty()){
                     blocklistPreference.setSummary(getString(R.string.settings_block_list_none_summary));
                 } else {
