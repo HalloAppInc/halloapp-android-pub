@@ -23,7 +23,6 @@ import java.util.concurrent.Future;
 
 public class InviteFriendsViewModel extends AndroidViewModel {
 
-    private BgWorkers bgWorkers;
     private Connection connection;
     private Preferences preferences;
 
@@ -36,7 +35,6 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
     public InviteFriendsViewModel(@NonNull Application application) {
         super(application);
-        bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
         preferences = Preferences.getInstance(application.getApplicationContext());
 
