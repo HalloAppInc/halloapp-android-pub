@@ -202,8 +202,8 @@ public class SettingsActivity extends HalloActivity {
                 }
             });
             settingsViewModel.getInviteCount().observe(getViewLifecycleOwner(), count -> {
-                if (count == null) {
-                    inviteFriends.setSummary(null);
+                if (count == null || count == -1) {
+                    inviteFriends.setSummary(" ");
                 } else if (count == 0){
                     inviteFriends.setSummary(getString(R.string.settings_invite_none_summary));
                 } else {

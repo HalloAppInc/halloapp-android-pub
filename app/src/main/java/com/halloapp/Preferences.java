@@ -20,6 +20,7 @@ public class Preferences {
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
     private static final String PREF_KEY_USE_DEBUG_HOST = "use_debug_host";
+    private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
 
     private final Context context;
     private SharedPreferences preferences;
@@ -57,6 +58,18 @@ public class Preferences {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_CONTACTS_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last contacts sync time");
         }
+    }
+
+    @WorkerThread
+    public void setInvitesRemaining(int invitesRemaining) {
+        if (!getPreferences().edit().putInt(PREF_KEY_INVITES_REMAINING, invitesRemaining).commit()) {
+            Log.e("preferences: failed to set invites remaining");
+        }
+    }
+
+    @WorkerThread
+    public int getInvitesRemaining() {
+        return getPreferences().getInt(PREF_KEY_INVITES_REMAINING, -1);
     }
 
     @WorkerThread

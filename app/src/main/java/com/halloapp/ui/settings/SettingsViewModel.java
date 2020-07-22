@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.UserId;
 import com.halloapp.privacy.FeedPrivacy;
@@ -28,6 +29,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private BgWorkers bgWorkers;
     private Connection connection;
     private ContactsDb contactsDb;
+    private Preferences preferences;
 
     private final PrivacyListApi privacyListApi;
 
@@ -43,6 +45,8 @@ public class SettingsViewModel extends AndroidViewModel {
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance(application);
+        preferences = Preferences.getInstance(application);
+
         privacyListApi = new PrivacyListApi(connection);
 
         blockList = new MutableLiveData<>();
@@ -50,8 +54,14 @@ public class SettingsViewModel extends AndroidViewModel {
         inviteCountData = new ComputableLiveData<Integer>() {
             @Override
             protected Integer compute() {
+                int cachedInvites = preferences.getInvitesRemaining();
+                if (cachedInvites != -1) {
+                    return cachedInvites;
+                }
                 try {
-                    return connection.getAvailableInviteCount().get();
+                    int availableInvites = connection.getAvailableInviteCount().get();
+                    preferences.setInvitesRemaining(availableInvites);
+                    return availableInvites;
                 } catch (ExecutionException | InterruptedException e) {
                     Log.e("InviteFriendsViewModel/inviteCountData failed to get count");
                     return null;
