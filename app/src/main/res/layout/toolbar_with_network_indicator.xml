@@ -12,7 +12,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:titleTextAppearance="@style/TextAppearance.Toolbar.Title"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents"
         app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"/>
 

@@ -11,9 +11,14 @@
         <item name="actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="actionModeBackground">@color/window_background</item>
         <item name="useLightSystemBars">@bool/light_system_bars</item>
+        <item name="toolbarStyle">@style/Toolbar</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
+
+    <style name="AppTheme.Home" parent="AppTheme.NoActionBar">
+        <item name="toolbarStyle">@style/Toolbar.Home</item>
+    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -25,7 +30,6 @@
         <item name="actionBarStyle">@style/ActionBar.Settings</item>
         <item name="actionBarTheme">@style/Theme.ActionBar.Settings</item>
         <item name="colorPrimaryDark">@color/settings_header_background</item>
-        <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Settings.Title</item>
         <item name="toolbarStyle">@style/Toolbar.Settings</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
@@ -95,7 +99,16 @@
         <item name="android:textColor">@android:color/holo_orange_dark</item>
     </style>
 
-    <style name="Toolbar.Settings" parent="@style/Widget.AppCompat.Toolbar">
+    <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Title</item>
+        <item name="subtitleTextAppearance">@style/TextAppearance.Toolbar.Subtitle</item>
+    </style>
+
+    <style name="Toolbar.Home" parent="Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Title.Home</item>
+    </style>
+
+    <style name="Toolbar.Settings" parent="Toolbar">
         <item name="titleTextColor">@color/white_87</item>
         <item name="colorControlNormal">@color/white_87</item>
     </style>
@@ -105,6 +118,8 @@
         <item name="backgroundStacked">@color/color_action_bar</item>
         <item name="backgroundSplit">@color/color_action_bar</item>
         <item name="elevation">0dp</item>
+        <item name="titleTextStyle">@style/TextAppearance.Toolbar.Title</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.Toolbar.Subtitle</item>
     </style>
 
     <style name="ActionBar.Settings" parent="ActionBar">
@@ -185,8 +200,11 @@
         <item name="android:textSize">10sp</item>
     </style>
 
-    <style name="TextAppearance.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">22sp</item>
+    <style name="TextAppearance.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title"/>
+    <style name="TextAppearance.Toolbar.Subtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle"/>
+
+    <style name="TextAppearance.Toolbar.Title.Home" parent="TextAppearance.Toolbar.Title">
+        <item name="android:textSize">22dp</item>
     </style>
 
     <style name="TextAppearance.Toolbar.Settings.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
