@@ -11,12 +11,15 @@ import com.halloapp.util.Preconditions;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
+    private final NetworkConnectivityManager networkConnectivityManager = NetworkConnectivityManager.getInstance();
+
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
         final ConnectivityManager connectivityManager = Preconditions.checkNotNull((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         Log.i("NetworkChangeReceiver: " + intent.getAction() + " " + (activeNetwork != null ? activeNetwork.getType() : "null"));
+        networkConnectivityManager.onUpdatedNetworkInfo(activeNetwork);
         if (activeNetwork != null) {
             onConnected(activeNetwork.getType());
         } else {

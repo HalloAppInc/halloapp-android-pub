@@ -43,7 +43,9 @@ import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
+import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.xmpp.Connection;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
@@ -56,7 +58,7 @@ import java.util.Locale;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host {
 
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String NAV_TARGET_FEED = "feed";
@@ -67,6 +69,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_SELECT_CONTACT = 3;
 
     private SpeedDialView fabView;
+    private View toolbarContainer;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
 
@@ -97,6 +100,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbarContainer = findViewById(R.id.toolbar_container);
+
         final BottomNavigationView navView = findViewById(R.id.nav_view);
         final AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
@@ -105,6 +110,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
+        networkIndicatorView.bind(this);
 
         final MenuItem messagesMenuItem = navView.getMenu().findItem(R.id.navigation_messages);
         final BadgedDrawable messageNotificationDrawable = new BadgedDrawable(
@@ -124,7 +132,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         viewModel.unseenChatsCount.getLiveData().observe(this,
                 unseenChatsCount -> messageNotificationDrawable.setBadge(
                         unseenChatsCount == null || unseenChatsCount == 0 ? "" : String.format(Locale.getDefault(), "%d", unseenChatsCount)));
-
         fabView = findViewById(R.id.speed_dial);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (fabView.isOpen()) {
@@ -355,5 +362,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_messages);
         }
+    }
+
+    @Override
+    public View getToolbarView() {
+        return toolbarContainer;
     }
 }

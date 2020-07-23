@@ -1,7 +1,10 @@
 package com.halloapp;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +12,7 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.core.net.ConnectivityManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -102,6 +106,7 @@ public class HalloApp extends Application {
         private final Runnable disconnectOnBackgroundedRunnable = () -> Connection.getInstance().disconnect();
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+        private final AirplaneModeChangeReceiver airplaneModeChangeReceiver = new AirplaneModeChangeReceiver();
         private final NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
 
             @Override
@@ -121,6 +126,7 @@ public class HalloApp extends Application {
         void onBackground() {
             Log.i("halloapp: onBackground");
             unregisterReceiver(receiver);
+            unregisterReceiver(airplaneModeChangeReceiver);
             Notifications.getInstance(HalloApp.this).setEnabled(true);
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
             Connection.getInstance().updatePresence(false);
@@ -133,6 +139,7 @@ public class HalloApp extends Application {
             Notifications.getInstance(HalloApp.this).setEnabled(false);
             connect();
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+            registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
             mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
             Connection.getInstance().updatePresence(true);
         }

@@ -9,18 +9,13 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/window_background"
+        <include
+            layout="@layout/toolbar_with_network_indicator"
+            android:id="@+id/toolbar_container"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
-            app:titleTextAppearance="@style/TextAppearance.Toolbar.Title"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-            app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar" />
+            app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"/>
 
         <fragment
             android:id="@+id/nav_host_fragment"
@@ -30,7 +25,7 @@
             app:defaultNavHost="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
             app:layout_constraintBottom_toTopOf="@+id/nav_separator"
             app:navGraph="@navigation/mobile_navigation" />
 

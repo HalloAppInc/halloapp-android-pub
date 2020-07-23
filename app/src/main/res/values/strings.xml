@@ -281,4 +281,6 @@
     </plurals>
     <string name="settings_feed_selected_empty">No contacts selected</string>
     <string name="settings_version_footer">Version %s</string>
+    <string name="connectivity_info_airplane_mode">Airplane mode on</string>
+    <string name="connectivity_info_not_connected">No network</string>
 </resources>

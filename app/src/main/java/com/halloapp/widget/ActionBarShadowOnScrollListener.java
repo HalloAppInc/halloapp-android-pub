@@ -15,9 +15,19 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
 
     private final float scrolledElevation;
     private final ActionBar actionBar;
+    private final View toolbarView;
+
+    public interface Host {
+        View getToolbarView();
+    }
 
     public ActionBarShadowOnScrollListener(@NonNull AppCompatActivity activity) {
         scrolledElevation = activity.getResources().getDimension(R.dimen.action_bar_elevation);
+        if (activity instanceof Host) {
+            toolbarView = ((Host) activity).getToolbarView();
+        } else {
+            toolbarView = null;
+        }
         actionBar = activity.getSupportActionBar();
     }
 
@@ -28,8 +38,18 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
         final View childView = layoutManager.getChildAt(0);
         final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
         final float elevation = scrolled ? scrolledElevation : 0;
-        if (actionBar.getElevation() != elevation) {
-            actionBar.setElevation(elevation);
+        updateElevation(elevation);
+    }
+
+    private void updateElevation(float elevation) {
+        if (toolbarView != null) {
+            if (toolbarView.getElevation() != elevation) {
+                toolbarView.setElevation(elevation);
+            }
+        } else {
+            if (actionBar.getElevation() != elevation) {
+                actionBar.setElevation(elevation);
+            }
         }
     }
 }
