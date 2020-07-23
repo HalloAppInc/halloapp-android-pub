@@ -193,6 +193,7 @@
     <string name="album">Album</string>
     <string name="new_messages">New messages</string>
     <string name="delete">Delete</string>
+    <string name="view_profile">View profile</string>
     <string name="last_seen">Last seen %s</string>
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
     <string name="online">Online</string>

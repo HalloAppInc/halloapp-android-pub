@@ -58,6 +58,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -370,6 +371,11 @@ public class ChatActivity extends HalloActivity {
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(this).deleteChat(chatId));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
+                return true;
+            }
+            case R.id.view_profile: {
+                Intent viewProfile = ViewProfileActivity.viewProfile(this, new UserId(chatId));
+                startActivity(viewProfile);
                 return true;
             }
             default: {
