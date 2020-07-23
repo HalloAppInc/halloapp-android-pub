@@ -3,6 +3,8 @@ package com.halloapp.util;
 import androidx.annotation.NonNull;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -70,4 +72,7 @@ public class BgWorkers {
         threadPool.execute(runnable);
     }
 
+    public <T> Future<T> submit(@NonNull Callable<T> callable) {
+        return threadPool.submit(callable);
+    }
 }
