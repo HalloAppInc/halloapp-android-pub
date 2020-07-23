@@ -15,8 +15,11 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
+import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -25,6 +28,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.LimitingTextView;
+import com.halloapp.xmpp.Connection;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -41,6 +45,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
     private final MessageViewHolderParent parent;
+    private final Connection connection;
+    private final FileStore fileStore;
+    private final ContentDb contentDb;
     private Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
@@ -68,6 +75,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         this.parent = parent;
 
+        this.connection = Connection.getInstance();
+        this.fileStore = FileStore.getInstance(itemView.getContext());
+        this.contentDb = ContentDb.getInstance(itemView.getContext());
+
         contentView = itemView.findViewById(R.id.content);
         statusView = itemView.findViewById(R.id.status);
         dateView = itemView.findViewById(R.id.date);
@@ -94,6 +105,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 return true;
             });
         }
+
+        statusView.setOnClickListener(v -> {
+            if (message != null && message.isTransferFailed()) {
+                UploadMediaTask.restartUpload(message, fileStore, contentDb, connection);
+            }
+        });
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));
@@ -172,7 +189,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (statusView != null) {
-            statusView.setImageResource(getStatusImageResource(message.state));
+            if (message.isTransferFailed()) {
+                statusView.setImageResource(R.drawable.ic_error);
+                statusView.setColorFilter(itemView.getContext().getResources().getColor(R.color.design_default_color_error));
+            } else {
+                statusView.setImageResource(getStatusImageResource(message.state));
+                statusView.setColorFilter(0);
+            }
         }
 
         if (!message.media.isEmpty()) {

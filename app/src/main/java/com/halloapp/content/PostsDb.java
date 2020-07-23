@@ -275,7 +275,7 @@ class PostsDb {
                     MediaTable._ID + "=?",
                     new String[]{Long.toString(rowId)},
                     SQLiteDatabase.CONFLICT_ABORT);
-            Log.d("Resumable Uploader ContentDb.setPatchUrl =" + url);
+            Log.d("Resumable Uploader ContentDb.setPatchUrl = " + url);
         } catch (SQLiteConstraintException ex) {
             Log.i("Resumable Uploader PostDb setPatchUrl: seen duplicate", ex);
         } catch (SQLException ex) {
@@ -314,6 +314,95 @@ class PostsDb {
             }
         }
         return Media.TRANSFERRED_UNKNOWN;
+    }
+
+    @WorkerThread
+    public byte[] getMediaEncKey(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_ENC_KEY + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getBlob(0);
+            }
+        }
+        Log.d("Resumable Uploader PostsDb.getMediaEncKey failed to get encKey");
+        return null;
+    }
+
+    @WorkerThread
+    public void setUploadProgress(long rowId, long offset) {
+        final ContentValues values = new ContentValues();
+        values.put(MediaTable.COLUMN_UPLOAD_PROGRESS, offset);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MediaTable.TABLE_NAME,
+                    values,
+                    MediaTable._ID + "=?",
+                    new String[]{Long.toString(rowId)},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            Log.d("Resumable Uploader PostsDb.setUploadProgress = " + offset);
+        } catch (SQLiteConstraintException ex) {
+            Log.i("Resumable Uploader PostDb setPatchUrl: seen duplicate ", ex);
+        } catch (SQLException ex) {
+            Log.e("Resumable Uploader PostDb setPatchUrl: failed " + ex);
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    public long getUploadProgress(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_UPLOAD_PROGRESS + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getLong(0);
+            }
+        }
+        return 0;
+    }
+
+    @WorkerThread
+    public void setRetryCount(long rowId, int count) {
+        final ContentValues values = new ContentValues();
+        values.put(MediaTable.COLUMN_RETRY_COUNT, count);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MediaTable.TABLE_NAME,
+                    values,
+                    MediaTable._ID + "=?",
+                    new String[]{Long.toString(rowId)},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            Log.d("Resumable Uploader ContentDb.setRetryCount = " + count);
+        } catch (SQLiteConstraintException ex) {
+            Log.i("Resumable Uploader PostDb setPatchUrl: seen duplicate", ex);
+        } catch (SQLException ex) {
+            Log.e("Resumable Uploader PostDb setPatchUrl: failed " + ex);
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    public int getRetryCount(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_RETRY_COUNT + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
     }
 
     @WorkerThread

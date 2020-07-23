@@ -33,8 +33,9 @@ public class Media {
     public File file;
     public int width;
     public int height;
-    public final byte [] encKey;
+    public byte [] encKey;
     public byte [] sha256hash;
+    private boolean initialState = false;
 
     public @TransferredState int transferred;
 
@@ -103,6 +104,15 @@ public class Media {
         final byte [] encKey = new byte[32];
         random.nextBytes(encKey);
         return encKey;
+    }
+
+    public boolean isInInitialState() {
+        return initialState;
+    }
+
+    public void initializeRetry(){
+        initialState = true;
+        transferred = TRANSFERRED_RESUME;
     }
 
     @Override

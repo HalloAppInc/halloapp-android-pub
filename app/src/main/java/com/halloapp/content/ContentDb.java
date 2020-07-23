@@ -263,6 +263,74 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public byte[] getMediaEncKey(@NonNull Post post, long rowId) {
+        Log.i("Get Media encKey from Post: "+ post);
+        return postsDb.getMediaEncKey(rowId);
+    }
+
+    @WorkerThread
+    public byte[] getMediaEncKey(@NonNull Message message, long rowId) {
+        Log.i("Get Media encKey from Message: "+ message);
+        return messagesDb.getMediaEncKey(rowId);
+    }
+
+    @WorkerThread
+    public void setUploadProgress(@NonNull Post post, long rowId, long offset) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set upload progress in Post: " + post);
+            postsDb.setUploadProgress(rowId, offset);
+        });
+    }
+
+    @WorkerThread
+    public void setUploadProgress(@NonNull Message message, long rowId, long offset) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set upload progress in Message: " + message);
+            messagesDb.setUploadProgress(rowId, offset);
+        });
+    }
+
+    @WorkerThread
+    public long getUploadProgress(@NonNull Post post, long rowId) {
+        Log.i("Get upload progress in Post: " + post);
+        return postsDb.getUploadProgress(rowId);
+    }
+
+    @WorkerThread
+    public long getUploadProgress(@NonNull Message message, long rowId) {
+        Log.i("Get upload progress in Message: " + message);
+        return messagesDb.getUploadProgress(rowId);
+    }
+
+    @WorkerThread
+    public void setRetryCount(@NonNull Post post, long rowId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set retry count in Post: " + post);
+            postsDb.setRetryCount(rowId, count);
+        });
+    }
+
+    @WorkerThread
+    public void setRetryCount(@NonNull Message message, long rowId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set retry count in Message: " + message);
+            messagesDb.setRetryCount(rowId, count);
+        });
+    }
+
+    @WorkerThread
+    public int getRetryCount(@NonNull Post post, long rowId) {
+        Log.i("Get retry count in Post: " + post);
+        return postsDb.getRetryCount(rowId);
+    }
+
+    @WorkerThread
+    public int getRetryCount(@NonNull Message message, long rowId) {
+        Log.i("Get retry count in Message: " + message);
+        return messagesDb.getRetryCount(rowId);
+    }
+
+    @WorkerThread
     public @NonNull List<Post> getUnseenPosts(long timestamp, int count) {
         return getPosts(timestamp, count, false, null, true);
     }

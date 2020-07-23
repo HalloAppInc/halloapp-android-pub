@@ -72,6 +72,7 @@ public class Post extends ContentItem {
     public void setPatchUrl(long rowId, @NonNull String url, @NonNull ContentDb contentDb) {
         contentDb.setPatchUrl(this, rowId, url);
     }
+
     @Override
     public String getPatchUrl(long rowId, @NonNull ContentDb contentDb) {
         return contentDb.getPatchUrl(this, rowId);
@@ -80,6 +81,31 @@ public class Post extends ContentItem {
     @Override
     public @Media.TransferredState int getMediaTransferred(long rowId, @NonNull ContentDb contentDb) {
         return contentDb.getMediaTransferred(this, rowId);
+    }
+
+    @Override
+    public byte[] getMediaEncKey(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getMediaEncKey(this, rowId);
+    }
+
+    @Override
+    public void setUploadProgress(long rowId, long offset, @NonNull ContentDb contentDb) {
+        contentDb.setUploadProgress(this, rowId, offset);
+    }
+
+    @Override
+    public long getUploadProgress(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getUploadProgress(this, rowId);
+    }
+
+    @Override
+    public void setRetryCount(long rowId, int count, @NonNull ContentDb contentDb) {
+        contentDb.setRetryCount(this, rowId, count);
+    }
+
+    @Override
+    public int getRetryCount(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getRetryCount(this, rowId);
     }
 
     @Override

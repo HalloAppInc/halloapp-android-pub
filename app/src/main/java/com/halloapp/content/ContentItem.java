@@ -41,6 +41,11 @@ public abstract class ContentItem implements TextContent {
     public abstract void setPatchUrl(long rowId, @NonNull String url, @NonNull ContentDb contentDb);
     public abstract String getPatchUrl(long rowId, @NonNull ContentDb contentDb);
     public abstract @Media.TransferredState int getMediaTransferred(long rowId, @NonNull ContentDb contentDb);
+    public abstract byte[] getMediaEncKey(long rowId, @NonNull ContentDb contentDb);
+    public abstract void setUploadProgress(long rowId, long offset, @NonNull ContentDb contentDb);
+    public abstract long getUploadProgress(long rowId, @NonNull ContentDb contentDb);
+    public abstract void setRetryCount(long rowId, int count, @NonNull ContentDb contentDb);
+    public abstract int getRetryCount(long rowId, @NonNull ContentDb contentDb);
 
     public boolean isOutgoing() {
         return senderUserId.isMe();
@@ -79,6 +84,14 @@ public abstract class ContentItem implements TextContent {
             }
         }
         return false;
+    }
+
+    public void reInitialize() {
+        for (Media mediaItem : media) {
+            if (mediaItem.transferred == Media.TRANSFERRED_FAILURE) {
+                mediaItem.initializeRetry();
+            }
+        }
     }
 
     @Override

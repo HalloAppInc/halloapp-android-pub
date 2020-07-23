@@ -84,6 +84,31 @@ public class Message extends ContentItem {
     }
 
     @Override
+    public byte[] getMediaEncKey(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getMediaEncKey(this, rowId);
+    }
+
+    @Override
+    public void setUploadProgress(long rowId, long offset, @NonNull ContentDb contentDb) {
+        contentDb.setUploadProgress(this, rowId, offset);
+    }
+
+    @Override
+    public long getUploadProgress(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getUploadProgress(this, rowId);
+    }
+
+    @Override
+    public void setRetryCount(long rowId, int count, @NonNull ContentDb contentDb) {
+        contentDb.setRetryCount(this, rowId, count);
+    }
+
+    @Override
+    public int getRetryCount(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getRetryCount(this, rowId);
+    }
+
+    @Override
     public @NonNull String toString() {
         return "Message {timestamp:" + timestamp + " sender:" + senderUserId + ", id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }

@@ -53,7 +53,7 @@ public class ResumableUploader {
     }
 
     @WorkerThread
-    public static String sendPatchRequest(File file, int offset, @NonNull String url, @Nullable ResumableUploadListener listener) throws IOException {
+    public static String sendPatchRequest(File file, long offset, @NonNull String url, @Nullable ResumableUploadListener listener) throws IOException {
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
         connection.setChunkedStreamingMode(BUFFER_SIZE);

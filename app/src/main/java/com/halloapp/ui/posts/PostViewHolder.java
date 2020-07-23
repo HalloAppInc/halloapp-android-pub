@@ -13,9 +13,11 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -23,6 +25,7 @@ import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.SeenDetectorLayout;
+import com.halloapp.xmpp.Connection;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -41,6 +44,9 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     final View footerSpacing;
 
     final PostViewHolderParent parent;
+    private final Connection connection;
+    private final FileStore fileStore;
+    private final ContentDb contentDb;
     Post post;
 
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
@@ -54,6 +60,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         this.parent = parent;
 
+        this.connection = Connection.getInstance();
+        this.fileStore = FileStore.getInstance(itemView.getContext());
+        this.contentDb = ContentDb.getInstance(itemView.getContext());
+
         avatarView = itemView.findViewById(R.id.avatar);
         nameView = itemView.findViewById(R.id.name);
         timeView = itemView.findViewById(R.id.time);
@@ -64,6 +74,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         textView = itemView.findViewById(R.id.text);
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
         footer = itemView.findViewById(R.id.post_footer);
+
+        statusView.setOnClickListener(v -> {
+            UploadMediaTask.restartUpload(post, fileStore, contentDb, connection);
+        });
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), Constants.MAX_IMAGE_ASPECT_RATIO);

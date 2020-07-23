@@ -38,6 +38,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     private final ContentDb contentDb;
     private final Connection connection;
 
+    private static final int RETRY_LIMIT = 3;
+
     public UploadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         this.contentItem = contentItem;
         this.contentDb = contentDb;
@@ -47,9 +49,14 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.i("UploadMediaTask " + contentItem);
+        Log.i("Resumable Uploader " + contentItem);
+        if (contentItem.isTransferFailed()) {
+            Log.i("Resumable Uplaoder ContentItem isTransferFailed");
+            return null;
+        }
+
         for (Media media : contentItem.media) {
-            media.transferred = contentItem.getMediaTransferred(media.rowId, contentDb);
+            Log.i("Resumable Uploader media transferred: " + media.transferred);
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
                 continue;
             }
@@ -57,7 +64,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 prepareMedia(media);
             } catch (IOException | MediaConversionException e) {
                 Log.e("UploadMediaTask", e);
-                return null;
+                break;
             }
 
             File encryptedFile;
@@ -65,18 +72,18 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 encryptedFile = encryptFile(media.file, media.encKey, media.type, contentItem.id);
             } catch (IOException e) {
                 Log.e("resumable uploader Fail to encrypt file");
-                return null;
+                break;
             }
 
             MediaUploadIq.Urls urls = null;
-            int offset = 0;
+            long offset = 0;
             if (media.transferred == Media.TRANSFERRED_NO) {
                 try {
                     long fileSize = encryptedFile.length();
                     urls = connection.requestMediaUpload(fileSize).get();
                     if (urls == null) {
                         Log.e("Resumable Uploader: failed to get urls");
-                        return null;
+                        break;
                     }
 
                     if (urls.patchUrl != null) {
@@ -85,8 +92,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                         contentItem.setMediaTransferred(media, contentDb);
                     }
                 } catch (ExecutionException | InterruptedException e) {
-                    Log.e("Resumable Uploader", e);
-                    return null;
+                    Log.e("Resumable Uploader ", e);
+                    break;
                 }
             } else if (media.transferred == Media.TRANSFERRED_RESUME) {
                 urls = new MediaUploadIq.Urls();
@@ -97,6 +104,26 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     if (offset == -1) {
                         continue;
                     }
+                    int retryCount;
+                    if (media.isInInitialState()) {
+                        Log.i("Resumable Upload media is re-initialized");
+                        retryCount = 0;
+                        media.encKey = contentItem.getMediaEncKey(media.rowId, contentDb);
+                    } else {
+                        if (offset > contentItem.getUploadProgress(media.rowId, contentDb)) {
+                            retryCount = 0;
+                            contentItem.setUploadProgress(media.rowId, offset, contentDb);
+                        } else {
+                            retryCount = contentItem.getRetryCount(media.rowId, contentDb);
+                            if (retryCount >= RETRY_LIMIT) {
+                                media.transferred = Media.TRANSFERRED_FAILURE;
+                                Log.i("Resumable Upload media reaches its retry limit");
+                                break;
+                            }
+                            retryCount++;
+                        }
+                    }
+                    contentItem.setRetryCount(media.rowId, retryCount, contentDb);
                 } catch (IOException e) {
                     Log.e("Resumable Uploader: failed to get offset from HEAD request" + e);
                 }
@@ -109,7 +136,6 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     media.url = ResumableUploader.sendPatchRequest(encryptedFile, offset, urls.patchUrl, resumableUploadListener);
                     media.sha256hash = calculateDigest(encryptedFile);
                     media.transferred = Media.TRANSFERRED_YES;
-                    contentItem.setMediaTransferred(media, contentDb);
                     if (encryptedFile.exists()) {
                         encryptedFile.delete();
                     }
@@ -120,43 +146,48 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                         if (encryptedFile.exists()) {
                             encryptedFile.delete();
                         }
-                        return null;
+                        break;
                     } else {
                         Log.e("Resumable Uploader other exception:" + e.code);
+                        break;
                     }
                 } catch (IOException e) {
                     Log.e("Resumable Uploader: " + urls.patchUrl, e);
-                    return null;
+                    break;
                 } catch (NoSuchAlgorithmException e) {
                     media.transferred = Media.TRANSFERRED_FAILURE;
                     if (encryptedFile.exists()) {
                         encryptedFile.delete();
                     }
-                    contentItem.setMediaTransferred(media, contentDb);
-                    return null;
+                    Log.e("Resumable Uploader NoSuchAlgorithmException");
+                    break;
                 }
             } else if (urls != null && urls.putUrl != null) {
                 try {
                     media.sha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
                     media.url = urls.getUrl;
                     media.transferred = Media.TRANSFERRED_YES;
-                    contentItem.setMediaTransferred(media, contentDb);
                 } catch (Uploader.UploadException e) {
                     Log.e("UploadMediaTask: " + media.url, e);
                     if (e.code / 100 == 4) {
                         media.transferred = Media.TRANSFERRED_FAILURE;
-                        contentItem.setMediaTransferred(media, contentDb);
+                        break;
                     }
                 } catch (IOException e) {
                     Log.e("UploadMediaTask: " + urls.putUrl, e);
-                    return null;
+                    break;
                 }
             }
+        }
+
+        for (Media media : contentItem.media) {
+            contentItem.setMediaTransferred(media, contentDb);
         }
 
         if (contentItem.isAllMediaTransferred()) {
             contentItem.send(connection);
         }
+
         return null;
     }
 
@@ -236,5 +267,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 Log.e("Resumable Uploader Task convert: failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath());
             }
         }
+    }
+
+    public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection){
+        contentItem.reInitialize();
+        new UploadMediaTask(contentItem, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
     }
 }
