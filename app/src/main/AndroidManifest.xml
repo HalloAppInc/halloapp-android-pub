@@ -118,11 +118,6 @@
             android:label="@string/title_profile"/>
 
         <activity
-            android:name=".ui.UserNameActivity"
-            android:label="@string/your_name"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
-
-        <activity
             android:name=".ui.VideoPlaybackActivity"
             android:theme="@style/AppTheme.MediaPlayer"/>
 

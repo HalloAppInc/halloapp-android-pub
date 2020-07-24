@@ -212,8 +212,8 @@
     <string name="your_name">Your name</string>
     <string name="update">Update</string>
     <string name="counter">%d/%d</string>
-    <string name="failed_set_name">Failed to set name, try again later</string>
-    <string name="name_updated">Name updated</string>
+    <string name="failed_update_profile">Failed to update profile, try again later</string>
+    <string name="profile_updated">Profile updated</string>
     <string name="try_again">Try again</string>
     <string name="crop">Crop</string>
     <string name="flip">Flip</string>

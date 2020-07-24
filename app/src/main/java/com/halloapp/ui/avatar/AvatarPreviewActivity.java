@@ -2,6 +2,7 @@ package com.halloapp.ui.avatar;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -11,7 +12,6 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Size;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
@@ -41,20 +40,21 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.CropPhotoView;
-import com.halloapp.xmpp.Connection;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ExecutionException;
 
 public class AvatarPreviewActivity extends HalloActivity {
+
+    public static final String RESULT_AVATAR_WIDTH = "avatar_width";
+    public static final String RESULT_AVATAR_HEIGHT = "avatar_height";
+    public static final String RESULT_AVATAR_HASH = "avatar_hash";
+    public static final String RESULT_AVATAR_FILE_PATH = "avatar_file_path";
 
     private AvatarPreviewViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -194,46 +194,41 @@ public class AvatarPreviewActivity extends HalloActivity {
         }
     }
 
-    class Prepare extends AsyncTask<Void, Void, Boolean> {
+    class TranscodeTask extends AsyncTask<Void, Void, TranscodeTask.TranscodeResult> {
 
         private final Media media;
         private final Application application;
 
-        Prepare(@NonNull Application application, @Nullable Media media) {
+        private File transcodedFile;
+
+        TranscodeTask(@NonNull Application application, @Nullable Media media) {
             this.application = application;
             this.media = media;
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected TranscodeResult doInBackground(Void... voids) {
             if (media != null) {
-                final File tmpFile = FileStore.getInstance(application).getTmpFile("avatar");
+                transcodedFile = FileStore.getInstance(application).getTmpFile("avatar");
                 try {
-                    TranscodeResult transcodeResult = transcode(media.file, tmpFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
-                    String avatarId = uploadAvatar(tmpFile, Connection.getInstance(), transcodeResult);
-                    if (avatarId == null) {
-                        return false;
-                    }
-
-                    final File outFile = FileStore.getInstance(application).getAvatarFile(UserId.ME.rawId());
-                    FileUtils.copyFile(tmpFile, outFile);
-
-                    AvatarLoader avatarLoader = AvatarLoader.getInstance(AvatarPreviewActivity.this);
-                    avatarLoader.reportMyAvatarChanged(avatarId);
+                    return transcode(media.file, transcodedFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
                 } catch (IOException | NoSuchAlgorithmException e) {
                     Log.e("failed to transcode image", e);
-                    return false;
+                    return null;
                 }
             }
-            return true;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Boolean success) {
-            super.onPostExecute(success);
-
-            if (success != null && success) {
-                setResult(RESULT_OK);
+        protected void onPostExecute(TranscodeResult success) {
+            if (success != null) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(RESULT_AVATAR_HASH, success.hash);
+                resultIntent.putExtra(RESULT_AVATAR_HEIGHT, success.height);
+                resultIntent.putExtra(RESULT_AVATAR_WIDTH, success.width);
+                resultIntent.putExtra(RESULT_AVATAR_FILE_PATH, transcodedFile.getAbsolutePath());
+                setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
                 CenterToast.show(getApplicationContext(), R.string.could_not_set_avatar);
@@ -307,25 +302,6 @@ public class AvatarPreviewActivity extends HalloActivity {
             matrix.postRotate(angle);
             return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
         }
-
-        @WorkerThread
-        public String uploadAvatar(File file, Connection connection, final TranscodeResult transcodeResult) {
-            try (FileInputStream fileInputStream = new FileInputStream(file)) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buf = new byte[1024];
-                int c;
-                while ((c = fileInputStream.read(buf)) != -1) {
-                    baos.write(buf, 0, c);
-                }
-                String base64 = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
-                return connection.setAvatar(base64, transcodeResult.byteCount, transcodeResult.width, transcodeResult.height).get();
-            } catch (IOException e) {
-                Log.e("Failed to get base64", e);
-            } catch (InterruptedException | ExecutionException e) {
-                Log.e("Avatar upload interrupted", e);
-            }
-            return null;
-        }
     }
 
     public class AvatarPreviewViewModelFactory implements ViewModelProvider.Factory {
@@ -376,7 +352,7 @@ public class AvatarPreviewActivity extends HalloActivity {
         }
 
         void preparePost() {
-            new Prepare(getApplication(), getMedia()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new TranscodeTask(getApplication(), getMedia()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.halloapp.ui.settings;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,35 +11,26 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
 
 import com.halloapp.Constants;
-import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.UserId;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.UserNameActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
-import com.halloapp.xmpp.Connection;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class SettingsProfile extends HalloActivity {
 
@@ -52,7 +43,25 @@ public class SettingsProfile extends HalloActivity {
     private TextView nameView;
     private ImageView avatarView;
 
-    private String userName;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CODE_CHANGE_AVATAR: {
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        int height = data.getIntExtra(AvatarPreviewActivity.RESULT_AVATAR_HEIGHT, - 1);
+                        int width = data.getIntExtra(AvatarPreviewActivity.RESULT_AVATAR_WIDTH, -1);
+                        String filePath = data.getStringExtra(AvatarPreviewActivity.RESULT_AVATAR_FILE_PATH);
+                        if (filePath != null && width > 0 && height > 0) {
+                            viewModel.setTempAvatar(filePath, width, height);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,13 +79,23 @@ public class SettingsProfile extends HalloActivity {
 
         nameView = findViewById(R.id.edit_name);
         avatarView = findViewById(R.id.avatar);
+        ImageView tempAvatarView = findViewById(R.id.temp_avatar);
         final View changeAvatarView = findViewById(R.id.change_avatar);
         final View saveButton = findViewById(R.id.save);
         final View progressBar = findViewById(R.id.progress);
 
         viewModel.getName().observe(this, text -> {
-            this.userName = text;
             nameView.setText(text);
+        });
+
+        viewModel.canSave().observe(this, saveButton::setEnabled);
+        viewModel.getTempAvatar().observe(this, avatar -> {
+            tempAvatarView.setImageBitmap(avatar);
+            if (avatar != null) {
+                tempAvatarView.setVisibility(View.VISIBLE);
+            } else {
+                tempAvatarView.setVisibility(View.GONE);
+            }
         });
 
         avatarLoader.load(avatarView, UserId.ME);
@@ -98,7 +117,7 @@ public class SettingsProfile extends HalloActivity {
                 if (s == null) {
                     return;
                 }
-                saveButton.setEnabled(!s.toString().equals(userName));
+                viewModel.setTempName(s.toString());
             }
         });
 
@@ -111,7 +130,7 @@ public class SettingsProfile extends HalloActivity {
         changeAvatarView.setOnClickListener(changeAvatarListener);
         avatarView.setOnClickListener(changeAvatarListener);
 
-        WorkManager.getInstance(this).getWorkInfosForUniqueWorkLiveData(SetNameWorker.WORK_NAME).observe(this, new Observer<List<WorkInfo>>() {
+        viewModel.getSaveProfileWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
 
             boolean running;
 
@@ -122,18 +141,18 @@ public class SettingsProfile extends HalloActivity {
                     Log.i("UserNameActivity: work " + workInfo.getId() + " " + state);
                     if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
                         nameView.setEnabled(false);
-                        saveButton.setVisibility(View.GONE);
+                        saveButton.setVisibility(View.INVISIBLE);
                         progressBar.setVisibility(View.VISIBLE);
                         running = true;
                     } else if (running) {
                         progressBar.setVisibility(View.GONE);
                         if (state == WorkInfo.State.FAILED) {
-                            CenterToast.show(getBaseContext(), R.string.failed_set_name);
+                            CenterToast.show(getBaseContext(), R.string.failed_update_profile);
                             nameView.setEnabled(true);
                             nameView.requestFocus();
                             saveButton.setVisibility(View.VISIBLE);
                         } else if (state == WorkInfo.State.SUCCEEDED) {
-                            CenterToast.show(getBaseContext(), R.string.name_updated);
+                            CenterToast.show(getBaseContext(), R.string.profile_updated);
                             setResult(RESULT_OK);
                             finish();
                         }
@@ -143,56 +162,35 @@ public class SettingsProfile extends HalloActivity {
             }
         });
 
-        saveButton.setOnClickListener(v -> sendName());
+        saveButton.setOnClickListener(v -> {
+            final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameView.getText()).toString());
+            if (TextUtils.isEmpty(name)) {
+                CenterToast.show(this, R.string.name_must_be_specified);
+                nameView.requestFocus();
+                return;
+            }
+            viewModel.saveProfile();
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!viewModel.hasChanges()) {
+            super.onBackPressed();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.alert_discard_changes_message);
+            builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+                finish();
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.create().show();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         avatarLoader.load(avatarView, UserId.ME);
-    }
-
-    private void sendName() {
-        final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameView.getText()).toString());
-        if (TextUtils.isEmpty(name)) {
-            CenterToast.show(this, R.string.name_must_be_specified);
-            nameView.requestFocus();
-            return;
-        }
-
-        final Data data = new Data.Builder().putString(SetNameWorker.WORKER_PARAM_NAME, name).build();
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(UserNameActivity.SetNameWorker.class).setInputData(data).build();
-        WorkManager.getInstance(this).enqueueUniqueWork(SetNameWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
-    }
-
-    public static class SetNameWorker extends Worker {
-
-        private static final String WORK_NAME = "set-name";
-
-        private static final String WORKER_PARAM_NAME = "name";
-
-        public SetNameWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
-            super(context, workerParams);
-        }
-
-        @Override
-        public @NonNull Result doWork() {
-            final String name = getInputData().getString(WORKER_PARAM_NAME);
-            if (TextUtils.isEmpty(name)) {
-                return Result.failure();
-            }
-            try {
-                final Boolean result = Connection.getInstance().sendName(name).get();
-                if (Boolean.TRUE.equals(result)) {
-                    Me.getInstance(getApplicationContext()).saveName(name);
-                    return Result.success();
-                } else {
-                    return Result.failure();
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("SetNameWorker", e);
-                return Result.failure();
-            }
-        }
     }
 }

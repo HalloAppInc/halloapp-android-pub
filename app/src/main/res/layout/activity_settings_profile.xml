@@ -33,6 +33,20 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_editor_absoluteY="48dp" />
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/temp_avatar"
+                android:layout_width="175dp"
+                android:layout_height="175dp"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone"
+                android:src="@drawable/avatar_person"
+                app:civ_border_color="@color/card_background"
+                app:civ_border_width="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteY="48dp" />
+
             <FrameLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"

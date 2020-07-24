@@ -181,7 +181,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         reportMyAvatarChanged(null);
     }
 
-    void reportMyAvatarChanged(String avatarId) {
+    public void reportMyAvatarChanged(String avatarId) {
         ContactsDb contactsDb = ContactsDb.getInstance(context);
         ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;

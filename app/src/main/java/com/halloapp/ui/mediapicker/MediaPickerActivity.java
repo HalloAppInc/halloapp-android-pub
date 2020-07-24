@@ -209,7 +209,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             case REQUEST_CODE_SET_AVATAR: {
                 if (result == RESULT_OK) {
                     overridePendingTransition(0, 0);
-                    setResult(RESULT_OK);
+                    setResult(RESULT_OK, data);
                     finish();
                 } else if (result == RESULT_SELECT_MORE) {
                     viewModel.original = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
