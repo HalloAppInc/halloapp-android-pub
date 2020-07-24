@@ -27,7 +27,7 @@ public class GroupsApi {
         return observable.map(response -> {
             List<MemberInfo> memberInfos = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
-                memberInfos.add(new MemberInfo(memberElement.uid, memberElement.type, memberElement.name));
+                memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
             return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
         });
@@ -65,7 +65,7 @@ public class GroupsApi {
         return observable.map(response -> {
             List<MemberInfo> memberInfos = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
-                memberInfos.add(new MemberInfo(memberElement.uid, memberElement.type, memberElement.name));
+                memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
             return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
         });

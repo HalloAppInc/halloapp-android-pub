@@ -18,6 +18,7 @@ import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
@@ -59,6 +60,7 @@ public class ContentDb {
         void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onGroupChatAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
+        void onGroupMembersChanged(@NonNull GroupId groupId);
         void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts);
@@ -83,6 +85,7 @@ public class ContentDb {
         public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onGroupChatAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
+        public void onGroupMembersChanged(@NonNull GroupId groupId) {}
         public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
@@ -535,6 +538,17 @@ public class ContentDb {
         });
     }
 
+    public void addRemoveGroupMembers(@NonNull GroupId groupId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.addRemoveGroupMembers(groupId, added, removed)) {
+                observers.notifyGroupMembersChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void retractMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.retractMessage(message);
@@ -622,6 +636,11 @@ public class ContentDb {
     @WorkerThread
     public @Nullable Chat getChat(@NonNull String chatId) {
         return messagesDb.getChat(chatId);
+    }
+
+    @WorkerThread
+    public @NonNull List<MemberInfo> getGroupMembers(@NonNull GroupId groupId) {
+        return messagesDb.getGroupMembers(groupId);
     }
 
     @WorkerThread

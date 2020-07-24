@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.tables.ChatsTable;
@@ -27,6 +29,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.groups.MemberElement;
 
 import java.io.File;
 import java.io.IOException;
@@ -238,6 +241,35 @@ class MessagesDb {
             Log.i("ContentDb.setGroupAvatar: success " + groupId);
         } catch (SQLiteConstraintException ex) {
             Log.w("ContentDb.setGroupAvatar: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean addRemoveGroupMembers(@NonNull GroupId groupId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed) {
+        Log.i("MessagesDb.addRemoveGroupMembers " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (MemberInfo member : added) {
+                final ContentValues memberValues = new ContentValues();
+                memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupId.rawId());
+                memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
+                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
+                db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
+            }
+
+            for (MemberInfo member : removed) {
+                db.delete(GroupMembersTable.TABLE_NAME, GroupMembersTable._ID + "=?", new String[]{Long.toString(member.rowId)});
+            }
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.addGroupMembers: added " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.addGroupMembers: duplicate " + ex.getMessage() + " " + groupId);
             return false;
         } finally {
             db.endTransaction();
@@ -1209,6 +1241,29 @@ class MessagesDb {
             }
         }
         return null;
+    }
+
+    @WorkerThread
+    @NonNull List<MemberInfo> getGroupMembers(GroupId groupId) {
+        final List<MemberInfo> members = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(GroupMembersTable.TABLE_NAME,
+                new String [] {
+                        GroupMembersTable._ID,
+                        GroupMembersTable.COLUMN_USER_ID,
+                        GroupMembersTable.COLUMN_IS_ADMIN},
+                GroupMembersTable.COLUMN_GROUP_ID + "=?",
+                new String[]{groupId.rawId()}, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final MemberInfo member = new MemberInfo(
+                        cursor.getLong(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getInt(2) == 1 ? MemberElement.Type.ADMIN : MemberElement.Type.MEMBER,
+                        null);
+                members.add(member);
+            }
+        }
+        return members;
     }
 
     @WorkerThread

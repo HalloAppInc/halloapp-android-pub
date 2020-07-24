@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -23,7 +24,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 23;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -90,6 +91,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_IS_GROUP + " INTEGER DEFAULT 0,"
                 + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
                 + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT"
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + GroupMembersTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GroupMembersTable.TABLE_NAME + " ("
+                + GroupMembersTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GroupMembersTable.COLUMN_GROUP_ID + " TEXT NOT NULL,"
+                + GroupMembersTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                + GroupMembersTable.COLUMN_IS_ADMIN + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + RepliesTable.TABLE_NAME);
@@ -266,6 +275,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 21: {
                 upgradeFromVersion21(db);
             }
+            case 22: {
+                upgradeFromVersion22(db);
+            }
 
             break;
             default: {
@@ -417,18 +429,28 @@ class ContentDbHelper extends SQLiteOpenHelper {
         //noinspection SyntaxError
         db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
                 + "BEGIN "
-                +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
-                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
-                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
-                +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                + " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                + " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                + " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                + " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 + "END;");
 
         // Create comments delete trigger
         db.execSQL("DROP TRIGGER IF EXISTS " + CommentsTable.TRIGGER_DELETE);
         db.execSQL("CREATE TRIGGER " + CommentsTable.TRIGGER_DELETE + " AFTER DELETE ON " + CommentsTable.TABLE_NAME + " "
                 + "BEGIN "
-                +   "DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
+                + "DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion22(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + GroupMembersTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GroupMembersTable.TABLE_NAME + " ("
+                + GroupMembersTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GroupMembersTable.COLUMN_GROUP_ID + " TEXT NOT NULL,"
+                + GroupMembersTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                + GroupMembersTable.COLUMN_IS_ADMIN + " INTEGER DEFAULT 0"
+                + ");");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

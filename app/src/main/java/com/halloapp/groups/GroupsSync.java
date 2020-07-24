@@ -17,6 +17,7 @@ import androidx.work.WorkerParameters;
 import com.halloapp.Constants;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -90,37 +91,65 @@ public class GroupsSync {
         Log.i("GroupsSync.performGroupSync");
         try {
             List<GroupInfo> groups = groupsApi.getGroupsList().await();
-            List<Chat> chats = contentDb.getChats();
+            List<Chat> chats = contentDb.getGroups();
 
             Map<String, Chat> chatMap = new HashMap<>();
             for (Chat chat : chats) {
                 chatMap.put(chat.chatId, chat);
             }
 
-            List<GroupInfo> added = new ArrayList<>();
-            List<GroupInfo> updated = new ArrayList<>();
+            List<GroupInfo> addedGroups = new ArrayList<>();
+            List<GroupInfo> updatedGroups = new ArrayList<>();
             for (GroupInfo groupInfo : groups) {
                 Chat chat = chatMap.remove(groupInfo.groupId.rawId());
                 if (chat == null) {
-                    added.add(groupInfo);
+                    addedGroups.add(groupInfo);
                 } else if (!haveSameMetadata(groupInfo, chat)) {
-                    updated.add(groupInfo);
+                    updatedGroups.add(groupInfo);
                 }
             }
-            List<Chat> deleted = new ArrayList<>(chatMap.values());
+            List<Chat> deletedGroups = new ArrayList<>(chatMap.values());
 
-            Log.d("GroupsSync.perfromGroupSync adding " + added.size() + " groups");
-            for (GroupInfo groupInfo : added) {
+            Log.d("GroupsSync.perfromGroupSync adding " + addedGroups.size() + " groups");
+            for (GroupInfo groupInfo : addedGroups) {
                 contentDb.addGroupChat(groupInfo, null);
             }
 
-            Log.d("GroupsSync.perfromGroupSync updating " + updated.size() + " groups");
-            for (GroupInfo groupInfo : updated) {
+            Log.d("GroupsSync.perfromGroupSync updating " + updatedGroups.size() + " groups");
+            for (GroupInfo groupInfo : updatedGroups) {
                 contentDb.updateGroupChat(groupInfo, null);
             }
 
-            Log.d("GroupsSync.perfromGroupSync ignoring " + deleted.size() + " deleted groups");
+            Log.d("GroupsSync.perfromGroupSync ignoring " + deletedGroups.size() + " deleted groups");
             // TODO(jack): mark deleted chats so users cannot send messages to them
+
+            for (GroupInfo groupInfo : groups) {
+                List<MemberInfo> serverMembers = groupsApi.getGroupInfo(groupInfo.groupId).await().members;
+                List<MemberInfo> localMembers = contentDb.getGroupMembers(groupInfo.groupId);
+
+                Map<UserId, MemberInfo> memberMap = new HashMap<>();
+                for (MemberInfo member : localMembers) {
+                    memberMap.put(member.userId, member);
+                }
+
+                List<MemberInfo> addedMembers = new ArrayList<>();
+                List<MemberInfo> updatedMembers = new ArrayList<>();
+                for (MemberInfo member : serverMembers) {
+                    MemberInfo local = memberMap.remove(member.userId);
+                    if (local == null) {
+                        addedMembers.add(member);
+                    } else if (!haveSameMetadata(member, local)) {
+                        updatedMembers.add(member);
+                    }
+                }
+
+                List<MemberInfo> deletedMembers = new ArrayList<>(memberMap.values());
+
+                // TODO(jack): handle admin change (member updates)
+
+                Log.d("GroupsSync.performGroupSync adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupInfo.groupId);
+                contentDb.addRemoveGroupMembers(groupInfo.groupId, addedMembers, deletedMembers, null);
+            }
         } catch (ObservableErrorException e) {
             Log.e("GroupsSync.perfromGroupSync observable error", e);
         } catch (InterruptedException e) {
@@ -134,6 +163,11 @@ public class GroupsSync {
         return TextUtils.equals(groupInfo.name, chat.name)
                 && TextUtils.equals(groupInfo.description, chat.groupDescription)
                 && TextUtils.equals(groupInfo.avatar, chat.groupAvatarId);
+    }
+
+    private boolean haveSameMetadata(@NonNull MemberInfo a, @NonNull MemberInfo b) {
+        Preconditions.checkArgument(a.userId.rawId().equals(b.userId.rawId()));
+        return TextUtils.equals(a.type, b.type);
     }
 
     public static class GroupSyncWorker extends Worker {
