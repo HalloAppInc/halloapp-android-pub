@@ -47,7 +47,7 @@ public class PresenceLoader {
     public void reportPresence(UserId userId, Long lastSeen) {
         MutableLiveData<PresenceState> mld = map.get(userId);
         if (mld == null) {
-            Log.w("Received unexpected presence for user " + userId);
+            Log.w("ReportPresence received unexpected presence for user " + userId);
             return;
         }
         if (lastSeen != null) {
@@ -60,7 +60,7 @@ public class PresenceLoader {
     public void reportBlocked(UserId userId) {
         MutableLiveData<PresenceState> mld = map.get(userId);
         if (mld == null) {
-            Log.w("Received unexpected presence for user " + userId);
+            Log.w("ReportBlocked received unexpected presence for user " + userId);
             return;
         }
         mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_UNKNOWN));
