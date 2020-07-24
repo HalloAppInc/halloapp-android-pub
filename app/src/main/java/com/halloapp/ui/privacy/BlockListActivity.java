@@ -28,6 +28,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.util.Preconditions;
+import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class BlockListActivity extends HalloActivity {
     private View emptyContainer;
     private View progressContainer;
 
+    private PresenceLoader presenceLoader;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
@@ -54,7 +56,7 @@ public class BlockListActivity extends HalloActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     String selectedId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
                     if (selectedId != null) {
-                        viewModel.blockContact(new UserId(selectedId));
+                        viewModel.blockContact(new UserId(selectedId), presenceLoader);
                     }
                 }
                 break;
@@ -74,6 +76,7 @@ public class BlockListActivity extends HalloActivity {
             actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
         }
 
+        presenceLoader = PresenceLoader.getInstance();
         avatarLoader = AvatarLoader.getInstance(this);
         viewModel = new ViewModelProvider(this).get(BlockListViewModel.class);
 

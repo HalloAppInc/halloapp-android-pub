@@ -3,6 +3,7 @@ package com.halloapp.xmpp;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.Constants;
 import com.halloapp.ForegroundChat;
 import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
@@ -54,6 +55,16 @@ public class PresenceLoader {
         } else {
             mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_ONLINE));
         }
+    }
+
+    public void reportBlocked(UserId userId) {
+        MutableLiveData<PresenceState> mld = map.get(userId);
+        if (mld == null) {
+            Log.w("Received unexpected presence for user " + userId);
+            return;
+        }
+        mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_UNKNOWN));
+
     }
 
     public void onDisconnect() {
