@@ -122,7 +122,7 @@ public class SettingsProfile extends HalloActivity {
         });
 
         final View.OnClickListener changeAvatarListener = v -> {
-            Log.d("ProfileFragment request change avatar");
+            Log.d("SettingsProfile request change avatar");
             final Intent intent = new Intent(this, MediaPickerActivity.class);
             intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
@@ -138,7 +138,7 @@ public class SettingsProfile extends HalloActivity {
             public void onChanged(List<WorkInfo> workInfos) {
                 for (WorkInfo workInfo : workInfos) {
                     final WorkInfo.State state = workInfo.getState();
-                    Log.i("UserNameActivity: work " + workInfo.getId() + " " + state);
+                    Log.i("SettingsProfile: work " + workInfo.getId() + " " + state);
                     if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
                         nameView.setEnabled(false);
                         saveButton.setVisibility(View.INVISIBLE);
