@@ -18,8 +18,34 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/window_background"
             android:elevation="@dimen/action_bar_elevation"
+            android:gravity="center_vertical"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-            app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar" />
+            app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
+
+            <LinearLayout
+                android:id="@+id/toolbar_text_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:background="?selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Toolbar.Title"/>
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Toolbar.Subtitle"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
             android:layout_width="match_parent"

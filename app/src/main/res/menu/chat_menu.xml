@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/view_profile"
-        android:title="@string/view_profile"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/delete"
         android:title="@string/delete"
         app:showAsAction="never"/>

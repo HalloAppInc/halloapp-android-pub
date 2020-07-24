@@ -89,6 +89,8 @@ public class ChatActivity extends HalloActivity {
     private PostEditText editText;
     private View replyContainer;
 
+    private TextView titleView;
+    private TextView subtitleView;
     private TextView replyNameView;
 
     private String chatId;
@@ -130,6 +132,9 @@ public class ChatActivity extends HalloActivity {
 
         setContentView(R.layout.activity_chat);
 
+        titleView = findViewById(R.id.title);
+        subtitleView = findViewById(R.id.subtitle);
+
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -154,6 +159,12 @@ public class ChatActivity extends HalloActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         replyNameView = findViewById(R.id.reply_name);
+
+        View toolbarTitleContainer = findViewById(R.id.toolbar_text_container);
+        toolbarTitleContainer.setOnClickListener(v -> {
+            Intent viewProfile = ViewProfileActivity.viewProfile(this, new UserId(chatId));
+            startActivity(viewProfile);
+        });
 
         final RecyclerView chatView = findViewById(R.id.chat);
         Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -278,11 +289,11 @@ public class ChatActivity extends HalloActivity {
                     });
                     presenceLoader.getLastSeenLiveData(new UserId(chatId)).observe(this, presenceState -> {
                         if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
-                            toolbar.setSubtitle(null);
+                            setSubtitle(null);
                         } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
-                            toolbar.setSubtitle(getString(R.string.online));
+                            setSubtitle(getString(R.string.online));
                         } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
-                            toolbar.setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
+                            setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
                         }
                     });
                 }
@@ -300,6 +311,17 @@ public class ChatActivity extends HalloActivity {
         } else {
             replyContainer.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        titleView.setText(title);
+    }
+
+    private void setSubtitle(@Nullable CharSequence subtitle) {
+        subtitleView.setVisibility(subtitle == null ? View.GONE : View.VISIBLE);
+        subtitleView.setText(subtitle);
     }
 
     @Override
@@ -371,11 +393,6 @@ public class ChatActivity extends HalloActivity {
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(this).deleteChat(chatId));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
-                return true;
-            }
-            case R.id.view_profile: {
-                Intent viewProfile = ViewProfileActivity.viewProfile(this, new UserId(chatId));
-                startActivity(viewProfile);
                 return true;
             }
             default: {
