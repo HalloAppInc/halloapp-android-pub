@@ -21,7 +21,7 @@
     <dimen name="media_gallery_preview_radius">16dp</dimen>
     <dimen name="media_gallery_preview_padding">20dp</dimen>
     <dimen name="media_crop_preview_list_spacing">8dp</dimen>
-    <dimen name="post_media_radius">9dp</dimen>
+    <dimen name="post_media_radius">15dp</dimen>
     <dimen name="message_media_radius">12dp</dimen>
     <dimen name="contacts_list_item_height">72dp</dimen>
     <dimen name="contacts_list_item_header_text_size">20sp</dimen>
