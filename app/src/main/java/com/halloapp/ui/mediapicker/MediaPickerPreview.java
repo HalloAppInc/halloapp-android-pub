@@ -13,7 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import android.util.Size;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -32,6 +32,7 @@ import androidx.exifinterface.media.ExifInterface;
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -103,41 +104,100 @@ public class MediaPickerPreview {
 
     private static class ImageLoaderTask extends AsyncTask<Void, Void, Bitmap> {
         private WeakReference<ImageView> viewRef;
+        private Context context;
         private Uri uri;
 
-        ImageLoaderTask(ImageView view, Uri uri) {
+        ImageLoaderTask(@NonNull ImageView view, @NonNull Uri uri) {
             viewRef = new WeakReference<>(view);
+            context = view.getContext().getApplicationContext();
             this.uri = uri;
+        }
+
+        private static int calculateInSampleSize(BitmapFactory.Options options, Size req) {
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            final int reqHeight = req.getHeight();
+            final int reqWidth = req.getWidth();
+            int inSampleSize = 1;
+
+            if (height > reqHeight || width > reqWidth) {
+                final int halfHeight = height / 2;
+                final int halfWidth = width / 2;
+
+                // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+                // height and width larger than the requested height and width.
+                while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                    inSampleSize *= 2;
+                }
+            }
+
+            return inSampleSize;
+        }
+
+        private InputStream getInputStream() throws FileNotFoundException {
+            return context.getContentResolver().openInputStream(uri);
+        }
+
+        private Matrix getOrientation() throws IOException {
+            InputStream inputStream = getInputStream();
+
+            ExifInterface exif = new ExifInterface(inputStream);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1); // to get orientation (e.g. ORIENTATION_ROTATE_90, ORIENTATION_ROTATE_180) –
+            inputStream.close();
+
+            return MediaUtils.fromOrientation(orientation);
+        }
+
+        private Size getSizeLimits() {
+            final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+            final int padding = context.getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_padding);
+
+            return new Size(displayMetrics.widthPixels - padding, displayMetrics.heightPixels - padding);
+        }
+
+        private BitmapFactory.Options getImageBoundsOptions() throws IOException {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+
+            InputStream inputStream = getInputStream();
+            BitmapFactory.decodeStream(inputStream, null, options);
+            inputStream.close();
+
+            return options;
+        }
+
+        private Bitmap decodeSampledBitmap() throws IOException {
+            final Size limit = getSizeLimits();
+            final BitmapFactory.Options options = getImageBoundsOptions();
+            options.inSampleSize = calculateInSampleSize(options, limit);
+            options.inJustDecodeBounds = false;
+
+            InputStream inputStream = getInputStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(getInputStream(), null, options);
+            inputStream.close();
+
+            return bitmap;
+        }
+
+        private Bitmap rotate(@NonNull Bitmap original) throws IOException {
+            final Bitmap result = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), getOrientation(), true);
+
+            if (result != original) {
+                original.recycle();
+            }
+
+            return result;
         }
 
         @Override
         protected Bitmap doInBackground(Void... voids) {
-            ImageView view = viewRef.get();
-
-            if (view != null) {
-                try {
-                    InputStream inputStream = view.getContext().getContentResolver().openInputStream(uri);
-                    if (inputStream == null) {
-                        return null;
-                    }
-
-                    ExifInterface exif = new ExifInterface(inputStream);
-                    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1); // to get orientation (e.g. ORIENTATION_ROTATE_90, ORIENTATION_ROTATE_180) –
-                    inputStream.close();
-
-                    final Matrix matrix = MediaUtils.fromOrientation(orientation);
-                    Bitmap bitmap = BitmapFactory.decodeStream(view.getContext().getContentResolver().openInputStream(uri));
-
-                    final Bitmap result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    if (result != bitmap) {
-                        bitmap.recycle();
-                    }
-
-                    return result;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+            try {
+                return rotate(decodeSampledBitmap());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             return null;
