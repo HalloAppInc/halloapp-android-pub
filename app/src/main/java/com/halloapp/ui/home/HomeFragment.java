@@ -27,6 +27,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
+import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 public class HomeFragment extends PostsFragment {
 
@@ -110,6 +111,8 @@ public class HomeFragment extends PostsFragment {
                 }
             }
         });
+
+        NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 

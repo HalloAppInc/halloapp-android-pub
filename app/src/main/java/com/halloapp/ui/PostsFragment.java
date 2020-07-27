@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -55,7 +56,7 @@ public class PostsFragment extends HalloFragment {
     private TimestampRefresher timestampRefresher;
 
     private DrawDelegateView drawDelegateView;
-    private final Stack<View> recycledMediaViews = new Stack<>();
+    private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
 
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
     private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
@@ -190,7 +191,7 @@ public class PostsFragment extends HalloFragment {
             }
 
             @Override
-            public Stack<View> getRecycledMediaViews() {
+            public RecyclerView.RecycledViewPool getMediaViewPool() {
                 return recycledMediaViews;
             }
 

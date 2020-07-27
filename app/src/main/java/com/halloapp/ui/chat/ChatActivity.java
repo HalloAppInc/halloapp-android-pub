@@ -66,6 +66,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.PostEditText;
 import com.halloapp.xmpp.PresenceLoader;
 
@@ -111,7 +112,7 @@ public class ChatActivity extends HalloActivity {
     private String copyText;
 
     private DrawDelegateView drawDelegateView;
-    private final Stack<View> recycledMediaViews = new Stack<>();
+    private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
 
     private boolean scrollUpOnDataLoaded;
     private boolean scrollToNewMessageOnDataLoaded = true;
@@ -178,6 +179,7 @@ public class ChatActivity extends HalloActivity {
         layoutManager.setStackFromEnd(false);
         chatView.setLayoutManager(layoutManager);
         chatView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+        NestedHorizontalScrollHelper.applyDefaultScrollRatio(chatView);
 
         chatView.setAdapter(adapter);
 
@@ -731,7 +733,7 @@ public class ChatActivity extends HalloActivity {
         }
 
         @Override
-        public Stack<View> getRecycledMediaViews() {
+        public RecyclerView.RecycledViewPool getMediaViewPool() {
             return recycledMediaViews;
         }
 

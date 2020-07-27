@@ -10,24 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.LimitingTextView;
-import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.SeenDetectorLayout;
 
-import me.relex.circleindicator.CircleIndicator;
+import me.relex.circleindicator.CircleIndicator3;
 
 public class PostViewHolder extends ViewHolderWithLifecycle {
 
@@ -36,8 +33,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final TextView timeView;
     private final ImageView statusView;
     private final View progressView;
-    private final MediaViewPager mediaPagerView;
-    private final CircleIndicator mediaPagerIndicator;
+    private final ViewPager2 mediaPagerView;
+    private final CircleIndicator3 mediaPagerIndicator;
     private final LimitingTextView textView;
     protected final MediaPagerAdapter mediaPagerAdapter;
     private final View footer;
@@ -71,9 +68,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), Constants.MAX_IMAGE_ASPECT_RATIO);
             mediaPagerView.setAdapter(mediaPagerAdapter);
-            mediaPagerView.setPageMargin(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
-
-            mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 }
@@ -143,7 +138,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         final boolean noCaption = TextUtils.isEmpty(post.text);
 
         if (!post.media.isEmpty()) {
-            mediaPagerView.setMaxAspectRatio(Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, Media.getMaxAspectRatio(post.media)));
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
             if (post.media.size() > 1) {
@@ -154,6 +148,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
+            mediaPagerView.setNestedScrollingEnabled(false);
         }
         final Integer textLimit = parent.getTextLimits().get(post.rowId);
         textView.setLineLimit(textLimit != null ? textLimit :

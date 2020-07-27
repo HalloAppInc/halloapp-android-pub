@@ -30,12 +30,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <com.halloapp.widget.MediaViewPager
+            <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/media_pager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <me.relex.circleindicator.CircleIndicator
+            <me.relex.circleindicator.CircleIndicator3
                 android:id="@+id/media_pager_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="8dp"

@@ -21,6 +21,8 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -39,6 +41,7 @@ import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 import java.util.Stack;
 
@@ -56,11 +59,10 @@ public class PostContentActivity extends HalloActivity {
     private TimestampRefresher timestampRefresher;
 
     private DrawDelegateView drawDelegateView;
-    private final Stack<View> recycledMediaViews = new Stack<>();
+    private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
 
-    private Post post;
-    private PostViewHolder postViewHolder;
-    private ViewGroup postViewGroup;
+    private RecyclerView postRecyclerView;
+    private SinglePostAdapter postAdapter;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -132,7 +134,7 @@ public class PostContentActivity extends HalloActivity {
         }
 
         @Override
-        public Stack<View> getRecycledMediaViews() {
+        public RecyclerView.RecycledViewPool getMediaViewPool() {
             return recycledMediaViews;
         }
 
@@ -168,7 +170,12 @@ public class PostContentActivity extends HalloActivity {
 
         setContentView(R.layout.activity_post_content);
 
-        postViewGroup = findViewById(R.id.post);
+        postRecyclerView = findViewById(R.id.post);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        postRecyclerView.setLayoutManager(linearLayoutManager);
+        postAdapter = new SinglePostAdapter();
+        postRecyclerView.setAdapter(postAdapter);
+        NestedHorizontalScrollHelper.applyDefaultScrollRatio(postRecyclerView);
 
         View content = findViewById(R.id.content);
         content.setOnClickListener(v -> finishAfterTransition());
@@ -215,65 +222,85 @@ public class PostContentActivity extends HalloActivity {
     }
 
     private void showPost(@Nullable Post post) {
-        this.post = post;
-        postViewGroup.removeAllViews();
-        if (post != null) {
-            postViewHolder = createViewHolder(postViewGroup, post);
-            postViewHolder.bindTo(post);
-            postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));
-        }
+        postAdapter.setPost(post);
     }
 
     private void updatePost() {
-        if (post != null && postViewHolder != null) {
+        postAdapter.notifyDataSetChanged();
+    }
+
+    private class SinglePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
+
+        private Post post;
+
+        private boolean initialSelectionSet = false;
+
+        public void setPost(@NonNull Post post) {
+            this.post = post;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
+            @LayoutRes int contentLayoutRes;
+            switch (viewType & POST_TYPE_MASK) {
+                case POST_TYPE_TEXT: {
+                    contentLayoutRes = R.layout.post_item_text;
+                    break;
+                }
+                case POST_TYPE_MEDIA: {
+                    contentLayoutRes = R.layout.post_item_media;
+                    break;
+                }
+                case POST_TYPE_RETRACTED: {
+                    contentLayoutRes = R.layout.post_item_retracted;
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException();
+                }
+            }
+            final ViewGroup content = layout.findViewById(R.id.post_content);
+            LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
+            if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
+                return new RetractedPostViewHolder(layout, postViewHolderParent);
+            }
+            final ViewGroup footer = layout.findViewById(R.id.post_footer);
+            switch (viewType & POST_DIRECTION_MASK) {
+                case POST_DIRECTION_INCOMING: {
+                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                    return new IncomingPostViewHolder(layout, postViewHolderParent);
+                }
+                case POST_DIRECTION_OUTGOING: {
+                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
+                    return new OutgoingPostViewHolder(layout, postViewHolderParent);
+                }
+                default: {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull PostViewHolder postViewHolder, int position) {
             postViewHolder.bindTo(post);
+            if (!initialSelectionSet) {
+                postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));
+                initialSelectionSet = true;
+            }
         }
-    }
 
-    public int getItemViewType(Post post) {
-        return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
-                (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
-    }
+        @Override
+        public int getItemViewType(int position) {
+            return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
+                    (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
+        }
 
-    public @NonNull PostViewHolder createViewHolder(@NonNull ViewGroup parent, @NonNull Post post) {
-        final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, true);
-        final int viewType = getItemViewType(post);
-        @LayoutRes int contentLayoutRes;
-        switch (viewType & POST_TYPE_MASK) {
-            case POST_TYPE_TEXT: {
-                contentLayoutRes = R.layout.post_item_text;
-                break;
-            }
-            case POST_TYPE_MEDIA: {
-                contentLayoutRes = R.layout.post_item_media;
-                break;
-            }
-            case POST_TYPE_RETRACTED: {
-                contentLayoutRes = R.layout.post_item_retracted;
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException();
-            }
-        }
-        final ViewGroup content = layout.findViewById(R.id.post_content);
-        LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
-        if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
-            return new RetractedPostViewHolder(layout, postViewHolderParent);
-        }
-        final ViewGroup footer = layout.findViewById(R.id.post_footer);
-        switch (viewType & POST_DIRECTION_MASK) {
-            case POST_DIRECTION_INCOMING: {
-                LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                return new IncomingPostViewHolder(layout, postViewHolderParent);
-            }
-            case POST_DIRECTION_OUTGOING: {
-                LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
-                return new OutgoingPostViewHolder(layout, postViewHolderParent);
-            }
-            default: {
-                throw new IllegalArgumentException();
-            }
+        @Override
+        public int getItemCount() {
+            return post == null ? 0 : 1;
         }
     }
 }

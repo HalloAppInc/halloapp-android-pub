@@ -12,11 +12,10 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -26,9 +25,8 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.LimitingTextView;
-import com.halloapp.widget.MediaViewPager;
 
-import me.relex.circleindicator.CircleIndicator;
+import me.relex.circleindicator.CircleIndicator3;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle {
 
@@ -38,8 +36,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView timestampView;
     private final TextView newMessagesSeparator;
     private final LimitingTextView textView;
-    private final MediaViewPager mediaPagerView;
-    private final CircleIndicator mediaPagerIndicator;
+    private final ViewPager2 mediaPagerView;
+    private final CircleIndicator3 mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
     private final MessageViewHolderParent parent;
@@ -91,8 +89,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));
             mediaPagerView.setAdapter(mediaPagerAdapter);
-            mediaPagerView.setPageMargin(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
-            mediaPagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 }
@@ -170,7 +167,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (!message.media.isEmpty()) {
-            mediaPagerView.setMaxAspectRatio(Media.getMaxAspectRatio(message.media));
             mediaPagerAdapter.setMedia(message.media);
             if (message.media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.halloapp.widget.AspectRatioFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/media_pager_child_padding">
@@ -34,4 +36,4 @@
         android:contentDescription="@string/play"
         android:visibility="gone"/>
 
-</FrameLayout>
+</com.halloapp.widget.AspectRatioFrameLayout>
