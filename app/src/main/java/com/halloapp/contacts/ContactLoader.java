@@ -6,10 +6,10 @@ import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ViewDataLoader;
 

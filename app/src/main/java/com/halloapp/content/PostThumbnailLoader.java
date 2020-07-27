@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
@@ -13,9 +12,8 @@ import androidx.collection.LruCache;
 
 import com.halloapp.Me;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.MentionsLoader;
@@ -24,7 +22,6 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.TextDrawable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 

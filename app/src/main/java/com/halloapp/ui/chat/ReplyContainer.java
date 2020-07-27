@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.MediaPagerAdapter;

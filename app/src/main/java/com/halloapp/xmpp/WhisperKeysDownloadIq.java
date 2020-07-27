@@ -2,7 +2,7 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;

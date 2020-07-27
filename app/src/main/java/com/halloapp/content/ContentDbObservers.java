@@ -2,7 +2,7 @@ package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 
 import java.util.Collection;
 import java.util.HashSet;

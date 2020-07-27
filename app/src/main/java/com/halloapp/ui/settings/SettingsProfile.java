@@ -1,6 +1,5 @@
 package com.halloapp.ui.settings;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -20,7 +19,7 @@ import androidx.work.WorkInfo;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;

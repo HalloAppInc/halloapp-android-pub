@@ -2,7 +2,7 @@ package com.halloapp;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;

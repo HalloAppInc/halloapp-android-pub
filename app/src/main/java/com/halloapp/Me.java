@@ -11,7 +11,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
-import com.halloapp.contacts.UserId;
 import com.halloapp.util.Log;
 
 import java.io.IOException;

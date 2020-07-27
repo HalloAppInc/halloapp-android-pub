@@ -21,7 +21,7 @@ import com.halloapp.LogProvider;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.ui.avatar.AvatarLoader;

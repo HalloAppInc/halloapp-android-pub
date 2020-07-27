@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.util.ListFormatter;

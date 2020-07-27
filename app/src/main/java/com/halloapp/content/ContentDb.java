@@ -12,7 +12,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MessagesTable;

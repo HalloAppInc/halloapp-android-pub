@@ -3,7 +3,7 @@ package com.halloapp.xmpp.privacy;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;

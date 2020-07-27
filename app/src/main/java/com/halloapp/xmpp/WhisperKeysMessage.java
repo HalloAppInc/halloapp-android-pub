@@ -1,7 +1,6 @@
 package com.halloapp.xmpp;
 
-import com.halloapp.contacts.UserId;
-import com.halloapp.util.Log;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;

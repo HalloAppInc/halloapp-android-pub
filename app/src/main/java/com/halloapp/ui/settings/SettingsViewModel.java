@@ -11,19 +11,16 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.invites.InvitesApi;
 import com.halloapp.xmpp.privacy.PrivacyList;
 import com.halloapp.xmpp.privacy.PrivacyListApi;
-import com.halloapp.xmpp.util.Observable;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class SettingsViewModel extends AndroidViewModel {
 

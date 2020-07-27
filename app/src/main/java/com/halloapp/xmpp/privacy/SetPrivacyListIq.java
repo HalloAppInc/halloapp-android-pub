@@ -2,8 +2,7 @@ package com.halloapp.xmpp.privacy;
 
 import androidx.annotation.Nullable;
 
-import com.halloapp.contacts.UserId;
-import com.halloapp.xmpp.privacy.PrivacyList;
+import com.halloapp.id.UserId;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.XmlStringBuilder;

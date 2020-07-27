@@ -2,7 +2,7 @@ package com.halloapp.privacy;
 
 import androidx.annotation.Nullable;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;

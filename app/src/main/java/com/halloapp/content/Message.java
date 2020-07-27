@@ -7,7 +7,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.xmpp.Connection;
 

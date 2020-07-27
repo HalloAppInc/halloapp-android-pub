@@ -22,7 +22,7 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.FileStore;
 import com.halloapp.Me;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;

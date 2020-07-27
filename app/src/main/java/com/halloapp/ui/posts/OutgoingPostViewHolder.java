@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;

@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.AvatarsLayout;

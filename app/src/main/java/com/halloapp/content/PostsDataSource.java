@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
 
 import java.util.List;

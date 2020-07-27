@@ -7,7 +7,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.Map;

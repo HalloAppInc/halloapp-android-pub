@@ -1,19 +1,27 @@
-package com.halloapp.contacts;
+package com.halloapp.id;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-public class UserId implements Parcelable {
+public class ChatId implements Parcelable {
+
+    @SuppressWarnings("ConstantConditions")
+    public @Nullable static ChatId fromString(@NonNull String s) {
+        if (s.startsWith("g")) {
+            return new GroupId(s);
+        } else {
+            return new UserId(s);
+        }
+    }
 
     private final String id;
 
-    public static final UserId ME = new UserId("");
-
-    public UserId(@NonNull String id) {
+    protected ChatId(@NonNull String id) {
         this.id = id;
     }
 
@@ -21,7 +29,7 @@ public class UserId implements Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserId userId = (UserId) o;
+        ChatId userId = (ChatId) o;
         return id.equals(userId.id);
     }
 
@@ -34,13 +42,9 @@ public class UserId implements Parcelable {
         return id;
     }
 
-    public boolean isMe() {
-        return "".equals(id);
-    }
-
     @Override
     public @NonNull String toString() {
-        return "{user:" + (isMe() ? "me" : id) + "}";
+        return "{chat:" + id + "}";
     }
 
     @Override
@@ -53,16 +57,15 @@ public class UserId implements Parcelable {
         dest.writeString(id);
     }
 
-    public static final Parcelable.Creator<UserId> CREATOR
-            = new Parcelable.Creator<UserId>() {
-        public UserId createFromParcel(Parcel in) {
+    public static final Creator<ChatId> CREATOR = new Creator<ChatId>() {
+        public ChatId createFromParcel(Parcel in) {
             String id = in.readString();
             id = id == null ? "" : id;
-            return new UserId(id);
+            return fromString(id);
         }
 
-        public UserId[] newArray(int size) {
-            return new UserId[size];
+        public ChatId[] newArray(int size) {
+            return new ChatId[size];
         }
     };
 }

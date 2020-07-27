@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
 import androidx.paging.PositionalDataSource;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 
 import java.util.List;
 

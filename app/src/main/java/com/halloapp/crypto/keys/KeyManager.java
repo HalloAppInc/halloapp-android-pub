@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.proto.IdentityKey;

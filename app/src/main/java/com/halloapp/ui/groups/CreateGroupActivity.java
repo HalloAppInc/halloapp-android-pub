@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.chat.ChatActivity;

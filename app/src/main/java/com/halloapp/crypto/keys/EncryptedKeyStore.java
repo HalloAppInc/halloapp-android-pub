@@ -2,7 +2,6 @@ package com.halloapp.crypto.keys;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Base64;
 
@@ -11,7 +10,7 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
 import com.google.crypto.tink.subtle.X25519;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;

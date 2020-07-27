@@ -3,9 +3,8 @@ package com.halloapp.xmpp;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.halloapp.Constants;
 import com.halloapp.ForegroundChat;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 

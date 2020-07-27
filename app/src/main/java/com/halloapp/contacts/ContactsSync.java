@@ -21,6 +21,7 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;

@@ -18,12 +18,11 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.media.Downloader;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.io.IOException;

@@ -2,7 +2,7 @@ package com.halloapp.xmpp.privacy;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.MutableObservable;

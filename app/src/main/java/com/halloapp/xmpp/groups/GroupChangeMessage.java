@@ -4,10 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
-import com.halloapp.contacts.UserId;
-import com.halloapp.util.Log;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
-import com.halloapp.xmpp.privacy.PrivacyList;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.EmbeddedExtensionProvider;

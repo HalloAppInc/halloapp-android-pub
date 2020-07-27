@@ -4,19 +4,16 @@ import android.app.Application;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.halloapp.Constants;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceLoader;
 import com.halloapp.xmpp.privacy.PrivacyListApi;
-import com.halloapp.xmpp.util.Observable;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -2,11 +2,7 @@ package com.halloapp.xmpp.groups;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.contacts.UserId;
-
 import org.jivesoftware.smack.packet.IQ;
-
-import java.util.List;
 
 public class GetGroupInfoIq extends IQ {
 

@@ -11,7 +11,6 @@ import androidx.annotation.StringDef;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
-import com.halloapp.contacts.UserId;
 import com.halloapp.proto.Comment;
 import com.halloapp.proto.Container;
 import com.halloapp.proto.MediaType;

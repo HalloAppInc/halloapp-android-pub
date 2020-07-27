@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.UserId;
+
 import java.text.Collator;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,8 @@ public class Contact {
     public @Nullable String fallbackName; // Not stored
     public @Nullable String normalizedPhone; // phone from server contact sync
     public @Nullable String avatarId; // from server
-    public @Nullable UserId userId;
+    public @Nullable
+    UserId userId;
     public boolean friend;
 
     public Contact(long rowId,

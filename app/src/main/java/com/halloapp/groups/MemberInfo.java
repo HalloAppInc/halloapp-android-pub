@@ -1,6 +1,6 @@
 package com.halloapp.groups;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.xmpp.groups.MemberElement;
 
 public class MemberInfo {

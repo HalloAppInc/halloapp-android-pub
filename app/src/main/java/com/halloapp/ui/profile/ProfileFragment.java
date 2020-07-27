@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;

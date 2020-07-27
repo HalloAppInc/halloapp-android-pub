@@ -2,7 +2,7 @@ package com.halloapp.content;
 
 import android.text.TextUtils;
 
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
 
 public class Mention {

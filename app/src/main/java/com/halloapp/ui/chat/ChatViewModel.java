@@ -16,14 +16,13 @@ import androidx.paging.PagedList;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.Log;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.UserId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;

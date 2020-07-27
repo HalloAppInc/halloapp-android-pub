@@ -14,6 +14,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
 
 import java.io.File;
