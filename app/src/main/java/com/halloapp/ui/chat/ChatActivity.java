@@ -134,10 +134,11 @@ public class ChatActivity extends HalloActivity {
 
         titleView = findViewById(R.id.title);
         subtitleView = findViewById(R.id.subtitle);
+        ImageView avatarView = findViewById(R.id.avatar);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -300,6 +301,7 @@ public class ChatActivity extends HalloActivity {
             });
             ContentDb.getInstance(this).setChatSeen(chatId);
         });
+        avatarLoader.load(avatarView, new UserId(chatId));
         viewModel.deleted.observe(this, deleted -> {
             if (deleted != null && deleted) {
                 finish();

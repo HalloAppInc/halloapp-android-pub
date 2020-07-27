@@ -19,29 +19,57 @@
             android:background="@color/window_background"
             android:elevation="@dimen/action_bar_elevation"
             android:gravity="center_vertical"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
             app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
 
             <LinearLayout
-                android:id="@+id/toolbar_text_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                android:background="?selectableItemBackground">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Toolbar.Title"/>
+                <LinearLayout
+                    android:id="@+id/toolbar_text_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackground"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="1dp">
 
-                <TextView
-                    android:id="@+id/subtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Toolbar.Subtitle"
-                    android:visibility="gone"/>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/avatar_person" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center_vertical"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp">
+
+                        <TextView
+                            android:id="@+id/title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Toolbar.Title.Chat"
+                            tools:text="Clark Chen"/>
+
+                        <TextView
+                            android:id="@+id/subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Chat"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
