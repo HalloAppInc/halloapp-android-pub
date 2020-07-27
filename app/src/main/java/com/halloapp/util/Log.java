@@ -122,6 +122,7 @@ public class Log {
         protected Void doInBackground(Void... voids) {
             String user = me.getUser();
             FirebaseCrashlytics.getInstance().setCustomKey("user", user);
+            FirebaseCrashlytics.getInstance().setUserId(user);
             return null;
         }
     }
