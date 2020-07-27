@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
@@ -165,11 +166,17 @@ public class RegistrationRequestActivity extends HalloActivity {
     }
 
     private void startRegistrationRequest() {
-        final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
-        if (TextUtils.isEmpty(name)) {
-            CenterToast.show(this, R.string.name_must_be_specified);
-            nameEditText.requestFocus();
-            return;
+        boolean reverify = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
+        final String name;
+        if (reverify) {
+            name = null;
+        } else {
+            name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
+            if (TextUtils.isEmpty(name)) {
+                CenterToast.show(this, R.string.name_must_be_specified);
+                nameEditText.requestFocus();
+                return;
+            }
         }
         if (!countryCodePicker.isValidFullNumber()) {
             CenterToast.show(this, R.string.invalid_phone_number);
@@ -201,7 +208,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             return registrationRequestResult;
         }
 
-        void requestRegistration(@NonNull String phone, @NonNull String name) {
+        void requestRegistration(@NonNull String phone, @Nullable String name) {
             new RegistrationRequestTask(this, phone, name).execute();
         }
     }
@@ -210,9 +217,9 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         final RegistrationRequestViewModel viewModel;
         final String phone;
-        final String name;
+        final @Nullable String name;
 
-        RegistrationRequestTask(@NonNull RegistrationRequestViewModel viewModel, @NonNull String phone, @NonNull String name) {
+        RegistrationRequestTask(@NonNull RegistrationRequestViewModel viewModel, @NonNull String phone, @Nullable String name) {
             this.viewModel = viewModel;
             this.phone = phone;
             this.name = name;
@@ -220,7 +227,9 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         @Override
         protected Registration.RegistrationRequestResult doInBackground(Void... voids) {
-            Me.getInstance(viewModel.getApplication()).saveName(name);
+            if (name != null) {
+                Me.getInstance(viewModel.getApplication()).saveName(name);
+            }
             return viewModel.registration.requestRegistration(phone);
         }
 
