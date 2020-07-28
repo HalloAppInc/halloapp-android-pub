@@ -1,5 +1,5 @@
 
-name: Master Push
+name: Main
 
 on:
   push:
