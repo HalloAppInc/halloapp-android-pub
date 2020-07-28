@@ -1,5 +1,6 @@
 package com.halloapp.ui.privacy;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -21,13 +22,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactsActivity;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -48,15 +52,14 @@ public class BlockListActivity extends HalloActivity {
     private View emptyContainer;
     private View progressContainer;
 
-    private PresenceLoader presenceLoader;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
             case REQUEST_CHOOSE_BLOCKED_CONTACT:
                 if (resultCode == RESULT_OK && data != null) {
-                    String selectedId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
-                    if (selectedId != null) {
-                        viewModel.blockContact(new UserId(selectedId), presenceLoader);
+                    Contact selectedContact = data.getParcelableExtra(ContactsActivity.RESULT_SELECTED_CONTACT);
+                    if (selectedContact != null) {
+                        blockContact(selectedContact);
                     }
                 }
                 break;
@@ -76,7 +79,6 @@ public class BlockListActivity extends HalloActivity {
             actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
         }
 
-        presenceLoader = PresenceLoader.getInstance();
         avatarLoader = AvatarLoader.getInstance(this);
         viewModel = new ViewModelProvider(this).get(BlockListViewModel.class);
 
@@ -100,7 +102,6 @@ public class BlockListActivity extends HalloActivity {
             }
         });
         viewModel.getBlockList().observe(this, this::setBlockedContacts);
-        viewModel.fetchBlockList();
     }
 
     private void setBlockedContacts(@Nullable List<Contact> contacts) {
@@ -131,6 +132,40 @@ public class BlockListActivity extends HalloActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void unblockContact(@NonNull Contact contact) {
+        if (contact.userId == null) {
+            Log.e("BlockListActivity/unblockContact tried to unblock a contact with null userId");
+            return;
+        }
+        final String name = contact.getDisplayName();
+        ProgressDialog unblockDialog = ProgressDialog.show(this, null, getString(R.string.unblocking_user_in_progress, name), true);
+        unblockDialog.show();
+        viewModel.unblockContact(contact.userId).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            unblockDialog.cancel();
+            CenterToast.show(this, getString(success ? R.string.unblocking_user_successful : R.string.unblocking_user_failed_check_internet, contact.getDisplayName()));
+        });
+    }
+
+    private void blockContact(@NonNull Contact contact) {
+        if (contact.userId == null) {
+            Log.e("BlockListActivity/blockContact tried to block a contact with null userId");
+            return;
+        }
+        final String name = contact.getDisplayName();
+        ProgressDialog blockDialog = ProgressDialog.show(this, null, getString(R.string.blocking_user_in_progress, name), true);
+        blockDialog.show();
+        viewModel.blockContact(contact.userId).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            blockDialog.cancel();
+            CenterToast.show(this, getString(success ? R.string.blocking_user_successful : R.string.blocking_user_failed_check_internet, name));
+        });
+    }
+
     private class ContactViewHolder extends RecyclerView.ViewHolder {
         final private ImageView avatarView;
         final private TextView nameView;
@@ -151,7 +186,7 @@ public class BlockListActivity extends HalloActivity {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(context.getString(R.string.unblock_user_confirmation, contact.getDisplayName()));
                 builder.setCancelable(true);
-                builder.setPositiveButton(R.string.unblock, (dialog, which) -> viewModel.unblockContact(contact.userId));
+                builder.setPositiveButton(R.string.unblock, (dialog, which) -> unblockContact(contact));
                 builder.setNegativeButton(R.string.cancel, null);
                 builder.show();
             });

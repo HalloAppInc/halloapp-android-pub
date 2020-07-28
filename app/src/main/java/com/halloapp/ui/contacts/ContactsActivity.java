@@ -56,7 +56,8 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final String EXTRA_SHOW_INVITE = "show_invite_option";
     private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
-    public static final String RESULT_SELECTED_ID = "selected_contact";
+    public static final String RESULT_SELECTED_ID = "selected_id";
+    public static final String RESULT_SELECTED_CONTACT = "selected_contact";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
@@ -443,6 +444,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             itemView.setOnClickListener(v -> {
                 Intent result = new Intent();
                 result.putExtra(RESULT_SELECTED_ID,  Preconditions.checkNotNull(contact.userId).rawId());
+                result.putExtra(RESULT_SELECTED_CONTACT, contact);
                 setResult(RESULT_OK, result);
                 finish();
             });

@@ -1,5 +1,7 @@
 package com.halloapp.contacts;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
 import android.text.TextUtils;
@@ -7,6 +9,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 
 import java.text.Collator;
@@ -14,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class Contact {
+public class Contact implements Parcelable {
 
     final long rowId;
     final long addressBookId;
@@ -88,5 +91,44 @@ public class Contact {
             }
         });
         return contacts;
+    }
+
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
+        public Contact createFromParcel(Parcel in) {
+            long rowId = in.readLong();
+            long addressBookId = in.readLong();
+            String addressBookName = in.readString();
+            String addressBookPhone = in.readString();
+            String halloName = in.readString();
+            String fallbackName = in.readString();
+            String normalizedPhone = in.readString();
+            String avatarId = in.readString();
+            UserId userId = in.readParcelable(UserId.class.getClassLoader());
+            boolean friend = in.readInt() == 1;
+            return new Contact(rowId, addressBookId, addressBookName, addressBookPhone, normalizedPhone, avatarId, userId, friend);
+        }
+
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(rowId);
+        dest.writeLong(addressBookId);
+        dest.writeString(addressBookName);
+        dest.writeString(addressBookPhone);
+        dest.writeString(halloName);
+        dest.writeString(fallbackName);
+        dest.writeString(normalizedPhone);
+        dest.writeString(avatarId);
+        dest.writeParcelable(userId, flags);
+        dest.writeInt(friend ? 1 : 0);
     }
 }
