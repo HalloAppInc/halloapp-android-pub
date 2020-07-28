@@ -4,6 +4,8 @@ name: Master Push
 on:
   push:
     branches: [ master, ci-test ]
+  pull_request:
+    types: [ synchronize ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
