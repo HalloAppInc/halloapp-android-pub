@@ -21,8 +21,8 @@ jobs:
 
     # GitHub servers currently come with only version 21 installed. See: https://github.com/actions/virtual-environments/issues/578#issuecomment-605886387
     # For other options, see https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
-    - name: Install NDK
-      run: echo "y" | sudo $ANDROID_HOME/tools/bin/sdkmanager --install "ndk;20.0.5594570"
+#    - name: Install NDK
+#      run: echo "y" | sudo $ANDROID_HOME/tools/bin/sdkmanager --install "ndk;20.0.5594570"
       
     - name: Assemble debug apk
       run: ./gradlew assembleDebug
