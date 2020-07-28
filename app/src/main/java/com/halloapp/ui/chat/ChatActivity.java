@@ -8,7 +8,9 @@ import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -153,10 +156,32 @@ public class ChatActivity extends HalloActivity {
 
         chatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
 
+        final ImageView sendButton = findViewById(R.id.send);
+
         editText = findViewById(R.id.entry);
         editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)
                 .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
                 .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)));
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s == null || TextUtils.isEmpty(s.toString())) {
+                    sendButton.clearColorFilter();
+                } else {
+                    sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+                }
+            }
+        });
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         replyNameView = findViewById(R.id.reply_name);
@@ -170,7 +195,7 @@ public class ChatActivity extends HalloActivity {
         final RecyclerView chatView = findViewById(R.id.chat);
         Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        findViewById(R.id.send).setOnClickListener(v -> sendMessage());
+        sendButton.setOnClickListener(v -> sendMessage());
         findViewById(R.id.media).setOnClickListener(v -> pickMedia());
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
