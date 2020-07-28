@@ -62,17 +62,6 @@ public class IncomingPostViewHolder extends PostViewHolder {
             postActionsSeparator.setVisibility(View.VISIBLE);
             footerSpacing.setVisibility(View.VISIBLE);
         }
-        updateMediaInsets();
-    }
-
-    private void updateMediaInsets() {
-        if (mediaPagerAdapter == null) {
-            return;
-        }
-        final int defaultMediaInset = commentsIndicator.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-        final boolean emptyText = TextUtils.isEmpty(post.text);
-        final boolean hasPager = post.media.size() > 1;
-        mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, (emptyText && !hasPager) ? 0 : defaultMediaInset);
     }
 }
 
