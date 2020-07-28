@@ -120,7 +120,7 @@ public class ChatMessageElement implements ExtensionElement {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, sessionSetupInfo);
                 chatMessage = readEncodedEntry(dec);
-                if (!plaintextChatMessage.equals(chatMessage)) {
+                if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
                 }
             } catch (GeneralSecurityException | ArrayIndexOutOfBoundsException e) {
