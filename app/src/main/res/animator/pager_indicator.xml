@@ -5,8 +5,8 @@
     <objectAnimator
         android:propertyName="alpha"
         android:valueType="floatType"
-        android:valueFrom="0.25"
-        android:valueTo="1.0"/>
+        android:valueFrom="0.2"
+        android:valueTo="0.7"/>
 
     <objectAnimator
         android:propertyName="scaleX"
