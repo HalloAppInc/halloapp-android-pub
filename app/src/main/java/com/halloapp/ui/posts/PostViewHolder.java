@@ -140,10 +140,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (!post.media.isEmpty()) {
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
+            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
             if (post.media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);
                 mediaPagerIndicator.setViewPager(mediaPagerView);
+                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
             } else {
+                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
                 mediaPagerIndicator.setVisibility(View.GONE);
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
