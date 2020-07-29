@@ -1,7 +1,6 @@
 package com.halloapp;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
@@ -47,7 +46,7 @@ public class HalloApp extends Application {
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ContentDb.getInstance(this).addObserver(MainContentDbObserver.getInstance(this));
-        ContactsDb.getInstance(this).addObserver(new ContactsDb.Observer() {
+        ContactsDb.getInstance().addObserver(new ContactsDb.Observer() {
 
             @Override
             public void onContactsChanged() {

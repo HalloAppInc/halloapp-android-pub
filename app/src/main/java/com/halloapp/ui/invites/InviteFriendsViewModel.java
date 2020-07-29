@@ -43,7 +43,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
             @Override
             protected List<Contact> compute() {
-                return Contact.sort(ContactsDb.getInstance(application).getAllUsers());
+                return Contact.sort(ContactsDb.getInstance().getAllUsers());
             }
         };
 

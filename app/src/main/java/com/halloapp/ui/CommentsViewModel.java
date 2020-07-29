@@ -111,7 +111,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
 
         lastSeenCommentRowId = new ComputableLiveData<Long>() {
             @Override
@@ -215,7 +215,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         protected Contact doInBackground(Void... voids) {
-            return ContactsDb.getInstance(application).getContact(userId);
+            return ContactsDb.getInstance().getContact(userId);
         }
 
         @Override

@@ -74,7 +74,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         contentDb = ContentDb.getInstance(application);
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
         this.replyPostId = replyPostId;
         this.replyPostMediaIndex = replyPostMediaIndex;
         if (uris != null) {
@@ -84,7 +84,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             chatName = new ComputableLiveData<String>() {
                 @Override
                 protected String compute() {
-                    return ContactsDb.getInstance(application).getContact(new UserId(chatId)).getDisplayName();
+                    return ContactsDb.getInstance().getContact(new UserId(chatId)).getDisplayName();
                 }
             };
         } else {

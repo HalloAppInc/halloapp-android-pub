@@ -122,14 +122,14 @@ public class ChatViewModel extends AndroidViewModel {
         contact = new ComputableLiveData<Contact>() {
             @Override
             protected Contact compute() {
-                return ContactsDb.getInstance(application).getContact(new UserId(chatId));
+                return ContactsDb.getInstance().getContact(new UserId(chatId));
             }
         };
 
         name = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return ContactsDb.getInstance(application).getContact(new UserId(chatId)).getDisplayName();
+                return ContactsDb.getInstance().getContact(new UserId(chatId)).getDisplayName();
             }
         };
 

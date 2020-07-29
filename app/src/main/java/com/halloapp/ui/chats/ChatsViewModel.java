@@ -94,7 +94,7 @@ public class ChatsViewModel extends AndroidViewModel {
     public ChatsViewModel(@NonNull Application application) {
         super(application);
 
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
 
         contentDb = ContentDb.getInstance(application);
@@ -111,7 +111,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);
                 }
-                final List<Contact> friends = ContactsDb.getInstance(application).getFriends();
+                final List<Contact> friends = ContactsDb.getInstance().getFriends();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
                 Collections.sort(friends, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
                 for (Contact friend : friends) {
@@ -126,7 +126,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name)) {
-                        chat.name = ContactsDb.getInstance(application).getContact(new UserId(chat.chatId)).getDisplayName();
+                        chat.name = ContactsDb.getInstance().getContact(new UserId(chat.chatId)).getDisplayName();
                     }
                 }
 

@@ -21,7 +21,7 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
     private final ContactsDb contactsDb;
 
     public ContactLoader(@NonNull Context context) {
-        contactsDb = ContactsDb.getInstance(context);
+        contactsDb = ContactsDb.getInstance();
     }
 
     @MainThread

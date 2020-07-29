@@ -96,7 +96,7 @@ public class Notifications {
         this.context = context.getApplicationContext();
         this.preferences = Preferences.getInstance();
         this.avatarLoader = AvatarLoader.getInstance(context);
-        this.contactsDb = ContactsDb.getInstance(context);
+        this.contactsDb = ContactsDb.getInstance();
     }
 
     public void init() {
@@ -361,7 +361,7 @@ public class Notifications {
         }
         final List<String> names = new ArrayList<>();
         for (UserId userId : userIds) {
-            final Contact contact = ContactsDb.getInstance(context).getContact(userId);
+            final Contact contact = ContactsDb.getInstance().getContact(userId);
             names.add(contact.getDisplayName());
         }
         final String text;
@@ -393,7 +393,7 @@ public class Notifications {
         }
         final List<String> names = new ArrayList<>();
         for (UserId userId : userIds) {
-            final Contact contact = ContactsDb.getInstance(context).getContact(userId);
+            final Contact contact = ContactsDb.getInstance().getContact(userId);
             names.add(contact.getDisplayName());
         }
         return postIds.size() == 1 ? context.getString(R.string.new_comments_notification, ListFormatter.format(context, names)) :

@@ -77,7 +77,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
 
         seenByList = new ComputableLiveData<List<SeenByContact>>() {

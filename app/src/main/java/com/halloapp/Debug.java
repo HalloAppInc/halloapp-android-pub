@@ -225,7 +225,7 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ContactsDb.getInstance(application).deleteDb();
+            ContactsDb.getInstance().deleteDb();
             restart(application);
             return null;
         }

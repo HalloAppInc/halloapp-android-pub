@@ -59,7 +59,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             BgWorkers.getInstance(),
                             ContentDb.getInstance(context),
                             Connection.getInstance(),
-                            ContactsDb.getInstance(context),
+                            ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
                             AvatarLoader.getInstance(context),
                             Notifications.getInstance(context),

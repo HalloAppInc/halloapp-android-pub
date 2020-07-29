@@ -26,7 +26,7 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
 
     public TextContentLoader(@NonNull Context context) {
         me = Me.getInstance();
-        contactsDb = ContactsDb.getInstance(context);
+        contactsDb = ContactsDb.getInstance();
     }
 
     @MainThread

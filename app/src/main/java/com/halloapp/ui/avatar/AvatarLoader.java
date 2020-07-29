@@ -107,7 +107,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         FileStore fileStore = FileStore.getInstance(context);
         File avatarFile = fileStore.getAvatarFile(userId.rawId());
 
-        ContactsDb contactsDb = ContactsDb.getInstance(context);
+        ContactsDb contactsDb = ContactsDb.getInstance();
         ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(userId);
 
         if (contactAvatarInfo == null) {
@@ -181,7 +181,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportMyAvatarChanged(String avatarId) {
-        ContactsDb contactsDb = ContactsDb.getInstance(context);
+        ContactsDb contactsDb = ContactsDb.getInstance();
         ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;
         contactAvatarInfo.avatarCheckTimestamp = 0;
@@ -206,10 +206,10 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             }
         }
 
-        ContactsDb.getInstance(context).updateAvatarId(userId, avatarId);
+        ContactsDb.getInstance().updateAvatarId(userId, avatarId);
         cache.remove(userId.rawId());
         try {
-            ContactsDb.getInstance(context).updateContactAvatarInfo(new ContactsDb.ContactAvatarInfo(userId, 0, avatarId)).get();
+            ContactsDb.getInstance().updateContactAvatarInfo(new ContactsDb.ContactAvatarInfo(userId, 0, avatarId)).get();
         } catch (ExecutionException | InterruptedException e) {
             Log.e("failed to update avatar", e);
         }

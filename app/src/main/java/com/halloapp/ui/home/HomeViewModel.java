@@ -125,7 +125,7 @@ public class HomeViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
-        contactsDb = ContactsDb.getInstance(getApplication());
+        contactsDb = ContactsDb.getInstance();
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();

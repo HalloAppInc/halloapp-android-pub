@@ -235,7 +235,7 @@ public class CommentsActivity extends HalloActivity {
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
-        ContactsDb.getInstance(this).addObserver(contactsObserver);
+        ContactsDb.getInstance().addObserver(contactsObserver);
 
         final String replyUser;
         final String replyCommentId;
@@ -295,7 +295,7 @@ public class CommentsActivity extends HalloActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d("CommentsActivity.onDestroy");
-        ContactsDb.getInstance(this).removeObserver(contactsObserver);
+        ContactsDb.getInstance().removeObserver(contactsObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
     }

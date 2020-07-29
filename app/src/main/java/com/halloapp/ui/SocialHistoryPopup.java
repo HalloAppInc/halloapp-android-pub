@@ -106,11 +106,11 @@ public class SocialHistoryPopup {
 
         popupWindow.setContentView(contentView);
 
-        ContactsDb.getInstance(context).addObserver(contactsObserver);
+        ContactsDb.getInstance().addObserver(contactsObserver);
     }
 
     public void destroy() {
-        ContactsDb.getInstance(context).removeObserver(contactsObserver);
+        ContactsDb.getInstance().removeObserver(contactsObserver);
     }
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
@@ -155,13 +155,13 @@ public class SocialHistoryPopup {
         wm.updateViewLayout(rootView, layoutParams);
 
         if (adapter.contactsInvalidated) {
-            new RefreshContactsTask(ContactsDb.getInstance(context), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new RefreshContactsTask(ContactsDb.getInstance(), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
     private void handleContactsChanged() {
         if (isShowing()) {
-            new RefreshContactsTask(ContactsDb.getInstance(context), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new RefreshContactsTask(ContactsDb.getInstance(), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             adapter.invalidateContacts();
         }

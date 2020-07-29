@@ -42,7 +42,7 @@ public class BlockListViewModel extends AndroidViewModel {
         super(application);
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         privacyListApi = new PrivacyListApi(connection);
         blockList = new MutableLiveData<>();

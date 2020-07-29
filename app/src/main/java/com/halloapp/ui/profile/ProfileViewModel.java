@@ -108,7 +108,7 @@ public class ProfileViewModel extends AndroidViewModel {
         me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();

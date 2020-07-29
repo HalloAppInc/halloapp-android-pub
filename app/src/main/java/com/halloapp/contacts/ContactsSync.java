@@ -130,7 +130,7 @@ public class ContactsSync {
         Log.i("ContactsSync.performContactSync");
         final ContactsDb.AddressBookSyncResult syncResult;
         try {
-            syncResult = ContactsDb.getInstance(context).syncAddressBook().get();
+            syncResult = ContactsDb.getInstance().syncAddressBook().get();
         } catch (ExecutionException | InterruptedException e) {
             Log.e("ContactsSync.performContactSync", e);
             return ListenableWorker.Result.failure();
@@ -175,7 +175,7 @@ public class ContactsSync {
             Log.e("ContactsSync.performHashContactSync: failed to get digest for sha256", e);
             return contactsToSync;
         }
-        List<Contact> allContacts = ContactsDb.getInstance(context).getAllContacts();
+        List<Contact> allContacts = ContactsDb.getInstance().getAllContacts();
         for (Contact contact : allContacts) {
             String normalizedPhone = contact.normalizedPhone;
             if (normalizedPhone != null) {
@@ -220,7 +220,7 @@ public class ContactsSync {
 
     @WorkerThread
     private ListenableWorker.Result performFullContactSync() {
-        return updateContactsOnServer(ContactsDb.getInstance(context).getAllContacts(), true);
+        return updateContactsOnServer(ContactsDb.getInstance().getAllContacts(), true);
     }
 
     @WorkerThread
@@ -304,7 +304,7 @@ public class ContactsSync {
 
         if (!updatedContacts.isEmpty()) {
             try {
-                ContactsDb.getInstance(context).updateContactsServerData(updatedContacts).get();
+                ContactsDb.getInstance().updateContactsServerData(updatedContacts).get();
                 // TODO(ds): remove
                 ContentDb.getInstance(context).migrateUserIds(updatedContacts);
             } catch (ExecutionException | InterruptedException e) {

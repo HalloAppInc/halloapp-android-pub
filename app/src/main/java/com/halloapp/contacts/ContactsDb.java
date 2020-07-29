@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
@@ -34,7 +35,7 @@ public class ContactsDb {
 
     private static ContactsDb instance;
 
-    private final Context context;
+    private final AppContext appContext;
     private final DatabaseHelper databaseHelper;
     private final ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
     private final Set<Observer> observers = new HashSet<>();
@@ -44,20 +45,20 @@ public class ContactsDb {
         void onContactsReset();
     }
 
-    public static ContactsDb getInstance(final @NonNull Context context) {
+    public static ContactsDb getInstance() {
         if (instance == null) {
             synchronized(ContactsDb.class) {
                 if (instance == null) {
-                    instance = new ContactsDb(context);
+                    instance = new ContactsDb(AppContext.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private ContactsDb(final @NonNull Context context) {
-        this.context = context.getApplicationContext();
-        this.databaseHelper = new DatabaseHelper(context.getApplicationContext());
+    private ContactsDb(final @NonNull AppContext appContext) {
+        this.appContext = appContext;
+        this.databaseHelper = new DatabaseHelper(appContext.get().getApplicationContext());
     }
 
     public void addObserver(Observer observer) {
@@ -74,7 +75,7 @@ public class ContactsDb {
 
     Future<AddressBookSyncResult> syncAddressBook() {
         return databaseWriteExecutor.submit(() -> {
-            final Collection<AddressBookContacts.AddressBookContact> addressBookContacts = AddressBookContacts.getAddressBookContacts(context);
+            final Collection<AddressBookContacts.AddressBookContact> addressBookContacts = AddressBookContacts.getAddressBookContacts(appContext.get());
             if (addressBookContacts == null) {
                 return null;
             }
@@ -313,10 +314,10 @@ public class ContactsDb {
                 contact = new Contact(userId, null, halloName);
             } else {
                 contact = new Contact(userId, null, null);
-                contact.fallbackName = context.getString(R.string.unknown_contact);
+                contact.fallbackName = appContext.get().getString(R.string.unknown_contact);
             }
         } else if (TextUtils.isEmpty(contact.addressBookName) && TextUtils.isEmpty(contact.addressBookPhone) && TextUtils.isEmpty(contact.halloName)) {
-            contact.fallbackName = context.getString(R.string.unknown_contact);
+            contact.fallbackName = appContext.get().getString(R.string.unknown_contact);
         }
         return contact;
     }
@@ -932,7 +933,7 @@ public class ContactsDb {
 
         private void deleteDb() {
             close();
-            final File dbFile = context.getDatabasePath(getDatabaseName());
+            final File dbFile = appContext.get().getDatabasePath(getDatabaseName());
             if (!dbFile.delete()) {
                 Log.e("ContactsDb: cannot delete " + dbFile.getAbsolutePath());
             }

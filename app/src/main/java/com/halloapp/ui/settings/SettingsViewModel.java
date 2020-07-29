@@ -44,7 +44,7 @@ public class SettingsViewModel extends AndroidViewModel {
         me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
-        contactsDb = ContactsDb.getInstance(application);
+        contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
 
         invitesApi = new InvitesApi(connection);

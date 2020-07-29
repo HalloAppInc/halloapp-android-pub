@@ -42,7 +42,6 @@ import com.halloapp.widget.DrawDelegateView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class PostsFragment extends HalloFragment {
 
@@ -87,7 +86,7 @@ public class PostsFragment extends HalloFragment {
         seenByLoader = new SeenByLoader(requireContext());
         avatarLoader = AvatarLoader.getInstance(getContext());
         textContentLoader = new TextContentLoader(requireContext());
-        ContactsDb.getInstance(requireContext()).addObserver(contactsObserver);
+        ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
     }
@@ -99,7 +98,7 @@ public class PostsFragment extends HalloFragment {
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();
-        ContactsDb.getInstance(requireContext()).removeObserver(contactsObserver);
+        ContactsDb.getInstance().removeObserver(contactsObserver);
     }
 
     @CallSuper

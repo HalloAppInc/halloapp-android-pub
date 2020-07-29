@@ -43,8 +43,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
-import java.util.Stack;
-
 public class PostContentActivity extends HalloActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
@@ -202,7 +200,7 @@ public class PostContentActivity extends HalloActivity {
         seenByLoader = new SeenByLoader(this);
         avatarLoader = AvatarLoader.getInstance(this);
         textContentLoader = new TextContentLoader(this);
-        ContactsDb.getInstance(this).addObserver(contactsObserver);
+        ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> updatePost());
 
@@ -218,7 +216,7 @@ public class PostContentActivity extends HalloActivity {
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();
-        ContactsDb.getInstance(this).removeObserver(contactsObserver);
+        ContactsDb.getInstance().removeObserver(contactsObserver);
     }
 
     private void showPost(@Nullable Post post) {

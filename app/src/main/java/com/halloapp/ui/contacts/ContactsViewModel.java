@@ -22,7 +22,7 @@ public class ContactsViewModel extends AndroidViewModel {
 
             @Override
             protected List<Contact> compute() {
-                return Contact.sort(ContactsDb.getInstance(application).getUsers());
+                return Contact.sort(ContactsDb.getInstance().getUsers());
             }
         };
     }

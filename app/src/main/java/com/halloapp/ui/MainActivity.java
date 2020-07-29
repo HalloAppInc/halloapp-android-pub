@@ -144,7 +144,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             processIntent(getIntent());
         }
 
-        ContactsDb.getInstance(this).addObserver(contactsObserver);
+        ContactsDb.getInstance().addObserver(contactsObserver);
     }
 
     private void updateFab(@IdRes int id) {
@@ -221,7 +221,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onDestroy() {
         super.onDestroy();
         Log.i("MainActivity.onDestroy");
-        ContactsDb.getInstance(this).removeObserver(contactsObserver);
+        ContactsDb.getInstance().removeObserver(contactsObserver);
     }
 
     @Override
