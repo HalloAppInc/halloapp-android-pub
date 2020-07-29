@@ -14,6 +14,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceLoader;
@@ -107,15 +108,8 @@ public class BlockListViewModel extends AndroidViewModel {
 
     @MainThread
     public LiveData<Boolean> unblockContact(@NonNull UserId userId) {
-        MutableLiveData<Boolean> unblockResult = new MutableLiveData<>();
-        long startTime = System.currentTimeMillis();
+        MutableLiveData<Boolean> unblockResult = new DelayedProgressLiveData<>();
         privacyListApi.unblockUsers(Collections.singleton(userId)).onResponse(result -> {
-            long dT = System.currentTimeMillis() - startTime;
-            if (dT < Constants.MINIMUM_PROGRESS_DIALOG_TIME_MILLIS) {
-                try {
-                    Thread.sleep(Constants.MINIMUM_PROGRESS_DIALOG_TIME_MILLIS - dT);
-                } catch (InterruptedException ignored) { }
-            }
             if (result == null || !result) {
                 unblockResult.postValue(false);
                 return;
@@ -144,15 +138,8 @@ public class BlockListViewModel extends AndroidViewModel {
 
     @MainThread
     public LiveData<Boolean> blockContact(@NonNull UserId userId) {
-        MutableLiveData<Boolean> blockResult = new MutableLiveData<>();
-        long startTime = System.currentTimeMillis();
+        MutableLiveData<Boolean> blockResult = new DelayedProgressLiveData<>();
         privacyListApi.blockUsers(Collections.singleton(userId)).onResponse(result -> {
-            long dT = System.currentTimeMillis() - startTime;
-            if (dT < Constants.MINIMUM_PROGRESS_DIALOG_TIME_MILLIS) {
-                try {
-                    Thread.sleep(Constants.MINIMUM_PROGRESS_DIALOG_TIME_MILLIS - dT);
-                } catch (InterruptedException ignored) { }
-            }
             if (result == null || !result) {
                 blockResult.postValue(false);
                 return;
