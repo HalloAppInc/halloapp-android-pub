@@ -78,6 +78,19 @@ public class BlockListManager {
     }
 
     @WorkerThread
+    public void ensureInitialBlockListFetch() {
+        if (preferences.getLastBlockListSyncTime() != 0) {
+            return;
+        }
+        fetchBlockList();
+    }
+
+    @WorkerThread
+    public void onLoginFailed() {
+        preferences.setLastBlockListSyncTime(0);
+    }
+
+    @WorkerThread
     @Nullable
     public List<UserId> getBlockList() {
         if (preferences.getLastBlockListSyncTime() == 0) {

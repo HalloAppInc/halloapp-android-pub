@@ -14,6 +14,7 @@ import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.groups.GroupsSync;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -46,6 +47,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private Notifications notifications;
     private ForegroundChat foregroundChat;
     private PresenceLoader presenceLoader;
+    private BlockListManager blockListManager;
     private ForegroundObserver foregroundObserver;
     private EncryptedSessionManager encryptedSessionManager;
 
@@ -65,6 +67,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),
                             PresenceLoader.getInstance(),
+                            BlockListManager.getInstance(),
                             ForegroundObserver.getInstance(),
                             EncryptedSessionManager.getInstance());
                 }
@@ -86,6 +89,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull Notifications notifications,
             @NonNull ForegroundChat foregroundChat,
             @NonNull PresenceLoader presenceLoader,
+            @NonNull BlockListManager blockListManager,
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull EncryptedSessionManager encryptedSessionManager) {
         this.context = context.getApplicationContext();
@@ -100,6 +104,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.notifications = notifications;
         this.foregroundChat = foregroundChat;
         this.presenceLoader = presenceLoader;
+        this.blockListManager = blockListManager;
         this.foregroundObserver = foregroundObserver;
         this.encryptedSessionManager = encryptedSessionManager;
     }
@@ -113,6 +118,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 Log.e("Failed to ensure keys uploaded", e);
             }
         });
+        bgWorkers.execute(blockListManager::ensureInitialBlockListFetch);
 
         connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
@@ -130,6 +136,7 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onLoginFailed() {
         me.resetRegistration();
+        blockListManager.onLoginFailed();
         if (foregroundObserver.isInForeground()) {
             RegistrationRequestActivity.reVerify(context);
         } else {
