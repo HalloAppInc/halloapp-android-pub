@@ -2,7 +2,6 @@ package com.halloapp.xmpp;
 
 import android.content.Context;
 import android.os.HandlerThread;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
@@ -681,7 +679,7 @@ public class Connection {
         return iqResponse;
     }
 
-    public void sendRerequest(final @NonNull Jid originalSender, final @NonNull String messageId) {
+    public void sendRerequest(final String encodedIdentityKey, final @NonNull Jid originalSender, final @NonNull String messageId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send message, no connection");
@@ -689,7 +687,6 @@ public class Connection {
             }
             try {
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(originalSender);
-                String encodedIdentityKey = Base64.encodeToString(EncryptedSessionManager.getInstance().getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
                 xmppMessage.addExtension(new RerequestElement(messageId, encodedIdentityKey));
                 Log.i("connection: sending rerequest for " + messageId + " to " + originalSender);
                 connection.sendStanza(xmppMessage);

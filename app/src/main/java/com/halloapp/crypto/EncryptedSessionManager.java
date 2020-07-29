@@ -1,6 +1,7 @@
 package com.halloapp.crypto;
 
 import android.content.Context;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
+
+import org.jxmpp.jid.Jid;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -97,6 +100,11 @@ public class EncryptedSessionManager {
         } catch (InterruptedException e) {
             throw new GeneralSecurityException("Interrupted during decryption", e);
         }
+    }
+
+    public void sendRerequest(final @NonNull Jid originalSender, final @NonNull String messageId) {
+        String encodedIdentityKey = Base64.encodeToString(getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
+        connection.sendRerequest(encodedIdentityKey, originalSender, messageId);
     }
 
     public void sendMessage(final @NonNull Message message) {

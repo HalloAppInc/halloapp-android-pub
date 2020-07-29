@@ -130,7 +130,7 @@ public class ChatMessageElement implements ExtensionElement {
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
-                    Connection.getInstance().sendRerequest(from, id);
+                    EncryptedSessionManager.getInstance().sendRerequest(from, id);
                 }
             }
         }
