@@ -795,6 +795,20 @@ public class Connection {
         });
     }
 
+    private void processMentions(@NonNull Collection<Mention> mentions) {
+        for (Mention mention : mentions) {
+            processMention(mention);
+        }
+    }
+
+    private void processMention(@NonNull Mention mention) {
+        if (mention.userId != null) {
+            if (isMe(mention.userId.rawId())) {
+                mention.userId = UserId.ME;
+            }
+        }
+    }
+
     private boolean processFeedPubSubItems(@NonNull UserId feedUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getEntries(items);
@@ -817,8 +831,10 @@ public class Connection {
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
-                    for (com.halloapp.proto.Mention mention : entry.mentions) {
-                        post.mentions.add(Mention.parseFromProto(mention));
+                    for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
+                        Mention mention = Mention.parseFromProto(mentionProto);
+                        processMention(mention);
+                        post.mentions.add(mention);
                     }
                     posts.add(post);
                 } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
@@ -833,8 +849,10 @@ public class Connection {
                             false,
                             entry.text
                     );
-                    for (com.halloapp.proto.Mention mention : entry.mentions) {
-                        comment.mentions.add(Mention.parseFromProto(mention));
+                    for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
+                        Mention mention = Mention.parseFromProto(mentionProto);
+                        processMention(mention);
+                        comment.mentions.add(mention);
                     }
                     comments.add(comment);
                 }
@@ -1000,7 +1018,9 @@ public class Connection {
                     final ChatMessageElement chatMessage = packet.getExtension(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE);
                     if (chatMessage != null) {
                         Log.i("connection: got chat message " + msg);
-                        connectionObservers.notifyIncomingMessageReceived(chatMessage.getMessage(packet.getFrom(), packet.getStanzaId()));
+                        Message parsedMessage = chatMessage.getMessage(packet.getFrom(), packet.getStanzaId());
+                        processMentions(parsedMessage.mentions);
+                        connectionObservers.notifyIncomingMessageReceived(parsedMessage);
                         handled = true;
                     }
                 }

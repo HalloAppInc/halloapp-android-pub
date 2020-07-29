@@ -8,7 +8,7 @@ import com.halloapp.xmpp.Connection;
 public class Mention {
 
     public static Mention parseFromProto(com.halloapp.proto.Mention protoMention) {
-        return new Mention(protoMention.getIndex(), Connection.getInstance().getUserId(protoMention.getUserId()), protoMention.getName());
+        return new Mention(protoMention.getIndex(), new UserId(protoMention.getUserId()), protoMention.getName());
     }
 
     public static com.halloapp.proto.Mention toProto(Mention mention) {
