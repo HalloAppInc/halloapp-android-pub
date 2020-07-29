@@ -36,7 +36,6 @@ public class ProfileViewModel extends AndroidViewModel {
 
     private final UserId userId;
 
-    private final ComputableLiveData<String> phoneNumberLiveData;
     private final ComputableLiveData<String> phoneNameLiveData;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
@@ -113,16 +112,6 @@ public class ProfileViewModel extends AndroidViewModel {
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
-        phoneNumberLiveData = new ComputableLiveData<String>() {
-            @Override
-            protected String compute() {
-                if (userId.isMe()) {
-                    return me.getPhone();
-                }
-                return null;
-            }
-        };
-        phoneNumberLiveData.invalidate();
         phoneNameLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
@@ -135,10 +124,6 @@ public class ProfileViewModel extends AndroidViewModel {
             }
         };
         phoneNameLiveData.invalidate();
-    }
-
-    public LiveData<String> getPhone() {
-        return phoneNumberLiveData.getLiveData();
     }
 
     public LiveData<String> getName() {

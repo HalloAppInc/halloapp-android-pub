@@ -24,9 +24,9 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 public class ProfileFragment extends PostsFragment {
@@ -87,15 +87,6 @@ public class ProfileFragment extends PostsFragment {
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
-        final TextView phoneView = headerView.findViewById(R.id.phone);
-        viewModel.getPhone().observe(getViewLifecycleOwner(), phone -> {
-            if (phone == null) {
-                phoneView.setVisibility(View.GONE);
-            } else {
-                phoneView.setVisibility(View.VISIBLE);
-                phoneView.setText(StringUtils.formatPhoneNumber(phone));
-            }
-        });
         viewModel.getName().observe(getViewLifecycleOwner(), name -> {
             nameView.setText(name);
             if (!profileUserId.isMe()) {
@@ -106,8 +97,12 @@ public class ProfileFragment extends PostsFragment {
         avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
 
-        if (!profileUserId.isMe()) {
-            phoneView.setVisibility(View.GONE);
+        if (profileUserId.isMe()) {
+            final View.OnClickListener editProfileClickListener = v -> {
+                openProfileEditor();;
+            };
+            avatarView.setOnClickListener(editProfileClickListener);
+            nameView.setOnClickListener(editProfileClickListener);
         }
 
         adapter.addHeader(headerView);
@@ -115,6 +110,10 @@ public class ProfileFragment extends PostsFragment {
         postsView.setAdapter(adapter);
 
         return root;
+    }
+
+    private void openProfileEditor() {
+        startActivity(new Intent(requireContext(), SettingsProfile.class));
     }
 
     @Override
