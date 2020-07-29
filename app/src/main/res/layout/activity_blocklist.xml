@@ -4,12 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/block_list_recyclerview"
         android:layout_width="match_parent"
@@ -30,22 +24,5 @@
             android:gravity="center"/>
 
     </LinearLayout>
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/progress"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_gravity="center"
-            android:indeterminateOnly="true"
-            android:indeterminate="true"/>
-
-    </FrameLayout>
 
 </FrameLayout>

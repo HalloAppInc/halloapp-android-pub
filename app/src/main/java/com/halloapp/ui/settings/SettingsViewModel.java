@@ -12,6 +12,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -29,14 +30,19 @@ public class SettingsViewModel extends AndroidViewModel {
     private Connection connection;
     private ContactsDb contactsDb;
     private Preferences preferences;
+    private BlockListManager blockListManager;
 
     private final InvitesApi invitesApi;
     private final PrivacyListApi privacyListApi;
 
     private ComputableLiveData<String> phoneNumberLiveData;
-    private final MutableLiveData<List<UserId>> blockList;
     private final MutableLiveData<FeedPrivacy> feedPrivacyLiveData;
     private final MutableLiveData<Integer> inviteCountLiveData;
+    private ComputableLiveData<List<UserId>> blockListLiveData;
+
+    private final BlockListManager.Observer blockListObserver = () -> {
+        blockListLiveData.invalidate();
+    };
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
@@ -46,11 +52,11 @@ public class SettingsViewModel extends AndroidViewModel {
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
+        blockListManager = BlockListManager.getInstance();
 
         invitesApi = new InvitesApi(connection);
         privacyListApi = new PrivacyListApi(connection);
 
-        blockList = new MutableLiveData<>();
         feedPrivacyLiveData = new MutableLiveData<>();
         inviteCountLiveData = new MutableLiveData<>();
         phoneNumberLiveData = new ComputableLiveData<String>() {
@@ -59,6 +65,13 @@ public class SettingsViewModel extends AndroidViewModel {
                 return me.getPhone();
             }
         };
+        blockListLiveData = new ComputableLiveData<List<UserId>>() {
+            @Override
+            protected List<UserId> compute() {
+                return blockListManager.getBlockList();
+            }
+        };
+        blockListManager.addObserver(blockListObserver);
         bgWorkers.execute(() -> me.getName());
         refresh();
     }
@@ -67,7 +80,6 @@ public class SettingsViewModel extends AndroidViewModel {
     public void refresh() {
         phoneNumberLiveData.invalidate();
         fetchFeedPrivacy();
-        fetchBlockList();
         fetchInvitesCount();
     }
 
@@ -107,13 +119,6 @@ public class SettingsViewModel extends AndroidViewModel {
         return feedPrivacyLiveData;
     }
 
-    private void fetchBlockList() {
-        bgWorkers.execute(() -> {
-            List<UserId> blockedUserIds = contactsDb.getBlockList();
-            blockList.postValue(blockedUserIds);
-        });
-    }
-
     public LiveData<String> getPhone() {
         return phoneNumberLiveData.getLiveData();
     }
@@ -123,10 +128,15 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<UserId>> getBlockList() {
-        return blockList;
+        return blockListLiveData.getLiveData();
     }
 
     public LiveData<Integer> getInviteCount() {
         return inviteCountLiveData;
+    }
+
+    @Override
+    protected void onCleared() {
+        blockListManager.removeObserver(blockListObserver);
     }
 }

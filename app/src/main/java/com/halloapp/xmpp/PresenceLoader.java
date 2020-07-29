@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.ForegroundChat;
 import com.halloapp.id.UserId;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PresenceLoader {
@@ -16,21 +18,31 @@ public class PresenceLoader {
     private static PresenceLoader instance;
 
     private final Connection connection;
+    private final BlockListManager blockListManager;
     private final Map<UserId, MutableLiveData<PresenceState>> map = new HashMap<>();
 
     public static PresenceLoader getInstance() {
         if (instance == null) {
             synchronized (PresenceLoader.class) {
                 if (instance == null) {
-                    instance = new PresenceLoader(Connection.getInstance());
+                    instance = new PresenceLoader(Connection.getInstance(), BlockListManager.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private PresenceLoader(Connection connection) {
+    private PresenceLoader(Connection connection, BlockListManager blockListManager) {
         this.connection = connection;
+        this.blockListManager = blockListManager;
+        this.blockListManager.addObserver(() -> {
+            List<UserId> blockList = blockListManager.getBlockList();
+            if (blockList != null) {
+                for (UserId blockedId : blockList) {
+                    reportBlocked(blockedId);
+                }
+            }
+        });
     }
 
     public LiveData<PresenceState> getLastSeenLiveData(UserId userId) {

@@ -4,133 +4,81 @@ import android.app.Application;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.halloapp.Constants;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
-import com.halloapp.util.BgWorkers;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.DelayedProgressLiveData;
-import com.halloapp.util.Log;
-import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.PresenceLoader;
-import com.halloapp.xmpp.privacy.PrivacyListApi;
+import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 public class BlockListViewModel extends AndroidViewModel {
 
-    private final MutableLiveData<List<Contact>> blockList;
-    private final MutableLiveData<Boolean> inProgress;
+    private ComputableLiveData<List<Contact>> blockListLiveData;
 
-    private final BgWorkers bgWorkers;
-    private final Connection connection;
     private final ContactsDb contactsDb;
-    private final PrivacyListApi privacyListApi;
-    private final PresenceLoader presenceLoader;
+    private final BlockListManager blockListManager;
+
+    private final BlockListManager.Observer blockListObserver = () -> {
+        blockListLiveData.invalidate();
+    };
 
     public BlockListViewModel(@NonNull Application application) {
         super(application);
-        bgWorkers = BgWorkers.getInstance();
-        connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
-        presenceLoader = PresenceLoader.getInstance();
-        privacyListApi = new PrivacyListApi(connection);
-        blockList = new MutableLiveData<>();
-        inProgress = new MutableLiveData<>();
+        blockListManager = BlockListManager.getInstance();
 
-        loadBlockList();
-    }
-
-    public LiveData<Boolean> getProgressLiveData() {
-        return inProgress;
-    }
-
-    private boolean fetchInProgress;
-
-    @MainThread
-    private void loadBlockList() {
-        if (fetchInProgress) {
-            return;
-        }
-        inProgress.setValue(true);
-        bgWorkers.execute(() -> {
-            List<UserId> deviceBlockList = contactsDb.getBlockList();
-            inProgress.postValue(false);
-            updateBlockedIds(deviceBlockList);
-            fetchBlockList();
-        });
-    }
-
-    @MainThread
-    private void fetchBlockList() {
-        if (fetchInProgress) {
-            return;
-        }
-        fetchInProgress = true;
-        privacyListApi.getBlockList().onResponse(ids -> {
-            if (ids == null) {
-                return;
+        blockListLiveData = new ComputableLiveData<List<Contact>>() {
+            @Override
+            protected List<Contact> compute() {
+                List<UserId> blockedIds = blockListManager.getBlockList();
+                return convertBlockedIdsToContacts(blockedIds);
             }
-            contactsDb.setBlockList(ids);
-            updateBlockedIds(ids);
-            fetchInProgress = false;
-        }).onError(e -> {
-            fetchInProgress = false;
-            Log.e("BlockListViewModel failed to fetch block list", e);
-        });
+        };
+
+        blockListManager.addObserver(blockListObserver);
     }
 
     @WorkerThread
-    private void updateBlockedIds(@NonNull List<UserId> blockedIds) {
+    @Nullable
+    private List<Contact> convertBlockedIdsToContacts(@Nullable List<UserId> blockedIds) {
+        if (blockedIds == null) {
+            return null;
+        }
         Set<UserId> idSet = new HashSet<>(blockedIds);
         List<Contact> blockedContacts = new ArrayList<>();
         for (UserId id : idSet) {
             blockedContacts.add(contactsDb.getContact(id));
         }
         Contact.sort(blockedContacts);
-        blockList.postValue(blockedContacts);
+        return blockedContacts;
     }
 
     @NonNull
     public LiveData<List<Contact>> getBlockList() {
-        return blockList;
+        return blockListLiveData.getLiveData()  ;
     }
 
     @MainThread
     public LiveData<Boolean> unblockContact(@NonNull UserId userId) {
         MutableLiveData<Boolean> unblockResult = new DelayedProgressLiveData<>();
-        privacyListApi.unblockUsers(Collections.singleton(userId)).onResponse(result -> {
+        blockListManager.unblockContact(userId).onResponse(result -> {
             if (result == null || !result) {
                 unblockResult.postValue(false);
-                return;
+            } else {
+                unblockResult.postValue(true);
             }
-            List<Contact> currentList = blockList.getValue();
-            if (currentList != null) {
-                currentList = new ArrayList<>(currentList);
-                ListIterator<Contact> listIterator = currentList.listIterator();
-                while (listIterator.hasNext()) {
-                    Contact contact = listIterator.next();
-                    if (userId.equals(contact.userId)) {
-                        listIterator.remove();
-                        break;
-                    }
-                }
-                blockList.postValue(currentList);
-            }
-            fetchBlockList();
-            unblockResult.postValue(result);
-        }).onError(exception -> {
-            fetchBlockList();
+        }).onError(e -> {
             unblockResult.postValue(false);
         });
         return unblockResult;
@@ -139,26 +87,20 @@ public class BlockListViewModel extends AndroidViewModel {
     @MainThread
     public LiveData<Boolean> blockContact(@NonNull UserId userId) {
         MutableLiveData<Boolean> blockResult = new DelayedProgressLiveData<>();
-        privacyListApi.blockUsers(Collections.singleton(userId)).onResponse(result -> {
+        blockListManager.blockContact(userId).onResponse(result -> {
             if (result == null || !result) {
                 blockResult.postValue(false);
-                return;
+            } else {
+                blockResult.postValue(true);
             }
-            List<Contact> currentList = blockList.getValue();
-            if (currentList != null) {
-                currentList = new ArrayList<>(currentList);
-                currentList.add(contactsDb.getContact(userId));
-                Contact.sort(currentList);
-                blockList.postValue(currentList);
-            }
-            fetchBlockList();
-            presenceLoader.reportBlocked(userId);
-            blockResult.postValue(true);
-        }).onError(exception -> {
-            fetchBlockList();
+        }).onError(e -> {
             blockResult.postValue(false);
         });
         return blockResult;
     }
 
+    @Override
+    protected void onCleared() {
+        blockListManager.removeObserver(blockListObserver);
+    }
 }

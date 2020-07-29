@@ -583,6 +583,19 @@ public class ContactsDb {
         db.endTransaction();
     }
 
+    @WorkerThread
+    public void addUserToBlockList(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BlocklistTable.COLUMN_USER_ID, userId.rawId());
+        db.insert(BlocklistTable.TABLE_NAME, null, contentValues);
+    }
+
+    @WorkerThread
+    public void removeUserFromBlockList(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(BlocklistTable.TABLE_NAME, BlocklistTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
+    }
 
     @WorkerThread
     public void setBlockList(@Nullable List<UserId> blocklist) {

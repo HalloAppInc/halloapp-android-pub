@@ -86,19 +86,9 @@ public class BlockListActivity extends HalloActivity {
         adapter = new BlocklistAdapter();
         recyclerView.setAdapter(adapter);
 
-        View content = findViewById(R.id.content);
         progressContainer = findViewById(R.id.progress);
         emptyContainer = findViewById(R.id.empty);
 
-        viewModel.getProgressLiveData().observe(this, inProgress -> {
-            if (inProgress == null || !inProgress) {
-                progressContainer.setVisibility(View.GONE);
-                content.setVisibility(View.VISIBLE);
-            } else {
-                progressContainer.setVisibility(View.VISIBLE);
-                content.setVisibility(View.GONE);
-            }
-        });
         viewModel.getBlockList().observe(this, this::setBlockedContacts);
     }
 

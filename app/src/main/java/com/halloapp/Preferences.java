@@ -23,6 +23,7 @@ public class Preferences {
     private static final String PREF_KEY_USE_DEBUG_HOST = "use_debug_host";
     private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
     private static final String PREF_KEY_FEED_PRIVACY_SETTING = "feed_privacy_setting";
+    private static final String PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME = "last_block_list_sync_time";
 
     private AppContext appContext;
     private SharedPreferences preferences;
@@ -59,6 +60,18 @@ public class Preferences {
     public void setLastContactsSyncTime(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_CONTACTS_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last contacts sync time");
+        }
+    }
+
+    @WorkerThread
+    public long getLastBlockListSyncTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0);
+    }
+
+    @WorkerThread
+    public void setLastBlockListSyncTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, time).commit()) {
+            Log.e("preferences: failed to set last block list sync time");
         }
     }
 
