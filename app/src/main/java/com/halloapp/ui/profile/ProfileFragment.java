@@ -28,6 +28,7 @@ import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 public class ProfileFragment extends PostsFragment {
 
@@ -68,6 +69,7 @@ public class ProfileFragment extends PostsFragment {
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+        NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
 
         profileUserId = UserId.ME;
         Bundle args = getArguments();
