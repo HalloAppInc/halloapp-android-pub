@@ -69,13 +69,13 @@
 
                 <ImageView
                     android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="14dp"
+                    android:layout_height="10dp"
                     android:layout_gravity="bottom|end"
-                    android:paddingStart="0dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="2dp"
-                    android:paddingBottom="3.5dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="3.5dp"
                     tools:src="@drawable/ic_messaging_seen" />
 
             </com.halloapp.widget.MessageTextLayout>
