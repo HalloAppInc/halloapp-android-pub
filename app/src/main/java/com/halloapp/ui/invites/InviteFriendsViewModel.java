@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
@@ -18,8 +17,6 @@ import com.halloapp.xmpp.invites.InvitesApi;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class InviteFriendsViewModel extends AndroidViewModel {
 
@@ -36,7 +33,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
     public InviteFriendsViewModel(@NonNull Application application) {
         super(application);
         connection = Connection.getInstance();
-        preferences = Preferences.getInstance(application.getApplicationContext());
+        preferences = Preferences.getInstance();
 
         invitesApi = new InvitesApi(connection);
 

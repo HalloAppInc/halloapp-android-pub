@@ -170,12 +170,11 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            final Registration.RegistrationVerificationResult result = viewModel.registration.verifyRegistration(phone, code, Me.getInstance(viewModel.getApplication()).getName());
+            final Registration.RegistrationVerificationResult result = viewModel.registration.verifyRegistration(phone, code, Me.getInstance().getName());
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
-                Context context = viewModel.getApplication();
-                final Me me = Me.getInstance(context);
+                final Me me = Me.getInstance();
                 me.saveRegistration(Preconditions.checkNotNull(result.user), Preconditions.checkNotNull(result.password), Preconditions.checkNotNull(result.phone));
-                Connection.getInstance().connect(context);
+                Connection.getInstance().connect();
             }
             return result;
         }

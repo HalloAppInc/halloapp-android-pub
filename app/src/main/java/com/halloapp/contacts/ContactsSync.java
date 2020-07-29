@@ -140,7 +140,7 @@ public class ContactsSync {
             return ListenableWorker.Result.failure();
         }
 
-        final Preferences preferences = Preferences.getInstance(context);
+        final Preferences preferences = Preferences.getInstance();
         final ListenableWorker.Result result;
         if (fullSync ||
                 preferences.getRequireFullContactsSync() ||
@@ -158,7 +158,7 @@ public class ContactsSync {
             preferences.setLastContactsSyncTime(System.currentTimeMillis());
         }
 
-        Log.i("ContactsSync.done: " + Preferences.getInstance(context).getLastContactsSyncTime());
+        Log.i("ContactsSync.done: " + Preferences.getInstance().getLastContactsSyncTime());
         return result;
     }
 

@@ -105,7 +105,7 @@ public class LogProvider extends ContentProvider {
             @Override
             protected String doInBackground(Void... voids) {
                 fetchLogcat();
-                return Me.getInstance(context).getUser();
+                return Me.getInstance().getUser();
             }
 
             @Override

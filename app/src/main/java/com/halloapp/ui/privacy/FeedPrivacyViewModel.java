@@ -33,7 +33,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
 
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance(application);
-        preferences = Preferences.getInstance(application);
+        preferences = Preferences.getInstance();
 
         privacyListApi = new PrivacyListApi(connection);
     }

@@ -417,7 +417,7 @@ public class ContactsDb {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(6);
-                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance(context).getUser())) {
+                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance().getUser())) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),
@@ -494,7 +494,7 @@ public class ContactsDb {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(6);
-                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance(context).getUser())) {
+                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance().getUser())) {
                     final Contact contact = new Contact(
                             cursor.getLong(0),
                             cursor.getLong(1),

@@ -94,7 +94,7 @@ public class Notifications {
 
     private Notifications(Context context) {
         this.context = context.getApplicationContext();
-        this.preferences = Preferences.getInstance(context);
+        this.preferences = Preferences.getInstance();
         this.avatarLoader = AvatarLoader.getInstance(context);
         this.contactsDb = ContactsDb.getInstance(context);
     }

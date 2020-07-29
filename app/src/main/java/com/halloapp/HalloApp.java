@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,7 +11,6 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.core.net.ConnectivityManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -57,7 +55,7 @@ public class HalloApp extends Application {
 
             @Override
             public void onContactsReset() {
-                Preferences.getInstance(HalloApp.this).setLastContactsSyncTime(0);
+                Preferences.getInstance().setLastContactsSyncTime(0);
             }
         });
 
@@ -73,12 +71,12 @@ public class HalloApp extends Application {
 
         DailyWorker.schedule(this);
 
-        new StartContactSyncTask(Preferences.getInstance(this), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void connect() {
-        Connection.getInstance().connect(this);
-        Log.setUser(Me.getInstance(this));
+        Connection.getInstance().connect();
+        Log.setUser(Me.getInstance());
     }
 
     @Override

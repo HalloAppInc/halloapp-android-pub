@@ -146,7 +146,7 @@ public class SettingsActivity extends HalloActivity {
                 } else {
                     String uri = SUPPORT_EMAIL_URI
                             + "?subject=" + Uri.encode(getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME))
-                            + "&body=" + Uri.encode(getString(R.string.email_logs_text, Me.getInstance(requireContext()).getUser(), BuildConfig.VERSION_NAME));
+                            + "&body=" + Uri.encode(getString(R.string.email_logs_text, Me.getInstance().getUser(), BuildConfig.VERSION_NAME));
                     Intent intent = new Intent(Intent.ACTION_SENDTO);
                     intent.setData(Uri.parse(uri));
                     startActivity(intent);
@@ -174,7 +174,7 @@ public class SettingsActivity extends HalloActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Connection connection = Connection.getInstance();
                     connection.disconnect();
-                    connection.connect(requireContext());
+                    connection.connect();
                     return true;
                 }
             });

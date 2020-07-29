@@ -259,7 +259,7 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Me.getInstance(application).resetRegistration();
+            Me.getInstance().resetRegistration();
             restart(application);
             return null;
         }

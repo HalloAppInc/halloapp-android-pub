@@ -24,28 +24,28 @@ public class Preferences {
     private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
     private static final String PREF_KEY_FEED_PRIVACY_SETTING = "feed_privacy_setting";
 
-    private final Context context;
+    private AppContext appContext;
     private SharedPreferences preferences;
 
-    public static Preferences getInstance(final @NonNull Context context) {
+    public static Preferences getInstance() {
         if (instance == null) {
             synchronized(Preferences.class) {
                 if (instance == null) {
-                    instance = new Preferences(context);
+                    instance = new Preferences(AppContext.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private Preferences(Context context) {
-        this.context = context.getApplicationContext();
+    private Preferences(@NonNull AppContext appContext) {
+        this.appContext = appContext;
     }
 
     @WorkerThread
     private synchronized SharedPreferences getPreferences() {
         if (preferences == null) {
-            preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            preferences = appContext.get().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         }
         return preferences;
     }

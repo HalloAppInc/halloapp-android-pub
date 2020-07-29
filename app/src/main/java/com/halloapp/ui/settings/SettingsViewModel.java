@@ -41,11 +41,11 @@ public class SettingsViewModel extends AndroidViewModel {
     public SettingsViewModel(@NonNull Application application) {
         super(application);
 
-        me = Me.getInstance(application);
+        me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance(application);
-        preferences = Preferences.getInstance(application);
+        preferences = Preferences.getInstance();
 
         invitesApi = new InvitesApi(connection);
         privacyListApi = new PrivacyListApi(connection);

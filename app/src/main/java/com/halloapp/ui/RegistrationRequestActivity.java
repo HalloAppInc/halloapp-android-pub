@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -28,7 +27,6 @@ import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
-import com.halloapp.content.ContentDb;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
@@ -228,7 +226,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         @Override
         protected Registration.RegistrationRequestResult doInBackground(Void... voids) {
             if (name != null) {
-                Me.getInstance(viewModel.getApplication()).saveName(name);
+                Me.getInstance().saveName(name);
             }
             return viewModel.registration.requestRegistration(phone);
         }

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 
+import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
@@ -101,7 +102,7 @@ public class Connection {
         if (instance == null) {
             synchronized(Connection.class) {
                 if (instance == null) {
-                    instance = new Connection(BgWorkers.getInstance(), ConnectionObservers.getInstance());
+                    instance = new Connection(Me.getInstance(), BgWorkers.getInstance(), Preferences.getInstance(), ConnectionObservers.getInstance());
                 }
             }
         }
@@ -137,8 +138,14 @@ public class Connection {
         public void onPresenceReceived(UserId user, Long lastSeen) {}
     }
 
-    private Connection(BgWorkers bgWorkers, ConnectionObservers connectionObservers) {
+    private Connection(
+            @NonNull Me me,
+            @NonNull BgWorkers bgWorkers,
+            @NonNull Preferences preferences,
+            @NonNull ConnectionObservers connectionObservers) {
+        this.me = me;
         this.bgWorkers = bgWorkers;
+        this.preferences = preferences;
         this.connectionObservers = connectionObservers;
         final HandlerThread handlerThread = new HandlerThread("ConnectionThread");
         handlerThread.start();
@@ -146,12 +153,8 @@ public class Connection {
         Roster.setRosterLoadedAtLoginDefault(false);
     }
 
-    public void connect(final @NonNull Context context) {
-        executor.execute(() -> {
-            this.me = Me.getInstance(context);
-            this.preferences = Preferences.getInstance(context);
-            connectInBackground();
-        });
+    public void connect() {
+        executor.execute(this::connectInBackground);
     }
 
     @WorkerThread

@@ -58,7 +58,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
     public SettingsProfileViewModel(@NonNull Application application) {
         super(application);
 
-        me = Me.getInstance(application);
+        me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
 
         workManager = WorkManager.getInstance(application);
@@ -172,7 +172,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     if (!Boolean.TRUE.equals(result)) {
                         return Result.failure();
                     }
-                    Me.getInstance(getApplicationContext()).saveName(name);
+                    Me.getInstance().saveName(name);
                 }
                 if (avatarFilePath != null && avatarWidth > 0 && avatarHeight > 0) {
                     File avatarFile = new File(avatarFilePath);

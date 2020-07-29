@@ -105,7 +105,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
         this.userId = userId;
 
-        me = Me.getInstance(application);
+        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance(application);

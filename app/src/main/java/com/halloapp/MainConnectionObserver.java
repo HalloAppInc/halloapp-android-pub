@@ -55,7 +55,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (instance == null) {
                     instance = new MainConnectionObserver(
                             context,
-                            Me.getInstance(context),
+                            Me.getInstance(),
                             BgWorkers.getInstance(),
                             ContentDb.getInstance(context),
                             Connection.getInstance(),

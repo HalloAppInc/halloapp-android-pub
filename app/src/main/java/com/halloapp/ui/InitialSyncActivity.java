@@ -40,7 +40,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         Log.i("InitialSyncActivity.onCreate");
         setContentView(R.layout.activity_initial_sync);
 
-        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(this), Preferences.getInstance(this));
+        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(), Preferences.getInstance());
         checkRegistrationTask.result.observe(this, checkResult -> {
             if (!checkResult.registered) {
                 startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));

@@ -28,28 +28,29 @@ public class Me {
     private static final String PREF_KEY_PHONE = "phone";
     private static final String PREF_KEY_NAME = "name";
 
-    private final Context context;
+    private AppContext appContext;
     private SharedPreferences preferences;
 
     public final MutableLiveData<String> name = new MutableLiveData<>();
 
-    public static Me getInstance(final @NonNull Context context) {
+    public static Me getInstance() {
         if (instance == null) {
             synchronized(Me.class) {
                 if (instance == null) {
-                    instance = new Me(context);
+                    instance = new Me(AppContext.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private Me(final @NonNull Context context) {
-        this.context = context.getApplicationContext();
+    private Me(final @NonNull AppContext appContext) {
+        this.appContext = appContext;
     }
 
     @WorkerThread
     private synchronized SharedPreferences getPreferences() {
+        final Context context = appContext.get();
         if (preferences == null) {
             if (Build.VERSION.SDK_INT >= 23) {
                 try {
@@ -72,9 +73,10 @@ public class Me {
 
     @WorkerThread
     public synchronized boolean isRegistered() {
+        final Context context = appContext.get();
         if (preferences == null) {
             if (Build.VERSION.SDK_INT >= 23) {
-                // EncryptedSharedPreferences.create is very slow call, try to use regular chared prefs to detect if any data is there
+                // EncryptedSharedPreferences.create is very slow call, try to use regular shared prefs to detect if any data is there
                 final SharedPreferences tmpPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
                 if (tmpPreferences.getAll().isEmpty()) {
                     return false;

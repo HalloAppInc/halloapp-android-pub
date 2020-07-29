@@ -18,7 +18,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -233,7 +232,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         if (Connection.getInstance().clientExpired) {
             AppExpirationActivity.open(this, 0);
         }
-        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(this), Preferences.getInstance(this));
+        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(), Preferences.getInstance());
         checkRegistrationTask.result.observe(this, checkResult -> {
             if (!checkResult.registered) {
                 Log.i("MainActivity.onStart: not registered");

@@ -1,24 +1,19 @@
 package com.halloapp.ui.mentions;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
-import androidx.core.content.ContextCompat;
 
 import com.halloapp.Me;
-import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Mention;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ViewDataLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -30,7 +25,7 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
     private LruCache<TextContent, List<Mention>> cache = new LruCache<>(512);
 
     public TextContentLoader(@NonNull Context context) {
-        me = Me.getInstance(context);
+        me = Me.getInstance();
         contactsDb = ContactsDb.getInstance(context);
     }
 
