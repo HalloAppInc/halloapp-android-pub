@@ -3,6 +3,8 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.GroupId;
+
 import org.jivesoftware.smack.packet.IQ;
 
 public class SetGroupInfoIq extends IQ {
@@ -15,14 +17,14 @@ public class SetGroupInfoIq extends IQ {
     private static final String ATTRIBUTE_NAME = "name";
     private static final String ATTRIBUTE_AVATAR = "avatar";
 
-    private final String gid;
+    private final GroupId groupId;
     private final String name;
     private final String avatar;
 
-    protected SetGroupInfoIq(@NonNull String gid, @Nullable String name, @Nullable String avatar) {
+    protected SetGroupInfoIq(@NonNull GroupId groupId, @Nullable String name, @Nullable String avatar) {
         super(ELEMENT, NAMESPACE);
         setType(Type.set);
-        this.gid = gid;
+        this.groupId = groupId;
         this.name = name;
         this.avatar = avatar;
     }
@@ -31,7 +33,7 @@ public class SetGroupInfoIq extends IQ {
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         xml.xmlnsAttribute(NAMESPACE);
         xml.attribute(ATTRIBUTE_ACTION, "set");
-        xml.attribute(ATTRIBUTE_GID, gid);
+        xml.attribute(ATTRIBUTE_GID, groupId.rawId());
         if (name != null) {
             xml.attribute(ATTRIBUTE_NAME, name);
         }

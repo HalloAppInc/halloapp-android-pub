@@ -1,5 +1,6 @@
 package com.halloapp.xmpp.groups;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -23,7 +24,7 @@ public class GroupResponseIq extends IQ {
     private static final String ATTRIBUTE_ACTION = "action";
     private static final String ATTRIBUTE_RESULT = "result";
 
-    public final String gid;
+    public final GroupId groupId;
     public final String name;
     public final String description;
     public final String avatar;
@@ -34,7 +35,7 @@ public class GroupResponseIq extends IQ {
 
     protected GroupResponseIq(XmlPullParser parser) throws IOException, XmlPullParserException {
         super(ELEMENT, NAMESPACE);
-        gid = parser.getAttributeValue("", ATTRIBUTE_GID);
+        groupId = new GroupId(parser.getAttributeValue("", ATTRIBUTE_GID));
         name = parser.getAttributeValue("", ATTRIBUTE_NAME);
         description = parser.getAttributeValue("", ATTRIBUTE_DESCRIPTION);
         avatar = parser.getAttributeValue("", ATTRIBUTE_AVATAR);

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -142,12 +143,12 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onGroupChatAdded(@NonNull String chatId) {
+    public void onGroupChatAdded(@NonNull GroupId groupId) {
 
     }
 
     @Override
-    public void onGroupMetadataChanged(@NonNull String gid) {
+    public void onGroupMetadataChanged(@NonNull GroupId groupId) {
 
     }
 

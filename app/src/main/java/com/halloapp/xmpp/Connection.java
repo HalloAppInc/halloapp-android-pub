@@ -1,6 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.content.Context;
 import android.os.HandlerThread;
 
 import androidx.annotation.NonNull;
@@ -8,11 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 
-import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
@@ -128,12 +127,12 @@ public class Connection {
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
         public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
-        public void onGroupMemberChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
-        public void onGroupMemberLeftReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
-        public void onGroupAdminChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
-        public void onGroupNameChangeReceived(@NonNull String groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
-        public void onGroupAvatarChangeReceived(@NonNull String groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
-        public void onGroupAdminAutoPromoteReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
+        public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
+        public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
         public void onPresenceReceived(UserId user, Long lastSeen) {}
     }

@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.MediaTable;
@@ -156,12 +157,12 @@ class MessagesDb {
     // TODO(jack): Update name when someone else changes it (XMPP message)
     @WorkerThread
     boolean addGroupChat(@NonNull GroupInfo groupInfo) {
-        Log.i("MessagesDb.addGroupChat " + groupInfo.gid);
+        Log.i("MessagesDb.addGroupChat " + groupInfo.groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_CHAT_ID, groupInfo.gid);
+            chatValues.put(ChatsTable.COLUMN_CHAT_ID, groupInfo.groupId.rawId());
             chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
             chatValues.put(ChatsTable.COLUMN_IS_GROUP, 1);
             chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
@@ -169,9 +170,9 @@ class MessagesDb {
             db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
 
             db.setTransactionSuccessful();
-            Log.i("ContentDb.addGroupChat: added " + groupInfo.gid);
+            Log.i("ContentDb.addGroupChat: added " + groupInfo.groupId);
         } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.addGroupChat: duplicate " + ex.getMessage() + " " + groupInfo.gid);
+            Log.w("ContentDb.addGroupChat: duplicate " + ex.getMessage() + " " + groupInfo.groupId);
             return false;
         } finally {
             db.endTransaction();
@@ -181,7 +182,7 @@ class MessagesDb {
 
     @WorkerThread
     boolean updateGroupChat(@NonNull GroupInfo groupInfo) {
-        Log.i("MessagesDb.updateGroupChat " + groupInfo.gid);
+        Log.i("MessagesDb.updateGroupChat " + groupInfo.groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -189,12 +190,12 @@ class MessagesDb {
             chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
             chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
             chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.gid});
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
 
             db.setTransactionSuccessful();
-            Log.i("ContentDb.updateGroupChat: updated " + groupInfo.gid);
+            Log.i("ContentDb.updateGroupChat: updated " + groupInfo.groupId);
         } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.updateGroupChat: " + ex.getMessage() + " " + groupInfo.gid);
+            Log.w("ContentDb.updateGroupChat: " + ex.getMessage() + " " + groupInfo.groupId);
             return false;
         } finally {
             db.endTransaction();
@@ -203,19 +204,19 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean setGroupName(@NonNull String gid, @NonNull String name) {
-        Log.i("MessagesDb.setGroupName " + gid);
+    boolean setGroupName(@NonNull GroupId groupId, @NonNull String name) {
+        Log.i("MessagesDb.setGroupName " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             final ContentValues chatValues = new ContentValues();
             chatValues.put(ChatsTable.COLUMN_CHAT_NAME, name);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{gid});
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
 
             db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupName: success " + gid);
+            Log.i("ContentDb.setGroupName: success " + groupId);
         } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupName: " + ex.getMessage() + " " + gid);
+            Log.w("ContentDb.setGroupName: " + ex.getMessage() + " " + groupId);
             return false;
         } finally {
             db.endTransaction();
@@ -224,19 +225,19 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean setGroupAvatar(@NonNull String gid, @NonNull String avatarId) {
-        Log.i("MessagesDb.setGroupAvatar " + gid);
+    boolean setGroupAvatar(@NonNull GroupId groupId, @NonNull String avatarId) {
+        Log.i("MessagesDb.setGroupAvatar " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             final ContentValues chatValues = new ContentValues();
             chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, avatarId);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{gid});
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
 
             db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupAvatar: success " + gid);
+            Log.i("ContentDb.setGroupAvatar: success " + groupId);
         } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupAvatar: " + ex.getMessage() + " " + gid);
+            Log.w("ContentDb.setGroupAvatar: " + ex.getMessage() + " " + groupId);
             return false;
         } finally {
             db.endTransaction();

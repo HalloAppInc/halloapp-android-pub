@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -17,14 +18,14 @@ public class AddRemoveMembersIq extends IQ {
     private static final String ATTRIBUTE_ACTION = "action";
     private static final String ATTRIBUTE_GID = "gid";
 
-    private final String gid;
+    private final GroupId groupId;
     private final List<UserId> addUids;
     private final List<UserId> removeUids;
 
-    protected AddRemoveMembersIq(@NonNull String gid, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
+    protected AddRemoveMembersIq(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
         super(ELEMENT, NAMESPACE);
         setType(Type.set);
-        this.gid = gid;
+        this.groupId = groupId;
         this.addUids = addUids;
         this.removeUids = removeUids;
     }
@@ -33,7 +34,7 @@ public class AddRemoveMembersIq extends IQ {
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         xml.xmlnsAttribute(NAMESPACE);
         xml.attribute(ATTRIBUTE_ACTION, "modify_members");
-        xml.attribute(ATTRIBUTE_GID, gid);
+        xml.attribute(ATTRIBUTE_GID, groupId.rawId());
         xml.rightAngleBracket();
         if (addUids != null) {
             for (UserId uid : addUids) {

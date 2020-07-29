@@ -100,7 +100,7 @@ public class GroupsSync {
             List<GroupInfo> added = new ArrayList<>();
             List<GroupInfo> updated = new ArrayList<>();
             for (GroupInfo groupInfo : groups) {
-                Chat chat = chatMap.remove(groupInfo.gid);
+                Chat chat = chatMap.remove(groupInfo.groupId.rawId());
                 if (chat == null) {
                     added.add(groupInfo);
                 } else if (!haveSameMetadata(groupInfo, chat)) {
@@ -130,7 +130,7 @@ public class GroupsSync {
     }
 
     private boolean haveSameMetadata(@NonNull GroupInfo groupInfo, @NonNull Chat chat) {
-        Preconditions.checkArgument(groupInfo.gid.equals(chat.chatId));
+        Preconditions.checkArgument(groupInfo.groupId.rawId().equals(chat.chatId));
         return TextUtils.equals(groupInfo.name, chat.name)
                 && TextUtils.equals(groupInfo.description, chat.groupDescription)
                 && TextUtils.equals(groupInfo.avatar, chat.groupAvatarId);

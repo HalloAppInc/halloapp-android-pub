@@ -2,6 +2,7 @@ package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 
 import java.util.Collection;
@@ -96,18 +97,18 @@ class ContentDbObservers {
         }
     }
 
-    void notifyGroupChatAdded(@NonNull String gid) {
+    void notifyGroupChatAdded(@NonNull GroupId groupId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onGroupChatAdded(gid);
+                observer.onGroupChatAdded(groupId);
             }
         }
     }
 
-    void notifyGroupMetadataChanged(@NonNull String gid) {
+    void notifyGroupMetadataChanged(@NonNull GroupId groupId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onGroupMetadataChanged(gid);
+                observer.onGroupMetadataChanged(groupId);
             }
         }
     }

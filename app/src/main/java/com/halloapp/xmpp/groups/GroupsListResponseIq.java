@@ -1,6 +1,7 @@
 package com.halloapp.xmpp.groups;
 
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.id.GroupId;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
@@ -33,11 +34,11 @@ public class GroupsListResponseIq extends IQ {
             }
             final String elementName = parser.getName();
             if (GroupResponseIq.ELEMENT.equals(elementName)) {
-                String gid = parser.getAttributeValue("", ATTRIBUTE_GID);
+                GroupId groupId = new GroupId(parser.getAttributeValue("", ATTRIBUTE_GID));
                 String name = parser.getAttributeValue("", ATTRIBUTE_NAME);
                 String description = parser.getAttributeValue("", ATTRIBUTE_DESCRIPTION);
                 String avatar = parser.getAttributeValue("", ATTRIBUTE_AVATAR);
-                GroupInfo groupInfo = new GroupInfo(gid, name, description, avatar, null);
+                GroupInfo groupInfo = new GroupInfo(groupId, name, description, avatar, null);
                 groupInfos.add(groupInfo);
             }
             Xml.skip(parser);

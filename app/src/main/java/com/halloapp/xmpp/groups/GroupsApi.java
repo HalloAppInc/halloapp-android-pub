@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
@@ -28,12 +29,12 @@ public class GroupsApi {
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.gid, response.name, response.description, response.avatar, memberInfos);
+            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
         });
     }
 
-    public Observable<Boolean> deleteGroup(@NonNull String gid) {
-        final DeleteGroupIq requestIq = new DeleteGroupIq(gid);
+    public Observable<Boolean> deleteGroup(@NonNull GroupId groupId) {
+        final DeleteGroupIq requestIq = new DeleteGroupIq(groupId);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return "ok".equals(response.result);
@@ -41,8 +42,8 @@ public class GroupsApi {
     }
 
     // TODO(jack): Return type
-    public Observable<String> addRemoveMembers(@NonNull String gid, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
-        final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(gid, addUids, removeUids);
+    public Observable<String> addRemoveMembers(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
+        final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return "TODO";
@@ -50,23 +51,23 @@ public class GroupsApi {
     }
 
     // TODO(jack): Return type
-    public Observable<String> promoteDemoteAdmins(@NonNull String gid, @Nullable List<UserId> promoteUids, @Nullable List<UserId> demoteUids) {
-        final PromoteDemoteAdminsIq requestIq = new PromoteDemoteAdminsIq(gid, promoteUids, demoteUids);
+    public Observable<String> promoteDemoteAdmins(@NonNull GroupId groupId, @Nullable List<UserId> promoteUids, @Nullable List<UserId> demoteUids) {
+        final PromoteDemoteAdminsIq requestIq = new PromoteDemoteAdminsIq(groupId, promoteUids, demoteUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return "TODO";
         });
     }
 
-    public Observable<GroupInfo> getGroupInfo(@NonNull String gid) {
-        final GetGroupInfoIq requestIq = new GetGroupInfoIq(gid);
+    public Observable<GroupInfo> getGroupInfo(@NonNull GroupId groupId) {
+        final GetGroupInfoIq requestIq = new GetGroupInfoIq(groupId);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             List<MemberInfo> memberInfos = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.gid, response.name, response.description, response.avatar, memberInfos);
+            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
         });
     }
 
@@ -78,8 +79,8 @@ public class GroupsApi {
         });
     }
 
-    public Observable<String> setGroupName(@NonNull String gid, @NonNull String name) {
-        final SetGroupInfoIq requestIq = new SetGroupInfoIq(gid, name, null);
+    public Observable<String> setGroupName(@NonNull GroupId groupId, @NonNull String name) {
+        final SetGroupInfoIq requestIq = new SetGroupInfoIq(groupId, name, null);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return response.name;
@@ -87,16 +88,16 @@ public class GroupsApi {
     }
 
     // TODO(jack): What about remove avatar?
-    public Observable<String> setGroupAvatar(@NonNull String gid, String avatar) {
-        final SetGroupInfoIq requestIq = new SetGroupInfoIq(gid, null, avatar);
+    public Observable<String> setGroupAvatar(@NonNull GroupId groupId, String avatar) {
+        final SetGroupInfoIq requestIq = new SetGroupInfoIq(groupId, null, avatar);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return response.avatar;
         });
     }
 
-    public Observable<Boolean> leaveGroup(@NonNull String gid) {
-        final LeaveGroupIq requestIq = new LeaveGroupIq(gid);
+    public Observable<Boolean> leaveGroup(@NonNull GroupId groupId) {
+        final LeaveGroupIq requestIq = new LeaveGroupIq(groupId);
         final Observable<GroupsListResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return true;

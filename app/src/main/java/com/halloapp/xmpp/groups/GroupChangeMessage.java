@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
 
@@ -37,7 +38,7 @@ public class GroupChangeMessage implements ExtensionElement {
         String AUTO_PROMOTE = "auto_promote_admins";
     }
 
-    public String groupId;
+    public GroupId groupId;
     public @Action String action;
     public String name;
     public String avatarId;
@@ -46,7 +47,7 @@ public class GroupChangeMessage implements ExtensionElement {
     public List<MemberElement> members;
 
     public GroupChangeMessage(
-            @NonNull String groupId,
+            @NonNull GroupId groupId,
             @NonNull String action,
             String name,
             String avatarId,
@@ -82,7 +83,7 @@ public class GroupChangeMessage implements ExtensionElement {
 
         @Override
         protected GroupChangeMessage createReturnExtension(String currentElement, String currentNamespace, Map<String, String> attributeMap, List<? extends ExtensionElement> content) {
-            final String groupId = Preconditions.checkNotNull(attributeMap.get(ATTRIBUTE_GROUP_ID));
+            final GroupId groupId = new GroupId(Preconditions.checkNotNull(attributeMap.get(ATTRIBUTE_GROUP_ID)));
             final @Action String action = Preconditions.checkNotNull(attributeMap.get(ATTRIBUTE_ACTION));
             final String name = attributeMap.get(ATTRIBUTE_NAME);
             final String avatarId = attributeMap.get(ATTRIBUTE_AVATAR_ID);

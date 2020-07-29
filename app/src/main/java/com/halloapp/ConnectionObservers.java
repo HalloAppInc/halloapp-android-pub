@@ -2,6 +2,7 @@ package com.halloapp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
@@ -199,7 +200,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupMemberChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupMemberChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onGroupMemberChangeReceived(groupId, members, sender, senderName, ackId);
@@ -207,7 +208,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupMemberLeftReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+    public void notifyGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onGroupMemberLeftReceived(groupId, members, ackId);
@@ -215,7 +216,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupAdminChangeReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onGroupAdminChangeReceived(groupId, members, sender, senderName, ackId);
@@ -223,7 +224,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupNameChangeReceived(@NonNull String groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onGroupNameChangeReceived(groupId, name, sender, senderName, ackId);
@@ -231,7 +232,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupAvatarChangeReceived(@NonNull String groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onGroupAvatarChangeReceived(groupId, avatarId, sender, senderName, ackId);
@@ -239,7 +240,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupAdminAutoPromoteReceived(@NonNull String groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+    public void notifyGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onGroupAdminAutoPromoteReceived(groupId, members, ackId);

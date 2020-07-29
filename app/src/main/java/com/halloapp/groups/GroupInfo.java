@@ -1,20 +1,22 @@
 package com.halloapp.groups;
 
+import com.halloapp.id.GroupId;
+
 import java.util.List;
 
 public class GroupInfo {
-    public final String gid;
+    public final GroupId groupId;
     public final String name;
     public final String description;
     public final String avatar;
 
     public final List<MemberInfo> members;
 
-    public GroupInfo(String gid, String name, String description, String avatar, List<MemberInfo> members) {
-        this.gid = gid;
+    public GroupInfo(GroupId groupId, String name, String description, String avatar, List<MemberInfo> members) {
+        this.groupId = groupId;
         this.name = name;
         this.description = description;
         this.avatar = avatar;
         this.members = members;
-    }
+    } 
 }

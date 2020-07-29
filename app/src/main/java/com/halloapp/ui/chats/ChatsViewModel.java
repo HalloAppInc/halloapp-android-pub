@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
@@ -61,7 +62,7 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
-        public void onGroupChatAdded(@NonNull String chatId) {
+        public void onGroupChatAdded(@NonNull GroupId groupId) {
             invalidateChats();
         }
 

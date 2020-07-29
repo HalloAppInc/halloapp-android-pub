@@ -105,7 +105,7 @@ public class CreateGroupActivity extends HalloActivity {
                     .onResponse(groupInfo -> {
                         contentDb.addGroupChat(groupInfo, () -> {
                             final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.gid);
+                            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.groupId);
                             startActivity(intent);
                             finish();
                         });

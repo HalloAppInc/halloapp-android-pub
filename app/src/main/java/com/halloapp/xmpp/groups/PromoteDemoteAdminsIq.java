@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -17,14 +18,14 @@ public class PromoteDemoteAdminsIq extends IQ {
     private static final String ATTRIBUTE_ACTION = "action";
     private static final String ATTRIBUTE_GID = "gid";
 
-    private final String gid;
+    private final GroupId groupId;
     private final List<UserId> promoteUids;
     private final List<UserId> demoteUids;
 
-    protected PromoteDemoteAdminsIq(@NonNull String gid, @Nullable List<UserId> promoteUids, @Nullable List<UserId> demoteUids) {
+    protected PromoteDemoteAdminsIq(@NonNull GroupId groupId, @Nullable List<UserId> promoteUids, @Nullable List<UserId> demoteUids) {
         super(ELEMENT, NAMESPACE);
         setType(Type.set);
-        this.gid = gid;
+        this.groupId = groupId;
         this.promoteUids = promoteUids;
         this.demoteUids = demoteUids;
     }
@@ -33,7 +34,7 @@ public class PromoteDemoteAdminsIq extends IQ {
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         xml.xmlnsAttribute(NAMESPACE);
         xml.attribute(ATTRIBUTE_ACTION, "modify_admins");
-        xml.attribute(ATTRIBUTE_GID, gid);
+        xml.attribute(ATTRIBUTE_GID, groupId.rawId());
         xml.rightAngleBracket();
         if (promoteUids != null) {
             for (UserId uid : promoteUids) {
