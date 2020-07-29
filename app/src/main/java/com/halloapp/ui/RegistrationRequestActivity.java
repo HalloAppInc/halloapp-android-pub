@@ -24,7 +24,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
-import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
@@ -225,10 +224,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         @Override
         protected Registration.RegistrationRequestResult doInBackground(Void... voids) {
-            if (name != null) {
-                Me.getInstance().saveName(name);
-            }
-            return viewModel.registration.requestRegistration(phone);
+            return viewModel.registration.registerPhoneNumber(name, phone);
         }
 
         @Override

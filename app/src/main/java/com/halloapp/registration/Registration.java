@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
@@ -98,6 +99,13 @@ public class Registration {
                 connection.disconnect();
             }
         }
+    }
+
+    public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone) {
+        if (name != null) {
+            me.saveName(name);
+        }
+        return requestRegistration(phone);
     }
 
     @WorkerThread
