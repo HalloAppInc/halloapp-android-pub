@@ -7,9 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
+import com.halloapp.Me;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.xmpp.Connection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,14 +33,19 @@ public class Registration {
         if (instance == null) {
             synchronized(Registration.class) {
                 if (instance == null) {
-                    instance = new Registration();
+                    instance = new Registration(Me.getInstance(), Connection.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private Registration() {
+    private Me me;
+    private Connection connection;
+
+    private Registration(@NonNull Me me, @NonNull Connection connection) {
+        this.me = me;
+        this.connection = connection;
     }
 
     @WorkerThread
@@ -94,7 +101,20 @@ public class Registration {
     }
 
     @WorkerThread
-    public @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code, @NonNull String name) {
+    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
+        RegistrationVerificationResult verificationResult = verifyRegistration(phone, code, me.getName());
+        if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
+            me.saveRegistration(
+                    Preconditions.checkNotNull(verificationResult.user),
+                    Preconditions.checkNotNull(verificationResult.password),
+                    Preconditions.checkNotNull(verificationResult.phone));
+            connection.connect();
+        }
+        return verificationResult;
+    }
+
+    @WorkerThread
+    private @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code, @NonNull String name) {
         Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
         InputStream inStream = null;
         HttpURLConnection connection = null;

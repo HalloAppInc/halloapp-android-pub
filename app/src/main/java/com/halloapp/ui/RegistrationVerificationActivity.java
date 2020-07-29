@@ -1,7 +1,6 @@
 package com.halloapp.ui;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
@@ -20,14 +19,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
-import com.halloapp.xmpp.Connection;
 
 public class RegistrationVerificationActivity extends HalloActivity {
 
@@ -170,13 +167,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            final Registration.RegistrationVerificationResult result = viewModel.registration.verifyRegistration(phone, code, Me.getInstance().getName());
-            if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
-                final Me me = Me.getInstance();
-                me.saveRegistration(Preconditions.checkNotNull(result.user), Preconditions.checkNotNull(result.password), Preconditions.checkNotNull(result.phone));
-                Connection.getInstance().connect();
-            }
-            return result;
+            return viewModel.registration.verifyPhoneNumber(phone, code);
         }
 
         @Override
