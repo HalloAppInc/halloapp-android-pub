@@ -523,6 +523,23 @@ public class Connection {
         });
     }
 
+    public Future<String> getMyAvatarId() {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot get my avatar, no connection");
+                return null;
+            }
+            try {
+                final AvatarIq getAvatarIq = new AvatarIq(connection.getXMPPServiceDomain(), new UserId(connection.getUser().getLocalpart().toString()));
+                final AvatarIq response = connection.createStanzaCollectorAndSend(getAvatarIq).nextResultOrThrow();
+                return response.avatarId;
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot get my avatar", e);
+            }
+            return null;
+        });
+    }
+
     public void sendPost(final @NonNull Post post) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {

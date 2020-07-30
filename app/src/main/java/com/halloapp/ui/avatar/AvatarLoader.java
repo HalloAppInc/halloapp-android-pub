@@ -23,6 +23,7 @@ import com.halloapp.content.Media;
 import com.halloapp.media.Downloader;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private static AvatarLoader instance;
 
     private final Context context;
+    private final Connection connection;
     private final LruCache<String, Bitmap> cache;
 
     private Bitmap defaultAvatar;
@@ -45,15 +47,16 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(context);
+                    instance = new AvatarLoader(context, Connection.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Context context) {
+    private AvatarLoader(@NonNull Context context, Connection connection) {
         this.context = context.getApplicationContext();
+        this.connection = connection;
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -122,6 +125,10 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 Contact contact = contactsDb.getContact(userId);
                 if (userId.isMe()) {
                     avatarId = contactAvatarInfo.avatarId;
+                    if (avatarId == null) {
+                        avatarId = connection.getMyAvatarId().get();
+                        contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+                    }
                 } else if (contact.friend) {
                     avatarId = contact.avatarId;
                 }
@@ -137,8 +144,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     contactAvatarInfo.avatarId = contact.avatarId;
                 }
                 contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
-            } catch (InterruptedIOException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 Log.w("AvatarLoader: Interrupted during avatar fetch", e);
+                contactAvatarInfo.avatarCheckTimestamp = 0;
+                contactAvatarInfo.avatarId = null;
+            } catch (InterruptedIOException e) {
+                Log.w("AvatarLoader: IO interrupted during avatar fetch", e);
                 contactAvatarInfo.avatarCheckTimestamp = 0;
                 contactAvatarInfo.avatarId = null;
             } catch (IOException e) {

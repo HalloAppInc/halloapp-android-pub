@@ -18,7 +18,7 @@ public class AvatarIq extends IQ {
     private static final String ATTRIBUTE_WIDTH = "width";
     private static final String ATTRIBUTE_HEIGHT = "height";
     private static final String ATTRIBUTE_BYTES = "bytes";
-    private static final String ATTRIBUTE_USER_ID = "uid";
+    private static final String ATTRIBUTE_USER_ID = "userid";
 
     public static final String NAMESPACE = "halloapp:user:avatar";
 
@@ -84,7 +84,6 @@ public class AvatarIq extends IQ {
         @Override
         public AvatarIq parse(XmlPullParser parser, int initialDepth) throws IOException, XmlPullParserException {
             String avatarId = parser.getAttributeValue("", "id");
-            Log.d("JACK got avatar id " + avatarId);
             return new AvatarIq(avatarId);
         }
     }
