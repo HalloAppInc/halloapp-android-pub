@@ -34,6 +34,8 @@ public class LimitingTextView extends AppCompatTextView {
     private int lastMeasureWidth;
     private int lastMeasureHeight;
     private boolean truncated;
+    private Typeface typeface;
+    private TextPaint mediumPaint;
 
     public LimitingTextView(Context context) {
         super(context);
@@ -74,12 +76,19 @@ public class LimitingTextView extends AppCompatTextView {
             truncated = true;
             lastMeasureWidth = widthMeasureSpec;
             lastMeasureHeight = heightMeasureSpec;
+            if (typeface == null) {
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL);
+            }
+            if (mediumPaint == null) {
+                mediumPaint = new TextPaint();
+            }
+            mediumPaint.set(layout.getPaint());
+            mediumPaint.setTypeface(typeface);
 
             final int lineBottom = layout.getLineBottom(lineLimit - 1);
-            final float readMoreTextSize = layout.getPaint().measureText(readMoreText.toString());
+            final float readMoreTextSize = mediumPaint.measureText(readMoreText.toString());
             final float lastLineRight = layout.getLineRight(lineLimit - 1);
             final int truncatePos = layout.getOffsetForHorizontal(lineLimit - 1, Math.max(lastLineRight - readMoreTextSize, 0));
-
             truncatedText.clear();
             truncatedText.clearSpans();
             truncatedText.append(originalText.subSequence(0, truncatePos));
