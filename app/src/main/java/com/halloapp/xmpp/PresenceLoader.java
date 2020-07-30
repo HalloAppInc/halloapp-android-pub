@@ -18,6 +18,7 @@ public class PresenceLoader {
     private static PresenceLoader instance;
 
     private final Connection connection;
+    private final ForegroundChat foregroundChat;
     private final BlockListManager blockListManager;
     private final Map<UserId, MutableLiveData<PresenceState>> map = new HashMap<>();
 
@@ -25,15 +26,16 @@ public class PresenceLoader {
         if (instance == null) {
             synchronized (PresenceLoader.class) {
                 if (instance == null) {
-                    instance = new PresenceLoader(Connection.getInstance(), BlockListManager.getInstance());
+                    instance = new PresenceLoader(Connection.getInstance(), ForegroundChat.getInstance(), BlockListManager.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private PresenceLoader(Connection connection, BlockListManager blockListManager) {
+    private PresenceLoader(Connection connection, ForegroundChat foregroundChat, BlockListManager blockListManager) {
         this.connection = connection;
+        this.foregroundChat = foregroundChat;
         this.blockListManager = blockListManager;
         this.blockListManager.addObserver(() -> {
             List<UserId> blockList = blockListManager.getBlockList();
@@ -92,7 +94,7 @@ public class PresenceLoader {
         MutableLiveData<PresenceState> keepMld = null;
         for (UserId userId : map.keySet()) {
             MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
-            if (ForegroundChat.getInstance().isForegroundChatId(userId.rawId())) {
+            if (foregroundChat.isForegroundChatId(userId.rawId())) {
                 keepUserId = userId;
                 keepMld = mld;
                 break;
