@@ -86,6 +86,15 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             });
         }
 
+        if (contentView != null) {
+            contentView.setOnLongClickListener(v -> {
+                if (parent.getSelectedMessageRowId() == -1 && textView != null) {
+                    parent.onItemLongClicked(textView.getText().toString(), message.rowId);
+                }
+                return true;
+            });
+        }
+
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));
             mediaPagerView.setAdapter(mediaPagerAdapter);
