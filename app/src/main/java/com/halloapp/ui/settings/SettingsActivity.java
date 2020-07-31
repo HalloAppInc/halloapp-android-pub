@@ -137,7 +137,7 @@ public class SettingsActivity extends HalloActivity {
 
             final Preference sendLogsPreference = Preconditions.checkNotNull((findPreference("send_logs")));
             sendLogsPreference.setOnPreferenceClickListener(preference -> {
-                Log.sendErrorReport(getString(R.string.send_logs));
+                Log.sendErrorReport("User sent logs");
                 CenterToast.show(requireContext(), R.string.send_logs);
                 requireActivity().finish();
 
