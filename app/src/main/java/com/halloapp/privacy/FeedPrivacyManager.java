@@ -1,5 +1,6 @@
 package com.halloapp.privacy;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -70,7 +71,7 @@ public class FeedPrivacyManager {
         this.privacyListApi = new PrivacyListApi(Connection.getInstance());
     }
 
-    @WorkerThread
+    @AnyThread
     public void fetchFeedPrivacy() {
         privacyListApi.getFeedPrivacy().onResponse(this::saveFeedPrivacy).onError(e -> {
             Log.e("FeedPrivacyManager/fetchFeedPrivacy failed to fetch privacy settings", e);
