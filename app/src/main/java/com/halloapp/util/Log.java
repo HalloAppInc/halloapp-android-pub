@@ -97,6 +97,7 @@ public class Log {
         }
         Throwable e = new ConstructedException(msg, stackTrace);
         FirebaseCrashlytics.getInstance().recordException(e);
+        FirebaseCrashlytics.getInstance().sendUnsentReports();
     }
 
     private static class ConstructedException extends Throwable {
