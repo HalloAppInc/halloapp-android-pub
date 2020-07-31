@@ -30,6 +30,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -54,6 +55,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private View loadingProgressBar;
     private Preferences preferences;
     private ContactsSync contactsSync;
+    private AvatarLoader avatarLoader;
 
     public static void reVerify(final Context context) {
         context.startActivity(new Intent(context, RegistrationRequestActivity.class)
@@ -69,6 +71,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         preferences = Preferences.getInstance();
         contactsSync = ContactsSync.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance(this);
 
         nameEditText = findViewById(R.id.name);
         phoneNumberEditText = findViewById(R.id.phone_number);
@@ -159,8 +162,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                 if (result == RESULT_OK) {
                     startActivity(new Intent(this, MainActivity.class));
                     if (preferences.getLastContactsSyncTime() > 0) {
-                        Log.i("RegistrationRequestActivity: Reverify starts to sync contact");
-                        contactsSync.startContactsSync(true);
+                        onRereg();
                     }
                     finish();
                 } else {
@@ -171,6 +173,12 @@ public class RegistrationRequestActivity extends HalloActivity {
                 break;
             }
         }
+    }
+
+    private void onRereg() {
+        Log.i("RegistrationRequestActivity: rereg success");
+        contactsSync.startContactsSync(true);
+        avatarLoader.removeMyAvatar();
     }
 
     private void startRegistrationRequest() {
