@@ -106,11 +106,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             });
         }
 
-        statusView.setOnClickListener(v -> {
-            if (message != null && message.isTransferFailed()) {
-                UploadMediaTask.restartUpload(message, fileStore, contentDb, connection);
-            }
-        });
+        if (statusView != null) {
+            statusView.setOnClickListener(v -> {
+                if (message != null && message.isTransferFailed()) {
+                    UploadMediaTask.restartUpload(message, fileStore, contentDb, connection);
+                }
+            });
+        }
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));

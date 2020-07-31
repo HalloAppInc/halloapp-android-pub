@@ -75,9 +75,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
         footer = itemView.findViewById(R.id.post_footer);
 
-        statusView.setOnClickListener(v -> {
-            UploadMediaTask.restartUpload(post, fileStore, contentDb, connection);
-        });
+        if (statusView != null) {
+            statusView.setOnClickListener(v -> {
+                UploadMediaTask.restartUpload(post, fileStore, contentDb, connection);
+            });
+        }
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), Constants.MAX_IMAGE_ASPECT_RATIO);
