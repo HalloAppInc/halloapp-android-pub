@@ -25,7 +25,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
+import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
@@ -50,6 +52,8 @@ public class RegistrationRequestActivity extends HalloActivity {
     private EditText nameEditText;
     private View nextButton;
     private View loadingProgressBar;
+    private Preferences preferences;
+    private ContactsSync contactsSync;
 
     public static void reVerify(final Context context) {
         context.startActivity(new Intent(context, RegistrationRequestActivity.class)
@@ -62,6 +66,9 @@ public class RegistrationRequestActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
         Log.i("RegistrationRequestActivity.onCreate");
         setContentView(R.layout.activity_registration_request);
+
+        preferences = Preferences.getInstance();
+        contactsSync = ContactsSync.getInstance(this);
 
         nameEditText = findViewById(R.id.name);
         phoneNumberEditText = findViewById(R.id.phone_number);
@@ -151,6 +158,10 @@ public class RegistrationRequestActivity extends HalloActivity {
             case REQUEST_CODE_VERIFICATION: {
                 if (result == RESULT_OK) {
                     startActivity(new Intent(this, MainActivity.class));
+                    if (preferences.getLastContactsSyncTime() > 0) {
+                        Log.i("RegistrationRequestActivity: Reverify starts to sync contact");
+                        contactsSync.startContactsSync(true);
+                    }
                     finish();
                 } else {
                     nextButton.setVisibility(View.VISIBLE);
