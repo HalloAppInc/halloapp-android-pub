@@ -64,6 +64,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onServerPropsReceived(props, hash);
+            }
+        }
+    }
+
     public void notifyLoginFailed() {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

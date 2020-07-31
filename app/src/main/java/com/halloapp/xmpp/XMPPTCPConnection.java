@@ -1,5 +1,6 @@
 package com.halloapp.xmpp;
 
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
@@ -283,6 +284,10 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
 
     @SuppressWarnings("HidingField")
     private final XMPPTCPConnectionConfiguration config;
+
+    /* begin halloapp modifications */
+    private String serverPropsHash;
+    /* end halloapp modifications */
 
     /**
      * Creates a new XMPP connection over TCP (optionally using proxies).
@@ -982,6 +987,11 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         ParserUtils.assertAtEndTag(parser);
         processStanza(stanza);
     }
+
+    protected String getServerPropsHash() {
+        return serverPropsHash;
+    }
+
     /* end halloapp added */
 
     protected class PacketReader {
@@ -1117,6 +1127,9 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                     break;
                                 case Success.ELEMENT:
                                     Success success = new Success(parser.nextText());
+                                    /* begin halloapp modifications */
+                                    serverPropsHash = parser.getAttributeValue(null, "props_hash");
+                                    /* end halloapp modifications */
                                     // We now need to bind a resource for the connection
                                     // Open a new stream and wait for the response
                                     openStream();

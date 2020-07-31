@@ -29,6 +29,8 @@ import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
+import com.halloapp.xmpp.props.ServerPropsRequestIq;
+import com.halloapp.xmpp.props.ServerPropsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
 import com.halloapp.xmpp.util.Observable;
 
@@ -96,6 +98,7 @@ public class Connection {
     private Preferences preferences;
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
+    private String connectionPropHash;
 
     public static Connection getInstance() {
         if (instance == null) {
@@ -135,6 +138,7 @@ public class Connection {
         public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
         public void onPresenceReceived(UserId user, Long lastSeen) {}
+        public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
     }
 
     private Connection(
@@ -197,6 +201,7 @@ public class Connection {
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
         ProviderManager.addIQProvider(InvitesResponseIq.ELEMENT, InvitesResponseIq.NAMESPACE, new InvitesResponseIq.Provider());
+        ProviderManager.addIQProvider(ServerPropsResponseIq.ELEMENT, ServerPropsResponseIq.NAMESPACE, new ServerPropsResponseIq.Provider());
         ProviderManager.addIQProvider(MediaUploadIq.ELEMENT, MediaUploadIq.NAMESPACE, new MediaUploadIq.Provider());
         ProviderManager.addIQProvider(SecondsToExpirationIq.ELEMENT, SecondsToExpirationIq.NAMESPACE, new SecondsToExpirationIq.Provider());
         ProviderManager.addIQProvider(WhisperKeysResponseIq.ELEMENT, WhisperKeysResponseIq.NAMESPACE, new WhisperKeysResponseIq.Provider());
@@ -271,9 +276,16 @@ public class Connection {
 
         pubSubHelper = new PubSubHelper(connection);
 
+        connectionPropHash = connection.getServerPropsHash();
+
         connectionObservers.notifyConnected();
 
         Log.i("connection: connected");
+    }
+
+    @Nullable
+    public String getConnectionPropHash() {
+        return connectionPropHash;
     }
 
     public void clientExpired() {
@@ -312,6 +324,23 @@ public class Connection {
         }
         connectInBackground();
         return connection != null && connection.isConnected() && connection.isAuthenticated();
+    }
+
+    public void requestServerProps() {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: request server props: no connection");
+                return;
+            }
+            ServerPropsRequestIq requestIq = new ServerPropsRequestIq();
+            requestIq.setTo(connection.getXMPPServiceDomain());
+            try {
+                ServerPropsResponseIq responseIq = connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+                connectionObservers.notifyServerPropsReceived(responseIq.getProps(), responseIq.getHash());
+            } catch (InterruptedException | SmackException.NoResponseException | SmackException.NotConnectedException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: failed to get server props", e);
+            }
+        });
     }
 
     public Future<Integer> requestSecondsToExpiration() {

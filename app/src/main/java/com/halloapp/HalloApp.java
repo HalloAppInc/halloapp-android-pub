@@ -21,6 +21,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -31,8 +32,8 @@ public class HalloApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        appContext.setApplicationContext(this);
         Log.i("halloapp: onCreate");
+        initSync();
 
         if (!BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
@@ -71,6 +72,17 @@ public class HalloApp extends Application {
         DailyWorker.schedule(this);
 
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    /**
+     * Synchronous init, try to do as little work here as possible
+     */
+    private void initSync() {
+        Log.i("HalloApp init");
+        appContext.setApplicationContext(this);
+
+        // Init server props synchronously so we have the correct values loaded
+        ServerProps.getInstance().init();
     }
 
     private void connect() {
