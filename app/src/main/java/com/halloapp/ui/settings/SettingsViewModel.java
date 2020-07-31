@@ -14,6 +14,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.Connection;
@@ -31,17 +32,21 @@ public class SettingsViewModel extends AndroidViewModel {
     private ContactsDb contactsDb;
     private Preferences preferences;
     private BlockListManager blockListManager;
+    private FeedPrivacyManager feedPrivacyManager;
 
     private final InvitesApi invitesApi;
-    private final PrivacyListApi privacyListApi;
 
     private ComputableLiveData<String> phoneNumberLiveData;
-    private final MutableLiveData<FeedPrivacy> feedPrivacyLiveData;
+    private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
     private final MutableLiveData<Integer> inviteCountLiveData;
     private ComputableLiveData<List<UserId>> blockListLiveData;
 
     private final BlockListManager.Observer blockListObserver = () -> {
         blockListLiveData.invalidate();
+    };
+
+    private final FeedPrivacyManager.Observer feedPrivacyObserver = () -> {
+        feedPrivacyLiveData.invalidate();
     };
 
     public SettingsViewModel(@NonNull Application application) {
@@ -53,11 +58,10 @@ public class SettingsViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
         blockListManager = BlockListManager.getInstance();
+        feedPrivacyManager = FeedPrivacyManager.getInstance();
 
         invitesApi = new InvitesApi(connection);
-        privacyListApi = new PrivacyListApi(connection);
 
-        feedPrivacyLiveData = new MutableLiveData<>();
         inviteCountLiveData = new MutableLiveData<>();
         phoneNumberLiveData = new ComputableLiveData<String>() {
             @Override
@@ -72,6 +76,13 @@ public class SettingsViewModel extends AndroidViewModel {
             }
         };
         blockListManager.addObserver(blockListObserver);
+        feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
+            @Override
+            protected FeedPrivacy compute() {
+                return feedPrivacyManager.getFeedPrivacy();
+            }
+        };
+        feedPrivacyManager.addObserver(feedPrivacyObserver);
         bgWorkers.execute(() -> me.getName());
         refresh();
     }
@@ -79,30 +90,7 @@ public class SettingsViewModel extends AndroidViewModel {
     @MainThread
     public void refresh() {
         phoneNumberLiveData.invalidate();
-        fetchFeedPrivacy();
         fetchInvitesCount();
-    }
-
-    private void fetchFeedPrivacy() {
-        bgWorkers.execute(() -> {
-            String cachedActiveList = preferences.getFeedPrivacyActiveList();
-            FeedPrivacy feedPrivacy;
-            List<UserId> exceptList = null;
-            List<UserId> onlyList = null;
-            if (PrivacyList.Type.EXCEPT.equals(cachedActiveList)) {
-                exceptList = contactsDb.getFeedExclusionList();
-            } else if (PrivacyList.Type.ONLY.equals(cachedActiveList)) {
-                onlyList = contactsDb.getFeedShareList();
-            }
-            feedPrivacy = new FeedPrivacy(cachedActiveList, exceptList, onlyList);
-            feedPrivacyLiveData.postValue(feedPrivacy);
-            privacyListApi.getFeedPrivacy().onResponse(feedPrivacyResponse -> {
-                preferences.setFeedPrivacyActiveList(feedPrivacyResponse.activeList);
-                contactsDb.setFeedExclusionList(feedPrivacyResponse.exceptList);
-                contactsDb.setFeedShareList(feedPrivacyResponse.onlyList);
-                feedPrivacyLiveData.postValue(feedPrivacyResponse);
-            });
-        });
     }
 
     private void fetchInvitesCount() {
@@ -116,7 +104,7 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public LiveData<FeedPrivacy> getFeedPrivacy() {
-        return feedPrivacyLiveData;
+        return feedPrivacyLiveData.getLiveData();
     }
 
     public LiveData<String> getPhone() {
@@ -138,5 +126,6 @@ public class SettingsViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         blockListManager.removeObserver(blockListObserver);
+        feedPrivacyManager.removeObserver(feedPrivacyObserver);
     }
 }

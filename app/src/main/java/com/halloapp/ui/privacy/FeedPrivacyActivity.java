@@ -107,7 +107,9 @@ public class FeedPrivacyActivity extends HalloActivity {
                     viewModel.savePrivacy(selectedType, currentList).observe(this, done -> {
                         if (done != null) {
                             BlueToast.show(this, done ? R.string.feed_privacy_update_success : R.string.feed_privacy_update_failure);
-                            finish();
+                            if (done) {
+                                finish();
+                            }
                         }
                     });
                     return;
@@ -169,6 +171,7 @@ public class FeedPrivacyActivity extends HalloActivity {
             settingRadioGroup.clearCheck();
             return;
         }
+        boolean animate = settingRadioGroup.getCheckedRadioButtonId() != -1;
         switch (type) {
             case PrivacyList.Type.ALL:
                 settingRadioGroup.check(R.id.radio_all);
@@ -179,6 +182,10 @@ public class FeedPrivacyActivity extends HalloActivity {
             case PrivacyList.Type.ONLY:
                 settingRadioGroup.check(R.id.radio_only);
                 break;
+        }
+        if (!animate) {
+            RadioButton radioButton = settingRadioGroup.findViewById(settingRadioGroup.getCheckedRadioButtonId());
+            radioButton.jumpDrawablesToCurrentState();
         }
     }
 

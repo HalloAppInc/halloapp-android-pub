@@ -11,9 +11,10 @@ import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
-import com.halloapp.xmpp.Connection;
+import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.privacy.PrivacyList;
-import com.halloapp.xmpp.privacy.PrivacyListApi;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,37 +22,37 @@ import java.util.List;
 
 public class FeedPrivacyViewModel extends AndroidViewModel {
 
-    private Connection connection;
-    private ContactsDb contactsDb;
-    private Preferences preferences;
-    private PrivacyListApi privacyListApi;
+    private BgWorkers bgWorkers;
+    private FeedPrivacyManager feedPrivacyManager;
 
-    private MutableLiveData<FeedPrivacy> feedPrivacyLiveData;
+    private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
+
+    private final FeedPrivacyManager.Observer feedPrivacyObserver = new FeedPrivacyManager.Observer() {
+        @Override
+        public void onFeedPrivacyChanged() {
+            feedPrivacyLiveData.invalidate();
+        }
+    };
 
     public FeedPrivacyViewModel(@NonNull Application application) {
         super(application);
 
-        connection = Connection.getInstance();
-        contactsDb = ContactsDb.getInstance();
-        preferences = Preferences.getInstance();
+        bgWorkers = BgWorkers.getInstance();
+        feedPrivacyManager = FeedPrivacyManager.getInstance();
 
-        privacyListApi = new PrivacyListApi(connection);
+        feedPrivacyManager.addObserver(feedPrivacyObserver);
+
+        feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
+            @Override
+            protected FeedPrivacy compute() {
+                return feedPrivacyManager.getFeedPrivacy();
+            }
+        };
     }
 
     @NonNull
     public LiveData<FeedPrivacy> getFeedPrivacy() {
-        if (feedPrivacyLiveData == null) {
-            feedPrivacyLiveData = new MutableLiveData<>();
-            privacyListApi.getFeedPrivacy().onResponse(result -> {
-                feedPrivacyLiveData.postValue(result);
-                preferences.setFeedPrivacyActiveList(result.activeList);
-                contactsDb.setFeedExclusionList(result.exceptList);
-                contactsDb.setFeedShareList(result.onlyList);
-            }).onError(exception -> {
-                feedPrivacyLiveData.postValue(null);
-            });
-        }
-        return feedPrivacyLiveData;
+        return feedPrivacyLiveData.getLiveData();
     }
 
     private void diffList(@NonNull List<UserId> oldList, @NonNull List<UserId> newList, List<UserId> addedUsers, List<UserId> deletedUsers) {
@@ -70,7 +71,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
     }
 
     public boolean hasChanges(@PrivacyList.Type String newSetting, @NonNull List<UserId> userIds) {
-        FeedPrivacy privacy = feedPrivacyLiveData.getValue();
+        FeedPrivacy privacy = feedPrivacyLiveData.getLiveData().getValue();
         if (privacy == null) {
             return false;
         }
@@ -95,7 +96,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
     @NonNull
     public LiveData<Boolean> savePrivacy(@PrivacyList.Type String newSetting, @NonNull List<UserId> userIds) {
         MutableLiveData<Boolean> savingLiveData = new MutableLiveData<>();
-        FeedPrivacy feedPrivacy = feedPrivacyLiveData.getValue();
+        FeedPrivacy feedPrivacy = feedPrivacyLiveData.getLiveData().getValue();
         if (feedPrivacy == null) {
             savingLiveData.setValue(Boolean.TRUE);
             return savingLiveData;
@@ -118,24 +119,19 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
                 return savingLiveData;
             }
         }
-        privacyListApi.setFeedPrivacy(newSetting, addedUsers, deletedUsers)
-                .onError(e -> {
-                    savingLiveData.postValue(Boolean.FALSE);
-                })
-                .onResponse(success -> {
-                    savingLiveData.postValue(success);
-                    preferences.setFeedPrivacyActiveList(feedPrivacy.activeList);
-                    contactsDb.setFeedShareList(feedPrivacy.onlyList);
-                    switch (newSetting) {
-                        case PrivacyList.Type.EXCEPT:
-                            contactsDb.setFeedExclusionList(userIds);
-                            break;
-                        case PrivacyList.Type.ONLY:
-                            contactsDb.setFeedShareList(userIds);
-                            break;
-                    }
-                });
+        bgWorkers.execute(() -> {
+            boolean success = feedPrivacyManager.updateFeedPrivacy(newSetting, addedUsers, deletedUsers);
+            if (!success) {
+                savingLiveData.postValue(Boolean.FALSE);
+            } else {
+                savingLiveData.postValue(Boolean.TRUE);
+            }
+        });
         return savingLiveData;
     }
 
+    @Override
+    protected void onCleared() {
+        feedPrivacyManager.removeObserver(feedPrivacyObserver);
+    }
 }

@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -517,13 +518,17 @@ public class ContactsDb {
     public List<UserId> getFeedExclusionList() {
         final List<UserId> exclusionList = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(FeedExcludedTable.TABLE_NAME,
-                new String[] { FeedExcludedTable._ID, FeedExcludedTable.COLUMN_USER_ID},
-                null, null, null, null, null
-        )) {
+        try (final Cursor cursor = db.rawQuery(
+                "SELECT " +
+                        FeedExcludedTable.TABLE_NAME + "." + FeedExcludedTable.COLUMN_USER_ID + ", " +
+                        ContactsTable.COLUMN_ADDRESS_BOOK_ID +
+                     " FROM " + FeedExcludedTable.TABLE_NAME +
+                     " LEFT JOIN " + ContactsTable.TABLE_NAME + " ON " +
+                        FeedExcludedTable.TABLE_NAME + "." + FeedExcludedTable.COLUMN_USER_ID + "=" + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID +
+                     " WHERE " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null)) {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
-                final String userIdStr = cursor.getString(1);
+                final String userIdStr = cursor.getString(0);
                 if (userIdStr != null && userIds.add(userIdStr)) {
                     exclusionList.add(new UserId(userIdStr));
                 }
@@ -549,16 +554,37 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    public void updateFeedExclusionList(@Nullable List<UserId> added, @Nullable List<UserId> removed) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        if (added != null) {
+            for (UserId addedUser : added) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(FeedExcludedTable.COLUMN_USER_ID, addedUser.rawId());
+                db.insert(FeedExcludedTable.TABLE_NAME, null, contentValues);
+            }
+        }
+        if (removed != null) {
+            for (UserId removedUser : removed) {
+                db.delete(FeedExcludedTable.TABLE_NAME, FeedExcludedTable.COLUMN_USER_ID + "=?", new String[] {removedUser.rawId()});
+            }
+        }
+    }
+
+    @WorkerThread
     public List<UserId> getFeedShareList() {
         final List<UserId> shareList = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(FeedSelectedTable.TABLE_NAME,
-                new String[] { FeedSelectedTable._ID, FeedSelectedTable.COLUMN_USER_ID},
-                null, null, null, null, null
-        )) {
+        try (final Cursor cursor = db.rawQuery(
+                "SELECT " +
+                        FeedSelectedTable.TABLE_NAME + "." + FeedSelectedTable.COLUMN_USER_ID + ", " +
+                        ContactsTable.COLUMN_ADDRESS_BOOK_ID +
+                     " FROM " + FeedSelectedTable.TABLE_NAME +
+                     " LEFT JOIN " + ContactsTable.TABLE_NAME + " ON " +
+                        FeedSelectedTable.TABLE_NAME + "." + FeedSelectedTable.COLUMN_USER_ID + "=" + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID +
+                     " WHERE " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null)) {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
-                final String userIdStr = cursor.getString(1);
+                final String userIdStr = cursor.getString(0);
                 if (userIdStr != null && userIds.add(userIdStr)) {
                     shareList.add(new UserId(userIdStr));
                 }
@@ -581,6 +607,23 @@ public class ContactsDb {
         }
         db.setTransactionSuccessful();
         db.endTransaction();
+    }
+
+    @WorkerThread
+    public void updateFeedShareList(@Nullable List<UserId> added, @Nullable List<UserId> removed) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        if (added != null) {
+            for (UserId addedUser : added) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(FeedSelectedTable.COLUMN_USER_ID, addedUser.rawId());
+                db.insert(FeedSelectedTable.TABLE_NAME, null, contentValues);
+            }
+        }
+        if (removed != null) {
+            for (UserId removedUser : removed) {
+                db.delete(FeedSelectedTable.TABLE_NAME, FeedSelectedTable.COLUMN_USER_ID + "=?", new String[] {removedUser.rawId()});
+            }
+        }
     }
 
     @WorkerThread
