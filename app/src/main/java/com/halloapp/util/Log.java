@@ -95,6 +95,11 @@ public class Log {
                 break;
             }
         }
+
+        // Set file name to message and line number to 0 to consistently group by message on Firebase
+        StackTraceElement first = stackTrace[0];
+        stackTrace[0] = new StackTraceElement(first.getClassName(), first.getMethodName(), msg, 0);
+
         Throwable e = new ConstructedException(msg, stackTrace);
         FirebaseCrashlytics.getInstance().recordException(e);
         if (!BuildConfig.DEBUG) {
