@@ -880,7 +880,7 @@ class PostsDb {
                         MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "," +
                         MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + " " +
                         "FROM " + MentionsTable.TABLE_NAME + " " +
-                        "LEFT JOIN " + CommentsTable.TABLE_NAME + " " +
+                        "INNER JOIN " + CommentsTable.TABLE_NAME + " " +
                         "AS c ON " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "=c." + CommentsTable._ID + " " +
                         "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? LIMIT " + limit;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
