@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -296,6 +297,11 @@ public class ContactsSync {
                     Log.i("ContactsSync.performContactSync: update avatar id for " + contact.addressBookName + " to " + contact.avatarId);
                     contactUpdated = true;
                 }
+                if (!Objects.equals(contact.halloName, contactsSyncResult.halloName)) {
+                    contact.halloName = contactsSyncResult.halloName;
+                    Log.i("ContactSync.performContactSync: update push name for " + contact.addressBookName + " to " + contact.halloName);
+                    contactUpdated = true;
+                }
                 if (contactUpdated) {
                     updatedContacts.add(contact);
                 }
@@ -306,6 +312,11 @@ public class ContactsSync {
             try {
                 ContactsDb.getInstance().updateContactsServerData(updatedContacts).get();
                 // TODO(ds): remove
+                Map<UserId, String> nameMap = new HashMap<>();
+                for (Contact contact : updatedContacts) {
+                    nameMap.put(contact.userId, contact.halloName);
+                }
+                ContactsDb.getInstance().updateUserNames(nameMap);
                 ContentDb.getInstance(context).migrateUserIds(updatedContacts);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.performContactSync: failed to update server data", e);
