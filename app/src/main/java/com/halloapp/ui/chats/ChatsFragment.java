@@ -29,6 +29,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -56,6 +57,7 @@ public class ChatsFragment extends HalloFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        Log.i("ChatsFragment.onCreateView");
         final View root = inflater.inflate(R.layout.fragment_chats, container, false);
         final RecyclerView chatsView = root.findViewById(R.id.chats);
         final View emptyView = root.findViewById(android.R.id.empty);

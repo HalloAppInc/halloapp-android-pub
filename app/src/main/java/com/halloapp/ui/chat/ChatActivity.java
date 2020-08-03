@@ -76,6 +76,8 @@ import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatActivity extends HalloActivity {
 
@@ -86,6 +88,8 @@ public class ChatActivity extends HalloActivity {
     public static final String EXTRA_COPY_TEXT = "copy_text";
 
     private static final int REQUEST_CODE_COMPOSE = 1;
+
+    public static Map<ChatId, String> messageDrafts = new HashMap<>();
 
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
@@ -160,6 +164,7 @@ public class ChatActivity extends HalloActivity {
         final ImageView sendButton = findViewById(R.id.send);
 
         editText = findViewById(R.id.entry);
+        editText.setText(ChatActivity.messageDrafts.get(chatId));
         editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)
                 .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
                 .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)));
@@ -176,6 +181,7 @@ public class ChatActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                ChatActivity.messageDrafts.put(chatId, s.toString());
                 if (s == null || TextUtils.isEmpty(s.toString())) {
                     sendButton.clearColorFilter();
                 } else {
