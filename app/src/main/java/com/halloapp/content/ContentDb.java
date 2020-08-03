@@ -12,14 +12,14 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 

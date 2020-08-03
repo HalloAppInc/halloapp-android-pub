@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
@@ -37,6 +38,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final Connection connection;
+    public static ConcurrentHashMap<String, Boolean> contentItemIds = new ConcurrentHashMap<>();
 
     private static final int RETRY_LIMIT = 3;
 
@@ -50,10 +52,17 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         Log.i("Resumable Uploader " + contentItem);
+
         if (contentItem.isTransferFailed()) {
-            Log.i("Resumable Uplaoder ContentItem isTransferFailed");
+            Log.i("Resumable Uploader ContentItem isTransferFailed");
             return null;
         }
+
+        if (UploadMediaTask.contentItemIds.containsKey(contentItem.id)) {
+            Log.i("Resumable Uploader: duplicate contentItem is currently uploading");
+            return null;
+        }
+        UploadMediaTask.contentItemIds.put(contentItem.id, true);
 
         for (Media media : contentItem.media) {
             Log.i("Resumable Uploader media transferred: " + media.transferred);
@@ -187,7 +196,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         if (contentItem.isAllMediaTransferred()) {
             contentItem.send(connection);
         }
-
+        UploadMediaTask.contentItemIds.remove(contentItem.id);
         return null;
     }
 

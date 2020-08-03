@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;

@@ -46,11 +46,11 @@ import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -74,7 +74,6 @@ import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Stack;
 
 public class ChatActivity extends HalloActivity {
 
