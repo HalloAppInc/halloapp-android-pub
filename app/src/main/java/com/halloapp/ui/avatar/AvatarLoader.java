@@ -112,12 +112,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         FileStore fileStore = FileStore.getInstance(context);
         File avatarFile = fileStore.getAvatarFile(userId.rawId());
 
-        ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(userId);
-
-        if (contactAvatarInfo == null) {
-            Log.i("AvatarLoader: Making new contact avatar info for user " + userId);
-            contactAvatarInfo = new ContactsDb.ContactAvatarInfo(userId, 0, null);
-        }
+        ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(userId);
 
         long currentTimeMs = System.currentTimeMillis();
         if (currentTimeMs - contactAvatarInfo.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
@@ -167,6 +162,17 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
     }
 
+    private @NonNull ContactsDb.ContactAvatarInfo getContactAvatarInfo(UserId userId) {
+        ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(userId);
+
+        if (contactAvatarInfo == null) {
+            Log.i("AvatarLoader: Making new contact avatar info for user " + userId);
+            contactAvatarInfo = new ContactsDb.ContactAvatarInfo(userId, 0, null);
+        }
+
+        return contactAvatarInfo;
+    }
+
     @NonNull private Bitmap getDefaultAvatar() {
         if (defaultAvatar == null) {
             Drawable drawable = context.getDrawable(R.drawable.avatar_person);
@@ -193,7 +199,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportMyAvatarChanged(String avatarId) {
-        ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(UserId.ME);
+        ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;
         contactAvatarInfo.avatarCheckTimestamp = 0;
         contactsDb.updateContactAvatarInfo(contactAvatarInfo);
