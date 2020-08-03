@@ -58,7 +58,7 @@ class ReplyContainer {
 
         containerView.setOnClickListener(v -> {
             final Intent intent = new Intent(containerView.getContext(), PostContentActivity.class);
-            intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME.rawId() : message.chatId);
+            intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME : message.chatId);
             intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
             intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, message.replyPostMediaIndex);
             if (containerView.getContext() instanceof Activity) {

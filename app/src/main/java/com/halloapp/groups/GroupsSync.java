@@ -17,6 +17,7 @@ import androidx.work.WorkerParameters;
 import com.halloapp.Constants;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
@@ -93,7 +94,7 @@ public class GroupsSync {
             List<GroupInfo> groups = groupsApi.getGroupsList().await();
             List<Chat> chats = contentDb.getGroups();
 
-            Map<String, Chat> chatMap = new HashMap<>();
+            Map<ChatId, Chat> chatMap = new HashMap<>();
             for (Chat chat : chats) {
                 chatMap.put(chat.chatId, chat);
             }
@@ -101,7 +102,7 @@ public class GroupsSync {
             List<GroupInfo> addedGroups = new ArrayList<>();
             List<GroupInfo> updatedGroups = new ArrayList<>();
             for (GroupInfo groupInfo : groups) {
-                Chat chat = chatMap.remove(groupInfo.groupId.rawId());
+                Chat chat = chatMap.remove(groupInfo.groupId);
                 if (chat == null) {
                     addedGroups.add(groupInfo);
                 } else if (!haveSameMetadata(groupInfo, chat)) {

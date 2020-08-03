@@ -2,6 +2,7 @@ package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 
@@ -129,7 +130,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    void notifyMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMessageUpdated(chatId, senderUserId,  messageId);
@@ -137,7 +138,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+    void notifyOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onOutgoingMessageDelivered(chatId, seenByUserId, messageId);
@@ -145,7 +146,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+    void notifyOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onOutgoingMessageSeen(chatId, seenByUserId, messageId);
@@ -153,7 +154,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    void notifyMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onMessageRetracted(chatId, senderUserId, messageId);
@@ -161,7 +162,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
+    void notifyChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onChatSeen(chatId, seenReceipts);
@@ -169,7 +170,7 @@ class ContentDbObservers {
         }
     }
 
-    void notifyChatDeleted(@NonNull String chatId) {
+    void notifyChatDeleted(@NonNull ChatId chatId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onChatDeleted(chatId);

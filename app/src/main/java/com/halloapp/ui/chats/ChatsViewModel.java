@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
@@ -54,11 +55,11 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateChats();
         }
 
-        public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
-        public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
@@ -66,19 +67,19 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateChats();
         }
 
-        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
+        public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
             invalidateMessage(chatId, UserId.ME, messageId);
         }
 
-        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+        public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
             invalidateMessage(chatId, UserId.ME, messageId);
         }
 
-        public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
+        public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
             invalidateChats();
         }
 
-        public void onChatDeleted(@NonNull String chatId) {
+        public void onChatDeleted(@NonNull ChatId chatId) {
             invalidateChats();
         }
 
@@ -86,7 +87,7 @@ public class ChatsViewModel extends AndroidViewModel {
             chatsList.invalidate();
         }
 
-        private void invalidateMessage(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        private void invalidateMessage(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
             messageLoader.removeFromCache(chatId, senderUserId, messageId);
             messageUpdated.postValue(true);
         }
@@ -108,7 +109,7 @@ public class ChatsViewModel extends AndroidViewModel {
             protected List<Chat> compute() {
 
                 final List<Chat> chats = ContentDb.getInstance(application).getChats();
-                Map<String, Chat> chatsMap = new HashMap<>();
+                Map<ChatId, Chat> chatsMap = new HashMap<>();
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);
                 }
@@ -119,15 +120,15 @@ public class ChatsViewModel extends AndroidViewModel {
                     if (friend.userId == null) {
                         continue;
                     }
-                    Chat chat = chatsMap.get(friend.userId.rawId());
+                    Chat chat = chatsMap.get(friend.userId);
                     if (chat == null) {
-                        chat = new Chat(-1, friend.userId.rawId(), 0, 0, -1L, -1L, friend.getDisplayName(), false, null, null);
+                        chat = new Chat(-1, friend.userId, 0, 0, -1L, -1L, friend.getDisplayName(), false, null, null);
                         chats.add(chat);
                     }
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name)) {
-                        chat.name = ContactsDb.getInstance().getContact(new UserId(chat.chatId)).getDisplayName();
+                        chat.name = ContactsDb.getInstance().getContact((UserId)chat.chatId).getDisplayName();
                     }
                 }
 

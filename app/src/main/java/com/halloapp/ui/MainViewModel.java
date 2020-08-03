@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.SeenReceipt;
+import com.halloapp.id.ChatId;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.Collection;
@@ -26,11 +27,11 @@ public class MainViewModel extends AndroidViewModel {
             }
         }
 
-        public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
+        public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
             unseenChatsCount.invalidate();
         }
 
-        public void onChatDeleted(@NonNull String chatId) {
+        public void onChatDeleted(@NonNull ChatId chatId) {
             unseenChatsCount.invalidate();
         }
     };

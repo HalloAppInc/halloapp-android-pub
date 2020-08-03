@@ -492,7 +492,7 @@ public class CommentsActivity extends HalloActivity {
                 mediaThumbnailLoader.load(imageView, media.get(position));
                 imageView.setOnClickListener(v -> {
                     final Intent intent = new Intent(imageView.getContext(), PostContentActivity.class);
-                    intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
+                    intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId);
                     intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
                     intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, position);
                     if (imageView.getContext() instanceof Activity) {

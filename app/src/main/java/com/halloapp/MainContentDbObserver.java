@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
@@ -130,7 +131,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         if (senderUserId.isMe()) {
             // TODO (ds): implement
             //connection.retractMessage(chatId, messageId);
@@ -138,7 +139,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
 
     }
 
@@ -158,24 +159,24 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
+    public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
 
     }
 
     @Override
-    public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+    public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
 
     }
 
     @Override
-    public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
+    public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
         for (SeenReceipt seenReceipt : seenReceipts) {
             connection.sendMessageSeenReceipt(seenReceipt.chatId, seenReceipt.senderUserId, seenReceipt.itemId);
         }
     }
 
     @Override
-    public void onChatDeleted(@NonNull String chatId) {
+    public void onChatDeleted(@NonNull ChatId chatId) {
 
     }
 

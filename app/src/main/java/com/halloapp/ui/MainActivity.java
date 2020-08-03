@@ -36,6 +36,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
@@ -336,7 +337,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             case REQUEST_CODE_SELECT_CONTACT:
                 if (result == RESULT_OK) {
                     String rawId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
-                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, rawId));
+                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, ChatId.fromString(rawId)));
                 }
                 break;
         }

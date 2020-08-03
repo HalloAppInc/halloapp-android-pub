@@ -7,6 +7,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.xmpp.Connection;
@@ -17,7 +18,7 @@ import java.util.Objects;
 
 public class Message extends ContentItem {
 
-    public final String chatId;
+    public final ChatId chatId;
     public final @State int state;
     public final int rerequestCount;
 
@@ -36,7 +37,7 @@ public class Message extends ContentItem {
 
     public Message(
             long rowId,
-            String chatId,
+            ChatId chatId,
             UserId senderUserId,
             String messageId,
             long timestamp,

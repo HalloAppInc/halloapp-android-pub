@@ -20,6 +20,7 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -71,7 +72,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     };
 
-    ContentComposerViewModel(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
+    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         contentDb = ContentDb.getInstance(application);
         contactsDb = ContactsDb.getInstance();
@@ -84,7 +85,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             chatName = new ComputableLiveData<String>() {
                 @Override
                 protected String compute() {
-                    return ContactsDb.getInstance().getContact(new UserId(chatId)).getDisplayName();
+                    return ContactsDb.getInstance().getContact((UserId)chatId).getDisplayName();
                 }
             };
         } else {
@@ -94,7 +95,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             replyPost = new ComputableLiveData<Post>() {
                 @Override
                 protected Post compute() {
-                    return contentDb.getPost(new UserId(chatId), replyPostId);
+                    return contentDb.getPost((UserId)chatId, replyPostId);
                 }
             };
         } else {
@@ -126,7 +127,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         new LoadContentUrisTask(getApplication(), uris, editStates, editMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    void prepareContent(@Nullable String chatId, @Nullable String text, @Nullable List<Mention> mentions) {
+    void prepareContent(@Nullable ChatId chatId, @Nullable String text, @Nullable List<Mention> mentions) {
         new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -166,13 +167,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final String chatId;
+        private final ChatId chatId;
         private final Collection<Uri> uris;
         private final Bundle editStates;
         private final String replyId;
         private final int replyPostMediaIndex;
 
-        Factory(@NonNull Application application, @Nullable String chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyId, int replyPostMediaIndex) {
+        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyId, int replyPostMediaIndex) {
             this.application = application;
             this.chatId = chatId;
             this.uris = uris;
@@ -263,7 +264,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     static class PrepareContentTask extends AsyncTask<Void, Void, Void> {
 
-        private final String chatId;
+        private final ChatId chatId;
         private final String text;
         private final List<Media> media;
         private final List<Mention> mentions;
@@ -272,7 +273,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final String replyPostId;
         private final int replyPostMediaIndex;
 
-        PrepareContentTask(@NonNull Application application, @Nullable String chatId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
+        PrepareContentTask(@NonNull Application application, @Nullable ChatId chatId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
             this.chatId = chatId;
             this.application = application;
             this.text = text;

@@ -129,7 +129,7 @@ public class ChatsFragment extends HalloFragment {
             void bindTo(@NonNull Chat chat) {
                 this.chat = chat;
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
-                avatarLoader.load(avatarView, new UserId(chat.chatId));
+                avatarLoader.load(avatarView, chat.chatId);
                 nameView.setText(chat.name);
                 if (chat.lastMessageRowId >= 0) {
                     viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {

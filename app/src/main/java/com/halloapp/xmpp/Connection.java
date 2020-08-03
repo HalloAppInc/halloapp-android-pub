@@ -11,6 +11,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
@@ -121,11 +122,11 @@ public class Connection {
         public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {}
         public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {}
-        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
-        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
+        public void onOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {}
+        public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
+        public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onIncomingMessageReceived(@NonNull Message message) {}
-        public void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull String stanzaId) {}
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
@@ -687,8 +688,8 @@ public class Connection {
                 Log.e("connection: cannot send message, no connection");
                 return;
             }
-            final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId), Domainpart.fromOrNull(XMPP_DOMAIN));
-            final UserId recipientUserId = new UserId(message.chatId);
+            final Jid recipientJid = JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(message.chatId.rawId()), Domainpart.fromOrNull(XMPP_DOMAIN));
+            final UserId recipientUserId = (UserId)message.chatId;
             try {
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(recipientJid);
                 xmppMessage.setStanzaId(message.id);
@@ -781,7 +782,7 @@ public class Connection {
         });
     }
 
-    public void sendMessageSeenReceipt(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send message seen receipt, no connection");
@@ -791,7 +792,7 @@ public class Connection {
                 final Jid recipientJid = userIdToJid(senderUserId);
                 final org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message(recipientJid);
                 message.setStanzaId(RandomId.create());
-                message.addExtension(new SeenReceiptElement(senderUserId.rawId().equals(chatId) ? null : chatId, messageId));
+                message.addExtension(new SeenReceiptElement(senderUserId.equals(chatId) ? null : chatId.rawId(), messageId));
                 ackHandlers.put(message.getStanzaId(), () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
                 Log.i("connection: sending message seen receipt " + messageId + " to " + recipientJid);
                 connection.sendStanza(message);
@@ -1078,7 +1079,7 @@ public class Connection {
                         Log.i("connection: got delivery receipt " + msg);
                         final String threadId = deliveryReceipt.getThreadId();
                         final UserId userId = getUserId(packet.getFrom());
-                        connectionObservers.notifyOutgoingMessageDelivered(threadId == null ? userId.rawId() : threadId, userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
+                        connectionObservers.notifyOutgoingMessageDelivered(threadId == null ? userId : ChatId.fromString(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1091,7 +1092,7 @@ public class Connection {
                         if (FEED_THREAD_ID.equals(threadId)) {
                             connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         } else {
-                            connectionObservers.notifyOutgoingMessageSeen(threadId == null ? userId.rawId() : threadId, userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                            connectionObservers.notifyOutgoingMessageSeen(threadId == null ? userId : ChatId.fromString(threadId), userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         }
                         handled = true;
                     }

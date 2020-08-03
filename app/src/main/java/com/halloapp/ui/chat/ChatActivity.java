@@ -50,6 +50,8 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.ContentComposerActivity;
@@ -95,7 +97,7 @@ public class ChatActivity extends HalloActivity {
     private TextView subtitleView;
     private TextView replyNameView;
 
-    private String chatId;
+    private ChatId chatId;
 
     private AvatarLoader avatarLoader;
     private PresenceLoader presenceLoader;
@@ -153,7 +155,7 @@ public class ChatActivity extends HalloActivity {
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
-        chatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
+        chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
 
         final ImageView sendButton = findViewById(R.id.send);
 
@@ -187,8 +189,12 @@ public class ChatActivity extends HalloActivity {
 
         View toolbarTitleContainer = findViewById(R.id.toolbar_text_container);
         toolbarTitleContainer.setOnClickListener(v -> {
-            Intent viewProfile = ViewProfileActivity.viewProfile(this, new UserId(chatId));
-            startActivity(viewProfile);
+            if (chatId instanceof UserId) {
+                Intent viewProfile = ViewProfileActivity.viewProfile(this, (UserId)chatId);
+                startActivity(viewProfile);
+            } else if (chatId instanceof GroupId) {
+                // TODO(jack): open up group info activity
+            }
         });
 
         final RecyclerView chatView = findViewById(R.id.chat);
@@ -303,30 +309,31 @@ public class ChatActivity extends HalloActivity {
                 adapter.setFirstUnseenMessageRowId(chat.firstUnseenMessageRowId);
                 adapter.setNewMessageCount(chat.newMessageCount);
             }
-            viewModel.isGroup.getLiveData().observe(this, isGroup -> {
-                if (isGroup && chat != null) {
+
+            if (chatId instanceof UserId) {
+                viewModel.name.getLiveData().observe(this, name -> {
+                    setTitle(name);
+                    if (replyPostId != null) {
+                        replyNameView.setText(name);
+                    }
+                });
+                presenceLoader.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
+                    if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
+                        setSubtitle(null);
+                    } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
+                        setSubtitle(getString(R.string.online));
+                    } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
+                        setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
+                    }
+                });
+            } else if (chatId instanceof GroupId) {
+                if (chat != null) {
                     setTitle(chat.name);
-                } else {
-                    viewModel.name.getLiveData().observe(this, name -> {
-                        setTitle(name);
-                        if (replyPostId != null) {
-                            replyNameView.setText(name);
-                        }
-                    });
-                    presenceLoader.getLastSeenLiveData(new UserId(chatId)).observe(this, presenceState -> {
-                        if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
-                            setSubtitle(null);
-                        } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
-                            setSubtitle(getString(R.string.online));
-                        } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
-                            setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
-                        }
-                    });
                 }
-            });
+            }
             ContentDb.getInstance(this).setChatSeen(chatId);
         });
-        avatarLoader.load(avatarView, new UserId(chatId));
+        avatarLoader.load(avatarView, chatId);
         viewModel.deleted.observe(this, deleted -> {
             if (deleted != null && deleted) {
                 finish();
@@ -396,8 +403,7 @@ public class ChatActivity extends HalloActivity {
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
-            final UserId userId = new UserId(chatId);
-            Debug.showDebugMenu(this, editText, userId);
+            Debug.showDebugMenu(this, editText, chatId);
             return true;
         }
         return super.onKeyLongPress(keyCode, event);

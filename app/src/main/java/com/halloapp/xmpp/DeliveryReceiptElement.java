@@ -2,6 +2,8 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.Nullable;
 
+import com.halloapp.id.ChatId;
+
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.provider.EmbeddedExtensionProvider;
@@ -21,10 +23,6 @@ public class DeliveryReceiptElement extends DeliveryReceipt {
 
     private final String threadId;
     private final long timestamp;
-
-    DeliveryReceiptElement(String threadId, String id) {
-        this(threadId, id, 0);
-    }
 
     private DeliveryReceiptElement(String threadId, String id, long timestamp) {
         super(id);

@@ -56,6 +56,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
+import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
@@ -108,7 +109,7 @@ public class ContentComposerActivity extends HalloActivity {
     private ImageButton addMediaButton;
 
     @Nullable
-    private String chatId;
+    private ChatId chatId;
     private String replyPostId;
     private int replyPostMediaIndex;
 
@@ -218,11 +219,11 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         if (savedInstanceState == null) {
-            chatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
+            chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         } else {
-            chatId = savedInstanceState.getString(EXTRA_CHAT_ID);
+            chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
@@ -453,7 +454,7 @@ public class ContentComposerActivity extends HalloActivity {
             outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }
         if (chatId != null) {
-            outState.putString(EXTRA_CHAT_ID, chatId);
+            outState.putParcelable(EXTRA_CHAT_ID, chatId);
         }
     }
 
@@ -556,7 +557,7 @@ public class ContentComposerActivity extends HalloActivity {
                     Log.w("ContentComposerActivity: cannot send empty content");
                 } else {
                     viewModel.prepareContent(
-                            getIntent().getStringExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
+                            getIntent().getParcelableExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
                 }
                 return true;
             }

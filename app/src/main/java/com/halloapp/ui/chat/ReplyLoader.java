@@ -43,7 +43,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
 
             String name = null;
             if (message.isOutgoing()) {
-                name = contactsDb.getContact(new UserId(message.chatId)).getDisplayName();
+                name = contactsDb.getContact((UserId)message.chatId).getDisplayName();
             }
             final ReplyPreview replyPreview = contentDb.getReplyPreview(message.rowId);
             if (replyPreview == null) {

@@ -1,9 +1,11 @@
 package com.halloapp.content;
 
+import com.halloapp.id.ChatId;
+
 public class Chat {
 
     public final long rowId;
-    public final String chatId;
+    public final ChatId chatId;
     public final long timestamp;
     public final int newMessageCount;
     public final long lastMessageRowId;
@@ -17,7 +19,7 @@ public class Chat {
 
     public Chat(
             long rowId,
-            String chatId,
+            ChatId chatId,
             long timestamp,
             int newMessageCount,
             long lastMessageRowId,

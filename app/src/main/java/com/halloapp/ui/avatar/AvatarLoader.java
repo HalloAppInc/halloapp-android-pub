@@ -18,6 +18,7 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.media.Downloader;
@@ -75,8 +76,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @MainThread
-    public void load(@NonNull ImageView view, @NonNull UserId userId) {
-        final Callable<Bitmap> loader = () -> getAvatarImpl(userId);
+    public void load(@NonNull ImageView view, @NonNull ChatId chatId) {
+        final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 
             @Override
@@ -89,28 +90,36 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 view.setImageResource(R.drawable.avatar_person);
             }
         };
-        load(view, loader, displayer, userId.rawId(), cache);
+        load(view, loader, displayer, chatId.rawId(), cache);
     }
 
     @WorkerThread
-    @NonNull public Bitmap getAvatar(@NonNull UserId userId) {
-        Bitmap avatar = cache.get(userId.rawId());
+    @NonNull public Bitmap getAvatar(@NonNull ChatId chatId) {
+        Bitmap avatar = cache.get(chatId.rawId());
         if (avatar != null) {
             return avatar;
         }
 
-        avatar = getAvatarImpl(userId);
+        avatar = getAvatarImpl(chatId);
         if (avatar != null) {
-            cache.put(userId.rawId(), avatar);
+            cache.put(chatId.rawId(), avatar);
         }
 
         return avatar != null ? avatar : getDefaultAvatar();
     }
 
     @WorkerThread
-    private Bitmap getAvatarImpl(@NonNull UserId userId) {
+    private Bitmap getAvatarImpl(@NonNull ChatId chatId) {
         FileStore fileStore = FileStore.getInstance(context);
-        File avatarFile = fileStore.getAvatarFile(userId.rawId());
+        File avatarFile = fileStore.getAvatarFile(chatId.rawId());
+
+        if (!(chatId instanceof UserId)) {
+            Log.w("Only user avatars supported right now");
+            // TODO(jack): implement for Groups
+            return null;
+        }
+
+        UserId userId = (UserId) chatId;
 
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(userId);
 

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -135,7 +136,7 @@ public class ChatMessageElement implements ExtensionElement {
             }
         }
         final Message message = new Message(0,
-                from.getLocalpartOrNull().toString(),
+                ChatId.fromString(from.getLocalpartOrNull().toString()),
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,

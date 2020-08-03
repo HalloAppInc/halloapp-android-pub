@@ -94,7 +94,7 @@ public class PresenceLoader {
         MutableLiveData<PresenceState> keepMld = null;
         for (UserId userId : map.keySet()) {
             MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
-            if (foregroundChat.isForegroundChatId(userId.rawId())) {
+            if (foregroundChat.isForegroundChatId(userId)) {
                 keepUserId = userId;
                 keepMld = mld;
                 break;

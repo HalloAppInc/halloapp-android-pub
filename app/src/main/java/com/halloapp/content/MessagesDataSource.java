@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
 
+import com.halloapp.id.ChatId;
 import com.halloapp.util.Log;
 
 import java.util.List;
@@ -11,18 +12,18 @@ import java.util.List;
 public class MessagesDataSource extends ItemKeyedDataSource<Long, Message> {
 
     private final ContentDb contentDb;
-    private final String chatId;
+    private final ChatId chatId;
 
     private Long keyRowId;
 
     public static class Factory extends DataSource.Factory<Long, Message> {
 
         private final ContentDb contentDb;
-        private final String chatId;
+        private final ChatId chatId;
 
         private MessagesDataSource latestSource;
 
-        public Factory(@NonNull ContentDb contentDb, @NonNull String chatId) {
+        public Factory(@NonNull ContentDb contentDb, @NonNull ChatId chatId) {
             this.contentDb = contentDb;
             this.chatId = chatId;
             latestSource = new MessagesDataSource(contentDb, chatId);
@@ -41,7 +42,7 @@ public class MessagesDataSource extends ItemKeyedDataSource<Long, Message> {
         }
     }
 
-    private MessagesDataSource(@NonNull ContentDb contentDb, @NonNull String chatId) {
+    private MessagesDataSource(@NonNull ContentDb contentDb, @NonNull ChatId chatId) {
         this.contentDb = contentDb;
         this.chatId = chatId;
     }

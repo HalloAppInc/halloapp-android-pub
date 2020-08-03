@@ -22,6 +22,7 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -160,13 +161,13 @@ public class Notifications {
         });
     }
 
-    public void clearMessageNotifications(@NonNull String chatId) {
+    public void clearMessageNotifications(@NonNull ChatId chatId) {
         executor.execute(() -> {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (Build.VERSION.SDK_INT >= 23 && getMessageNotificationCount() <= 2) {
                 notificationManager.cancel(MESSAGE_NOTIFICATION_ID);
             }
-            notificationManager.cancel(chatId, MESSAGE_NOTIFICATION_ID);
+            notificationManager.cancel(chatId.rawId(), MESSAGE_NOTIFICATION_ID);
         });
     }
 
@@ -190,8 +191,8 @@ public class Notifications {
             Log.i("Notifications.updateMessageNotifications: " + messages.size() + " messages");
 
             // group messages by chat IDs
-            final HashMap<String, List<Message>> chatsMessages = new HashMap<>();
-            final List<String> chatsIds = new ArrayList<>();
+            final HashMap<ChatId, List<Message>> chatsMessages = new HashMap<>();
+            final List<ChatId> chatsIds = new ArrayList<>();
             for (Message message : messages) {
                 if (message.isOutgoing() || message.isRetracted() || foregroundChat.isForegroundChatId(message.chatId)) {
                     continue;
@@ -215,7 +216,7 @@ public class Notifications {
             final Set<UserId> senders = new HashSet<>();
             final Map<UserId, Bitmap> avatars = new HashMap<>();
             int chatIndex = 0;
-            for (String chatId : chatsIds) {
+            for (ChatId chatId : chatsIds) {
                 final List<Message> chatMessages = Preconditions.checkNotNull(chatsMessages.get(chatId));
 
                 final IconCompat chatIcon = IconCompat.createWithResource(context, R.drawable.avatar_person);
@@ -261,7 +262,7 @@ public class Notifications {
                 builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex, PendingIntent.FLAG_UPDATE_CURRENT));
                 chatIndex++;
 
-                notificationManager.notify(chatId, MESSAGE_NOTIFICATION_ID, builder.build());
+                notificationManager.notify(chatId.rawId(), MESSAGE_NOTIFICATION_ID, builder.build());
             }
 
             final String text = context.getResources().getQuantityString(R.plurals.new_messages_notification, messages.size(), messages.size(), ListFormatter.format(context, names));
@@ -280,7 +281,7 @@ public class Notifications {
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
                 builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
             } else {
-                final String chatId = chatsIds.get(0);
+                final ChatId chatId = chatsIds.get(0);
                 final Intent contentIntent = new Intent(context, ChatActivity.class);
                 contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

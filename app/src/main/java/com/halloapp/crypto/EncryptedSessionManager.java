@@ -108,7 +108,11 @@ public class EncryptedSessionManager {
     }
 
     public void sendMessage(final @NonNull Message message) {
-        final UserId recipientUserId = new UserId(message.chatId);
+        if (!(message.chatId instanceof UserId)) {
+            // TODO(jack): support groups
+            throw new IllegalArgumentException("Encryption only supported for 1-1 chats");
+        }
+        final UserId recipientUserId = (UserId)message.chatId;
         try (AutoCloseLock autoCloseLock = acquireLock(recipientUserId)) {
             SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId);
             connection.sendMessage(message, sessionSetupInfo);

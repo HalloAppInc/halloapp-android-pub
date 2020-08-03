@@ -10,9 +10,10 @@ import java.util.Objects;
 
 public class ChatId implements Parcelable {
 
-    @SuppressWarnings("ConstantConditions")
-    public @Nullable static ChatId fromString(@NonNull String s) {
-        if (s.startsWith("g")) {
+    public @Nullable static ChatId fromString(@Nullable String s) {
+        if (s == null) {
+            return null;
+        } else if (s.startsWith("g")) {
             return new GroupId(s);
         } else {
             return new UserId(s);

@@ -2,6 +2,7 @@ package com.halloapp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
@@ -128,7 +129,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {
+    public void notifyOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onOutgoingMessageSent(chatId, messageId);
@@ -136,7 +137,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+    public void notifyOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onOutgoingMessageDelivered(chatId, userId, id, timestamp, stanzaId);
@@ -144,7 +145,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+    public void notifyOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onOutgoingMessageSeen(chatId, userId, id, timestamp, stanzaId);
@@ -160,7 +161,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void notifyIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId);

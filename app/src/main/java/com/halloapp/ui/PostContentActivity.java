@@ -188,7 +188,7 @@ public class PostContentActivity extends HalloActivity {
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
 
-        final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
+        final UserId userId = Preconditions.checkNotNull(getIntent().getParcelableExtra(EXTRA_POST_SENDER_USER_ID));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         final PostContentViewModel viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), userId, postId)).get(PostContentViewModel.class);

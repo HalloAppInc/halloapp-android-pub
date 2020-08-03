@@ -7,6 +7,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ViewDataLoader;
 
@@ -29,7 +30,7 @@ public class MessageLoader extends ViewDataLoader<View, Message, Long> {
         load(view, loader, displayer, messageRowId, cache);
     }
 
-    public void removeFromCache(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void removeFromCache(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         final Map<Long, Message> snapshot = cache.snapshot();
         for (Map.Entry<Long, Message> entry : snapshot.entrySet()) {
             final Message message = entry.getValue();

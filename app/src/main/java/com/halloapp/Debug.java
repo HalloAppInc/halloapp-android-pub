@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
@@ -188,23 +189,26 @@ public class Debug {
 
     }
 
-    public static void showDebugMenu(@NonNull Activity activity, View anchor, UserId peerUserId) {
+    public static void showDebugMenu(@NonNull Activity activity, View anchor, ChatId chatId) {
         PopupMenu menu = new PopupMenu(activity, anchor);
-        menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
-        menu.setOnMenuItemClickListener(item -> {
-            BlueToast.show(activity, item.getTitle());
-            switch (item.getTitle().toString()) {
-                case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
-                    try {
-                        KeyManager.getInstance().getNextOutboundMessageKey(peerUserId);
-                    } catch (Exception e) {
-                        Log.w("DEBUG error skipping outbound message key", e);
+
+        if (chatId instanceof  UserId) {
+            menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
+            menu.setOnMenuItemClickListener(item -> {
+                BlueToast.show(activity, item.getTitle());
+                switch (item.getTitle().toString()) {
+                    case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
+                        try {
+                            KeyManager.getInstance().getNextOutboundMessageKey((UserId)chatId);
+                        } catch (Exception e) {
+                            Log.w("DEBUG error skipping outbound message key", e);
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
-            return false;
-        });
+                return false;
+            });
+        }
         menu.show();
     }
 

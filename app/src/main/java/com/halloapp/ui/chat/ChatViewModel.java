@@ -16,6 +16,8 @@ import androidx.paging.PagedList;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
@@ -28,10 +30,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatViewModel extends AndroidViewModel {
 
-    private final String chatId;
+    private final ChatId chatId;
 
     final LiveData<PagedList<Message>> messageList;
-    final ComputableLiveData<Boolean> isGroup;
     final ComputableLiveData<Contact> contact;
     final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
@@ -61,31 +62,31 @@ public class ChatViewModel extends AndroidViewModel {
             }
         }
 
-        public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
                 invalidateMessages();
             }
         }
 
-        public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
                 invalidateMessages();
             }
         }
 
-        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
+        public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
                 invalidateMessages();
             }
         }
 
-        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+        public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
                 invalidateMessages();
             }
         }
 
-        public void onChatDeleted(@NonNull String chatId) {
+        public void onChatDeleted(@NonNull ChatId chatId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
                 deleted.postValue(true);
                 invalidateMessages();
@@ -101,7 +102,7 @@ public class ChatViewModel extends AndroidViewModel {
         }
     };
 
-    public ChatViewModel(@NonNull Application application, @NonNull String chatId, @Nullable String replyPostId) {
+    public ChatViewModel(@NonNull Application application, @NonNull ChatId chatId, @Nullable String replyPostId) {
         super(application);
 
         this.chatId = chatId;
@@ -112,24 +113,17 @@ public class ChatViewModel extends AndroidViewModel {
         dataSourceFactory = new MessagesDataSource.Factory(contentDb, chatId);
         messageList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
-        isGroup = new ComputableLiveData<Boolean>() {
-            @Override
-            protected Boolean compute() {
-                return chatId.startsWith("g");
-            }
-        };
-
         contact = new ComputableLiveData<Contact>() {
             @Override
             protected Contact compute() {
-                return ContactsDb.getInstance().getContact(new UserId(chatId));
+                return ContactsDb.getInstance().getContact((UserId)chatId);
             }
         };
 
         name = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return ContactsDb.getInstance().getContact(new UserId(chatId)).getDisplayName();
+                return ContactsDb.getInstance().getContact((UserId)chatId).getDisplayName();
             }
         };
 
@@ -147,7 +141,7 @@ public class ChatViewModel extends AndroidViewModel {
             replyPost = new ComputableLiveData<Post>() {
                 @Override
                 protected Post compute() {
-                    return contentDb.getPost(new UserId(chatId), replyPostId);
+                    return contentDb.getPost((UserId)chatId, replyPostId);
                 }
             };
         } else {
@@ -183,10 +177,10 @@ public class ChatViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final String chatId;
+        private final ChatId chatId;
         private final String replyPostId;
 
-        Factory(@NonNull Application application, @NonNull String chatId, @Nullable String replyPostId) {
+        Factory(@NonNull Application application, @NonNull ChatId chatId, @Nullable String replyPostId) {
             this.application = application;
             this.chatId = chatId;
             this.replyPostId = replyPostId;

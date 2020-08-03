@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
@@ -180,17 +181,17 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onOutgoingMessageSent(@NonNull String chatId, @NonNull String messageId) {
+    public void onOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {
         contentDb.setMessageTransferred(chatId, UserId.ME, messageId);
     }
 
     @Override
-    public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+    public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         contentDb.setOutgoingMessageDelivered(chatId, userId, id, timestamp, () -> connection.sendAck(stanzaId));
     }
 
     @Override
-    public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+    public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         contentDb.setOutgoingMessageSeen(chatId, userId, id, timestamp, () -> connection.sendAck(stanzaId));
     }
 
@@ -211,15 +212,15 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onIncomingMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         contentDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
     }
 
     @Override
     public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
-        Message message = contentDb.getMessage(peerUserId.rawId(), UserId.ME, messageId);
+        Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
         if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-            contentDb.setMessageRerequestCount(peerUserId.rawId(), UserId.ME, messageId, message.rerequestCount + 1);
+            contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
             encryptedSessionManager.sendMessage(message);
         }
         connection.sendAck(stanzaId);

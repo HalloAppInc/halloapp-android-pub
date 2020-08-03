@@ -17,6 +17,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.tables.ChatsTable;
@@ -56,7 +57,7 @@ class MessagesDb {
         db.beginTransaction();
         try {
             final ContentValues messageValues = new ContentValues();
-            messageValues.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
+            messageValues.put(MessagesTable.COLUMN_CHAT_ID, message.chatId.rawId());
             messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
             messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
             messageValues.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
@@ -128,12 +129,12 @@ class MessagesDb {
                     (unseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
                     (unseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
                     ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
-                    "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId)) {
+                    "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId.rawId())) {
                 updatedRowsCount = statement.executeUpdateDelete();
             }
             if (updatedRowsCount == 0) {
                 final ContentValues chatValues = new ContentValues();
-                chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId);
+                chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
                 chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
                 chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
                 if (unseen) {
@@ -310,7 +311,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setMessageRerequestCount(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
+    void setMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
         Log.i("MessagesDb.setMessageRerequestCount: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId + " count=" + count);
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_REREQUEST_COUNT, count);
@@ -318,7 +319,7 @@ class MessagesDb {
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
-                    new String [] {chatId, senderUserId.rawId(), messageId},
+                    new String [] {chatId.rawId(), senderUserId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("MessagesDb.setMessageRerequestCount: failed");
@@ -327,7 +328,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setMessageTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + " senderUserId=" + senderUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, senderUserId.isMe() ? Message.STATE_OUTGOING_SENT : Message.STATE_INCOMING_RECEIVED);
@@ -335,7 +336,7 @@ class MessagesDb {
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
-                    new String [] {chatId, senderUserId.rawId(), messageId},
+                    new String [] {chatId.rawId(), senderUserId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setMessageTransferred: failed");
@@ -484,7 +485,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
+    void setOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageDelivered: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_DELIVERED);
@@ -492,7 +493,7 @@ class MessagesDb {
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "<" + Message.STATE_OUTGOING_DELIVERED,
-                    new String [] {chatId, messageId},
+                    new String [] {chatId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setOutgoingMessageDelivered: failed");
@@ -501,7 +502,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
+    void setOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageSeen: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_SEEN);
@@ -509,7 +510,7 @@ class MessagesDb {
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
-                    new String [] {chatId, messageId},
+                    new String [] {chatId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setOutgoingMessageSeen: failed");
@@ -528,10 +529,10 @@ class MessagesDb {
         try {
             int updatedCount = db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
-                    new String[]{message.chatId, message.senderUserId.rawId(), message.id},
+                    new String[]{message.chatId.rawId(), message.senderUserId.rawId(), message.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
-                values.put(MessagesTable.COLUMN_CHAT_ID, message.chatId);
+                values.put(MessagesTable.COLUMN_CHAT_ID, message.chatId.rawId());
                 values.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
                 values.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
                 values.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
@@ -630,7 +631,7 @@ class MessagesDb {
                     }
                     message = new Message(
                             rowId,
-                            cursor.getString(1),
+                            ChatId.fromString(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -712,7 +713,7 @@ class MessagesDb {
                 if (message == null) {
                     message = new Message(
                             cursor.getLong(0),
-                            cursor.getString(1),
+                            ChatId.fromString(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -741,7 +742,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @Nullable Message getMessage(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    @Nullable Message getMessage(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
             "SELECT " +
@@ -785,7 +786,7 @@ class MessagesDb {
                     RepliesTable.COLUMN_POST_ID + "," +
                     RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
-            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId + "\" AND " +
+            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId.rawId() + "\" AND " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=\"" + senderUserId.rawId() + "\" AND " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=\"" + messageId + "\"";
         Message message = null;
@@ -794,7 +795,7 @@ class MessagesDb {
                 if (message == null) {
                     message = new Message(
                             cursor.getLong(0),
-                            cursor.getString(1),
+                            ChatId.fromString(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -823,10 +824,10 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
+    @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId + "\"";
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId.rawId() + "\"";
         if (startRowId != null) {
             where += " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? "<" : ">") + startRowId;
         }
@@ -886,7 +887,7 @@ class MessagesDb {
                     }
                     message = new Message(
                             rowId,
-                            cursor.getString(1),
+                            ChatId.fromString(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -985,7 +986,7 @@ class MessagesDb {
                     }
                     message = new Message(
                             rowId,
-                            cursor.getString(1),
+                            ChatId.fromString(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -1046,7 +1047,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void deleteChat(@NonNull String chatId) {
+    void deleteChat(@NonNull ChatId chatId) {
         Log.i("ContentDb.deleteChat " + chatId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -1062,7 +1063,7 @@ class MessagesDb {
                     MediaTable.COLUMN_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-            "WHERE " + MessagesTable.COLUMN_CHAT_ID  + "=" + chatId;
+            "WHERE " + MessagesTable.COLUMN_CHAT_ID  + "=" + chatId.rawId();
 
         int filesDeleted = 0;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -1077,8 +1078,8 @@ class MessagesDb {
                 }
             }
         }
-        final int messagesDeleted = db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
-        final int chatsDeleted = db.delete(ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "=?", new String []{chatId});
+        final int messagesDeleted = db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId.rawId()});
+        final int chatsDeleted = db.delete(ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "=?", new String []{chatId.rawId()});
         db.setTransactionSuccessful();
         db.endTransaction();
 
@@ -1086,7 +1087,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<SeenReceipt> setChatSeen(@NonNull String chatId) {
+    @NonNull List<SeenReceipt> setChatSeen(@NonNull ChatId chatId) {
         Log.i("ContentDb.setChatSeen " + chatId);
         final List<SeenReceipt> seenReceipts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -1100,20 +1101,20 @@ class MessagesDb {
                 chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
                 db.updateWithOnConflict(ChatsTable.TABLE_NAME, chatValues,
                         ChatsTable.COLUMN_CHAT_ID + "=?",
-                        new String [] {chatId},
+                        new String [] {chatId.rawId()},
                         SQLiteDatabase.CONFLICT_ABORT);
 
                 try (final Cursor cursor = db.query(MessagesTable.TABLE_NAME,
                         new String [] {MessagesTable.COLUMN_MESSAGE_ID, MessagesTable.COLUMN_SENDER_USER_ID},
                         MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable._ID + ">=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "<>''",
-                        new String [] {chatId, String.valueOf(chat.firstUnseenMessageRowId)}, null, null, null)) {
+                        new String [] {chatId.rawId(), String.valueOf(chat.firstUnseenMessageRowId)}, null, null, null)) {
                     while (cursor.moveToNext()) {
                         final String messageId = cursor.getString(0);
                         final UserId senderUserId = new UserId(cursor.getString(1));
                         seenReceipts.add(new SeenReceipt(chatId, senderUserId, messageId));
 
                         final ContentValues values = new ContentValues();
-                        values.put(OutgoingSeenReceiptsTable.COLUMN_CHAT_ID, chatId);
+                        values.put(OutgoingSeenReceiptsTable.COLUMN_CHAT_ID, chatId.rawId());
                         values.put(OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
                         values.put(OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID, messageId);
                         db.insert(OutgoingSeenReceiptsTable.TABLE_NAME, null, values);
@@ -1129,10 +1130,10 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    void setMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         final int deleteCount = databaseHelper.getWritableDatabase().delete(OutgoingSeenReceiptsTable.TABLE_NAME,
                 OutgoingSeenReceiptsTable.COLUMN_CHAT_ID + "=? AND " + OutgoingSeenReceiptsTable.COLUMN_SENDER_USER_ID + "=? AND " + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID + "=?",
-                new String [] {chatId, senderUserId.rawId(), messageId});
+                new String [] {chatId.rawId(), senderUserId.rawId(), messageId});
         Log.i("ContentDb.setMessageSeenReceiptSent: delete " + deleteCount + " rows for " + chatId + " " + senderUserId + " " + messageId);
     }
 
@@ -1157,7 +1158,7 @@ class MessagesDb {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
-                        cursor.getString(1),
+                        ChatId.fromString(cursor.getString(1)),
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
@@ -1193,7 +1194,7 @@ class MessagesDb {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
-                        cursor.getString(1),
+                        ChatId.fromString(cursor.getString(1)),
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
@@ -1209,7 +1210,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @Nullable Chat getChat(@NonNull String chatId) {
+    @Nullable Chat getChat(@NonNull ChatId chatId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
                 new String [] {
@@ -1224,12 +1225,12 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID},
                 ChatsTable.COLUMN_CHAT_ID + "=?",
-                new String [] {chatId},
+                new String [] {chatId.rawId()},
                 null, null, null)) {
             if (cursor.moveToNext()) {
                 return new Chat(
                         cursor.getLong(0),
-                        cursor.getString(1),
+                        ChatId.fromString(cursor.getString(1)),
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
@@ -1283,7 +1284,7 @@ class MessagesDb {
                 null, null, null, null, null)) {
             while (cursor.moveToNext()) {
                 final SeenReceipt receipt = new SeenReceipt(
-                        cursor.getString(0),
+                        ChatId.fromString(cursor.getString(0)),
                         new UserId(cursor.getString(1)),
                         cursor.getString(2));
                 receipts.add(receipt);

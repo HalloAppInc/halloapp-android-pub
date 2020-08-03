@@ -19,6 +19,7 @@ import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
@@ -56,15 +57,15 @@ public class ContentDb {
         void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onMessageAdded(@NonNull Message message);
-        void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
-        void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onGroupChatAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
         void onGroupMembersChanged(@NonNull GroupId groupId);
-        void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
-        void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
-        void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts);
-        void onChatDeleted(@NonNull String chatId);
+        void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
+        void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
+        void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
+        void onChatDeleted(@NonNull ChatId chatId);
         void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onFeedCleanup();
         void onDbCreated();
@@ -81,15 +82,15 @@ public class ContentDb {
         public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onMessageAdded(@NonNull Message message) {}
-        public void onMessageRetracted(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
-        public void onMessageUpdated(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onGroupChatAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
         public void onGroupMembersChanged(@NonNull GroupId groupId) {}
-        public void onOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
-        public void onOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
-        public void onChatSeen(@NonNull String chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
-        public void onChatDeleted(@NonNull String chatId) {}
+        public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
+        public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
+        public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
+        public void onChatDeleted(@NonNull ChatId chatId) {}
         public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
         public void onFeedCleanup() {}
         public void onDbCreated() {}
@@ -484,7 +485,7 @@ public class ContentDb {
 
     public void addMessage(@NonNull Message message, boolean unseen, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            final Post replyPost = message.replyPostId == null ? null : getPost(message.isIncoming() ? UserId.ME : new UserId(message.chatId), message.replyPostId);
+            final Post replyPost = message.replyPostId == null ? null : getPost(message.isIncoming() ? UserId.ME : (UserId)message.chatId, message.replyPostId);
             if (messagesDb.addMessage(message, unseen, replyPost)) {
                 observers.notifyMessageAdded(message);
             }
@@ -569,20 +570,20 @@ public class ContentDb {
         });
     }
 
-    public void setMessageRerequestCount(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
+    public void setMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageRerequestCount(chatId, senderUserId, messageId, count);
         });
     }
 
-    public void setMessageTransferred(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
             observers.notifyMessageUpdated(chatId, senderUserId, messageId);
         });
     }
 
-    public void setOutgoingMessageDelivered(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
+    public void setOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setOutgoingMessageDelivered(chatId, recipientUserId, messageId, timestamp);
             observers.notifyOutgoingMessageDelivered(chatId, recipientUserId, messageId);
@@ -590,7 +591,7 @@ public class ContentDb {
         });
     }
 
-    public void setOutgoingMessageSeen(@NonNull String chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
+    public void setOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setOutgoingMessageSeen(chatId, recipientUserId, messageId, timestamp);
             observers.notifyOutgoingMessageSeen(chatId, recipientUserId, messageId);
@@ -609,12 +610,12 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable Message getMessage(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public @Nullable Message getMessage(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         return messagesDb.getMessage(chatId, senderUserId, messageId);
     }
 
     @WorkerThread
-    @NonNull List<Message> getMessages(@NonNull String chatId, @Nullable Long startRowId, int count, boolean after) {
+    @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
         return messagesDb.getMessages(chatId, startRowId, count, after);
     }
 
@@ -634,7 +635,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable Chat getChat(@NonNull String chatId) {
+    public @Nullable Chat getChat(@NonNull ChatId chatId) {
         return messagesDb.getChat(chatId);
     }
 
@@ -648,14 +649,14 @@ public class ContentDb {
         return messagesDb.getUnseenChatsCount();
     }
 
-    public void deleteChat(@NonNull String chatId) {
+    public void deleteChat(@NonNull ChatId chatId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.deleteChat(chatId);
             observers.notifyChatDeleted(chatId);
         });
     }
 
-    public void setChatSeen(@NonNull String chatId) {
+    public void setChatSeen(@NonNull ChatId chatId) {
         databaseWriteExecutor.execute(() -> {
             final Collection<SeenReceipt> seenReceipts = messagesDb.setChatSeen(chatId);
             if (!seenReceipts.isEmpty()) {
@@ -664,7 +665,7 @@ public class ContentDb {
         });
     }
 
-    public void setMessageSeenReceiptSent(@NonNull String chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void setMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> messagesDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId));
     }
 
@@ -748,7 +749,7 @@ public class ContentDb {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            observers.notifyChatSeen("", new ArrayList<>());
+            observers.notifyChatSeen(UserId.ME, new ArrayList<>());
             observers.notifyFeedCleanup();
         });
     }

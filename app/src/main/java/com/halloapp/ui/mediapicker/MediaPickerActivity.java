@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.CropImageActivity;
@@ -311,7 +312,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     private void startContentComposer(@NonNull ArrayList<Uri> uris) {
         final Intent intent = new Intent(this, ContentComposerActivity.class);
-        intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, getIntent().getStringExtra(EXTRA_CHAT_ID));
+        ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+        intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
 
