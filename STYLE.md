@@ -72,19 +72,18 @@ the code they describe
   - Fragments
   - Views
   - Services
-  - Broadcast Receivers 
+  - Broadcast Receivers
   - `getInstance` calls for other singletons
 - If you need to access a singleton from elsewhere, use dependency injection and pass the dependency down.
-
 - Don't intersperse `getInstance` calls whenever you need them, instead add a field. (see sample below)
 - Group singletons together and order them by length. Tie break with alphabetical order
-  
 
 ## Other
 
 - All checked exceptions should be explicitly mentioned in a catch block
 - Log statements must not contain side effects
 - Wildcard imports are not allowed
+- Generated code and written code should not be updated in the same commit
 
 ## Samples
 
