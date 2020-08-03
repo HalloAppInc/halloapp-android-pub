@@ -36,7 +36,7 @@ public class HalloApp extends Application {
         initSync();
 
         if (!BuildConfig.DEBUG) {
-            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+            Log.uploadUnsentReports();
         } else {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()

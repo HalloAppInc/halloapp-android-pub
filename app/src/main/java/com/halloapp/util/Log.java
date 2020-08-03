@@ -101,6 +101,11 @@ public class Log {
 
         Throwable e = new ConstructedException(msg, stackTrace);
         FirebaseCrashlytics.getInstance().recordException(e);
+
+        uploadUnsentReports();
+    }
+
+    public static void uploadUnsentReports() {
         if (!BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().sendUnsentReports();
         }
