@@ -91,14 +91,13 @@ public class Log {
         for (int i = 0; i < stackTrace.length; i++) {
             StackTraceElement elem = stackTrace[i];
             if (elem.getClassName().equals(logClassName) && elem.getMethodName().equals(methodName)) {
-                stackTrace = Arrays.copyOfRange(stackTrace, i + 1, stackTrace.length);
+                stackTrace = Arrays.copyOfRange(stackTrace, i, stackTrace.length);
                 break;
             }
         }
 
         // Set file name to message and line number to 0 to consistently group by message on Firebase
-        StackTraceElement first = stackTrace[0];
-        stackTrace[0] = new StackTraceElement(first.getClassName(), first.getMethodName(), msg, 0);
+        stackTrace[0] = new StackTraceElement(msg, "NoMethod", msg, 0);
 
         Throwable e = new ConstructedException(msg, stackTrace);
         FirebaseCrashlytics.getInstance().recordException(e);
