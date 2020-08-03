@@ -39,6 +39,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private final Context context;
     private final Connection connection;
+    private final ContactsDb contactsDb;
     private final LruCache<String, Bitmap> cache;
 
     private Bitmap defaultAvatar;
@@ -47,16 +48,17 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(context, Connection.getInstance());
+                    instance = new AvatarLoader(context, Connection.getInstance(), ContactsDb.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Context context, Connection connection) {
+    private AvatarLoader(@NonNull Context context, Connection connection, ContactsDb contactsDb) {
         this.context = context.getApplicationContext();
         this.connection = connection;
+        this.contactsDb = contactsDb;
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -110,7 +112,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         FileStore fileStore = FileStore.getInstance(context);
         File avatarFile = fileStore.getAvatarFile(userId.rawId());
 
-        ContactsDb contactsDb = ContactsDb.getInstance();
         ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(userId);
 
         if (contactAvatarInfo == null) {
@@ -192,7 +193,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportMyAvatarChanged(String avatarId) {
-        ContactsDb contactsDb = ContactsDb.getInstance();
         ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;
         contactAvatarInfo.avatarCheckTimestamp = 0;
