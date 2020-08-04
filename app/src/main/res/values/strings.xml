@@ -38,6 +38,7 @@
     <string name="chat_message_attribution">%s: %s</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
     <string name="posts_empty">Your posts will appear here</string>
+    <string name="your_post_title">Your post</string>
     <string name="contact_profile_empty">%s\'s posts will appear here</string>
     <string name="contact_profile_not_friends">You are not friends with %s on HalloApp</string>
     <string name="invalid_phone_number">Invalid phone number</string>
@@ -133,7 +134,7 @@
     <string name="avatar_picker_title">Profile photo</string>
     <string name="other_media">Other media</string>
     <string name="rotate">Rotate</string>
-    <string name="seen_by">Seen by</string>
+    <string name="seen_by">Viewed by</string>
     <string name="options">Options</string>
     <string name="block">Block</string>
     <string name="play">Play</string>
@@ -198,6 +199,8 @@
     <string name="new_messages">New messages</string>
     <string name="delete">Delete</string>
     <string name="view_profile">View profile</string>
+    <string name="action_hide">Hide</string>
+    <string name="hide_my_posts">Hide my posts</string>
     <string name="last_seen">Last seen %s</string>
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
     <string name="online">Online</string>
@@ -221,7 +224,7 @@
     <string name="crop">Crop</string>
     <string name="flip">Flip</string>
     <string name="no_one_seen_your_post">No one saw your post :(</string>
-    <string name="other_friends">Friends who didn\'t see your post yet</string>
+    <string name="other_friends">Delivered to</string>
     <string name="email_logs_subject">HalloApp Android %s</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %s\nversion: %s\n</string>
     <string name="share">Share</string>
@@ -306,4 +309,8 @@
     <string name="unblocking_user_successful">Unblocked %s</string>
     <string name="unblocking_user_failed_check_internet">Couldn\'t unblock %s. Check your internet and try again.</string>
     <string name="unblocking_user_in_progress">Unblocking %s…</string>
+    <string name="are_you_sure_dialog_title">Are you sure?</string>
+    <string name="hide_future_posts_confirmation">Are you sure you want to hide all your future posts from %s? You can always change this later.</string>
+    <string name="feed_privacy_hide_success">Feed privacy updated. Hiding posts from %s</string>
+    <string name="feed_privacy_hide_failure">Failed to update feed privacy, check your internet and try again</string>
 </resources>

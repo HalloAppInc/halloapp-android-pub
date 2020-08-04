@@ -101,7 +101,7 @@ class PostsDb {
         db.beginTransaction();
         try {
             if (post.rowId == 0) {
-                final Post updatePost = getPost(post.senderUserId, post.id);
+                final Post updatePost = getPost(post.id);
                 if (updatePost != null) {
                     post = updatePost;
                 }
@@ -674,7 +674,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    @Nullable Post getPost(@NonNull UserId userId, @NonNull String postId) {
+    @Nullable Post getPost(@NonNull String postId) {
         Post post = null;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
@@ -706,9 +706,9 @@ class PostsDb {
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-                "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=?";
+                "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=?";
 
-        try (final Cursor cursor = db.rawQuery(sql, new String [] {userId.rawId(), postId})) {
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);

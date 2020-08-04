@@ -75,11 +75,7 @@ class ReplyContainer {
             @Override
             public void showResult(@NonNull View view, @Nullable ReplyLoader.Result result) {
                 if (result != null) {
-                    if (message.isIncoming()) {
-                        nameView.setText(R.string.me);
-                    } else {
-                        nameView.setText(result.name);
-                    }
+                    nameView.setText(result.name);
                     if (result.mentions != null) {
                         parent.getTextContentLoader().load(textView, result);
                     } else {

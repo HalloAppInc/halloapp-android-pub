@@ -16,15 +16,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -43,9 +44,12 @@ public class ChatViewModel extends AndroidViewModel {
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Post> replyPost;
     private ComputableLiveData<List<UserId>> blockListLiveData;
+    final ComputableLiveData<String> replyName;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
+    private final Me me;
     private final ContentDb contentDb;
+    private final ContactsDb contactsDb;
     private final AtomicInteger outgoingAddedCount = new AtomicInteger(0);
     private final AtomicInteger incomingAddedCount = new AtomicInteger(0);
     private final AtomicInteger initialUnseen = new AtomicInteger(0);
@@ -113,13 +117,15 @@ public class ChatViewModel extends AndroidViewModel {
         }
     };
 
-    public ChatViewModel(@NonNull Application application, @NonNull ChatId chatId, @Nullable String replyPostId) {
+    public ChatViewModel(@NonNull Application application, @NonNull ChatId chatId, @Nullable UserId replySenderId, @Nullable String replyPostId) {
         super(application);
 
         this.chatId = chatId;
 
+        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
+        contactsDb = ContactsDb.getInstance();
 
         blockListManager = BlockListManager.getInstance();
 
@@ -150,15 +156,26 @@ public class ChatViewModel extends AndroidViewModel {
             }
         };
 
-        if (replyPostId != null) {
+        if (replyPostId != null && replySenderId != null) {
             replyPost = new ComputableLiveData<Post>() {
                 @Override
                 protected Post compute() {
-                    return contentDb.getPost((UserId)chatId, replyPostId);
+                    return contentDb.getPost(replyPostId);
+                }
+            };
+            replyName = new ComputableLiveData<String>()
+            {
+                @Override
+                protected String compute() {
+                    if (replySenderId.isMe()) {
+                        return me.getName();
+                    }
+                    return contactsDb.getContact(replySenderId).getDisplayName();
                 }
             };
         } else {
             replyPost = null;
+            replyName = null;
         }
 
         blockListLiveData = new ComputableLiveData<List<UserId>>() {
@@ -252,18 +269,20 @@ public class ChatViewModel extends AndroidViewModel {
         private final Application application;
         private final ChatId chatId;
         private final String replyPostId;
+        private final UserId replySenderId;
 
-        Factory(@NonNull Application application, @NonNull ChatId chatId, @Nullable String replyPostId) {
+        Factory(@NonNull Application application, @NonNull ChatId chatId, @Nullable UserId replySenderId, @Nullable String replyPostId) {
             this.application = application;
             this.chatId = chatId;
             this.replyPostId = replyPostId;
+            this.replySenderId = replySenderId;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ChatViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ChatViewModel(application, chatId, replyPostId);
+                return (T) new ChatViewModel(application, chatId, replySenderId, replyPostId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

@@ -350,8 +350,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable Post getPost(@NonNull UserId userId, @NonNull String postId) {
-        return postsDb.getPost(userId, postId);
+    public @Nullable Post getPost(@NonNull String postId) {
+        return postsDb.getPost(postId);
     }
 
     @WorkerThread
@@ -485,7 +485,7 @@ public class ContentDb {
 
     public void addMessage(@NonNull Message message, boolean unseen, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            final Post replyPost = message.replyPostId == null ? null : getPost(message.isIncoming() ? UserId.ME : (UserId)message.chatId, message.replyPostId);
+            final Post replyPost = message.replyPostId == null ? null : getPost(message.replyPostId);
             if (messagesDb.addMessage(message, unseen, replyPost)) {
                 observers.notifyMessageAdded(message);
             }

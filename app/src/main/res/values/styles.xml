@@ -12,6 +12,7 @@
         <item name="actionModeBackground">@color/window_background</item>
         <item name="useLightSystemBars">@bool/light_system_bars</item>
         <item name="toolbarStyle">@style/Toolbar</item>
+        <item name="bottomSheetDialogTheme">@style/RoundedBottomSheetDialog</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
@@ -88,6 +89,26 @@
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingEnd">100dp</item>
+    </style>
+
+    <style name="RoundedBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundedBottomSheet</item>
+        <item name="android:windowIsFloating">false</item> <!-- This is important -->
+        <item name="android:statusBarColor">@android:color/transparent</item> <!-- And then this will be needed -->
+        <item name="android:navigationBarColor">@color/window_background</item>
+        <item name="android:colorBackground">@color/window_background</item>
+    </style>
+
+    <style name="RoundedBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/RoundedAppearanceBottomSheetDialog</item>
+    </style>
+
+    <style name="RoundedAppearanceBottomSheetDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">

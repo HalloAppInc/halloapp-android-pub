@@ -28,6 +28,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
@@ -49,11 +50,14 @@ public class PostSeenByActivity extends HalloActivity {
     private AvatarLoader avatarLoader;
     private TimestampRefresher timestampRefresher;
 
+    private String postId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("PostSeenByActivity.onCreate");
         setContentView(R.layout.activity_post_seen_by);
+        setTitle(R.string.your_post_title);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -62,7 +66,7 @@ public class PostSeenByActivity extends HalloActivity {
         seenByView.setLayoutManager(layoutManager);
         seenByView.setAdapter(adapter);
 
-        final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+        postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         viewModel = new ViewModelProvider(this, new PostSeenByViewModel.Factory(getApplication(), postId)).get(PostSeenByViewModel.class);
         viewModel.seenByList.getLiveData().observe(this, adapter::setSeenBy);
@@ -124,73 +128,7 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     private void showPost(@NonNull Post post) {
-        final RecyclerView mediaGallery = findViewById(R.id.media);
-        final TextView textView = findViewById(R.id.text);
 
-        final boolean hasMedia = !post.media.isEmpty();
-        final boolean hasText = !TextUtils.isEmpty(post.text);
-
-        if (hasMedia) {
-            textView.setVisibility(View.GONE);
-            final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
-            mediaGallery.setLayoutManager(layoutManager);
-            mediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.details_media_list_spacing)));
-            mediaGallery.setAdapter(new MediaAdapter(post.media));
-        } else if (hasText) {
-            mediaGallery.setVisibility(View.GONE);
-            textView.setVisibility(View.VISIBLE);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
-                    (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
-            textView.setText(post.text);
-        } else {
-            Log.e("Post has neither media nor text");
-            mediaGallery.setVisibility(View.GONE);
-            textView.setVisibility(View.GONE);
-        }
-    }
-
-    private class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
-
-        final List<Media> media;
-
-        MediaAdapter(@NonNull List<Media> media) {
-            this.media = media;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            final ImageView imageView = new ImageView(parent.getContext());
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            imageView.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
-                }
-            });
-            imageView.setClipToOutline(true);
-            return new ViewHolder(imageView);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            final ImageView imageView = (ImageView)holder.itemView;
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setAdjustViewBounds(true);
-            mediaThumbnailLoader.load(imageView, media.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return media.size();
-        }
-
-        private class ViewHolder extends RecyclerView.ViewHolder {
-
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-            }
-        }
     }
 
     interface ListItem {
@@ -264,11 +202,11 @@ public class PostSeenByActivity extends HalloActivity {
 
         private void createListItems() {
             listItems.clear();
-            listItems.add(new HeaderListItem(getString(R.string.seen_by)));
             final Set<UserId> seenByUserIds = new HashSet<>();
             if (seenByContacts == null || seenByContacts.isEmpty()) {
-                listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
+                //listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
             } else {
+                listItems.add(new HeaderListItem(getString(R.string.seen_by)));
                 for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
                     listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
                     seenByUserIds.add(seenByContact.contact.userId);
@@ -337,6 +275,7 @@ public class PostSeenByActivity extends HalloActivity {
             final ImageView avatarView;
             final TextView nameView;
             final TextView timeView;
+            final TextView phoneView;
             final View menuView;
 
             Contact contact;
@@ -347,6 +286,11 @@ public class PostSeenByActivity extends HalloActivity {
                 nameView = itemView.findViewById(R.id.name);
                 timeView = itemView.findViewById(R.id.time);
                 menuView = itemView.findViewById(R.id.menu);
+                phoneView = itemView.findViewById(R.id.phone);
+                itemView.setOnClickListener(v -> {
+                    ContactMenuBottomSheetDialogFragment bs = ContactMenuBottomSheetDialogFragment.newInstance(contact, postId);
+                    DialogFragmentUtils.showDialogFragmentOnce(bs, getSupportFragmentManager());
+                });
                 menuView.setOnClickListener(v -> {
                     final PopupMenu menu = new PopupMenu(menuView.getContext(), menuView);
                     getMenuInflater().inflate(R.menu.contact_menu, menu.getMenu());
@@ -372,12 +316,8 @@ public class PostSeenByActivity extends HalloActivity {
                 contact = item.contact;
                 avatarLoader.load(avatarView, Preconditions.checkNotNull(item.contact.userId));
                 nameView.setText(contact.getDisplayName());
-                if (item.timestamp >= 0) {
-                    TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - item.timestamp);
-                    timestampRefresher.scheduleTimestampRefresh(item.timestamp);
-                } else {
-                    timeView.setText("");
-                }
+                phoneView.setText(contact.getDisplayPhone());
+                timeView.setText("");
             }
         }
 

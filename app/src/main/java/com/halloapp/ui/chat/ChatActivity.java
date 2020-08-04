@@ -85,6 +85,7 @@ import java.util.Map;
 public class ChatActivity extends HalloActivity {
 
     public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_REPLY_POST_SENDER_ID = "reply_post_sender_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_SELECTED_MESSAGE_ROW_ID = "selected_message_row_id";
@@ -118,6 +119,7 @@ public class ChatActivity extends HalloActivity {
     private ActionMode actionMode;
 
     private String replyPostId;
+    private UserId replySenderId;
     private int replyPostMediaIndex;
     private long selectedMessageRowId = -1;
     private String copyText;
@@ -226,9 +228,11 @@ public class ChatActivity extends HalloActivity {
         chatView.setAdapter(adapter);
 
         if (savedInstanceState == null) {
+            replySenderId = getIntent().getParcelableExtra(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         } else {
+            replySenderId = savedInstanceState.getParcelable(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
             selectedMessageRowId = savedInstanceState.getLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
@@ -242,7 +246,7 @@ public class ChatActivity extends HalloActivity {
         }
 
         viewModel = new ViewModelProvider(this,
-                new ChatViewModel.Factory(getApplication(), chatId, replyPostId)).get(ChatViewModel.class);
+                new ChatViewModel.Factory(getApplication(), chatId, replySenderId, replyPostId)).get(ChatViewModel.class);
 
         final View newMessagesView = findViewById(R.id.new_messages);
         newMessagesView.setOnClickListener(v -> {
@@ -327,9 +331,6 @@ public class ChatActivity extends HalloActivity {
                 viewModel.name.getLiveData().observe(this, name -> {
                     chatName = name;
                     setTitle(name);
-                    if (replyPostId != null) {
-                        replyNameView.setText(name);
-                    }
                 });
                 presenceLoader.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
                     if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
@@ -357,6 +358,7 @@ public class ChatActivity extends HalloActivity {
         replyContainer = findViewById(R.id.reply_container);
         if (viewModel.replyPost != null) {
             viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
+            viewModel.replyName.getLiveData().observe(this, replyNameView::setText);
         } else {
             replyContainer.setVisibility(View.GONE);
         }
@@ -407,6 +409,7 @@ public class ChatActivity extends HalloActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (replyPostId != null) {
+            outState.putParcelable(EXTRA_REPLY_POST_SENDER_ID, replySenderId);
             outState.putString(EXTRA_REPLY_POST_ID, replyPostId);
             outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }

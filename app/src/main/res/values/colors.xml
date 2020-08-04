@@ -86,4 +86,5 @@
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>
     <color name="secondary_text">@color/black_54</color>
+    <color name="secondary_text_button">@color/black_70</color>
 </resources>

@@ -78,7 +78,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
     public void load(@NonNull ImageView view, @NonNull UserId userId, @NonNull String postId) {
         final Callable<Drawable> loader = () -> {
 
-            final Post post = contentDb.getPost(userId, postId);
+            final Post post = contentDb.getPost(postId);
             if (post == null) {
                 return null;
             }

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="56dp"
-    android:paddingStart="16dp"
+    android:paddingStart="@dimen/toolbar_title_offset"
     android:paddingEnd="16dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -25,14 +25,33 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/time"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/phone"
         android:singleLine="true"
         android:ellipsize="end"
         android:textAppearance="?textAppearanceListItem"
         android:fontFamily="sans-serif-medium"
         android:textDirection="locale"
         android:textAlignment="gravity"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Ded Pihtov"/>
+
+    <TextView
+        android:id="@+id/phone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintEnd_toStartOf="@+id/time"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="14sp"
+        android:textColor="@color/secondary_text"
+        android:textDirection="locale"
+        android:textAlignment="gravity"
+        tools:text="+1-650-924-6950"/>
+
 
     <TextView
         android:id="@+id/time"

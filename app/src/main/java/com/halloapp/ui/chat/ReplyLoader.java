@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
+import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
@@ -40,9 +42,15 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
     @MainThread
     public void load(@NonNull View view, @NonNull Message message, @NonNull ViewDataLoader.Displayer<View, Result> displayer) {
         final Callable<Result> loader = () -> {
-
+            Post replyPost = contentDb.getPost(message.replyPostId);
             String name = null;
-            if (message.isOutgoing()) {
+            if (replyPost != null) {
+                if (replyPost.senderUserId.isMe()) {
+                    name = view.getContext().getString(R.string.me);
+                } else {
+                    name = contactsDb.getContact(replyPost.senderUserId).getDisplayName();
+                }
+            } else if (message.isOutgoing()) {
                 name = contactsDb.getContact((UserId)message.chatId).getDisplayName();
             }
             final ReplyPreview replyPreview = contentDb.getReplyPreview(message.rowId);

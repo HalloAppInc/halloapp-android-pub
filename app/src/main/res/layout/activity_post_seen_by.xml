@@ -7,49 +7,12 @@
     tools:context=".ui.PostSeenByActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/media"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/details_media_list_height"
-        android:layout_marginBottom="12dp"
-        android:clipToPadding="false"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.halloapp.widget.LimitingTextView
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoLink="web"
-        android:gravity="center"
-        android:lineSpacingMultiplier="1.1"
-        android:textAppearance="?textAppearanceListItemSmall"
-        android:textSize="16sp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        app:ltvLimit="3"
-        app:ltvStep="12"
-        app:layout_constraintBottom_toTopOf="@+id/seen_by_list"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/media"
-        app:ltvReadMore="@string/read_more"
-        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
-
-
-    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/seen_by_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/card_background"
-        android:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

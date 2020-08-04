@@ -240,7 +240,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         protected Post doInBackground(Void... voids) {
-            return ContentDb.getInstance(application).getPost(userId, postId);
+            return ContentDb.getInstance(application).getPost(postId);
         }
 
         @Override

@@ -10,21 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:paddingTop="20dp"
         android:paddingBottom="12dp"
+        android:paddingStart="@dimen/toolbar_title_offset"
+        android:paddingEnd="@dimen/toolbar_title_offset"
         android:singleLine="true"
         android:textAlignment="gravity"
-        android:textAppearance="?textAppearanceListItem"
-        android:textColor="?android:attr/textColorSecondary"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="19dp"
+        android:textColor="@color/primary_text"
         android:textDirection="locale"
         tools:text="Seen by" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/post_actions_separator" />
 
 </LinearLayout>
 

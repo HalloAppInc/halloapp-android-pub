@@ -102,7 +102,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             replyPost = new ComputableLiveData<Post>() {
                 @Override
                 protected Post compute() {
-                    return contentDb.getPost((UserId)chatId, replyPostId);
+                    return contentDb.getPost(replyPostId);
                 }
             };
         } else {
