@@ -160,7 +160,7 @@ public class GroupsSync {
     }
 
     private boolean haveSameMetadata(@NonNull GroupInfo groupInfo, @NonNull Chat chat) {
-        Preconditions.checkArgument(groupInfo.groupId.rawId().equals(chat.chatId));
+        Preconditions.checkArgument(groupInfo.groupId.equals(chat.chatId));
         return TextUtils.equals(groupInfo.name, chat.name)
                 && TextUtils.equals(groupInfo.description, chat.groupDescription)
                 && TextUtils.equals(groupInfo.avatar, chat.groupAvatarId);
