@@ -311,12 +311,12 @@ public class ContactsSync {
         if (!updatedContacts.isEmpty()) {
             try {
                 ContactsDb.getInstance().updateContactsServerData(updatedContacts).get();
-                // TODO(ds): remove
                 Map<UserId, String> nameMap = new HashMap<>();
                 for (Contact contact : updatedContacts) {
                     nameMap.put(contact.userId, contact.halloName);
                 }
                 ContactsDb.getInstance().updateUserNames(nameMap);
+                // TODO(ds): remove
                 ContentDb.getInstance(context).migrateUserIds(updatedContacts);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.performContactSync: failed to update server data", e);
