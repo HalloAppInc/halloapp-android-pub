@@ -59,6 +59,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
@@ -200,7 +201,7 @@ public class ChatActivity extends HalloActivity {
                 Intent viewProfile = ViewProfileActivity.viewProfile(this, (UserId)chatId);
                 startActivity(viewProfile);
             } else if (chatId instanceof GroupId) {
-                // TODO(jack): open up group info activity
+                startActivity(GroupInfoActivity.viewGroup(this, (GroupId)chatId));
             }
         });
 

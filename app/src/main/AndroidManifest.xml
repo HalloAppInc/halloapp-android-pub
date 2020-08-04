@@ -74,6 +74,9 @@
         <activity
             android:name=".ui.profile.ViewProfileActivity" />
 
+        <activity
+            android:name=".ui.groups.GroupInfoActivity" />
+
         <activity android:name=".ui.invites.InviteFriendsActivity"
             android:label="@string/invite_friends_title"
             android:windowSoftInputMode="adjustResize"/>

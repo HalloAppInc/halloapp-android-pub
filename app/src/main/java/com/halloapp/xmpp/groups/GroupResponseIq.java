@@ -1,6 +1,7 @@
 package com.halloapp.xmpp.groups;
 
 import com.halloapp.id.GroupId;
+import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -50,9 +51,8 @@ public class GroupResponseIq extends IQ {
             if (MemberElement.ELEMENT.equals(name)) {
                 MemberElement memberElement = new MemberElement(parser);
                 memberElements.add(memberElement);
-            } else {
-                Xml.skip(parser);
             }
+            Xml.skip(parser);
         }
     }
 

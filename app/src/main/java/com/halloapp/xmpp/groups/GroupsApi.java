@@ -3,10 +3,10 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.Observable;
 
