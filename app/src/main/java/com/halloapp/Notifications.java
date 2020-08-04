@@ -75,6 +75,7 @@ public class Notifications {
     private final Preferences preferences;
     private final AvatarLoader avatarLoader;
     private final ContactsDb contactsDb;
+    private final ForegroundChat foregroundChat;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private long feedNotificationTimeCutoff;
@@ -97,6 +98,7 @@ public class Notifications {
         this.preferences = Preferences.getInstance();
         this.avatarLoader = AvatarLoader.getInstance(context);
         this.contactsDb = ContactsDb.getInstance();
+        this.foregroundChat = ForegroundChat.getInstance();
     }
 
     public void init() {
@@ -182,9 +184,6 @@ public class Notifications {
     }
 
     public void updateMessageNotifications() {
-        if (!enabled) {
-            return;
-        }
         executor.execute(() -> {
 
             final List<Message> messages = ContentDb.getInstance(context).getUnseenMessages(UNSEEN_MESSAGES_LIMIT);
@@ -194,7 +193,7 @@ public class Notifications {
             final HashMap<String, List<Message>> chatsMessages = new HashMap<>();
             final List<String> chatsIds = new ArrayList<>();
             for (Message message : messages) {
-                if (message.isOutgoing() || message.isRetracted()) {
+                if (message.isOutgoing() || message.isRetracted() || foregroundChat.isForegroundChatId(message.chatId)) {
                     continue;
                 }
                 List<Message> chatMessages = chatsMessages.get(message.chatId);
