@@ -40,8 +40,6 @@ public class GroupsSync {
 
     private final Context context;
     private final GroupsApi groupsApi;
-    private final BgWorkers bgWorkers;
-    private final Connection connection;
     private final ContentDb contentDb;
 
     private UUID lastSyncRequestId;
@@ -60,8 +58,6 @@ public class GroupsSync {
     private GroupsSync(@NonNull Context context) {
         this.context = context.getApplicationContext();
         this.groupsApi = GroupsApi.getInstance();
-        this.bgWorkers = BgWorkers.getInstance();
-        this.connection = Connection.getInstance();
         this.contentDb = ContentDb.getInstance(context);
     }
 
