@@ -146,7 +146,7 @@ public class ChatActivity extends HalloActivity {
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -181,10 +181,11 @@ public class ChatActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                ChatActivity.messageDrafts.put(chatId, s.toString());
                 if (s == null || TextUtils.isEmpty(s.toString())) {
+                    messageDrafts.remove(chatId);
                     sendButton.clearColorFilter();
                 } else {
+                    messageDrafts.put(chatId, s.toString());
                     sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
                 }
             }
@@ -530,6 +531,7 @@ public class ChatActivity extends HalloActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_COMPOSE: {
                 if (resultCode == RESULT_OK) {
@@ -691,6 +693,7 @@ public class ChatActivity extends HalloActivity {
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    //noinspection SwitchStatementWithTooFewBranches
                     switch (item.getItemId()) {
                         case R.id.copy:
                             bgWorkers.execute(() -> {
