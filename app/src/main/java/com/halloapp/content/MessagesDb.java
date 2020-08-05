@@ -264,7 +264,11 @@ class MessagesDb {
             }
 
             for (MemberInfo member : removed) {
-                db.delete(GroupMembersTable.TABLE_NAME, GroupMembersTable._ID + "=?", new String[]{Long.toString(member.rowId)});
+                db.delete(
+                        GroupMembersTable.TABLE_NAME,
+                        GroupMembersTable.COLUMN_GROUP_ID + "=? AND " + GroupMembersTable.COLUMN_USER_ID + "=?",
+                        new String[]{groupId.rawId(), member.userId.rawId()}
+                        );
             }
 
             db.setTransactionSuccessful();

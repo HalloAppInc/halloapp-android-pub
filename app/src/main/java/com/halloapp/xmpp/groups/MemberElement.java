@@ -35,7 +35,7 @@ public class MemberElement implements ExtensionElement {
     public @Type String type;
     public String name;
     public @Action String action;
-    public String result;
+    public @Result String result;
     public String reason;
 
     @StringDef({Type.ADMIN, Type.MEMBER, Type.INVALID})
@@ -53,6 +53,13 @@ public class MemberElement implements ExtensionElement {
         String LEAVE = "leave";
         String PROMOTE = "promote";
         String DEMOTE = "demote";
+    }
+
+    @StringDef({Result.OK, Result.FAILED, Result.INVALID})
+    public @interface Result {
+        String INVALID = "invalid";
+        String OK = "ok";
+        String FAILED = "failed";
     }
 
     MemberElement(UserId uid) {
@@ -90,6 +97,7 @@ public class MemberElement implements ExtensionElement {
         buf.halfOpenElement(ELEMENT);
         buf.xmlnsAttribute(NAMESPACE);
         buf.attribute(ATTRIBUTE_UID, Preconditions.checkNotNull(uid).rawId());
+        buf.attribute(ATTRIBUTE_ACTION, action);
         buf.closeEmptyElement();
         return buf;
     }

@@ -57,7 +57,7 @@ public class GroupsSync {
 
     private GroupsSync(@NonNull Context context) {
         this.context = context.getApplicationContext();
-        this.groupsApi = GroupsApi.getInstance();
+        this.groupsApi = GroupsApi.getInstance(context);
         this.contentDb = ContentDb.getInstance(context);
     }
 

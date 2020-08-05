@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,15 +20,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.content.ContentDb;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.CenterToast;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GroupInfoActivity extends HalloActivity {
@@ -41,6 +50,8 @@ public class GroupInfoActivity extends HalloActivity {
     }
 
     private Me me;
+    private GroupsApi groupsApi;
+    private Connection connection;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
 
@@ -56,6 +67,8 @@ public class GroupInfoActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
 
         me = Me.getInstance();
+        groupsApi = GroupsApi.getInstance(this);
+        connection = Connection.getInstance();
         avatarLoader = AvatarLoader.getInstance(this);
         contactLoader = new ContactLoader(this);
 
@@ -167,19 +180,74 @@ public class GroupInfoActivity extends HalloActivity {
 
     private class MemberViewHolder extends ViewHolderWithLifecycle {
 
+        private View itemView;
         private ImageView avatar;
         private TextView name;
 
         public MemberViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            this.itemView = itemView;
             avatar = itemView.findViewById(R.id.avatar);
             name = itemView.findViewById(R.id.name);
         }
 
         void bindTo(@NonNull MemberInfo member) {
-            contactLoader.load(name, member.userId);
+            contactLoader.load(name, member.userId, false);
             avatarLoader.load(avatar, member.userId);
+            itemView.setOnClickListener(v -> {
+                Context context = getBaseContext();
+                String[] options = new String[] {
+                        context.getString(R.string.view_profile),
+                        context.getString(R.string.message),
+                        context.getString(R.string.group_remove_member), // TODO(jack): ensure user is admin
+                };
+                AlertDialog dialog =
+                        new AlertDialog.Builder(v.getContext())
+                        .setItems(options, (d, which) -> {
+                            UserId userId = member.userId;
+                            switch (which) {
+                                case 0: {
+                                    viewProfile(userId);
+                                    break;
+                                }
+                                case 1: {
+                                    openChat(userId);
+                                    break;
+                                }
+                                case 2: {
+                                    removeMember(userId);
+                                    break;
+                                }
+                            }
+                        }).create();
+                dialog.show();
+            });
+        }
+
+        private void viewProfile(UserId userId) {
+            startActivity(ViewProfileActivity.viewProfile(getBaseContext(), userId));
+        }
+
+        private void openChat(UserId userId) {
+            final Intent contentIntent = new Intent(getBaseContext(), ChatActivity.class);
+            contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, userId);
+            startActivity(contentIntent);
+        }
+
+        private void removeMember(UserId userId) {
+            groupsApi.addRemoveMembers(groupId, null, Collections.singletonList(userId))
+                    .onResponse(success -> {
+                        if (!success) {
+                            removalFailure(null);
+                        }
+                    })
+                    .onError(this::removalFailure);
+        }
+
+        private void removalFailure(Exception err) {
+            Log.e("Failed to remove member", err);
+            CenterToast.show(getBaseContext(), R.string.failed_remove_member);
         }
     }
 }

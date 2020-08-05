@@ -1,12 +1,16 @@
 package com.halloapp.xmpp.groups;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.content.ContentDb;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.Observable;
 
@@ -17,20 +21,22 @@ public class GroupsApi {
 
     private static GroupsApi instance;
 
+    private ContentDb contentDb;
     private Connection connection;
 
-    public static GroupsApi getInstance() {
+    public static GroupsApi getInstance(Context context) {
         if (instance == null) {
             synchronized (GroupsApi.class) {
                 if (instance == null) {
-                    instance = new GroupsApi(Connection.getInstance());
+                    instance = new GroupsApi(ContentDb.getInstance(context), Connection.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private GroupsApi(Connection connection) {
+    private GroupsApi(ContentDb contentDb, Connection connection) {
+        this.contentDb = contentDb;
         this.connection = connection;
     }
 
@@ -54,12 +60,32 @@ public class GroupsApi {
         });
     }
 
-    // TODO(jack): Return type
-    public Observable<String> addRemoveMembers(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
+    public Observable<Boolean> addRemoveMembers(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
         final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
-            return "TODO";
+            boolean success = true;
+
+            List<MemberInfo> added = new ArrayList<>();
+            List<MemberInfo> removed = new ArrayList<>();
+            for (MemberElement memberElement : response.memberElements) {
+                if (MemberElement.Result.OK.equals(memberElement.result)) {
+                    MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+                    if (MemberElement.Action.ADD.equals(memberElement.action)) {
+                        added.add(memberInfo);
+                    } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
+                        removed.add(memberInfo);
+                    } else {
+                        Log.w("Groups addremove unexpected action " + memberElement.action);
+                    }
+                } else {
+                    success = false;
+                }
+            }
+
+            contentDb.addRemoveGroupMembers(groupId, added, removed, null);
+
+            return success;
         });
     }
 
