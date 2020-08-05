@@ -59,7 +59,7 @@ public class GroupsSync {
 
     private GroupsSync(@NonNull Context context) {
         this.context = context.getApplicationContext();
-        this.groupsApi = new GroupsApi(Connection.getInstance());
+        this.groupsApi = GroupsApi.getInstance();
         this.bgWorkers = BgWorkers.getInstance();
         this.connection = Connection.getInstance();
         this.contentDb = ContentDb.getInstance(context);

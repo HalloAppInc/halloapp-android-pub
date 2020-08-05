@@ -15,9 +15,22 @@ import java.util.List;
 
 public class GroupsApi {
 
+    private static GroupsApi instance;
+
     private Connection connection;
 
-    public GroupsApi(Connection connection) {
+    public static GroupsApi getInstance() {
+        if (instance == null) {
+            synchronized (GroupsApi.class) {
+                if (instance == null) {
+                    instance = new GroupsApi(Connection.getInstance());
+                }
+            }
+        }
+        return instance;
+    }
+
+    private GroupsApi(Connection connection) {
         this.connection = connection;
     }
 

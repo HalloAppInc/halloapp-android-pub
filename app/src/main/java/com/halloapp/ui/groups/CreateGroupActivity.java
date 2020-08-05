@@ -34,8 +34,8 @@ import java.util.List;
 public class CreateGroupActivity extends HalloActivity {
     private static final String EXTRA_USER_IDS = "user_ids";
 
+    private final GroupsApi groupsApi = GroupsApi.getInstance();
     private final Connection connection = Connection.getInstance();
-    private final GroupsApi groupsApi = new GroupsApi(connection);
 
     private ContentDb contentDb;
 

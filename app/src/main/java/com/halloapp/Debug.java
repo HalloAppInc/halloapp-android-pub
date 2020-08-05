@@ -48,7 +48,6 @@ public class Debug {
     private static final String DEBUG_MENU_REMOVE_AVATAR = "Remove avatar";
     private static final String DEBUG_MENU_TEST_KEYS = "Test keys";
     private static final String DEBUG_MENU_CLEAR_KEY_STORE = "Clear key store";
-    private static final String DEBUG_MENU_CREATE_GROUP = "Create group";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
 
@@ -69,7 +68,6 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_REMOVE_AVATAR);
         menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
-        menu.getMenu().add(DEBUG_MENU_CREATE_GROUP);
         menu.setOnMenuItemClickListener(item -> {
             BlueToast.show(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -157,12 +155,6 @@ public class Debug {
                         } catch (Exception e) {
                             Log.w("DEBUG failed to clear key store");
                         }
-                    });
-                    break;
-                }
-                case DEBUG_MENU_CREATE_GROUP: {
-                    bgWorkers.execute(() -> {
-                        new GroupsApi(Connection.getInstance()).createGroup("NAME", Collections.singletonList(new UserId("1000000000000000002")));
                     });
                     break;
                 }
