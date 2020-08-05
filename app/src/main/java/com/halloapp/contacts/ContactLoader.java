@@ -34,7 +34,9 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
         if (userId.isMe()) {
             view.setText(view.getContext().getString(R.string.me));
             view.setClickable(false);
-            view.setOnClickListener(null);
+            if (openProfileOnTap) {
+                view.setOnClickListener(null);
+            }
             return;
         }
         final Callable<Contact> loader = () -> contactsDb.getContact(userId);
@@ -62,8 +64,10 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
             @Override
             public void showLoading(@NonNull TextView view) {
                 view.setText("");
-                view.setOnClickListener(null);
                 view.setClickable(false);
+                if (openProfileOnTap) {
+                    view.setOnClickListener(null);
+                }
             }
         };
         load(view, loader, displayer, userId, cache);
