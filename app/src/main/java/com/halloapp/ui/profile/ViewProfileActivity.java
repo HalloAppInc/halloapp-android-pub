@@ -15,11 +15,11 @@ import com.halloapp.util.Log;
 
 public class ViewProfileActivity extends HalloActivity {
 
-    private static final String EXTRA_USER_ID = "raw_user_id";
+    private static final String EXTRA_USER_ID = "user_id";
 
     public static Intent viewProfile(@NonNull Context context, @NonNull UserId userId) {
         Intent intent = new Intent(context, ViewProfileActivity.class);
-        intent.putExtra(EXTRA_USER_ID, userId.rawId());
+        intent.putExtra(EXTRA_USER_ID, userId);
         return intent;
     }
 
@@ -27,14 +27,12 @@ public class ViewProfileActivity extends HalloActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String rawUserId = getIntent().getStringExtra(EXTRA_USER_ID);
-        if (rawUserId == null) {
+        UserId userId = getIntent().getParcelableExtra(EXTRA_USER_ID);
+        if (userId == null) {
             finish();
             Log.e("ViewProfileActivity/onCreate must provide a user id");
             return;
         }
-
-        UserId userId = new UserId(rawUserId);
 
         setTitle("");
         setContentView(R.layout.activity_view_profile);
