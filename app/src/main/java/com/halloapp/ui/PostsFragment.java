@@ -84,7 +84,7 @@ public class PostsFragment extends HalloFragment {
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(requireContext());
         seenByLoader = new SeenByLoader(requireContext());
-        avatarLoader = AvatarLoader.getInstance(getContext());
+        avatarLoader = AvatarLoader.getInstance(requireContext());
         textContentLoader = new TextContentLoader(requireContext());
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
