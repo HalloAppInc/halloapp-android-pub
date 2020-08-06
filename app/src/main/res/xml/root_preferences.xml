@@ -51,7 +51,7 @@
         <SwitchPreferenceCompat
             app:key="use_debug_host"
             app:title="Use debug host"
-            app:defaultValue="false"/>
+            app:defaultValue="@bool/isDebug"/>
 
         <Preference
             app:key="debug_menu"
