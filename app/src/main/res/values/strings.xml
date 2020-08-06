@@ -263,6 +263,9 @@
     <string name="failed_create_group">Failed to create group, try again later</string>
     <string name="group_remove_member">Remove</string>
     <string name="failed_remove_member">Failed to remove member, try again later</string>
+    <string name="leave_group">Leave group</string>
+    <string name="leave_group_confirmation">Would you like to leave this group?</string>
+    <string name="failed_leave_group">Failed to leave group, try again later</string>
     <plurals name="settings_invite_summary">
         <item quantity="one">%d invite available</item>
         <item quantity="other">%d invites available</item>

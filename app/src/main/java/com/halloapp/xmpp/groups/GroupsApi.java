@@ -14,6 +14,8 @@ import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.Observable;
 
+import org.jivesoftware.smack.packet.IQ;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,9 @@ public class GroupsApi {
         this.connection = connection;
     }
 
+    // TODO(jack): trigger: upon delete of group, delete members
+
+    // TODO(jack): add group to db here
     public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids) {
         final CreateGroupIq requestIq = new CreateGroupIq(name, uids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
@@ -137,8 +142,9 @@ public class GroupsApi {
 
     public Observable<Boolean> leaveGroup(@NonNull GroupId groupId) {
         final LeaveGroupIq requestIq = new LeaveGroupIq(groupId);
-        final Observable<GroupsListResponseIq> observable = connection.sendRequestIq(requestIq);
+        final Observable<IQ> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
+            // TODO(jack): mark group as left somehow
             return true;
         });
     }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -51,7 +53,6 @@ public class GroupInfoActivity extends HalloActivity {
 
     private Me me;
     private GroupsApi groupsApi;
-    private Connection connection;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
 
@@ -68,7 +69,6 @@ public class GroupInfoActivity extends HalloActivity {
 
         me = Me.getInstance();
         groupsApi = GroupsApi.getInstance(this);
-        connection = Connection.getInstance();
         avatarLoader = AvatarLoader.getInstance(this);
         contactLoader = new ContactLoader(this);
 
@@ -110,6 +110,42 @@ public class GroupInfoActivity extends HalloActivity {
             }
             adapter.submitMembers(otherMembers);
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.group_info_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (item.getItemId()) {
+            case R.id.leave: {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getBaseContext().getString(R.string.leave_group_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> leaveGroup());
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    private void leaveGroup() {
+        groupsApi.leaveGroup(groupId)
+                .onResponse(response -> {
+                    // TODO(jack): should exit from this and parent activity
+                })
+                .onError(err -> {
+                    Log.e("Failed to leave group", err);
+                    CenterToast.show(getBaseContext(), R.string.failed_remove_member);
+                });
     }
 
     private class MemberAdapter extends RecyclerView.Adapter<ViewHolderWithLifecycle> {

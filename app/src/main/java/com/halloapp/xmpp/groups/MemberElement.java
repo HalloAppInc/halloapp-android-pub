@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.StringDef;
 
 import com.halloapp.id.UserId;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -97,7 +98,9 @@ public class MemberElement implements ExtensionElement {
         buf.halfOpenElement(ELEMENT);
         buf.xmlnsAttribute(NAMESPACE);
         buf.attribute(ATTRIBUTE_UID, Preconditions.checkNotNull(uid).rawId());
-        buf.attribute(ATTRIBUTE_ACTION, action);
+        if (action != null) {
+            buf.attribute(ATTRIBUTE_ACTION, action);
+        }
         buf.closeEmptyElement();
         return buf;
     }

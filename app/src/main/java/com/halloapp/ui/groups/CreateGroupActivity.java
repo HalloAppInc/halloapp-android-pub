@@ -16,10 +16,11 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.util.GlobalUI;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -112,11 +113,13 @@ public class CreateGroupActivity extends HalloActivity {
                     })
                     .onError(error -> {
                         Log.e("Create group failed", error);
-                        CenterToast.show(getBaseContext(), R.string.failed_create_group);
-                        nameEditText.setEnabled(true);
-                        nameEditText.requestFocus();
-                        createButton.setVisibility(View.VISIBLE);
-                        updateProgress.setVisibility(View.GONE);
+                        GlobalUI.getInstance().postDelayed(() -> {
+                            CenterToast.show(getBaseContext(), R.string.failed_create_group);
+                            nameEditText.setEnabled(true);
+                            nameEditText.requestFocus();
+                            createButton.setVisibility(View.VISIBLE);
+                            updateProgress.setVisibility(View.GONE);
+                        }, 0);
                     });
         });
     }
