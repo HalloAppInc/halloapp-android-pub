@@ -22,6 +22,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -98,6 +99,8 @@ public class SettingsActivity extends HalloActivity {
 
     public static class SettingsFragment extends HalloPreferenceFragment {
 
+        private ServerProps serverProps = ServerProps.getInstance();
+
         private Preference blocklistPreference;
         private Preference inviteFriends;
         private Preference feedPrivacyPreference;
@@ -166,7 +169,7 @@ public class SettingsActivity extends HalloActivity {
             });
 
             final PreferenceCategory debugCategory = Preconditions.checkNotNull(findPreference("debug"));
-            debugCategory.setVisible(BuildConfig.DEBUG);
+            debugCategory.setVisible(BuildConfig.DEBUG || serverProps.getIsInternalUser());
 
             final Preference hostPreference = Preconditions.checkNotNull(findPreference("use_debug_host"));
             hostPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

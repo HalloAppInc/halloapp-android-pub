@@ -21,6 +21,7 @@ public class ServerProps {
 
     private static final String PREF_KEY_PROPS_HASH = "props:version_hash";
 
+    private static final String PROP_INTERNAL_USER = "dev";
     private static final String PROP_GROUPS_ENABLED = "groups";
     private static final String PROP_MAX_GROUP_SIZE = "max_group_size";
 
@@ -44,6 +45,7 @@ public class ServerProps {
 
     private SharedPreferences preferences;
 
+    private final BooleanProp propInternalUser = createProp(PROP_INTERNAL_USER, false);
     private final IntegerProp propMaxGroupSize = createProp(PROP_MAX_GROUP_SIZE, 25);
     private final BooleanProp propGroupsEnabled = createProp(PROP_GROUPS_ENABLED, false);
 
@@ -129,6 +131,10 @@ public class ServerProps {
         IntegerProp prop = new IntegerProp(key, defaultValue);
         serverProps.add(prop);
         return prop;
+    }
+
+    public synchronized boolean getIsInternalUser() {
+        return propInternalUser.getValue();
     }
 
     public synchronized int getMaxGroupSize() {
