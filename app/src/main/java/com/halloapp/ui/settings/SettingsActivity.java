@@ -18,7 +18,6 @@ import androidx.preference.PreferenceCategory;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.LogProvider;
-import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
@@ -145,14 +144,9 @@ public class SettingsActivity extends HalloActivity {
                 requireActivity().finish();
 
                 if (BuildConfig.DEBUG) {
-                    LogProvider.openLogIntent(requireContext());
+                    LogProvider.openDebugLogcatIntent(requireContext());
                 } else {
-                    String uri = SUPPORT_EMAIL_URI
-                            + "?subject=" + Uri.encode(getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME))
-                            + "&body=" + Uri.encode(getString(R.string.email_logs_text, Me.getInstance().getUser(), BuildConfig.VERSION_NAME));
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse(uri));
-                    startActivity(intent);
+                    LogProvider.openEmailLogIntent(requireContext());
                 }
 
                 return false;

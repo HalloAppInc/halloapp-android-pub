@@ -18,8 +18,10 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.util.Log;
+import com.halloapp.util.LogManager;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,64 +31,10 @@ import java.io.OutputStream;
 public class LogProvider extends ContentProvider {
     private static final String AUTHORITY = "com.halloapp.LogProvider";
     private static final String LOG_FILE_NAME = "logcat.log";
+    public static final String LOG_ZIP_NAME = "logs.zip";
     private static final String DEBUG_SUFFIX = " [DEBUG]";
-    private static final int MATCH_CODE = 1;
-
-    private static final Cursor cursor = new AbstractCursor() {
-        private int getFileSize() {
-            return logcatData.length;
-        }
-
-        @Override
-        public int getCount() {
-            return 1;
-        }
-
-        @Override
-        public String[] getColumnNames() {
-            return new String[]{OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
-        }
-
-        @Override
-        public String getString(int column) {
-            if (column == 0) {
-                return LOG_FILE_NAME;
-            } else if (column == 1) {
-                return Integer.toString(getFileSize());
-            }
-            return null;
-        }
-
-        @Override
-        public short getShort(int column) {
-            return 0;
-        }
-
-        @Override
-        public int getInt(int column) {
-            return 0;
-        }
-
-        @Override
-        public long getLong(int column) {
-            return 0;
-        }
-
-        @Override
-        public float getFloat(int column) {
-            return 0;
-        }
-
-        @Override
-        public double getDouble(int column) {
-            return 0;
-        }
-
-        @Override
-        public boolean isNull(int column) {
-            return false;
-        }
-    };
+    private static final int MATCH_LOGCAT = 1;
+    private static final int MATCH_CRASHLYTICS = 2;
 
     private static byte[] logcatData;
 
@@ -95,12 +43,36 @@ public class LogProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, "*", MATCH_CODE);
+        uriMatcher.addURI(AUTHORITY, LOG_FILE_NAME, MATCH_LOGCAT);
+        uriMatcher.addURI(AUTHORITY, LOG_ZIP_NAME, MATCH_CRASHLYTICS);
         return true;
     }
 
     @MainThread
-    public static void openLogIntent(final Context context) {
+    public static void openEmailLogIntent(final Context context) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
+                LogManager.getInstance().zipCrashlyticsLogs(context, file);
+                return Me.getInstance().getUser();
+            }
+
+            @Override
+            protected void onPostExecute(String user) {
+                final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                intent.setType("application/zip");
+                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {SettingsActivity.SUPPORT_EMAIL});
+                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
+                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
+                context.startActivity(intent);
+            }
+        }.execute();
+    }
+
+    @MainThread
+    public static void openDebugLogcatIntent(final Context context) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
@@ -144,7 +116,7 @@ public class LogProvider extends ContentProvider {
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
         switch (uriMatcher.match(uri)) {
-            case MATCH_CODE:
+            case MATCH_LOGCAT:
                 try {
                     // Create pipe so we don't need storage permissions; assumes logs won't be too big for memory, but should be okay for debug
                     ParcelFileDescriptor[] descriptors = ParcelFileDescriptor.createPipe();
@@ -160,6 +132,8 @@ public class LogProvider extends ContentProvider {
                     Log.w("Error getting logs", e);
                     throw new FileNotFoundException("IOException getting logs");
                 }
+            case MATCH_CRASHLYTICS:
+                return ParcelFileDescriptor.open(new File(getContext().getExternalCacheDir(), LOG_ZIP_NAME), ParcelFileDescriptor.MODE_READ_ONLY);
             default:
                 Log.w("Unsupported uri: '" + uri + "'.");
                 throw new FileNotFoundException("Unsupported uri: " + uri.toString());
@@ -169,13 +143,137 @@ public class LogProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return "text/plain";
+        switch (uriMatcher.match(uri)) {
+            case MATCH_CRASHLYTICS: {
+                return "application/zip";
+            }
+            default: {
+                return "text/plain";
+            }
+        }
     }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return cursor;
+        switch (uriMatcher.match(uri)) {
+            case MATCH_CRASHLYTICS: {
+                if (getContext() == null) {
+                    return null;
+                }
+                File zipFile = new File(getContext().getExternalCacheDir(), LOG_ZIP_NAME);
+                return new AbstractCursor() {
+
+                    @Override
+                    public int getCount() {
+                        return 1;
+                    }
+
+                    @Override
+                    public String[] getColumnNames() {
+                        return new String[]{OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
+                    }
+
+                    @Override
+                    public String getString(int column) {
+                        if (column == 0) {
+                            return LOG_ZIP_NAME;
+                        } else if (column == 1) {
+                            return Long.toString(zipFile.length());
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public short getShort(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public int getInt(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public long getLong(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public float getFloat(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public double getDouble(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isNull(int column) {
+                        return false;
+                    }
+                };
+            }
+            default: {
+                return new AbstractCursor() {
+                    private int getFileSize() {
+                        return logcatData.length;
+
+                    }
+
+                    @Override
+                    public int getCount() {
+                        return 1;
+                    }
+
+                    @Override
+                    public String[] getColumnNames() {
+                        return new String[]{OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
+                    }
+
+                    @Override
+                    public String getString(int column) {
+                        if (column == 0) {
+                            return LOG_FILE_NAME;
+                        } else if (column == 1) {
+                            return Integer.toString(getFileSize());
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public short getShort(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public int getInt(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public long getLong(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public float getFloat(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public double getDouble(int column) {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isNull(int column) {
+                        return false;
+                    }
+                };
+            }
+        }
     }
 
     @Nullable
