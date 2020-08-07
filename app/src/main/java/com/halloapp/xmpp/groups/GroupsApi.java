@@ -69,28 +69,13 @@ public class GroupsApi {
         final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
-            boolean success = true;
-
-            List<MemberInfo> added = new ArrayList<>();
-            List<MemberInfo> removed = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
-                if (MemberElement.Result.OK.equals(memberElement.result)) {
-                    MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
-                    if (MemberElement.Action.ADD.equals(memberElement.action)) {
-                        added.add(memberInfo);
-                    } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
-                        removed.add(memberInfo);
-                    } else {
-                        Log.w("Groups addremove unexpected action " + memberElement.action);
-                    }
-                } else {
-                    success = false;
+                if (!MemberElement.Result.OK.equals(memberElement.result)) {
+                    return false;
                 }
             }
 
-            contentDb.addRemoveGroupMembers(groupId, added, removed, null);
-
-            return success;
+            return true;
         });
     }
 

@@ -1,6 +1,7 @@
 package com.halloapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -205,6 +206,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onAvatarChangeMessageReceived(userId, avatarId, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupCreated(groupId, name, avatarId, members, sender, senderName, ackId);
             }
         }
     }

@@ -27,9 +27,10 @@ public class GroupChangeMessage implements ExtensionElement {
     private static final String ATTRIBUTE_SENDER_ID = "sender";
     private static final String ATTRIBUTE_SENDER_NAME = "sender_name";
 
-    @StringDef({Action.MODIFY_MEMBERS, Action.LEAVE, Action.MODIFY_ADMINS, Action.CHANGE_NAME, Action.CHANGE_AVATAR, Action.AUTO_PROMOTE, Action.INVALID})
+    @StringDef({Action.MODIFY_MEMBERS, Action.CREATE, Action.LEAVE, Action.MODIFY_ADMINS, Action.CHANGE_NAME, Action.CHANGE_AVATAR, Action.AUTO_PROMOTE, Action.INVALID})
     public @interface Action {
         String INVALID = "invalid";
+        String CREATE = "create";
         String MODIFY_MEMBERS = "modify_members";
         String LEAVE = "leave";
         String MODIFY_ADMINS = "modify_admins";

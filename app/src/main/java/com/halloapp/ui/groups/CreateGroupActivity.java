@@ -104,12 +104,10 @@ public class CreateGroupActivity extends HalloActivity {
             updateProgress.setVisibility(View.VISIBLE);
             groupsApi.createGroup(name, userIds)
                     .onResponse(groupInfo -> {
-                        contentDb.addGroupChat(groupInfo, () -> {
-                            final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.groupId);
-                            startActivity(intent);
-                            finish();
-                        });
+                        final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                        intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.groupId);
+                        startActivity(intent);
+                        finish();
                     })
                     .onError(error -> {
                         Log.e("Create group failed", error);

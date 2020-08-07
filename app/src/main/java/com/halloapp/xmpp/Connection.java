@@ -131,6 +131,7 @@ public class Connection {
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
         public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
+        public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
@@ -1127,6 +1128,10 @@ public class Connection {
                         Log.i("connection: got group change message " + msg);
                         String ackId = packet.getStanzaId();
                         switch (groupChangeMessage.action) {
+                            case GroupChangeMessage.Action.CREATE: {
+                                connectionObservers.notifyGroupCreated(groupChangeMessage.groupId, groupChangeMessage.name, groupChangeMessage.avatarId, groupChangeMessage.members, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
+                                break;
+                            }
                             case GroupChangeMessage.Action.MODIFY_MEMBERS: {
                                 connectionObservers.notifyGroupMemberChangeReceived(groupChangeMessage.groupId, groupChangeMessage.members, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
                                 break;

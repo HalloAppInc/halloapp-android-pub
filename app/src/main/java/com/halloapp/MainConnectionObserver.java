@@ -3,9 +3,12 @@ package com.halloapp;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -275,17 +278,47 @@ public class MainConnectionObserver extends Connection.Observer {
         connection.sendAck(ackId);
     }
 
-    // TODO(jack): Make GroupsDb to store these changes
+    @Override
+    public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        List<MemberInfo> members = new ArrayList<>();
+        for (MemberElement memberElement : memberElements) {
+            members.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
+        }
+        members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
+
+        contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, members), () -> connection.sendAck(ackId));
+    }
+
     @Override
     public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        connection.sendAck(ackId);
+        List<MemberInfo> added = new ArrayList<>();
+        List<MemberInfo> removed = new ArrayList<>();
+        for (MemberElement memberElement : members) {
+            MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+            if (MemberElement.Action.ADD.equals(memberElement.action)) {
+                added.add(memberInfo);
+            } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
+                removed.add(memberInfo);
+            }
+        }
+
+        contentDb.addRemoveGroupMembers(groupId, added, removed, () -> connection.sendAck(ackId));
     }
 
     @Override
     public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
-        connection.sendAck(ackId);
+        List<MemberInfo> left = new ArrayList<>();
+        for (MemberElement memberElement : members) {
+            MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+            if (MemberElement.Action.LEAVE.equals(memberElement.action)) {
+                left.add(memberInfo);
+            }
+        }
+
+        contentDb.addRemoveGroupMembers(groupId, new ArrayList<>(), left, () -> connection.sendAck(ackId));
     }
 
+    // TODO(jack): Make GroupsDb to store these changes
     @Override
     public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         connection.sendAck(ackId);
