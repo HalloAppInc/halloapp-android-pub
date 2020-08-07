@@ -25,6 +25,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.groups.GroupChangeMessage;
+import com.halloapp.xmpp.groups.GroupChatMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.groups.MemberElement;
@@ -198,6 +199,7 @@ public class Connection {
         ProviderManager.addExtensionProvider(WhisperKeysMessage.ELEMENT, WhisperKeysMessage.NAMESPACE, new WhisperKeysMessage.Provider());
         ProviderManager.addExtensionProvider(AvatarChangeMessage.ELEMENT, AvatarChangeMessage.NAMESPACE, new AvatarChangeMessage.Provider());
         ProviderManager.addExtensionProvider(GroupChangeMessage.ELEMENT, GroupChangeMessage.NAMESPACE, new GroupChangeMessage.Provider());
+        ProviderManager.addExtensionProvider(GroupChatMessage.ELEMENT, GroupChatMessage.NAMESPACE, new GroupChatMessage.Provider());
         ProviderManager.addExtensionProvider(MemberElement.ELEMENT, MemberElement.NAMESPACE, new MemberElement.Provider());
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
@@ -707,6 +709,26 @@ public class Connection {
         });
     }
 
+    public void sendGroupMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+            try {
+                final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(JidCreate.bareFromOrNull(XMPP_DOMAIN));
+                xmppMessage.setType(org.jivesoftware.smack.packet.Message.Type.groupchat);
+                xmppMessage.setStanzaId(message.id);
+                xmppMessage.addExtension(new GroupChatMessage((GroupId)message.chatId, message));
+                ackHandlers.put(xmppMessage.getStanzaId(), () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+                Log.i("connection: sending group message " + message.id + " to " + message.chatId);
+                connection.sendStanza(xmppMessage);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.e("connection: cannot send group message", e);
+            }
+        });
+    }
+
     public <T extends IQ> Observable<T> sendRequestIq(@NonNull IQ iq) {
         BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
@@ -1160,6 +1182,16 @@ public class Connection {
                                 Log.w("connection: unrecognized group change action " + groupChangeMessage.action);
                             }
                         }
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    final GroupChatMessage groupChatMessage = packet.getExtension(GroupChatMessage.ELEMENT, GroupChatMessage.NAMESPACE);
+                    if (groupChatMessage != null) {
+                        Log.i("connection: got group chat message " + msg);
+                        Message parsedMessage = groupChatMessage.getMessage(packet.getFrom(), packet.getStanzaId());
+                        processMentions(parsedMessage.mentions);
+                        connectionObservers.notifyIncomingMessageReceived(parsedMessage);
                         handled = true;
                     }
                 }

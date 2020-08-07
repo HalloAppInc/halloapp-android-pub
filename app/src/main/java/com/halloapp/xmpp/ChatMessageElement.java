@@ -50,7 +50,7 @@ public class ChatMessageElement implements ExtensionElement {
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
-        this.chatMessage = messageToChatMessage(message);
+        this.chatMessage = MessageElementHelper.messageToChatMessage(message);
         this.timestamp = 0;
         this.recipientUserId = recipientUserId;
         this.sessionSetupInfo = sessionSetupInfo;
@@ -120,7 +120,7 @@ public class ChatMessageElement implements ExtensionElement {
             try {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, sessionSetupInfo);
-                chatMessage = readEncodedEntry(dec);
+                chatMessage = MessageElementHelper.readEncodedEntry(dec);
                 if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
                 }
@@ -147,7 +147,7 @@ public class ChatMessageElement implements ExtensionElement {
                 0);
         for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(
-                    fromProtoMediaType(item.getType()),
+                    MessageElementHelper.fromProtoMediaType(item.getType()),
                     item.getDownloadUrl(),
                     item.getEncryptionKey().toByteArray(),
                     item.getPlaintextHash().toByteArray(),
@@ -185,71 +185,6 @@ public class ChatMessageElement implements ExtensionElement {
         Container.Builder containerBuilder = Container.newBuilder();
         containerBuilder.setChatMessage(chatMessage);
         return containerBuilder.build().toByteArray();
-    }
-
-    private static ChatMessage messageToChatMessage(@NonNull Message message) {
-        ChatMessage.Builder chatMessageBuilder = ChatMessage.newBuilder();
-        for (Media media : message.media) {
-            com.halloapp.proto.Media.Builder mediaBuilder = com.halloapp.proto.Media.newBuilder();
-            mediaBuilder.setType(getProtoMediaType(media.type));
-            mediaBuilder.setWidth(media.width);
-            mediaBuilder.setHeight(media.height);
-            mediaBuilder.setEncryptionKey(ByteString.copyFrom(media.encKey));
-            mediaBuilder.setPlaintextHash(ByteString.copyFrom(media.sha256hash));
-            mediaBuilder.setDownloadUrl(media.url);
-            chatMessageBuilder.addMedia(mediaBuilder.build());
-        }
-        for (Mention mention : message.mentions) {
-            chatMessageBuilder.addMentions(Mention.toProto(mention));
-        }
-        if (message.text != null) {
-            chatMessageBuilder.setText(message.text);
-        }
-        if (message.replyPostId != null) {
-            chatMessageBuilder.setFeedPostId(message.replyPostId);
-            chatMessageBuilder.setFeedPostMediaIndex(message.replyPostMediaIndex);
-        }
-        return chatMessageBuilder.build();
-    }
-
-    private static @Media.MediaType int fromProtoMediaType(@NonNull MediaType type) {
-        if (type == MediaType.MEDIA_TYPE_IMAGE) {
-            return Media.MEDIA_TYPE_IMAGE;
-        } else if (type == MediaType.MEDIA_TYPE_VIDEO) {
-            return Media.MEDIA_TYPE_VIDEO;
-        }
-        Log.w("Unrecognized MediaType " + type);
-        return Media.MEDIA_TYPE_UNKNOWN;
-    }
-
-    private static MediaType getProtoMediaType(@Media.MediaType int type) {
-        if (type == Media.MEDIA_TYPE_IMAGE) {
-            return MediaType.MEDIA_TYPE_IMAGE;
-        } else if (type == Media.MEDIA_TYPE_VIDEO) {
-            return MediaType.MEDIA_TYPE_VIDEO;
-        }
-        Log.w("Unrecognized media type " + type);
-        return MediaType.MEDIA_TYPE_UNSPECIFIED;
-    }
-
-    private static ChatMessage readEncodedEntryString(String entry) {
-        return readEncodedEntry(Base64.decode(entry, Base64.NO_WRAP));
-    }
-
-    private static ChatMessage readEncodedEntry(byte[] entry) {
-        final Container container;
-        try {
-            container = Container.parseFrom(entry);
-        } catch (InvalidProtocolBufferException e) {
-            Log.w("Error reading encoded entry", e);
-            return null;
-        }
-        if (container.hasChatMessage()) {
-           return container.getChatMessage();
-        } else {
-            Log.i("Unknown encoded entry type");
-        }
-        return null;
     }
 
     private static ChatMessageElement readEncryptedEntry(@NonNull XmlPullParser parser, long timestamp) throws Exception {
@@ -301,7 +236,7 @@ public class ChatMessageElement implements ExtensionElement {
                         Log.w("Failed to read encrypted entry", e);
                     }
                 } else if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
-                    plaintextChatMessage = readEncodedEntryString(Xml.readText(parser));
+                    plaintextChatMessage = MessageElementHelper.readEncodedEntryString(Xml.readText(parser));
                     if (chatMessageElement == null) {
                         chatMessageElement = new ChatMessageElement(plaintextChatMessage, timestamp);
                     } else {

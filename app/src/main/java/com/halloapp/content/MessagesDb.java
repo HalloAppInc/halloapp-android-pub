@@ -129,7 +129,7 @@ class MessagesDb {
                     (unseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
                     (unseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
                     ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
-                    "WHERE " + ChatsTable.COLUMN_CHAT_ID + "=" + message.chatId.rawId())) {
+                    "WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
                 updatedRowsCount = statement.executeUpdateDelete();
             }
             if (updatedRowsCount == 0) {

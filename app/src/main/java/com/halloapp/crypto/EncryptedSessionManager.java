@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -108,9 +109,10 @@ public class EncryptedSessionManager {
     }
 
     public void sendMessage(final @NonNull Message message) {
-        if (!(message.chatId instanceof UserId)) {
-            // TODO(jack): support groups
-            throw new IllegalArgumentException("Encryption only supported for 1-1 chats");
+        if (message.chatId instanceof GroupId) {
+            // TODO(jack): support groups encryption
+            connection.sendGroupMessage(message, null);
+            return;
         }
         final UserId recipientUserId = (UserId)message.chatId;
         try (AutoCloseLock autoCloseLock = acquireLock(recipientUserId)) {
