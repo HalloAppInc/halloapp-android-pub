@@ -321,8 +321,13 @@ public class CropImageActivity extends HalloActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_MORE_MEDIA) {
-            ArrayList<Uri> uris = data.getParcelableArrayListExtra(EXTRA_MEDIA);
-            Bundle state = data.getBundleExtra(EXTRA_STATE);
+            ArrayList<Uri> uris = new ArrayList<>();
+            Bundle state = null;
+
+            if (data != null) {
+                uris = data.getParcelableArrayListExtra(EXTRA_MEDIA);
+                state = data.getBundleExtra(EXTRA_STATE);
+            }
 
             viewModel.loadMediaData(uris, state);
         }
