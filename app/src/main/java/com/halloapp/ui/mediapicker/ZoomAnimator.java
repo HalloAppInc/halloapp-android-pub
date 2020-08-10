@@ -1,15 +1,16 @@
 package com.halloapp.ui.mediapicker;
 
 import android.view.ViewPropertyAnimator;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ZoomAnimator extends DefaultItemAnimator {
+public class ZoomAnimator extends RecyclerView.ItemAnimator {
     private static final float PROGRESS_STEP = 0.02f;
 
     private float progress = 0.0f;
@@ -69,7 +70,7 @@ public class ZoomAnimator extends DefaultItemAnimator {
         change.clear();
         persist.clear();
 
-        endAnimations();
+        dispatchAnimationsFinished();
     }
 
     public boolean isManualAnimationRunning() {
@@ -223,9 +224,21 @@ public class ZoomAnimator extends DefaultItemAnimator {
 
     @Override
     public void runPendingAnimations() {
-        if (!isManualAnimation) {
-            super.runPendingAnimations();
-        }
+    }
+
+    @Override
+    public void endAnimation(@NonNull RecyclerView.ViewHolder item) {
+
+    }
+
+    @Override
+    public void endAnimations() {
+
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isManualAnimation;
     }
 
     @Override
@@ -248,11 +261,9 @@ public class ZoomAnimator extends DefaultItemAnimator {
             }
 
             appear.add(item);
-
-            return true;
         }
 
-        return super.animateAppearance(viewHolder, preLayoutInfo, postLayoutInfo);
+        return false;
     }
 
     @Override
@@ -275,11 +286,9 @@ public class ZoomAnimator extends DefaultItemAnimator {
             }
 
             disappear.add(item);
-
-            return true;
         }
 
-        return super.animateDisappearance(viewHolder, preLayoutInfo, postLayoutInfo);
+        return false;
     }
 
     @Override
@@ -300,11 +309,9 @@ public class ZoomAnimator extends DefaultItemAnimator {
             }
 
             persist.add(item);
-
-            return true;
         }
 
-        return super.animatePersistence(viewHolder, preInfo, postInfo);
+        return false;
     }
 
     @Override
@@ -330,9 +337,66 @@ public class ZoomAnimator extends DefaultItemAnimator {
 
             change.add(item);
 
-            return true;
+            return false;
         }
 
-        return super.animateChange(oldHolder, newHolder, preInfo, postInfo);
+        return animateSelection((MediaPickerActivity.MediaItemViewHolder)oldHolder, (MediaPickerActivity.MediaItemViewHolder)newHolder, preInfo, postInfo);
+    }
+
+    public boolean animateSelection(@NonNull MediaPickerActivity.MediaItemViewHolder oldHolder, @NonNull MediaPickerActivity.MediaItemViewHolder newHolder, @NonNull ItemHolderInfo preInfo, @NonNull ItemHolderInfo postInfo) {
+        if (oldHolder.animateSelection || oldHolder.animateDeselection) {
+            if (oldHolder != newHolder) {
+                dispatchAnimationStarted(oldHolder);
+            }
+            dispatchAnimationStarted(newHolder);
+
+            final float animateScale = oldHolder.animateDeselection ? 1.1f : .9f;
+
+            ScaleAnimation animation = new ScaleAnimation(
+                    1f,
+                    animateScale,
+                    1f,
+                    animateScale,
+                    Animation.RELATIVE_TO_SELF,
+                    .5f,
+                    Animation.RELATIVE_TO_SELF,
+                    .5f);
+            animation.setDuration(70);
+            animation.setRepeatCount(1);
+            animation.setRepeatMode(Animation.REVERSE);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (oldHolder != newHolder) {
+                        dispatchAnimationFinished(oldHolder);
+                    }
+                    dispatchAnimationFinished(newHolder);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+
+            if (oldHolder != newHolder) {
+                oldHolder.itemView.setAlpha(0);
+            }
+            newHolder.itemView.setAlpha(1);
+            newHolder.thumbnailFrame.startAnimation(animation);
+
+            oldHolder.animateSelection = false;
+            oldHolder.animateDeselection = false;
+            newHolder.animateSelection = false;
+            newHolder.animateDeselection = false;
+        } else {
+            if (oldHolder != newHolder) {
+                dispatchAnimationFinished(oldHolder);
+            }
+            dispatchAnimationFinished(newHolder);
+        }
+
+        return false;
     }
 }

@@ -30,17 +30,13 @@ public class GallerySpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
         return position;
     }
 
-    /**
-     * The day layout with large thumbnails consists of blocks of up to 5 items.
-     * Two items sit on the first row and three on the second.
-     */
     private int getSpanSizeInDayLargeBlock(int position) {
         final int positionInBlock = getPositionFromHeader(position) % MediaPickerActivity.MediaItemsAdapter.BLOCK_SIZE_DAY_LARGE;
 
-        if (positionInBlock < 2) {
-            return MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE / 2;
+        if (positionInBlock < MediaPickerActivity.MediaItemsAdapter.BLOCK_DAY_LARGE_SIZE_ROW_1) {
+            return MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE / MediaPickerActivity.MediaItemsAdapter.BLOCK_DAY_LARGE_SIZE_ROW_1;
         } else {
-            return MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE / 3;
+            return MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE / MediaPickerActivity.MediaItemsAdapter.BLOCK_DAY_LARGE_SIZE_ROW_2;
         }
     }
 
