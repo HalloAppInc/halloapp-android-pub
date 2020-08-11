@@ -76,10 +76,10 @@
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
                     android:textColor="@color/post_timestamp"
                     android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    tools:text="1h"/>
+                    tools:text="1h" />
 
             </LinearLayout>
 

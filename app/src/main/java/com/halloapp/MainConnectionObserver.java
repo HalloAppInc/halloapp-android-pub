@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;

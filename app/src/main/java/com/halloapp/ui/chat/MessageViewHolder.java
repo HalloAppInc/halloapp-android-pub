@@ -39,6 +39,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView dateView;
     private final TextView timestampView;
     private final TextView newMessagesSeparator;
+    private final TextView systemMessage;
     private final LimitingTextView textView;
     private final ViewPager2 mediaPagerView;
     private final CircleIndicator3 mediaPagerIndicator;
@@ -54,6 +55,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         abstract void onItemLongClicked(String text, long messageRowId);
         abstract long getSelectedMessageRowId();
         abstract ReplyLoader getReplyLoader();
+        abstract void unblockContactFromTap();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -87,6 +89,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
+        systemMessage = itemView.findViewById(R.id.system_message);
 
         if (textView != null) {
             textView.setOnLongClickListener(v -> {
@@ -103,6 +106,14 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     parent.onItemLongClicked(textView.getText().toString(), message.rowId);
                 }
                 return true;
+            });
+        }
+
+        if (systemMessage != null) {
+            systemMessage.setOnClickListener(v -> {
+                if (message.usage == Message.USAGE_BLOCK) {
+                    parent.unblockContactFromTap();
+                }
             });
         }
 
@@ -166,6 +177,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     }
 
     private void updateBubbleMerging(boolean mergeWithPrev, boolean mergeWithNext) {
+        if (contentView == null) {
+            return;
+        }
         contentView.setBackgroundResource(getMessageBackground(message, mergeWithNext, mergeWithPrev));
         View contentParent = (contentView.getParent() instanceof View) ? (View) contentView.getParent() : null;
         if (contentParent != null) {
@@ -200,7 +214,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             }
         }
 
-        if (!message.media.isEmpty()) {
+        if (!message.media.isEmpty() && mediaPagerAdapter != null) {
             mediaPagerAdapter.setMedia(message.media);
             if (message.media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);
@@ -210,6 +224,14 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
+        }
+
+        if (systemMessage != null) {
+            if (message.usage == Message.USAGE_BLOCK) {
+                systemMessage.setText(R.string.block_notification);
+            } else if (message.usage == Message.USAGE_UNBLOCK) {
+                systemMessage.setText(R.string.unblock_notification);
+            }
         }
 
         if (textView != null) {
@@ -236,32 +258,39 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), message.timestamp));
         }
 
-        if (prevMessage == null || !TimeUtils.isSameDay(message.timestamp, prevMessage.timestamp)) {
-            dateView.setVisibility(View.VISIBLE);
-            dateView.setText(TimeFormatter.formatMessageSeparatorDate(dateView.getContext(), message.timestamp));
-        } else {
-            dateView.setVisibility(View.GONE);
-        }
-
-        if (newMessageCountSeparator > 0) {
-            newMessagesSeparator.setVisibility(View.VISIBLE);
-            newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, newMessageCountSeparator, newMessageCountSeparator));
-        } else {
-            newMessagesSeparator.setVisibility(View.GONE);
-        }
-
-        //
-        if (message.replyPostId != null) {
-            if (replyContainer == null) {
-                final ViewGroup replyContainerView = itemView.findViewById(R.id.reply_container);
-                replyContainer = new ReplyContainer(LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView), parent);
+        if (dateView != null) {
+            if (prevMessage == null || !TimeUtils.isSameDay(message.timestamp, prevMessage.timestamp)) {
+                dateView.setVisibility(View.VISIBLE);
+                dateView.setText(TimeFormatter.formatMessageSeparatorDate(dateView.getContext(), message.timestamp));
+            } else {
+                dateView.setVisibility(View.GONE);
             }
-            replyContainer.bindTo(message);
-            replyContainer.show();
-            contentView.setMinimumWidth(itemView.getResources().getDimensionPixelSize(R.dimen.reply_min_width));
-        } else if (replyContainer != null) {
-            replyContainer.hide();
-            contentView.setMinimumWidth(0);
+        }
+
+        if (newMessagesSeparator !=null) {
+            if (newMessageCountSeparator > 0) {
+                newMessagesSeparator.setVisibility(View.VISIBLE);
+                newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, newMessageCountSeparator, newMessageCountSeparator));
+            } else {
+                newMessagesSeparator.setVisibility(View.GONE);
+            }
+        }
+
+        if (contentView !=null) {
+            if (message.replyPostId != null) {
+                if (replyContainer == null) {
+                    final ViewGroup replyContainerView = itemView.findViewById(R.id.reply_container);
+                    if (replyContainerView != null) {
+                        replyContainer = new ReplyContainer(LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView), parent);
+                        replyContainer.bindTo(message);
+                        replyContainer.show();
+                        contentView.setMinimumWidth(itemView.getResources().getDimensionPixelSize(R.dimen.reply_min_width));
+                    }
+                }
+            } else if (replyContainer != null) {
+                replyContainer.hide();
+                contentView.setMinimumWidth(0);
+            }
         }
     }
 }

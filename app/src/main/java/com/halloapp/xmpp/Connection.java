@@ -11,15 +11,15 @@ import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -687,6 +687,10 @@ public class Connection {
 
     public void sendMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo) {
         executor.execute(() -> {
+            if (message.isLocalMessage()) {
+                Log.i("connection: System message shouldn't be sent");
+                return;
+            }
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send message, no connection");
                 return;

@@ -20,14 +20,14 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
@@ -289,7 +289,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
             final ContentItem contentItem = chatId == null ?
                     new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, 0);
+                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, 0);
             if (media != null) {
                 for (Media mediaItem : media) {
                     final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));

@@ -106,6 +106,8 @@ public class GroupChatMessage implements ExtensionElement {
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,
+                Message.TYPE_CHAT,
+                Message.USAGE_CHAT,
                 chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),

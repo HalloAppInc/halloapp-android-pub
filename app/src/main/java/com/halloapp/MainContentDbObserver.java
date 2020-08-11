@@ -4,9 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.LoadPostsHistoryWorker;
@@ -14,6 +11,9 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
 import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;

@@ -1,9 +1,11 @@
 package com.halloapp.ui.chat;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
@@ -16,16 +18,19 @@ import androidx.paging.PagedList;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.DelayedProgressLiveData;
+import com.halloapp.util.RandomId;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatViewModel extends AndroidViewModel {
@@ -37,6 +42,7 @@ public class ChatViewModel extends AndroidViewModel {
     final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Post> replyPost;
+    private ComputableLiveData<List<UserId>> blockListLiveData;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
     private final ContentDb contentDb;
@@ -44,8 +50,13 @@ public class ChatViewModel extends AndroidViewModel {
     private final AtomicInteger incomingAddedCount = new AtomicInteger(0);
     private final AtomicInteger initialUnseen = new AtomicInteger(0);
     private final MessagesDataSource.Factory dataSourceFactory;
+    private final BlockListManager blockListManager;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private final BlockListManager.Observer blockListObserver = () -> {
+        blockListLiveData.invalidate();
+    };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -110,6 +121,8 @@ public class ChatViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
+        blockListManager = BlockListManager.getInstance();
+
         dataSourceFactory = new MessagesDataSource.Factory(contentDb, chatId);
         messageList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
@@ -147,11 +160,71 @@ public class ChatViewModel extends AndroidViewModel {
         } else {
             replyPost = null;
         }
+
+        blockListLiveData = new ComputableLiveData<List<UserId>>() {
+            @Override
+            protected List<UserId> compute() {
+                return blockListManager.getBlockList();
+            }
+        };
+        blockListManager.addObserver(blockListObserver);
+    }
+
+    @NonNull
+    public LiveData<List<UserId>> getBlockList() {
+        return blockListLiveData.getLiveData()  ;
+    }
+
+    @MainThread
+    public LiveData<Boolean> unblockContact(@NonNull UserId userId) {
+        MutableLiveData<Boolean> unblockResult = new DelayedProgressLiveData<>();
+        blockListManager.unblockContact(userId).onResponse(result -> {
+            if (result == null || !result) {
+                unblockResult.postValue(false);
+            } else {
+                unblockResult.postValue(true);
+            }
+        }).onError(e -> {
+            unblockResult.postValue(false);
+        });
+        return unblockResult;
+    }
+
+    @MainThread
+    public LiveData<Boolean> blockContact(@NonNull UserId userId) {
+        MutableLiveData<Boolean> blockResult = new DelayedProgressLiveData<>();
+        blockListManager.blockContact(userId).onResponse(result -> {
+            if (result == null || !result) {
+                blockResult.postValue(false);
+            } else {
+                blockResult.postValue(true);
+            }
+        }).onError(e -> {
+            blockResult.postValue(false);
+        });
+        return blockResult;
+    }
+
+    public void sendSystemMessage(@Message.Usage int usage, ChatId chatId, Context context) {
+        final Message message = new Message(0,
+                chatId,
+                UserId.ME,
+                RandomId.create(),
+                System.currentTimeMillis(),
+                Message.TYPE_SYSTEM,
+                usage,
+                Message.STATE_OUTGOING_DELIVERED,
+                null,
+                null,
+                -1,
+                0);
+        message.addToStorage(ContentDb.getInstance(context));
     }
 
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+        blockListManager.removeObserver(blockListObserver);
     }
 
     int getOutgoingAdded() {

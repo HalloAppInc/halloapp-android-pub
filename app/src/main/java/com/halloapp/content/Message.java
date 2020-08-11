@@ -7,9 +7,9 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
@@ -19,11 +19,30 @@ import java.util.Objects;
 public class Message extends ContentItem {
 
     public final ChatId chatId;
+
+    public final @Type int type;
+    public final @Usage int usage;
     public final @State int state;
+
     public final int rerequestCount;
 
     public final String replyPostId;
     public final int replyPostMediaIndex;
+
+    @SuppressLint("UniqueConstants")
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM})
+    public @interface Type {}
+    public static final int TYPE_CHAT = 0;
+    public static final int TYPE_SYSTEM = 1;
+
+    @SuppressLint("UniqueConstants")
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK})
+    public @interface Usage {}
+    public static final int USAGE_CHAT = 0;
+    public static final int USAGE_BLOCK = 1;
+    public static final int USAGE_UNBLOCK = 2;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -41,6 +60,8 @@ public class Message extends ContentItem {
             UserId senderUserId,
             String messageId,
             long timestamp,
+            @Type int messageType,
+            @Usage int usage,
             @State int state,
             String text,
             String replyPostId,
@@ -48,10 +69,16 @@ public class Message extends ContentItem {
             int rerequestCount) {
         super(rowId, senderUserId, messageId, timestamp, text);
         this.chatId = chatId;
+        this.type = messageType;
+        this.usage = usage;
         this.state = state;
         this.replyPostId = TextUtils.isEmpty(replyPostId) ? null : replyPostId;
         this.replyPostMediaIndex = replyPostMediaIndex;
         this.rerequestCount = rerequestCount;
+    }
+
+    public boolean isLocalMessage() {
+        return type == Message.TYPE_SYSTEM;
     }
 
     @Override
@@ -111,7 +138,7 @@ public class Message extends ContentItem {
 
     @Override
     public @NonNull String toString() {
-        return "Message {timestamp:" + timestamp + " sender:" + senderUserId + ", chatId:" + chatId + " id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
+        return "Message {timestamp:" + timestamp + " sender:" + senderUserId + ", state: " + state + ", id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
 
     @Override

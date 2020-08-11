@@ -230,6 +230,8 @@
     <string name="menu_item_block_user">Block user</string>
     <string name="cancel">Cancel</string>
     <string name="empty_block_list">No blocked contacts</string>
+    <string name="block_notification">You blocked this contact. Tap to unblock</string>
+    <string name="unblock_notification">You unblocked this contact</string>
     <string name="save">Save</string>
     <string name="contact_picker_feed_except_title">Hide posts from…</string>
     <string name="contact_picker_feed_only_title">Share posts with…</string>

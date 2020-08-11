@@ -7,4 +7,9 @@
         android:title="@string/delete"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/block"
+        android:title="@string/block"
+        app:showAsAction="never"/>
+
 </menu>

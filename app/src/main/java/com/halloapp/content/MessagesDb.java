@@ -15,17 +15,17 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
-import com.halloapp.content.tables.GroupMembersTable;
-import com.halloapp.groups.MemberInfo;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.tables.ChatsTable;
+import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -61,6 +61,8 @@ class MessagesDb {
             messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
             messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
             messageValues.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
+            messageValues.put(MessagesTable.COLUMN_TYPE, message.type);
+            messageValues.put(MessagesTable.COLUMN_USAGE, message.usage);
             messageValues.put(MessagesTable.COLUMN_STATE, message.state);
             if (message.text != null) {
                 messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
@@ -598,6 +600,8 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
@@ -651,23 +655,25 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6),
-                            cursor.getString(15),
-                            cursor.getInt(16),
-                            cursor.getInt(7));
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(17),
+                            cursor.getInt(18),
+                            cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(10)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14)));
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -690,6 +696,8 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
@@ -733,23 +741,25 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6),
-                            cursor.getString(15),
-                            cursor.getInt(16),
-                            cursor.getInt(7));
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(17),
+                            cursor.getInt(18),
+                            cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(10)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14)));
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
                 }
             }
         }
@@ -766,6 +776,8 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
@@ -815,23 +827,25 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6),
-                            cursor.getString(17),
-                            cursor.getInt(18),
-                            cursor.getInt(7));
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(19),
+                            cursor.getInt(20),
+                            cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(10)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
-                            cursor.getBlob(15),
-                            cursor.getBlob(16),
-                            cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14)));
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
+                            cursor.getBlob(17),
+                            cursor.getBlob(18),
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
                 }
             }
         }
@@ -854,6 +868,8 @@ class MessagesDb {
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                 MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
@@ -907,23 +923,25 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6),
-                            cursor.getString(15),
-                            cursor.getInt(16),
-                            cursor.getInt(7));
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(17),
+                            cursor.getInt(18),
+                            cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(10)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(12),
-                            cursor.getInt(13),
-                            cursor.getInt(14)));
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -949,6 +967,8 @@ class MessagesDb {
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                    MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
@@ -1006,23 +1026,25 @@ class MessagesDb {
                             cursor.getString(3),
                             cursor.getLong(4),
                             cursor.getInt(5),
-                            cursor.getString(6),
-                            cursor.getString(17),
-                            cursor.getInt(18),
-                            cursor.getInt(7));
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(19),
+                            cursor.getInt(20),
+                            cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(10)) {
                     Preconditions.checkNotNull(message).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
-                            cursor.getBlob(12),
-                            cursor.getBlob(13),
-                            cursor.getInt(14),
-                            cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
+                            cursor.getBlob(14),
+                            cursor.getBlob(15),
+                            cursor.getInt(16),
+                            cursor.getInt(17),
+                            cursor.getInt(18)));
                 }
             }
             if (message != null) {

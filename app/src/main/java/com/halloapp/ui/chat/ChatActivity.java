@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -70,6 +71,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.PostEditText;
@@ -78,6 +80,7 @@ import com.halloapp.xmpp.PresenceLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ChatActivity extends HalloActivity {
@@ -119,6 +122,8 @@ public class ChatActivity extends HalloActivity {
     private int replyPostMediaIndex;
     private long selectedMessageRowId = -1;
     private String copyText;
+    private boolean blocked;
+    private String chatName;
 
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -128,6 +133,7 @@ public class ChatActivity extends HalloActivity {
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
     private BgWorkers bgWorkers = BgWorkers.getInstance();
+    private MenuItem menuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,6 +327,7 @@ public class ChatActivity extends HalloActivity {
 
             if (chatId instanceof UserId) {
                 viewModel.name.getLiveData().observe(this, name -> {
+                    chatName = name;
                     setTitle(name);
                     if (replyPostId != null) {
                         replyNameView.setText(name);
@@ -337,6 +344,7 @@ public class ChatActivity extends HalloActivity {
                 });
             } else if (chatId instanceof GroupId) {
                 if (chat != null) {
+                    chatName = chat.name;
                     setTitle(chat.name);
                 }
             }
@@ -421,6 +429,16 @@ public class ChatActivity extends HalloActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
+        menuItem = menu.findItem(R.id.block);
+        viewModel.getBlockList().observe(this, userIds -> {
+            blocked = updateBlockedContact(userIds);
+            Log.i("ChatActivity: blocked = " + blocked);
+            if (blocked) {
+                menuItem.setTitle(getString(R.string.unblock));
+            } else {
+                menuItem.setTitle(getString(R.string.block));
+            }
+        });
         return true;
     }
 
@@ -437,10 +455,64 @@ public class ChatActivity extends HalloActivity {
                 builder.show();
                 return true;
             }
+            case R.id.block: {
+                if (!blocked) {
+                    blockContact(item);
+                } else {
+                    unBlockContact(item);
+                }
+                return true;
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    private void blockContact(MenuItem item) {
+        ProgressDialog blockDialog = ProgressDialog.show(this, null, getString(R.string.blocking_user_in_progress, chatName), true);
+        blockDialog.show();
+
+        viewModel.blockContact((UserId)chatId).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            blockDialog.cancel();
+            CenterToast.show(this, getString(success ? R.string.blocking_user_successful : R.string.blocking_user_failed_check_internet, chatName));
+            if (success) {
+                item.setTitle(getString(R.string.unblock));
+                viewModel.sendSystemMessage(Message.USAGE_BLOCK, chatId, this);
+            }
+        });
+    }
+
+    private void unBlockContact(MenuItem item) {
+        ProgressDialog unblockDialog = ProgressDialog.show(this, null, getString(R.string.unblocking_user_in_progress, chatName), true);
+        unblockDialog.show();
+        viewModel.unblockContact(new UserId(chatId.rawId())).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            unblockDialog.cancel();
+            CenterToast.show(this, getString(success ? R.string.unblocking_user_successful : R.string.unblocking_user_failed_check_internet, chatName));
+            if (success) {
+                item.setTitle(getString(R.string.block));
+                viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, chatId, this);
+            }
+        });
+    }
+
+    private boolean updateBlockedContact(List<UserId> userIds) {
+        if (userIds == null) {
+            Log.i("ChatActivity: blocklist's userids is null");
+            return false;
+        }
+        for (UserId userId : userIds) {
+            if (userId.equals(chatId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updatePostReply(@Nullable Post post) {
@@ -509,6 +581,8 @@ public class ChatActivity extends HalloActivity {
                 UserId.ME,
                 RandomId.create(),
                 System.currentTimeMillis(),
+                Message.TYPE_CHAT,
+                Message.USAGE_CHAT,
                 Message.STATE_INITIAL,
                 messageText,
                 replyPostId,
@@ -573,6 +647,7 @@ public class ChatActivity extends HalloActivity {
         static final int VIEW_TYPE_INCOMING_MEDIA = 5;
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
+        static final int VIEW_TYPE_SYSTEM = 8;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -604,7 +679,9 @@ public class ChatActivity extends HalloActivity {
         @Override
         public int getItemViewType(int position) {
             final Message message = Preconditions.checkNotNull(getItem(position));
-            if (message.isIncoming()) {
+            if (message.type == Message.TYPE_SYSTEM) {
+                return VIEW_TYPE_SYSTEM;
+            } else if (message.isIncoming()) {
                 if (message.isRetracted()) {
                     return VIEW_TYPE_INCOMING_RETRACTED;
                 } else if (message.media.isEmpty()) {
@@ -656,6 +733,10 @@ public class ChatActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_OUTGOING_RETRACTED: {
                     layoutRes = R.layout.message_item_outgoing_retracted;
+                    break;
+                }
+                case VIEW_TYPE_SYSTEM: {
+                    layoutRes = R.layout.message_item_system;
                     break;
                 }
                 default: {
@@ -739,6 +820,13 @@ public class ChatActivity extends HalloActivity {
         @Override
         public long getSelectedMessageRowId() {
             return selectedMessageRowId;
+        }
+
+        @Override
+        public void unblockContactFromTap() {
+            if (blocked) {
+                unBlockContact(menuItem);
+            }
         }
 
         @Override

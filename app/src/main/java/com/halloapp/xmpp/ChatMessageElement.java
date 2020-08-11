@@ -8,14 +8,14 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Container;
 import com.halloapp.proto.MediaType;
@@ -140,6 +140,8 @@ public class ChatMessageElement implements ExtensionElement {
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,
+                Message.TYPE_CHAT,
+                Message.USAGE_CHAT,
                 chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),

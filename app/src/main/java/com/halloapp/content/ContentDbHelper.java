@@ -24,7 +24,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -67,6 +67,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
                 + MessagesTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + MessagesTable.COLUMN_TYPE + " INTEGER DEFAULT 0,"
+                + MessagesTable.COLUMN_USAGE + " INTEGER DEFAULT 0,"
                 + MessagesTable.COLUMN_STATE + " INTEGER,"
                 + MessagesTable.COLUMN_TEXT + " TEXT,"
                 + MessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
@@ -278,6 +280,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 22: {
                 upgradeFromVersion22(db);
             }
+            case 23: {
+                upgradeFromVersion23(db);
+            }
 
             break;
             default: {
@@ -451,6 +456,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + GroupMembersTable.COLUMN_USER_ID + " TEXT NOT NULL,"
                 + GroupMembersTable.COLUMN_IS_ADMIN + " INTEGER DEFAULT 0"
                 + ");");
+    }
+
+    private void upgradeFromVersion23(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_TYPE + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_USAGE + " INTEGER DEFAULT 0");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

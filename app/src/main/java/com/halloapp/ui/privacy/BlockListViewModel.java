@@ -14,8 +14,8 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
-import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.DelayedProgressLiveData;
 
 import java.util.ArrayList;
 import java.util.HashSet;
