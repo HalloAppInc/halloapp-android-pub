@@ -91,7 +91,7 @@ public class ContentComposerActivity extends HalloActivity {
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
-    private ScrollView mediaContainerView;
+    private ScrollView mediaVerticalScrollView;
     private ViewTreeObserver.OnScrollChangedListener onScrollChangeListener;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
@@ -106,7 +106,6 @@ public class ContentComposerActivity extends HalloActivity {
     private ImageButton deletePictureButton;
     private ImageButton cropPictureButton;
     private TextView mediaIndexView;
-    private ImageButton addMediaButton;
 
     @Nullable
     private ChatId chatId;
@@ -147,7 +146,7 @@ public class ContentComposerActivity extends HalloActivity {
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        mediaContainerView = findViewById(R.id.media_container);
+        mediaVerticalScrollView = findViewById(R.id.media_vertical_scroll);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -163,13 +162,10 @@ public class ContentComposerActivity extends HalloActivity {
         cropPictureButton = findViewById(R.id.crop);
         deletePictureButton = findViewById(R.id.delete);
         mediaIndexView = findViewById(R.id.media_index);
-        addMediaButton = findViewById(R.id.add_media);
 
         cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
         deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
-
-        addMediaButton.setOnClickListener(view -> openMediaPicker());
 
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
@@ -199,10 +195,6 @@ public class ContentComposerActivity extends HalloActivity {
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
             editText.setHint(R.string.write_a_description);
-            editText.setOnFocusChangeListener((view, hasFocus) -> {
-                editText.setMinLines(hasFocus ? 2 : 1);
-            });
-            addMediaButton.setVisibility(calledFromPicker ? View.VISIBLE : View.GONE);
         } else {
             progressView.setVisibility(View.GONE);
             editText.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
@@ -683,7 +675,6 @@ public class ContentComposerActivity extends HalloActivity {
         }
         if (mediaPairList != null && !mediaPairList.isEmpty()) {
             final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
-            addMediaButton.setVisibility(calledFromPicker ? View.VISIBLE : View.GONE);
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
                 cropPictureButton.setVisibility(View.VISIBLE);
@@ -691,7 +682,6 @@ public class ContentComposerActivity extends HalloActivity {
                 cropPictureButton.setVisibility(View.GONE);
             }
         } else {
-            addMediaButton.setVisibility(View.GONE);
             cropPictureButton.setVisibility(View.GONE);
             deletePictureButton.setVisibility(View.GONE);
         }
@@ -709,17 +699,17 @@ public class ContentComposerActivity extends HalloActivity {
         final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
         onScrollChangeListener = () -> {
             final ActionBar actionBar = getSupportActionBar();
-            final float elevation = mediaContainerView.getScrollY() > 0 ? scrolledElevation : 0;
+            final float elevation = mediaVerticalScrollView.getScrollY() > 0 ? scrolledElevation : 0;
             if (actionBar.getElevation() != elevation) {
                 actionBar.setElevation(elevation);
             }
         };
         onScrollChangeListener.onScrollChanged();
-        mediaContainerView.getViewTreeObserver().addOnScrollChangedListener(onScrollChangeListener);
+        mediaVerticalScrollView.getViewTreeObserver().addOnScrollChangedListener(onScrollChangeListener);
     }
 
     private void clearOnScrollChangeListener() {
-        mediaContainerView.getViewTreeObserver().removeOnScrollChangedListener(onScrollChangeListener);
+        mediaVerticalScrollView.getViewTreeObserver().removeOnScrollChangedListener(onScrollChangeListener);
     }
 
     private void refreshVideoPlayers(int currentPosition) {
