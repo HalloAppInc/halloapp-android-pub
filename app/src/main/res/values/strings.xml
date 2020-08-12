@@ -256,6 +256,7 @@
     <string name="invite_invalid_phone_number">Invalid phone number</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
+    <string name="add_members">Add members</string>
     <string name="create_group">Create group</string>
     <string name="new_group_title">New group</string>
     <string name="button_create_group">Create</string>

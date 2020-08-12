@@ -30,6 +30,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -44,6 +45,8 @@ import java.util.List;
 public class GroupInfoActivity extends HalloActivity {
 
     private static final String GROUP_ID = "group_id";
+
+    private static final int REQUEST_CODE_ADD_MEMBERS = 1;
 
     public static Intent viewGroup(@NonNull Context context, @NonNull GroupId groupId) {
         Intent intent = new Intent(context, GroupInfoActivity.class);
@@ -93,6 +96,12 @@ public class GroupInfoActivity extends HalloActivity {
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, membersView, false);
         adapter.addHeader(headerView);
 
+        final View addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
+        adapter.addHeader(addMembersView);
+        addMembersView.setOnClickListener(v -> {
+            startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.add_members), REQUEST_CODE_ADD_MEMBERS);
+        });
+
         groupNameView = headerView.findViewById(R.id.name);
 
         final GroupViewModel viewModel = new ViewModelProvider(this, new GroupViewModel.Factory(getApplication(), groupId)).get(GroupViewModel.class);
@@ -134,6 +143,27 @@ public class GroupInfoActivity extends HalloActivity {
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_ADD_MEMBERS:
+                if (resultCode == RESULT_OK && data != null) {
+                    List<UserId> userIds = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
+                    groupsApi.addRemoveMembers(groupId, userIds, null)
+                            .onResponse(response -> {
+
+                            })
+                            .onError(err -> {
+                                Log.e("Error adding members", err);
+                            });
+                }
+                finish();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
