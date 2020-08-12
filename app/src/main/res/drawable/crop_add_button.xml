@@ -29,7 +29,7 @@
                 android:height="30dp" />
 
             <solid
-                android:color="@color/white_30" />
+                android:color="@color/white_87" />
         </shape>
     </item>
 </selector>

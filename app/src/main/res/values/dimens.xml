@@ -8,8 +8,9 @@
     <dimen name="comment_media_list_height">72dp</dimen>
     <dimen name="comment_media_list_corner_radius">4dp</dimen>
     <dimen name="details_media_list_spacing">4dp</dimen>
-    <dimen name="details_media_list_height">96dp</dimen>
-    <dimen name="details_media_list_corner_radius">4dp</dimen>
+    <dimen name="details_media_list_height">70dp</dimen>
+    <dimen name="details_media_list_corner_radius">5dp</dimen>
+    <dimen name="details_media_list_thumb_radius">3dp</dimen>
     <dimen name="text_post_thumbnail_max_text_size">14dp</dimen>
     <dimen name="text_post_thumbnail_min_text_size">4dp</dimen>
     <dimen name="text_post_thumbnail_padding">2dp</dimen>

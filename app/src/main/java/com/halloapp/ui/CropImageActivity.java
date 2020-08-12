@@ -439,6 +439,7 @@ public class CropImageActivity extends HalloActivity {
                 final CropImageViewModel.MediaModel model = dataset.get(position);
                 final Media media = model.state == null ? model.original : model.edit;
 
+                holder.thumbnailView.setImageDrawable(null);
                 mediaLoader.load(holder.thumbnailView, media, new Displayer(media));
 
                 if (media.type == Media.MEDIA_TYPE_VIDEO) {
@@ -452,8 +453,10 @@ public class CropImageActivity extends HalloActivity {
 
                 if (viewModel.getSelectedPosition() == position) {
                     holder.itemView.setBackgroundColor(Color.WHITE);
+                    holder.thumbnailView.setAlpha(1.0f);
                 } else {
                     holder.itemView.setBackgroundColor(backgroundColorDefault);
+                    holder.thumbnailView.setAlpha(.6f);
                 }
 
                 holder.thumbnailView.setOnClickListener(v -> onMediaSelect(media, position));
@@ -487,7 +490,7 @@ public class CropImageActivity extends HalloActivity {
                     thumbnailView.setOutlineProvider(new ViewOutlineProvider() {
                         @Override
                         public void getOutline(View view, Outline outline) {
-                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
+                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_thumb_radius));
                         }
                     });
                     thumbnailView.setClipToOutline(true);
