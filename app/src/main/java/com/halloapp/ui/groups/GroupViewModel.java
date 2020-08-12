@@ -1,33 +1,32 @@
 package com.halloapp.ui.groups;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.content.Chat;
-import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Message;
-import com.halloapp.content.Post;
-import com.halloapp.content.SeenReceipt;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.DelayedProgressLiveData;
+import com.halloapp.util.Log;
+import com.halloapp.xmpp.groups.GroupsApi;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
 
     private final ContentDb contentDb;
+    private final GroupsApi groupsApi;
 
     private final GroupId groupId;
 
@@ -71,6 +70,7 @@ public class GroupViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
+        groupsApi = GroupsApi.getInstance(application);
 
         chatLiveData = new ComputableLiveData<Chat>() {
             @Override
@@ -95,6 +95,39 @@ public class GroupViewModel extends AndroidViewModel {
 
     public LiveData<List<MemberInfo>> getMembers() {
         return membersLiveData.getLiveData();
+    }
+
+    public LiveData<Boolean> addMembers(List<UserId> userIds) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.addRemoveMembers(groupId, userIds, null)
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Add members failed", error);
+                    result.postValue(false);
+                });
+        return result;
+    }
+
+    public LiveData<Boolean> removeMember(UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.addRemoveMembers(groupId, null, Collections.singletonList(userId))
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Remove member failed", error);
+                    result.postValue(false);
+                });
+        return result;
+    }
+
+    public LiveData<Boolean> leaveGroup() {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.leaveGroup(groupId)
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Leave group failed", error);
+                    result.postValue(false);
+                });
+        return result;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.content.ContentDb;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -35,14 +35,13 @@ import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
-import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GroupInfoActivity extends HalloActivity {
+
+    public static final int RESULT_CODE_LEAVE_GROUP = RESULT_FIRST_USER;
 
     private static final String GROUP_ID = "group_id";
 
@@ -54,8 +53,9 @@ public class GroupInfoActivity extends HalloActivity {
         return intent;
     }
 
+    private GroupViewModel viewModel;
+
     private Me me;
-    private GroupsApi groupsApi;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
 
@@ -71,7 +71,6 @@ public class GroupInfoActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
 
         me = Me.getInstance();
-        groupsApi = GroupsApi.getInstance(this);
         avatarLoader = AvatarLoader.getInstance(this);
         contactLoader = new ContactLoader(this);
 
@@ -86,6 +85,8 @@ public class GroupInfoActivity extends HalloActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
+
+        viewModel = new ViewModelProvider(this, new GroupViewModel.Factory(getApplication(), groupId)).get(GroupViewModel.class);
 
         membersView = findViewById(R.id.members);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -103,8 +104,6 @@ public class GroupInfoActivity extends HalloActivity {
         });
 
         groupNameView = headerView.findViewById(R.id.name);
-
-        final GroupViewModel viewModel = new ViewModelProvider(this, new GroupViewModel.Factory(getApplication(), groupId)).get(GroupViewModel.class);
 
         viewModel.getChat().observe(this, chat -> {
             groupNameView.setText(chat.name);
@@ -152,15 +151,16 @@ public class GroupInfoActivity extends HalloActivity {
             case REQUEST_CODE_ADD_MEMBERS:
                 if (resultCode == RESULT_OK && data != null) {
                     List<UserId> userIds = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
-                    groupsApi.addRemoveMembers(groupId, userIds, null)
-                            .onResponse(response -> {
 
-                            })
-                            .onError(err -> {
-                                Log.e("Error adding members", err);
-                            });
+                    ProgressDialog addMembersDialog = ProgressDialog.show(this, null, getString(R.string.add_members_in_progress), true);
+                    addMembersDialog.show();
+                    viewModel.addMembers(userIds).observe(this, success -> {
+                        addMembersDialog.cancel();
+                        if (success == null || !success) {
+                            CenterToast.show(getBaseContext(), R.string.failed_add_members);
+                        }
+                    });
                 }
-                finish();
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
@@ -168,14 +168,17 @@ public class GroupInfoActivity extends HalloActivity {
     }
 
     private void leaveGroup() {
-        groupsApi.leaveGroup(groupId)
-                .onResponse(response -> {
-                    // TODO(jack): should exit from this and parent activity
-                })
-                .onError(err -> {
-                    Log.e("Failed to leave group", err);
-                    CenterToast.show(getBaseContext(), R.string.failed_remove_member);
-                });
+        ProgressDialog leaveGroupDialog = ProgressDialog.show(this, null, getString(R.string.leavel_group_in_progress), true);
+        leaveGroupDialog.show();
+        viewModel.leaveGroup().observe(this, success -> {
+            leaveGroupDialog.cancel();
+            if (success == null || !success) {
+                CenterToast.show(getBaseContext(), R.string.failed_leave_group);
+            } else {
+                setResult(RESULT_CODE_LEAVE_GROUP);
+                finish();
+            }
+        });
     }
 
     private class MemberAdapter extends RecyclerView.Adapter<ViewHolderWithLifecycle> {
@@ -302,18 +305,14 @@ public class GroupInfoActivity extends HalloActivity {
         }
 
         private void removeMember(UserId userId) {
-            groupsApi.addRemoveMembers(groupId, null, Collections.singletonList(userId))
-                    .onResponse(success -> {
-                        if (!success) {
-                            removalFailure(null);
-                        }
-                    })
-                    .onError(this::removalFailure);
-        }
-
-        private void removalFailure(Exception err) {
-            Log.e("Failed to remove member", err);
-            CenterToast.show(getBaseContext(), R.string.failed_remove_member);
+            ProgressDialog removeMemberDialog = ProgressDialog.show(GroupInfoActivity.this, null, getString(R.string.remove_member_in_progress), true);
+            removeMemberDialog.show();
+            viewModel.removeMember(userId).observe(this, success -> {
+                removeMemberDialog.cancel();
+                if (success == null || !success) {
+                    CenterToast.show(getBaseContext(), R.string.failed_remove_member);
+                }
+            });
         }
     }
 }

@@ -89,6 +89,7 @@ public class ChatActivity extends HalloActivity {
     public static final String EXTRA_COPY_TEXT = "copy_text";
 
     private static final int REQUEST_CODE_COMPOSE = 1;
+    private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
 
     public static Map<ChatId, String> messageDrafts = new HashMap<>();
 
@@ -201,7 +202,7 @@ public class ChatActivity extends HalloActivity {
                 Intent viewProfile = ViewProfileActivity.viewProfile(this, (UserId)chatId);
                 startActivity(viewProfile);
             } else if (chatId instanceof GroupId) {
-                startActivity(GroupInfoActivity.viewGroup(this, (GroupId)chatId));
+                startActivityForResult(GroupInfoActivity.viewGroup(this, (GroupId)chatId), REQUEST_CODE_VIEW_GROUP_INFO);
             }
         });
 
@@ -532,13 +533,18 @@ public class ChatActivity extends HalloActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_COMPOSE: {
                 if (resultCode == RESULT_OK) {
                     replyPostId = null;
                     replyPostMediaIndex = -1;
                     updatePostReply(null);
+                }
+                break;
+            }
+            case REQUEST_CODE_VIEW_GROUP_INFO: {
+                if (resultCode == GroupInfoActivity.RESULT_CODE_LEAVE_GROUP) {
+                    finish();
                 }
                 break;
             }
