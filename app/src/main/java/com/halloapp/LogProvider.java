@@ -63,8 +63,8 @@ public class LogProvider extends ContentProvider {
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("application/zip");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {SettingsActivity.SUPPORT_EMAIL});
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
+                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME));
+                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME));
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
                 context.startActivity(intent);
             }
