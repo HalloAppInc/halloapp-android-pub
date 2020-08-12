@@ -66,6 +66,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.ContentComposerScrollView;
 import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
@@ -91,7 +92,7 @@ public class ContentComposerActivity extends HalloActivity {
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
-    private ScrollView mediaVerticalScrollView;
+    private ContentComposerScrollView mediaVerticalScrollView;
     private ViewTreeObserver.OnScrollChangedListener onScrollChangeListener;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
@@ -156,6 +157,9 @@ public class ContentComposerActivity extends HalloActivity {
         mentionPickerView = findViewById(R.id.mention_picker_view);
         editText = findViewById(R.id.entry);
         editText.setMentionPickerView(mentionPickerView);
+        editText.setOnFocusChangeListener((view, hasFocus) -> {
+            mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
+        });
 
         final View progressView = findViewById(R.id.progress);
 
