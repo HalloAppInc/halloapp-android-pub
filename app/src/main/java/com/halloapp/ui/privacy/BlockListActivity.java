@@ -48,7 +48,6 @@ public class BlockListActivity extends HalloActivity {
     private List<UserId> blockedUsers = new ArrayList<>();
 
     private View emptyContainer;
-    private View progressContainer;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -86,7 +85,6 @@ public class BlockListActivity extends HalloActivity {
         adapter = new BlocklistAdapter();
         recyclerView.setAdapter(adapter);
 
-        progressContainer = findViewById(R.id.progress);
         emptyContainer = findViewById(R.id.empty);
 
         viewModel.getBlockList().observe(this, this::setBlockedContacts);
