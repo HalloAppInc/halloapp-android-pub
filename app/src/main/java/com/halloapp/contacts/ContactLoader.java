@@ -73,6 +73,12 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
         load(view, loader, displayer, userId, cache);
     }
 
+    @MainThread
+    public void load(@NonNull TextView view, @NonNull UserId userId, @NonNull ViewDataLoader.Displayer<TextView, Contact> displayer) {
+        final Callable<Contact> loader = () -> contactsDb.getContact(userId);
+        load(view, loader, displayer, userId, cache);
+    }
+
     public void resetCache() {
         cache.evictAll();
     }

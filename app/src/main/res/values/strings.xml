@@ -35,6 +35,7 @@
     <string name="set_avatar_done">Done</string>
     <string name="set_avatar_reset">Reset</string>
     <string name="new_post">New post</string>
+    <string name="chat_message_attribution">%s: %s</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
     <string name="posts_empty">Your posts will appear here</string>
     <string name="contact_profile_empty">%s\'s posts will appear here</string>

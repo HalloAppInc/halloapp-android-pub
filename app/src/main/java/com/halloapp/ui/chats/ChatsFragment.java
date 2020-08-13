@@ -19,9 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.groups.GroupInfo;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloFragment;
@@ -42,6 +46,7 @@ public class ChatsFragment extends HalloFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(getContext());
+    private final ContactLoader contactLoader = new ContactLoader(getContext());
     private ChatsViewModel viewModel;
 
     @Override
@@ -202,6 +207,26 @@ public class ChatsFragment extends HalloFragment {
                     mediaIcon.setVisibility(View.VISIBLE);
                     mediaIcon.setImageResource(R.drawable.ic_media_collection);
                 }
+
+                if (message.chatId instanceof GroupId && !message.senderUserId.isMe()) {
+                    contactLoader.load(infoView, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                        @Override
+                        public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                            bindMessageText(result == null ? null : result.getDisplayName(), message);
+                        }
+
+                        @Override
+                        public void showLoading(@NonNull TextView view) {
+                            infoView.setText("");
+                        }
+                    });
+                } else {
+                    contactLoader.cancel(infoView);
+                    bindMessageText(null, message);
+                }
+            }
+
+            private void bindMessageText(@Nullable String sender, @NonNull Message message) {
                 final String text;
                 if (TextUtils.isEmpty(message.text)) {
                     if (message.media.size() == 1) {
@@ -228,7 +253,7 @@ public class ChatsFragment extends HalloFragment {
                     text = message.text;
                 }
                 infoView.setTextColor(getResources().getColor(R.color.chat_message_preview));
-                infoView.setText(text);
+                infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
             }
         }
     }
