@@ -171,14 +171,17 @@ class MessagesDb {
             chatValues.put(ChatsTable.COLUMN_IS_GROUP, 1);
             chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
             chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
+            chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
             db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
 
-            for (MemberInfo member : groupInfo.members) {
-                final ContentValues memberValues = new ContentValues();
-                memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupInfo.groupId.rawId());
-                memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
-                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
-                db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
+            if (groupInfo.members != null) {
+                for (MemberInfo member : groupInfo.members) {
+                    final ContentValues memberValues = new ContentValues();
+                    memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupInfo.groupId.rawId());
+                    memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
+                    memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
+                    db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
+                }
             }
 
             db.setTransactionSuccessful();

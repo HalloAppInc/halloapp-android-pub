@@ -111,7 +111,7 @@ public class Message extends ContentItem {
 
     @Override
     public @NonNull String toString() {
-        return "Message {timestamp:" + timestamp + " sender:" + senderUserId + ", id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
+        return "Message {timestamp:" + timestamp + " sender:" + senderUserId + ", chatId:" + chatId + " id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
 
     @Override
