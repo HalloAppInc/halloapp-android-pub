@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
@@ -142,6 +143,6 @@ public class ServerProps {
     }
 
     public synchronized boolean getGroupsEnabled() {
-        return propGroupsEnabled.getValue();
+        return BuildConfig.DEBUG || getIsInternalUser(); // TODO(jack): switch to using actual groups prop when ready
     }
 }

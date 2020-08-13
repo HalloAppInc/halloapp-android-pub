@@ -31,6 +31,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.CreateGroupActivity;
@@ -61,6 +62,8 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
+    private final ServerProps serverProps = ServerProps.getInstance();
+
     private ContactsViewModel viewModel;
     private TextView emptyView;
 
@@ -266,7 +269,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemViewType(int position) {
-            if (Constants.GROUPS_ENABLED) {
+            if (serverProps.getGroupsEnabled()) {
                 if (position == 0) {
                     return ITEM_TYPE_GROUP;
                 }
@@ -296,7 +299,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (Constants.GROUPS_ENABLED) {
+            if (serverProps.getGroupsEnabled()) {
                 if (position > 0 && position < getFilteredContactsCount() + 1) {
                     holder.bindTo(filteredContacts.get(position - 1), filterTokens);
                 }
@@ -313,13 +316,13 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0) + (Constants.GROUPS_ENABLED ? 1 : 0);
+            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0) + (serverProps.getGroupsEnabled() ? 1 : 0);
         }
 
         @NonNull
         @Override
         public String getSectionName(int position) {
-            int contactsPosition = position - (Constants.GROUPS_ENABLED ? 1 : 0);
+            int contactsPosition = position - (serverProps.getGroupsEnabled() ? 1 : 0);
             if (contactsPosition < 0 || filteredContacts == null || contactsPosition >= filteredContacts.size()) {
                 return "";
             }

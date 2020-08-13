@@ -19,6 +19,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -39,6 +40,7 @@ public class GroupsSync {
     private final Context context;
     private final GroupsApi groupsApi;
     private final ContentDb contentDb;
+    private final ServerProps serverProps;
 
     private UUID lastSyncRequestId;
 
@@ -57,6 +59,7 @@ public class GroupsSync {
         this.context = context.getApplicationContext();
         this.groupsApi = GroupsApi.getInstance();
         this.contentDb = ContentDb.getInstance(context);
+        this.serverProps = ServerProps.getInstance();
     }
 
     public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
@@ -73,7 +76,7 @@ public class GroupsSync {
 
     public void startGroupsSync() {
         Log.d("GroupsSync.startGroupsSync");
-        if (!Constants.GROUPS_ENABLED) {
+        if (!serverProps.getGroupsEnabled()) {
             return;
         }
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(GroupSyncWorker.class).build();
