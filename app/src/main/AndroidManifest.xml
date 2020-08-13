@@ -93,7 +93,7 @@
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter
-                android:label="@string/share_option_message">
+                android:label="@string/share_option_post">
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
