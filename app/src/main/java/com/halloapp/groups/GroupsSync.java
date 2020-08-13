@@ -19,10 +19,8 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
@@ -57,7 +55,7 @@ public class GroupsSync {
 
     private GroupsSync(@NonNull Context context) {
         this.context = context.getApplicationContext();
-        this.groupsApi = GroupsApi.getInstance(context);
+        this.groupsApi = GroupsApi.getInstance();
         this.contentDb = ContentDb.getInstance(context);
     }
 

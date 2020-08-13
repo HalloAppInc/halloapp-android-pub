@@ -70,7 +70,7 @@ public class GroupViewModel extends AndroidViewModel {
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
-        groupsApi = GroupsApi.getInstance(application);
+        groupsApi = GroupsApi.getInstance();
 
         chatLiveData = new ComputableLiveData<Chat>() {
             @Override

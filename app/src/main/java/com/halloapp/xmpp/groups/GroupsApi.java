@@ -1,16 +1,12 @@
 package com.halloapp.xmpp.groups;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.content.ContentDb;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.Observable;
 
@@ -23,22 +19,20 @@ public class GroupsApi {
 
     private static GroupsApi instance;
 
-    private ContentDb contentDb;
     private Connection connection;
 
-    public static GroupsApi getInstance(Context context) {
+    public static GroupsApi getInstance() {
         if (instance == null) {
             synchronized (GroupsApi.class) {
                 if (instance == null) {
-                    instance = new GroupsApi(ContentDb.getInstance(context), Connection.getInstance());
+                    instance = new GroupsApi(Connection.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private GroupsApi(ContentDb contentDb, Connection connection) {
-        this.contentDb = contentDb;
+    private GroupsApi(Connection connection) {
         this.connection = connection;
     }
 
