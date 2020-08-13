@@ -145,6 +145,8 @@ public class GroupsSync {
                 Log.d("GroupsSync.performGroupSync adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupInfo.groupId);
                 contentDb.addRemoveGroupMembers(groupInfo.groupId, addedMembers, deletedMembers, null);
             }
+
+            return ListenableWorker.Result.success();
         } catch (ObservableErrorException e) {
             Log.e("GroupsSync.perfromGroupSync observable error", e);
         } catch (InterruptedException e) {
