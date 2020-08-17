@@ -27,11 +27,13 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 
 import java.io.File;
@@ -85,7 +87,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
             chatName = new ComputableLiveData<String>() {
                 @Override
                 protected String compute() {
-                    return ContactsDb.getInstance().getContact((UserId)chatId).getDisplayName();
+                    if (chatId instanceof UserId) {
+                        return contactsDb.getContact((UserId)chatId).getDisplayName();
+                    } else if (chatId instanceof GroupId) {
+                        return Preconditions.checkNotNull(contentDb.getChat(chatId)).name;
+                    }
+                    return null;
                 }
             };
         } else {
