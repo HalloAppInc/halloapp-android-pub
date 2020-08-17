@@ -68,10 +68,6 @@ public class EncryptedSessionManager {
         this.messageCipher = new MessageCipher(keyManager, encryptedKeyStore);
     }
 
-    public void init(Context context) {
-        encryptedKeyStore.init(context);
-    }
-
     // Should be used in a try-with-resources block for auto-release
     private AutoCloseLock acquireLock(UserId userId) throws InterruptedException {
         lockMap.putIfAbsent(userId, new AutoCloseLock());

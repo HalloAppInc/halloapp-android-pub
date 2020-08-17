@@ -10,6 +10,7 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
 import com.google.crypto.tink.subtle.X25519;
+import com.halloapp.AppContext;
 import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.util.BgWorkers;
@@ -72,59 +73,57 @@ public class EncryptedKeyStore {
 
     // TODO(jack): Try moving away from SharedPreferences to avoid Strings in memory with key material
     private SharedPreferences sharedPreferences;
-    private BgWorkers bgWorkers;
+
+    private AppContext appContext;
 
     public static EncryptedKeyStore getInstance() {
         if (instance == null) {
             synchronized (EncryptedKeyStore.class) {
                 if (instance == null) {
-                    instance = new EncryptedKeyStore(BgWorkers.getInstance());
+                    instance = new EncryptedKeyStore(AppContext.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private EncryptedKeyStore(BgWorkers bgWorkers) {
-        this.bgWorkers = bgWorkers;
+    private EncryptedKeyStore(AppContext appContext) {
+        this.appContext = appContext;
     }
 
-    public void init(Context context) {
-        bgWorkers.execute(() -> {
-            try {
-                sharedPreferences = getSharedPreferences(context);
-            } catch (Exception e) {
-                Log.e("Failed to init encrypted key store", e);
-            }
-        });
+    private SharedPreferences getPreferences() {
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences(appContext.get());
+        }
+        return sharedPreferences;
     }
 
     public boolean getKeysUploaded() {
-        return sharedPreferences.getBoolean(PREF_KEY_KEYS_UPLOADED, false);
+        return getPreferences().getBoolean(PREF_KEY_KEYS_UPLOADED, false);
     }
 
     public void setKeysUploaded(boolean uploaded) {
-        sharedPreferences.edit().putBoolean(PREF_KEY_KEYS_UPLOADED, uploaded).apply();
+        getPreferences().edit().putBoolean(PREF_KEY_KEYS_UPLOADED, uploaded).apply();
     }
 
     public int getKeysVersion() {
-        return sharedPreferences.getInt(PREF_KEY_KEYS_VERSION, 0);
+        return getPreferences().getInt(PREF_KEY_KEYS_VERSION, 0);
     }
 
     public void setKeysVersion(int version) {
-        sharedPreferences.edit().putInt(PREF_KEY_KEYS_VERSION, version).apply();
+        getPreferences().edit().putInt(PREF_KEY_KEYS_VERSION, version).apply();
     }
 
     public boolean getSessionAlreadySetUp(UserId peerUserId) {
-        return sharedPreferences.getBoolean(getSessionAlreadySetUpPrefKey(peerUserId), false);
+        return getPreferences().getBoolean(getSessionAlreadySetUpPrefKey(peerUserId), false);
     }
 
     public void setSessionAlreadySetUp(UserId peerUserId, boolean downloaded) {
-        sharedPreferences.edit().putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded).apply();
+        getPreferences().edit().putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded).apply();
     }
 
     public void clearSessionAlreadySetUp(UserId peerUserId) {
-        sharedPreferences.edit().remove(getSessionAlreadySetUpPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getSessionAlreadySetUpPrefKey(peerUserId)).apply();
     }
 
     private String getSessionAlreadySetUpPrefKey(UserId peerUserId) {
@@ -132,15 +131,15 @@ public class EncryptedKeyStore {
     }
 
     public long getLastDownloadAttempt(UserId peerUserId) {
-        return sharedPreferences.getLong(getLastDownloadAttemptPrefKey(peerUserId), 0);
+        return getPreferences().getLong(getLastDownloadAttemptPrefKey(peerUserId), 0);
     }
 
     public void setLastDownloadAttempt(UserId peerUserId, long lastDownloadAttempt) {
-        sharedPreferences.edit().putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt).apply();
+        getPreferences().edit().putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt).apply();
     }
 
     public void clearLastDownloadAttempt(UserId peerUserId) {
-        sharedPreferences.edit().remove(getLastDownloadAttemptPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getLastDownloadAttemptPrefKey(peerUserId)).apply();
     }
 
     private String getLastDownloadAttemptPrefKey(UserId peerUserId) {
@@ -148,15 +147,15 @@ public class EncryptedKeyStore {
     }
 
     public boolean getPeerResponded(UserId peerUserId) {
-        return sharedPreferences.getBoolean(getPeerRespondedPrefKey(peerUserId), false);
+        return getPreferences().getBoolean(getPeerRespondedPrefKey(peerUserId), false);
     }
 
     public void setPeerResponded(UserId peerUserId, boolean responded) {
-        sharedPreferences.edit().putBoolean(getPeerRespondedPrefKey(peerUserId), responded).apply();
+        getPreferences().edit().putBoolean(getPeerRespondedPrefKey(peerUserId), responded).apply();
     }
 
     public void clearPeerResponded(UserId peerUserId) {
-        sharedPreferences.edit().remove(getPeerRespondedPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getPeerRespondedPrefKey(peerUserId)).apply();
     }
 
     private String getPeerRespondedPrefKey(UserId peerUserId) {
@@ -212,7 +211,7 @@ public class EncryptedKeyStore {
     }
 
     public Set<OneTimePreKey> getNewBatchOfOneTimePreKeys() {
-        int startId = sharedPreferences.getInt(PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID, 1);
+        int startId = getPreferences().getInt(PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID, 1);
 
         Set<OneTimePreKey> ret = new HashSet<>();
         for (int i=0; i<ONE_TIME_PRE_KEY_BATCH_COUNT; i++) {
@@ -232,7 +231,7 @@ public class EncryptedKeyStore {
     public PrivateXECKey removeOneTimePreKeyById(int id) {
         String prefKey = getOneTimePreKeyPrefKey(id);
         PrivateXECKey ret = new PrivateXECKey(retrieveCurve25519PrivateKey(prefKey));
-        sharedPreferences.edit().remove(prefKey).apply();
+        getPreferences().edit().remove(prefKey).apply();
         return ret;
     }
 
@@ -242,7 +241,7 @@ public class EncryptedKeyStore {
 
     public byte[] removeSkippedMessageKey(UserId peerUserId, int ephemeralKeyId, int chainIndex) {
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(messageKeySetPrefKey, new HashSet<>());
+        Set<String> messageKeyPrefKeys = getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>());
 
         String prefKey = getMessageKeyPrefKey(peerUserId, ephemeralKeyId, chainIndex);
         if (!messageKeyPrefKeys.remove(prefKey)) {
@@ -250,13 +249,13 @@ public class EncryptedKeyStore {
             return null;
         }
 
-        String messageKeyString = sharedPreferences.getString(prefKey, null);
+        String messageKeyString = getPreferences().getString(prefKey, null);
         if (messageKeyString == null) {
             Log.e("Failed to retrieve message key for " + prefKey);
             return null;
         }
 
-        sharedPreferences.edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
+        getPreferences().edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
 
         return stringToBytes(messageKeyString);
     }
@@ -265,12 +264,12 @@ public class EncryptedKeyStore {
     public void storeSkippedMessageKey(UserId peerUserId, MessageKey messageKey) {
         Log.i("Storing skipped message key " + messageKey + " for user " + peerUserId);
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(messageKeySetPrefKey, new HashSet<>());
+        Set<String> messageKeyPrefKeys = getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>());
 
         String keyPrefKey = getMessageKeyPrefKey(peerUserId, messageKey.getEphemeralKeyId(), messageKey.getCurrentChainIndex());
         messageKeyPrefKeys.add(keyPrefKey);
 
-        sharedPreferences.edit()
+        getPreferences().edit()
                 .putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial()))
                 .putStringSet(messageKeySetPrefKey, messageKeyPrefKeys)
                 .apply();
@@ -278,9 +277,9 @@ public class EncryptedKeyStore {
 
     public void clearSkippedMessageKeys(UserId peerUserId) {
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = sharedPreferences.getStringSet(messageKeySetPrefKey, new HashSet<>());
+        Set<String> messageKeyPrefKeys = getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>());
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = getPreferences().edit();
         editor.remove(messageKeySetPrefKey);
 
         for (String prefKey : messageKeyPrefKeys) {
@@ -307,7 +306,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerPublicIdentityKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getPeerPublicIdentityKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getPeerPublicIdentityKeyPrefKey(peerUserId)).apply();
     }
 
     public String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
@@ -323,7 +322,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerSignedPreKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getPeerSignedPreKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getPeerSignedPreKeyPrefKey(peerUserId)).apply();
     }
 
     private String getPeerSignedPreKeyPrefKey(UserId peerUserId) {
@@ -339,7 +338,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerOneTimePreKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getPeerOneTimePreKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getPeerOneTimePreKeyPrefKey(peerUserId)).apply();
     }
 
     private String getPeerOneTimePreKeyPrefKey(UserId peerUserId) {
@@ -347,11 +346,11 @@ public class EncryptedKeyStore {
     }
 
     public void setPeerOneTimePreKeyId(UserId peerUserId, int id) {
-        sharedPreferences.edit().putInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), id).apply();
+        getPreferences().edit().putInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), id).apply();
     }
 
     public Integer getPeerOneTimePreKeyId(UserId peerUserId) {
-        int ret = sharedPreferences.getInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), -1);
+        int ret = getPreferences().getInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), -1);
         if (ret == -1) {
             return null;
         }
@@ -359,7 +358,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerOneTimePreKeyId(UserId peerUserId) {
-        sharedPreferences.edit().remove(getPeerOneTimePreKeyIdPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getPeerOneTimePreKeyIdPrefKey(peerUserId)).apply();
     }
 
     private String getPeerOneTimePreKeyIdPrefKey(UserId peerUserId) {
@@ -375,7 +374,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearRootKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getRootKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getRootKeyPrefKey(peerUserId)).apply();
     }
 
     private String getRootKeyPrefKey(UserId peerUserId) {
@@ -391,7 +390,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundChainKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getOutboundChainKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getOutboundChainKeyPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundChainKeyPrefKey(UserId peerUserId) {
@@ -407,7 +406,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundChainKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getInboundChainKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getInboundChainKeyPrefKey(peerUserId)).apply();
     }
 
     private String getInboundChainKeyPrefKey(UserId peerUserId) {
@@ -423,7 +422,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundEphemeralKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getInboundEphemeralKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getInboundEphemeralKeyPrefKey(peerUserId)).apply();
     }
 
     private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
@@ -439,7 +438,7 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundEphemeralKey(UserId peerUserId) {
-        sharedPreferences.edit().remove(getOutboundEphemeralKeyPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getOutboundEphemeralKeyPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundEphemeralKeyPrefKey(UserId peerUserId) {
@@ -447,15 +446,15 @@ public class EncryptedKeyStore {
     }
 
     public void setInboundEphemeralKeyId(UserId peerUserId, int id) {
-        sharedPreferences.edit().putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
+        getPreferences().edit().putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
     }
 
     public int getInboundEphemeralKeyId(UserId peerUserId) {
-        return sharedPreferences.getInt(getInboundEphemeralKeyIdPrefKey(peerUserId), -1);
+        return getPreferences().getInt(getInboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
     public void clearInboundEphemeralKeyId(UserId peerUserId) {
-        sharedPreferences.edit().remove(getInboundEphemeralKeyIdPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getInboundEphemeralKeyIdPrefKey(peerUserId)).apply();
     }
 
     private String getInboundEphemeralKeyIdPrefKey(UserId peerUserId) {
@@ -463,15 +462,15 @@ public class EncryptedKeyStore {
     }
 
     public void setOutboundEphemeralKeyId(UserId peerUserId, int id) {
-        sharedPreferences.edit().putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
+        getPreferences().edit().putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
     }
 
     public int getOutboundEphemeralKeyId(UserId peerUserId) {
-        return sharedPreferences.getInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), -1);
+        return getPreferences().getInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
     public void clearOutboundEphemeralKeyId(UserId peerUserId) {
-        sharedPreferences.edit().remove(getOutboundEphemeralKeyIdPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getOutboundEphemeralKeyIdPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundEphemeralKeyIdPrefKey(UserId peerUserId) {
@@ -479,15 +478,15 @@ public class EncryptedKeyStore {
     }
 
     public void setInboundPreviousChainLength(UserId peerUserId, int len) {
-        sharedPreferences.edit().putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len).apply();
+        getPreferences().edit().putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len).apply();
     }
 
     public int getInboundPreviousChainLength(UserId peerUserId) {
-        return sharedPreferences.getInt(getInboundPreviousChainLengthPrefKey(peerUserId), 0);
+        return getPreferences().getInt(getInboundPreviousChainLengthPrefKey(peerUserId), 0);
     }
 
     public void clearInboundPreviousChainLength(UserId peerUserId) {
-        sharedPreferences.edit().remove(getInboundPreviousChainLengthPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getInboundPreviousChainLengthPrefKey(peerUserId)).apply();
     }
 
     private String getInboundPreviousChainLengthPrefKey(UserId peerUserId) {
@@ -495,15 +494,15 @@ public class EncryptedKeyStore {
     }
 
     public void setOutboundPreviousChainLength(UserId peerUserId, int len) {
-        sharedPreferences.edit().putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len).apply();
+        getPreferences().edit().putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len).apply();
     }
 
     public int getOutboundPreviousChainLength(UserId peerUserId) {
-        return sharedPreferences.getInt(getOutboundPreviousChainLengthPrefKey(peerUserId), 0);
+        return getPreferences().getInt(getOutboundPreviousChainLengthPrefKey(peerUserId), 0);
     }
 
     public void clearOutboundPreviousChainLength(UserId peerUserId) {
-        sharedPreferences.edit().remove(getOutboundPreviousChainLengthPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getOutboundPreviousChainLengthPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundPreviousChainLengthPrefKey(UserId peerUserId) {
@@ -511,15 +510,15 @@ public class EncryptedKeyStore {
     }
 
     public void setInboundCurrentChainIndex(UserId peerUserId, int index) {
-        sharedPreferences.edit().putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index).apply();
+        getPreferences().edit().putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index).apply();
     }
 
     public int getInboundCurrentChainIndex(UserId peerUserId) {
-        return sharedPreferences.getInt(getInboundCurrentChainIndexPrefKey(peerUserId), 0);
+        return getPreferences().getInt(getInboundCurrentChainIndexPrefKey(peerUserId), 0);
     }
 
     public void clearInboundCurrentChainIndex(UserId peerUserId) {
-        sharedPreferences.edit().remove(getInboundCurrentChainIndexPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getInboundCurrentChainIndexPrefKey(peerUserId)).apply();
     }
 
     private String getInboundCurrentChainIndexPrefKey(UserId peerUserId) {
@@ -527,15 +526,15 @@ public class EncryptedKeyStore {
     }
 
     public void setOutboundCurrentChainIndex(UserId peerUserId, int index) {
-        sharedPreferences.edit().putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index).apply();
+        getPreferences().edit().putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index).apply();
     }
 
     public int getOutboundCurrentChainIndex(UserId peerUserId) {
-        return sharedPreferences.getInt(getOutboundCurrentChainIndexPrefKey(peerUserId), 0);
+        return getPreferences().getInt(getOutboundCurrentChainIndexPrefKey(peerUserId), 0);
     }
 
     public void clearOutboundCurrentChainIndex(UserId peerUserId) {
-        sharedPreferences.edit().remove(getOutboundCurrentChainIndexPrefKey(peerUserId)).apply();
+        getPreferences().edit().remove(getOutboundCurrentChainIndexPrefKey(peerUserId)).apply();
     }
 
     private String getOutboundCurrentChainIndexPrefKey(UserId peerUserId) {
@@ -560,25 +559,30 @@ public class EncryptedKeyStore {
     }
 
     private void storeBytes(String prefKey, byte[] bytes) {
-        sharedPreferences.edit().putString(prefKey, bytesToString(bytes)).apply();
+        getPreferences().edit().putString(prefKey, bytesToString(bytes)).apply();
     }
 
     @Nullable
     private byte[] retrieveBytes(String prefKey) {
-        String stored = sharedPreferences.getString(prefKey, null);
+        String stored = getPreferences().getString(prefKey, null);
         return stringToBytes(stored);
     }
 
-    private static SharedPreferences getSharedPreferences(Context context) throws GeneralSecurityException, IOException {
+    private static SharedPreferences getSharedPreferences(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {
-            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-            return EncryptedSharedPreferences.create(
-                    EncryptedKeyStore.ENC_PREF_FILE_NAME,
-                    masterKeyAlias,
-                    context,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
+            try {
+                String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+                return EncryptedSharedPreferences.create(
+                        EncryptedKeyStore.ENC_PREF_FILE_NAME,
+                        masterKeyAlias,
+                        context,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                );
+            } catch (GeneralSecurityException | IOException e) {
+                Log.e("EncryptedKeyStore failed to get shared preferences", e);
+                return null;
+            }
         } else {
             // TODO(jack): remove once androidx.security supports back to API 21
             return context.getSharedPreferences(EncryptedKeyStore.ENC_PREF_FILE_NAME, Context.MODE_PRIVATE);
@@ -599,6 +603,6 @@ public class EncryptedKeyStore {
 
 
     public void clearAll() {
-        sharedPreferences.edit().clear().commit();
+        getPreferences().edit().clear().commit();
     }
 }

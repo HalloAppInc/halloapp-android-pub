@@ -59,8 +59,6 @@ public class HalloApp extends Application {
             }
         });
 
-        EncryptedSessionManager.getInstance().init(this);
-
         Notifications.getInstance(this).init();
 
         connect();
