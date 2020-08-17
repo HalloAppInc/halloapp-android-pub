@@ -38,8 +38,10 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
 import com.halloapp.util.IntentUtils;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -105,36 +107,34 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 setSendingEnabled(false);
                 banner = null;
             } else if (nullableCount == InviteFriendsViewModel.RESPONSE_RETRYABLE) {
-                banner = Snackbar.make(listView, R.string.invite_info_fetch_internet, Snackbar.LENGTH_INDEFINITE);
+                banner = SnackbarHelper.showIndefinitely(listView, R.string.invite_info_fetch_internet);
                 banner.setAction(R.string.try_again, v -> {
                    banner.dismiss();
                    viewModel.refreshInvites();
                 });
                 listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), banner.getView().getHeight());
                 progress.setVisibility(View.GONE);
-                showBanner();
+                addBannerCallback();
                 setSendingEnabled(false);
             } else if (nullableCount > 0) {
                 progress.setVisibility(View.GONE);
-                banner = Snackbar.make(listView, getResources().getQuantityString(R.plurals.invites_remaining, nullableCount, nullableCount), Snackbar.LENGTH_INDEFINITE);
-                showBanner();
+                banner = SnackbarHelper.showIndefinitely(listView, getResources().getQuantityString(R.plurals.invites_remaining, nullableCount, nullableCount));
+                addBannerCallback();
                 setSendingEnabled(true);
             } else {
                 progress.setVisibility(View.GONE);
-                banner = Snackbar.make(listView, R.string.no_invites_remaining, Snackbar.LENGTH_INDEFINITE);
-                showBanner();
+                banner = SnackbarHelper.showIndefinitely(listView, R.string.no_invites_remaining);
+                addBannerCallback();
                 setSendingEnabled(false);
             }
         });
         loadContacts();
     }
 
-    private void showBanner() {
+    private void addBannerCallback() {
         if (banner == null) {
             return;
         }
-        banner.setTextColor(ContextCompat.getColor(this, R.color.white_87));
-        banner.setBackgroundTint(ContextCompat.getColor(this, R.color.color_secondary));
         banner.addCallback(new Snackbar.Callback() {
 
             @Override
@@ -150,7 +150,6 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 banner.removeCallback(this);
             }
         });
-        banner.show();
     }
 
     private void setSendingEnabled(boolean enabled) {

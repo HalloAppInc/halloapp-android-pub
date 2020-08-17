@@ -28,6 +28,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.List;
 
@@ -146,7 +147,7 @@ public class SettingsProfile extends HalloActivity {
                     } else if (running) {
                         progressBar.setVisibility(View.GONE);
                         if (state == WorkInfo.State.FAILED) {
-                            CenterToast.show(getBaseContext(), R.string.failed_update_profile);
+                            SnackbarHelper.showWarning(SettingsProfile.this, R.string.failed_update_profile);
                             nameView.setEnabled(true);
                             nameView.requestFocus();
                             saveButton.setVisibility(View.VISIBLE);
@@ -164,7 +165,7 @@ public class SettingsProfile extends HalloActivity {
         saveButton.setOnClickListener(v -> {
             final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameView.getText()).toString());
             if (TextUtils.isEmpty(name)) {
-                CenterToast.show(this, R.string.name_must_be_specified);
+                SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
                 nameView.requestFocus();
                 return;
             }

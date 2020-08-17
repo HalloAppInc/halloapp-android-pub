@@ -25,10 +25,9 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.StringUtils;
-import com.halloapp.widget.BlueToast;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
-import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.io.File;
 import java.util.Collections;
@@ -69,7 +68,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
         menu.setOnMenuItemClickListener(item -> {
-            BlueToast.show(activity, item.getTitle());
+            SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_RESET_REGISTRATION: {
                     new ResetRegistrationTask(activity.getApplication()).execute();
@@ -168,7 +167,7 @@ public class Debug {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
         menu.setOnMenuItemClickListener(item -> {
-            BlueToast.show(activity, item.getTitle());
+            SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
                     ContentDb.getInstance(activity).setCommentsSeen(userId, postId, false);
@@ -187,7 +186,7 @@ public class Debug {
         if (chatId instanceof  UserId) {
             menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
             menu.setOnMenuItemClickListener(item -> {
-                BlueToast.show(activity, item.getTitle());
+                SnackbarHelper.showInfo(activity, item.getTitle());
                 switch (item.getTitle().toString()) {
                     case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
                         try {

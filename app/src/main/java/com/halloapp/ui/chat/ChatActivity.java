@@ -71,10 +71,10 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.PostEditText;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -478,10 +478,12 @@ public class ChatActivity extends HalloActivity {
                 return;
             }
             blockDialog.cancel();
-            CenterToast.show(this, getString(success ? R.string.blocking_user_successful : R.string.blocking_user_failed_check_internet, chatName));
             if (success) {
+                SnackbarHelper.showInfo(this, getString(R.string.blocking_user_successful, chatName));
                 item.setTitle(getString(R.string.unblock));
                 viewModel.sendSystemMessage(Message.USAGE_BLOCK, chatId, this);
+            } else {
+                SnackbarHelper.showWarning(this, getString(R.string.blocking_user_failed_check_internet, chatName));
             }
         });
     }
@@ -494,10 +496,12 @@ public class ChatActivity extends HalloActivity {
                 return;
             }
             unblockDialog.cancel();
-            CenterToast.show(this, getString(success ? R.string.unblocking_user_successful : R.string.unblocking_user_failed_check_internet, chatName));
             if (success) {
+                SnackbarHelper.showInfo(this, getString(R.string.unblocking_user_successful, chatName));
                 item.setTitle(getString(R.string.block));
                 viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, chatId, this);
+            } else {
+                SnackbarHelper.showWarning(this, getString(R.string.unblocking_user_failed_check_internet, chatName));
             }
         });
     }

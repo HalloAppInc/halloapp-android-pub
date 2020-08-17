@@ -24,7 +24,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
-import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -89,7 +89,7 @@ public class CreateGroupActivity extends HalloActivity {
         createButton.setOnClickListener(v -> {
             final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
             if (TextUtils.isEmpty(name)) {
-                CenterToast.show(this, R.string.name_must_be_specified);
+                SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
                 nameEditText.requestFocus();
                 return;
             }
@@ -108,7 +108,7 @@ public class CreateGroupActivity extends HalloActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    CenterToast.show(getBaseContext(), R.string.failed_create_group);
+                    SnackbarHelper.showWarning(this, R.string.failed_create_group);
                     nameEditText.setEnabled(true);
                     nameEditText.requestFocus();
                     createButton.setVisibility(View.VISIBLE);

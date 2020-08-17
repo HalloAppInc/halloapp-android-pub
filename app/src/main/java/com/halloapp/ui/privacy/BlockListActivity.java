@@ -30,7 +30,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +131,11 @@ public class BlockListActivity extends HalloActivity {
                 return;
             }
             unblockDialog.cancel();
-            CenterToast.show(this, getString(success ? R.string.unblocking_user_successful : R.string.unblocking_user_failed_check_internet, contact.getDisplayName()));
+            if (success) {
+                SnackbarHelper.showInfo(this, getString(R.string.unblocking_user_successful, contact.getDisplayName()));
+            } else {
+                SnackbarHelper.showWarning(this, getString(R.string.unblocking_user_failed_check_internet, contact.getDisplayName()));
+            }
         });
     }
 
@@ -148,7 +152,11 @@ public class BlockListActivity extends HalloActivity {
                 return;
             }
             blockDialog.cancel();
-            CenterToast.show(this, getString(success ? R.string.blocking_user_successful : R.string.blocking_user_failed_check_internet, name));
+            if (success) {
+                SnackbarHelper.showInfo(this, getString(R.string.blocking_user_successful, contact.getDisplayName()));
+            } else {
+                SnackbarHelper.showWarning(this, getString(R.string.blocking_user_failed_check_internet, contact.getDisplayName()));
+            }
         });
     }
 

@@ -27,7 +27,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -65,13 +64,13 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.ContentComposerScrollView;
 import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,7 +194,7 @@ public class ContentComposerActivity extends HalloActivity {
         if (uris != null) {
             progressView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
-                CenterToast.show(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
+                SnackbarHelper.showInfo(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
             editText.setHint(R.string.write_a_description);
@@ -294,8 +293,7 @@ public class ContentComposerActivity extends HalloActivity {
                 mediaPagerIndicator.setViewPager(mediaPager);
             }
             if (media.size() != expectedMediaCount) {
-                // NOTE(Vasil): The following line violates strict thread file loading policy.
-                CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
+                SnackbarHelper.showWarning(this, R.string.failed_to_load_media);
             }
             invalidateOptionsMenu();
             updateMediaButtons();

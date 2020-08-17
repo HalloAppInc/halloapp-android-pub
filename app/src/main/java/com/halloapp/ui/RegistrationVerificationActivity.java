@@ -24,7 +24,7 @@ import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 
 public class RegistrationVerificationActivity extends HalloActivity {
 
@@ -73,7 +73,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 setResult(RESULT_OK);
                 finish();
             } else {
-                CenterToast.show(this, R.string.registration_code_invalid);
+                SnackbarHelper.showWarning(this, R.string.registration_code_invalid);
                 codeEditText.setText("");
                 codeEditText.setEnabled(true);
                 codeEditText.requestFocus();

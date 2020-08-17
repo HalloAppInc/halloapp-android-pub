@@ -34,7 +34,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
-import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
 
 
@@ -109,7 +109,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         .setCancelable(true);
                     builder.show();
                 } else {
-                    CenterToast.show(this, R.string.registration_failed);
+                    SnackbarHelper.showWarning(this, R.string.registration_failed);
                 }
                 nextButton.setVisibility(View.VISIBLE);
                 phoneNumberEditText.setEnabled(true);
@@ -189,13 +189,13 @@ public class RegistrationRequestActivity extends HalloActivity {
         } else {
             name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
             if (TextUtils.isEmpty(name)) {
-                CenterToast.show(this, R.string.name_must_be_specified);
+                SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
                 nameEditText.requestFocus();
                 return;
             }
         }
         if (!countryCodePicker.isValidFullNumber()) {
-            CenterToast.show(this, R.string.invalid_phone_number);
+            SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
             phoneNumberEditText.requestFocus();
             return;
         }

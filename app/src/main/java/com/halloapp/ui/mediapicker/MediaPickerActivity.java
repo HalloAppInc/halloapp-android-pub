@@ -24,7 +24,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
@@ -32,7 +31,6 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
@@ -44,8 +42,8 @@ import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.GridSpacingItemDecoration;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -207,7 +205,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 if (result == RESULT_OK) {
                     if (data == null) {
                         Log.e("MediaPackerActivity.onActivityResult.REQUEST_CODE_PICK_IMAGE: no data");
-                        CenterToast.show(this, R.string.bad_image);
+                        SnackbarHelper.showWarning(this, R.string.bad_image);
                     } else {
                         final ArrayList<Uri> uris = new ArrayList<>();
                         final ClipData clipData = data.getClipData();
@@ -225,7 +223,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                             handleSelection(uris);
                         } else {
                             Log.e("MediaPackerActivity.onActivityResult.REQUEST_CODE_PICK_MEDIA: no uri");
-                            CenterToast.show(this, R.string.bad_image);
+                            SnackbarHelper.showWarning(this, R.string.bad_image);
                         }
                     }
                 }
@@ -710,10 +708,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         private void notifyTooManyItems() {
             final String message = getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS);
-            Snackbar.make(itemView, message, Snackbar.LENGTH_LONG)
-                    .setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white_87))
-                    .setBackgroundTint(ContextCompat.getColor(itemView.getContext(), R.color.color_secondary))
-                    .show();
+            SnackbarHelper.showInfo(itemView, message);
         }
 
         private void onItemClicked() {

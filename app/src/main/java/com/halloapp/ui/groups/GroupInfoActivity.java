@@ -34,7 +34,7 @@ import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +157,7 @@ public class GroupInfoActivity extends HalloActivity {
                     viewModel.addMembers(userIds).observe(this, success -> {
                         addMembersDialog.cancel();
                         if (success == null || !success) {
-                            CenterToast.show(getBaseContext(), R.string.failed_add_members);
+                            SnackbarHelper.showWarning(this, R.string.failed_add_members);
                         }
                     });
                 }
@@ -173,7 +173,7 @@ public class GroupInfoActivity extends HalloActivity {
         viewModel.leaveGroup().observe(this, success -> {
             leaveGroupDialog.cancel();
             if (success == null || !success) {
-                CenterToast.show(getBaseContext(), R.string.failed_leave_group);
+                SnackbarHelper.showWarning(this, R.string.failed_leave_group);
             } else {
                 setResult(RESULT_CODE_LEAVE_GROUP);
                 finish();
@@ -310,7 +310,7 @@ public class GroupInfoActivity extends HalloActivity {
             viewModel.removeMember(userId).observe(this, success -> {
                 removeMemberDialog.cancel();
                 if (success == null || !success) {
-                    CenterToast.show(getBaseContext(), R.string.failed_remove_member);
+                    SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_remove_member);
                 }
             });
         }

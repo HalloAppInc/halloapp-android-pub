@@ -40,6 +40,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.CropPhotoView;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -103,7 +104,7 @@ public class AvatarPreviewActivity extends HalloActivity {
                     mediaThumbnailLoader.load(imageView, mediaItem);
                     imageView.setVisibility(View.VISIBLE);
                 } else {
-                    CenterToast.show(getBaseContext(), R.string.failed_to_load_media);
+                    SnackbarHelper.showWarning(this, R.string.failed_to_load_media);
                 }
                 setButton.setEnabled(true);
             });

@@ -31,8 +31,8 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.LinearSpacingItemDecoration;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -354,7 +354,7 @@ public class PostSeenByActivity extends HalloActivity {
                         //noinspection SwitchStatementWithTooFewBranches
                         switch (item.getItemId()) {
                             case R.id.block: {
-                                CenterToast.show(getBaseContext(), R.string.block); // TODO (ds): add contact blocking
+                                SnackbarHelper.showInfo(itemView, R.string.block); // TODO (ds): add contact blocking
                                 return true;
                             }
                             default: {

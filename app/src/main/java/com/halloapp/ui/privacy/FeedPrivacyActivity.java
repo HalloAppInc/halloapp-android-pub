@@ -19,7 +19,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
-import com.halloapp.widget.BlueToast;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.Collections;
@@ -106,7 +106,11 @@ public class FeedPrivacyActivity extends HalloActivity {
                 if (viewModel.hasChanges(selectedType, currentList)) {
                     viewModel.savePrivacy(selectedType, currentList).observe(this, done -> {
                         if (done != null) {
-                            BlueToast.show(this, done ? R.string.feed_privacy_update_success : R.string.feed_privacy_update_failure);
+                            if (done) {
+                                SnackbarHelper.showInfo(this, R.string.feed_privacy_update_success);
+                            } else {
+                                SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
+                            }
                             if (done) {
                                 finish();
                             }

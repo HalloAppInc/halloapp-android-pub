@@ -12,7 +12,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.CenterToast;
+import com.halloapp.widget.SnackbarHelper;
 
 public class AppExpirationActivity extends HalloActivity {
 
@@ -44,7 +44,7 @@ public class AppExpirationActivity extends HalloActivity {
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
                 Log.i("AppExpirationActivity Play Store Not Installed", e);
-                CenterToast.show(AppExpirationActivity.this, R.string.app_expiration_no_play_store);
+                SnackbarHelper.showWarning(AppExpirationActivity.this, R.string.app_expiration_no_play_store);
             }
         });
     }
