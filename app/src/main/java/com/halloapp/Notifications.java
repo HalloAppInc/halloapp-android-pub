@@ -24,6 +24,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -224,7 +225,7 @@ public class Notifications {
                 final Person chatUser = new Person.Builder().setIcon(chatIcon).setName(context.getString(R.string.me)).setKey("").build();
                 final NotificationCompat.MessagingStyle style = new NotificationCompat.MessagingStyle(chatUser);
                 final List<String> chatNames = new ArrayList<>();
-                final Set<ChatId> chatSenders = new HashSet<>();
+                final Set<ChatId> chats = new HashSet<>();
                 for (Message message : chatMessages) {
                     Bitmap avatar = avatars.get(message.chatId);
                     if (avatar == null) {
@@ -233,15 +234,19 @@ public class Notifications {
                     }
                     final IconCompat icon = IconCompat.createWithBitmap(avatar);
                     final Contact sender = contactsDb.getContact(message.senderUserId);
+                    final String senderName = sender.getDisplayName();
                     if (senders.add(message.senderUserId)) {
-                        names.add(sender.getDisplayName());
+                        names.add(senderName);
                     }
-                    if (chatSenders.add(message.chatId)) {
-                        final Chat chat = ContentDb.getInstance(context).getChat(message.chatId);
-                        chatNames.add(chat != null ? chat.name : sender.getDisplayName());
+                    final Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(context).getChat(message.chatId));
+                    if (chats.add(message.chatId)) {
+                        chatNames.add(chat.name);
                     }
-                    Person user = new Person.Builder().setIcon(icon).setName(message.senderUserId.isMe() ? context.getString(R.string.me) : sender.getDisplayName()).setKey(message.senderUserId.rawId()).build();
-                    style.addMessage(getMessagePreviewIcon(message) + getMessagePreviewText(message), message.timestamp, user);
+                    String chatName = message.chatId instanceof GroupId ? chat.name : senderName;
+                    Person user = new Person.Builder().setIcon(icon).setName(message.senderUserId.isMe() ? context.getString(R.string.me) : chatName).setKey(message.chatId.rawId()).build();
+                    String previewText = getMessagePreviewIcon(message) + getMessagePreviewText(message);
+                    String textWithAttribution = message.chatId instanceof GroupId ? context.getString(R.string.chat_message_attribution, senderName, previewText) : previewText;
+                    style.addMessage(textWithAttribution, message.timestamp, user);
                 }
                 final String text = context.getResources().getQuantityString(R.plurals.new_messages_notification, chatMessages.size(), chatMessages.size(), ListFormatter.format(context, chatNames));
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MESSAGE_NOTIFICATION_CHANNEL_ID)
