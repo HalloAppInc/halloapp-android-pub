@@ -48,9 +48,7 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
                     return;
                 }
                 view.setText(MentionsFormatter.insertMentions(text, result, ((v, mention) -> {
-                    if (mention.isInAddressBook || (mention.userId != null && mention.userId.isMe())) {
-                        v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
-                    }
+                    v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
                 })));
             }
 

@@ -27,16 +27,13 @@ import java.util.Collection;
 public class ProfileViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
-    private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     private final PostsDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final UserId userId;
-
-    private final ComputableLiveData<String> phoneNameLiveData;
+    private final ComputableLiveData<Contact> contactLiveData;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -103,35 +100,27 @@ public class ProfileViewModel extends AndroidViewModel {
     public ProfileViewModel(@NonNull Application application, @NonNull UserId userId) {
         super(application);
 
-        this.userId = userId;
-
-        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance();
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
-        phoneNameLiveData = new ComputableLiveData<String>() {
+        contactLiveData = new ComputableLiveData<Contact>() {
             @Override
-            protected String compute() {
+            protected Contact compute() {
                 if (userId.isMe()) {
-                    return me.getName();
+                    return null;
                 } else {
-                    Contact contact = contactsDb.getContact(userId);
-                    return contact.getDisplayName();
+                    return contactsDb.getContact(userId);
                 }
             }
         };
-        phoneNameLiveData.invalidate();
+        contactLiveData.invalidate();
     }
 
-    public LiveData<String> getName() {
-        if (userId.isMe()) {
-            return me.name;
-        } else {
-            return phoneNameLiveData.getLiveData();
-        }
+    public LiveData<Contact> getContact() {
+        return contactLiveData.getLiveData();
     }
 
     @Override

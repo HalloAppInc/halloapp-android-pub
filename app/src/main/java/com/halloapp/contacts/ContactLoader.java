@@ -53,7 +53,7 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
                     view.setText(R.string.unknown_contact);
                 } else {
                     view.setText(contact.getDisplayName());
-                    if (openProfileOnTap && !userId.isMe() && contact.addressBookName != null) {
+                    if (openProfileOnTap && !userId.isMe()) {
                         view.setOnClickListener(v -> {
                             v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
                         });

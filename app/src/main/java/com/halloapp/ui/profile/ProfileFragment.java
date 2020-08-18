@@ -89,12 +89,19 @@ public class ProfileFragment extends PostsFragment {
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
-        viewModel.getName().observe(getViewLifecycleOwner(), name -> {
-            nameView.setText(name);
-            if (!profileUserId.isMe()) {
-                emptyView.setText(getString(R.string.contact_profile_empty, name));
-            }
-        });
+        if (profileUserId.isMe()) {
+            nameView.setText(R.string.me);
+        } else {
+            viewModel.getContact().observe(getViewLifecycleOwner(), contact -> {
+                String name = contact.getDisplayName();
+                nameView.setText(name);
+                if (contact.addressBookName == null) {
+                    emptyView.setText(getString(R.string.contact_profile_not_friends, name));
+                } else {
+                    emptyView.setText(getString(R.string.contact_profile_empty, name));
+                }
+            });
+        }
 
         avatarView = headerView.findViewById(R.id.avatar);
         AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
