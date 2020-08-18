@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.util.Log;
+
 public class BooleanProp implements Prop {
 
     private final String key;
@@ -33,7 +35,7 @@ public class BooleanProp implements Prop {
 
     @Override
     public void load(@NonNull SharedPreferences sharedPreferences) {
-        sharedPreferences.getBoolean(key, defaultValue);
+        value = sharedPreferences.getBoolean(key, defaultValue);
     }
 
     @Override

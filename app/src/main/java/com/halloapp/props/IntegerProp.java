@@ -43,7 +43,7 @@ public class IntegerProp implements Prop {
 
     @Override
     public void load(@NonNull SharedPreferences sharedPreferences) {
-        sharedPreferences.getInt(key, defaultValue);
+        value = sharedPreferences.getInt(key, defaultValue);
     }
 
     @Override
