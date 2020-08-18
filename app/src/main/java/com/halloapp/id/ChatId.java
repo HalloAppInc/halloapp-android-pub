@@ -6,12 +6,15 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.util.Log;
+
 import java.util.Objects;
 
 public class ChatId implements Parcelable {
 
     public @Nullable static ChatId fromString(@Nullable String s) {
         if (s == null) {
+            Log.w("Returning null ChatId for null String");
             return null;
         } else if (s.startsWith("g")) {
             return new GroupId(s);
