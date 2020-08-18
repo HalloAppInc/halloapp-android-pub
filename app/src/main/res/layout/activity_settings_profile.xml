@@ -54,6 +54,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/avatar"
                 app:layout_constraintEnd_toEndOf="@+id/avatar"
                 android:background="@drawable/change_avatar_background"
+                android:backgroundTint="@color/color_secondary"
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="1dp">
 
@@ -62,7 +63,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="1dp"
-                    android:tint="@color/color_secondary"
+                    android:tint="@color/white_87"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_camera" />
 

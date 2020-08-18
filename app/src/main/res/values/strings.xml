@@ -213,7 +213,6 @@
     <string name="share_via">Share via…</string>
     <string name="name_hint">Your name</string>
     <string name="name_must_be_specified">Name must be specified</string>
-    <string name="your_name">Your name</string>
     <string name="update">Update</string>
     <string name="counter">%d/%d</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
