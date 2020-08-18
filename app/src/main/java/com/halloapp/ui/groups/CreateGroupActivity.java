@@ -3,23 +3,32 @@ package com.halloapp.ui.groups;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Pair;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.content.Mention;
 import com.halloapp.id.UserId;
+import com.halloapp.ui.ContentComposerViewModel;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -51,8 +60,17 @@ public class CreateGroupActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("CreateGroupActivity.onCreate");
+
+        if (Build.VERSION.SDK_INT >= 28) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
         setContentView(R.layout.activity_create_group);
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         viewModel = new ViewModelProvider(this).get(CreateGroupViewModel.class);
@@ -62,12 +80,8 @@ public class CreateGroupActivity extends HalloActivity {
             userIds = new ArrayList<>();
         }
 
-        nameEditText = findViewById(R.id.name);
+        nameEditText = findViewById(R.id.edit_name);
         nameEditText.requestFocus();
-
-        final TextView counterView = findViewById(R.id.counter);
-        final View createButton = findViewById(R.id.create);
-        final View updateProgress = findViewById(R.id.progress);
 
         nameEditText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_GROUP_NAME_LENGTH)});
         nameEditText.addTextChangedListener(new TextWatcher() {
@@ -78,44 +92,55 @@ public class CreateGroupActivity extends HalloActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                counterView.setText(getString(R.string.counter, s.length(), Constants.MAX_GROUP_NAME_LENGTH));
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+    }
 
-        createButton.setOnClickListener(v -> {
-            final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
-            if (TextUtils.isEmpty(name)) {
-                SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
-                nameEditText.requestFocus();
-                return;
-            }
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.create_group_menu, menu);
+        return true;
+    }
 
-            nameEditText.setEnabled(false);
-            createButton.setVisibility(View.GONE);
-            updateProgress.setVisibility(View.VISIBLE);
-
-            ProgressDialog createGroupDialog = ProgressDialog.show(this, null, getString(R.string.create_group_in_progress, name), true);
-            createGroupDialog.show();
-            viewModel.createGroup(name, userIds).observe(this, groupInfo -> {
-                createGroupDialog.cancel();
-                if (groupInfo != null) {
-                    final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                    intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.groupId);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    SnackbarHelper.showWarning(this, R.string.failed_create_group);
-                    nameEditText.setEnabled(true);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.create: {
+                final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
+                if (TextUtils.isEmpty(name)) {
+                    SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
                     nameEditText.requestFocus();
-                    createButton.setVisibility(View.VISIBLE);
-                    updateProgress.setVisibility(View.GONE);
+                    return true;
                 }
-            });
-        });
+
+                nameEditText.setEnabled(false);
+
+                ProgressDialog createGroupDialog = ProgressDialog.show(this, null, getString(R.string.create_group_in_progress, name), true);
+                createGroupDialog.show();
+                viewModel.createGroup(name, userIds).observe(this, groupInfo -> {
+                    createGroupDialog.cancel();
+                    if (groupInfo != null) {
+                        final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                        intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupInfo.groupId);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        SnackbarHelper.showWarning(this, R.string.failed_create_group);
+                        nameEditText.setEnabled(true);
+                        nameEditText.requestFocus();
+                    }
+                });
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 
     @Override

@@ -52,6 +52,7 @@
             android:label=""/>
 
         <activity android:name=".ui.groups.CreateGroupActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/new_group_title"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
 
