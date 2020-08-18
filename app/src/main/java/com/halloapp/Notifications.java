@@ -239,10 +239,10 @@ public class Notifications {
                         names.add(senderName);
                     }
                     final Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(context).getChat(message.chatId));
-                    if (chats.add(message.chatId)) {
-                        chatNames.add(chat.name);
-                    }
                     String chatName = message.chatId instanceof GroupId ? chat.name : senderName;
+                    if (chats.add(message.chatId)) {
+                        chatNames.add(chatName);
+                    }
                     Person user = new Person.Builder().setIcon(icon).setName(message.senderUserId.isMe() ? context.getString(R.string.me) : chatName).setKey(message.chatId.rawId()).build();
                     String previewText = getMessagePreviewIcon(message) + getMessagePreviewText(message);
                     String textWithAttribution = message.chatId instanceof GroupId ? context.getString(R.string.chat_message_attribution, senderName, previewText) : previewText;
