@@ -226,7 +226,7 @@ public class PublishedEntry {
         return writer.toString();
     }
 
-    private String getEncodedEntryString() {
+    public String getEncodedEntryString() {
         return Base64.encodeToString(getEncodedEntry(), Base64.NO_WRAP);
     }
 

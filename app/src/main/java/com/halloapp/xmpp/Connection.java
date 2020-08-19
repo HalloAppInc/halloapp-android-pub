@@ -9,6 +9,7 @@ import androidx.core.util.Pair;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
@@ -24,6 +25,8 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.feed.FeedItem;
+import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.groups.GroupChangeMessage;
 import com.halloapp.xmpp.groups.GroupChatMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
@@ -593,10 +596,19 @@ public class Connection {
                 for (Mention mention : post.mentions) {
                     entry.mentions.add(Mention.toProto(mention));
                 }
-                final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
-                pubSubHelper.publishItem(getMyFeedNodeId(), item);
-                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
+                if (Constants.NEW_FEED_API && post.getAudienceType() != null) {
+                    FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntryString());
+                    FeedUpdateIq publishIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
+                    publishIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
+                    publishIq.setTo(connection.getXMPPServiceDomain());
+
+                    connection.createStanzaCollectorAndSend(publishIq).nextResultOrThrow();
+                } else {
+                    final SimplePayload payload = new SimplePayload(entry.toXml());
+                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
+                    pubSubHelper.publishItem(getMyFeedNodeId(), item);
+                    // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
+                }
                 connectionObservers.notifyOutgoingPostSent(post.id);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
@@ -611,17 +623,23 @@ public class Connection {
                 return;
             }
             try {
-                final PublishedEntry entry = new PublishedEntry(
-                        PublishedEntry.ENTRY_FEED,
-                        null,
-                        0,
-                        connection.getUser().getLocalpart().toString(),
-                        null,
-                        null,
-                        null);
-                final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
-                pubSubHelper.retractItem(getMyFeedNodeId(), item);
+                if (Constants.NEW_FEED_API) {
+                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+                    requestIq.setTo((connection.getXMPPServiceDomain()));
+                    connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+                } else {
+                    final PublishedEntry entry = new PublishedEntry(
+                            PublishedEntry.ENTRY_FEED,
+                            null,
+                            0,
+                            connection.getUser().getLocalpart().toString(),
+                            null,
+                            null,
+                            null);
+                    final SimplePayload payload = new SimplePayload(entry.toXml());
+                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
+                    pubSubHelper.retractItem(getMyFeedNodeId(), item);
+                }
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 connectionObservers.notifyOutgoingPostSent(postId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -648,9 +666,20 @@ public class Connection {
                 for (Mention mention : comment.mentions) {
                     entry.mentions.add(Mention.toProto(mention));
                 }
-                final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
-                pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
+                if (Constants.NEW_FEED_API) {
+                    UserId postSender = comment.postSenderUserId;
+                    if (postSender.isMe()) {
+                        postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
+                    }
+                    FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, postSender, entry.getEncodedEntryString());
+                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
+                    requestIq.setTo(connection.getXMPPServiceDomain());
+                    connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+                } else {
+                    final SimplePayload payload = new SimplePayload(entry.toXml());
+                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
+                    pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
+                }
                 // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
                 connectionObservers.notifyOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -666,17 +695,28 @@ public class Connection {
                 return;
             }
             try {
-                final PublishedEntry entry = new PublishedEntry(
-                        PublishedEntry.ENTRY_COMMENT,
-                        null,
-                        0,
-                        connection.getUser().getLocalpart().toString(),
-                        null,
-                        postId,
-                        null);
-                final SimplePayload payload = new SimplePayload(entry.toXml());
-                final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
-                pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
+                if (Constants.NEW_FEED_API) {
+                    UserId postSender = postSenderUserId;
+                    if (postSender.isMe()) {
+                        postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
+                    }
+                    FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
+                    requestIq.setTo(connection.getXMPPServiceDomain());
+                    connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+                } else {
+                    final PublishedEntry entry = new PublishedEntry(
+                            PublishedEntry.ENTRY_COMMENT,
+                            null,
+                            0,
+                            connection.getUser().getLocalpart().toString(),
+                            null,
+                            postId,
+                            null);
+                    final SimplePayload payload = new SimplePayload(entry.toXml());
+                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
+                    pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
+                }
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
                 connectionObservers.notifyOutgoingCommentSent(postSenderUserId, postId, commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {

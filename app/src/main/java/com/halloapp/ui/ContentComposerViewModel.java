@@ -30,11 +30,14 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
 import java.io.IOException;
@@ -271,6 +274,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     static class PrepareContentTask extends AsyncTask<Void, Void, Void> {
 
+        private final ContactsDb contactsDb = ContactsDb.getInstance();
+        private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
+
         private final ChatId chatId;
         private final String text;
         private final List<Media> media;
@@ -334,6 +340,26 @@ public class ContentComposerViewModel extends AndroidViewModel {
             }
             if (mentions != null) {
                 contentItem.mentions.addAll(mentions);
+            }
+            if (contentItem instanceof Post) {
+                FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
+                List<UserId> audienceList;
+                @PrivacyList.Type String audienceType;
+                if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+                    List<Contact> contacts = contactsDb.getUsers();
+                    audienceList = new ArrayList<>(contacts.size());
+                    for (Contact contact : contacts) {
+                        audienceList.add(contact.userId);
+                    }
+                    audienceType = PrivacyList.Type.ALL;
+                } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
+                    audienceList = feedPrivacy.onlyList;
+                    audienceType = PrivacyList.Type.ONLY;
+                } else {
+                    audienceList = feedPrivacy.exceptList;
+                    audienceType = PrivacyList.Type.EXCEPT;
+                }
+                ((Post) contentItem).setAudience(audienceType, audienceList);
             }
             this.contentItem.postValue(contentItem);
             return null;

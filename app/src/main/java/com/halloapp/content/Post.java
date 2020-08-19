@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.BuildConfig;
 import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,6 +41,9 @@ public class Post extends ContentItem {
     public int seenByCount;
     public Comment firstComment;
 
+    private @PrivacyList.Type String audienceType;
+    private List<UserId> audienceList;
+
     public Post(
             long rowId,
             UserId senderUserId,
@@ -71,6 +75,19 @@ public class Post extends ContentItem {
     @Override
     public void setPatchUrl(long rowId, @NonNull String url, @NonNull ContentDb contentDb) {
         contentDb.setPatchUrl(this, rowId, url);
+    }
+
+    public void setAudience(@PrivacyList.Type String audienceType, @NonNull List<UserId> users) {
+        this.audienceList = users;
+        this.audienceType = audienceType;
+    }
+
+    public @PrivacyList.Type String getAudienceType() {
+        return audienceType;
+    }
+
+    public List<UserId> getAudienceList() {
+        return audienceList;
     }
 
     @Override
