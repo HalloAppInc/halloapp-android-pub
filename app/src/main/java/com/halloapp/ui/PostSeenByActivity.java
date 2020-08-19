@@ -62,9 +62,21 @@ public class PostSeenByActivity extends HalloActivity {
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final RecyclerView seenByView = findViewById(R.id.seen_by_list);
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         seenByView.setLayoutManager(layoutManager);
         seenByView.setAdapter(adapter);
+        seenByView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                int first = layoutManager.findFirstVisibleItemPosition();
+                HeaderListItem headerItem = adapter.getPreviousHeader(first);
+                if (headerItem != null) {
+                    setTitle(headerItem.title);
+                } else {
+                    setTitle(R.string.your_post_title);
+                }
+            }
+        });
 
         postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
@@ -74,8 +86,6 @@ public class PostSeenByActivity extends HalloActivity {
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         avatarLoader = AvatarLoader.getInstance(this);
-
-        viewModel.post.getLiveData().observe(this, this::showPost);
 
         viewModel.postDeleted.observe(this, deleted -> {
             if (Boolean.TRUE.equals(deleted)) {
@@ -125,10 +135,6 @@ public class PostSeenByActivity extends HalloActivity {
                     .setNegativeButton(R.string.no, null)
                     .show();
         }
-    }
-
-    private void showPost(@NonNull Post post) {
-
     }
 
     interface ListItem {
@@ -188,6 +194,8 @@ public class PostSeenByActivity extends HalloActivity {
 
         private final List<ListItem> listItems = new ArrayList<>();
 
+        private final List<Integer> headerIndexes = new ArrayList();
+
         void setSeenBy(List<PostSeenByViewModel.SeenByContact> seenByContacts) {
             this.seenByContacts = seenByContacts;
             createListItems();
@@ -200,12 +208,26 @@ public class PostSeenByActivity extends HalloActivity {
             createListItems();
         }
 
+        public HeaderListItem getPreviousHeader(int firstVisible) {
+            int previousHeader = -1;
+            for (Integer headerIndex : headerIndexes) {
+                if (headerIndex < firstVisible && headerIndex > previousHeader) {
+                    previousHeader = headerIndex;
+                }
+            }
+            if (previousHeader >= 0) {
+                return (HeaderListItem) listItems.get(previousHeader);
+            }
+            return null;
+        }
+
         private void createListItems() {
             listItems.clear();
             final Set<UserId> seenByUserIds = new HashSet<>();
             if (seenByContacts == null || seenByContacts.isEmpty()) {
                 //listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
             } else {
+                headerIndexes.add(listItems.size());
                 listItems.add(new HeaderListItem(getString(R.string.seen_by)));
                 for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
                     listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
@@ -217,6 +239,7 @@ public class PostSeenByActivity extends HalloActivity {
                 for (Contact contact : friends) {
                     if (!seenByUserIds.contains(contact.userId)) {
                         if (!headerAdded) {
+                            headerIndexes.add(listItems.size());
                             listItems.add(new HeaderListItem(getString(R.string.other_friends)));
                             headerAdded = true;
                         }
