@@ -51,7 +51,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean addMessage(@NonNull Message message, boolean unseen, @Nullable Post replyPost) {
+    boolean addMessage(@NonNull Message message, boolean unseen, @Nullable Post replyPost, @Nullable Message replyMessage) {
         Log.i("ContentDb.addMessage " + message + " " + unseen);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -99,32 +99,51 @@ class MessagesDb {
                 mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
             mentionsDb.addMentions(message);
-            if (message.replyPostId != null) {
-                final ContentValues replyPostValues = new ContentValues();
-                replyPostValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
-                replyPostValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
-                replyPostValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+
+            if (message.replyPostId != null || message.replyMessageId != null) {
+                final ContentValues replyValues = new ContentValues();
+                replyValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
+
+                ContentItem replyItem = null;
+                int mediaIndex = -1;
                 if (replyPost != null) {
-                    if (!TextUtils.isEmpty(replyPost.text)) {
-                        replyPostValues.put(RepliesTable.COLUMN_TEXT, replyPost.text);
+                    replyItem = replyPost;
+                    mediaIndex = message.replyPostMediaIndex;
+                    replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
+                    replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+                } else if (replyMessage != null) {
+                    replyItem = replyMessage;
+                    mediaIndex = message.replyMessageMediaIndex;
+                    replyValues.put(RepliesTable.COLUMN_POST_ID, ""); // TODO(jack)
+                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_ID, message.replyMessageId);
+                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX, message.replyMessageMediaIndex);
+                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
+                } else {
+                    Log.e("Content item for reply is null");
+                }
+
+                if (replyItem != null) {
+                    if (!TextUtils.isEmpty(replyItem.text)) {
+                        replyValues.put(RepliesTable.COLUMN_TEXT, replyItem.text);
                     }
-                    final Media replyMedia = (message.replyPostMediaIndex >= 0 && message.replyPostMediaIndex < replyPost.media.size()) ? replyPost.media.get(message.replyPostMediaIndex) : null;
+                    final Media replyMedia = (mediaIndex >= 0 && mediaIndex < replyItem.media.size()) ? replyItem.media.get(mediaIndex) : null;
                     if (replyMedia != null && replyMedia.file != null) {
-                        replyPostValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
+                        replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
                         final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
                         try {
                             MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
-                            replyPostValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
+                            replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
                         } catch (IOException e) {
                             Log.e("ContentDb.addMessage: cannot create reply preview", e);
                         }
                     }
                 }
-                long id = db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyPostValues, SQLiteDatabase.CONFLICT_IGNORE);
-                if (replyPost != null && replyPost.mentions.size() > 0) {
-                    mentionsDb.addReplyPreviewMentions(id, replyPost.mentions);
+                long id = db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyValues, SQLiteDatabase.CONFLICT_IGNORE);
+                if (replyItem != null && replyItem.mentions.size() > 0) {
+                    mentionsDb.addReplyPreviewMentions(id, replyItem.mentions);
                 }
             }
+
             final int updatedRowsCount;
             try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
                     ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
@@ -682,7 +701,10 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
-                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
             "FROM " + MessagesTable.TABLE_NAME + "," + ChatsTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -699,6 +721,9 @@ class MessagesDb {
             "LEFT JOIN (" +
                 "SELECT " +
                     RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
                     RepliesTable.COLUMN_POST_ID + "," +
                     RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
@@ -717,6 +742,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
+                    String rawReplySenderId = cursor.getString(21);
                     message = new Message(
                             rowId,
                             ChatId.fromString(cursor.getString(1)),
@@ -729,6 +755,9 @@ class MessagesDb {
                             cursor.getString(8),
                             cursor.getString(17),
                             cursor.getInt(18),
+                            cursor.getString(19),
+                            cursor.getInt(20),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
@@ -778,7 +807,10 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
-                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -795,6 +827,9 @@ class MessagesDb {
             "LEFT JOIN (" +
                 "SELECT " +
                     RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
                     RepliesTable.COLUMN_POST_ID + "," +
                     RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
@@ -803,6 +838,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
+                    String rawReplySenderId = cursor.getString(21);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromString(cursor.getString(1)),
@@ -815,6 +851,9 @@ class MessagesDb {
                             cursor.getString(8),
                             cursor.getString(17),
                             cursor.getInt(18),
+                            cursor.getString(19),
+                            cursor.getInt(20),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
@@ -860,7 +899,10 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_ENC_KEY + ", " +
                 "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
-                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -879,6 +921,9 @@ class MessagesDb {
             "LEFT JOIN (" +
                 "SELECT " +
                     RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
                     RepliesTable.COLUMN_POST_ID + "," +
                     RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
@@ -889,6 +934,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
+                    String rawReplySenderId = cursor.getString(23);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromString(cursor.getString(1)),
@@ -901,6 +947,9 @@ class MessagesDb {
                             cursor.getString(8),
                             cursor.getString(19),
                             cursor.getInt(20),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
@@ -950,7 +999,10 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
-                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
+                "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -968,7 +1020,10 @@ class MessagesDb {
                 "SELECT " +
                     RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
                     RepliesTable.COLUMN_POST_ID + "," +
-                    RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                    RepliesTable.COLUMN_POST_MEDIA_INDEX + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
+                    RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? " DESC " : " ASC ") +
@@ -985,6 +1040,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
+                    String rawReplySenderId = cursor.getString(21);
                     message = new Message(
                             rowId,
                             ChatId.fromString(cursor.getString(1)),
@@ -997,6 +1053,9 @@ class MessagesDb {
                             cursor.getString(8),
                             cursor.getString(17),
                             cursor.getInt(18),
+                            cursor.getString(19),
+                            cursor.getInt(20),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
@@ -1051,7 +1110,10 @@ class MessagesDb {
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                     "r." + RepliesTable.COLUMN_POST_ID + ", " +
-                    "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + " " +
+                    "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                    "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                    "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                    "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
                 "FROM " + MessagesTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -1070,6 +1132,9 @@ class MessagesDb {
                 "LEFT JOIN (" +
                     "SELECT " +
                         RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
                         RepliesTable.COLUMN_POST_ID + "," +
                         RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                     "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
@@ -1088,6 +1153,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
+                    String rawReplySenderId = cursor.getString(23);
                     message = new Message(
                             rowId,
                             ChatId.fromString(cursor.getString(1)),
@@ -1100,6 +1166,9 @@ class MessagesDb {
                             cursor.getString(8),
                             cursor.getString(19),
                             cursor.getInt(20),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }

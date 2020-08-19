@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/reply"
+        android:icon="@drawable/ic_reply"
+        android:title="@string/reply"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/copy"
         android:icon="@drawable/ic_copy"
         android:title="@string/copy"

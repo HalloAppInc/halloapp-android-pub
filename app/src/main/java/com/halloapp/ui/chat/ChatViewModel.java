@@ -38,12 +38,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ChatViewModel extends AndroidViewModel {
 
     private final ChatId chatId;
+    private long messageRowId;
 
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
     final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Post> replyPost;
+    ComputableLiveData<Message> replyMessage;
     private ComputableLiveData<List<UserId>> blockListLiveData;
     final ComputableLiveData<String> replyName;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
@@ -181,6 +183,14 @@ public class ChatViewModel extends AndroidViewModel {
             replyName = null;
         }
 
+        messageRowId = -1;
+        replyMessage = new ComputableLiveData<Message>() {
+            @Override
+            protected Message compute() {
+                return contentDb.getMessage(messageRowId);
+            }
+        };
+
         blockListLiveData = new ComputableLiveData<List<UserId>>() {
             @Override
             protected List<UserId> compute() {
@@ -206,6 +216,11 @@ public class ChatViewModel extends AndroidViewModel {
             lastUpdateTime = System.currentTimeMillis();
         }
         mainHandler.postDelayed(resetComposingRunnable, 3000);
+    }
+
+    public void updateMessageRowId(long rowId) {
+        messageRowId = rowId;
+        replyMessage.invalidate();
     }
 
     @NonNull
@@ -255,6 +270,9 @@ public class ChatViewModel extends AndroidViewModel {
                 null,
                 null,
                 -1,
+                null,
+                -1,
+                null,
                 0);
         message.addToStorage(contentDb);
     }

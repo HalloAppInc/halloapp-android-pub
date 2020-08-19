@@ -25,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 28;
+    private static final int DATABASE_VERSION = 29;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -116,6 +116,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + RepliesTable.TABLE_NAME + " ("
                 + RepliesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + RepliesTable.COLUMN_MESSAGE_ROW_ID + " INTEGER,"
+                + RepliesTable.COLUMN_REPLY_MESSAGE_ID + " TEXT,"
+                + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + " INTEGER DEFAULT 0,"
+                + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " TEXT,"
                 + RepliesTable.COLUMN_POST_ID + " TEXT NOT NULL,"
                 + RepliesTable.COLUMN_POST_MEDIA_INDEX + " INTEGER,"
                 + RepliesTable.COLUMN_TEXT + " TEXT,"
@@ -323,6 +326,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 27: {
                 upgradeFromVersion27(db);
+            }
+            case 28: {
+                upgradeFromVersion28(db);
             }
             break;
             default: {
@@ -548,6 +554,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion27(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1");
+    }
+
+    private void upgradeFromVersion28(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_REPLY_MESSAGE_ID + " TEXT");
+        db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " TEXT");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

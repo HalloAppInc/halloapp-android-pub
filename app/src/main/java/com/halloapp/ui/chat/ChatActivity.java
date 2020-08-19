@@ -123,7 +123,10 @@ public class ChatActivity extends HalloActivity {
 
     private String replyPostId;
     private UserId replySenderId;
+    private long replyMessageRowId = -1;
+    private Message replyMessage;
     private int replyPostMediaIndex;
+    private int replyMessageMediaIndex = 0;
     private long selectedMessageRowId = -1;
     private String copyText;
     private boolean blocked;
@@ -137,6 +140,7 @@ public class ChatActivity extends HalloActivity {
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
     private MenuItem menuItem;
+    private Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -403,6 +407,7 @@ public class ChatActivity extends HalloActivity {
         } else {
             replyContainer.setVisibility(View.GONE);
         }
+        viewModel.replyMessage.getLiveData().observe(this, this::updateMessageReply);
     }
 
     @Override
@@ -568,10 +573,10 @@ public class ChatActivity extends HalloActivity {
     private void updatePostReply(@Nullable Post post) {
         if (post != null) {
             replyContainer.setVisibility(View.VISIBLE);
-            final TextView replyTextView = findViewById(R.id.reply_text);
+            final TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
             textContentLoader.load(replyTextView, post);
-            final ImageView replyMediaIconView = findViewById(R.id.reply_media_icon);
-            final ImageView replyMediaThumbView = findViewById(R.id.reply_media_thumb);
+            final ImageView replyMediaIconView = replyContainer.findViewById(R.id.reply_media_icon);
+            final ImageView replyMediaThumbView = replyContainer.findViewById(R.id.reply_media_thumb);
             if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
                 replyMediaThumbView.setVisibility(View.VISIBLE);
                 replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
@@ -609,9 +614,69 @@ public class ChatActivity extends HalloActivity {
                 replyMediaThumbView.setVisibility(View.GONE);
                 replyMediaIconView.setVisibility(View.GONE);
             }
-            findViewById(R.id.reply_close).setOnClickListener(v -> {
+            replyContainer.findViewById(R.id.reply_close).setOnClickListener(v -> {
                 replyPostId = null;
                 replyPostMediaIndex = -1;
+                replyContainer.setVisibility(View.GONE);
+            });
+        } else {
+            replyContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateMessageReply(@Nullable Message message) {
+        if (message != null) {
+            replyMessage = message;
+            replyContainer.setVisibility(View.VISIBLE);
+            contactLoader.load(replyNameView, message.senderUserId);
+            TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
+            textContentLoader.load(replyTextView, message);
+            final ImageView replyMediaIconView = replyContainer.findViewById(R.id.reply_media_icon);
+            final ImageView replyMediaThumbView = replyContainer.findViewById(R.id.reply_media_thumb);
+            if (replyMessageMediaIndexMap.containsKey(replyMessageRowId)) {
+                replyMessageMediaIndex = replyMessageMediaIndexMap.get(replyMessageRowId);
+            }
+            if (replyMessageMediaIndex >= 0 && replyMessageMediaIndex < message.media.size()) {
+                replyMediaThumbView.setVisibility(View.VISIBLE);
+                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
+                    }
+                });
+                replyMediaThumbView.setClipToOutline(true);
+                final Media media = message.media.get(replyMessageMediaIndex);
+                mediaThumbnailLoader.load(replyMediaThumbView, media);
+                replyMediaIconView.setVisibility(View.VISIBLE);
+                switch (media.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
+                        if (TextUtils.isEmpty(message.text)) {
+                            replyTextView.setText(R.string.photo);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_video);
+                        if (TextUtils.isEmpty(message.text)) {
+                            replyTextView.setText(R.string.video);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
+                        replyTextView.setText(message.text);
+                        break;
+                    }
+                }
+            } else {
+                replyMediaThumbView.setVisibility(View.GONE);
+                replyMediaIconView.setVisibility(View.GONE);
+            }
+            replyContainer.findViewById(R.id.reply_close).setOnClickListener(v -> {
+                replyMessageRowId = -1;
+                replyMessageMediaIndex = -1;
                 replyContainer.setVisibility(View.GONE);
             });
         } else {
@@ -637,9 +702,14 @@ public class ChatActivity extends HalloActivity {
                 messageText,
                 replyPostId,
                 replyPostMediaIndex,
+                replyMessage != null ? replyMessage.id : null,
+                replyMessageMediaIndex ,
+                replyMessage != null ? replyMessage.senderUserId : null,
                 0);
         replyPostId = null;
         replyPostMediaIndex = -1;
+        replyMessage = null;
+        replyMessageMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
         message.addToStorage(ContentDb.getInstance(this));
     }
@@ -831,12 +901,18 @@ public class ChatActivity extends HalloActivity {
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    //noinspection SwitchStatementWithTooFewBranches
                     switch (item.getItemId()) {
                         case R.id.copy:
                             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData clipData = ClipData.newPlainText(getString(R.string.copy_text), text);
                             clipboardManager.setPrimaryClip(clipData);
+                            if (actionMode != null) {
+                                actionMode.finish();
+                            }
+                            return true;
+                        case R.id.reply:
+                            replyMessageRowId = selectedMessageRowId;
+                            viewModel.updateMessageRowId(selectedMessageRowId);
                             if (actionMode != null) {
                                 actionMode.finish();
                             }
@@ -877,6 +953,11 @@ public class ChatActivity extends HalloActivity {
             if (blocked) {
                 unBlockContact(menuItem);
             }
+        }
+
+        @Override
+        public void setReplyMessageMediaIndex(long rowId, int pos) {
+            replyMessageMediaIndexMap.put(rowId, pos);
         }
 
         @Override

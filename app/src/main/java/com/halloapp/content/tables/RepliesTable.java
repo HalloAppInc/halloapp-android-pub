@@ -11,6 +11,9 @@ public class RepliesTable implements BaseColumns {
     public static final String INDEX_MESSAGE_KEY = "reply_message_key";
 
     public static final String COLUMN_MESSAGE_ROW_ID = "message_row_id";
+    public static final String COLUMN_REPLY_MESSAGE_ID = "reply_message_id";
+    public static final String COLUMN_REPLY_MESSAGE_MEDIA_INDEX = "reply_message_media_index";
+    public static final String COLUMN_REPLY_MESSAGE_SENDER_ID = "reply_message_sender_id";
     public static final String COLUMN_POST_ID = "post_id";
     public static final String COLUMN_POST_MEDIA_INDEX = "post_media_index";
     public static final String COLUMN_TEXT = "text";

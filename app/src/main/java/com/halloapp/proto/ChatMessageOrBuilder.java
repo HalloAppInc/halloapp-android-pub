@@ -64,4 +64,34 @@ public interface ChatMessageOrBuilder extends
    * <code>repeated .proto.Mention mentions = 5;</code>
    */
   int getMentionsCount();
+
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   * @return The chatReplyMessageId.
+   */
+  java.lang.String getChatReplyMessageId();
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   * @return The bytes for chatReplyMessageId.
+   */
+  com.google.protobuf.ByteString
+      getChatReplyMessageIdBytes();
+
+  /**
+   * <code>int32 chat_reply_message_media_index = 7;</code>
+   * @return The chatReplyMessageMediaIndex.
+   */
+  int getChatReplyMessageMediaIndex();
+
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   * @return The chatReplyMessageSenderId.
+   */
+  java.lang.String getChatReplyMessageSenderId();
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   * @return The bytes for chatReplyMessageSenderId.
+   */
+  com.google.protobuf.ByteString
+      getChatReplyMessageSenderIdBytes();
 }

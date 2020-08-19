@@ -449,6 +449,9 @@ public class MainConnectionObserver extends Connection.Observer {
                 text,
                 null,
                 -1,
+                null,
+                -1,
+                null,
                 0);
 
         contentDb.addMessage(promoteAdminsMessage, false, completionRunnable);

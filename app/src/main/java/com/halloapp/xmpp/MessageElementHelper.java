@@ -78,6 +78,11 @@ public class MessageElementHelper {
             chatMessageBuilder.setFeedPostId(message.replyPostId);
             chatMessageBuilder.setFeedPostMediaIndex(message.replyPostMediaIndex);
         }
+        if (message.replyMessageId != null) {
+            chatMessageBuilder.setChatReplyMessageId(message.replyMessageId);
+            chatMessageBuilder.setChatReplyMessageMediaIndex(message.replyMessageMediaIndex);
+            chatMessageBuilder.setChatReplyMessageSenderId(message.replyMessageSenderId.rawId());
+        }
         return chatMessageBuilder.build();
     }
 }

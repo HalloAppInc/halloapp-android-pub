@@ -2,37 +2,22 @@ package com.halloapp.xmpp.groups;
 
 import android.util.Base64;
 
-import androidx.annotation.NonNull;
-
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
-import com.halloapp.crypto.EncryptedSessionManager;
-import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Container;
-import com.halloapp.proto.MediaType;
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
-import com.halloapp.xmpp.ChatMessageElement;
 import com.halloapp.xmpp.MessageElementHelper;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.provider.EmbeddedExtensionProvider;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
-
-import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.Map;
 
 public class GroupChatMessage implements ExtensionElement {
 
@@ -112,6 +97,9 @@ public class GroupChatMessage implements ExtensionElement {
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),
                 chatMessage.getFeedPostMediaIndex(),
+                chatMessage.getChatReplyMessageId(),
+                chatMessage.getChatReplyMessageMediaIndex(),
+                new UserId(chatMessage.getChatReplyMessageSenderId()),
                 0);
         for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(

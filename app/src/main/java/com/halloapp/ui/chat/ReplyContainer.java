@@ -57,6 +57,10 @@ class ReplyContainer {
     void bindTo(@NonNull Message message) {
 
         containerView.setOnClickListener(v -> {
+            // TODO(jack): Scroll to message
+            if (message.replyPostId == null) {
+                return;
+            }
             final Intent intent = new Intent(containerView.getContext(), PostContentActivity.class);
             intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME : message.chatId);
             intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
@@ -68,8 +72,11 @@ class ReplyContainer {
                 parent.startActivity(intent);
             }
         });
-
-        mediaThumbView.setTransitionName(MediaPagerAdapter.getTransitionName(message.replyPostId, message.replyPostMediaIndex));
+        if (message.replyPostId != null) {
+            mediaThumbView.setTransitionName(MediaPagerAdapter.getTransitionName(message.replyPostId, message.replyPostMediaIndex));
+        } else {
+            mediaThumbView.setTransitionName(MediaPagerAdapter.getTransitionName(message.replyMessageId, message.replyMessageMediaIndex));
+        }
         containerView.setBackgroundResource(message.isIncoming() ? R.drawable.reply_frame_incoming : R.drawable.reply_frame_outgoing);
         parent.getReplyLoader().load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
             @Override

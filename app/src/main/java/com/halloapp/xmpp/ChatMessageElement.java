@@ -150,6 +150,9 @@ public class ChatMessageElement implements ExtensionElement {
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),
                 chatMessage.getFeedPostMediaIndex(),
+                chatMessage.getChatReplyMessageId(),
+                chatMessage.getChatReplyMessageMediaIndex(),
+                new UserId(chatMessage.getChatReplyMessageSenderId()),
                 0);
         for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(

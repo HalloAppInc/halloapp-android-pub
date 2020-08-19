@@ -28,6 +28,9 @@ public class Message extends ContentItem {
 
     public final String replyPostId;
     public final int replyPostMediaIndex;
+    public final String replyMessageId;
+    public final int replyMessageMediaIndex;
+    public final UserId replyMessageSenderId;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -76,6 +79,9 @@ public class Message extends ContentItem {
             String text,
             String replyPostId,
             int replyPostMediaIndex,
+            String replyMessageId,
+            int replyMessageMediaIndex,
+            UserId replyMessageSenderId,
             int rerequestCount) {
         super(rowId, senderUserId, messageId, timestamp, text);
         this.chatId = chatId;
@@ -84,11 +90,18 @@ public class Message extends ContentItem {
         this.state = state;
         this.replyPostId = TextUtils.isEmpty(replyPostId) ? null : replyPostId;
         this.replyPostMediaIndex = replyPostMediaIndex;
+        this.replyMessageId = replyMessageId;
+        this.replyMessageMediaIndex = replyMessageMediaIndex;
+        this.replyMessageSenderId = replyMessageSenderId;
         this.rerequestCount = rerequestCount;
     }
 
     public boolean isLocalMessage() {
         return type == Message.TYPE_SYSTEM;
+    }
+
+    public boolean isMeMessageSender() {
+        return senderUserId.equals(UserId.ME);
     }
 
     @Override

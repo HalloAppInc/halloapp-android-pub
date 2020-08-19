@@ -20,6 +20,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.ReplyPreview;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mentions.TextContent;
+import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.List;
@@ -42,17 +43,29 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
     @MainThread
     public void load(@NonNull View view, @NonNull Message message, @NonNull ViewDataLoader.Displayer<View, Result> displayer) {
         final Callable<Result> loader = () -> {
-            Post replyPost = contentDb.getPost(message.replyPostId);
             String name = null;
-            if (replyPost != null) {
-                if (replyPost.senderUserId.isMe()) {
-                    name = view.getContext().getString(R.string.me);
-                } else {
-                    name = contactsDb.getContact(replyPost.senderUserId).getDisplayName();
+            if (message.replyPostId != null) {
+                Post replyPost = contentDb.getPost(message.replyPostId);
+                if (replyPost != null) {
+                    if (replyPost.senderUserId.isMe()) {
+                        name = view.getContext().getString(R.string.me);
+                    } else {
+                        name = contactsDb.getContact(replyPost.senderUserId).getDisplayName();
+                    }
+                } else if (message.isOutgoing()) {
+                    name = contactsDb.getContact((UserId) message.chatId).getDisplayName();
                 }
-            } else if (message.isOutgoing()) {
-                name = contactsDb.getContact((UserId)message.chatId).getDisplayName();
+            } else if (message.replyMessageId != null) {
+                Message replyMessage = contentDb.getMessage(message.chatId, message.replyMessageSenderId, message.replyMessageId);
+                if (replyMessage != null) {
+                    if (replyMessage.senderUserId.isMe()) {
+                        name = view.getContext().getString(R.string.me);
+                    } else {
+                        name = contactsDb.getContact(replyMessage.senderUserId).getDisplayName();
+                    }
+                }
             }
+
             final ReplyPreview replyPreview = contentDb.getReplyPreview(message.rowId);
             if (replyPreview == null) {
                 return new Result(name, null, null, Media.MEDIA_TYPE_UNKNOWN, null);

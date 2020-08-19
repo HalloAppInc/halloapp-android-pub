@@ -73,6 +73,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         abstract long getSelectedMessageRowId();
         abstract ReplyLoader getReplyLoader();
         abstract void unblockContactFromTap();
+        abstract void setReplyMessageMediaIndex(long rowId, int pos);
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -244,6 +245,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
+            parent.setReplyMessageMediaIndex(message.rowId, selPos == null ? 0 : selPos);
         }
 
         if (systemMessage != null) {
@@ -375,7 +377,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (contentView !=null) {
-            if (message.replyPostId != null) {
+            if (message.replyPostId != null || (message.replyMessageId != null && !message.replyMessageId.isEmpty())) {
                 if (replyContainer == null) {
                     final ViewGroup replyContainerView = itemView.findViewById(R.id.reply_container);
                     if (replyContainerView != null) {

@@ -16,6 +16,8 @@ public  final class ChatMessage extends
     text_ = "";
     feedPostId_ = "";
     mentions_ = emptyProtobufList();
+    chatReplyMessageId_ = "";
+    chatReplyMessageSenderId_ = "";
   }
   public static final int MEDIA_FIELD_NUMBER = 1;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.Media> media_;
@@ -323,6 +325,126 @@ public  final class ChatMessage extends
   private void removeMentions(int index) {
     ensureMentionsIsMutable();
     mentions_.remove(index);
+  }
+
+  public static final int CHAT_REPLY_MESSAGE_ID_FIELD_NUMBER = 6;
+  private java.lang.String chatReplyMessageId_;
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   * @return The chatReplyMessageId.
+   */
+  @java.lang.Override
+  public java.lang.String getChatReplyMessageId() {
+    return chatReplyMessageId_;
+  }
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   * @return The bytes for chatReplyMessageId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getChatReplyMessageIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(chatReplyMessageId_);
+  }
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   * @param value The chatReplyMessageId to set.
+   */
+  private void setChatReplyMessageId(
+      java.lang.String value) {
+    value.getClass();
+  
+    chatReplyMessageId_ = value;
+  }
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   */
+  private void clearChatReplyMessageId() {
+    
+    chatReplyMessageId_ = getDefaultInstance().getChatReplyMessageId();
+  }
+  /**
+   * <code>string chat_reply_message_id = 6;</code>
+   * @param value The bytes for chatReplyMessageId to set.
+   */
+  private void setChatReplyMessageIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    chatReplyMessageId_ = value.toStringUtf8();
+    
+  }
+
+  public static final int CHAT_REPLY_MESSAGE_MEDIA_INDEX_FIELD_NUMBER = 7;
+  private int chatReplyMessageMediaIndex_;
+  /**
+   * <code>int32 chat_reply_message_media_index = 7;</code>
+   * @return The chatReplyMessageMediaIndex.
+   */
+  @java.lang.Override
+  public int getChatReplyMessageMediaIndex() {
+    return chatReplyMessageMediaIndex_;
+  }
+  /**
+   * <code>int32 chat_reply_message_media_index = 7;</code>
+   * @param value The chatReplyMessageMediaIndex to set.
+   */
+  private void setChatReplyMessageMediaIndex(int value) {
+    
+    chatReplyMessageMediaIndex_ = value;
+  }
+  /**
+   * <code>int32 chat_reply_message_media_index = 7;</code>
+   */
+  private void clearChatReplyMessageMediaIndex() {
+    
+    chatReplyMessageMediaIndex_ = 0;
+  }
+
+  public static final int CHAT_REPLY_MESSAGE_SENDER_ID_FIELD_NUMBER = 8;
+  private java.lang.String chatReplyMessageSenderId_;
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   * @return The chatReplyMessageSenderId.
+   */
+  @java.lang.Override
+  public java.lang.String getChatReplyMessageSenderId() {
+    return chatReplyMessageSenderId_;
+  }
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   * @return The bytes for chatReplyMessageSenderId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getChatReplyMessageSenderIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(chatReplyMessageSenderId_);
+  }
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   * @param value The chatReplyMessageSenderId to set.
+   */
+  private void setChatReplyMessageSenderId(
+      java.lang.String value) {
+    value.getClass();
+  
+    chatReplyMessageSenderId_ = value;
+  }
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   */
+  private void clearChatReplyMessageSenderId() {
+    
+    chatReplyMessageSenderId_ = getDefaultInstance().getChatReplyMessageSenderId();
+  }
+  /**
+   * <code>string chat_reply_message_sender_id = 8;</code>
+   * @param value The bytes for chatReplyMessageSenderId to set.
+   */
+  private void setChatReplyMessageSenderIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    chatReplyMessageSenderId_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.ChatMessage parseFrom(
@@ -750,6 +872,132 @@ public  final class ChatMessage extends
       return this;
     }
 
+    /**
+     * <code>string chat_reply_message_id = 6;</code>
+     * @return The chatReplyMessageId.
+     */
+    @java.lang.Override
+    public java.lang.String getChatReplyMessageId() {
+      return instance.getChatReplyMessageId();
+    }
+    /**
+     * <code>string chat_reply_message_id = 6;</code>
+     * @return The bytes for chatReplyMessageId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getChatReplyMessageIdBytes() {
+      return instance.getChatReplyMessageIdBytes();
+    }
+    /**
+     * <code>string chat_reply_message_id = 6;</code>
+     * @param value The chatReplyMessageId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatReplyMessageId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setChatReplyMessageId(value);
+      return this;
+    }
+    /**
+     * <code>string chat_reply_message_id = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearChatReplyMessageId() {
+      copyOnWrite();
+      instance.clearChatReplyMessageId();
+      return this;
+    }
+    /**
+     * <code>string chat_reply_message_id = 6;</code>
+     * @param value The bytes for chatReplyMessageId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatReplyMessageIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setChatReplyMessageIdBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>int32 chat_reply_message_media_index = 7;</code>
+     * @return The chatReplyMessageMediaIndex.
+     */
+    @java.lang.Override
+    public int getChatReplyMessageMediaIndex() {
+      return instance.getChatReplyMessageMediaIndex();
+    }
+    /**
+     * <code>int32 chat_reply_message_media_index = 7;</code>
+     * @param value The chatReplyMessageMediaIndex to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatReplyMessageMediaIndex(int value) {
+      copyOnWrite();
+      instance.setChatReplyMessageMediaIndex(value);
+      return this;
+    }
+    /**
+     * <code>int32 chat_reply_message_media_index = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearChatReplyMessageMediaIndex() {
+      copyOnWrite();
+      instance.clearChatReplyMessageMediaIndex();
+      return this;
+    }
+
+    /**
+     * <code>string chat_reply_message_sender_id = 8;</code>
+     * @return The chatReplyMessageSenderId.
+     */
+    @java.lang.Override
+    public java.lang.String getChatReplyMessageSenderId() {
+      return instance.getChatReplyMessageSenderId();
+    }
+    /**
+     * <code>string chat_reply_message_sender_id = 8;</code>
+     * @return The bytes for chatReplyMessageSenderId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getChatReplyMessageSenderIdBytes() {
+      return instance.getChatReplyMessageSenderIdBytes();
+    }
+    /**
+     * <code>string chat_reply_message_sender_id = 8;</code>
+     * @param value The chatReplyMessageSenderId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatReplyMessageSenderId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setChatReplyMessageSenderId(value);
+      return this;
+    }
+    /**
+     * <code>string chat_reply_message_sender_id = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearChatReplyMessageSenderId() {
+      copyOnWrite();
+      instance.clearChatReplyMessageSenderId();
+      return this;
+    }
+    /**
+     * <code>string chat_reply_message_sender_id = 8;</code>
+     * @param value The bytes for chatReplyMessageSenderId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatReplyMessageSenderIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setChatReplyMessageSenderIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:proto.ChatMessage)
   }
   @java.lang.Override
@@ -773,10 +1021,13 @@ public  final class ChatMessage extends
             "feedPostMediaIndex_",
             "mentions_",
             com.halloapp.proto.Mention.class,
+            "chatReplyMessageId_",
+            "chatReplyMessageMediaIndex_",
+            "chatReplyMessageSenderId_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0002\u0000\u0001\u001b\u0002\u0208" +
-              "\u0003\u0208\u0004\u0004\u0005\u001b";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0002\u0000\u0001\u001b\u0002\u0208\u0003\u0208" +
+              "\u0004\u0004\u0005\u001b\u0006\u0208\u0007\u0004\b\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
