@@ -27,6 +27,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
+import com.halloapp.xmpp.feed.SharePosts;
 import com.halloapp.xmpp.groups.GroupChangeMessage;
 import com.halloapp.xmpp.groups.GroupChatMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
@@ -71,6 +72,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -572,6 +574,26 @@ public class Connection {
                 Log.w("connection: cannot get my avatar", e);
             }
             return null;
+        });
+    }
+
+    public void sharePost(@NonNull Post post, final @NonNull UserId userId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot send post, no connection");
+                return;
+            }
+            try {
+                FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
+                SharePosts sharePosts = new SharePosts(userId, Collections.singletonList(sharedPost));
+                FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
+                updateIq.setTo(connection.getXMPPServiceDomain());
+
+                connection.createStanzaCollectorAndSend(updateIq).nextResultOrThrow();
+                //connectionObservers.notifyOutgoingPostSent(post.id);
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: cannot send post", e);
+            }
         });
     }
 

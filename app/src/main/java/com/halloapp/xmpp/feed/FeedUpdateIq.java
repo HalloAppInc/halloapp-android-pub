@@ -21,17 +21,20 @@ public class FeedUpdateIq extends IQ {
     private static final String ATTRIBUTE_ACTION = "action";
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Action.PUBLISH, Action.RETRACT})
+    @IntDef({Action.PUBLISH, Action.RETRACT, Action.SHARE})
     public @interface Action {
         int PUBLISH = 0;
         int RETRACT = 1;
+        int SHARE = 2;
     }
 
     private @Action int action;
-    private @NonNull FeedItem feedItem;
+    private @Nullable FeedItem feedItem;
 
     private @Nullable @PrivacyList.Type String audienceType;
     private @Nullable List<UserId> audienceList;
+
+    private @Nullable SharePosts sharePosts;
 
     public FeedUpdateIq(@Action int action, @NonNull FeedItem feedItem) {
         super(ELEMENT, NAMESPACE);
@@ -42,12 +45,23 @@ public class FeedUpdateIq extends IQ {
         this.feedItem = feedItem;
     }
 
+    public FeedUpdateIq(@NonNull SharePosts sharePosts) {
+        super(ELEMENT, NAMESPACE);
+        this.action = Action.SHARE;
+
+        setType(Type.set);
+
+        this.sharePosts = sharePosts;
+    }
+
     private String getActionString() {
         switch (action) {
             case Action.PUBLISH:
                 return "publish";
             case Action.RETRACT:
                 return "retract";
+            case Action.SHARE:
+                return "share";
         }
         return null;
     }
@@ -62,17 +76,21 @@ public class FeedUpdateIq extends IQ {
         xml.xmlnsAttribute(NAMESPACE);
         xml.attribute(ATTRIBUTE_ACTION, getActionString());
         xml.rightAngleBracket();
-        feedItem.toNode(xml);
-        if (audienceType != null && audienceList != null) {
-            xml.halfOpenElement("audience_list");
-            xml.attribute("type", audienceType);
-            xml.rightAngleBracket();
-            for (UserId user : audienceList) {
-                xml.openElement("uid");
-                xml.append(user.rawId());
-                xml.closeElement("uid");
+        if (action == Action.SHARE && sharePosts != null) {
+            sharePosts.toNode(xml);
+        } else {
+            feedItem.toNode(xml);
+            if (audienceType != null && audienceList != null) {
+                xml.halfOpenElement("audience_list");
+                xml.attribute("type", audienceType);
+                xml.rightAngleBracket();
+                for (UserId user : audienceList) {
+                    xml.openElement("uid");
+                    xml.append(user.rawId());
+                    xml.closeElement("uid");
+                }
+                xml.closeElement("audience_list");
             }
-            xml.closeElement("audience_list");
         }
         return xml;
     }
