@@ -307,7 +307,7 @@ public class GroupInfoActivity extends HalloActivity {
         private void removeMember(UserId userId) {
             ProgressDialog removeMemberDialog = ProgressDialog.show(GroupInfoActivity.this, null, getString(R.string.remove_member_in_progress), true);
             removeMemberDialog.show();
-            viewModel.removeMember(userId).observe(this, success -> {
+            viewModel.removeMember(userId).observe(GroupInfoActivity.this, success -> {
                 removeMemberDialog.cancel();
                 if (success == null || !success) {
                     SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_remove_member);
