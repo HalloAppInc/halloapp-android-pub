@@ -158,7 +158,7 @@
                                 android:layout_weight="1"
                                 android:background="@null"
                                 android:hint="@string/write_a_description"
-                                android:textColorHint="@color/black_50"
+                                android:textColorHint="@color/secondary_text"
                                 android:importantForAutofill="no"
                                 android:gravity="top"
                                 android:inputType="textCapSentences|textMultiLine"
