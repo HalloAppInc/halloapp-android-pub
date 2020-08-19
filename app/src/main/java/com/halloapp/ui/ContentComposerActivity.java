@@ -572,16 +572,13 @@ public class ContentComposerActivity extends HalloActivity {
             onCropped(data);
             cropResultProcessed = true;
 
-            mediaPager.getViewTreeObserver().addOnPreDrawListener(
-                    new ViewTreeObserver.OnPreDrawListener() {
-                        @Override
-                        public boolean onPreDraw() {
-                            mediaPager.getViewTreeObserver().removeOnPreDrawListener(this);
-                            startPostponedEnterTransition();
-                            return true;
-                        }
-                    }
-            );
+            mediaPager.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    mediaPager.removeOnLayoutChangeListener(this);
+                    startPostponedEnterTransition();
+                }
+            });
         }
     }
 
