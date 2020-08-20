@@ -18,7 +18,9 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.media.Downloader;
@@ -43,7 +45,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private final ContactsDb contactsDb;
     private final LruCache<String, Bitmap> cache;
 
-    private Bitmap defaultAvatar;
+    private Bitmap defaultUserAvatar;
+    private Bitmap defaultGroupAvatar;
 
     public static AvatarLoader getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -82,12 +85,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                view.setImageBitmap(result != null ? result : getDefaultAvatar());
+                view.setImageBitmap(result != null ? result : getDefaultAvatar(chatId));
             }
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageResource(R.drawable.avatar_person);
+                view.setImageResource(chatId instanceof GroupId ? R.drawable.avatar_group : R.drawable.avatar_person);
             }
         };
         load(view, loader, displayer, chatId.rawId(), cache);
@@ -105,7 +108,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             cache.put(chatId.rawId(), avatar);
         }
 
-        return avatar != null ? avatar : getDefaultAvatar();
+        return avatar != null ? avatar : getDefaultAvatar(chatId);
     }
 
     @WorkerThread
@@ -182,12 +185,24 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return contactAvatarInfo;
     }
 
-    @NonNull private Bitmap getDefaultAvatar() {
-        if (defaultAvatar == null) {
+    @NonNull private Bitmap getDefaultAvatar(@NonNull ChatId chatId) {
+        return chatId instanceof GroupId ? getDefaultGroupAvatar() : getDefaultUserAvatar();
+    }
+
+    @NonNull private Bitmap getDefaultUserAvatar() {
+        if (defaultUserAvatar == null) {
             Drawable drawable = context.getDrawable(R.drawable.avatar_person);
-            defaultAvatar = drawableToBitmap(drawable);
+            defaultUserAvatar = drawableToBitmap(drawable);
         }
-        return defaultAvatar;
+        return defaultUserAvatar;
+    }
+
+    @NonNull private Bitmap getDefaultGroupAvatar() {
+        if (defaultGroupAvatar == null) {
+            Drawable drawable = context.getDrawable(R.drawable.avatar_group);
+            defaultGroupAvatar = drawableToBitmap(drawable);
+        }
+        return defaultGroupAvatar;
     }
 
     // From https://stackoverflow.com/a/24389104/11817085

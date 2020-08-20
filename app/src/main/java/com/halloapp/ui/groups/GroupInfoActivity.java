@@ -94,8 +94,9 @@ public class GroupInfoActivity extends HalloActivity {
         membersView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
         membersView.setAdapter(adapter);
 
-        final View headerView = getLayoutInflater().inflate(R.layout.profile_header, membersView, false);
+        final View headerView = getLayoutInflater().inflate(R.layout.group_info_header, membersView, false);
         adapter.addHeader(headerView);
+        avatarLoader.load(headerView.findViewById(R.id.avatar), groupId);
 
         final View addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
         adapter.addHeader(addMembersView);
