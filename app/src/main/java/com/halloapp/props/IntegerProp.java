@@ -48,6 +48,6 @@ public class IntegerProp implements Prop {
 
     @Override
     public void save(@NonNull SharedPreferences sharedPreferences) {
-        sharedPreferences.edit().putInt(key, defaultValue).apply();
+        sharedPreferences.edit().putInt(key, value).apply();
     }
 }
