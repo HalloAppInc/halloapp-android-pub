@@ -286,6 +286,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                         replyContainer.show();
                         contentView.setMinimumWidth(itemView.getResources().getDimensionPixelSize(R.dimen.reply_min_width));
                     }
+                } else {
+                    replyContainer.bindTo(message);
+                    replyContainer.show();
+                    contentView.setMinimumWidth(itemView.getResources().getDimensionPixelSize(R.dimen.reply_min_width));
                 }
             } else if (replyContainer != null) {
                 replyContainer.hide();
