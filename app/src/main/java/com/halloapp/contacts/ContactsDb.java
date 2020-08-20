@@ -15,6 +15,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Log;
 
@@ -24,7 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -136,7 +136,7 @@ public class ContactsDb {
         });
     }
 
-    public Future<Void> updateAvatarId(UserId userId, String avatarId) {
+    public Future<Void> updateAvatarId(ChatId chatId, String avatarId) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
@@ -146,9 +146,9 @@ public class ContactsDb {
                 values.put(ContactsTable.COLUMN_AVATAR_ID, avatarId);
                 final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                         ContactsTable.COLUMN_USER_ID + "=? ",
-                        new String [] {userId.rawId()},
+                        new String [] {chatId.rawId()},
                         SQLiteDatabase.CONFLICT_ABORT);
-                Log.i("ContactsDb.updateAvatarId: " + updatedContactRows + " rows updated for " + userId + " " + avatarId);
+                Log.i("ContactsDb.updateAvatarId: " + updatedContactRows + " rows updated for " + chatId + " " + avatarId);
                 updatedRows += updatedContactRows;
                 db.setTransactionSuccessful();
             } finally {
@@ -273,11 +273,11 @@ public class ContactsDb {
                 values.put(AvatarsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
                 values.put(AvatarsTable.COLUMN_AVATAR_ID, contact.avatarId);
                 final int updateRowsCount = db.updateWithOnConflict(AvatarsTable.TABLE_NAME, values,
-                        AvatarsTable.COLUMN_USER_ID + "=? ",
-                        new String [] {contact.userId.rawId()},
+                        AvatarsTable.COLUMN_CHAT_ID + "=? ",
+                        new String [] {contact.chatId.rawId()},
                         SQLiteDatabase.CONFLICT_ABORT);
                 if (updateRowsCount == 0) {
-                    values.put(AvatarsTable.COLUMN_USER_ID, contact.userId.rawId());
+                    values.put(AvatarsTable.COLUMN_CHAT_ID, contact.chatId.rawId());
                     db.insert(AvatarsTable.TABLE_NAME, null, values);
                 }
                 Log.i("ContactsDb.updateContactAvatarInfo");
@@ -290,17 +290,17 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public ContactAvatarInfo getContactAvatarInfo(@NonNull UserId userId) {
+    public ContactAvatarInfo getContactAvatarInfo(@NonNull ChatId chatId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(AvatarsTable.TABLE_NAME,
                 new String[] {
-                        AvatarsTable.COLUMN_USER_ID,
+                        AvatarsTable.COLUMN_CHAT_ID,
                         AvatarsTable.COLUMN_AVATAR_TIMESTAMP,
                         AvatarsTable.COLUMN_AVATAR_ID
                 },
-                AvatarsTable.COLUMN_USER_ID + "=?", new String [] {userId.rawId()}, null, null, null, "1")) {
+                AvatarsTable.COLUMN_CHAT_ID + "=?", new String [] {chatId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
-                return new ContactAvatarInfo(userId, cursor.getLong(1), cursor.getString(2));
+                return new ContactAvatarInfo(chatId, cursor.getLong(1), cursor.getString(2));
             }
         }
         return null;
@@ -721,7 +721,7 @@ public class ContactsDb {
 
         static final String INDEX_USER_ID = "avatars_user_id_index";
 
-        static final String COLUMN_USER_ID = "user_id";
+        static final String COLUMN_CHAT_ID = "user_id";
         static final String COLUMN_AVATAR_TIMESTAMP = "avatar_timestamp";
         static final String COLUMN_AVATAR_ID = "avatar_hash";
     }
@@ -801,14 +801,14 @@ public class ContactsDb {
             db.execSQL("DROP TABLE IF EXISTS " + AvatarsTable.TABLE_NAME);
             db.execSQL("CREATE TABLE " + AvatarsTable.TABLE_NAME + " ("
                     + AvatarsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + AvatarsTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + AvatarsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
                     + AvatarsTable.COLUMN_AVATAR_TIMESTAMP + " INTEGER,"
                     + AvatarsTable.COLUMN_AVATAR_ID + " TEXT"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + AvatarsTable.INDEX_USER_ID);
             db.execSQL("CREATE UNIQUE INDEX " + AvatarsTable.INDEX_USER_ID + " ON " + AvatarsTable.TABLE_NAME + " ("
-                    + AvatarsTable.COLUMN_USER_ID
+                    + AvatarsTable.COLUMN_CHAT_ID
                     + ");");
 
             db.execSQL("DROP TABLE IF EXISTS " + NamesTable.TABLE_NAME);
@@ -939,7 +939,7 @@ public class ContactsDb {
 
             for (ContactAvatarInfo avatar : avatars.values()) {
                 final ContentValues values = new ContentValues();
-                values.put(AvatarsTable.COLUMN_USER_ID, avatar.userId.rawId());
+                values.put(AvatarsTable.COLUMN_CHAT_ID, avatar.chatId.rawId());
                 values.put(AvatarsTable.COLUMN_AVATAR_ID, avatar.avatarId);
                 values.put(AvatarsTable.COLUMN_AVATAR_TIMESTAMP, avatar.avatarCheckTimestamp);
                 db.insert(AvatarsTable.TABLE_NAME, null, values);
@@ -1029,12 +1029,12 @@ public class ContactsDb {
     }
 
     public static class ContactAvatarInfo {
-        public final UserId userId;
+        public final ChatId chatId;
         public long avatarCheckTimestamp;
         public String avatarId;
 
-        public ContactAvatarInfo(UserId userId, long avatarCheckTimestamp, String avatarId) {
-            this.userId = userId;
+        public ContactAvatarInfo(ChatId chatId, long avatarCheckTimestamp, String avatarId) {
+            this.chatId = chatId;
             this.avatarCheckTimestamp = avatarCheckTimestamp;
             this.avatarId = avatarId;
         }
