@@ -2,6 +2,7 @@ package com.halloapp.props;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
@@ -21,6 +22,9 @@ public class ServerProps {
     private static final String PREFS_NAME = "props";
 
     private static final String PREF_KEY_PROPS_HASH = "props:version_hash";
+    private static final String PREF_KEY_LAST_PROPS_FETCH = "props:last_fetch";
+
+    private static final long PROPS_EXPIRATION_MS = DateUtils.DAY_IN_MILLIS;
 
     private static final String PROP_INTERNAL_USER = "dev";
     private static final String PROP_GROUPS_ENABLED = "groups";
@@ -88,7 +92,7 @@ public class ServerProps {
     public synchronized void onReceiveServerPropsHash(@NonNull String hash) {
         SharedPreferences preferences = getPreferences();
         String oldHash = preferences.getString(PREF_KEY_PROPS_HASH, null);
-        if (oldHash != null && oldHash.equals(hash)) {
+        if (oldHash != null && oldHash.equals(hash) && !propsExpired()) {
             return;
         }
         connection.requestServerProps();
@@ -103,6 +107,19 @@ public class ServerProps {
             }
         }
         saveProps(propsHash);
+        setLastFetchTime();
+    }
+
+    private boolean propsExpired() {
+        return System.currentTimeMillis() - getLastFetchTime() > PROPS_EXPIRATION_MS;
+    }
+
+    private long getLastFetchTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_PROPS_FETCH, 0);
+    }
+
+    private void setLastFetchTime() {
+        getPreferences().edit().putLong(PREF_KEY_LAST_PROPS_FETCH, System.currentTimeMillis()).apply();
     }
 
     private void loadProps() {
