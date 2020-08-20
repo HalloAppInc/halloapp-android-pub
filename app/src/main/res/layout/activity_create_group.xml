@@ -95,7 +95,7 @@
                 app:boxBackgroundColor="@color/settings_text_entry_background"
                 app:boxStrokeColor="@color/color_secondary"
                 app:hintTextColor="@color/color_secondary"
-                android:hint="@string/name_hint">
+                android:hint="@string/group_name_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edit_name"
