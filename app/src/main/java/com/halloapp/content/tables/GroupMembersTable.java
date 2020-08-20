@@ -8,6 +8,8 @@ public class GroupMembersTable implements BaseColumns {
 
     public static final String TABLE_NAME = "group_members";
 
+    public static final String INDEX_GROUP_USER = "group_user";
+
     public static final String COLUMN_GROUP_ID = "group_id";
     public static final String COLUMN_USER_ID = "user_id";
     public static final String COLUMN_IS_ADMIN = "is_admin";

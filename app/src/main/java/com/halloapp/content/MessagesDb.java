@@ -273,7 +273,7 @@ class MessagesDb {
                 memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupId.rawId());
                 memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
                 memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
-                db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
+                db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
 
             for (MemberInfo member : removed) {

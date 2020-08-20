@@ -24,7 +24,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 24;
+    private static final int DATABASE_VERSION = 25;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -101,6 +101,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + GroupMembersTable.COLUMN_GROUP_ID + " TEXT NOT NULL,"
                 + GroupMembersTable.COLUMN_USER_ID + " TEXT NOT NULL,"
                 + GroupMembersTable.COLUMN_IS_ADMIN + " INTEGER DEFAULT 0"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + GroupMembersTable.INDEX_GROUP_USER);
+        db.execSQL("CREATE UNIQUE INDEX " + GroupMembersTable.INDEX_GROUP_USER + " ON " + GroupMembersTable.TABLE_NAME + "("
+                + GroupMembersTable.COLUMN_GROUP_ID + ", "
+                + GroupMembersTable.COLUMN_USER_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + RepliesTable.TABLE_NAME);
@@ -283,6 +289,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 23: {
                 upgradeFromVersion23(db);
             }
+            case 24: {
+                upgradeFromVersion24(db);
+            }
 
             break;
             default: {
@@ -461,6 +470,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion23(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_TYPE + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_USAGE + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion24(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP INDEX IF EXISTS " + GroupMembersTable.INDEX_GROUP_USER);
+        db.execSQL("CREATE UNIQUE INDEX " + GroupMembersTable.INDEX_GROUP_USER + " ON " + GroupMembersTable.TABLE_NAME + "("
+                + GroupMembersTable.COLUMN_GROUP_ID + ", "
+                + GroupMembersTable.COLUMN_USER_ID
+                + ");");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
