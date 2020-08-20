@@ -543,6 +543,23 @@ public class Connection {
         });
     }
 
+    public Future<String> setGroupAvatar(GroupId groupId, String base64) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot set group avatar, no connection");
+                return null;
+            }
+            try {
+                final GroupAvatarIq avatarIq = new GroupAvatarIq(connection.getXMPPServiceDomain(), groupId, base64);
+                final GroupResponseIq response = connection.createStanzaCollectorAndSend(avatarIq).nextResultOrThrow();
+                return response.avatar;
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.w("connection: cannot update avatar", e);
+            }
+            return null;
+        });
+    }
+
     public Future<String> getAvatarId(UserId userId) {
         return executor.submit(() -> {
             if (!reconnectIfNeeded() || connection == null) {
