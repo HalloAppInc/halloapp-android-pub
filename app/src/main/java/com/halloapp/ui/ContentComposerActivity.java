@@ -160,7 +160,7 @@ public class ContentComposerActivity extends HalloActivity {
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
 
-        final View progressView = findViewById(R.id.progress);
+        final View loadingView = findViewById(R.id.loading);
 
         cropPictureButton = findViewById(R.id.crop);
         deletePictureButton = findViewById(R.id.delete);
@@ -192,14 +192,14 @@ public class ContentComposerActivity extends HalloActivity {
         final Bundle editStates = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
 
         if (uris != null) {
-            progressView.setVisibility(View.VISIBLE);
+            loadingView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
                 SnackbarHelper.showInfo(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
             editText.setHint(R.string.write_a_description);
         } else {
-            progressView.setVisibility(View.GONE);
+            loadingView.setVisibility(View.GONE);
             editText.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
             editText.requestFocus();
             editText.setHint(R.string.write_a_post);
@@ -279,8 +279,13 @@ public class ContentComposerActivity extends HalloActivity {
         expectedMediaCount = (uris != null) ? uris.size() : 0;
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+        viewModel.loadingItem.observe(this, editItem -> {
+            setProgressPreview(editItem, true);
+        });
         viewModel.editMedia.observe(this, media -> {
-            progressView.setVisibility(View.GONE);
+            loadingView.setVisibility(View.GONE);
+            setProgressPreview(viewModel.loadingItem.getValue(), false);
+
             if (!media.isEmpty()) {
                 mediaPager.setVisibility(View.VISIBLE);
                 mediaPager.setOffscreenPageLimit(media.size());
@@ -463,8 +468,8 @@ public class ContentComposerActivity extends HalloActivity {
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            Log.d("ContentComposerActivity onStart");
             initializeOnScrollChangeListener();
+            Log.d("ContentComposerActivity: init all video players onStart");
             initializeAllVideoPlayers();
         }
     }
@@ -473,8 +478,8 @@ public class ContentComposerActivity extends HalloActivity {
     public void onResume() {
         super.onResume();
         if (Util.SDK_INT <= 23) {
-            Log.d("ContentComposerActivity onResume");
             initializeOnScrollChangeListener();
+            Log.d("ContentComposerActivity: init all video players onResume");
             initializeAllVideoPlayers();
         }
     }
@@ -483,8 +488,8 @@ public class ContentComposerActivity extends HalloActivity {
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
-            Log.d("ContentComposerActivity onPause");
             clearOnScrollChangeListener();
+            Log.d("ContentComposerActivity: release all video players onPause");
             releaseAllVideoPlayers();
         }
     }
@@ -493,8 +498,8 @@ public class ContentComposerActivity extends HalloActivity {
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-            Log.d("ContentComposerActivity onStop");
             clearOnScrollChangeListener();
+            Log.d("ContentComposerActivity: release all video players onStop");
             releaseAllVideoPlayers();
         }
     }
@@ -617,11 +622,29 @@ public class ContentComposerActivity extends HalloActivity {
             }
 
             // Load new data
-            final View progressView = findViewById(R.id.progress);
-            progressView.setVisibility(View.VISIBLE);
+            final View loadingView = findViewById(R.id.loading);
+            loadingView.setVisibility(View.VISIBLE);
             mediaPager.setVisibility(View.GONE);
             expectedMediaCount = (uris != null) ? uris.size() : 0;
             viewModel.loadUris(uris, editStates);
+        }
+    }
+
+    private void setProgressPreview(@Nullable ContentComposerViewModel.EditMediaPair editMediaPair, boolean showPreview) {
+        final Media mediaItem = editMediaPair != null ? editMediaPair.getRelevantMedia() : null;
+        final ContentPhotoView previewView = findViewById(R.id.preview);
+        final View progressView = findViewById(R.id.progress);
+
+        if (showPreview && mediaItem != null) {
+            previewView.setVisibility(View.VISIBLE);
+            progressView.setVisibility(View.GONE);
+            fullThumbnailLoader.load(previewView, mediaItem);
+        } else {
+            previewView.setVisibility(View.GONE);
+            progressView.setVisibility(View.VISIBLE);
+            if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                fullThumbnailLoader.remove(mediaItem.file);
+            }
         }
     }
 
@@ -644,7 +667,6 @@ public class ContentComposerActivity extends HalloActivity {
         }
         viewModel.deleteMediaItem(currentItem);
         mediaPagerAdapter.setMediaPairList(mediaPairList);
-        mediaPagerAdapter.notifyDataSetChanged();
         if (!mediaPairList.isEmpty()) {
             setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
         } else {

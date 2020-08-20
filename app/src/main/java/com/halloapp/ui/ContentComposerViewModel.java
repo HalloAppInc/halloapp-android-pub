@@ -49,6 +49,7 @@ import java.util.List;
 public class ContentComposerViewModel extends AndroidViewModel {
 
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
+    final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
     final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
     final ComputableLiveData<String> chatName;
@@ -134,7 +135,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void loadUris(@NonNull Collection<Uri> uris, @Nullable Bundle editStates) {
-        new LoadContentUrisTask(getApplication(), uris, editStates, editMedia).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadContentUrisTask(getApplication(), uris, editStates, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void prepareContent(@Nullable ChatId chatId, @Nullable String text, @Nullable List<Mention> mentions) {
@@ -202,21 +203,24 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     }
 
-    static class LoadContentUrisTask extends AsyncTask<Void, Void, List<EditMediaPair>> {
+    static class LoadContentUrisTask extends AsyncTask<Void, EditMediaPair, List<EditMediaPair>> {
 
         private final Collection<Uri> uris;
         private final Bundle editStates;
         private final Application application;
         private final MutableLiveData<List<EditMediaPair>> media;
+        private final MutableLiveData<EditMediaPair> loadingItem;
 
         LoadContentUrisTask(@NonNull Application application,
                             @NonNull Collection<Uri> uris,
                             @Nullable Bundle editStates,
-                            @NonNull MutableLiveData<List<EditMediaPair>> media) {
+                            @NonNull MutableLiveData<List<EditMediaPair>> media,
+                            @NonNull MutableLiveData<EditMediaPair> loadingItem) {
             this.application = application;
             this.uris = uris;
             this.editStates = editStates;
             this.media = media;
+            this.loadingItem = loadingItem;
         }
 
         @Override
@@ -225,6 +229,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
             final ContentResolver contentResolver = application.getContentResolver();
             final FileStore fileStore = FileStore.getInstance(application);
+            int uriIndex = 0;
 
             for (Uri uri : uris) {
                 @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
@@ -256,14 +261,25 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
                     final Parcelable state = (editStates != null) ? editStates.getParcelable(uri.toString()) : null;
                     mediaPairList.add(new EditMediaPair(uri, originalItem, editItem, state));
+
+                    if (mediaPairList.size() == 1 && uriIndex + 1 != uris.size()) {
+                        publishProgress(mediaPairList.get(0));
+                    }
                 } else {
                     if (fileCreated && originalFile.exists()) {
                         originalFile.delete();
                     }
                     Log.e("PostComposerActivity: failed to load " + uri);
                 }
+
+                uriIndex++;
             }
             return mediaPairList;
+        }
+
+        @Override
+        protected void onProgressUpdate(EditMediaPair... mediaPairs) {
+            this.loadingItem.postValue(mediaPairs[0]);
         }
 
         @Override
