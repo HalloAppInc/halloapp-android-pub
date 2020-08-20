@@ -296,6 +296,43 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean promoteDemoteGroupAdmins(@NonNull GroupId groupId, @NonNull List<MemberInfo> promoted, @NonNull List<MemberInfo> demoted) {
+        Log.i("MessagesDb.promoteDemoteGroupAdmins " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (MemberInfo member : promoted) {
+                final ContentValues memberValues = new ContentValues();
+                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, 1);
+
+                db.update(GroupMembersTable.TABLE_NAME,
+                        memberValues,
+                        GroupMembersTable.COLUMN_GROUP_ID + "=? AND " + GroupMembersTable.COLUMN_USER_ID + "=?",
+                        new String[]{groupId.rawId(), member.userId.rawId()});
+            }
+
+            for (MemberInfo member : demoted) {
+                final ContentValues memberValues = new ContentValues();
+                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, 0);
+
+                db.update(GroupMembersTable.TABLE_NAME,
+                        memberValues,
+                        GroupMembersTable.COLUMN_GROUP_ID + "=? AND " + GroupMembersTable.COLUMN_USER_ID + "=?",
+                        new String[]{groupId.rawId(), member.userId.rawId()});
+            }
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.promoteDemoteGroupAdmins: done " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.promoteDemoteGroupAdmins: error " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
     void setMediaTransferred(@NonNull Message message, @NonNull Media media) {
         Log.i("ContentDb.setMediaTransferred: message=" + message + " media=" + media);
         final ContentValues values = new ContentValues();

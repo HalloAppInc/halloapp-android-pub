@@ -319,10 +319,20 @@ public class MainConnectionObserver extends Connection.Observer {
         contentDb.addRemoveGroupMembers(groupId, new ArrayList<>(), left, () -> connection.sendAck(ackId));
     }
 
-    // TODO(jack): Make GroupsDb to store these changes
     @Override
     public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        connection.sendAck(ackId);
+        List<MemberInfo> promoted = new ArrayList<>();
+        List<MemberInfo> demoted = new ArrayList<>();
+        for (MemberElement memberElement : members) {
+            MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+            if (MemberElement.Action.PROMOTE.equals(memberElement.action)) {
+                promoted.add(memberInfo);
+            } else if (MemberElement.Action.DEMOTE.equals(memberElement.action)) {
+                demoted.add(memberInfo);
+            }
+        }
+
+        contentDb.promoteDemoteGroupAdmins(groupId, promoted, demoted, () -> connection.sendAck(ackId));
     }
 
     @Override
@@ -337,6 +347,14 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
-        connection.sendAck(ackId);
+        List<MemberInfo> promoted = new ArrayList<>();
+        for (MemberElement memberElement : members) {
+            MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+            if (MemberElement.Action.PROMOTE.equals(memberElement.action)) {
+                promoted.add(memberInfo);
+            }
+        }
+
+        contentDb.promoteDemoteGroupAdmins(groupId, promoted, new ArrayList<>(), () -> connection.sendAck(ackId));
     }
 }

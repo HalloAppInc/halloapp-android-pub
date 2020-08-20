@@ -62,6 +62,7 @@ public class ContentDb {
         void onGroupChatAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
         void onGroupMembersChanged(@NonNull GroupId groupId);
+        void onGroupAdminsChanged(@NonNull GroupId groupId);
         void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
@@ -87,6 +88,7 @@ public class ContentDb {
         public void onGroupChatAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
         public void onGroupMembersChanged(@NonNull GroupId groupId) {}
+        public void onGroupAdminsChanged(@NonNull GroupId groupId) {}
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
@@ -543,6 +545,17 @@ public class ContentDb {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.addRemoveGroupMembers(groupId, added, removed)) {
                 observers.notifyGroupMembersChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void promoteDemoteGroupAdmins(@NonNull GroupId groupId, @NonNull List<MemberInfo> promoted, @NonNull List<MemberInfo> demoted, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.promoteDemoteGroupAdmins(groupId, promoted, demoted)) {
+                observers.notifyGroupAdminsChanged(groupId);
             }
             if (completionRunnable != null) {
                 completionRunnable.run();
