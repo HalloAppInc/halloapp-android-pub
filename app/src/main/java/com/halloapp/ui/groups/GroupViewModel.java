@@ -50,6 +50,13 @@ public class GroupViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onGroupAdminsChanged(@NonNull GroupId groupId) {
+            if (groupId.equals(GroupViewModel.this.groupId)) {
+                invalidateMembers();
+            }
+        }
+
+        @Override
         public void onChatDeleted(@NonNull ChatId chatId) {
             // TODO(jack): handle chat deletion
         }
@@ -114,6 +121,28 @@ public class GroupViewModel extends AndroidViewModel {
                 .onResponse(result::postValue)
                 .onError(error -> {
                     Log.e("Remove member failed", error);
+                    result.postValue(false);
+                });
+        return result;
+    }
+
+    public LiveData<Boolean> promoteAdmin(UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.promoteDemoteAdmins(groupId, Collections.singletonList(userId), null)
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Promote admin failed", error);
+                    result.postValue(false);
+                });
+        return result;
+    }
+
+    public LiveData<Boolean> demoteAdmin(UserId userId) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.promoteDemoteAdmins(groupId, null, Collections.singletonList(userId))
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Demote admin failed", error);
                     result.postValue(false);
                 });
         return result;

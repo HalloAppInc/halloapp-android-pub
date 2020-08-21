@@ -35,6 +35,7 @@ import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,8 @@ public class GroupInfoActivity extends HalloActivity {
 
     private TextView groupNameView;
     private RecyclerView membersView;
+
+    private boolean userIsAdmin = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,6 +118,9 @@ public class GroupInfoActivity extends HalloActivity {
             for (MemberInfo member : members) {
                 if (!member.userId.rawId().equals(me.getUser())) {
                     otherMembers.add(member);
+                } else {
+                    userIsAdmin = MemberElement.Type.ADMIN.equals(member.type);
+                    addMembersView.setVisibility(userIsAdmin ? View.VISIBLE : View.GONE);
                 }
             }
             adapter.submitMembers(otherMembers);
@@ -169,7 +175,7 @@ public class GroupInfoActivity extends HalloActivity {
     }
 
     private void leaveGroup() {
-        ProgressDialog leaveGroupDialog = ProgressDialog.show(this, null, getString(R.string.leavel_group_in_progress), true);
+        ProgressDialog leaveGroupDialog = ProgressDialog.show(this, null, getString(R.string.leave_group_in_progress), true);
         leaveGroupDialog.show();
         viewModel.leaveGroup().observe(this, success -> {
             leaveGroupDialog.cancel();
@@ -267,11 +273,15 @@ public class GroupInfoActivity extends HalloActivity {
             avatarLoader.load(avatar, member.userId);
             itemView.setOnClickListener(v -> {
                 Context context = getBaseContext();
-                String[] options = new String[] {
-                        context.getString(R.string.view_profile),
-                        context.getString(R.string.message),
-                        context.getString(R.string.group_remove_member), // TODO(jack): ensure user is admin
-                };
+                List<String> optionsList = new ArrayList<>();
+                optionsList.add(context.getString(R.string.view_profile));
+                optionsList.add(context.getString(R.string.message));
+                if (userIsAdmin) {
+                    optionsList.add(context.getString(R.string.group_remove_member));
+                    optionsList.add(context.getString(MemberElement.Type.ADMIN.equals(member.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
+                }
+                String[] options = new String[optionsList.size()];
+                optionsList.toArray(options);
                 AlertDialog dialog =
                         new AlertDialog.Builder(v.getContext())
                         .setItems(options, (d, which) -> {
@@ -287,6 +297,10 @@ public class GroupInfoActivity extends HalloActivity {
                                 }
                                 case 2: {
                                     removeMember(userId);
+                                    break;
+                                }
+                                case 3: {
+                                    promoteDemoteAdmin(member);
                                     break;
                                 }
                             }
@@ -314,6 +328,27 @@ public class GroupInfoActivity extends HalloActivity {
                     SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_remove_member);
                 }
             });
+        }
+
+        private void promoteDemoteAdmin(MemberInfo member) {
+            boolean isAdmin = MemberElement.Type.ADMIN.equals(member.type);
+            ProgressDialog promoteDemoteDialog = ProgressDialog.show(GroupInfoActivity.this, null, getString(isAdmin ? R.string.demote_admin_in_progress : R.string.promote_admin_in_progress), true);
+            promoteDemoteDialog.show();
+            if (isAdmin) {
+                viewModel.demoteAdmin(member.userId).observe(GroupInfoActivity.this, success -> {
+                    promoteDemoteDialog.cancel();
+                    if (success == null || !success) {
+                        SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_demote_admin);
+                    }
+                });
+            } else {
+                viewModel.promoteAdmin(member.userId).observe(GroupInfoActivity.this, success -> {
+                    promoteDemoteDialog.cancel();
+                    if (success == null || !success) {
+                        SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_promote_admin);
+                    }
+                });
+            }
         }
     }
 }

@@ -73,12 +73,17 @@ public class GroupsApi {
         });
     }
 
-    // TODO(jack): Return type
-    public Observable<String> promoteDemoteAdmins(@NonNull GroupId groupId, @Nullable List<UserId> promoteUids, @Nullable List<UserId> demoteUids) {
+    public Observable<Boolean> promoteDemoteAdmins(@NonNull GroupId groupId, @Nullable List<UserId> promoteUids, @Nullable List<UserId> demoteUids) {
         final PromoteDemoteAdminsIq requestIq = new PromoteDemoteAdminsIq(groupId, promoteUids, demoteUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
-            return "TODO";
+            for (MemberElement memberElement : response.memberElements) {
+                if (!MemberElement.Result.OK.equals(memberElement.result)) {
+                    return false;
+                }
+            }
+
+            return true;
         });
     }
 
