@@ -70,6 +70,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
     private ContactsViewModel viewModel;
     private TextView emptyView;
+    private EditText searchBox;
 
     private HashSet<UserId> initialSelectedContacts;
     private HashSet<UserId> selectedContacts;
@@ -108,7 +109,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        final EditText searchBox = findViewById(R.id.search_text);
+        searchBox = findViewById(R.id.search_text);
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -205,6 +206,10 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             finishMenuItem.setTitle(ss);
             finishMenuItem.setEnabled(hasSelection);
         }
+    }
+
+    private void clearSearchBar() {
+        searchBox.setText("");
     }
 
     @Override
@@ -444,6 +449,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 }
                 updateSelectionIcon();
                 updateToolbar();
+                clearSearchBar();
             });
         }
 
