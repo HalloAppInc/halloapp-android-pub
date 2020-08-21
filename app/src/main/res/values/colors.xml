@@ -60,6 +60,7 @@
     <color name="feed_notification_icon">@color/black_80</color>
     <color name="crop_done">#69a1ff</color>
     <color name="settings_text_entry_background">@android:color/white</color>
+    <color name="avatars_footer_divider">@android:color/white</color>
 
     <color name="settings_header_background">@color/color_secondary</color>
 

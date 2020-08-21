@@ -69,6 +69,12 @@ public class Contact implements Parcelable {
         return null;
     }
 
+    public String getShortName() {
+        String displayName = getDisplayName();
+        String[] parts = displayName.split(" ");
+        return parts[0];
+    }
+
     public @Nullable String getDisplayPhone() {
         final String internationalPhone;
         if (normalizedPhone != null) {

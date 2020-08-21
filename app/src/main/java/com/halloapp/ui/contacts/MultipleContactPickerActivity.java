@@ -11,7 +11,6 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,23 +34,28 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.util.ViewDataLoader;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -67,13 +70,17 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
+    private final SelectedAdapter avatarsAdapter = new SelectedAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
+    private final ContactLoader contactLoader = new ContactLoader(this);
     private ContactsViewModel viewModel;
     private TextView emptyView;
     private EditText searchBox;
+    private RecyclerView avatarsView;
 
     private HashSet<UserId> initialSelectedContacts;
     private HashSet<UserId> selectedContacts;
+    private Map<UserId, Contact> contactMap = new HashMap<>();
 
     private @DrawableRes int selectionIcon;
 
@@ -140,8 +147,21 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
         emptyView = findViewById(android.R.id.empty);
 
+        avatarsView = findViewById(R.id.avatars);
+        final RecyclerView.LayoutManager avatarsLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        avatarsView.setLayoutManager(avatarsLayoutManager);
+        avatarsView.setAdapter(avatarsAdapter);
+
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
-        viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
+        viewModel.contactList.getLiveData().observe(this, contacts -> {
+            Map<UserId, Contact> map = new HashMap<>();
+            for (Contact contact : contacts) {
+                map.put(contact.userId, contact);
+            }
+            this.contactMap = map;
+            adapter.setContacts(contacts);
+            avatarsAdapter.setUserIds(selectedContacts);
+        });
 
         ArrayList<UserId> preselected = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
         if (preselected != null) {
@@ -150,6 +170,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             selectedContacts = new HashSet<>();
         }
         initialSelectedContacts = new HashSet<>(selectedContacts);
+        avatarsAdapter.setUserIds(initialSelectedContacts);
 
         @StringRes int title = getIntent().getIntExtra(EXTRA_TITLE_RES, 0);
         if (title != 0) {
@@ -205,6 +226,9 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), hasSelection ? R.color.color_secondary : R.color.black_30)), 0, ss.length(), 0);
             finishMenuItem.setTitle(ss);
             finishMenuItem.setEnabled(hasSelection);
+        }
+        if (avatarsView != null) {
+            avatarsView.setVisibility(hasSelection ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -447,6 +471,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 } else {
                     selectedContacts.add(contact.userId);
                 }
+                avatarsAdapter.setUserIds(selectedContacts);
                 updateSelectionIcon();
                 updateToolbar();
                 clearSearchBar();
@@ -497,5 +522,97 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             }
             phoneView.setText(contact.getDisplayPhone());
         }
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        void bindTo(@NonNull UserId userId) {
+        }
+    }
+
+    class AvatarViewHolder extends ViewHolder {
+
+        ImageView avatar;
+        ImageView remove;
+        TextView name;
+
+        AvatarViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            avatar = itemView.findViewById(R.id.avatar);
+            remove = itemView.findViewById(R.id.remove);
+            name = itemView.findViewById(R.id.name);
+        }
+
+        void bindTo(@NonNull UserId userId) {
+            avatarLoader.load(avatar, userId);
+            contactLoader.load(name, userId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                    if (result != null) {
+                        view.setText(result.getShortName());
+                    }
+                }
+
+                @Override
+                public void showLoading(@NonNull TextView view) {
+                    view.setText("");
+                }
+            });
+
+            remove.setOnClickListener(v -> {
+                selectedContacts.remove(userId);
+                adapter.notifyDataSetChanged();
+                avatarsAdapter.setUserIds(selectedContacts);
+                updateToolbar();
+            });
+        }
+    }
+
+    private class SelectedAdapter extends RecyclerView.Adapter<ViewHolder> {
+        private List<Contact> contacts = new ArrayList<>();
+
+        void setUserIds(@NonNull Set<UserId> contacts) {
+            List<UserId> list = new ArrayList<>(contacts);
+            List<Contact> result = new ArrayList<>();
+            for (UserId userId : list) {
+                Contact contact = contactMap.get(userId);
+                if (contact != null) {
+                    result.add(contact);
+                }
+            }
+            Collections.sort(result, new Comparator<Contact>() {
+                @Override
+                public int compare(Contact o1, Contact o2) {
+                    return o1.getDisplayName().compareTo(o2.getDisplayName());
+                }
+            });
+            this.contacts = result;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public @NonNull
+        ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new AvatarViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.avatar_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if (position < contacts.size()) {
+                Contact contact = contacts.get(position);
+                holder.bindTo(contacts.get(position).userId);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return contacts.size();
+        }
+
     }
 }
