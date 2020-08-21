@@ -208,6 +208,7 @@
     <string name="yesterday">Yesterday</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="select_contact">Select contact</string>
+    <string name="search_contacts">Search contacts</string>
     <string name="search">Search</string>
     <string name="contact_search_empty">Nothing found for \'%s\'</string>
     <string name="action_save">Save</string>

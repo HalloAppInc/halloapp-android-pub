@@ -62,6 +62,7 @@
 
         <activity
             android:name=".ui.contacts.MultipleContactPickerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/select_contact"/>
 
         <activity
