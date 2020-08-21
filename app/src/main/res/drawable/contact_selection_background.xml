@@ -10,14 +10,14 @@
 
             <stroke
                 android:width="2dp"
-                android:color="@color/color_secondary_40_alpha" />
+                android:color="@color/color_primary_40_alpha" />
         </shape>
     </item>
     <item android:state_selected="true">
         <shape
             android:shape="oval"
             android:useLevel="false" >
-            <solid android:color="@color/color_secondary" />
+            <solid android:color="@color/color_primary" />
         </shape>
     </item>
 </selector>

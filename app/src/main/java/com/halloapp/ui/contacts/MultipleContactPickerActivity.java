@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,7 +31,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -55,6 +53,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     private static final String EXTRA_TITLE_RES = "title_res";
+    private static final String EXTRA_ACTION_RES = "action_res";
     private static final String EXTRA_SELECTED_IDS = "selected_ids";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
@@ -68,16 +67,19 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private @DrawableRes int selectionIcon;
 
-    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds) {
-        return newPickerIntent(context, selectedIds, 0);
-    }
+    private MenuItem finishMenuItem;
 
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title) {
+        return newPickerIntent(context, selectedIds, title, R.string.action_save);
+    }
+
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action) {
         Intent intent = new Intent(context, MultipleContactPickerActivity.class);
         if (selectedIds != null) {
             intent.putParcelableArrayListExtra(EXTRA_SELECTED_IDS, new ArrayList<>(selectedIds));
         }
         intent.putExtra(EXTRA_TITLE_RES, title);
+        intent.putExtra(EXTRA_ACTION_RES, action);
         return intent;
     }
 
@@ -100,10 +102,6 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 adapter::getSectionName));
         listView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
-        FloatingActionButton fab = findViewById(R.id.saveFab);
-        fab.setOnClickListener(v -> {
-            saveResult();
-        });
         emptyView = findViewById(android.R.id.empty);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
@@ -152,33 +150,33 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
     }
 
-    private void updateTitle() {
+    private String getActionText() {
+        @StringRes int string = getIntent().getIntExtra(EXTRA_ACTION_RES, R.string.action_save);
+        return getString(string);
+    }
+
+    private void updateToolbar() {
+        boolean hasSelection = selectedContacts != null && selectedContacts.size() != 0;
         if (getSupportActionBar() != null) {
-            if (selectedContacts == null || selectedContacts.size() == 0) {
-                getSupportActionBar().setSubtitle(getString(R.string.no_contacts_selected_subtitle));
-            } else {
+            if (hasSelection) {
                 getSupportActionBar().setSubtitle(getResources().getQuantityString(R.plurals.contact_selection_subtitle, selectedContacts.size(), selectedContacts.size()));
+            } else {
+                getSupportActionBar().setSubtitle(getString(R.string.no_contacts_selected_subtitle));
             }
+        }
+        if (finishMenuItem != null) {
+            SpannableString ss = new SpannableString(getActionText());
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), hasSelection ? R.color.color_secondary : R.color.black_30)), 0, ss.length(), 0);
+            finishMenuItem.setTitle(ss);
+            finishMenuItem.setEnabled(hasSelection);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.contacts_menu, menu);
-        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(final String text) {
-                searchView.clearFocus();
-                return true;
-            }
-            @Override
-            public boolean onQueryTextChange(final String text) {
-                adapter.getFilter().filter(text);
-                return false;
-            }
-        });
+        getMenuInflater().inflate(R.menu.multiple_contact_picker_menu, menu);
+        finishMenuItem = menu.findItem(R.id.finish);
+        updateToolbar();
         return true;
     }
 
@@ -193,8 +191,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     public boolean onOptionsItemSelected(MenuItem item) {
         //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
-            case R.id.refresh_contacts: {
-                ContactsSync.getInstance(this).startContactsSync(true);
+            case R.id.finish: {
+                saveResult();
                 return true;
             }
             default: {
@@ -255,7 +253,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         void setContacts(@NonNull List<Contact> contacts) {
             this.contacts = contacts;
             getFilter().filter(filterText);
-            updateTitle();
+            updateToolbar();
         }
 
         void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
@@ -410,7 +408,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                     selectedContacts.add(contact.userId);
                 }
                 updateSelectionIcon();
-                updateTitle();
+                updateToolbar();
             });
         }
 
@@ -426,7 +424,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
             this.contact = contact;
-           updateSelectionIcon();
+            updateSelectionIcon();
             avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
             if (filterTokens != null && !filterTokens.isEmpty()) {
                 SpannableString formattedName = null;

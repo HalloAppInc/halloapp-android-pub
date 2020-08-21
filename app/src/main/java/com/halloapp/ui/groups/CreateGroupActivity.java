@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +21,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
@@ -51,6 +56,8 @@ public class CreateGroupActivity extends HalloActivity {
     private ProgressDialog createGroupDialog;
 
     private List<UserId> userIds;
+
+    private MenuItem createMenuItem;
 
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> userIds) {
         Intent intent = new Intent(context, CreateGroupActivity.class);
@@ -90,6 +97,22 @@ public class CreateGroupActivity extends HalloActivity {
 
         nameEditText.requestFocus();
         nameEditText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_GROUP_NAME_LENGTH)});
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateAction(!TextUtils.isEmpty(s.toString()));
+            }
+        });
 
         viewModel.getAvatar().observe(this, bitmap -> {
             avatarView.setImageBitmap(bitmap);
@@ -140,6 +163,15 @@ public class CreateGroupActivity extends HalloActivity {
         });
     }
 
+    private void updateAction(boolean enabled) {
+        if (createMenuItem != null) {
+            SpannableString ss = new SpannableString(getString(R.string.button_create_group));
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), enabled ? R.color.color_secondary : R.color.black_30)), 0, ss.length(), 0);
+            createMenuItem.setTitle(ss);
+            createMenuItem.setEnabled(enabled);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -163,6 +195,8 @@ public class CreateGroupActivity extends HalloActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.create_group_menu, menu);
+        createMenuItem = menu.findItem(R.id.create);
+        updateAction(false);
         return true;
     }
 
