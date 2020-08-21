@@ -3,16 +3,21 @@ package com.halloapp.ui.contacts;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -21,6 +26,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +39,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
@@ -79,9 +86,36 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= 28) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
         setContentView(R.layout.activity_contacts);
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        EditText searchBox = findViewById(R.id.search_text);
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                adapter.getFilter().filter(s.toString());
+            }
+        });
 
         final RecyclerView listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -93,7 +127,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 getResources().getDimension(R.dimen.contacts_list_item_header_text_size),
                 getResources().getColor(R.color.contacts_list_item_header_text_color),
                 adapter::getSectionName));
-        listView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         emptyView = findViewById(android.R.id.empty);
 
@@ -112,20 +145,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contacts_menu, menu);
-        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(final String text) {
-                searchView.clearFocus();
-                return true;
-            }
-            @Override
-            public boolean onQueryTextChange(final String text) {
-                adapter.getFilter().filter(text);
-                return false;
-            }
-        });
         return true;
     }
 
