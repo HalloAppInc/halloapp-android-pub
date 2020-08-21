@@ -13,6 +13,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.id.UserId;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
@@ -52,6 +53,7 @@ class PostsDb {
         values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
         values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
         values.put(PostsTable.COLUMN_SEEN, post.seen);
+        values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
         if (post.text != null) {
             values.put(PostsTable.COLUMN_TEXT, post.text);
         }
@@ -86,6 +88,15 @@ class PostsDb {
                 mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
             }
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+        final List<UserId> audienceList = post.getAudienceList();
+        if (audienceList != null) {
+            for (UserId userId : audienceList) {
+                final ContentValues audienceUser = new ContentValues();
+                audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
+                audienceUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
+                db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
+            }
         }
         mentionsDb.addMentions(post);
         Log.i("ContentDb.addPost: added " + post);
@@ -550,6 +561,7 @@ class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -629,35 +641,37 @@ class PostsDb {
                             cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
-                    post.commentCount = cursor.getInt(14);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(15);
-                    final String firstCommentId = cursor.getString(17);
+                    List<UserId> audienceList = getPostAudienceInfo(post.id);
+                    post.setAudience(cursor.getString(7), audienceList);
+                    post.commentCount = cursor.getInt(15);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(16);
+                    final String firstCommentId = cursor.getString(18);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(16),
+                        post.firstComment = new Comment(cursor.getLong(17),
                                 post.senderUserId,
                                 post.id,
-                                new UserId(cursor.getString(18)),
+                                new UserId(cursor.getString(19)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(20),
+                                cursor.getLong(21),
                                 true,
                                 true,
-                                cursor.getString(19));
+                                cursor.getString(20));
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(21);
+                    post.seenByCount = cursor.getInt(22);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13)));
+                            cursor.getInt(13),
+                            cursor.getInt(14)));
                 }
             }
             if (post != null && cursor.getCount() < count) {
@@ -686,6 +700,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -721,19 +736,20 @@ class PostsDb {
                             cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
+                    post.setAudience(cursor.getString(7), getPostAudienceInfo(post.id));
                     mentionsDb.fillMentions(post);
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             null,
                             null,
-                            cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13)));
+                            cursor.getInt(13),
+                            cursor.getInt(14)));
                 }
             }
         }
@@ -1013,6 +1029,22 @@ class PostsDb {
     }
 
     @WorkerThread
+    @NonNull List<UserId> getPostAudienceInfo(@NonNull String postId) {
+        final List<UserId> audienceList = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(AudienceTable.TABLE_NAME,
+                new String [] {AudienceTable.COLUMN_USER_ID},
+                AudienceTable.COLUMN_POST_ID + "=?",
+                new String [] {postId}, null, null, AudienceTable._ID + " DESC")) {
+            while (cursor.moveToNext()) {
+                audienceList.add(new UserId(cursor.getString(0)));
+            }
+        }
+        Log.i("ContentDb.getPostAudienceInfo: audienceList.size=" + audienceList.size());
+        return audienceList;
+    }
+
+    @WorkerThread
     @NonNull List<SeenByInfo> getPostSeenByInfos(@NonNull String postId) {
         final List<SeenByInfo> seenByInfos = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -1041,6 +1073,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -1089,18 +1122,19 @@ class PostsDb {
                             cursor.getInt(5),
                             cursor.getString(6));
                     mentionsDb.fillMentions(post);
+                    post.setAudience(cursor.getString(7), getPostAudienceInfo(post.id));
                 }
-                if (!cursor.isNull(7)) {
+                if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(7),
-                            cursor.getInt(8),
-                            cursor.getString(9),
-                            fileStore.getMediaFile(cursor.getString(10)),
-                            cursor.getBlob(11),
+                            cursor.getLong(8),
+                            cursor.getInt(9),
+                            cursor.getString(10),
+                            fileStore.getMediaFile(cursor.getString(11)),
                             cursor.getBlob(12),
-                            cursor.getInt(13),
+                            cursor.getBlob(13),
                             cursor.getInt(14),
-                            cursor.getInt(15)));
+                            cursor.getInt(15),
+                            cursor.getInt(16)));
                 }
             }
             if (post != null) {

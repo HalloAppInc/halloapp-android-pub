@@ -357,7 +357,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             if (mentions != null) {
                 contentItem.mentions.addAll(mentions);
             }
-            if (contentItem instanceof Post) {
+            if (Constants.NEW_FEED_API && contentItem instanceof Post) {
                 FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
                 List<UserId> audienceList;
                 @PrivacyList.Type String audienceType;

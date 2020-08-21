@@ -17,9 +17,12 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenByInfo;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 
 public class PostSeenByViewModel extends AndroidViewModel {
 
@@ -96,6 +99,37 @@ public class PostSeenByViewModel extends AndroidViewModel {
         friendsList = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
+                Post post = contentDb.getPost(postId);
+                if (post != null) {
+                    @PrivacyList.Type String audienceType = post.getAudienceType();
+                    List<UserId> audienceList = post.getAudienceList();
+                    if (audienceType != null) {
+                        if (PrivacyList.Type.EXCEPT.equals(audienceType)) {
+                            List<Contact> friends = contactsDb.getFriends();
+                            if (audienceList != null) {
+                                HashSet<UserId> filteredUsers = new HashSet<>(audienceList);
+                                ListIterator<Contact> friendsIterator = friends.listIterator();
+                                while (friendsIterator.hasNext()) {
+                                    Contact friend = friendsIterator.next();
+                                    if (filteredUsers.contains(friend.userId)) {
+                                        friendsIterator.remove();
+                                    }
+                                }
+                            }
+                            return friends;
+                        } else if (PrivacyList.Type.ONLY.equals(audienceType)) {
+                            List<Contact> sharedTo = new ArrayList<>();
+                            if (audienceList != null) {
+                                for (UserId userId : audienceList) {
+                                    sharedTo.add(contactsDb.getContact(userId));
+                                }
+                            }
+                            return Contact.sort(sharedTo);
+                        } else {
+                            return Contact.sort(contactsDb.getFriends());
+                        }
+                    }
+                }
                 return Contact.sort(contactsDb.getFriends());
             }
         };
@@ -103,7 +137,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         post = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                return ContentDb.getInstance(application).getPost(postId);
+                return contentDb.getPost(postId);
             }
         };
     }

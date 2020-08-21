@@ -32,5 +32,5 @@ public class Constants {
     public static final boolean REREQUEST_SEND_ENABLED = true;
     public static final boolean INVITES_ENABLED = true;
     public static final int MAX_REREQUESTS_PER_MESSAGE = 1;
-    public static final boolean NEW_FEED_API = false;
+    public static final boolean NEW_FEED_API = BuildConfig.DEBUG;
 }

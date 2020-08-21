@@ -2,6 +2,7 @@ package com.halloapp.content;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.id.UserId;
@@ -86,6 +87,7 @@ public class Post extends ContentItem {
         return audienceType;
     }
 
+    @Nullable
     public List<UserId> getAudienceList() {
         return audienceList;
     }

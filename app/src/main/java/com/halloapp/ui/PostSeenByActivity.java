@@ -52,6 +52,8 @@ public class PostSeenByActivity extends HalloActivity {
 
     private String postId;
 
+    private Post post;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +95,10 @@ public class PostSeenByActivity extends HalloActivity {
             }
         });
 
+        viewModel.post.getLiveData().observe(this, post -> {
+            this.post = post;
+        });
+
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
     }
@@ -125,7 +131,6 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     private void onRetractPost() {
-        final Post post = viewModel.post.getLiveData().getValue();
         if (post != null) {
             new AlertDialog.Builder(this)
                     .setMessage(getString(R.string.retract_post_confirmation))

@@ -362,6 +362,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<UserId> getPostAudience(@NonNull String postId) {
+        return postsDb.getPostSeenByUsers(postId);
+    }
+
+    @WorkerThread
     public @NonNull List<SeenByInfo> getPostSeenByInfos(@NonNull String postId) {
         return postsDb.getPostSeenByInfos(postId);
     }

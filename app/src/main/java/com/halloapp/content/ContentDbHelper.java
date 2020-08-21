@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.GroupMembersTable;
@@ -24,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 26;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -46,7 +47,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_TIMESTAMP + " INTEGER,"
                 + PostsTable.COLUMN_TRANSFERRED + " INTEGER,"
                 + PostsTable.COLUMN_SEEN + " INTEGER,"
-                + PostsTable.COLUMN_TEXT + " TEXT"
+                + PostsTable.COLUMN_TEXT + " TEXT,"
+                + PostsTable.COLUMN_AUDIENCE_TYPE + " TEXT"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
@@ -199,6 +201,19 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + SeenTable.COLUMN_SEEN_BY_USER_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + AudienceTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + AudienceTable.TABLE_NAME + " ("
+                + AudienceTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + AudienceTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + AudienceTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + AudienceTable.INDEX_AUDIENCE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + AudienceTable.INDEX_AUDIENCE_KEY + " ON " + AudienceTable.TABLE_NAME + "("
+                + AudienceTable.COLUMN_POST_ID + ", "
+                + AudienceTable.COLUMN_USER_ID
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + OutgoingSeenReceiptsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + OutgoingSeenReceiptsTable.TABLE_NAME + " ("
                 + OutgoingSeenReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -222,6 +237,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
@@ -292,7 +308,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 24: {
                 upgradeFromVersion24(db);
             }
-
+            case 25: {
+                upgradeFromVersion25(db);
+            }
             break;
             default: {
                 onCreate(db);
@@ -478,6 +496,33 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + GroupMembersTable.COLUMN_GROUP_ID + ", "
                 + GroupMembersTable.COLUMN_USER_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion25(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_AUDIENCE_TYPE + " TEXT");
+        db.execSQL("DROP TABLE IF EXISTS " + AudienceTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + AudienceTable.TABLE_NAME + " ("
+                + AudienceTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + AudienceTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + AudienceTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + AudienceTable.INDEX_AUDIENCE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + AudienceTable.INDEX_AUDIENCE_KEY + " ON " + AudienceTable.TABLE_NAME + "("
+                + AudienceTable.COLUMN_POST_ID + ", "
+                + AudienceTable.COLUMN_USER_ID
+                + ");");
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
+        //noinspection SyntaxError
+        db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
+                + "END;");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
