@@ -288,7 +288,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemViewType(int position) {
-            if (serverProps.getGroupsEnabled()) {
+            if (shouldShowCreateGroupItem()) {
                 if (position == 0) {
                     return ITEM_TYPE_GROUP;
                 }
@@ -318,7 +318,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (serverProps.getGroupsEnabled()) {
+            if (shouldShowCreateGroupItem()) {
                 if (position > 0 && position < getFilteredContactsCount() + 1) {
                     holder.bindTo(filteredContacts.get(position - 1), filterTokens);
                 }
@@ -329,19 +329,23 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             }
         }
 
+        private boolean shouldShowCreateGroupItem() {
+            return serverProps.getGroupsEnabled() && TextUtils.isEmpty(filterText);
+        }
+
         protected void setInviteVisible(boolean visible) {
             showInviteOption = visible;
         }
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0) + (serverProps.getGroupsEnabled() ? 1 : 0);
+            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0) + (shouldShowCreateGroupItem() ? 1 : 0);
         }
 
         @NonNull
         @Override
         public String getSectionName(int position) {
-            int contactsPosition = position - (serverProps.getGroupsEnabled() ? 1 : 0);
+            int contactsPosition = position - (shouldShowCreateGroupItem() ? 1 : 0);
             if (contactsPosition < 0 || filteredContacts == null || contactsPosition >= filteredContacts.size()) {
                 return "";
             }
