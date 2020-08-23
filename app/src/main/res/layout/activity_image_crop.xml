@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.CropImageActivity">
 
-    <com.theartofdev.edmodo.cropper.CropImageView
+    <com.halloapp.ui.mediaedit.EditImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -14,11 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/media_list"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cropBorderCornerThickness="0dp"
-        app:cropBorderLineThickness="6dp"
-        app:cropBorderLineColor="@android:color/white"
-        app:cropBorderRadius="15dp"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/media_list"

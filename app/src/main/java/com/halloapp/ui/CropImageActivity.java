@@ -29,15 +29,15 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.mediaedit.EditImageView;
+import com.halloapp.ui.mediaedit.ImageCropper;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.ClippedBitmapDrawable;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.PlaceholderDrawable;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class CropImageActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_MORE_MEDIA = 1;
 
-    private CropImageView cropImageView;
+    private EditImageView editImageView;
     private RecyclerView mediaListView;
     private CropImageViewModel viewModel;
     private MediaListAdapter adapter;
@@ -87,25 +87,8 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupEditView() {
-        cropImageView = findViewById(R.id.image);
-        cropImageView.setTransitionName(TRANSITION_VIEW_NAME);
-        cropImageView.setMinAspectRatio(1 / Constants.MAX_IMAGE_ASPECT_RATIO);
-
-        cropImageView.setOnSetImageUriCompleteListener((view, uri, error) -> {
-            if (!transitionStarted) {
-                transitionStarted = true;
-                startPostponedEnterTransition();
-            }
-
-            if (error != null) {
-                CenterToast.show(this, R.string.failed_to_load_media);
-                finish();
-            } else {
-                if (selected == null || selected.state == null) {
-                    setInitialFrame();
-                }
-            }
-        });
+        editImageView = findViewById(R.id.image);
+        editImageView.setTransitionName(TRANSITION_VIEW_NAME);
 
         viewModel.getSelected().observe(this, model -> {
             if (model == null) {
@@ -114,12 +97,12 @@ public class CropImageActivity extends HalloActivity {
 
             selected = model;
 
-            if (selected.state != null) {
-                cropImageView.clearImage();
-                cropImageView.onRestoreInstanceState(selected.state);
-            } else {
-                cropImageView.setImageUriAsync(Uri.fromFile(selected.original.file));
-            }
+            editImageView.setAsyncImageFile(selected.original.file, (EditImageView.State) selected.state, () -> {
+                if (!transitionStarted) {
+                    transitionStarted = true;
+                    startPostponedEnterTransition();
+                }
+            });
 
             adapter.notifyDataSetChanged();
         });
@@ -196,25 +179,20 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupButtons() {
-        findViewById(R.id.reset).setOnClickListener(v -> {
-            cropImageView.resetCropRect();
-            setInitialFrame();
-        });
+        findViewById(R.id.reset).setOnClickListener(v -> editImageView.reset());
         findViewById(R.id.done).setOnClickListener(v -> {
-            cropImageView.setOnCropImageCompleteListener((view, result) -> {
-                selected.state = cropImageView.onSaveInstanceState();
+            final EditImageView.State state = editImageView.getState();
+
+            ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
+                selected.state = state;
                 mediaLoader.remove(selected.edit.file);
                 viewModel.update(selected);
 
                 final Intent intent = new Intent();
                 prepareResults(intent);
                 setResult(RESULT_OK, intent);
-
-                cropImageView.setShowCropOverlay(false);
                 finishAfterTransition();
             });
-
-            saveCroppedImageAsync();
         });
     }
 
@@ -239,45 +217,20 @@ public class CropImageActivity extends HalloActivity {
         intent.putExtra(EXTRA_SELECTED, position);
     }
 
-    private void setInitialFrame() {
-        Rect rect = cropImageView.getWholeImageRect();
-        final int w, h;
-
-        if (cropImageView.getRotatedDegrees() % 180 == 0) {
-            w = rect.width();
-            h = rect.height();
-        } else {
-            w = rect.height();
-            h = rect.width();
-        }
-
-        final Rect cropRect;
-        if (h > Constants.MAX_IMAGE_ASPECT_RATIO * w) {
-            int padding = (int) ((h - Constants.MAX_IMAGE_ASPECT_RATIO * w) / 2);
-            cropRect = new Rect(0, padding, w, h - padding);
-        } else {
-            cropRect = new Rect(0, 0, w, h);
-        }
-
-        cropImageView.setCropRect(cropRect);
-    }
-
     @Override
     public void onBackPressed() {
-        cropImageView.setOnCropImageCompleteListener((view, result) -> {
-            selected.state = cropImageView.onSaveInstanceState();
+        final EditImageView.State state = editImageView.getState();
+
+        ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
+            selected.state = state;
             mediaLoader.remove(selected.edit.file);
             viewModel.update(selected);
 
             final Intent intent = new Intent();
             prepareResults(intent);
             setResult(RESULT_OK, intent);
-
-            cropImageView.setShowCropOverlay(false);
             finishAfterTransition();
         });
-
-        saveCroppedImageAsync();
     }
 
     @Override
@@ -290,11 +243,11 @@ public class CropImageActivity extends HalloActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rotate: {
-                cropImageView.rotateImage(270);
+                editImageView.rotate();
                 return true;
             }
             case R.id.flip: {
-                cropImageView.flipImageHorizontally();
+                editImageView.flip();
                 return true;
             }
             case R.id.delete: {
@@ -326,17 +279,6 @@ public class CropImageActivity extends HalloActivity {
         }
     }
 
-    private void saveCroppedImageAsync() {
-        cropImageView.saveCroppedImageAsync(
-            Uri.fromFile(selected.edit.file),
-            Bitmap.CompressFormat.JPEG,
-            Constants.JPEG_QUALITY,
-            Constants.MAX_IMAGE_DIMENSION,
-            Constants.MAX_IMAGE_DIMENSION,
-            CropImageView.RequestSizeOptions.RESIZE_INSIDE
-        );
-    }
-
     private void finishWhenNoImages(List<CropImageViewModel.MediaModel> models) {
         boolean hasImages = false;
         for (CropImageViewModel.MediaModel m : models) {
@@ -355,8 +297,10 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void selectMoreImages() {
-        cropImageView.setOnCropImageCompleteListener((view, result) -> {
-            selected.state = cropImageView.onSaveInstanceState();
+        final EditImageView.State state = editImageView.getState();
+
+        ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
+            selected.state = state;
             mediaLoader.remove(selected.edit.file);
             viewModel.update(selected);
 
@@ -366,8 +310,6 @@ public class CropImageActivity extends HalloActivity {
             prepareResults(intent);
             startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
         });
-
-        saveCroppedImageAsync();
     }
 
     private void onMediaSelect(@NonNull Media media, int position) {
@@ -376,15 +318,14 @@ public class CropImageActivity extends HalloActivity {
         }
 
         if (selected != null) {
-            selected.state = cropImageView.onSaveInstanceState();
+            final EditImageView.State state = editImageView.getState();
 
-            cropImageView.setOnCropImageCompleteListener((view, result) -> {
+            ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
+                selected.state = state;
                 mediaLoader.remove(selected.edit.file);
                 viewModel.update(selected);
                 viewModel.select(position);
             });
-
-            saveCroppedImageAsync();
         } else {
             viewModel.select(position);
         }
