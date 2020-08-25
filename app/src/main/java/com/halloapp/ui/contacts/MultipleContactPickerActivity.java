@@ -133,6 +133,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 adapter.getFilter().filter(s.toString());
             }
         });
+        searchBox.requestFocus();
 
         final RecyclerView listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);

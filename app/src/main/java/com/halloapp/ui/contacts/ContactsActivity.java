@@ -116,6 +116,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 adapter.getFilter().filter(s.toString());
             }
         });
+        searchBox.requestFocus();
 
         final RecyclerView listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
