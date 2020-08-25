@@ -37,7 +37,6 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("InitialSyncActivity.onCreate");
         setContentView(R.layout.activity_initial_sync);
 
         final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(), Preferences.getInstance());
@@ -111,12 +110,6 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         retryView.setVisibility(View.VISIBLE);
         rationaleView.setVisibility(View.GONE);
         continueView.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("InitialSyncActivity.onDestroy");
     }
 
     @Override

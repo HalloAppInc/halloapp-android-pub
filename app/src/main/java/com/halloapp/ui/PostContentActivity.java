@@ -155,7 +155,6 @@ public class PostContentActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("PostContentActivity.onCreate");
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -212,7 +211,6 @@ public class PostContentActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("PostContentActivity.onDestroy");
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();

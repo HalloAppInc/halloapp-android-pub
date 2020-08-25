@@ -38,7 +38,6 @@ public class VideoPlaybackActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("VideoPlaybackActivity.onCreate");
 
         setContentView(R.layout.activity_video_playback);
 
@@ -71,12 +70,6 @@ public class VideoPlaybackActivity extends HalloActivity {
             startWindow = savedInstanceState.getInt(KEY_WINDOW);
             startPosition = savedInstanceState.getLong(KEY_POSITION);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("VideoPlaybackActivity.onDestroy");
     }
 
     @Override

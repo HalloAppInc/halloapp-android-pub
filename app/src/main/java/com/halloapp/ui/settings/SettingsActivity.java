@@ -49,7 +49,6 @@ public class SettingsActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("SettingsActivity.onCreate");
         setContentView(R.layout.settings_activity);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -81,12 +80,6 @@ public class SettingsActivity extends HalloActivity {
         profileContainer.setOnClickListener(v -> {
             startActivity(new Intent(this, SettingsProfile.class));
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("SettingsActivity.onDestroy");
     }
 
     @Override

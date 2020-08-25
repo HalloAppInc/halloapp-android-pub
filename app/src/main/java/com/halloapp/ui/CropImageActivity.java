@@ -63,7 +63,6 @@ public class CropImageActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("ImageCropActivity: onCreate");
 
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setEnterTransition(new Fade());
@@ -261,12 +260,6 @@ public class CropImageActivity extends HalloActivity {
         }
 
         cropImageView.setCropRect(cropRect);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("ImageCropActivity: onDestroy");
     }
 
     @Override

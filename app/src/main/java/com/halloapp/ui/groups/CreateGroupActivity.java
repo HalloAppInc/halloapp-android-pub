@@ -70,7 +70,6 @@ public class CreateGroupActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("CreateGroupActivity.onCreate");
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -220,11 +219,4 @@ public class CreateGroupActivity extends HalloActivity {
             }
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("CreateGroupActivity.onDestroy");
-    }
-
 }

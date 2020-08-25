@@ -119,7 +119,6 @@ public class CommentsActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("CommentsActivity.onCreate");
         setContentView(R.layout.activity_comments);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -294,7 +293,6 @@ public class CommentsActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("CommentsActivity.onDestroy");
         ContactsDb.getInstance().removeObserver(contactsObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();

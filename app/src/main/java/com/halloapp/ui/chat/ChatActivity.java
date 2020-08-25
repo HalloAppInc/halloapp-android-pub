@@ -138,7 +138,6 @@ public class ChatActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("ChatActivity.onCreate");
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -378,7 +377,6 @@ public class ChatActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i("ChatActivity.onDestroy");
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         replyLoader.destroy();
@@ -399,7 +397,6 @@ public class ChatActivity extends HalloActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("ChatActivity.onStop");
         scrollToNewMessageOnDataLoaded = true;
         viewModel.chat.invalidate();
         ForegroundChat.getInstance().setForegroundChatId(null);

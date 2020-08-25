@@ -122,7 +122,6 @@ public class ContentComposerActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("ContentComposerActivity: onCreate");
 
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setExitTransition(new Fade());
@@ -460,7 +459,6 @@ public class ContentComposerActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("ContentComposerActivity: onDestroy");
         fullThumbnailLoader.destroy();
     }
 

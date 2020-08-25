@@ -57,7 +57,6 @@ public class PostSeenByActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("PostSeenByActivity.onCreate");
         setContentView(R.layout.activity_post_seen_by);
         setTitle(R.string.your_post_title);
 
@@ -106,7 +105,6 @@ public class PostSeenByActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("PostSeenByActivity.onDestroy");
         mediaThumbnailLoader.destroy();
     }
 

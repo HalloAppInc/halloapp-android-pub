@@ -56,7 +56,6 @@ public class RegistrationVerificationActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("RegistrationVerificationActivity.onCreate");
         setContentView(R.layout.activity_registration_verification);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -124,7 +123,6 @@ public class RegistrationVerificationActivity extends HalloActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("RegistrationVerificationActivity.onDestroy");
         smsVerificationManager.removeObserver(smsVerificationObserver);
     }
 

@@ -66,7 +66,6 @@ public class AvatarPreviewActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("AvatarPreviewActivity: onCreate");
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
@@ -117,7 +116,6 @@ public class AvatarPreviewActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("AvatarPreviewActivity: onDestroy");
         mediaThumbnailLoader.destroy();
     }
 

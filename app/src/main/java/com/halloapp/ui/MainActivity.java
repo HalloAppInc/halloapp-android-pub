@@ -87,7 +87,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("MainActivity.onCreate");
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -221,14 +220,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("MainActivity.onDestroy");
         ContactsDb.getInstance().removeObserver(contactsObserver);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("MainActivity.onStart");
         Notifications.getInstance(this).clearFeedNotifications();
         if (Connection.getInstance().clientExpired) {
             AppExpirationActivity.open(this, 0);
@@ -254,12 +251,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
         });
         checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("MainActivity.onStop");
     }
 
     @Override

@@ -66,7 +66,6 @@ public class RegistrationRequestActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("RegistrationRequestActivity.onCreate");
         setContentView(R.layout.activity_registration_request);
 
         preferences = Preferences.getInstance();
@@ -145,12 +144,6 @@ public class RegistrationRequestActivity extends HalloActivity {
         nameEditText.requestFocus();
 
         findViewById(R.id.next).setOnClickListener(v -> startRegistrationRequest());
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("RegistrationRequestActivity.onDestroy");
     }
 
     @Override
