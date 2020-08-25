@@ -447,7 +447,7 @@ public class ChatActivity extends HalloActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
-            case R.id.delete: {
+            case R.id.clear_chat: {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getBaseContext().getString(R.string.delete_chat_confirmation));
                 builder.setCancelable(true);
