@@ -11,12 +11,15 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,25 +27,33 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkInfo;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
+import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.SnackbarHelper;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class CreateGroupActivity extends HalloActivity {
     private static final String EXTRA_USER_IDS = "user_ids";
@@ -53,7 +64,10 @@ public class CreateGroupActivity extends HalloActivity {
 
     private EditText nameEditText;
     private ImageView avatarView;
+    private RecyclerView membersView;
     private ProgressDialog createGroupDialog;
+
+    private final ContactsAdapter adapter = new ContactsAdapter();
 
     private List<UserId> userIds;
 
@@ -83,16 +97,17 @@ public class CreateGroupActivity extends HalloActivity {
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        viewModel = new ViewModelProvider(this).get(CreateGroupViewModel.class);
-
         userIds = getIntent().getParcelableArrayListExtra(EXTRA_USER_IDS);
         if (userIds == null) {
             userIds = new ArrayList<>();
         }
 
+        viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication(), userIds)).get(CreateGroupViewModel.class);
+
         nameEditText = findViewById(R.id.edit_name);
         avatarView = findViewById(R.id.avatar);
         final View changeAvatarView = findViewById(R.id.change_avatar);
+        membersView = findViewById(R.id.members);
 
         nameEditText.requestFocus();
         nameEditText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_GROUP_NAME_LENGTH)});
@@ -123,6 +138,18 @@ public class CreateGroupActivity extends HalloActivity {
             intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
         });
+
+
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        membersView.setLayoutManager(layoutManager);
+        membersView.setAdapter(adapter);
+        membersView.addItemDecoration(new ContactsSectionItemDecoration(
+                getResources().getDimension(R.dimen.contacts_list_item_header_width),
+                getResources().getDimension(R.dimen.contacts_list_item_height),
+                getResources().getDimension(R.dimen.contacts_list_item_header_text_size),
+                getResources().getColor(R.color.contacts_list_item_header_text_color),
+                adapter::getSectionName));
+        viewModel.getContacts().observe(this, adapter::setContacts);
 
         viewModel.getCreateGroupWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
 
@@ -217,6 +244,106 @@ public class CreateGroupActivity extends HalloActivity {
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
+        private static final int ITEM_TYPE_CONTACT = 1;
+        private static final int ITEM_TYPE_MEMBERS_HEADER = 2;
+
+        private List<Contact> contacts = new ArrayList<>();
+
+        void setContacts(@NonNull List<Contact> contacts) {
+            this.contacts = contacts;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position == 0 ? ITEM_TYPE_MEMBERS_HEADER : ITEM_TYPE_CONTACT;
+        }
+
+        @Override
+        public @NonNull
+        ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            switch (viewType) {
+                case ITEM_TYPE_CONTACT: {
+                    return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false));
+                }
+                case ITEM_TYPE_MEMBERS_HEADER: {
+                    return new MembersHeaderHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.members_header, parent, false));
+                }
+                default: {
+                    throw new IllegalArgumentException("Invalid view type " + viewType);
+                }
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if (position != 0) {
+                holder.bindTo(contacts.get(position - 1));
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return contacts.size() + 1;
+        }
+
+        @NonNull
+        @Override
+        public String getSectionName(int position) {
+            if (position <= 0 || contacts == null || position >= contacts.size() + 1) {
+                return "";
+            }
+            final String name = contacts.get(position - 1).getDisplayName();
+            if (TextUtils.isEmpty(name)) {
+                return "";
+            }
+            final int codePoint = name.codePointAt(0);
+            return Character.isAlphabetic(codePoint) ? new String(Character.toChars(codePoint)).toUpperCase(Locale.getDefault()) : "#";
+        }
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        void bindTo(Contact contact) {
+        }
+    }
+
+    static class ContactViewHolder extends ViewHolder {
+        private final AvatarLoader avatarLoader;
+
+        final private ImageView avatarView;
+        final private TextView nameView;
+        final private TextView phoneView;
+
+        ContactViewHolder(@NonNull View itemView) {
+            super(itemView);
+            avatarView = itemView.findViewById(R.id.avatar);
+            nameView = itemView.findViewById(R.id.name);
+            phoneView = itemView.findViewById(R.id.phone);
+            avatarLoader = AvatarLoader.getInstance(itemView.getContext());
+        }
+
+        void bindTo(@NonNull Contact contact) {
+            avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
+            nameView.setText(contact.getDisplayName());
+            phoneView.setText(contact.getDisplayPhone());
+        }
+    }
+
+    class MembersHeaderHolder extends ViewHolder {
+
+        MembersHeaderHolder(@NonNull View itemView) {
+            super(itemView);
+
+            TextView membersTextView = itemView.findViewById(R.id.members_header_text);
+            membersTextView.setText(getString(R.string.members_header, Integer.toString(userIds.size())));
         }
     }
 }

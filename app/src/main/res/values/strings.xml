@@ -267,6 +267,7 @@
     <string name="invite_invalid_phone_number">Invalid phone number</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
+    <string name="members_header">Members (%s)</string>
     <string name="add_members">Add members</string>
     <string name="add_members_in_progress">Adding members…</string>
     <string name="failed_add_members">Failed to add members, try again later</string>

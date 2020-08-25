@@ -8,9 +8,12 @@ import android.util.Base64;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -20,10 +23,15 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.FileStore;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.ui.chat.ChatViewModel;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -42,16 +50,31 @@ import java.util.concurrent.ExecutionException;
 public class CreateGroupViewModel extends AndroidViewModel {
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final WorkManager workManager;
 
     private final MutableLiveData<Bitmap> avatarLiveData = new MutableLiveData<>();
+    private final ComputableLiveData<List<Contact>> contactsLiveData;
 
     private String avatarFile;
 
-    public CreateGroupViewModel(@NonNull Application application) {
+    public CreateGroupViewModel(@NonNull Application application, @NonNull List<UserId> userIds) {
         super(application);
 
         workManager = WorkManager.getInstance(application);
+
+        contactsLiveData = new ComputableLiveData<List<Contact>>() {
+            @Override
+            protected List<Contact> compute() {
+                List<Contact> ret = new ArrayList<>();
+                for (UserId userId : userIds) {
+                    ret.add(contactsDb.getContact(userId));
+                }
+                Contact.sort(ret);
+                return ret;
+            }
+        };
+        contactsLiveData.invalidate();
     }
 
     public LiveData<Bitmap> getAvatar() {
@@ -63,6 +86,10 @@ public class CreateGroupViewModel extends AndroidViewModel {
         bgWorkers.execute(() -> {
             avatarLiveData.postValue(BitmapFactory.decodeFile(filepath));
         });
+    }
+
+    public LiveData<List<Contact>> getContacts() {
+        return contactsLiveData.getLiveData();
     }
 
     public LiveData<List<WorkInfo>> getCreateGroupWorkInfo() {
@@ -158,6 +185,26 @@ public class CreateGroupViewModel extends AndroidViewModel {
                 Log.e("Interrupted while creating group", e);
                 return Result.failure();
             }
+        }
+    }
+
+    public static class Factory implements ViewModelProvider.Factory {
+
+        private final Application application;
+        private final List<UserId> userIds;
+
+        Factory(@NonNull Application application, @NonNull List<UserId> userIds) {
+            this.application = application;
+            this.userIds = userIds;
+        }
+
+        @Override
+        public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(CreateGroupViewModel.class)) {
+                //noinspection unchecked
+                return (T) new CreateGroupViewModel(application, userIds);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }
 }
