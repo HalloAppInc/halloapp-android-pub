@@ -30,6 +30,8 @@ import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
+import com.halloapp.xmpp.ChatState;
+import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +51,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     private final Me me;
     private final ContentDb contentDb;
+    private final Connection connection;
     private final ContactsDb contactsDb;
     private final AtomicInteger outgoingAddedCount = new AtomicInteger(0);
     private final AtomicInteger incomingAddedCount = new AtomicInteger(0);
@@ -125,6 +128,7 @@ public class ChatViewModel extends AndroidViewModel {
         me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
+        connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
 
         blockListManager = BlockListManager.getInstance();
@@ -185,6 +189,24 @@ public class ChatViewModel extends AndroidViewModel {
             }
         };
         blockListManager.addObserver(blockListObserver);
+
+        resetComposingRunnable = () -> {
+            connection.updateChatState(chatId, ChatState.Type.AVAILABLE);
+            lastUpdateTime = 0;
+        };
+    }
+
+    private long lastUpdateTime;
+
+    private final Runnable resetComposingRunnable;
+
+    public void onComposingMessage() {
+        mainHandler.removeCallbacks(resetComposingRunnable);
+        if (System.currentTimeMillis() > lastUpdateTime + 10_000) {
+            connection.updateChatState(chatId, ChatState.Type.TYPING);
+            lastUpdateTime = System.currentTimeMillis();
+        }
+        mainHandler.postDelayed(resetComposingRunnable, 3000);
     }
 
     @NonNull

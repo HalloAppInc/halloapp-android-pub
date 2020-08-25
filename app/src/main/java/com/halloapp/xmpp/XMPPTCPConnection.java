@@ -69,6 +69,7 @@ import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smack.util.dns.SmackDaneProvider;
 import org.jivesoftware.smack.util.dns.SmackDaneVerifier;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.v1.XmlPullParser;
@@ -988,6 +989,24 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         processStanza(stanza);
     }
 
+    protected void parseAndProcessChatState(XmlPullParser parser) throws Exception {
+        ParserUtils.assertAtStartTag(parser);
+
+        String type = parser.getAttributeValue(null, "type");
+        String threadId = parser.getAttributeValue(null, "thread_id");
+        String threadType = parser.getAttributeValue(null, "thread_type");
+
+        if (type == null) {
+            type = "available";
+        }
+
+        ChatStateStanza stanza = new ChatStateStanza(ParserUtils.getJidAttribute(parser, "to"), parser.getAttributeValue("", "id"), type, threadId, threadType);
+        stanza.setFrom(ParserUtils.getJidAttribute(parser, "from"));
+
+        ParserUtils.assertAtEndTag(parser);
+        processStanza(stanza);
+    }
+
     protected String getServerPropsHash() {
         return serverPropsHash;
     }
@@ -1049,6 +1068,14 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                         clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
                                     }
                                     break;
+                                case "chat_state": {
+                                    try {
+                                        parseAndProcessChatState(parser);
+                                    } finally {
+                                        clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
+                                    }
+                                    break;
+                                }
                                 /* end halloapp added */
                                 case Message.ELEMENT:
                                 case IQ.IQ_ELEMENT:

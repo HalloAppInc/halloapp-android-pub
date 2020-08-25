@@ -146,6 +146,7 @@ public class Connection {
         public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
         public void onPresenceReceived(UserId user, Long lastSeen) {}
+        public void onChatStateReceived(UserId user, ChatState chatState) {}
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
     }
 
@@ -257,6 +258,7 @@ public class Connection {
         connection.addSyncStanzaListener(new MessageStanzaListener(), new StanzaTypeFilter(org.jivesoftware.smack.packet.Message.class));
         connection.addSyncStanzaListener(new AckStanzaListener(), new StanzaTypeFilter(AckStanza.class));
         connection.addSyncStanzaListener(new PresenceStanzaListener(), new StanzaTypeFilter(PresenceStanza.class));
+        connection.addSyncStanzaListener(new ChatStateStanzaListener(), new StanzaTypeFilter(ChatStateStanza.class));
 
         Log.i("connection: connecting...");
         try {
@@ -464,6 +466,21 @@ public class Connection {
                 connection.sendStanza(stanza);
             } catch (InterruptedException | SmackException.NotConnectedException e) {
                 Log.e("Failed to update presence", e);
+            }
+        });
+    }
+
+    public void updateChatState(@NonNull ChatId chat, @ChatState.Type int state) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: update chat state: no connection");
+                return;
+            }
+            try {
+                ChatStateStanza stanza = new ChatStateStanza(connection.getXMPPServiceDomain(), state == ChatState.Type.TYPING ? "typing" : "available", chat);
+                connection.sendStanza(stanza);
+            } catch (InterruptedException | SmackException.NotConnectedException e) {
+                Log.e("Failed to update chat state", e);
             }
         });
     }
@@ -1142,6 +1159,32 @@ public class Connection {
             final PresenceStanza presence = (PresenceStanza) packet;
             Log.i("connection: got presence " + presence);
             connectionObservers.notifyPresenceReceived(getUserId(packet.getFrom()), ((PresenceStanza) packet).lastSeen);
+        }
+    }
+
+    class ChatStateStanzaListener implements StanzaListener {
+
+        @Override
+        public void processStanza(final Stanza packet) {
+            if (!(packet instanceof ChatStateStanza)) {
+                Log.w("connection: got packet instead of ack " + packet);
+                return;
+            }
+            final ChatStateStanza presence = (ChatStateStanza) packet;
+            Log.i("connection: got presence " + presence);
+            ChatState chatState = null;
+            if ("chat".equals(presence.threadType)) {
+                chatState = new ChatState(processChatStateType(presence.type), getUserId(presence.threadId));
+            } else if ("group_chat".equals(presence.threadType)) {
+                chatState = new ChatState(processChatStateType(presence.type), new GroupId(presence.threadId));
+            }
+            if (chatState != null) {
+                connectionObservers.notifyChatStateReceived(getUserId(packet.getFrom()), chatState);
+            }
+        }
+
+        private @ChatState.Type int processChatStateType(String type) {
+            return "typing".equals(type) ? ChatState.Type.TYPING : ChatState.Type.AVAILABLE;
         }
     }
 

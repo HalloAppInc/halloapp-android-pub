@@ -9,6 +9,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.WhisperKeysMessage;
@@ -270,6 +271,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onPresenceReceived(userId, lastSeen);
+            }
+        }
+    }
+
+    public void notifyChatStateReceived(UserId userId, ChatState chatState) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onChatStateReceived(userId, chatState);
             }
         }
     }

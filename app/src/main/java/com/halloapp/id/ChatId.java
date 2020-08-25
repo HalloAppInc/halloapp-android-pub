@@ -10,7 +10,7 @@ import com.halloapp.util.Log;
 
 import java.util.Objects;
 
-public class ChatId implements Parcelable {
+public abstract class ChatId implements Parcelable {
 
     public @Nullable static ChatId fromString(@Nullable String s) {
         if (s == null) {
