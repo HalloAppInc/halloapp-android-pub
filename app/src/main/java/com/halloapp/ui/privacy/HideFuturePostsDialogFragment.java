@@ -4,20 +4,18 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModel;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.SnackbarHelper;
 
 
@@ -69,14 +67,15 @@ public class HideFuturePostsDialogFragment extends DialogFragment {
             dismiss();
         });
         hide.setOnClickListener(v -> {
-            viewModel.hideContact(contact).observe(requireActivity(), success -> {
+            FragmentActivity activity = requireActivity();
+            viewModel.hideContact(contact).observe(activity, success -> {
                 if (success == null) {
                     return;
                 }
                 if (success) {
-                    SnackbarHelper.showInfo(requireActivity(), getString(R.string.feed_privacy_hide_success, contact.getDisplayName()));
+                    SnackbarHelper.showInfo(activity, getString(R.string.feed_privacy_hide_success, contact.getDisplayName()));
                 } else {
-                    SnackbarHelper.showWarning(requireActivity(), getString(R.string.feed_privacy_hide_failure));
+                    SnackbarHelper.showWarning(activity, getString(R.string.feed_privacy_hide_failure));
                 }
                 dismiss();
             });
