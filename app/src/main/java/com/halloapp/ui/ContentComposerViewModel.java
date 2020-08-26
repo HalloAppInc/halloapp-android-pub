@@ -362,7 +362,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 List<UserId> audienceList;
                 @PrivacyList.Type String audienceType;
                 if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-                    List<Contact> contacts = contactsDb.getUsers();
+                    List<Contact> contacts = contactsDb.getFriends();
                     audienceList = new ArrayList<>(contacts.size());
                     for (Contact contact : contacts) {
                         audienceList.add(contact.userId);
