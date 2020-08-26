@@ -226,6 +226,7 @@ public class PostSeenByActivity extends HalloActivity {
 
         private void createListItems() {
             listItems.clear();
+            headerIndexes.clear();
             final Set<UserId> seenByUserIds = new HashSet<>();
             if (seenByContacts == null || seenByContacts.isEmpty()) {
                 //listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
