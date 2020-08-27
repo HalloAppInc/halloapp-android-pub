@@ -128,7 +128,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         this.post = post;
 
-        parent.getAvatarLoader().load(avatarView, post.senderUserId);
+        parent.getAvatarLoader().load(avatarView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {

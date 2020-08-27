@@ -270,7 +270,7 @@ public class GroupInfoActivity extends HalloActivity {
 
         void bindTo(@NonNull MemberInfo member) {
             contactLoader.load(name, member.userId, false);
-            avatarLoader.load(avatar, member.userId);
+            avatarLoader.load(avatar, member.userId, false);
             itemView.setOnClickListener(v -> {
                 Context context = getBaseContext();
                 List<String> optionsList = new ArrayList<>();

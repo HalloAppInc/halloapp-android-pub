@@ -26,6 +26,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.media.Downloader;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
@@ -82,6 +83,21 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull ChatId chatId) {
+        load(view, chatId, true);
+    }
+
+    @MainThread
+    public void load(@NonNull ImageView view, @NonNull ChatId chatId, boolean openProfileOnTap) {
+        if (openProfileOnTap && chatId instanceof UserId) {
+            UserId userId = (UserId) chatId;
+            if (userId.isMe()) {
+                view.setOnClickListener(null);
+            } else {
+                view.setOnClickListener(v -> {
+                    v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
+                });
+            }
+        }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 
