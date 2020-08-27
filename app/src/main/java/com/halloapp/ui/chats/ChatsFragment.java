@@ -54,6 +54,8 @@ public class ChatsFragment extends HalloFragment {
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
     private ChatsViewModel viewModel;
 
+    private LinearLayoutManager layoutManager;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +76,14 @@ public class ChatsFragment extends HalloFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator)chatsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
         chatsView.setLayoutManager(layoutManager);
         chatsView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(ChatsViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(ChatsViewModel.class);
+        if (viewModel.getSavedScrollState() != null) {
+            layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
+        }
         viewModel.chatsList.getLiveData().observe(getViewLifecycleOwner(), chats -> {
             adapter.setChats(chats);
             emptyView.setVisibility(chats.size() == 0 ? View.VISIBLE : View.GONE);
@@ -88,6 +93,14 @@ public class ChatsFragment extends HalloFragment {
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (viewModel != null && layoutManager != null) {
+            viewModel.saveScrollState(layoutManager.onSaveInstanceState());
+        }
+        super.onDestroyView();
     }
 
     private class ChatsAdapter extends AdapterWithLifecycle<ChatsAdapter.ViewHolder> {

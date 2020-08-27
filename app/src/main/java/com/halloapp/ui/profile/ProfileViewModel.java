@@ -3,8 +3,10 @@ package com.halloapp.ui.profile;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,6 +36,8 @@ public class ProfileViewModel extends AndroidViewModel {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final ComputableLiveData<Contact> contactLiveData;
+
+    private Parcelable savedScrollState;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -97,6 +101,7 @@ public class ProfileViewModel extends AndroidViewModel {
         }
     };
 
+
     public ProfileViewModel(@NonNull Application application, @NonNull UserId userId) {
         super(application);
 
@@ -121,6 +126,14 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public LiveData<Contact> getContact() {
         return contactLiveData.getLiveData();
+    }
+
+    public void saveScrollState(@Nullable Parcelable savedScrollState) {
+        this.savedScrollState = savedScrollState;
+    }
+
+    public @Nullable Parcelable getSavedScrollState() {
+        return savedScrollState;
     }
 
     @Override

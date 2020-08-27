@@ -53,6 +53,8 @@ public class HomeFragment extends PostsFragment {
         postThumbnailLoader.destroy();
     }
 
+    private LinearLayoutManager layoutManager;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -68,11 +70,14 @@ public class HomeFragment extends PostsFragment {
             viewModel.reloadPostsAt(Long.MAX_VALUE);
         });
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        if (viewModel.getSavedScrollState() != null) {
+            layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
+        }
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
@@ -136,6 +141,9 @@ public class HomeFragment extends PostsFragment {
 
     @Override
     public void onDestroyView() {
+        if (viewModel != null && layoutManager != null) {
+            viewModel.saveScrollState(layoutManager.onSaveInstanceState());
+        }
         super.onDestroyView();
         socialHistoryPopup.destroy();
     }

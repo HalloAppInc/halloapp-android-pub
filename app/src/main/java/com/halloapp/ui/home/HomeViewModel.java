@@ -3,9 +3,11 @@ package com.halloapp.ui.home;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
@@ -43,6 +45,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final PostsDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private Parcelable savedScrollState;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
@@ -156,6 +160,14 @@ public class HomeViewModel extends AndroidViewModel {
         if (pagedList != null) {
             ((PostsDataSource)pagedList.getDataSource()).reloadAt(timestamp);
         }
+    }
+
+    public void saveScrollState(@Nullable Parcelable savedScrollState) {
+        this.savedScrollState = savedScrollState;
+    }
+
+    public @Nullable Parcelable getSavedScrollState() {
+        return savedScrollState;
     }
 
     private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut) {

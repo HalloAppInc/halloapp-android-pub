@@ -38,6 +38,10 @@ public class ProfileFragment extends PostsFragment {
 
     private UserId profileUserId;
 
+    private LinearLayoutManager layoutManager;
+
+    private ProfileViewModel viewModel;
+
     public static ProfileFragment newProfileFragment(@NonNull UserId userId) {
         ProfileFragment profileFragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -58,6 +62,14 @@ public class ProfileFragment extends PostsFragment {
         Log.d("ProfileFragment: onDestroy");
     }
 
+    @Override
+    public void onDestroyView() {
+        if (viewModel != null && layoutManager != null) {
+            viewModel.saveScrollState(layoutManager.onSaveInstanceState());
+        }
+        super.onDestroyView();
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
@@ -66,7 +78,7 @@ public class ProfileFragment extends PostsFragment {
         final RecyclerView postsView = root.findViewById(R.id.posts);
         final TextView emptyView = root.findViewById(android.R.id.empty);
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
@@ -80,9 +92,11 @@ public class ProfileFragment extends PostsFragment {
             }
         }
 
-        final ProfileViewModel viewModel = new ViewModelProvider(this, new ProfileViewModel.Factory(requireActivity().getApplication(), profileUserId)).get(ProfileViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity(), new ProfileViewModel.Factory(requireActivity().getApplication(), profileUserId)).get(ProfileViewModel.class);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
-
+        if (viewModel.getSavedScrollState() != null) {
+            layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
+        }
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);

@@ -1,9 +1,11 @@
 package com.halloapp.ui.chats;
 
 import android.app.Application;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -36,6 +38,8 @@ public class ChatsViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     final MessageLoader messageLoader;
+
+    private Parcelable savedScrollState;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
 
@@ -137,6 +141,14 @@ public class ChatsViewModel extends AndroidViewModel {
         };
 
         messageUpdated = new MutableLiveData<>(false);
+    }
+
+    public void saveScrollState(@Nullable Parcelable savedScrollState) {
+        this.savedScrollState = savedScrollState;
+    }
+
+    public @Nullable Parcelable getSavedScrollState() {
+        return savedScrollState;
     }
 
     @Override
