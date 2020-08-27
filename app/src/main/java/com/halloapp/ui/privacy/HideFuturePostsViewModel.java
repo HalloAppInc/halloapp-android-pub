@@ -53,7 +53,7 @@ public class HideFuturePostsViewModel extends ViewModel {
                 hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(currentPrivacy.activeList, Collections.singletonList(contact.userId), null));
                 hiding.postValue(null);
             } else {
-                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(currentPrivacy.activeList, Collections.singletonList(contact.userId), null));
+                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(PrivacyList.Type.EXCEPT, Collections.singletonList(contact.userId), null));
                 hiding.postValue(null);
             }
         });
