@@ -26,6 +26,7 @@ import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
@@ -257,6 +258,11 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onPresenceReceived(UserId user, Long lastSeen) {
         presenceLoader.reportPresence(user, lastSeen);
+    }
+
+    @Override
+    public void onChatStateReceived(UserId user, ChatState chatState) {
+        presenceLoader.reportChatState(user, chatState);
     }
 
     @Override

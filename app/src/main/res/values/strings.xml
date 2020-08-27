@@ -324,4 +324,7 @@
     <string name="hide_future_posts_confirmation">Are you sure you want to hide all your future posts from %s? You can always change this later.</string>
     <string name="feed_privacy_hide_success">Feed privacy updated. Hiding posts from %s</string>
     <string name="feed_privacy_hide_failure">Failed to update feed privacy, check your internet and try again</string>
+    <string name="user_typing">Typing…</string>
+    <string name="group_user_typing">%s is typing…</string>
+    <string name="group_many_users_typing">Multiple users typing…</string>
 </resources>

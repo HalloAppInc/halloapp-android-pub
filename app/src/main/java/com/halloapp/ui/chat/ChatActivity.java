@@ -46,6 +46,7 @@ import com.halloapp.Debug;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
@@ -355,6 +356,8 @@ public class ChatActivity extends HalloActivity {
                         setSubtitle(getString(R.string.online));
                     } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
                         setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
+                    } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_TYPING) {
+                        setSubtitle(getString(R.string.user_typing));
                     }
                 });
             } else if (chatId instanceof GroupId) {
@@ -362,6 +365,23 @@ public class ChatActivity extends HalloActivity {
                     chatName = chat.name;
                     setTitle(chat.name);
                 }
+                presenceLoader.getChatStateLiveData((GroupId)chatId).observe(this, groupChatState -> {
+                    if (groupChatState == null || groupChatState.typingUsers == null || groupChatState.typingUsers.isEmpty()) {
+                        setSubtitle(null);
+                    } else {
+                        if (groupChatState.typingUsers.size() == 1) {
+                            UserId typingUser = Preconditions.checkNotNull(groupChatState.typingUsers.get(0));
+                            Contact contact = groupChatState.contactMap.get(typingUser);
+                            if (contact == null) {
+                                setSubtitle(null);
+                                return;
+                            }
+                            setSubtitle(getString(R.string.group_user_typing, contact.getDisplayName()));
+                        } else {
+                            setSubtitle(getString(R.string.group_many_users_typing));
+                        }
+                    }
+                });
             }
             ContentDb.getInstance(this).setChatSeen(chatId);
         });

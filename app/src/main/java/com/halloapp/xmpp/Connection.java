@@ -1179,7 +1179,10 @@ public class Connection {
                 chatState = new ChatState(processChatStateType(presence.type), new GroupId(presence.threadId));
             }
             if (chatState != null) {
-                connectionObservers.notifyChatStateReceived(getUserId(packet.getFrom()), chatState);
+                UserId from = getUserId(packet.getFrom());
+                if (from != null && !from.isMe()) {
+                    connectionObservers.notifyChatStateReceived(getUserId(packet.getFrom()), chatState);
+                }
             }
         }
 

@@ -26,7 +26,7 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/time"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/info"
+        app:layout_constraintBottom_toTopOf="@+id/info_container"
         app:layout_constraintVertical_chainStyle="packed"
         android:singleLine="true"
         android:ellipsize="end"
@@ -51,46 +51,82 @@
         android:textAppearance="?textAppearanceListItemSecondary"
         tools:text="Yesterday"/>
 
-    <ImageView
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="0dp"
-        android:paddingEnd="6dp"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toStartOf="@+id/media_icon"
-        app:layout_constraintTop_toTopOf="@+id/info"
-        app:layout_constraintBottom_toBottomOf="@+id/info"
-        tools:src="@drawable/ic_messaging_sent"/>
-
-    <ImageView
-        android:id="@+id/media_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginEnd="6dp"
-        app:layout_constraintStart_toEndOf="@+id/status"
-        app:layout_constraintEnd_toStartOf="@+id/info"
-        app:layout_constraintTop_toTopOf="@+id/info"
-        app:layout_constraintBottom_toBottomOf="@+id/info"
-        android:tint="?android:textColorPrimary"
-        tools:src="@drawable/ic_camera"/>
-
-    <TextView
-        android:id="@+id/info"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/info_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/media_icon"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/new_messages"
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="2dp"
+        android:background="?selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="0dp"
+            android:paddingEnd="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/media_icon"
+            app:layout_constraintTop_toTopOf="@+id/info"
+            app:layout_constraintBottom_toBottomOf="@+id/info"
+            tools:src="@drawable/ic_messaging_sent"/>
+
+        <ImageView
+            android:id="@+id/media_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="6dp"
+            app:layout_constraintStart_toEndOf="@+id/status"
+            app:layout_constraintEnd_toStartOf="@+id/info_barrier"
+            app:layout_constraintTop_toTopOf="@+id/info"
+            app:layout_constraintBottom_toBottomOf="@+id/info"
+            android:tint="?android:textColorPrimary"
+            tools:src="@drawable/ic_camera"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/info_barrier"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="media_icon,status"/>
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/info_barrier"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="2dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            android:textAppearance="?textAppearanceListItemSecondary"
+            android:textDirection="locale"
+            android:textAlignment="gravity"
+            tools:text="+1 (650) 555-3000"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/typing_indicator"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/info_container"
+        app:layout_constraintEnd_toEndOf="@+id/info_container"
+        app:layout_constraintTop_toTopOf="@+id/info_container"
+        app:layout_constraintBottom_toBottomOf="@+id/info_container"
         android:singleLine="true"
         android:ellipsize="end"
         android:textSize="14sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_secondary"
         android:textAppearance="?textAppearanceListItemSecondary"
         android:textDirection="locale"
         android:textAlignment="gravity"
-        tools:text="+1 (650) 555-3000"/>
+        android:visibility="gone"
+        tools:text="Clark is typing..."/>
 
     <TextView
         android:id="@+id/new_messages"
@@ -98,7 +134,7 @@
         android:layout_height="16sp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="3dp"
-        app:layout_constraintStart_toEndOf="@+id/info"
+        app:layout_constraintStart_toEndOf="@+id/info_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time"
         android:fontFamily="sans-serif-medium"

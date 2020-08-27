@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +40,8 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.xmpp.ChatState;
+import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +51,7 @@ public class ChatsFragment extends HalloFragment {
     private final ChatsAdapter adapter = new ChatsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(getContext());
     private final ContactLoader contactLoader = new ContactLoader(getContext());
+    private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
     private ChatsViewModel viewModel;
 
     @Override
@@ -109,6 +114,12 @@ public class ChatsFragment extends HalloFragment {
             return chats == null ? 0 : chats.size();
         }
 
+        @Override
+        public void onViewRecycled(@NonNull ViewHolder holder) {
+            holder.detatchObservers();
+            super.onViewRecycled(holder);
+        }
+
         class ViewHolder extends ViewHolderWithLifecycle {
 
             final ImageView avatarView;
@@ -118,8 +129,16 @@ public class ChatsFragment extends HalloFragment {
             final TextView timeView;
             final ImageView statusView;
             final ImageView mediaIcon;
+            final TextView typingView;
+            final View infoContainer;
 
             private Chat chat;
+
+            private LiveData<PresenceLoader.PresenceState> presenceLiveData;
+            private LiveData<PresenceLoader.GroupChatState> groupChatStateLiveData;
+
+            private Observer<PresenceLoader.PresenceState> presenceObserver;
+            private Observer<PresenceLoader.GroupChatState> groupChatStateObserver;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -130,7 +149,50 @@ public class ChatsFragment extends HalloFragment {
                 newMessagesView = itemView.findViewById(R.id.new_messages);
                 statusView = itemView.findViewById(R.id.status);
                 mediaIcon = itemView.findViewById(R.id.media_icon);
+                typingView = itemView.findViewById(R.id.typing_indicator);
+                infoContainer = itemView.findViewById(R.id.info_container);
                 itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId)));
+
+                presenceObserver = presenceState -> {
+                    if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_TYPING) {
+                        typingView.setVisibility(View.VISIBLE);
+                        infoContainer.setVisibility(View.INVISIBLE);
+                        typingView.setText(R.string.user_typing);
+                    } else {
+                        infoContainer.setVisibility(View.VISIBLE);
+                        typingView.setVisibility(View.GONE);
+                    }
+                };
+
+                groupChatStateObserver = groupChatState -> {
+                    int typingUsers = groupChatState.typingUsers.size();
+                    if (typingUsers > 0) {
+                        typingView.setVisibility(View.VISIBLE);
+                        infoContainer.setVisibility(View.INVISIBLE);
+                        if (groupChatState.typingUsers.size() == 1) {
+                            UserId typingUser = Preconditions.checkNotNull(groupChatState.typingUsers.get(0));
+                            Contact contact = Preconditions.checkNotNull(groupChatState.contactMap.get(typingUser));
+                            typingView.setText(getString(R.string.group_user_typing, contact.getDisplayName()));
+                        } else if (groupChatState.typingUsers.size() > 0) {
+                            typingView.setText(getString(R.string.group_many_users_typing));
+                        }
+                    }else {
+                        infoContainer.setVisibility(View.VISIBLE);
+                        typingView.setVisibility(View.GONE);
+                    }
+                };
+            }
+
+            void detatchObservers() {
+                if (groupChatStateLiveData != null) {
+                    groupChatStateLiveData.removeObserver(groupChatStateObserver);
+                    groupChatStateLiveData = null;
+                }
+
+                if (presenceLiveData != null) {
+                    presenceLiveData.removeObserver(presenceObserver);
+                    presenceLiveData = null;
+                }
             }
 
             void bindTo(@NonNull Chat chat) {
@@ -138,6 +200,15 @@ public class ChatsFragment extends HalloFragment {
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
                 avatarLoader.load(avatarView, chat.chatId);
                 nameView.setText(chat.name);
+                detatchObservers();
+                if (chat.isGroup) {
+                    groupChatStateLiveData = presenceLoader.getChatStateLiveData((GroupId) chat.chatId);
+                    groupChatStateLiveData.observe(getViewLifecycleOwner(), groupChatStateObserver);
+                } else {
+                    presenceLiveData = presenceLoader.getLastSeenLiveData((UserId) chat.chatId);
+                    presenceLiveData.observe(getViewLifecycleOwner(), presenceObserver);
+                }
+
                 if (chat.lastMessageRowId >= 0) {
                     viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {
                         @Override
