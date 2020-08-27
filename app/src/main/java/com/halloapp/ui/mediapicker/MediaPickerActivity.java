@@ -65,6 +65,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public static final int PICKER_PURPOSE_SEND = 1;
     public static final int PICKER_PURPOSE_AVATAR = 2;
     public static final int PICKER_PURPOSE_RESULT = 3;
+    public static final int PICKER_PURPOSE_POST = 4;
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
@@ -172,7 +173,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         super.onDestroy();
         thumbnailLoader.destroy();
 
-        if (pickerPurpose == PICKER_PURPOSE_SEND) {
+        if (pickerPurpose == PICKER_PURPOSE_SEND || pickerPurpose == PICKER_PURPOSE_POST) {
             if (viewModel.original != null && viewModel.original.size() > 0) {
                 viewModel.clean(viewModel.original);
             }
@@ -288,7 +289,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.media_picker, menu);
-        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+        if (pickerPurpose == PICKER_PURPOSE_AVATAR || pickerPurpose == PICKER_PURPOSE_SEND) {
             MenuItem menuItem = menu.findItem(R.id.camera);
             menuItem.setVisible(true);
         }
@@ -358,7 +359,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void handleSelection(@NonNull ArrayList<Uri> uris) {
-        if (pickerPurpose == PICKER_PURPOSE_SEND) {
+        if (pickerPurpose == PICKER_PURPOSE_SEND || pickerPurpose == PICKER_PURPOSE_POST) {
             Preconditions.checkState(uris.size() > 0);
             startContentComposer(uris);
         } else if (pickerPurpose == PICKER_PURPOSE_AVATAR) {

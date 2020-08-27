@@ -196,7 +196,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             case R.id.add_post_gallery: {
                 final Intent intent = new Intent(this, MediaPickerActivity.class);
-                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_SEND);
+                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
                 startActivity(intent);
                 break;
             }
