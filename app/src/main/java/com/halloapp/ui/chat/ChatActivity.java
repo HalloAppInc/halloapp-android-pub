@@ -465,6 +465,7 @@ public class ChatActivity extends HalloActivity {
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         menuItem = menu.findItem(R.id.block);
+        menuItem.setVisible(chatId instanceof UserId);
         viewModel.getBlockList().observe(this, userIds -> {
             blocked = updateBlockedContact(userIds);
             Log.i("ChatActivity: blocked = " + blocked);
