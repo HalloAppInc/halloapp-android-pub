@@ -176,7 +176,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 onFabActionSelected(actionItem.getId());
                 return true;
             });
-            addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_media_collection, R.string.gallery_post);
+            addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
             addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
             addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
         }
