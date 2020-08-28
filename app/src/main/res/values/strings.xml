@@ -261,7 +261,7 @@
         <item quantity="other">You have %s invites remaining this week</item>
     </plurals>
     <string name="no_invites_remaining">More invites coming this Monday!</string>
-    <string name="invite_friends_title">Invite friends</string>
+    <string name="invite_friends_title">Invite friends &amp; family</string>
     <string name="invite_action">Invite</string>
     <string name="invite_already_a_user_subtitle">Already a HalloApp user</string>
     <string name="invite_invalid_phone_number">Invalid phone number</string>
@@ -301,7 +301,7 @@
         <item quantity="other">%d contacts</item>
     </plurals>
     <string name="settings_block_list_none_summary">None</string>
-    <string name="settings_feed_contacts_summary">My contacts</string>
+    <string name="settings_feed_contacts_summary">My phone contacts</string>
     <plurals name="settings_feed_excluded_summary">
         <item quantity="one">%d contact excluded</item>
         <item quantity="other">%d contacts excluded</item>
