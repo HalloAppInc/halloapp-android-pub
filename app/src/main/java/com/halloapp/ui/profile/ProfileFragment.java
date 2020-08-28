@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.PostsFragment;
@@ -33,6 +34,8 @@ import com.halloapp.widget.NestedHorizontalScrollHelper;
 public class ProfileFragment extends PostsFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
+
+    private Me me = Me.getInstance();
 
     private ImageView avatarView;
 
@@ -104,7 +107,7 @@ public class ProfileFragment extends PostsFragment {
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
         final TextView nameView = headerView.findViewById(R.id.name);
         if (profileUserId.isMe()) {
-            nameView.setText(R.string.me);
+            me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
             viewModel.getContact().observe(getViewLifecycleOwner(), contact -> {
                 String name = contact.getDisplayName();
