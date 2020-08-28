@@ -168,10 +168,9 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
         if (drawable instanceof ClippedBitmapDrawable) {
             final ClippedBitmapDrawable clippedBitmapDrawable = ((ClippedBitmapDrawable) drawable);
             if (getScale() <= 1) {
-                clippedBitmapDrawable.allowOverdraw(1 - getScale());
-            } else {
-                clippedBitmapDrawable.allowOverdraw(0);
+                setScale(1.0f);
             }
+            clippedBitmapDrawable.allowOverdraw(0);
         }
         super.onDraw(canvas);
     }
