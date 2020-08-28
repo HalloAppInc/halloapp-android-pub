@@ -25,10 +25,6 @@
             app:title="@string/settings_block_list"
             app:summary=" "/>
 
-        <Preference
-            app:key="terms_and_policy"
-            app:title="@string/terms_of_service" />
-
     </com.halloapp.widget.HAPreferenceCategory>
 
     <com.halloapp.widget.HAPreferenceCategory app:title="@string/about">
@@ -36,6 +32,10 @@
         <Preference
             app:key="send_logs"
             app:title="@string/send_logs" />
+
+        <Preference
+            app:key="terms_and_policy"
+            app:title="@string/terms_of_service" />
 
         <Preference
             app:key="invite_friends"

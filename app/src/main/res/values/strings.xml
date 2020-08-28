@@ -116,7 +116,7 @@
     <string name="send_logs">Send logs</string>
     <string name="terms_of_service">Terms &amp; Privacy policy</string>
     <string name="settings_block_list">Blocked contacts</string>
-    <string name="settings_feed_privacy">Feed</string>
+    <string name="settings_feed_privacy">Posts</string>
     <string name="settings_privacy">Privacy</string>
     <plurals name="contact_selection_subtitle">
         <item quantity="one">%d contact selected</item>
