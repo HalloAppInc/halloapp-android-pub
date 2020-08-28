@@ -110,6 +110,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        // prevent navigating to the same fragment
+        navView.setOnNavigationItemReselectedListener(item -> { });
+
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
         networkIndicatorView.bind(this);
 
