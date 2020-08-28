@@ -135,6 +135,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 unseenChatsCount -> messageNotificationDrawable.setBadge(
                         unseenChatsCount == null || unseenChatsCount == 0 ? "" : String.format(Locale.getDefault(), "%d", unseenChatsCount)));
         fabView = findViewById(R.id.speed_dial);
+        fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (fabView.isOpen()) {
                 fabView.close();
