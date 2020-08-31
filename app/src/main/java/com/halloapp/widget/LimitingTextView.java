@@ -10,6 +10,8 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -88,10 +90,20 @@ public class LimitingTextView extends AppCompatTextView {
             final int lineBottom = layout.getLineBottom(lineLimit - 1);
             final float readMoreTextSize = mediumPaint.measureText(readMoreText.toString());
             final float lastLineRight = layout.getLineRight(lineLimit - 1);
-            final int truncatePos = layout.getOffsetForHorizontal(lineLimit - 1, Math.max(lastLineRight - readMoreTextSize, 0));
+            int truncatePos = layout.getOffsetForHorizontal(lineLimit - 1, Math.max(lastLineRight - readMoreTextSize, 0));
             truncatedText.clear();
             truncatedText.clearSpans();
-            truncatedText.append(originalText.subSequence(0, truncatePos));
+            truncatedText.append(originalText);
+            Linkify.addLinks(truncatedText, Linkify.WEB_URLS);
+            URLSpan[] spans = truncatedText.getSpans(truncatePos, truncatePos, URLSpan.class);
+            for (URLSpan span : spans) {
+                int spanEnd = truncatedText.getSpanEnd(span);
+                int spanStart = truncatedText.getSpanStart(span);
+                if (spanEnd > truncatePos && spanStart < truncatePos) {
+                    truncatePos = spanStart;
+                }
+            }
+            truncatedText.delete(truncatePos, truncatedText.length());
             truncatedText.append(readMoreText);
 
             super.setText(truncatedText, BufferType.NORMAL);
