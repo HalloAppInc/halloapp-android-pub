@@ -103,7 +103,7 @@ public class AvatarsLayout extends FrameLayout {
             if (users.size() <= i) {
                 break;
             }
-            avatarLoader.load((ImageView) getChildAt(childCount - i - 1), users.get(i));
+            avatarLoader.load((ImageView) getChildAt(childCount - i - 1), users.get(i), false);
         }
     }
 
