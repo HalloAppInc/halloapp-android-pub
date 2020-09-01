@@ -17,8 +17,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
+import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -39,6 +41,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView dateView;
     private final TextView timestampView;
     private final TextView newMessagesSeparator;
+    private final TextView nameView;
     private final TextView systemMessage;
     private final LimitingTextView textView;
     private final ViewPager2 mediaPagerView;
@@ -46,9 +49,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
     private final MessageViewHolderParent parent;
+
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
+    private final ContactLoader contactLoader;
+
     private Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
@@ -80,12 +86,14 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance(itemView.getContext());
         this.contentDb = ContentDb.getInstance(itemView.getContext());
+        this.contactLoader = new ContactLoader(itemView.getContext());
 
         contentView = itemView.findViewById(R.id.content);
         statusView = itemView.findViewById(R.id.status);
         dateView = itemView.findViewById(R.id.date);
         timestampView = itemView.findViewById(R.id.timestamp);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
+        nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
@@ -273,6 +281,18 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, newMessageCountSeparator, newMessageCountSeparator));
             } else {
                 newMessagesSeparator.setVisibility(View.GONE);
+            }
+        }
+
+        if (nameView != null) {
+            if (message.isOutgoing()) {
+                contactLoader.cancel(nameView);
+                nameView.setVisibility(View.GONE);
+            } else if ((prevMessage == null || !prevMessage.senderUserId.equals(message.senderUserId)) && message.chatId instanceof GroupId) {
+                contactLoader.load(nameView, message.senderUserId);
+                nameView.setVisibility(View.VISIBLE);
+            } else {
+                nameView.setVisibility(View.GONE);
             }
         }
 
