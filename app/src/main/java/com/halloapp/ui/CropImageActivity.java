@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -32,7 +34,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaedit.EditImageView;
 import com.halloapp.ui.mediaedit.ImageCropper;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ClippedBitmapDrawable;
@@ -53,6 +54,7 @@ public class CropImageActivity extends HalloActivity {
     private static final int REQUEST_CODE_MORE_MEDIA = 1;
 
     private EditImageView editImageView;
+    private ImageView transitionView;
     private RecyclerView mediaListView;
     private CropImageViewModel viewModel;
     private MediaListAdapter adapter;
@@ -64,8 +66,38 @@ public class CropImageActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Fade fade = new Fade();
+        fade.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                // NOTE(stefan): trans.setVisibility(View.GONE) doesn't seem to work here, instead make view zero size
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)transitionView.getLayoutParams();
+                params.topMargin = 0;
+                params.leftMargin = 0;
+                params.bottomMargin = editImageView.getHeight();
+                params.rightMargin = editImageView.getWidth();
+                transitionView.setLayoutParams(params);
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+            }
+        });
+
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().setEnterTransition(new Fade());
+        getWindow().setEnterTransition(fade);
         postponeEnterTransition();
 
         setContentView(R.layout.activity_image_crop);
@@ -87,8 +119,10 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupEditView() {
+        transitionView = findViewById(R.id.transition);
+        transitionView.setTransitionName(TRANSITION_VIEW_NAME);
+
         editImageView = findViewById(R.id.image);
-        editImageView.setTransitionName(TRANSITION_VIEW_NAME);
 
         viewModel.getSelected().observe(this, model -> {
             if (model == null) {
@@ -99,8 +133,11 @@ public class CropImageActivity extends HalloActivity {
 
             editImageView.setAsyncImageFile(selected.original.file, (EditImageView.State) selected.state, () -> {
                 if (!transitionStarted) {
-                    transitionStarted = true;
-                    startPostponedEnterTransition();
+                    prepareTransitionView();
+                    transitionView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+                        transitionStarted = true;
+                        startPostponedEnterTransition();
+                    });
                 }
             });
 
@@ -180,14 +217,42 @@ public class CropImageActivity extends HalloActivity {
 
     private void setupButtons() {
         findViewById(R.id.reset).setOnClickListener(v -> editImageView.reset());
-        findViewById(R.id.done).setOnClickListener(v -> {
-            final EditImageView.State state = editImageView.getState();
+        findViewById(R.id.done).setOnClickListener(v -> cropAndExitWithTransition());
+    }
 
-            ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
-                selected.state = state;
-                mediaLoader.remove(selected.edit.file);
-                viewModel.update(selected);
+    private void prepareTransitionView() {
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)transitionView.getLayoutParams();
+        EditImageView.State state = (EditImageView.State) selected.state;
 
+        if (state == null) {
+            params.topMargin = 0;
+            params.leftMargin = 0;
+            params.bottomMargin = 0;
+            params.rightMargin = 0;
+            transitionView.setImageDrawable(null);
+            transitionView.setImageURI(Uri.fromFile(selected.original.file));
+        } else {
+            params.topMargin = (int)state.cropRect.top;
+            params.leftMargin = (int)state.cropRect.left;
+            params.bottomMargin = (int)(editImageView.getHeight() - state.cropRect.bottom);
+            params.rightMargin = (int)(editImageView.getWidth() - state.cropRect.right);
+            transitionView.setImageDrawable(null);
+            transitionView.setImageURI(Uri.fromFile(selected.edit.file));
+        }
+
+        transitionView.setLayoutParams(params);
+    }
+
+    private void cropAndExitWithTransition() {
+        final EditImageView.State state = editImageView.getState();
+
+        ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
+            selected.state = state;
+            mediaLoader.remove(selected.edit.file);
+            viewModel.update(selected);
+
+            prepareTransitionView();
+            transitionView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 final Intent intent = new Intent();
                 prepareResults(intent);
                 setResult(RESULT_OK, intent);
@@ -219,18 +284,7 @@ public class CropImageActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        final EditImageView.State state = editImageView.getState();
-
-        ImageCropper.crop(this, selected.original.file, selected.edit.file, state, () -> {
-            selected.state = state;
-            mediaLoader.remove(selected.edit.file);
-            viewModel.update(selected);
-
-            final Intent intent = new Intent();
-            prepareResults(intent);
-            setResult(RESULT_OK, intent);
-            finishAfterTransition();
-        });
+        cropAndExitWithTransition();
     }
 
     @Override

@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.util.BgWorkers;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     public static final float MAX_ASPECT_RATIO = 1.25f;
     public static final float MAX_SCALE = 10.0f;
     public static final float MIN_SCALE = 1.0f;
+
+    // 'THRESHOLD_SCALE' is used together with 'threshold' to compute the minimum crop region size.
+    // 'threshold' is the recommended size for a tapable region. Both vertically and horizontally there
+    // are 3 different tapable regions (two borders and inside), thus 'THRESHOLD_SCALE' >= 3 is required.
+    // Current value of 4 is chosen to give more space for easier tapping on different parts of the crop region.
+    private static final float THRESHOLD_SCALE = 4;
 
     private final float initialOffset = getResources().getDimension(R.dimen.media_crop_region_init_offset);
     private final float threshold = getResources().getDimension(R.dimen.media_crop_region_threshold);
@@ -95,7 +102,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             return;
         }
 
-        new Thread(() -> {
+        BgWorkers.getInstance().execute(() -> {
             WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
             DisplayMetrics displayMetrics = new DisplayMetrics();
             wm.getDefaultDisplay().getMetrics(displayMetrics);
@@ -129,7 +136,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                     listener.loaded();
                 }
             });
-        }).start();
+        });
     }
 
     public State getState() {
@@ -196,8 +203,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         final int l = (int) Math.floor((w - dw * baseScale) / 2);
         final int t = (int) Math.floor((h - dh * baseScale) / 2);
-        final int r = (int) Math.round((w + dw * baseScale) / 2);
-        final int b = (int) Math.round((h + dh * baseScale) / 2);
+        final int r = Math.round((w + dw * baseScale) / 2);
+        final int b = Math.round((h + dh * baseScale) / 2);
 
         imageRect.set(l, t, r, b);
         setClipBounds(new Rect(l, t, r, b));
@@ -448,12 +455,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         return limit.contains(crop);
     }
 
-    private boolean isCropRegionMinSize(RectF crop) {
-        return (crop.width() > threshold * 4) && (crop.height() > threshold * 4);
+    private boolean isCropRegionTooSmall(RectF crop) {
+        return (crop.width() < threshold * THRESHOLD_SCALE) || (crop.height() < threshold * THRESHOLD_SCALE);
     }
 
     private boolean isCropRegionValid(RectF crop) {
-        return isCropRegionWithinImage(crop) && isCropRegionMinSize(crop);
+        return isCropRegionWithinImage(crop) && !isCropRegionTooSmall(crop);
     }
 
     private void updateCropRegionBy(CropRegionSection section, float deltaX, float deltaY) {
@@ -507,8 +514,6 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             final int action = motionEvent.getAction() & MotionEvent.ACTION_MASK;
 
             switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    break;
                 case MotionEvent.ACTION_POINTER_DOWN:
                     if (!isStarted) {
                         isMultiTouch = true;
@@ -579,17 +584,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     public static class State implements Parcelable {
-        RectF cropRect;
-        float offsetX;
-        float offsetY;
-        float scale;
-        int numberOfRotations;
-        boolean hFlipped;
-        boolean vFlipped;
-        int cropWidth;
-        int cropHeight;
-        int cropOffsetX;
-        int cropOffsetY;
+        public RectF cropRect;
+        public float offsetX;
+        public float offsetY;
+        public float scale;
+        public int numberOfRotations;
+        public boolean hFlipped;
+        public boolean vFlipped;
+        public int cropWidth;
+        public int cropHeight;
+        public int cropOffsetX;
+        public int cropOffsetY;
 
         @Override
         public int describeContents() {
