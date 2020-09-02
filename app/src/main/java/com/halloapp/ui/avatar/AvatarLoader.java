@@ -96,6 +96,9 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
                 });
             }
+        } else {
+            // TODO: (clarkc) Add support for group profiles later on
+            view.setOnClickListener(null);
         }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
