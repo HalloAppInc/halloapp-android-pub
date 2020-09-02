@@ -122,6 +122,10 @@
         <item quantity="one">%d contact selected</item>
         <item quantity="other">%d contacts selected</item>
     </plurals>
+    <plurals name="contact_maximum_selection">
+        <item quantity="one">You may select at most %d contact</item>
+        <item quantity="other">You may select at most %d contacts</item>
+    </plurals>
     <string name="no_contacts_selected_subtitle">No contacts selected</string>
     <string name="help">Help</string>
     <string name="about">About</string>

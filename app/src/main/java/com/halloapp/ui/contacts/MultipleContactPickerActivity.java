@@ -41,8 +41,10 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
@@ -67,6 +69,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private static final String EXTRA_TITLE_RES = "title_res";
     private static final String EXTRA_ACTION_RES = "action_res";
     private static final String EXTRA_SELECTED_IDS = "selected_ids";
+    private static final String EXTRA_MAX_SELECTION = "max_selection";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -83,20 +86,25 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private Map<UserId, Contact> contactMap = new HashMap<>();
 
     private @DrawableRes int selectionIcon;
+    private int maxSelection = -1;
 
     private MenuItem finishMenuItem;
 
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title) {
-        return newPickerIntent(context, selectedIds, title, R.string.action_save);
+        return newPickerIntent(context, selectedIds, title, R.string.action_save, null);
     }
 
-    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action) {
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action, @Nullable Integer maxSelection) {
         Intent intent = new Intent(context, MultipleContactPickerActivity.class);
         if (selectedIds != null) {
+            if (maxSelection != null && maxSelection >= 1 && selectedIds.size() > maxSelection) {
+                Log.e("Starting selection larger than max allowed size");
+            }
             intent.putParcelableArrayListExtra(EXTRA_SELECTED_IDS, new ArrayList<>(selectedIds));
         }
         intent.putExtra(EXTRA_TITLE_RES, title);
         intent.putExtra(EXTRA_ACTION_RES, action);
+        intent.putExtra(EXTRA_MAX_SELECTION, maxSelection);
         return intent;
     }
 
@@ -172,6 +180,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
         initialSelectedContacts = new HashSet<>(selectedContacts);
         avatarsAdapter.setUserIds(initialSelectedContacts);
+
+        maxSelection = getIntent().getIntExtra(EXTRA_MAX_SELECTION, -1);
 
         @StringRes int title = getIntent().getIntExtra(EXTRA_TITLE_RES, 0);
         if (title != 0) {
@@ -469,6 +479,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 }
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
+                } else if (maxSelection >= 1 && selectedContacts.size() >= maxSelection) {
+                    SnackbarHelper.showWarning(MultipleContactPickerActivity.this, getResources().getQuantityString(R.plurals.contact_maximum_selection, maxSelection, maxSelection));
                 } else {
                     selectedContacts.add(contact.userId);
                 }

@@ -63,7 +63,8 @@
 
         <activity
             android:name=".ui.contacts.MultipleContactPickerActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity
             android:name=".ui.privacy.BlockListActivity"
