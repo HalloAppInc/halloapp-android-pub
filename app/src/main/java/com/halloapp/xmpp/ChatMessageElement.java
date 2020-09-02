@@ -5,8 +5,6 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -18,9 +16,9 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.ChatMessage;
 import com.halloapp.proto.Container;
-import com.halloapp.proto.MediaType;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.stats.Stats;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -48,6 +46,8 @@ public class ChatMessageElement implements ExtensionElement {
     private final SessionSetupInfo sessionSetupInfo;
     private final byte[] encryptedBytes;
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
+
+    private Stats stats = Stats.getInstance();
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
         this.chatMessage = MessageElementHelper.messageToChatMessage(message);
@@ -123,10 +123,14 @@ public class ChatMessageElement implements ExtensionElement {
                 chatMessage = MessageElementHelper.readEncodedEntry(dec);
                 if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
+                    stats.reportDecryptError("plaintext mismatch");
+                } else {
+                    stats.reportDecryptSuccess();
                 }
             } catch (GeneralSecurityException | ArrayIndexOutOfBoundsException e) {
                 Log.e("Failed to decrypt message, falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure");
+                stats.reportDecryptError("decryption failure");
                 chatMessage = plaintextChatMessage;
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
@@ -171,10 +175,12 @@ public class ChatMessageElement implements ExtensionElement {
         try {
             byte[] encodedEntry = getEncodedEntry();
             byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
+            stats.reportEncryptSuccess();
             return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
         } catch (GeneralSecurityException e) {
             Log.e("Failed to encrypt", e);
             Log.sendErrorReport("Encryption failure");
+            stats.reportEncryptError("encryption failed");
         }
         return "";
     }

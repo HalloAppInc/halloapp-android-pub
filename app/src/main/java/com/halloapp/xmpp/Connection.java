@@ -25,6 +25,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
@@ -538,6 +539,24 @@ public class Connection {
                 return response.count;
             } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
                 Log.e("connection: cannot get one time key count", e);
+            }
+            return null;
+        });
+    }
+
+    public Future<Void> sendStats(List<Stats.Counter> counters) {
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: send stats: no connection");
+                return null;
+            }
+            final StatsIq statsIq = new StatsIq(connection.getXMPPServiceDomain(), counters);
+            try {
+                final IQ response = connection.createStanzaCollectorAndSend(statsIq).nextResultOrThrow();
+                Log.d("connection: response for send stats  " + response.toString());
+                return null;
+            } catch (SmackException.NotConnectedException | InterruptedException | XMPPException.XMPPErrorException | SmackException.NoResponseException e) {
+                Log.e("connection: cannot send stats", e);
             }
             return null;
         });
