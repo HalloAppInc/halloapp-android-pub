@@ -234,7 +234,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
         if (finishMenuItem != null) {
             SpannableString ss = new SpannableString(getActionText());
-            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), hasSelection ? R.color.color_secondary : R.color.black_30)), 0, ss.length(), 0);
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), hasSelection ? R.color.color_secondary : R.color.button_disabled_background)), 0, ss.length(), 0);
             finishMenuItem.setTitle(ss);
             finishMenuItem.setEnabled(hasSelection);
         }
