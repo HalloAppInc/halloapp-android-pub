@@ -58,8 +58,7 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/new_messages"
         app:layout_constraintTop_toBottomOf="@+id/name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="?selectableItemBackground">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
             android:id="@+id/status"
