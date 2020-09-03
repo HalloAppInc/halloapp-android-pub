@@ -250,10 +250,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return bitmap;
     }
 
+    @WorkerThread
     public void removeMyAvatar() {
         reportMyAvatarChanged(null);
     }
 
+    @WorkerThread
     public void reportMyAvatarChanged(String avatarId) {
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;

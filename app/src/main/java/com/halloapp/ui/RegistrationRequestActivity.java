@@ -31,6 +31,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -44,6 +45,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_VERIFICATION = 1;
 
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
     private RegistrationRequestViewModel registrationRequestViewModel;
@@ -171,7 +173,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private void onRereg() {
         Log.i("RegistrationRequestActivity: rereg success");
         contactsSync.startContactsSync(true);
-        avatarLoader.removeMyAvatar();
+        bgWorkers.execute(avatarLoader::removeMyAvatar);
     }
 
     private void startRegistrationRequest() {
