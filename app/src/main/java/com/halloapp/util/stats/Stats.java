@@ -109,6 +109,7 @@ public class Stats {
     }
 
     public class SuccessCounter extends Counter {
+        private static final String DIM_RESULT = "result";
 
         public SuccessCounter(String namespace, String metric) {
             super(namespace, metric);
@@ -116,14 +117,13 @@ public class Stats {
 
         public void reportSuccess() {
             Dimensions.Builder builder = new Dimensions.Builder()
-                    .put("success", "true");
+                    .put(DIM_RESULT, "success");
             reportEvent(builder.build());
         }
 
         public void reportError(String error) {
             Dimensions.Builder builder = new Dimensions.Builder()
-                    .put("success", "false")
-                    .put("error", error);
+                    .put(DIM_RESULT, error);
             reportEvent(builder.build());
         }
     }
