@@ -160,7 +160,6 @@ class MessagesDb {
         return true;
     }
 
-    // TODO(jack): Update name when someone else changes it (XMPP message)
     @WorkerThread
     boolean addGroupChat(@NonNull GroupInfo groupInfo) {
         Log.i("MessagesDb.addGroupChat " + groupInfo.groupId);
@@ -174,6 +173,8 @@ class MessagesDb {
             chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
             chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
             chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+
+            // TODO(jack): handle case where insert rejected due to chat message received before group create message
             db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
 
             if (groupInfo.members != null) {

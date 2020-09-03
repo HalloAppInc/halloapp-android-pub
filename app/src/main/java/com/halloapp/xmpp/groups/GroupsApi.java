@@ -38,7 +38,6 @@ public class GroupsApi {
 
     // TODO(jack): trigger: upon delete of group, delete members
 
-    // TODO(jack): add group to db here
     public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids) {
         final CreateGroupIq requestIq = new CreateGroupIq(name, uids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);

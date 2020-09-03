@@ -240,7 +240,7 @@ public class Notifications {
                     }
                     final Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(context).getChat(message.chatId));
                     String chatName = message.chatId instanceof GroupId ? chat.name : senderName;
-                    if (chats.add(message.chatId)) {
+                    if (chatName != null && chats.add(message.chatId)) {
                         chatNames.add(chatName);
                     }
                     Person user = new Person.Builder().setIcon(icon).setName(message.senderUserId.isMe() ? context.getString(R.string.me) : chatName).setKey(message.chatId.rawId()).build();
