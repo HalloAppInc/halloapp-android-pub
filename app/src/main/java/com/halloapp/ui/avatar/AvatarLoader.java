@@ -99,6 +99,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         } else {
             // TODO: (clarkc) Add support for group profiles later on
             view.setOnClickListener(null);
+            view.setClickable(false);
         }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
