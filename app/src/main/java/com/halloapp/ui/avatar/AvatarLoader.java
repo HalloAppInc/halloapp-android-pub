@@ -184,17 +184,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 }
 
                 contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
-            } catch (InterruptedException | ExecutionException e) {
-                Log.w("AvatarLoader: Interrupted during avatar fetch", e);
+            } catch (InterruptedException | ExecutionException | IOException e) {
+                Log.w("AvatarLoader: Failed getting avatar; resetting values", e);
                 contactAvatarInfo.avatarCheckTimestamp = 0;
                 contactAvatarInfo.avatarId = null;
-            } catch (InterruptedIOException e) {
-                Log.w("AvatarLoader: IO interrupted during avatar fetch", e);
-                contactAvatarInfo.avatarCheckTimestamp = 0;
-                contactAvatarInfo.avatarId = null;
-            } catch (IOException e) {
-                Log.w("AvatarLoader: Failed getting avatar", e);
-                contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+                return null;
             } finally {
                 contactsDb.updateContactAvatarInfo(contactAvatarInfo);
             }
