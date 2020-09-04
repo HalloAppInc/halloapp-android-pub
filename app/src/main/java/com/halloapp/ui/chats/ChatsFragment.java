@@ -26,7 +26,6 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
-import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.AdapterWithLifecycle;
@@ -40,7 +39,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.List;
@@ -214,7 +212,7 @@ public class ChatsFragment extends HalloFragment {
                 avatarLoader.load(avatarView, chat.chatId);
                 nameView.setText(chat.name);
                 detatchObservers();
-                if (chat.isGroup) {
+                if (chat.chatId instanceof GroupId) {
                     groupChatStateLiveData = presenceLoader.getChatStateLiveData((GroupId) chat.chatId);
                     groupChatStateLiveData.observe(getViewLifecycleOwner(), groupChatStateObserver);
                 } else {
