@@ -127,7 +127,7 @@ public class AvatarsLayout extends FrameLayout {
             }
         }
         if (visibleChildCount == 0) {
-            setMeasuredDimension(0, avatarSize +  + getPaddingTop() + getPaddingBottom());
+            setMeasuredDimension(0, avatarSize + getPaddingTop() + getPaddingBottom());
         } else {
             setMeasuredDimension(
                     avatarSize + (int)((visibleChildCount - 1) * (2f * avatarSize / 3f)) + getPaddingLeft() + getPaddingRight(),

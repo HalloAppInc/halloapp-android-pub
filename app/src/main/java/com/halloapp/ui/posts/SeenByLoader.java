@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
+import com.halloapp.id.UserId;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.AvatarsLayout;
 
@@ -20,8 +20,16 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
     private final LruCache<String, List<UserId>> cache = new LruCache<>(512);
     private final ContentDb contentDb;
 
+    private ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+            cache.remove(postId);
+        }
+    };
+
     public SeenByLoader(@NonNull Context context) {
         contentDb = ContentDb.getInstance(context);
+        contentDb.addObserver(contentObserver);
     }
 
     @MainThread
@@ -40,5 +48,11 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
             }
         };
         load(view, loader, displayer, postId, cache);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        contentDb.removeObserver(contentObserver);
     }
 }
