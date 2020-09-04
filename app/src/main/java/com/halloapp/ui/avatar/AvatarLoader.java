@@ -87,19 +87,20 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull ChatId chatId, boolean openProfileOnTap) {
-        if (openProfileOnTap && chatId instanceof UserId) {
-            UserId userId = (UserId) chatId;
-            if (userId.isMe()) {
-                view.setOnClickListener(null);
+        if (openProfileOnTap) {
+            if (chatId instanceof UserId) {
+                UserId userId = (UserId) chatId;
+                if (userId.isMe()) {
+                    view.setOnClickListener(null);
+                } else {
+                    view.setOnClickListener(v -> {
+                        v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
+                    });
+                }
             } else {
-                view.setOnClickListener(v -> {
-                    v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
-                });
+                // TODO: (clarkc) Add support for group profiles later on
+                view.setOnClickListener(null);
             }
-        } else {
-            // TODO: (clarkc) Add support for group profiles later on
-            view.setOnClickListener(null);
-            view.setClickable(false);
         }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {

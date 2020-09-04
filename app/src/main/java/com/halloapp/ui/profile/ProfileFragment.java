@@ -121,7 +121,7 @@ public class ProfileFragment extends PostsFragment {
         }
 
         avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
+        AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId, false);
 
         if (profileUserId.isMe()) {
             final View.OnClickListener editProfileClickListener = v -> {
@@ -145,7 +145,7 @@ public class ProfileFragment extends PostsFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId);
+        AvatarLoader.getInstance(requireContext()).load(avatarView, profileUserId, false);
         adapter.notifyDataSetChanged();
     }
 
