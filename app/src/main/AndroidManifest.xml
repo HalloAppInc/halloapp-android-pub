@@ -36,14 +36,17 @@
         <activity
             android:name=".ui.RegistrationVerificationActivity"
             android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
 
         <activity
             android:name=".ui.RegistrationRequestActivity"
             android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity android:name=".ui.InitialSyncActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
         <activity android:name=".ui.chat.ChatActivity"

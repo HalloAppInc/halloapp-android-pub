@@ -61,6 +61,7 @@
     <color name="crop_done">#69a1ff</color>
     <color name="settings_text_entry_background">@android:color/white</color>
     <color name="avatars_footer_divider">@android:color/white</color>
+    <color name="thick_progress_spinner">#696969</color>
 
     <color name="settings_header_background">@color/color_secondary</color>
 

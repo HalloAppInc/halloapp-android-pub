@@ -58,8 +58,6 @@ public class RegistrationVerificationActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_verification);
 
-        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
         codeEditText = findViewById(R.id.code);
         loadingProgressBar = findViewById(R.id.loading);
 

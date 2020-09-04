@@ -7,33 +7,47 @@
     android:padding="24dp"
     tools:context=".ui.RegistrationRequestActivity">
 
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_logo"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        android:layout_marginTop="36dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:gravity="start"
         android:fontFamily="sans-serif-medium"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:text="@string/verify_registration_title"/>
 
     <com.halloapp.widget.CodeEditText
         android:id="@+id/code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="354dp"
+        android:layout_height="50dp"
         android:inputType="numberPassword"
         android:importantForAutofill="no"
         android:gravity="center"
-        android:textSize="22sp"
+        android:textSize="22dp"
         android:singleLine="true"
-        app:cetBorderColor="@color/color_primary"
-        app:cetBorderSize="2dp"
-        android:layout_marginTop="16dp"
+        app:cetBorderColor="@android:color/white"
+        app:cetCellRadius="5dp"
+        app:cetCellSpacing="9dp"
+        android:layout_marginTop="24dp"
         android:background="@null"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:textColor="@color/color_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"/>

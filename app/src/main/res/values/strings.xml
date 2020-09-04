@@ -20,13 +20,15 @@
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">Now</string>
     <string name="phone_number_hint">Phone number</string>
-    <string name="request_registration_title">Welcome to HalloApp</string>
+    <string name="request_registration_title">Welcome!</string>
     <string name="reverify_registration_title">Please, re-verify your phone number</string>
-    <string name="request_registration_subtitle">You will receive verification code. Carrier rates may apply.</string>
+    <string name="request_registration_subtitle">You will receive a verification code.\nCarrier rates may apply.</string>
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
+    <string name="contact_permission_title">One last thing</string>
     <string name="registration_code_invalid">Invalid registration code, try again</string>
     <string name="registration_failed">Failed to register phone number, try again</string>
-    <string name="registration_failed_no_friends">We are currently in beta and by invitation only. Please have one of your friends who is a HalloApp user invite you.</string>
+    <string name="registration_failed_no_friends">We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number.</string>
+    <string name="registration_failed_no_friends_title">Shucks!</string>
     <string name="type_a_post_hint">Type a post</string>
     <string name="type_a_message_hint">Type a message</string>
     <string name="write_a_description">Write a description</string>
@@ -78,7 +80,7 @@
     <string name="storage_permission_rationale_denied">Pick media we need a permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
-    <string name="contact_rationale_upload">HalloApp uses your addressbook contacts to connect you with your friends and family. We need permission to access your contacts and upload them to our servers in order to make these connections.</string>
+    <string name="contact_rationale_upload">In order to connect you with your friends &amp; family we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a></string>
     <string name="contact_rationale_continue">Accept</string>
     <string name="failed_to_initialize">Failed to initialize</string>
     <string name="type_a_comment_hint">Add a comment</string>
@@ -105,6 +107,8 @@
         <item quantity="one">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d other commented on &lt;b>%4$s&lt;/b>\'s post</item>
         <item quantity="other">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d others commented on &lt;b>%4$s&lt;/b>\'s post</item>
     </plurals>
+    <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>
+    <string name="contact_hashing_faq_dialog_info">• HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book.\n\n• We do not keep your phone number list on our servers, we only keep track of the phone numbers registered on HalloApp.\n\n• We match newly registered users via phone number hashing. Details on our algorithm can be found at halloapp.com/faq</string>
     <string name="commented_on_own_post">&lt;b>%1s&lt;/b> commented on their post</string>
     <string name="list_of_two">%s and %s</string>
     <string name="list_of_many_start">%s</string>

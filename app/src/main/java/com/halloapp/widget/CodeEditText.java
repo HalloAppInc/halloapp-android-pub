@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -17,6 +18,9 @@ import com.halloapp.R;
 public class CodeEditText extends AppCompatEditText {
 
     private int codeLength;
+
+    private float requestedCellSpacing;
+    private float cellCornerRadius;
 
     private final Paint cellPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -50,10 +54,11 @@ public class CodeEditText extends AppCompatEditText {
 
     private void init(AttributeSet attrs, int defStyle) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CodeEditText, defStyle, 0);
+        requestedCellSpacing = a.getDimension(R.styleable.CodeEditText_cetCellSpacing, -1);
+        cellCornerRadius = a.getDimension(R.styleable.CodeEditText_cetCellRadius, 0);
 
         cellPaint.setColor(a.getColor(R.styleable.CodeEditText_cetBorderColor, 0xff000000));
-        cellPaint.setStrokeWidth(a.getDimension(R.styleable.CodeEditText_cetBorderSize, 1));
-        cellPaint.setStyle(Paint.Style.STROKE);
+        cellPaint.setStyle(Paint.Style.FILL);
 
         codeLength = a.getInteger(R.styleable.CodeEditText_cetCodeLength, 6);
 
@@ -92,20 +97,25 @@ public class CodeEditText extends AppCompatEditText {
         final int width = right - left;
         final int height = bottom - top;
         float cellWidth = Math.min(1f * width / codeLength, height);
-        float cellSpacing = cellWidth / 6f;
+        float cellSpacing = cellWidth / 12f;
 
-        cellRect.top = top + cellSpacing;
-        cellRect.bottom = bottom - cellSpacing;
+        if (requestedCellSpacing >= 0) {
+            cellSpacing = requestedCellSpacing;
+        }
+
+        cellRect.top = top;
+        cellRect.bottom = bottom;
 
         textPaint.setColor(getCurrentTextColor());
         textPaint.setTextSize(getTextSize());
         textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-        final float xOffset = left + width / 2f - cellWidth * codeLength / 2;
+        final float xOffset = left + width / 2f - ((cellWidth + cellSpacing) * codeLength) / 2 + cellSpacing/2;
         for (int i = 0; i < codeLength; i++) {
-            cellRect.left = xOffset + i * cellWidth + cellSpacing;
-            cellRect.right = cellRect.left + cellWidth - 2 * cellSpacing;
-            canvas.drawRoundRect(cellRect, cellPaint.getStrokeWidth(), cellPaint.getStrokeWidth(), cellPaint);
+            cellRect.left = xOffset + i * (cellWidth + cellSpacing);
+            cellRect.right = cellRect.left + cellWidth;
+            canvas.drawRoundRect(cellRect, cellCornerRadius, cellCornerRadius, cellPaint);
             if (i < text.length()) {
                 String digit = text.substring(i, i+1);
                 textPaint.getTextBounds(digit, 0, digit.length(), textRect);

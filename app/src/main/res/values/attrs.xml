@@ -2,9 +2,10 @@
 <resources>
     <attr name="useLightSystemBars" format="boolean"/>
     <declare-styleable name="CodeEditText">
-        <attr name="cetBorderSize" format="dimension" />
+        <attr name="cetCellRadius" format="dimension" />
         <attr name="cetBorderColor" format="color" />
         <attr name="cetCodeLength" format="integer" />
+        <attr name="cetCellSpacing" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="ContentPhotoView">

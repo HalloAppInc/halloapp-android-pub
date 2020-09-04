@@ -23,6 +23,7 @@
     <color name="home_navigation_divider">#292929</color>
     <color name="old_comments_indicator">#33FFFFFF</color>
     <color name="avatars_footer_divider">#292929</color>
+    <color name="thick_progress_spinner">#9B9B9B</color>
 
     <color name="settings_header_background">#353535</color>
     <color name="settings_text_entry_background">@color/white_20</color>

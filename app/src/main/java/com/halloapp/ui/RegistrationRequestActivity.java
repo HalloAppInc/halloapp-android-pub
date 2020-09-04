@@ -106,6 +106,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         || result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NOT_INVITED) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationRequestActivity.this)
                         .setMessage(getBaseContext().getString(R.string.registration_failed_no_friends))
+                        .setTitle(getBaseContext().getString(R.string.registration_failed_no_friends_title))
                         .setPositiveButton(R.string.ok, null)
                         .setCancelable(true);
                     builder.show();
@@ -116,7 +117,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                 phoneNumberEditText.setEnabled(true);
                 countryCodePicker.setCcpClickable(true);
             }
-            loadingProgressBar.setVisibility(View.GONE);
+            loadingProgressBar.setVisibility(View.INVISIBLE );
         });
 
         phoneNumberEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -196,7 +197,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         }
 
         loadingProgressBar.setVisibility(View.VISIBLE);
-        nextButton.setVisibility(View.GONE);
+        nextButton.setVisibility(View.INVISIBLE);
         phoneNumberEditText.setEnabled(false);
         countryCodePicker.setCcpClickable(false);
         Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
