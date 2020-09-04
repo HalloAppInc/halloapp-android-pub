@@ -174,8 +174,16 @@ class MessagesDb {
             chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
             chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
 
-            // TODO(jack): handle case where insert rejected due to chat message received before group create message
-            db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
+            boolean exists;
+            try (Cursor cursor = db.rawQuery("SELECT * FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()})) {
+                exists = cursor.getCount() > 0;
+            }
+
+            if (exists) {
+                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_REPLACE);
+            } else {
+                db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
+            }
 
             if (groupInfo.members != null) {
                 for (MemberInfo member : groupInfo.members) {
