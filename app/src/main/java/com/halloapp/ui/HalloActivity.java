@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -11,7 +12,7 @@ import com.halloapp.util.ThreadUtils;
 
 public class HalloActivity extends AppCompatActivity {
 
-    private String activityName;
+    private final String activityName;
 
     public HalloActivity() {
         super();
@@ -22,9 +23,20 @@ public class HalloActivity extends AppCompatActivity {
         return activityName;
     }
 
+    protected void logTrace(String section, String... args) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getActivityName()).append(".").append(section);
+        if (args != null) {
+            for (String arg : args) {
+                sb.append(" ").append(arg);
+            }
+        }
+        Log.i(sb.toString());
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i(activityName + ".onCreate");
+        logTrace("onCreate");
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
             super.onCreate(savedInstanceState);
         });
@@ -32,36 +44,38 @@ public class HalloActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.i(getActivityName() + ".onStart");
+        logTrace("onStart");
         super.onStart();
     }
 
     @Override
     protected void onResume() {
-        Log.i(getActivityName() + ".onResume");
+        logTrace("onResume");
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        Log.i(getActivityName() + ".onPause");
+        logTrace("onPause");
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.i(getActivityName() + ".onStop");
+        logTrace("onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.i(getActivityName() + ".onDestroy");
+        logTrace("onDestroy");
         super.onDestroy();
     }
 
     @Override
     public void startActivity(Intent intent) {
+        ComponentName component = intent.getComponent();
+        logTrace("startActivity", component == null ? "" : component.getShortClassName());
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
             super.startActivity(intent);
         });
@@ -69,6 +83,8 @@ public class HalloActivity extends AppCompatActivity {
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
+        ComponentName component = intent.getComponent();
+        logTrace("startActivityForResult", Integer.toString(requestCode), component == null ? "" : component.getShortClassName());
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
             super.startActivityForResult(intent, requestCode);
         });

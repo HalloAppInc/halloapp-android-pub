@@ -168,6 +168,7 @@ public class ChatActivity extends HalloActivity {
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
         chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+        Log.d("ChatActivity chatId " + chatId);
 
         final ImageView sendButton = findViewById(R.id.send);
 
