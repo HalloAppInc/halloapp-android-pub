@@ -43,6 +43,10 @@ public class HalloApp extends Application {
                     .penaltyDeath()
                     .penaltyDeathOnNetwork()
                     .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
         }
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
