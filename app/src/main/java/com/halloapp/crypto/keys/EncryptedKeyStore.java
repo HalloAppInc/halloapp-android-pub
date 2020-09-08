@@ -91,7 +91,7 @@ public class EncryptedKeyStore {
         this.appContext = appContext;
     }
 
-    private SharedPreferences getPreferences() {
+    private synchronized SharedPreferences getPreferences() {
         if (sharedPreferences == null) {
             sharedPreferences = getSharedPreferences(appContext.get());
         }
