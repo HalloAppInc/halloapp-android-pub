@@ -35,7 +35,8 @@ public class ProfileFragment extends PostsFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
-    private Me me = Me.getInstance();
+    private final Me me = Me.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private ImageView avatarView;
 
@@ -121,7 +122,7 @@ public class ProfileFragment extends PostsFragment {
         }
 
         avatarView = headerView.findViewById(R.id.avatar);
-        AvatarLoader.getInstance().load(avatarView, profileUserId, false);
+        avatarLoader.load(avatarView, profileUserId, false);
 
         if (profileUserId.isMe()) {
             final View.OnClickListener editProfileClickListener = v -> {
@@ -145,7 +146,7 @@ public class ProfileFragment extends PostsFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AvatarLoader.getInstance().load(avatarView, profileUserId, false);
+        avatarLoader.load(avatarView, profileUserId, false);
         adapter.notifyDataSetChanged();
     }
 
