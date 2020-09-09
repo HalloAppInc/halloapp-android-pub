@@ -1,7 +1,6 @@
 package com.halloapp.ui.chat;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -244,7 +243,7 @@ public class ChatViewModel extends AndroidViewModel {
         return blockResult;
     }
 
-    public void sendSystemMessage(@Message.Usage int usage, ChatId chatId, Context context) {
+    public void sendSystemMessage(@Message.Usage int usage, ChatId chatId) {
         final Message message = new Message(0,
                 chatId,
                 UserId.ME,
@@ -257,7 +256,7 @@ public class ChatViewModel extends AndroidViewModel {
                 null,
                 -1,
                 0);
-        message.addToStorage(ContentDb.getInstance(context));
+        message.addToStorage(contentDb);
     }
 
     @Override

@@ -517,7 +517,7 @@ public class ChatActivity extends HalloActivity {
             if (success) {
                 SnackbarHelper.showInfo(this, getString(R.string.blocking_user_successful, chatName));
                 item.setTitle(getString(R.string.unblock));
-                viewModel.sendSystemMessage(Message.USAGE_BLOCK, chatId, this);
+                viewModel.sendSystemMessage(Message.USAGE_BLOCK, chatId);
             } else {
                 SnackbarHelper.showWarning(this, getString(R.string.blocking_user_failed_check_internet, chatName));
             }
@@ -535,7 +535,7 @@ public class ChatActivity extends HalloActivity {
             if (success) {
                 SnackbarHelper.showInfo(this, getString(R.string.unblocking_user_successful, chatName));
                 item.setTitle(getString(R.string.block));
-                viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, chatId, this);
+                viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, chatId);
             } else {
                 SnackbarHelper.showWarning(this, getString(R.string.unblocking_user_failed_check_internet, chatName));
             }
