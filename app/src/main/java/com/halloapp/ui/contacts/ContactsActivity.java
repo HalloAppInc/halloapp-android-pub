@@ -149,7 +149,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.refresh_contacts: {
                 ContactsSync.getInstance(this).startContactsSync(true);

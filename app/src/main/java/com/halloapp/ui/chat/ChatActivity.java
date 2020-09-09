@@ -481,7 +481,6 @@ public class ChatActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.clear_chat: {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);

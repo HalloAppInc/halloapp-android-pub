@@ -36,6 +36,8 @@ public class LogProvider extends ContentProvider {
     private static final int MATCH_LOGCAT = 1;
     private static final int MATCH_CRASHLYTICS = 2;
 
+    private AppContext appContext = AppContext.getInstance();
+
     private static byte[] logcatData;
 
     private UriMatcher uriMatcher;
@@ -134,7 +136,7 @@ public class LogProvider extends ContentProvider {
                     throw new FileNotFoundException("IOException getting logs");
                 }
             case MATCH_CRASHLYTICS:
-                return ParcelFileDescriptor.open(new File(getContext().getExternalCacheDir(), LOG_ZIP_NAME), ParcelFileDescriptor.MODE_READ_ONLY);
+                return ParcelFileDescriptor.open(new File(appContext.get().getExternalCacheDir(), LOG_ZIP_NAME), ParcelFileDescriptor.MODE_READ_ONLY);
             default:
                 Log.w("Unsupported uri: '" + uri + "'.");
                 throw new FileNotFoundException("Unsupported uri: " + uri.toString());
@@ -144,6 +146,7 @@ public class LogProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (uriMatcher.match(uri)) {
             case MATCH_CRASHLYTICS: {
                 return "application/zip";
@@ -157,6 +160,7 @@ public class LogProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (uriMatcher.match(uri)) {
             case MATCH_CRASHLYTICS: {
                 if (getContext() == null) {

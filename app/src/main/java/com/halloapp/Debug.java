@@ -174,6 +174,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
+            //noinspection SwitchStatementWithTooFewBranches
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
                     ContentDb.getInstance(activity).setCommentsSeen(userId, postId, false);
@@ -193,6 +194,7 @@ public class Debug {
             menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
             menu.setOnMenuItemClickListener(item -> {
                 SnackbarHelper.showInfo(activity, item.getTitle());
+                //noinspection SwitchStatementWithTooFewBranches
                 switch (item.getTitle().toString()) {
                     case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
                         try {

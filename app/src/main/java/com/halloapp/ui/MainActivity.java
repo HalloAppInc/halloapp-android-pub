@@ -318,7 +318,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
-        //noinspection SwitchStatementWithTooFewBranches
         switch (request) {
             case REQUEST_CODE_CAPTURE_IMAGE: {
                 if (result == Activity.RESULT_OK) {

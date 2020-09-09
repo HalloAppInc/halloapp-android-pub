@@ -1,5 +1,6 @@
 package com.halloapp.privacy;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -113,7 +114,7 @@ public class BlockListManager {
         });
     }
 
-    @WorkerThread
+    @AnyThread
     public Observable<Boolean> blockContact(@NonNull UserId userId) {
         MutableObservable<Boolean> resultObservable = new MutableObservable<>();
         privacyListApi.blockUsers(Collections.singleton(userId)).onResponse(result -> {
@@ -128,7 +129,7 @@ public class BlockListManager {
         return resultObservable;
     }
 
-    @WorkerThread
+    @AnyThread
     public Observable<Boolean> unblockContact(@NonNull UserId userId) {
         MutableObservable<Boolean> resultObservable = new MutableObservable<>();
         privacyListApi.unblockUsers(Collections.singleton(userId)).onResponse(result -> {

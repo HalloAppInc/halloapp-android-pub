@@ -1,5 +1,6 @@
 package com.halloapp.crypto.keys;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -241,7 +242,7 @@ public class EncryptedKeyStore {
 
     public byte[] removeSkippedMessageKey(UserId peerUserId, int ephemeralKeyId, int chainIndex) {
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>());
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
 
         String prefKey = getMessageKeyPrefKey(peerUserId, ephemeralKeyId, chainIndex);
         if (!messageKeyPrefKeys.remove(prefKey)) {
@@ -264,7 +265,7 @@ public class EncryptedKeyStore {
     public void storeSkippedMessageKey(UserId peerUserId, MessageKey messageKey) {
         Log.i("Storing skipped message key " + messageKey + " for user " + peerUserId);
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>());
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
 
         String keyPrefKey = getMessageKeyPrefKey(peerUserId, messageKey.getEphemeralKeyId(), messageKey.getCurrentChainIndex());
         messageKeyPrefKeys.add(keyPrefKey);
@@ -277,7 +278,7 @@ public class EncryptedKeyStore {
 
     public void clearSkippedMessageKeys(UserId peerUserId) {
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>());
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
 
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.remove(messageKeySetPrefKey);
@@ -602,6 +603,7 @@ public class EncryptedKeyStore {
     }
 
 
+    @SuppressLint("ApplySharedPref")
     public void clearAll() {
         getPreferences().edit().clear().commit();
     }

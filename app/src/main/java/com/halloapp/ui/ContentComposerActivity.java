@@ -76,6 +76,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
@@ -546,6 +547,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.share: {
                 final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
@@ -623,7 +625,7 @@ public class ContentComposerActivity extends HalloActivity {
             final View loadingView = findViewById(R.id.loading);
             loadingView.setVisibility(View.VISIBLE);
             mediaPager.setVisibility(View.GONE);
-            expectedMediaCount = (uris != null) ? uris.size() : 0;
+            expectedMediaCount = uris.size();
             viewModel.loadUris(uris, editStates);
         }
     }
@@ -689,7 +691,7 @@ public class ContentComposerActivity extends HalloActivity {
         if (mediaPairList == null || mediaPairList.size() <= 1) {
             mediaIndexView.setVisibility(View.GONE);
         } else {
-            mediaIndexView.setText(String.format("%d / %d", currentItem + 1, mediaPairList.size()));
+            mediaIndexView.setText(String.format(Locale.getDefault(), "%d / %d", currentItem + 1, mediaPairList.size()));
             mediaIndexView.setVisibility(View.VISIBLE);
         }
         if (mediaPairList != null && !mediaPairList.isEmpty()) {
@@ -717,7 +719,7 @@ public class ContentComposerActivity extends HalloActivity {
     private void initializeOnScrollChangeListener() {
         final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
         onScrollChangeListener = () -> {
-            final ActionBar actionBar = getSupportActionBar();
+            final ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
             final float elevation = mediaVerticalScrollView.getScrollY() > 0 ? scrolledElevation : 0;
             if (actionBar.getElevation() != elevation) {
                 actionBar.setElevation(elevation);
@@ -782,9 +784,8 @@ public class ContentComposerActivity extends HalloActivity {
             contentPlayerView.setPlayer(player);
             player.prepare(mediaSource, false, false);
             Log.d(String.format("ContentComposerActivity: initializeVideoPlayer %s", mediaPair.uri));
-
         }
-        if (player != null && shouldAutoPlay != player.getPlayWhenReady()) {
+        if (shouldAutoPlay != player.getPlayWhenReady()) {
             player.setPlayWhenReady(shouldAutoPlay);
         }
     }

@@ -158,7 +158,7 @@ public class Notifications {
                 } else {
                     text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
                 }
-                showFeedNotification(context.getString(R.string.app_name), text);
+                showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text));
             }
         });
     }

@@ -28,6 +28,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.Downloader;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
 
@@ -164,13 +165,13 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                         return null;
                     }
 
-                    if (!avatarFile.exists() || !avatarId.equals(contactAvatarInfo.avatarId)) {
+                    if (!avatarFile.exists() || !Preconditions.checkNotNull(avatarId).equals(contactAvatarInfo.avatarId)) {
                         String url = "https://avatar-cdn.halloapp.net/" + avatarId;
                         Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
                         contactAvatarInfo.avatarId = contact.avatarId;
                     }
                 } else {
-                    Chat chat = ContentDb.getInstance(context).getChat(chatId);
+                    Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(context).getChat(chatId));
                     avatarId = chat.groupAvatarId;
 
                     if (TextUtils.isEmpty(avatarId)) {
