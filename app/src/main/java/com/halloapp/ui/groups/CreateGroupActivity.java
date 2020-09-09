@@ -38,7 +38,6 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
-import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.chat.ChatActivity;
@@ -327,7 +326,7 @@ public class CreateGroupActivity extends HalloActivity {
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
-            avatarLoader = AvatarLoader.getInstance(itemView.getContext());
+            avatarLoader = AvatarLoader.getInstance();
         }
 
         void bindTo(@NonNull Contact contact) {

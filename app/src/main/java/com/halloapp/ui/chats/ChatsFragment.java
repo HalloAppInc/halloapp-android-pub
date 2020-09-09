@@ -47,7 +47,7 @@ import java.util.Locale;
 public class ChatsFragment extends HalloFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(getContext());
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final ContactLoader contactLoader = new ContactLoader(getContext());
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
     private ChatsViewModel viewModel;

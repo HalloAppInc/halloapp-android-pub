@@ -228,7 +228,7 @@ public class CommentsActivity extends HalloActivity {
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader(this);
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

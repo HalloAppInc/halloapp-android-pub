@@ -38,7 +38,6 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.SnackbarHelper;
@@ -74,7 +73,7 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite_friends);
 
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         deviceAvatarLoader = new DeviceAvatarLoader(this);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);

@@ -60,7 +60,7 @@ public class SettingsActivity extends HalloActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
 
         settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
 

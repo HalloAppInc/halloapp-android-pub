@@ -1,15 +1,11 @@
 package com.halloapp.ui;
 
-import android.graphics.Outline;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -24,15 +20,11 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.DialogFragmentUtils;
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.TimeFormatter;
-import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
@@ -86,7 +78,7 @@ public class PostSeenByActivity extends HalloActivity {
         viewModel.friendsList.getLiveData().observe(this, adapter::setFriends);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
 
         viewModel.postDeleted.observe(this, deleted -> {
             if (Boolean.TRUE.equals(deleted)) {

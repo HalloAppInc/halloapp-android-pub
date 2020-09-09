@@ -99,7 +99,7 @@ public class Notifications {
     private Notifications(Context context) {
         this.context = context.getApplicationContext();
         this.preferences = Preferences.getInstance();
-        this.avatarLoader = AvatarLoader.getInstance(context);
+        this.avatarLoader = AvatarLoader.getInstance();
         this.contactsDb = ContactsDb.getInstance();
         this.foregroundChat = ForegroundChat.getInstance();
     }

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import androidx.collection.LruCache;
 
+import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -32,7 +33,6 @@ import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -50,18 +50,18 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private Bitmap defaultUserAvatar;
     private Bitmap defaultGroupAvatar;
 
-    public static AvatarLoader getInstance(@NonNull Context context) {
+    public static AvatarLoader getInstance() {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(context, Connection.getInstance(), ContactsDb.getInstance());
+                    instance = new AvatarLoader(AppContext.getInstance().get(), Connection.getInstance(), ContactsDb.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Context context, Connection connection, ContactsDb contactsDb) {
+    private AvatarLoader(@NonNull Context context, @NonNull Connection connection, @NonNull ContactsDb contactsDb) {
         this.context = context.getApplicationContext();
         this.connection = connection;
         this.contactsDb = contactsDb;

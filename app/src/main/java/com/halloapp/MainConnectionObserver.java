@@ -70,7 +70,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
-                            AvatarLoader.getInstance(context),
+                            AvatarLoader.getInstance(),
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),
                             PresenceLoader.getInstance(),

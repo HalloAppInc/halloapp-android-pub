@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,7 +43,6 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
@@ -68,7 +66,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     public static final String RESULT_SELECTED_CONTACT = "selected_contact";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final ServerProps serverProps = ServerProps.getInstance();
 
     private ContactsViewModel viewModel;

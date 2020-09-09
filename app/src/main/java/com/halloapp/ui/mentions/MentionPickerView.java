@@ -32,7 +32,7 @@ import java.util.List;
 
 public class MentionPickerView extends FrameLayout {
 
-    protected final AvatarLoader avatarLoader = AvatarLoader.getInstance(getContext());
+    protected final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private OnMentionListener listener;
 
