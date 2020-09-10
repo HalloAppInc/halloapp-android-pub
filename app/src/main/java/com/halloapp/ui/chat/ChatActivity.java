@@ -106,6 +106,7 @@ public class ChatActivity extends HalloActivity {
     private TextView titleView;
     private TextView subtitleView;
     private TextView replyNameView;
+    private ImageView avatarView;
 
     private ChatId chatId;
 
@@ -150,7 +151,7 @@ public class ChatActivity extends HalloActivity {
 
         titleView = findViewById(R.id.title);
         subtitleView = findViewById(R.id.subtitle);
-        ImageView avatarView = findViewById(R.id.avatar);
+        avatarView = findViewById(R.id.avatar);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -399,6 +400,12 @@ public class ChatActivity extends HalloActivity {
         } else {
             replyContainer.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        avatarLoader.load(avatarView, chatId);
     }
 
     @Override

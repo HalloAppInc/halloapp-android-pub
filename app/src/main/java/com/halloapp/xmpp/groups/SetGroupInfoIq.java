@@ -32,7 +32,7 @@ public class SetGroupInfoIq extends IQ {
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         xml.xmlnsAttribute(NAMESPACE);
-        xml.attribute(ATTRIBUTE_ACTION, "set");
+        xml.attribute(ATTRIBUTE_ACTION, "set_name");
         xml.attribute(ATTRIBUTE_GID, groupId.rawId());
         if (name != null) {
             xml.attribute(ATTRIBUTE_NAME, name);

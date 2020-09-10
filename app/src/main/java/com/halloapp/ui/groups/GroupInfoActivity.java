@@ -66,6 +66,7 @@ public class GroupInfoActivity extends HalloActivity {
 
     private TextView groupNameView;
     private RecyclerView membersView;
+    private ImageView avatarView;
 
     private boolean userIsAdmin = false;
 
@@ -99,7 +100,8 @@ public class GroupInfoActivity extends HalloActivity {
 
         final View headerView = getLayoutInflater().inflate(R.layout.group_info_header, membersView, false);
         adapter.addHeader(headerView);
-        avatarLoader.load(headerView.findViewById(R.id.avatar), groupId);
+        avatarView = headerView.findViewById(R.id.avatar);
+        avatarLoader.load(avatarView, groupId, false);
 
         final View addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
         adapter.addHeader(addMembersView);
@@ -107,7 +109,14 @@ public class GroupInfoActivity extends HalloActivity {
             startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.add_members), REQUEST_CODE_ADD_MEMBERS);
         });
 
+        View.OnClickListener openEditGroupListener = v -> {
+            if (userIsAdmin) {
+                startActivity(EditGroupActivity.openEditGroup(this, groupId));
+            }
+        };
         groupNameView = headerView.findViewById(R.id.name);
+        groupNameView.setOnClickListener(openEditGroupListener);
+        avatarView.setOnClickListener(openEditGroupListener);
 
         viewModel.getChat().observe(this, chat -> {
             groupNameView.setText(chat.name);
@@ -122,6 +131,12 @@ public class GroupInfoActivity extends HalloActivity {
             }
             adapter.submitMembers(members);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        avatarLoader.load(avatarView, groupId, false);
     }
 
     @Override

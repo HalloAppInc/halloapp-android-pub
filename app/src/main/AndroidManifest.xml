@@ -83,6 +83,9 @@
         <activity
             android:name=".ui.groups.GroupInfoActivity" />
 
+        <activity
+            android:name=".ui.groups.EditGroupActivity" />
+
         <activity android:name=".ui.invites.InviteFriendsActivity"
             android:label="@string/invite_friends_title"
             android:windowSoftInputMode="adjustResize"/>
