@@ -29,7 +29,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.R;
-import com.halloapp.media.MediaUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,13 +40,6 @@ public class MediaPickerPreview implements Runnable {
     private View content, anchor;
     private GalleryItem item;
     private Uri uri;
-    private final ViewOutlineProvider vop = new ViewOutlineProvider() {
-        @Override
-        public void getOutline(View view, Outline outline) {
-            int radius = context.getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_radius);
-            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
-        }
-    };
 
     public MediaPickerPreview(Context context) {
         this.context = context.getApplicationContext();
@@ -78,9 +70,13 @@ public class MediaPickerPreview implements Runnable {
         ImageView iv = content.findViewById(R.id.image);
         TextureView tv = content.findViewById(R.id.video);
 
-        iv.setOutlineProvider(vop);
-        iv.setClipToOutline(true);
-        tv.setOutlineProvider(vop);
+        tv.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                int radius = context.getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_radius);
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+            }
+        });
         tv.setClipToOutline(true);
 
         if (item.type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
@@ -96,7 +92,13 @@ public class MediaPickerPreview implements Runnable {
 
     private void displayImage(ImageView iv) {
         try {
-            iv.setImageBitmap(rotate(decodeSampledBitmap()));
+            int orientation = getImageOrientation();
+            Bitmap bitmap = decodeSampledBitmap();
+            iv.setImageBitmap(bitmap);
+            iv.setOutlineProvider(getImageViewOutlineProvider(bitmap, orientation));
+            iv.setClipToOutline(true);
+            iv.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> iv.setImageMatrix(getImageMatrix(view, bitmap, orientation)));
+
             display();
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,9 +116,13 @@ public class MediaPickerPreview implements Runnable {
         }
 
         player.setOnVideoSizeChangedListener((mediaPlayer, width, height) -> {
-            Size limit = getSizeLimits();
-            final float scale = Math.min((float)limit.getWidth() / (float) width, (float)limit.getHeight() / (float) height);
-            tv.setLayoutParams(new ConstraintLayout.LayoutParams(Math.round(scale * (float) width), Math.round(scale * (float) height)));
+            final float scale = Math.min((float)tv.getWidth() / (float) width, (float)tv.getHeight() / (float) height);
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)tv.getLayoutParams();
+            params.width = Math.round(scale * (float)width);
+            params.height = Math.round(scale * (float)height);
+
+            tv.setLayoutParams(params);
         });
 
         tv.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -153,8 +159,8 @@ public class MediaPickerPreview implements Runnable {
 
     private void display() {
         anchor.post(() -> {
-            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int width = LinearLayout.LayoutParams.MATCH_PARENT;
+            int height = LinearLayout.LayoutParams.MATCH_PARENT;
             popup = new PopupWindow(content, width, height, true);
             popup.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null));
             popup.setAnimationStyle(R.style.MediaPreviewAnimation);
@@ -186,18 +192,45 @@ public class MediaPickerPreview implements Runnable {
         return inSampleSize;
     }
 
+    private ViewOutlineProvider getImageViewOutlineProvider(Bitmap bitmap, int orientation) {
+        final int radius = context.getResources().getDimensionPixelSize(R.dimen.media_gallery_preview_radius);
+
+        return new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                float w = view.getWidth();
+                float h = view.getHeight();
+                float bw = bitmap.getWidth();
+                float bh = bitmap.getHeight();
+
+                if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                    bw = bitmap.getHeight();
+                    bh = bitmap.getWidth();
+                }
+
+                float scale = Math.min(w / bw, h / bh);
+
+                final int l = (int) Math.floor((w - bw * scale) / 2);
+                final int t = (int) Math.floor((h - bh * scale) / 2);
+                final int r = Math.round((w + bw * scale) / 2);
+                final int b = Math.round((h + bh * scale) / 2);
+
+                outline.setRoundRect(l, t, r, b, radius);
+            }
+        };
+    }
+
     private InputStream getInputStream() throws FileNotFoundException {
         return context.getContentResolver().openInputStream(uri);
     }
 
-    private Matrix getOrientation() throws IOException {
+    private int getImageOrientation() throws IOException {
         InputStream inputStream = getInputStream();
-
         ExifInterface exif = new ExifInterface(inputStream);
-        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1); // to get orientation (e.g. ORIENTATION_ROTATE_90, ORIENTATION_ROTATE_180) –
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
         inputStream.close();
 
-        return MediaUtils.fromOrientation(orientation);
+        return orientation;
     }
 
     private Size getSizeLimits() {
@@ -228,20 +261,45 @@ public class MediaPickerPreview implements Runnable {
         options.inJustDecodeBounds = false;
 
         InputStream inputStream = getInputStream();
-        Bitmap bitmap = BitmapFactory.decodeStream(getInputStream(), null, options);
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, options);
         inputStream.close();
 
         return bitmap;
     }
 
-    private Bitmap rotate(@NonNull Bitmap original) throws IOException {
-        final Bitmap result = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), getOrientation(), true);
+    private Matrix getImageMatrix(View view, Bitmap bitmap, int orientation) {
+        float w = view.getWidth();
+        float h = view.getHeight();
+        float bw = bitmap.getWidth();
+        float bh = bitmap.getHeight();
 
-        if (result != original) {
-            original.recycle();
+        float scale = Math.min(w / bw, h / bh);
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            scale = Math.min(w / bh, h / bw);
         }
 
-        return result;
+        float x = (w - bw * scale) / 2;
+        float y = (h - bh * scale) / 2;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        matrix.postTranslate(x, y);
+
+        float angle = 0;
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                angle = 90;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                angle = 180;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                angle = 270;
+                break;
+        }
+        matrix.postRotate(angle, w / 2, h / 2);
+
+        return matrix;
     }
 
     private void attachSurface(MediaPlayer player, SurfaceTexture surfaceTexture) {
