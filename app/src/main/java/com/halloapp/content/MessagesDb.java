@@ -127,18 +127,20 @@ class MessagesDb {
             }
             final int updatedRowsCount;
             try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
-                    ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + ", " +
-                    (unseen ? (ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1, ") : "") +
-                    (unseen ? (ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END, ") : "") +
-                    ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
-                    "WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
+                    ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
+                    (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
+                    (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
+                    (message.type == Message.TYPE_CHAT ? (", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " ") : "") +
+                    " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
                 updatedRowsCount = statement.executeUpdateDelete();
             }
             if (updatedRowsCount == 0) {
                 final ContentValues chatValues = new ContentValues();
                 chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
                 chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
-                chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+                if (message.type == Message.TYPE_CHAT) {
+                    chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+                }
                 if (unseen) {
                     chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
                     chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
