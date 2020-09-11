@@ -175,7 +175,7 @@ public class PublishedEntry {
 
     private static @Nullable PublishedEntry.Builder readEntry(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, ELEMENT);
-        PublishedEntry.Builder entryBuilder = null;
+        PublishedEntry.Builder entryBuilder = new PublishedEntry.Builder();
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
