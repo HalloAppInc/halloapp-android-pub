@@ -37,25 +37,29 @@ public class ProfileViewModel extends AndroidViewModel {
 
     private final ComputableLiveData<Contact> contactLiveData;
 
+    private final UserId userId;
+
     private Parcelable savedScrollState;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
         public void onPostAdded(@NonNull Post post) {
-            if (post.isOutgoing()) {
+            if (post.senderUserId.equals(userId)) {
                 invalidatePosts();
             }
         }
 
         @Override
         public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
-            invalidatePosts();
+            if (senderUserId.equals(userId)) {
+                invalidatePosts();
+            }
         }
 
         @Override
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
-            if (senderUserId.isMe()) {
+            if (senderUserId.equals(userId)) {
                 invalidatePosts();
             }
         }
@@ -67,12 +71,16 @@ public class ProfileViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
-            invalidatePosts();
+            if (comment.postSenderUserId.equals(userId)) {
+                invalidatePosts();
+            }
         }
 
         @Override
         public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-            invalidatePosts();
+            if (postSenderUserId.equals(userId)) {
+                invalidatePosts();
+            }
         }
 
         @Override
@@ -81,7 +89,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
-            if (postSenderUserId.isMe()) {
+            if (postSenderUserId.equals(userId)) {
                 invalidatePosts();
             }
         }
@@ -104,6 +112,8 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public ProfileViewModel(@NonNull Application application, @NonNull UserId userId) {
         super(application);
+
+        this.userId = userId;
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
