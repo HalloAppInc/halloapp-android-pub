@@ -114,16 +114,13 @@ public class GroupInfoActivity extends HalloActivity {
         });
 
         viewModel.getMembers().observe(this, members -> {
-            List<MemberInfo> otherMembers = new ArrayList<>();
             for (MemberInfo member : members) {
-                if (!member.userId.rawId().equals(me.getUser())) {
-                    otherMembers.add(member);
-                } else {
+                if (member.userId.rawId().equals(me.getUser())) {
                     userIsAdmin = MemberElement.Type.ADMIN.equals(member.type);
                     addMembersView.setVisibility(userIsAdmin ? View.VISIBLE : View.GONE);
                 }
             }
-            adapter.submitMembers(otherMembers);
+            adapter.submitMembers(members);
         });
     }
 
@@ -269,6 +266,14 @@ public class GroupInfoActivity extends HalloActivity {
         }
 
         void bindTo(@NonNull MemberInfo member) {
+            if (member.userId.rawId().equals(me.getUser())) {
+                contactLoader.cancel(name);
+                name.setText(R.string.me);
+                avatarLoader.load(avatar, UserId.ME, false);
+                itemView.setOnClickListener(null);
+                return;
+            }
+
             contactLoader.load(name, member.userId, false);
             avatarLoader.load(avatar, member.userId, false);
             itemView.setOnClickListener(v -> {
