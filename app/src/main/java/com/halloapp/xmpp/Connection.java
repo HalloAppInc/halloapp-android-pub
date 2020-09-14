@@ -1296,6 +1296,9 @@ public class Connection {
                     final GroupChangeMessage groupChangeMessage = packet.getExtension(GroupChangeMessage.ELEMENT, GroupChangeMessage.NAMESPACE);
                     if (groupChangeMessage != null) {
                         Log.i("connection: got group change message " + msg);
+                        if (groupChangeMessage.sender != null && groupChangeMessage.senderName != null) {
+                            connectionObservers.notifyUserNamesReceived(Collections.singletonMap(groupChangeMessage.sender, groupChangeMessage.senderName));
+                        }
                         String ackId = packet.getStanzaId();
                         switch (groupChangeMessage.action) {
                             case GroupChangeMessage.Action.CREATE: {
