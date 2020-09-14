@@ -246,6 +246,15 @@
     <string name="empty_block_list">No blocked contacts</string>
     <string name="block_notification">You blocked this contact. Tap to unblock</string>
     <string name="unblock_notification">You unblocked this contact</string>
+    <string name="system_message_group_created">This group was created by %s</string>
+    <string name="system_message_members_added">%s added %s</string>
+    <string name="system_message_members_removed">%s removed %s</string>
+    <string name="system_message_member_left">%s left</string>
+    <string name="system_message_members_promoted">%s promoted %s to admin</string>
+    <string name="system_message_members_demoted">%s demoted %s from admin</string>
+    <string name="system_message_member_auto_promoted">%s was auto-promoted to admin</string>
+    <string name="system_message_group_name_changed">%s changed the group name to %s</string>
+    <string name="system_message_group_avatar_changed">%s changed the group avatar</string>
     <string name="save">Save</string>
     <string name="contact_picker_feed_except_title">Hide posts from…</string>
     <string name="contact_picker_feed_only_title">Share posts with…</string>

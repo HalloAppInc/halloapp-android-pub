@@ -9,7 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -39,48 +42,75 @@ public class ViewDataLoader<V extends View, R, K> {
 
     @MainThread
     public void load(@NonNull V view, @NonNull Callable<R> loader, @NonNull Displayer<V, R> displayer, @NonNull K key, @Nullable LruCache<K, R> cache) {
+        Displayer<V, List<R>> displayerAdapter = new Displayer<V, List<R>>() {
+            @Override
+            public void showResult(@NonNull V view, @Nullable List<R> result) {
+                displayer.showResult(view, result == null ? null : result.size() == 0 ? null : result.get(0));
+            }
 
+            @Override
+            public void showLoading(@NonNull V view) {
+                displayer.showLoading(view);
+            }
+        };
+        loadMultiple(view, Collections.singletonList(loader), displayerAdapter, Collections.singletonList(key), cache);
+    }
+
+    @MainThread
+    public void loadMultiple(@NonNull V view, @NonNull List<Callable<R>> loaders, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable LruCache<K, R> cache) {
         final Future existing = queue.get(view);
         if (existing != null) {
             existing.cancel(true);
         }
-        view.setTag(key);
+        view.setTag(getTag(keys));
 
         if (cache != null) {
-            final R result = cache.get(key);
-            if (result != null) {
-                displayer.showResult(view, result);
+            List<R> results = new ArrayList<>();
+            for (K key : keys) {
+                final R result = cache.get(key);
+                if (result == null) {
+                    break;
+                }
+                results.add(result);
+            }
+            if (results.size() == keys.size()) {
+                displayer.showResult(view, results);
                 return;
             }
         }
         displayer.showLoading(view);
 
         final Future future = executor.submit(() -> {
-            final Semaphore keyGuard;
-            try {
-                keyGuard = getKeyGuard(key);
-                keyGuard.acquire();
-            } catch (InterruptedException e) {
-                executeShowResult(view, displayer, key, null);
-                return;
-            }
-            R result = null;
-            if (cache != null) {
-                result = cache.get(key);
-            }
-            if (result == null) {
+            List<R> results = new ArrayList<>();
+            for (int i=0; i<keys.size(); i++) {
+                K key = keys.get(i);
+                final Semaphore keyGuard;
                 try {
-                    result = loader.call();
-                } catch (Exception e) {
-                    Log.e("ViewDataLoader: exception key=" + key, e);
+                    keyGuard = getKeyGuard(key);
+                    keyGuard.acquire();
+                } catch (InterruptedException e) {
+                    executeShowResult(view, displayer, keys, null);
+                    return;
                 }
+                R result = null;
+                if (cache != null) {
+                    result = cache.get(key);
+                }
+                if (result == null) {
+                    try {
+                        result = loaders.get(i).call();
+                    } catch (Exception e) {
+                        Log.e("ViewDataLoader: exception key=" + key, e);
+                    }
+                }
+                results.add(result);
+                if (result != null && cache != null) {
+                    cache.put(key, result);
+                }
+                keyGuard.release();
             }
-            if (result != null && cache != null) {
-                cache.put(key, result);
-            }
-            keyGuard.release();
 
-            executeShowResult(view, displayer, key, result);
+            executeShowResult(view, displayer, keys, results);
         });
         queue.put(view, future);
     }
@@ -111,13 +141,18 @@ public class ViewDataLoader<V extends View, R, K> {
         executor.shutdownNow();
     }
 
-    private void executeShowResult(@NonNull V view, @NonNull Displayer<V, R> displayer, @NonNull K key, @Nullable R result) {
-        if (key.equals(view.getTag())) {
+    private void executeShowResult(@NonNull V view, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable List<R> result) {
+
+        if (getTag(keys).equals(view.getTag())) {
             mainHandler.post(() -> {
-                if (key.equals(view.getTag())) {
+                if (getTag(keys).equals(view.getTag())) {
                     displayer.showResult(view, result);
                 }
             });
         }
+    }
+
+    private Object getTag(List<K> keys) {
+        return keys.size() == 1 ? keys.get(0) : keys;
     }
 }

@@ -11,26 +11,36 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.util.ListFormatter;
+import com.halloapp.util.Log;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.xmpp.Connection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -50,6 +60,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private @Nullable ReplyContainer replyContainer;
     private final MessageViewHolderParent parent;
 
+    private final Me me;
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
@@ -83,6 +94,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         this.parent = parent;
 
+        this.me = Me.getInstance();
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance(itemView.getContext());
         this.contentDb = ContentDb.getInstance(itemView.getContext());
@@ -235,10 +247,72 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (systemMessage != null) {
-            if (message.usage == Message.USAGE_BLOCK) {
-                systemMessage.setText(R.string.block_notification);
-            } else if (message.usage == Message.USAGE_UNBLOCK) {
-                systemMessage.setText(R.string.unblock_notification);
+            switch (message.usage) {
+                case Message.USAGE_BLOCK: {
+                    contactLoader.cancel(systemMessage);
+                    systemMessage.setText(R.string.block_notification);
+                    break;
+                }
+                case Message.USAGE_UNBLOCK: {
+                    contactLoader.cancel(systemMessage);
+                    systemMessage.setText(R.string.unblock_notification);
+                    break;
+                }
+                case Message.USAGE_CREATE_GROUP: {
+                    systemMessageSingleUser(message, R.string.system_message_group_created);
+                    break;
+                }
+                case Message.USAGE_ADD_MEMBERS: {
+                    systemMessageAffectedList(message, R.string.system_message_members_added);
+                    break;
+                }
+                case Message.USAGE_REMOVE_MEMBER: {
+                    systemMessageAffectedList(message, R.string.system_message_members_removed);
+                    break;
+                }
+                case Message.USAGE_MEMBER_LEFT: {
+                    systemMessageSingleUser(message, R.string.system_message_member_left);
+                    break;
+                }
+                case Message.USAGE_PROMOTE: {
+                    systemMessageAffectedList(message, R.string.system_message_members_promoted);
+                    break;
+                }
+                case Message.USAGE_DEMOTE: {
+                    systemMessageAffectedList(message, R.string.system_message_members_demoted);
+                    break;
+                }
+                case Message.USAGE_AUTO_PROMOTE: {
+                    systemMessageSingleUser(message, R.string.system_message_member_auto_promoted);
+                    break;
+                }
+                case Message.USAGE_NAME_CHANGE: {
+                    if (message.senderUserId.rawId().equals(me.user.getValue())) {
+                        systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed, itemView.getContext().getString(R.string.me), message.text));
+                    } else {
+                        contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                            @Override
+                            public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                                if (result != null) {
+                                    systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed, result.getDisplayName(), message.text));
+                                }
+                            }
+
+                            @Override
+                            public void showLoading(@NonNull TextView view) {
+                                systemMessage.setText("");
+                            }
+                        });
+                    }
+                    break;
+                }
+                case Message.USAGE_AVATAR_CHANGE: {
+                    systemMessageSingleUser(message, R.string.system_message_group_avatar_changed);
+                    break;
+                }
+                default: {
+                    Log.w("Unrecognized system message usage " + message.usage);
+                }
             }
         }
 
@@ -316,5 +390,55 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 contentView.setMinimumWidth(0);
             }
         }
+    }
+
+    private void systemMessageSingleUser(@NonNull Message message, @StringRes int string) {
+        if (message.senderUserId.rawId().equals(me.user.getValue())) {
+            systemMessage.setText(itemView.getContext().getString(string, itemView.getContext().getString(R.string.me)));
+        } else {
+            contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                    if (result != null) {
+                        systemMessage.setText(itemView.getContext().getString(string, result.getDisplayName()));
+                    }
+                }
+
+                @Override
+                public void showLoading(@NonNull TextView view) {
+                    systemMessage.setText("");
+                }
+            });
+        }
+    }
+
+    private void systemMessageAffectedList(@NonNull Message message, @StringRes int string) {
+        String commaSeparatedMembers = message.text;
+        String[] parts = commaSeparatedMembers.split(",");
+        List<UserId> userIds = new ArrayList<>();
+        userIds.add(message.senderUserId);
+        for (String part : parts) {
+            userIds.add(new UserId(part));
+        }
+        contactLoader.loadMultiple(systemMessage, userIds, new ViewDataLoader.Displayer<TextView, List<Contact>>() {
+            @Override
+            public void showResult(@NonNull TextView view, @Nullable List<Contact> result) {
+                if (result != null) {
+                    Contact sender = result.get(0);
+                    String senderName = sender.userId.rawId().equals(me.user.getValue()) ? itemView.getContext().getString(R.string.me) : sender.getDisplayName();
+                    List<String> names = new ArrayList<>();
+                    for (int i=1; i<result.size(); i++) {
+                        names.add(result.get(i).getDisplayName());
+                    }
+                    String formatted = ListFormatter.format(itemView.getContext(), names);
+                    systemMessage.setText(itemView.getContext().getString(string, senderName, formatted));
+                }
+            }
+
+            @Override
+            public void showLoading(@NonNull TextView view) {
+                systemMessage.setText("");
+            }
+        });
     }
 }

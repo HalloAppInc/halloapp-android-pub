@@ -26,6 +26,8 @@ import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -293,7 +295,9 @@ public class MainConnectionObserver extends Connection.Observer {
         }
         members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
 
-        contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, members), () -> connection.sendAck(ackId));
+        contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, members), () -> {
+            addSystemMessage(groupId, sender, Message.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
+        });
     }
 
     @Override
@@ -309,7 +313,19 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
-        contentDb.addRemoveGroupMembers(groupId, added, removed, () -> connection.sendAck(ackId));
+        contentDb.addRemoveGroupMembers(groupId, added, removed, () -> {
+            if (!added.isEmpty()) {
+                String idList = toUserIdList(added);
+                addSystemMessage(groupId, sender, Message.USAGE_ADD_MEMBERS, idList, null);
+            }
+
+            if (!removed.isEmpty()) {
+                String idList = toUserIdList(removed);
+                addSystemMessage(groupId, sender, Message.USAGE_REMOVE_MEMBER, idList, null);
+            }
+
+            connection.sendAck(ackId);
+        });
     }
 
     @Override
@@ -322,7 +338,13 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
-        contentDb.addRemoveGroupMembers(groupId, new ArrayList<>(), left, () -> connection.sendAck(ackId));
+        contentDb.addRemoveGroupMembers(groupId, new ArrayList<>(), left, () -> {
+            for (MemberInfo member : left) {
+                addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, null);
+            }
+
+            connection.sendAck(ackId);
+        });
     }
 
     @Override
@@ -338,17 +360,33 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
-        contentDb.promoteDemoteGroupAdmins(groupId, promoted, demoted, () -> connection.sendAck(ackId));
+        contentDb.promoteDemoteGroupAdmins(groupId, promoted, demoted, () -> {
+            if (!promoted.isEmpty()) {
+                String idList = toUserIdList(promoted);
+                addSystemMessage(groupId, sender, Message.USAGE_PROMOTE, idList, null);
+            }
+
+            if (!demoted.isEmpty()) {
+                String idList = toUserIdList(demoted);
+                addSystemMessage(groupId, sender, Message.USAGE_DEMOTE, idList, null);
+            }
+
+            connection.sendAck(ackId);
+        });
     }
 
     @Override
     public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        contentDb.setGroupName(groupId, name, () -> connection.sendAck(ackId));
+        contentDb.setGroupName(groupId, name, () -> {
+            addSystemMessage(groupId, sender, Message.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
+        });
     }
 
     @Override
     public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        contentDb.setGroupAvatar(groupId, avatarId, () -> connection.sendAck(ackId));
+        contentDb.setGroupAvatar(groupId, avatarId, () -> {
+            addSystemMessage(groupId, sender, Message.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
+        });
     }
 
     @Override
@@ -361,6 +399,38 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
-        contentDb.promoteDemoteGroupAdmins(groupId, promoted, new ArrayList<>(), () -> connection.sendAck(ackId));
+        contentDb.promoteDemoteGroupAdmins(groupId, promoted, new ArrayList<>(), () -> {
+            for (MemberInfo member : promoted) {
+                addSystemMessage(groupId, member.userId, Message.USAGE_AUTO_PROMOTE, null, null);
+            }
+
+            connection.sendAck(ackId);
+        });
+    }
+
+    private String toUserIdList(@NonNull List<MemberInfo> members) {
+        Preconditions.checkArgument(!members.isEmpty());
+        StringBuilder sb = new StringBuilder(members.get(0).userId.rawId());
+        for (int i=1; i<members.size(); i++) {
+            sb.append(",").append(members.get(i).userId.rawId());
+        }
+        return sb.toString();
+    }
+
+    private void addSystemMessage(@NonNull GroupId groupId, @NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
+        Message promoteAdminsMessage = new Message(0,
+                groupId,
+                sender,
+                RandomId.create(),
+                System.currentTimeMillis(),
+                Message.TYPE_SYSTEM,
+                usage,
+                Message.STATE_OUTGOING_DELIVERED,
+                text,
+                null,
+                -1,
+                0);
+
+        contentDb.addMessage(promoteAdminsMessage, false, completionRunnable);
     }
 }

@@ -16,7 +16,6 @@
         android:gravity="center_horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:singleLine="true"
         android:textAppearance="?textAppearanceBody1"
         tools:text="You blocked this contact" />
 

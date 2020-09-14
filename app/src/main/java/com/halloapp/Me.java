@@ -32,6 +32,7 @@ public class Me {
     private SharedPreferences preferences;
 
     public final MutableLiveData<String> name = new MutableLiveData<>();
+    public final MutableLiveData<String> user = new MutableLiveData<>();
 
     public static Me getInstance() {
         if (instance == null) {
@@ -88,7 +89,11 @@ public class Me {
 
     @WorkerThread
     public synchronized String getUser() {
-        return getPreferences().getString(PREF_KEY_USER_ID, null);
+        final String user = getPreferences().getString(PREF_KEY_USER_ID, null);
+        if (!Objects.equals(this.user.getValue(), user)) {
+            this.user.postValue(user);
+        }
+        return user;
     }
 
     @WorkerThread
@@ -125,6 +130,8 @@ public class Me {
         Log.i("Me.saveRegistration: " + user + " " + password);
         if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.saveRegistration: failed");
+        } else {
+            this.user.postValue(user);
         }
     }
 
@@ -132,6 +139,8 @@ public class Me {
     public synchronized void resetRegistration() {
         if (!getPreferences().edit().remove(PREF_KEY_USER_ID).remove(PREF_KEY_PASSWORD).remove(PREF_KEY_PHONE).commit()) {
             Log.e("Me.resetRegistration: failed");
+        } else {
+            this.user.postValue(null);
         }
     }
 }

@@ -38,11 +38,20 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK})
+    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE})
     public @interface Usage {}
     public static final int USAGE_CHAT = 0;
     public static final int USAGE_BLOCK = 1;
     public static final int USAGE_UNBLOCK = 2;
+    public static final int USAGE_CREATE_GROUP = 3;
+    public static final int USAGE_ADD_MEMBERS = 4;
+    public static final int USAGE_REMOVE_MEMBER = 5;
+    public static final int USAGE_MEMBER_LEFT = 6;
+    public static final int USAGE_PROMOTE = 7;
+    public static final int USAGE_DEMOTE = 8;
+    public static final int USAGE_AUTO_PROMOTE = 9;
+    public static final int USAGE_NAME_CHANGE = 10;
+    public static final int USAGE_AVATAR_CHANGE = 11;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
