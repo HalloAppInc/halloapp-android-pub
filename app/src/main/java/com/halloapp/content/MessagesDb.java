@@ -182,9 +182,9 @@ class MessagesDb {
             }
 
             if (exists) {
-                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_REPLACE);
-            } else {
                 db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
+            } else {
+                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_REPLACE);
             }
 
             if (groupInfo.members != null) {
