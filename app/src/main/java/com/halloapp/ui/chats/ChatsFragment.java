@@ -30,6 +30,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
@@ -44,7 +45,7 @@ import com.halloapp.xmpp.PresenceLoader;
 import java.util.List;
 import java.util.Locale;
 
-public class ChatsFragment extends HalloFragment {
+public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
@@ -57,6 +58,11 @@ public class ChatsFragment extends HalloFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void resetScrollPosition() {
+        layoutManager.scrollToPosition(0);
     }
 
     @Override

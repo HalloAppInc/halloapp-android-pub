@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -110,8 +111,14 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // prevent navigating to the same fragment
-        navView.setOnNavigationItemReselectedListener(item -> { });
+        navView.setOnNavigationItemReselectedListener(item -> {
+            Fragment navigationFragment = Preconditions.checkNotNull(getSupportFragmentManager().getPrimaryNavigationFragment());
+            for (Fragment tabFragment : navigationFragment.getChildFragmentManager().getFragments()) {
+                if (tabFragment instanceof MainNavFragment) {
+                    ((MainNavFragment) tabFragment).resetScrollPosition();
+                }
+            }
+        });
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
         networkIndicatorView.bind(this);

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
+import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Log;
@@ -29,7 +30,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
-public class HomeFragment extends PostsFragment {
+public class HomeFragment extends PostsFragment implements MainNavFragment {
 
     private HomeViewModel viewModel;
     private BadgedDrawable notificationDrawable;
@@ -54,6 +55,11 @@ public class HomeFragment extends PostsFragment {
     }
 
     private LinearLayoutManager layoutManager;
+
+    @Override
+    public void resetScrollPosition() {
+        layoutManager.scrollToPosition(0);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

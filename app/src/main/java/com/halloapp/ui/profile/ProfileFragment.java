@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
+import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -31,7 +32,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
-public class ProfileFragment extends PostsFragment {
+public class ProfileFragment extends PostsFragment implements MainNavFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
@@ -52,6 +53,11 @@ public class ProfileFragment extends PostsFragment {
         args.putString(ARG_SELECTED_PROFILE_USER_ID, userId.rawId());
         profileFragment.setArguments(args);
         return profileFragment;
+    }
+
+    @Override
+    public void resetScrollPosition() {
+        layoutManager.scrollToPosition(0);
     }
 
     @Override
