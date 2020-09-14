@@ -13,9 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.util.TimeFormatter;

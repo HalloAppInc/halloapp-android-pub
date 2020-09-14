@@ -707,7 +707,8 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_FILE + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
-                    "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                    "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                    "s.seen_by_count " +
                 "FROM " + PostsTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -721,6 +722,12 @@ class PostsDb {
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                "LEFT JOIN (" +
+                    "SELECT " +
+                    SeenTable.COLUMN_POST_ID + "," +
+                    "count(*) AS seen_by_count " +
+                    "FROM " + SeenTable.TABLE_NAME + " GROUP BY " + SeenTable.COLUMN_POST_ID + ") " +
+                    "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
                 "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=?";
 
         try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
@@ -738,6 +745,7 @@ class PostsDb {
                             cursor.getString(6));
                     post.setAudience(cursor.getString(7), getPostAudienceInfo(post.id));
                     mentionsDb.fillMentions(post);
+                    post.seenByCount = cursor.getInt(15);
                 }
                 if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
