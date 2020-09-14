@@ -1337,6 +1337,7 @@ public class Connection {
                     final GroupChatMessage groupChatMessage = packet.getExtension(GroupChatMessage.ELEMENT, GroupChatMessage.NAMESPACE);
                     if (groupChatMessage != null) {
                         Log.i("connection: got group chat message " + msg);
+                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(groupChatMessage.sender, groupChatMessage.senderName));
                         Message parsedMessage = groupChatMessage.getMessage(packet.getFrom(), packet.getStanzaId());
                         processMentions(parsedMessage.mentions);
                         connectionObservers.notifyIncomingMessageReceived(parsedMessage);
