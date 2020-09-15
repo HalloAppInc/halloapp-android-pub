@@ -28,6 +28,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
 import java.io.ByteArrayOutputStream;
@@ -44,7 +45,6 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
     private WorkManager workManager;
 
-    private ComputableLiveData<String> phoneNumberLiveData;
     private MutableLiveData<Bitmap> tempAvatarLiveData;
     private MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
     private MediatorLiveData<Boolean> canSave;
@@ -63,13 +63,6 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
         workManager = WorkManager.getInstance(application);
 
-        phoneNumberLiveData = new ComputableLiveData<String>() {
-            @Override
-            protected String compute() {
-                return me.getPhone();
-            }
-        };
-        phoneNumberLiveData.invalidate();
         tempAvatarLiveData = new MutableLiveData<>();
         bgWorkers.execute(() -> me.getName());
         canSave = new MediatorLiveData<>();
@@ -111,10 +104,6 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         workManager.enqueueUniqueWork(UpdateProfileWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
-    public LiveData<String> getPhone() {
-        return phoneNumberLiveData.getLiveData();
-    }
-
     public LiveData<String> getName() {
         return me.name;
     }
@@ -127,9 +116,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         this.avatarWidth = width;
         this.avatarHeight = height;
         this.avatarFile = filepath;
-        bgWorkers.execute(() -> {
-            tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath));
-        });
+        bgWorkers.execute(() -> tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
     }
 
     public LiveData<Boolean> canSave() {
@@ -168,7 +155,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
             try {
                 if (!TextUtils.isEmpty(name)) {
-                    final Boolean result = Connection.getInstance().sendName(name).get();
+                    final Boolean result = Connection.getInstance().sendName(Preconditions.checkNotNull(name)).get();
                     if (!Boolean.TRUE.equals(result)) {
                         return Result.failure();
                     }
