@@ -112,10 +112,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnNavigationItemReselectedListener(item -> {
-            Fragment navigationFragment = Preconditions.checkNotNull(getSupportFragmentManager().getPrimaryNavigationFragment());
-            for (Fragment tabFragment : navigationFragment.getChildFragmentManager().getFragments()) {
-                if (tabFragment instanceof MainNavFragment) {
-                    ((MainNavFragment) tabFragment).resetScrollPosition();
+            Fragment navigationFragment = getSupportFragmentManager().getPrimaryNavigationFragment();
+            if (navigationFragment != null) {
+                for (Fragment tabFragment : navigationFragment.getChildFragmentManager().getFragments()) {
+                    if (tabFragment instanceof MainNavFragment) {
+                        ((MainNavFragment) tabFragment).resetScrollPosition();
+                    }
                 }
             }
         });
