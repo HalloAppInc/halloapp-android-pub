@@ -8,7 +8,6 @@ import android.util.Base64;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -26,10 +25,8 @@ import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.groups.GroupInfo;
-import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.ui.chat.ChatViewModel;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
@@ -83,9 +80,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
 
     public void setAvatar(@NonNull String filepath) {
         this.avatarFile = filepath;
-        bgWorkers.execute(() -> {
-            avatarLiveData.postValue(BitmapFactory.decodeFile(filepath));
-        });
+        bgWorkers.execute(() -> avatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
     }
 
     public LiveData<List<Contact>> getContacts() {

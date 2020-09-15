@@ -127,9 +127,7 @@ public class CreateGroupActivity extends HalloActivity {
             }
         });
 
-        viewModel.getAvatar().observe(this, bitmap -> {
-            avatarView.setImageBitmap(bitmap);
-        });
+        viewModel.getAvatar().observe(this, bitmap -> avatarView.setImageBitmap(bitmap));
 
         changeAvatarView.setOnClickListener(v -> {
             Log.d("CreateGroupActivity request change avatar");
@@ -200,6 +198,7 @@ public class CreateGroupActivity extends HalloActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case CODE_CHANGE_AVATAR: {
                 if (resultCode == RESULT_OK) {
@@ -227,6 +226,7 @@ public class CreateGroupActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.create: {
                 final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());

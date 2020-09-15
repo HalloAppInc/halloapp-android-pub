@@ -118,9 +118,7 @@ public class GroupInfoActivity extends HalloActivity {
         groupNameView.setOnClickListener(openEditGroupListener);
         avatarView.setOnClickListener(openEditGroupListener);
 
-        viewModel.getChat().observe(this, chat -> {
-            groupNameView.setText(chat.name);
-        });
+        viewModel.getChat().observe(this, chat -> groupNameView.setText(chat.name));
 
         viewModel.getMembers().observe(this, members -> {
             for (MemberInfo member : members) {
@@ -166,6 +164,7 @@ public class GroupInfoActivity extends HalloActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_ADD_MEMBERS:
                 if (resultCode == RESULT_OK && data != null) {

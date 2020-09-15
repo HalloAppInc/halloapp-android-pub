@@ -57,6 +57,7 @@ public class EditGroupActivity extends HalloActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case CODE_CHANGE_AVATAR: {
                 if (resultCode == RESULT_OK) {
@@ -96,9 +97,7 @@ public class EditGroupActivity extends HalloActivity {
         final View saveButton = findViewById(R.id.save);
         final View progressBar = findViewById(R.id.progress);
 
-        viewModel.getName().observe(this, text -> {
-            nameView.setText(text);
-        });
+        viewModel.getName().observe(this, text -> nameView.setText(text));
 
         viewModel.canSave().observe(this, saveButton::setEnabled);
         viewModel.getTempAvatar().observe(this, avatar -> {
@@ -192,9 +191,7 @@ public class EditGroupActivity extends HalloActivity {
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.alert_discard_changes_message);
-            builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
-                finish();
-            });
+            builder.setPositiveButton(R.string.action_discard, (dialog, which) -> finish());
             builder.setNegativeButton(R.string.cancel, null);
             builder.create().show();
         }

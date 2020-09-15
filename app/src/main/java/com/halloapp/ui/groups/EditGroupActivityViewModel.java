@@ -23,6 +23,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.FileStore;
+import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -69,7 +70,8 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         groupNameLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return ContentDb.getInstance(application).getChat(groupId).name;
+                Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(application).getChat(groupId));
+                return chat.name;
             }
         };
 
@@ -130,9 +132,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         this.avatarWidth = width;
         this.avatarHeight = height;
         this.avatarFile = filepath;
-        bgWorkers.execute(() -> {
-            tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath));
-        });
+        bgWorkers.execute(() -> tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
     }
 
     public LiveData<Boolean> canSave() {
@@ -174,7 +174,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
             try {
                 if (!TextUtils.isEmpty(name)) {
                     try {
-                        final String result = GroupsApi.getInstance().setGroupName(groupId, name).await();
+                        final String result = GroupsApi.getInstance().setGroupName(groupId, Preconditions.checkNotNull(name)).await();
                         if (result == null) {
                             return Result.failure();
                         }
