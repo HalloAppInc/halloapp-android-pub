@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.util.Log;
-
 public class BooleanProp implements Prop {
 
     private final String key;

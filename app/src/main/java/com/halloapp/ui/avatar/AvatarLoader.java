@@ -94,9 +94,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 if (userId.isMe()) {
                     view.setOnClickListener(null);
                 } else {
-                    view.setOnClickListener(v -> {
-                        v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));
-                    });
+                    view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
                 }
             } else {
                 // TODO: (clarkc) Add support for group profiles later on

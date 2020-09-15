@@ -42,8 +42,6 @@ public class GroupsSync {
     private final ContentDb contentDb;
     private final ServerProps serverProps;
 
-    private UUID lastSyncRequestId;
-
     public static GroupsSync getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized(GroupsSync.class) {
@@ -62,25 +60,12 @@ public class GroupsSync {
         this.serverProps = ServerProps.getInstance();
     }
 
-    public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
-        return WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(GroupsSync.GROUPS_SYNC_WORK_ID);
-    }
-
-    public UUID getLastSyncRequestId() {
-        return lastSyncRequestId;
-    }
-
-    public void cancelGroupsSync() {
-        WorkManager.getInstance(context).cancelUniqueWork(GROUPS_SYNC_WORK_ID);
-    }
-
     public void startGroupsSync() {
         Log.d("GroupsSync.startGroupsSync");
         if (!serverProps.getGroupsEnabled()) {
             return;
         }
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(GroupSyncWorker.class).build();
-        lastSyncRequestId = workRequest.getId();
         WorkManager.getInstance(context).enqueueUniqueWork(GROUPS_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
