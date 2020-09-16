@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.os.Build;
 import android.text.format.DateUtils;
 
 public class Constants {
@@ -32,5 +33,5 @@ public class Constants {
     public static final boolean REREQUEST_SEND_ENABLED = true;
     public static final boolean INVITES_ENABLED = true;
     public static final int MAX_REREQUESTS_PER_MESSAGE = 1;
-    public static final boolean NEW_FEED_API = true; // TODO: (clarkc) remove this and also old code paths
+    public static final boolean NEW_FEED_API = BuildConfig.DEBUG; // TODO: (clarkc) turning
 }
