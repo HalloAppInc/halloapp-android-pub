@@ -9,7 +9,9 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Me;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class Log {
@@ -137,5 +139,31 @@ public class Log {
             FirebaseCrashlytics.getInstance().setUserId(user);
             return null;
         }
+    }
+
+    // Cannot hard-code; proguard minification will change the names
+    private static final List<String> classesToIgnore = Arrays.asList(
+            Preconditions.class.getName()
+    );
+
+    public static void wrapCrashlytics() {
+        Thread.UncaughtExceptionHandler original = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            // Remove irrelevant stack elements so that Crashlytics grouping works
+            StackTraceElement[] stackTrace = throwable.getStackTrace();
+            int i = 0;
+            while (stackTrace.length > i && classesToIgnore.contains(stackTrace[i].getClassName())) {
+                i++;
+            }
+            stackTrace = Arrays.copyOfRange(stackTrace, i, stackTrace.length);
+            throwable.setStackTrace(stackTrace);
+
+            if (original != null) {
+                original.uncaughtException(thread, throwable);
+            } else {
+                e("No other handler to delegate", throwable);
+                sendErrorReport("Crashlytics handler missing");
+            }
+        });
     }
 }

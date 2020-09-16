@@ -83,6 +83,8 @@ public class HalloApp extends Application {
         Log.i("HalloApp init");
         appContext.setApplicationContext(this);
 
+        Log.wrapCrashlytics();
+
         // Init server props synchronously so we have the correct values loaded
         ServerProps.getInstance().init();
     }

@@ -24,6 +24,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
@@ -50,6 +51,7 @@ public class Debug {
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
     private static final String DEBUG_MENU_FETCH_SERVER_PROPS = "Fetch server props";
+    private static final String DEBUG_MENU_CRASH_PRECONDITION = "Preconditions crash null";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -69,6 +71,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_FETCH_SERVER_PROPS);
+        menu.getMenu().add(DEBUG_MENU_CRASH_PRECONDITION);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -161,6 +164,10 @@ public class Debug {
                 }
                 case DEBUG_MENU_FETCH_SERVER_PROPS: {
                     Connection.getInstance().requestServerProps();
+                    break;
+                }
+                case DEBUG_MENU_CRASH_PRECONDITION: {
+                    Preconditions.checkNotNull(null);
                     break;
                 }
             }
