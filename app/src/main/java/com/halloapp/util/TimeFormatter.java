@@ -77,7 +77,7 @@ public class TimeFormatter {
         } else if (TimeUtils.isSameWeek(currentTime, timestamp)) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);
         } else {
-            return formatTimeDiff(context, timeDiff, false);
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_NUMERIC_DATE);
         }
     }
 
