@@ -25,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 26;
+    private static final int DATABASE_VERSION = 27;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -253,6 +253,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   "DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
                 + "END;");
 
+        db.execSQL("DROP TRIGGER IF EXISTS " + ChatsTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + ChatsTable.TRIGGER_DELETE + " AFTER DELETE ON " + ChatsTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   "DELETE FROM " + GroupMembersTable.TABLE_NAME + " WHERE " + GroupMembersTable.COLUMN_GROUP_ID + "=OLD." + ChatsTable.COLUMN_CHAT_ID + "; "
+                + "END;");
+
         observers.notifyDbCreated();
     }
 
@@ -310,6 +316,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 25: {
                 upgradeFromVersion25(db);
+            }
+            case 26: {
+                upgradeFromVersion26(db);
             }
             break;
             default: {
@@ -522,6 +531,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
+                + "END;");
+    }
+
+    private void upgradeFromVersion26(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TRIGGER IF EXISTS " + ChatsTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + ChatsTable.TRIGGER_DELETE + " AFTER DELETE ON " + ChatsTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   "DELETE FROM " + GroupMembersTable.TABLE_NAME + " WHERE " + GroupMembersTable.COLUMN_GROUP_ID + "=OLD." + ChatsTable.COLUMN_CHAT_ID + "; "
                 + "END;");
     }
 

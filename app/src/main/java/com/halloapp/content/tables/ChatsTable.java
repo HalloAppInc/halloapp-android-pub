@@ -8,6 +8,8 @@ public class ChatsTable implements BaseColumns {
 
     public static final String TABLE_NAME = "chats";
 
+    public static final String TRIGGER_DELETE = "on_chat_delete";
+
     public static final String COLUMN_CHAT_ID = "chat_id";
     public static final String COLUMN_TIMESTAMP = "timestamp";
     public static final String COLUMN_NEW_MESSAGE_COUNT = "new_message_count";
