@@ -63,7 +63,7 @@
             style="?attr/buttonBarButtonStyle"
             android:maxLines="1"
             android:text="@string/cancel"
-            android:textColor="@color/color_primary"
+            android:textColor="@color/color_secondary"
             android:visibility="gone"
             android:layout_height="wrap_content" />
         <Button android:id="@+id/button2"
@@ -71,7 +71,7 @@
             android:layout_gravity="end"
             style="?attr/buttonBarButtonStyle"
             android:maxLines="1"
-            android:textColor="@color/color_primary"
+            android:textColor="@color/color_secondary"
             android:text="@string/ok"
             android:layout_height="wrap_content" />
     </LinearLayout>

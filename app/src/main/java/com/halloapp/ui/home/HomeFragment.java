@@ -3,12 +3,14 @@ package com.halloapp.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,12 +20,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
+import com.halloapp.ui.FeedNuxBottomSheetDialogFragment;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -38,6 +43,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
     private PostThumbnailLoader postThumbnailLoader;
 
     private boolean scrollUpOnDataLoaded;
+
+    private FrameLayout nuxActivityCenterContainer;
+    private FrameLayout nuxFeedContainer;
+    private View nuxFeed;
+    private View nuxActivityCenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,11 +81,13 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         final View emptyView = root.findViewById(android.R.id.empty);
         final View newPostsView = root.findViewById(R.id.new_posts);
 
+        nuxActivityCenterContainer = root.findViewById(R.id.activity_center_nux_container);
+        nuxFeedContainer = root.findViewById(R.id.post_nux_container);
+
         newPostsView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
             viewModel.reloadPostsAt(Long.MAX_VALUE);
         });
-
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
@@ -109,6 +121,49 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
                 updateSocialHistory(commentHistoryData);
+            }
+        });
+        viewModel.showFeedNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
+            if (shouldShow == null) {
+                return;
+            }
+            if (shouldShow) {
+                if (nuxFeed == null) {
+                    nuxFeed = LayoutInflater.from(requireContext()).inflate(R.layout.nux_home_feed, nuxFeedContainer, true);
+                    View learnMore = nuxFeed.findViewById(R.id.learn_more);
+                    View close = nuxFeed.findViewById(R.id.nux_close);
+                    close.setOnClickListener(v -> {
+                        viewModel.closeFeedNux();
+                    });
+                    learnMore.setOnClickListener(v -> {
+                        DialogFragmentUtils.showDialogFragmentOnce(new FeedNuxBottomSheetDialogFragment(), getChildFragmentManager());
+                    });
+                }
+                nuxFeedContainer.setVisibility(View.VISIBLE);
+                postsView.post(() -> {
+                    postsView.setPadding(0, nuxFeedContainer.getHeight(), 0, 0);
+                    postsView.scrollToPosition(0);
+                });
+            } else {
+                TransitionManager.beginDelayedTransition((ViewGroup) root);
+                nuxFeedContainer.setVisibility(View.GONE);
+                if (nuxFeed == null) {
+                    return;
+                }
+                postsView.setPadding(0, 0, 0, 0);
+            }
+        });
+        viewModel.showActivityCenterNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
+            if (shouldShow == null) {
+                return;
+            }
+            if (shouldShow) {
+                if (nuxActivityCenter == null) {
+                    nuxActivityCenter = LayoutInflater.from(requireContext()).inflate(R.layout.nux_activity_center, nuxActivityCenterContainer, true);
+                }
+            } else {
+                nuxActivityCenterContainer.removeAllViews();
+                nuxActivityCenter = null;
             }
         });
 
@@ -177,6 +232,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
             case R.id.notifications: {
                 if (!socialHistoryPopup.isShowing() && getView() != null) {
                     socialHistoryPopup.show(getView().getHeight() * 9 / 10);
+                    if (nuxActivityCenter != null) {
+                        viewModel.closeActivityCenterNux();
+                    }
                 }
                 return true;
             }
@@ -187,7 +245,13 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
     }
 
     private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
-        notificationDrawable.setBadge((socialHistory == null || socialHistory.unseenCount == 0) ? "" : "•");
+        boolean hideBadge = socialHistory == null || socialHistory.unseenCount == 0;
+        notificationDrawable.setBadge(hideBadge ? "" : "•");
+        if (!hideBadge && nuxActivityCenter != null) {
+            nuxActivityCenterContainer.setVisibility(View.VISIBLE);
+        } else {
+            nuxActivityCenterContainer.setVisibility(View.GONE);
+        }
         socialHistoryPopup.setSocialHistory(socialHistory);
     }
 }

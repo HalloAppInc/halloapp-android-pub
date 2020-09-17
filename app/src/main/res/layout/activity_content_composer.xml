@@ -45,6 +45,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -204,8 +209,99 @@
                         </LinearLayout>
 
                     </androidx.cardview.widget.CardView>
+                    <LinearLayout
+                        android:id="@+id/audience_nux"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:orientation="vertical"
+                        android:layout_gravity="bottom"
+                        android:paddingEnd="8dp"
+                        android:elevation="6dp"
+                        android:clipToPadding="false"
+                        android:visibility="invisible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="10dp"
+                            android:visibility="visible"
+                            android:background="@drawable/nux_bubble_background"
+                            android:elevation="4dp">
+
+                            <TextView
+                                android:id="@+id/nux_text"
+                                android:paddingLeft="12dp"
+                                android:paddingRight="12dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:textSize="18sp"
+                                android:lineSpacingMultiplier="1.2"
+                                android:textColor="@android:color/white"
+                                android:text="@string/post_audience_nux_text"/>
+
+                            <TextView android:id="@+id/ok_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_gravity="end"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/nux_text"
+                                android:background="?selectableItemBackground"
+                                android:maxLines="1"
+                                android:textColor="@color/nux_button_text"
+                                android:text="@string/ok"
+                                android:fontFamily="sans-serif-medium"
+                                android:textSize="18sp"
+                                android:padding="8dp"
+                                android:layout_height="wrap_content" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_nux_bubble_tail_up"
+                            android:elevation="4dp"
+                            android:scaleY="-1"
+                            android:tint="@color/color_secondary"
+                            android:layout_gravity="center_horizontal"/>
+
+                    </LinearLayout>
+
 
                 </FrameLayout>
+
+                    <LinearLayout
+                        android:id="@+id/post_audience_help"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_secondary"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="13sp"
+                            android:text="@string/post_audience_nux_title"/>
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginRight="6dp"
+                            android:layout_gravity="center_vertical"
+                            android:tint="@color/color_secondary"
+                            android:src="@drawable/ic_help"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </com.halloapp.widget.ContentComposerScrollView>
 

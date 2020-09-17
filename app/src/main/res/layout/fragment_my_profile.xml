@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chats"
+        android:id="@+id/posts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,22 +24,24 @@
         >
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_people"
+            android:src="@drawable/ic_posts"
             app:tint="@color/button_disabled_background"/>
 
         <TextView
+            android:id="@+id/empty_profile_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
+            android:layout_marginTop="12dp"
             android:textSize="16sp"
             android:gravity="center"
             android:textColor="@color/hint_text"
             android:layout_gravity="center"
-            android:text="@string/chats_page_empty"/>
+            android:text="@string/posts_empty"/>
 
     </LinearLayout>
 
@@ -49,7 +51,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_max="400dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

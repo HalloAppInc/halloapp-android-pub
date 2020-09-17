@@ -1,11 +1,14 @@
 package com.halloapp.ui.chats;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,6 +38,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
+import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
@@ -54,6 +58,9 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private ChatsViewModel viewModel;
 
     private LinearLayoutManager layoutManager;
+
+    private FrameLayout nuxContainer;
+    private View nux;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +85,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         final RecyclerView chatsView = root.findViewById(R.id.chats);
         final View emptyView = root.findViewById(android.R.id.empty);
 
+        nuxContainer = root.findViewById(R.id.nux_container);
+
         Preconditions.checkNotNull((SimpleItemAnimator)chatsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -96,6 +105,27 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
+        viewModel.showMessagesNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
+            if (shouldShow == null) {
+                return;
+            }
+            if (shouldShow) {
+                if (nux == null) {
+                    TransitionManager.beginDelayedTransition(nuxContainer);
+                    nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_bubble_up_arrow, nuxContainer, true);
+                    TextView text = nux.findViewById(R.id.nux_text);
+                    View btn = nux.findViewById(R.id.ok_btn);
+                    text.setText(R.string.messages_nux_text);
+                    btn.setOnClickListener(v -> {
+                        viewModel.closeNux();
+                    });
+                }
+            } else {
+                TransitionManager.beginDelayedTransition(nuxContainer);
+                nuxContainer.setVisibility(View.GONE);
+            }
+        });
+
         return root;
     }
 
@@ -107,7 +137,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onDestroyView();
     }
 
-    private class ChatsAdapter extends AdapterWithLifecycle<ChatsAdapter.ViewHolder> {
+    private static final int TYPE_CHAT = 0;
+    private static final int TYPE_INVITE = 1;
+
+    private class ChatsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
         private List<Chat> chats;
 
@@ -117,24 +150,63 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         }
 
         @Override
-        public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
+        public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == TYPE_CHAT) {
+                return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
+            } else {
+                return new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
+            }
+
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bindTo(chats.get(position));
+        public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
+            if (holder instanceof ViewHolder) {
+                ((ViewHolder) holder).bindTo(chats.get(position));
+            }
         }
 
         @Override
         public int getItemCount() {
-            return chats == null ? 0 : chats.size();
+            return chats == null ? 1 : chats.size() + 1;
         }
 
         @Override
-        public void onViewRecycled(@NonNull ViewHolder holder) {
-            holder.detatchObservers();
+        public int getItemViewType(int position) {
+            if (chats == null || chats.size() == position) {
+                return TYPE_INVITE;
+            }
+            return TYPE_CHAT;
+        }
+
+        @Override
+        public void onViewRecycled(@NonNull ViewHolderWithLifecycle holder) {
+            if (holder instanceof ViewHolder) {
+                ((ViewHolder) holder).detatchObservers();
+            }
             super.onViewRecycled(holder);
+        }
+
+        class InviteViewHolder extends ViewHolderWithLifecycle {
+
+            final ImageView avatarView;
+            final TextView nameView;
+            final View infoContainer;
+
+            InviteViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                avatarView = itemView.findViewById(R.id.avatar);
+                nameView = itemView.findViewById(R.id.name);
+                infoContainer = itemView.findViewById(R.id.info_container);
+
+                avatarView.setImageResource(R.drawable.invite_avatar_icon);
+                nameView.setText(R.string.invite_friends_title);
+                infoContainer.setVisibility(View.GONE);
+                nameView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_secondary));
+
+                itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), InviteFriendsActivity.class)));
+            }
         }
 
         class ViewHolder extends ViewHolderWithLifecycle {

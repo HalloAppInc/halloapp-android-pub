@@ -40,4 +40,5 @@
     <color name="primary_text">@color/white_87</color>
     <color name="secondary_text">@color/white_54</color>
     <color name="secondary_text_button">@color/white_70</color>
+    <color name="hint_text">@color/white_30</color>
 </resources>

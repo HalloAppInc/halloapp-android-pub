@@ -144,6 +144,7 @@
         android:ellipsize="end"
         android:background="@drawable/new_messages_indicator_background"
         android:textColor="?android:textColorPrimaryInverse"
+        android:visibility="gone"
         tools:text="3"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

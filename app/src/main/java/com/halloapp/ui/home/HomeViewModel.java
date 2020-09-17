@@ -15,6 +15,7 @@ import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
@@ -22,6 +23,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
@@ -38,8 +40,13 @@ public class HomeViewModel extends AndroidViewModel {
     final LiveData<PagedList<Post>> postList;
     final ComputableLiveData<SocialHistory> socialHistory;
 
+    final ComputableLiveData<Boolean> showFeedNux;
+    final ComputableLiveData<Boolean> showActivityCenterNux;
+
+    private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
+    private final Preferences preferences;
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
     private final PostsDataSource.Factory dataSourceFactory;
@@ -127,9 +134,11 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NonNull Application application) {
         super(application);
 
+        bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance();
+        preferences = Preferences.getInstance();
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
@@ -140,6 +149,32 @@ public class HomeViewModel extends AndroidViewModel {
                 return loadSocialHistory();
             }
         };
+        showActivityCenterNux = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return !preferences.getShowedActivityCenterNux();
+            }
+        };
+        showFeedNux = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return !preferences.getShowedFeedNux();
+            }
+        };
+    }
+
+    public void closeFeedNux() {
+        bgWorkers.execute(() -> {
+            preferences.markFeedNuxShown();
+            showFeedNux.invalidate();
+        });
+    }
+
+    public void closeActivityCenterNux() {
+        bgWorkers.execute(() -> {
+            preferences.markActivityCenterNuxShown();
+            showActivityCenterNux.invalidate();
+        });
     }
 
     @Override

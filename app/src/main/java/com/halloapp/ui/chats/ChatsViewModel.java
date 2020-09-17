@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.ChatId;
@@ -19,6 +20,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessageLoader;
 import com.halloapp.content.SeenReceipt;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 
@@ -32,11 +34,14 @@ import java.util.Map;
 
 public class ChatsViewModel extends AndroidViewModel {
 
+    final ComputableLiveData<Boolean> showMessagesNux;
     final ComputableLiveData<List<Chat>> chatsList;
     final MutableLiveData<Boolean> messageUpdated;
 
+    private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
+    private final Preferences preferences;
     final MessageLoader messageLoader;
 
     private Parcelable savedScrollState;
@@ -100,14 +105,22 @@ public class ChatsViewModel extends AndroidViewModel {
     public ChatsViewModel(@NonNull Application application) {
         super(application);
 
+        bgWorkers = BgWorkers.getInstance();
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
 
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
-        messageLoader = new MessageLoader(Preconditions.checkNotNull(application));
+        preferences = Preferences.getInstance();
 
+        messageLoader = new MessageLoader(Preconditions.checkNotNull(application));
+        showMessagesNux = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return !preferences.getShowedMessagesNux();
+            }
+        };
         chatsList = new ComputableLiveData<List<Chat>>() {
             @Override
             protected List<Chat> compute() {
@@ -141,6 +154,13 @@ public class ChatsViewModel extends AndroidViewModel {
         };
 
         messageUpdated = new MutableLiveData<>(false);
+    }
+
+    public void closeNux() {
+        bgWorkers.execute(() -> {
+            preferences.markMessagesNuxShown();
+            showMessagesNux.invalidate();
+        });
     }
 
     public void saveScrollState(@Nullable Parcelable savedScrollState) {

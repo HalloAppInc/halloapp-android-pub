@@ -89,4 +89,7 @@
     <color name="primary_text">@color/black_87</color>
     <color name="secondary_text">@color/black_54</color>
     <color name="secondary_text_button">@color/black_70</color>
+    <color name="hint_text">@color/black_30</color>
+
+    <color name="nux_button_text">@color/white_70</color>
 </resources>

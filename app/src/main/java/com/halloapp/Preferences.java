@@ -24,6 +24,11 @@ public class Preferences {
     private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
     private static final String PREF_KEY_FEED_PRIVACY_SETTING = "feed_privacy_setting";
     private static final String PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME = "last_block_list_sync_time";
+    private static final String PREF_KEY_SHOWED_FEED_NUX = "showed_feed_nux";
+    private static final String PREF_KEY_SHOWED_MESSAGES_NUX = "showed_messages_nux";
+    private static final String PREF_KEY_SHOWED_PROFILE_NUX = "showed_profile_nux";
+    private static final String PREF_KEY_SHOWED_MAKE_POST_NUX = "showed_make_post_nux";
+    private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
 
     private AppContext appContext;
     private SharedPreferences preferences;
@@ -130,6 +135,66 @@ public class Preferences {
     public void setFeedPrivacyActiveList(@PrivacyList.Type String activeList) {
         if (!getPreferences().edit().putString(PREF_KEY_FEED_PRIVACY_SETTING, activeList).commit()) {
             Log.e("preferences: failed to set feed privacy active list");
+        }
+    }
+
+    @WorkerThread
+    public boolean getShowedFeedNux() {
+        return getPreferences().getBoolean(PREF_KEY_SHOWED_FEED_NUX, false);
+    }
+
+    @WorkerThread
+    public void markFeedNuxShown() {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_FEED_NUX, true).commit()) {
+            Log.e("preferences: failed to mark feed nux shown");
+        }
+    }
+
+    @WorkerThread
+    public boolean getShowedMessagesNux() {
+        return getPreferences().getBoolean(PREF_KEY_SHOWED_MESSAGES_NUX, false);
+    }
+
+    @WorkerThread
+    public void markMessagesNuxShown() {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_MESSAGES_NUX, true).commit()) {
+            Log.e("preferences: failed to mark messages nux shown");
+        }
+    }
+
+    @WorkerThread
+    public boolean getShowedProfileNux() {
+        return getPreferences().getBoolean(PREF_KEY_SHOWED_PROFILE_NUX, false);
+    }
+
+    @WorkerThread
+    public void markProfileNuxShown() {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_PROFILE_NUX, true).commit()) {
+            Log.e("preferences: failed to mark profile nux shown");
+        }
+    }
+
+    @WorkerThread
+    public boolean getShowedMakePostNux() {
+        return getPreferences().getBoolean(PREF_KEY_SHOWED_MAKE_POST_NUX, false);
+    }
+
+    @WorkerThread
+    public void markMakePostNuxShown() {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_MAKE_POST_NUX, true).commit()) {
+            Log.e("preferences: failed to mark make post nux shown");
+        }
+    }
+
+    @WorkerThread
+    public boolean getShowedActivityCenterNux() {
+        return getPreferences().getBoolean(PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, false);
+    }
+
+    @WorkerThread
+    public void markActivityCenterNuxShown() {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, true).commit()) {
+            Log.e("preferences: failed to mark activity center nux shown");
         }
     }
 

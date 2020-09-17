@@ -40,6 +40,8 @@
     <string name="chat_message_attribution">%s: %s</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
     <string name="posts_empty">Your posts will appear here</string>
+    <string name="home_page_empty">Posts from your contacts will appear here</string>
+    <string name="chats_page_empty">Your contacts &amp; messages will appear here</string>
     <string name="your_post_title">Your post</string>
     <string name="contact_profile_empty">%s\'s posts will appear here</string>
     <string name="contact_profile_not_friends">You are not friends with %s on HalloApp</string>
@@ -344,4 +346,11 @@
     <string name="user_typing">Typing…</string>
     <string name="group_user_typing">%s is typing…</string>
     <string name="group_many_users_typing">Multiple users typing…</string>
+    <string name="feed_nux_bottom_sheet_title">About HalloApp</string>
+    <string name="feed_nux_bottom_sheet_text">Home feed allows you to share text, photo, and video updates that disappear after 30 days.\n\nIf you want to share updates with someone, both parties must have each other\'s numbers saved on their phones.\n\nYou can share your updates with your entire contact list or only with selected people. Go to settings to change feed privacy.</string>
+    <string name="messages_nux_text">This is where you’ll find messages from your friends &amp; family. When someone new joins HalloApp you can see them here.</string>
+    <string name="profile_nux_text">This is your profile. Your own posts will collect here. Each post expires in 30 days.</string>
+    <string name="post_audience_nux_title">Who will see my post?</string>
+    <string name="post_audience_nux_text">Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings.</string>
+    <string name="make_post_nux">Tap to share an update with your friends &amp; family on HalloApp</string>
 </resources>

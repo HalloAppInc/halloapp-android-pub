@@ -29,11 +29,14 @@ public abstract class InfoBottomSheetDialogFragment extends BottomSheetDialogFra
 
         Button okButton = view.findViewById(R.id.button2);
         okButton.setOnClickListener(v -> {
-            dismiss();
+            onOkButtonPress();
         });
         return view;
     }
 
+    protected void onOkButtonPress() {
+        dismiss();
+    }
 
     protected abstract CharSequence getTitle();
     protected abstract CharSequence getText();

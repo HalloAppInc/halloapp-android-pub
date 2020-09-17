@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +33,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
-public class ProfileFragment extends PostsFragment implements MainNavFragment {
+public class ProfileFragment extends PostsFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
@@ -43,7 +44,7 @@ public class ProfileFragment extends PostsFragment implements MainNavFragment {
 
     private UserId profileUserId;
 
-    private LinearLayoutManager layoutManager;
+    protected LinearLayoutManager layoutManager;
 
     private ProfileViewModel viewModel;
 
@@ -53,11 +54,6 @@ public class ProfileFragment extends PostsFragment implements MainNavFragment {
         args.putString(ARG_SELECTED_PROFILE_USER_ID, userId.rawId());
         profileFragment.setArguments(args);
         return profileFragment;
-    }
-
-    @Override
-    public void resetScrollPosition() {
-        layoutManager.scrollToPosition(0);
     }
 
     @Override
@@ -80,13 +76,19 @@ public class ProfileFragment extends PostsFragment implements MainNavFragment {
         super.onDestroyView();
     }
 
+    @LayoutRes
+    protected int getLayout() {
+        return R.layout.fragment_profile;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
 
-        final View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        final View root = inflater.inflate(getLayout(), container, false);
         final RecyclerView postsView = root.findViewById(R.id.posts);
-        final TextView emptyView = root.findViewById(android.R.id.empty);
+        final TextView emptyView = root.findViewById(R.id.empty_profile_text);
+        final View emptyContainer = root.findViewById(android.R.id.empty);
 
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
@@ -103,7 +105,7 @@ public class ProfileFragment extends PostsFragment implements MainNavFragment {
         }
 
         viewModel = new ViewModelProvider(requireActivity(), new ProfileViewModel.Factory(requireActivity().getApplication(), profileUserId)).get(ProfileViewModel.class);
-        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
         }

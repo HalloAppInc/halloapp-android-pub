@@ -72,6 +72,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private SpeedDialView fabView;
     private View toolbarContainer;
 
+    private ProfileNuxViewModel profileNuxViewModel;
+
     private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
 
         @Override
@@ -139,6 +141,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         messagesTab.setClipChildren(false);
         messagesTab.setClipToPadding(false);
 
+        profileNuxViewModel = new ViewModelProvider(this).get(ProfileNuxViewModel.class);
         final MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.unseenChatsCount.getLiveData().observe(this,
                 unseenChatsCount -> messageNotificationDrawable.setBadge(
@@ -151,6 +154,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             updateFab(destination.getId());
         });
+
 
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 && savedInstanceState == null) {
             // The activity was not launched from history
@@ -180,7 +184,19 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else {
             fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
             fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
-            fabView.setOnChangeListener(null);
+            fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+                @Override
+                public boolean onMainActionSelected() {
+                    return false;
+                }
+
+                @Override
+                public void onToggleChanged(boolean isOpen) {
+                    if (id == R.id.navigation_profile && isOpen) {
+                        profileNuxViewModel.onFabToggled();
+                    }
+                }
+            });
             fabView.setOnActionSelectedListener(actionItem -> {
                 onFabActionSelected(actionItem.getId());
                 return true;
