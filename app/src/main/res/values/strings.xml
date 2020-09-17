@@ -353,4 +353,7 @@
     <string name="post_audience_nux_title">Who will see my post?</string>
     <string name="post_audience_nux_text">Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings.</string>
     <string name="make_post_nux">Tap to share an update with your friends &amp; family on HalloApp</string>
+    <string name="activity_center_nux">This is your activity center. Tap to see your most recent activity.</string>
+    <string name="home_feed_nux">Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp.</string>
+    <string name="home_feed_nux_learn_more">Learn more</string>
 </resources>

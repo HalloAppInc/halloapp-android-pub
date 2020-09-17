@@ -44,10 +44,10 @@ public class MyProfileFragment extends ProfileFragment implements MainNavFragmen
             if (nuxToShow == null) {
                 return;
             }
-            if (nuxToShow == 0) {
+            if (nuxToShow == ProfileNuxViewModel.Nux.NUX_NONE) {
                 TransitionManager.beginDelayedTransition(nuxContainer);
                 nuxContainer.setVisibility(View.GONE);
-            } else if (nuxToShow == 1) {
+            } else if (nuxToShow == ProfileNuxViewModel.Nux.NUX_PROFILE) {
                 if (nux == null) {
                     TransitionManager.beginDelayedTransition(nuxContainer);
                     nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_bubble_up_arrow, nuxContainer, true);
@@ -56,7 +56,7 @@ public class MyProfileFragment extends ProfileFragment implements MainNavFragmen
                     text.setText(R.string.profile_nux_text);
                     btn.setOnClickListener(v -> nuxViewModel.closeProfileNux());
                 }
-            } else if (nuxToShow == 2) {
+            } else if (nuxToShow == ProfileNuxViewModel.Nux.NUX_MAKE_POST) {
                 if (nuxContainer.getVisibility() != View.GONE) {
                     TransitionManager.beginDelayedTransition(nuxContainer);
                     nuxContainer.setVisibility(View.GONE);

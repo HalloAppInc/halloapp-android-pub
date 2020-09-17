@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nux_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             android:textSize="18sp"
             android:lineSpacingMultiplier="1.2"
             android:textColor="@android:color/white"
-            android:text="Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp."/>
+            tools:text="Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp."/>
 
         <TextView android:id="@+id/ok_btn"
             android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
             android:background="?selectableItemBackground"
             android:maxLines="1"
             android:textColor="@color/nux_button_text"
-            android:text="OK"
+            android:text="@string/ok"
             android:fontFamily="sans-serif-medium"
             android:textSize="18sp"
             android:padding="8dp"

@@ -34,7 +34,8 @@
             android:textSize="18sp"
             android:lineSpacingMultiplier="1.2"
             android:textColor="@android:color/white"
-            android:text="This is your activity center. Tap to see your most recent activity."/>
+            android:text="@string/make_post_nux"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView

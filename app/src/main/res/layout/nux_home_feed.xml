@@ -36,7 +36,7 @@
             android:textSize="18sp"
             android:lineSpacingMultiplier="1.2"
             android:textColor="@android:color/white"
-            android:text="Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp."/>
+            android:text="@string/home_feed_nux"/>
 
         <TextView android:id="@+id/learn_more"
             android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
             android:background="?selectableItemBackground"
             android:maxLines="1"
             android:textColor="@color/nux_button_text"
-            android:text="Learn more"
+            android:text="@string/home_feed_nux_learn_more"
             android:fontFamily="sans-serif-medium"
             android:textSize="18sp"
             android:padding="8dp"
