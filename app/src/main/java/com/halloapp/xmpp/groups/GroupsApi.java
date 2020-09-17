@@ -36,8 +36,6 @@ public class GroupsApi {
         this.connection = connection;
     }
 
-    // TODO(jack): trigger: upon delete of group, delete members
-
     public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids) {
         final CreateGroupIq requestIq = new CreateGroupIq(name, uids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
@@ -52,9 +50,9 @@ public class GroupsApi {
 
     public Observable<Boolean> deleteGroup(@NonNull GroupId groupId) {
         final DeleteGroupIq requestIq = new DeleteGroupIq(groupId);
-        final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
+        final Observable<IQ> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
-            return "ok".equals(response.result);
+            return true;
         });
     }
 

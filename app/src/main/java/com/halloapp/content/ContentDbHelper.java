@@ -25,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 27;
+    private static final int DATABASE_VERSION = 28;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -93,6 +93,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " INTEGER DEFAULT -1,"
                 + ChatsTable.COLUMN_CHAT_NAME + " TEXT,"
                 + ChatsTable.COLUMN_IS_GROUP + " INTEGER DEFAULT 0,"
+                + ChatsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1,"
                 + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
                 + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT"
                 + ");");
@@ -320,6 +321,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 26: {
                 upgradeFromVersion26(db);
             }
+            case 27: {
+                upgradeFromVersion27(db);
+            }
             break;
             default: {
                 onCreate(db);
@@ -540,6 +544,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 +   "DELETE FROM " + GroupMembersTable.TABLE_NAME + " WHERE " + GroupMembersTable.COLUMN_GROUP_ID + "=OLD." + ChatsTable.COLUMN_CHAT_ID + "; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion27(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

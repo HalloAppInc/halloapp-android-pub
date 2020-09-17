@@ -324,6 +324,13 @@ public class MainConnectionObserver extends Connection.Observer {
                 addSystemMessage(groupId, sender, Message.USAGE_REMOVE_MEMBER, idList, null);
             }
 
+            for (MemberInfo member : removed) {
+                if (member.userId.rawId().equals(me.getUser())) {
+                    contentDb.setGroupInactive(groupId, null);
+                    break;
+                }
+            }
+
             connection.sendAck(ackId);
         });
     }
@@ -340,7 +347,11 @@ public class MainConnectionObserver extends Connection.Observer {
 
         contentDb.addRemoveGroupMembers(groupId, new ArrayList<>(), left, () -> {
             for (MemberInfo member : left) {
-                addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, null);
+                addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, () -> {
+                    if (member.userId.rawId().equals(me.getUser())) {
+                        contentDb.setGroupInactive(groupId, null);
+                    }
+                });
             }
 
             connection.sendAck(ackId);
@@ -405,6 +416,15 @@ public class MainConnectionObserver extends Connection.Observer {
             }
 
             connection.sendAck(ackId);
+        });
+    }
+
+    @Override
+    public void onGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        addSystemMessage(groupId, sender, Message.USAGE_GROUP_DELETED, null, () -> {
+            contentDb.setGroupInactive(groupId, () -> {
+                connection.sendAck(ackId);
+            });
         });
     }
 

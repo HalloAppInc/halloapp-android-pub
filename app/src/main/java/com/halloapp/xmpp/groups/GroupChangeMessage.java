@@ -27,7 +27,7 @@ public class GroupChangeMessage implements ExtensionElement {
     private static final String ATTRIBUTE_SENDER_ID = "sender";
     private static final String ATTRIBUTE_SENDER_NAME = "sender_name";
 
-    @StringDef({Action.MODIFY_MEMBERS, Action.CREATE, Action.LEAVE, Action.MODIFY_ADMINS, Action.CHANGE_NAME, Action.CHANGE_AVATAR, Action.AUTO_PROMOTE, Action.INVALID})
+    @StringDef({Action.MODIFY_MEMBERS, Action.CREATE, Action.LEAVE, Action.MODIFY_ADMINS, Action.CHANGE_NAME, Action.CHANGE_AVATAR, Action.AUTO_PROMOTE, Action.DELETE, Action.INVALID})
     public @interface Action {
         String INVALID = "invalid";
         String CREATE = "create";
@@ -37,6 +37,7 @@ public class GroupChangeMessage implements ExtensionElement {
         String CHANGE_NAME = "change_name";
         String CHANGE_AVATAR = "change_avatar";
         String AUTO_PROMOTE = "auto_promote_admins";
+        String DELETE = "delete";
     }
 
     public GroupId groupId;

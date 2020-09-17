@@ -11,6 +11,7 @@ public class Chat {
     public final long lastMessageRowId;
     public final long firstUnseenMessageRowId;
 
+    public final boolean isActive;
     public final boolean isGroup;
     public final String groupDescription;
     public final String groupAvatarId;
@@ -27,7 +28,8 @@ public class Chat {
             String name,
             boolean isGroup,
             String groupDescription,
-            String groupAvatarId
+            String groupAvatarId,
+            boolean isActive
     ) {
         this.rowId = rowId;
         this.chatId = chatId;
@@ -39,5 +41,6 @@ public class Chat {
         this.isGroup = isGroup;
         this.groupDescription = groupDescription;
         this.groupAvatarId = groupAvatarId;
+        this.isActive = isActive;
     }
 }

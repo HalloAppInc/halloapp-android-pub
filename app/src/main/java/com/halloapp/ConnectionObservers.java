@@ -267,6 +267,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupDeleteReceived(groupId, sender, senderName, ackId);
+            }
+        }
+    }
+
     public void notifyPresenceReceived(UserId userId, Long lastSeen) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

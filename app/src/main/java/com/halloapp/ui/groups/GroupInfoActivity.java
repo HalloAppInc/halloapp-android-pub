@@ -67,8 +67,10 @@ public class GroupInfoActivity extends HalloActivity {
     private TextView groupNameView;
     private RecyclerView membersView;
     private ImageView avatarView;
+    private View addMembersView;
 
-    private boolean userIsAdmin = false;
+    private MenuItem deleteMenuItem;
+    private MenuItem leaveMenuItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,14 +105,14 @@ public class GroupInfoActivity extends HalloActivity {
         avatarView = headerView.findViewById(R.id.avatar);
         avatarLoader.load(avatarView, groupId, false);
 
-        final View addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
+        addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
         adapter.addHeader(addMembersView);
         addMembersView.setOnClickListener(v -> {
             startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.add_members), REQUEST_CODE_ADD_MEMBERS);
         });
 
         View.OnClickListener openEditGroupListener = v -> {
-            if (userIsAdmin) {
+            if (getUserIsAdmin()) {
                 startActivity(EditGroupActivity.openEditGroup(this, groupId));
             }
         };
@@ -120,15 +122,23 @@ public class GroupInfoActivity extends HalloActivity {
 
         viewModel.getChat().observe(this, chat -> groupNameView.setText(chat.name));
 
-        viewModel.getMembers().observe(this, members -> {
-            for (MemberInfo member : members) {
-                if (member.userId.rawId().equals(me.getUser())) {
-                    userIsAdmin = MemberElement.Type.ADMIN.equals(member.type);
-                    addMembersView.setVisibility(userIsAdmin ? View.VISIBLE : View.GONE);
-                }
-            }
-            adapter.submitMembers(members);
-        });
+        viewModel.getMembers().observe(this, members -> adapter.submitMembers(members));
+
+        viewModel.getUserIsAdmin().observe(this, userIsAdmin -> updateVisibilities());
+        viewModel.getChatIsActive().observe(this, chatIsActive -> updateVisibilities());
+    }
+
+    private void updateVisibilities() {
+        boolean userIsAdmin = getUserIsAdmin();
+        boolean chatIsActive = getChatIsActive();
+        boolean both = userIsAdmin && chatIsActive;
+        addMembersView.setVisibility(both ? View.VISIBLE : View.GONE);
+        if (deleteMenuItem != null) {
+            deleteMenuItem.setVisible(both);
+        }
+        if (leaveMenuItem != null) {
+            leaveMenuItem.setVisible(chatIsActive);
+        }
     }
 
     @Override
@@ -140,18 +150,39 @@ public class GroupInfoActivity extends HalloActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.group_info_menu, menu);
+        deleteMenuItem = menu.findItem(R.id.delete);
+        leaveMenuItem = menu.findItem(R.id.leave);
+        updateVisibilities();
         return true;
+    }
+
+    private boolean getUserIsAdmin() {
+        Boolean userIsAdmin = viewModel.getUserIsAdmin().getValue();
+        return userIsAdmin != null && userIsAdmin;
+    }
+
+    private boolean getChatIsActive() {
+        Boolean chatIsActive = viewModel.getChatIsActive().getValue();
+        return chatIsActive != null && chatIsActive;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.leave: {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getBaseContext().getString(R.string.leave_group_confirmation));
                 builder.setCancelable(true);
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> leaveGroup());
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
+                return true;
+            }
+            case R.id.delete: {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getBaseContext().getString(R.string.delete_group_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteGroup());
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
                 return true;
@@ -192,6 +223,20 @@ public class GroupInfoActivity extends HalloActivity {
             leaveGroupDialog.cancel();
             if (success == null || !success) {
                 SnackbarHelper.showWarning(this, R.string.failed_leave_group);
+            } else {
+                setResult(RESULT_CODE_LEAVE_GROUP);
+                finish();
+            }
+        });
+    }
+
+    private void deleteGroup() {
+        ProgressDialog deleteGroupDialog = ProgressDialog.show(this, null, getString(R.string.delete_group_in_progress), true);
+        deleteGroupDialog.show();
+        viewModel.deleteGroup().observe(this, success -> {
+            deleteGroupDialog.cancel();
+            if (success == null || !success) {
+                SnackbarHelper.showWarning(this, R.string.failed_delete_group);
             } else {
                 setResult(RESULT_CODE_LEAVE_GROUP);
                 finish();
@@ -295,7 +340,7 @@ public class GroupInfoActivity extends HalloActivity {
                 List<String> optionsList = new ArrayList<>();
                 optionsList.add(context.getString(R.string.view_profile));
                 optionsList.add(context.getString(R.string.message));
-                if (userIsAdmin) {
+                if (getUserIsAdmin()) {
                     optionsList.add(context.getString(R.string.group_remove_member));
                     optionsList.add(context.getString(MemberElement.Type.ADMIN.equals(member.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
                 }

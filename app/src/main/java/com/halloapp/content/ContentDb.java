@@ -546,6 +546,17 @@ public class ContentDb {
         });
     }
 
+    public void setGroupInactive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupInactive(groupId)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void addRemoveGroupMembers(@NonNull GroupId groupId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.addRemoveGroupMembers(groupId, added, removed)) {

@@ -310,6 +310,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     systemMessageSingleUser(message, R.string.system_message_group_avatar_changed);
                     break;
                 }
+                case Message.USAGE_GROUP_DELETED: {
+                    systemMessageSingleUser(message, R.string.system_message_group_deleted);
+                    break;
+                }
                 default: {
                     Log.w("Unrecognized system message usage " + message.usage);
                 }

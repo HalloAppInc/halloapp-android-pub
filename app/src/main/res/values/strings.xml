@@ -257,6 +257,7 @@
     <string name="system_message_member_auto_promoted">%s was auto-promoted to admin</string>
     <string name="system_message_group_name_changed">%s changed the group name to %s</string>
     <string name="system_message_group_avatar_changed">%s changed the group avatar</string>
+    <string name="system_message_group_deleted">%s deleted the group</string>
     <string name="save">Save</string>
     <string name="contact_picker_feed_except_title">Hide posts from…</string>
     <string name="contact_picker_feed_only_title">Share posts with…</string>
@@ -310,6 +311,10 @@
     <string name="leave_group_confirmation">Would you like to leave this group?</string>
     <string name="leave_group_in_progress">Leaving group…</string>
     <string name="failed_leave_group">Failed to leave group, try again later</string>
+    <string name="delete_group">Delete group</string>
+    <string name="delete_group_confirmation">Would you like to delete this group?</string>
+    <string name="delete_group_in_progress">Deleting group…</string>
+    <string name="failed_delete_group">Failed to delete group, try again later</string>
     <plurals name="settings_invite_summary">
         <item quantity="one">%d invite available</item>
         <item quantity="other">%d invites available</item>

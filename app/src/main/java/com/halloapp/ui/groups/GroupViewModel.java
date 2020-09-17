@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Me;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.groups.MemberInfo;
@@ -19,6 +20,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
+import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,9 @@ public class GroupViewModel extends AndroidViewModel {
 
     private final ComputableLiveData<Chat> chatLiveData;
     private final ComputableLiveData<List<MemberInfo>> membersLiveData;
+
+    private final MutableLiveData<Boolean> userIsAdmin = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> chatIsActive = new MutableLiveData<>();
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -82,7 +87,9 @@ public class GroupViewModel extends AndroidViewModel {
         chatLiveData = new ComputableLiveData<Chat>() {
             @Override
             protected Chat compute() {
-                return contentDb.getChat(groupId);
+                Chat chat = contentDb.getChat(groupId);
+                chatIsActive.postValue(chat != null && chat.isActive);
+                return chat;
             }
         };
         chatLiveData.invalidate();
@@ -90,7 +97,14 @@ public class GroupViewModel extends AndroidViewModel {
         membersLiveData = new ComputableLiveData<List<MemberInfo>>() {
             @Override
             protected List<MemberInfo> compute() {
-                return contentDb.getGroupMembers(groupId);
+                List<MemberInfo> members = contentDb.getGroupMembers(groupId);
+                for (MemberInfo member : members) {
+                    if (member.userId.rawId().equals(Me.getInstance().getUser())) {
+                        userIsAdmin.postValue(MemberElement.Type.ADMIN.equals(member.type));
+                        break;
+                    }
+                }
+                return members;
             }
         };
         membersLiveData.invalidate();
@@ -102,6 +116,14 @@ public class GroupViewModel extends AndroidViewModel {
 
     public LiveData<List<MemberInfo>> getMembers() {
         return membersLiveData.getLiveData();
+    }
+
+    public LiveData<Boolean> getUserIsAdmin() {
+        return userIsAdmin;
+    }
+
+    public LiveData<Boolean> getChatIsActive() {
+        return chatIsActive;
     }
 
     public LiveData<Boolean> addMembers(List<UserId> userIds) {
@@ -154,6 +176,17 @@ public class GroupViewModel extends AndroidViewModel {
                 .onResponse(result::postValue)
                 .onError(error -> {
                     Log.e("Leave group failed", error);
+                    result.postValue(false);
+                });
+        return result;
+    }
+
+    public LiveData<Boolean> deleteGroup() {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.deleteGroup(groupId)
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Delete group failed", error);
                     result.postValue(false);
                 });
         return result;

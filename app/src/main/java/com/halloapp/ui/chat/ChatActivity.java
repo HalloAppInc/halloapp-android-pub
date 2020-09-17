@@ -107,6 +107,7 @@ public class ChatActivity extends HalloActivity {
     private TextView subtitleView;
     private TextView replyNameView;
     private ImageView avatarView;
+    private View footer;
 
     private ChatId chatId;
 
@@ -152,6 +153,7 @@ public class ChatActivity extends HalloActivity {
         titleView = findViewById(R.id.title);
         subtitleView = findViewById(R.id.subtitle);
         avatarView = findViewById(R.id.avatar);
+        footer = findViewById(R.id.footer);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -344,6 +346,7 @@ public class ChatActivity extends HalloActivity {
             if (chat != null) {
                 adapter.setFirstUnseenMessageRowId(chat.firstUnseenMessageRowId);
                 adapter.setNewMessageCount(chat.newMessageCount);
+                footer.setVisibility(chat.isActive ? View.VISIBLE : View.GONE);
             }
 
             if (chatId instanceof UserId) {

@@ -139,7 +139,7 @@ public class ChatsViewModel extends AndroidViewModel {
                     }
                     Chat chat = chatsMap.get(friend.userId);
                     if (chat == null) {
-                        chat = new Chat(-1, friend.userId, 0, 0, -1L, -1L, friend.getDisplayName(), false, null, null);
+                        chat = new Chat(-1, friend.userId, 0, 0, -1L, -1L, friend.getDisplayName(), false, null, null, true);
                         chats.add(chat);
                     }
                 }
