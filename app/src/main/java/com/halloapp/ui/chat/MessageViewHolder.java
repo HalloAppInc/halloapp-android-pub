@@ -377,7 +377,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (contentView !=null) {
-            if (message.replyPostId != null || (message.replyMessageId != null && !message.replyMessageId.isEmpty())) {
+            if (message.replyPostId != null || message.replyMessageId != null) {
                 if (replyContainer == null) {
                     final ViewGroup replyContainerView = itemView.findViewById(R.id.reply_container);
                     if (replyContainerView != null) {

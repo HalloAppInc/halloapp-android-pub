@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
@@ -28,6 +29,7 @@ import java.util.concurrent.Callable;
 
 class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
 
+    private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     private final int dimensionLimit;
@@ -36,6 +38,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
     @MainThread
     ReplyLoader(@NonNull Context context, int dimensionLimit) {
         this.dimensionLimit = dimensionLimit;
+        this.me = Me.getInstance();
         this.contentDb = ContentDb.getInstance(context);
         this.contactsDb = ContactsDb.getInstance();
     }
@@ -56,7 +59,8 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
                     name = contactsDb.getContact((UserId) message.chatId).getDisplayName();
                 }
             } else if (message.replyMessageId != null) {
-                Message replyMessage = contentDb.getMessage(message.chatId, message.replyMessageSenderId, message.replyMessageId);
+                UserId originalSenderId = me.getUser().equals(message.replyMessageSenderId.rawId()) ? UserId.ME : message.replyMessageSenderId;
+                Message replyMessage = contentDb.getMessage(message.chatId, originalSenderId, message.replyMessageId);
                 if (replyMessage != null) {
                     if (replyMessage.senderUserId.isMe()) {
                         name = view.getContext().getString(R.string.me);

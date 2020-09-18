@@ -44,6 +44,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.ForegroundChat;
+import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -111,6 +112,7 @@ public class ChatActivity extends HalloActivity {
 
     private ChatId chatId;
 
+    private Me me;
     private AvatarLoader avatarLoader;
     private PresenceLoader presenceLoader;
 
@@ -168,6 +170,7 @@ public class ChatActivity extends HalloActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader(this);
         replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
+        me = Me.getInstance();
         avatarLoader = AvatarLoader.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
@@ -704,7 +707,7 @@ public class ChatActivity extends HalloActivity {
                 replyPostMediaIndex,
                 replyMessage != null ? replyMessage.id : null,
                 replyMessageMediaIndex ,
-                replyMessage != null ? replyMessage.senderUserId : null,
+                replyMessage != null ? (replyMessage.senderUserId.isMe() ? new UserId(me.getUser()) : replyMessage.senderUserId) : null,
                 0);
         replyPostId = null;
         replyPostMediaIndex = -1;

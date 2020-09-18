@@ -19,6 +19,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
+import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
 class ReplyContainer {
@@ -55,7 +56,6 @@ class ReplyContainer {
     }
 
     void bindTo(@NonNull Message message) {
-
         containerView.setOnClickListener(v -> {
             // TODO(jack): Scroll to message
             if (message.replyPostId == null) {

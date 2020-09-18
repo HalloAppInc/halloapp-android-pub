@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
@@ -42,6 +43,7 @@ public class ContentDb {
     private final ContentDbObservers observers = new ContentDbObservers();
     private final ContentDbHelper databaseHelper;
 
+    private final Me me;
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
     private final PostsDb postsDb;
@@ -111,6 +113,7 @@ public class ContentDb {
 
     private ContentDb(final @NonNull Context context) {
         databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
+        me = Me.getInstance();
         mentionsDb = new MentionsDb(databaseHelper);
         messagesDb = new MessagesDb(mentionsDb, databaseHelper, FileStore.getInstance(context));
         postsDb = new PostsDb(mentionsDb, databaseHelper, FileStore.getInstance(context));
@@ -493,7 +496,8 @@ public class ContentDb {
     public void addMessage(@NonNull Message message, boolean unseen, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             final Post replyPost = message.replyPostId == null ? null : getPost(message.replyPostId);
-            final Message replyMessage = message.replyMessageId == null ? null : getMessage(message.chatId, message.replyMessageSenderId, message.replyMessageId);
+            UserId originalSenderId = message.replyMessageSenderId == null ? null : me.getUser().equals(message.replyMessageSenderId.rawId()) ? UserId.ME : message.replyMessageSenderId;
+            final Message replyMessage = message.replyMessageId == null ? null : getMessage(message.chatId, originalSenderId, message.replyMessageId);
             if (messagesDb.addMessage(message, unseen, replyPost, replyMessage)) {
                 observers.notifyMessageAdded(message);
             }
