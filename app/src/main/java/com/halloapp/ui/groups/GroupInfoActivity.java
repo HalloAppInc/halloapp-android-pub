@@ -340,7 +340,7 @@ public class GroupInfoActivity extends HalloActivity {
                 List<String> optionsList = new ArrayList<>();
                 optionsList.add(context.getString(R.string.view_profile));
                 optionsList.add(context.getString(R.string.message));
-                if (getUserIsAdmin()) {
+                if (getUserIsAdmin() && getChatIsActive()) {
                     optionsList.add(context.getString(R.string.group_remove_member));
                     optionsList.add(context.getString(MemberElement.Type.ADMIN.equals(member.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
                 }
