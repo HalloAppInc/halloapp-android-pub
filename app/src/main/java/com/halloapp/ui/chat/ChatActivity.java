@@ -667,7 +667,7 @@ public class ChatActivity extends HalloActivity {
                 break;
             }
             case REQUEST_CODE_VIEW_GROUP_INFO: {
-                if (resultCode == GroupInfoActivity.RESULT_CODE_LEAVE_GROUP) {
+                if (resultCode == GroupInfoActivity.RESULT_CODE_EXIT_CHAT) {
                     finish();
                 }
                 break;

@@ -42,7 +42,7 @@ import java.util.List;
 
 public class GroupInfoActivity extends HalloActivity {
 
-    public static final int RESULT_CODE_LEAVE_GROUP = RESULT_FIRST_USER;
+    public static final int RESULT_CODE_EXIT_CHAT = RESULT_FIRST_USER;
 
     private static final String GROUP_ID = "group_id";
 
@@ -224,7 +224,7 @@ public class GroupInfoActivity extends HalloActivity {
             if (success == null || !success) {
                 SnackbarHelper.showWarning(this, R.string.failed_leave_group);
             } else {
-                setResult(RESULT_CODE_LEAVE_GROUP);
+                setResult(RESULT_CODE_EXIT_CHAT);
                 finish();
             }
         });
@@ -238,7 +238,7 @@ public class GroupInfoActivity extends HalloActivity {
             if (success == null || !success) {
                 SnackbarHelper.showWarning(this, R.string.failed_delete_group);
             } else {
-                setResult(RESULT_CODE_LEAVE_GROUP);
+                setResult(RESULT_CODE_EXIT_CHAT);
                 finish();
             }
         });

@@ -27,6 +27,7 @@ import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
 
+    private final Me me;
     private final ContentDb contentDb;
     private final GroupsApi groupsApi;
 
@@ -80,6 +81,7 @@ public class GroupViewModel extends AndroidViewModel {
 
         this.groupId = groupId;
 
+        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
         groupsApi = GroupsApi.getInstance();
@@ -99,7 +101,7 @@ public class GroupViewModel extends AndroidViewModel {
             protected List<MemberInfo> compute() {
                 List<MemberInfo> members = contentDb.getGroupMembers(groupId);
                 for (MemberInfo member : members) {
-                    if (member.userId.rawId().equals(Me.getInstance().getUser())) {
+                    if (member.userId.rawId().equals(me.getUser())) {
                         userIsAdmin.postValue(MemberElement.Type.ADMIN.equals(member.type));
                         break;
                     }
