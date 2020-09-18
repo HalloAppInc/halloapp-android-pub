@@ -54,6 +54,8 @@
     <dimen name="mention_picker_elevation">2dp</dimen>
     <dimen name="type_post_edit_minimum_hight">265dp</dimen>
     <dimen name="settings_divider_height">0.5dp</dimen>
+    <dimen name="swipe_down_distance_threshold">150dp</dimen>
+    <dimen name="swipe_down_velocity_threshold">1000dp</dimen>
 
     <!-- Message Bubbles -->
     <dimen name="message_bubble_corner_radius">20dp</dimen>

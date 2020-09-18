@@ -61,7 +61,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -788,7 +787,7 @@ public class ContentComposerActivity extends HalloActivity {
         SimpleExoPlayer player = playerMap.get(mediaPair);
         if (player == null) {
             final DataSource.Factory dataSourceFactory =
-                    new DefaultDataSourceFactory(getApplicationContext(), "hallo");
+                    new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
             final MediaSource mediaSource =
                     new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.original.file));
 

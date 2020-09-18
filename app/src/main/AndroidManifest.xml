@@ -169,6 +169,10 @@
             android:theme="@style/AppTheme.Black"
             android:label="@string/edit"/>
 
+        <activity android:name=".ui.mediaexplorer.MediaExplorerActivity"
+            android:theme="@style/AppTheme.Black.Translucent"
+            android:label="" />
+
         <receiver
             android:name=".registration.SmsVerificationReceiver"
             android:exported="true"

@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.util.Rtl;
 import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.ContentPhotoView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.MediaViewHolder> {
@@ -96,19 +98,26 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         holder.imageView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
         holder.container.setAspectRatio(fixedAspectRatio);
         parent.getMediaThumbnailLoader().load(holder.imageView, mediaItem);
+
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             holder.playButton.setVisibility(View.VISIBLE);
-            if (mediaItem.file != null) {
-                holder.imageView.setOnClickListener(v -> {
-                    final Intent intent = new Intent(holder.itemView.getContext(), VideoPlaybackActivity.class);
-                    intent.setData(Uri.fromFile(mediaItem.file));
-                    parent.startActivity(intent);
-                });
-            } else {
-                holder.imageView.setOnClickListener(null);
-            }
         } else {
             holder.playButton.setVisibility(View.GONE);
+        }
+
+        if (mediaItem.file != null) {
+            holder.imageView.setOnClickListener(v -> {
+                ArrayList<MediaExplorerActivity.Model> data = new ArrayList<>(media.size());
+                for (final Media item : media) {
+                    data.add(new MediaExplorerActivity.Model(Uri.fromFile(item.file), item.type));
+                }
+
+                Intent intent = new Intent(v.getContext(), MediaExplorerActivity.class);
+                intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
+                intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
+                parent.startActivity(intent);
+            });
+        } else {
             holder.imageView.setOnClickListener(null);
         }
     }

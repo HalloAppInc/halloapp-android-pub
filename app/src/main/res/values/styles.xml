@@ -35,13 +35,19 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
-    <style name="AppTheme.Black">
+    <style name="AppTheme.Black" parent="Theme.AppCompat">
         <item name="actionBarStyle">@style/ActionBarBlack</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="android:textColorPrimary">#FFF</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="android:navigationBarColor">@android:color/black</item>
         <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.Black.Translucent" parent="AppTheme.Black">
+        <item name="actionBarStyle">@style/ActionBarBlack.Translucent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
     <style name="AppTheme.MediaPlayer" parent="Theme.MaterialComponents.DayNight">
@@ -148,6 +154,13 @@
         <item name="background">@android:color/black</item>
         <item name="backgroundStacked">@android:color/black</item>
         <item name="backgroundSplit">@android:color/black</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="ActionBarBlack.Translucent" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
+        <item name="background">@android:color/transparent</item>
+        <item name="backgroundStacked">@android:color/transparent</item>
+        <item name="backgroundSplit">@android:color/transparent</item>
         <item name="elevation">0dp</item>
     </style>
 

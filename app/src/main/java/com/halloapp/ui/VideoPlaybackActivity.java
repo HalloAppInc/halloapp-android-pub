@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -20,8 +19,8 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.util.Log;
 
 public class VideoPlaybackActivity extends HalloActivity {
 
@@ -131,7 +130,7 @@ public class VideoPlaybackActivity extends HalloActivity {
 
     private void initializePlayer() {
         if (player == null) {
-            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, "hallo");
+            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Constants.USER_AGENT);
             mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(getIntent().getData());
 
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
