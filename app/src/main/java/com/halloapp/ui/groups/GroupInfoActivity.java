@@ -112,7 +112,7 @@ public class GroupInfoActivity extends HalloActivity {
         });
 
         View.OnClickListener openEditGroupListener = v -> {
-            if (getUserIsAdmin()) {
+            if (getUserIsAdmin() && getChatIsActive()) {
                 startActivity(EditGroupActivity.openEditGroup(this, groupId));
             }
         };
