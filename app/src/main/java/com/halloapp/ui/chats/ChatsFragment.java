@@ -412,7 +412,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 } else {
                     text = message.text;
                 }
-                infoView.setTextColor(getResources().getColor(R.color.chat_message_preview));
+                infoView.setTextColor(infoView.getResources().getColor(R.color.chat_message_preview));
                 infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
             }
         }
