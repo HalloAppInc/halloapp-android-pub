@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,8 +24,10 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
@@ -70,6 +73,7 @@ public class PostSeenByActivity extends HalloActivity {
                 }
             }
         });
+        seenByView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
@@ -166,10 +170,10 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     static class EmptyListItem implements ListItem {
-        final String text;
+        final boolean showInvite;
 
-        EmptyListItem(String text) {
-            this.text = text;
+        EmptyListItem(boolean showInvite) {
+            this.showInvite = showInvite;
         }
 
         @Override
@@ -220,27 +224,40 @@ public class PostSeenByActivity extends HalloActivity {
             listItems.clear();
             headerIndexes.clear();
             final Set<UserId> seenByUserIds = new HashSet<>();
-            if (seenByContacts == null || seenByContacts.isEmpty()) {
-                //listItems.add(new EmptyListItem(getString(R.string.no_one_seen_your_post)));
-            } else {
+            boolean emptyDeliveredTo = friends == null || friends.isEmpty();
+            boolean emptyViewedBy = seenByContacts == null || seenByContacts.isEmpty();
+            if (!emptyViewedBy || emptyDeliveredTo) {
                 headerIndexes.add(listItems.size());
                 listItems.add(new HeaderListItem(getString(R.string.seen_by)));
-                for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
-                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
-                    seenByUserIds.add(seenByContact.contact.userId);
+                if (!emptyViewedBy) {
+                    for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
+                        listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
+                        seenByUserIds.add(seenByContact.contact.userId);
+                    }
+                } else {
+                    listItems.add(new EmptyListItem(false));
                 }
             }
-            if (friends != null && !friends.isEmpty()) {
+            if (emptyViewedBy || !emptyDeliveredTo) {
                 boolean headerAdded = false;
-                for (Contact contact : friends) {
-                    if (!seenByUserIds.contains(contact.userId)) {
-                        if (!headerAdded) {
-                            headerIndexes.add(listItems.size());
-                            listItems.add(new HeaderListItem(getString(R.string.other_friends)));
-                            headerAdded = true;
+                if (emptyViewedBy) {
+                    headerAdded = true;
+                    headerIndexes.add(listItems.size());
+                    listItems.add(new HeaderListItem(getString(R.string.other_friends)));
+                }
+                if (!emptyDeliveredTo) {
+                    for (Contact contact : friends) {
+                        if (!seenByUserIds.contains(contact.userId)) {
+                            if (!headerAdded) {
+                                headerAdded = true;
+                                headerIndexes.add(listItems.size());
+                                listItems.add(new HeaderListItem(getString(R.string.other_friends)));
+                            }
+                            listItems.add(new ContactListItem(contact, -1));
                         }
-                        listItems.add(new ContactListItem(contact, -1));
                     }
+                } else {
+                    listItems.add(new EmptyListItem(true));
                 }
             }
         }
@@ -357,13 +374,23 @@ public class PostSeenByActivity extends HalloActivity {
 
         private class EmptyViewHolder extends ViewHolder<EmptyListItem> {
 
+            private final View inviteText;
+
             EmptyViewHolder(@NonNull View itemView) {
                 super(itemView);
+
+                inviteText = itemView.findViewById(R.id.invite_text);
             }
 
             @Override
             void bindTo(@NonNull EmptyListItem item) {
-                ((TextView)itemView).setText(item.text);
+                inviteText.setVisibility(item.showInvite ? View.VISIBLE : View.GONE);
+                if (item.showInvite) {
+                    inviteText.setOnClickListener(v -> startActivity(new Intent(PostSeenByActivity.this, InviteFriendsActivity.class)));
+                } else {
+                    inviteText.setOnClickListener(null);
+                    inviteText.setClickable(false);
+                }
             }
         }
     }

@@ -101,33 +101,13 @@ public class PostSeenByViewModel extends AndroidViewModel {
             protected List<Contact> compute() {
                 Post post = contentDb.getPost(postId);
                 if (post != null) {
-                    @PrivacyList.Type String audienceType = post.getAudienceType();
                     List<UserId> audienceList = post.getAudienceList();
-                    if (audienceType != null) {
-                        if (PrivacyList.Type.EXCEPT.equals(audienceType)) {
-                            List<Contact> friends = contactsDb.getFriends();
-                            if (audienceList != null) {
-                                HashSet<UserId> filteredUsers = new HashSet<>(audienceList);
-                                ListIterator<Contact> friendsIterator = friends.listIterator();
-                                while (friendsIterator.hasNext()) {
-                                    Contact friend = friendsIterator.next();
-                                    if (filteredUsers.contains(friend.userId)) {
-                                        friendsIterator.remove();
-                                    }
-                                }
-                            }
-                            return friends;
-                        } else if (PrivacyList.Type.ONLY.equals(audienceType)) {
-                            List<Contact> sharedTo = new ArrayList<>();
-                            if (audienceList != null) {
-                                for (UserId userId : audienceList) {
-                                    sharedTo.add(contactsDb.getContact(userId));
-                                }
-                            }
-                            return Contact.sort(sharedTo);
-                        } else {
-                            return Contact.sort(contactsDb.getFriends());
+                    if (audienceList != null) {
+                        List<Contact> sharedTo = new ArrayList<>();
+                        for (UserId userId : audienceList) {
+                            sharedTo.add(contactsDb.getContact(userId));
                         }
+                        return Contact.sort(sharedTo);
                     }
                 }
                 return Contact.sort(contactsDb.getFriends());

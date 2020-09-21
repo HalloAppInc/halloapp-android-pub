@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:ellipsize="end"
-    android:fontFamily="sans-serif-medium"
+    android:layout_height="80dp"
     android:padding="16dp"
-    android:singleLine="true"
-    android:textAlignment="gravity"
-    android:textStyle="italic"
-    android:textDirection="locale"
-    android:gravity="center"
-    tools:text="No single person saw your post :(" />
+    android:paddingStart="@dimen/toolbar_title_offset"
+    android:paddingEnd="@dimen/toolbar_title_offset">
+
+    <TextView
+        android:id="@+id/invite_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:textColor="@color/color_secondary"
+        android:singleLine="true"
+        android:textAlignment="gravity"
+        android:textDirection="locale"
+        android:gravity="start"
+        android:text="@string/invite_friends_title" />
+
+</FrameLayout>
 
 
 

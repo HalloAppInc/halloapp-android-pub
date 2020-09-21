@@ -237,7 +237,7 @@
     <string name="crop">Crop</string>
     <string name="flip">Flip</string>
     <string name="no_one_seen_your_post">No one saw your post :(</string>
-    <string name="other_friends">Delivered to</string>
+    <string name="other_friends">Sent to</string>
     <string name="email_logs_subject">HalloApp Android %s</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %s\nversion: %s\n</string>
     <string name="share">Share</string>
