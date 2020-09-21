@@ -31,7 +31,7 @@
         android:layout_height="72dp"
         android:layout_gravity="center"
         android:tint="@android:color/white"
-        android:alpha="0.5"
+        android:alpha="0.7"
         android:src="@drawable/ic_play"
         android:contentDescription="@string/play"
         android:visibility="gone"/>
