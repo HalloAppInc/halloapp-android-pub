@@ -62,9 +62,6 @@ public class GroupsSync {
 
     public void startGroupsSync() {
         Log.d("GroupsSync.startGroupsSync");
-        if (!serverProps.getGroupsEnabled()) {
-            return;
-        }
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(GroupSyncWorker.class).build();
         WorkManager.getInstance(context).enqueueUniqueWork(GROUPS_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
