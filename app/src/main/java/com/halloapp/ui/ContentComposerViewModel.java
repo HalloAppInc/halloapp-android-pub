@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class ContentComposerViewModel extends AndroidViewModel {
@@ -74,6 +75,11 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsReset() {
+
+        }
+
+        @Override
+        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
 
         }
     };
@@ -358,6 +364,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 contentItem.mentions.addAll(mentions);
             }
             if (Constants.NEW_FEED_API && contentItem instanceof Post) {
+                Post contentPost = (Post) contentItem;
                 FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
                 List<UserId> audienceList;
                 @PrivacyList.Type String audienceType;
@@ -372,10 +379,18 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     audienceList = feedPrivacy.onlyList;
                     audienceType = PrivacyList.Type.ONLY;
                 } else {
-                    audienceList = feedPrivacy.exceptList;
+                    HashSet<UserId> excludedSet = new HashSet<>(feedPrivacy.exceptList);
                     audienceType = PrivacyList.Type.EXCEPT;
+                    List<Contact> contacts = contactsDb.getFriends();
+                    audienceList = new ArrayList<>(contacts.size());
+                    for (Contact contact : contacts) {
+                        if (!excludedSet.contains(contact.userId)) {
+                            audienceList.add(contact.userId);
+                        }
+                    }
+                    contentPost.setExcludeList(feedPrivacy.exceptList);
                 }
-                ((Post) contentItem).setAudience(audienceType, audienceList);
+                contentPost.setAudience(audienceType, audienceList);
             }
             this.contentItem.postValue(contentItem);
             return null;

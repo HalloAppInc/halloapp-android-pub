@@ -38,6 +38,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
@@ -52,6 +53,7 @@ import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -84,6 +86,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         public void onContactsReset() {
             startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
             finish();
+        }
+
+        @Override
+        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
+
         }
     };
 

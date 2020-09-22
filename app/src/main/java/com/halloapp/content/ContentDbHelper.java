@@ -25,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 29;
+    private static final int DATABASE_VERSION = 30;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -209,13 +209,15 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + AudienceTable.TABLE_NAME + " ("
                 + AudienceTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + AudienceTable.COLUMN_POST_ID + " TEXT NOT NULL,"
-                + AudienceTable.COLUMN_USER_ID + " TEXT NOT NULL"
+                + AudienceTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                + AudienceTable.COLUMN_EXCLUDED + " INTEGER NOT NULL DEFAULT(0)"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + AudienceTable.INDEX_AUDIENCE_KEY);
         db.execSQL("CREATE UNIQUE INDEX " + AudienceTable.INDEX_AUDIENCE_KEY + " ON " + AudienceTable.TABLE_NAME + "("
                 + AudienceTable.COLUMN_POST_ID + ", "
-                + AudienceTable.COLUMN_USER_ID
+                + AudienceTable.COLUMN_USER_ID + ", "
+                + AudienceTable.COLUMN_EXCLUDED
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + OutgoingSeenReceiptsTable.TABLE_NAME);
@@ -329,6 +331,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 28: {
                 upgradeFromVersion28(db);
+            }
+            case 29: {
+                upgradeFromVersion29(db);
             }
             break;
             default: {
@@ -560,6 +565,16 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_REPLY_MESSAGE_ID + " TEXT");
         db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " TEXT");
+    }
+
+    private void upgradeFromVersion29(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + AudienceTable.TABLE_NAME + " ADD COLUMN " + AudienceTable.COLUMN_EXCLUDED + " INTEGER NOT NULL DEFAULT(0)");
+        db.execSQL("DROP INDEX IF EXISTS " + AudienceTable.INDEX_AUDIENCE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + AudienceTable.INDEX_AUDIENCE_KEY + " ON " + AudienceTable.TABLE_NAME + "("
+                + AudienceTable.COLUMN_POST_ID + ", "
+                + AudienceTable.COLUMN_USER_ID + ", "
+                + AudienceTable.COLUMN_EXCLUDED
+                + ");");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

@@ -291,4 +291,20 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyCommentRetracted(@NonNull String commentId, @NonNull UserId commentUid, @NonNull String postId, @NonNull UserId postUid, long timestamp) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onCommentRevoked(commentId, commentUid, postId, postUid, timestamp);
+            }
+        }
+    }
+
+    public void notifyPostRetracted(@NonNull UserId postUid, @NonNull String postId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onPostRevoked(postUid, postId);
+            }
+        }
+    }
+
 }

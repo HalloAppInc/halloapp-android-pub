@@ -44,6 +44,7 @@ public class Post extends ContentItem {
 
     private @PrivacyList.Type String audienceType;
     private List<UserId> audienceList;
+    private List<UserId> excludeList;
 
     public Post(
             long rowId,
@@ -81,6 +82,15 @@ public class Post extends ContentItem {
     public void setAudience(@PrivacyList.Type String audienceType, @NonNull List<UserId> users) {
         this.audienceList = users;
         this.audienceType = audienceType;
+    }
+
+    public void setExcludeList(@Nullable List<UserId> excludeList) {
+        this.excludeList = excludeList;
+    }
+
+    @Nullable
+    public List<UserId> getExcludeList() {
+        return excludeList;
     }
 
     public @PrivacyList.Type String getAudienceType() {

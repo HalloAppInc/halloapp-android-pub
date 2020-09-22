@@ -29,6 +29,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -41,6 +42,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class PostsFragment extends HalloFragment {
@@ -72,6 +74,11 @@ public class PostsFragment extends HalloFragment {
 
         @Override
         public void onContactsReset() {
+        }
+
+        @Override
+        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
+
         }
     };
 

@@ -44,6 +44,7 @@ public class ContactsDb {
     public interface Observer {
         void onContactsChanged();
         void onContactsReset();
+        void onNewFriends(@NonNull Collection<UserId> newFriends);
     }
 
     public static ContactsDb getInstance() {
@@ -161,7 +162,7 @@ public class ContactsDb {
         });
     }
 
-    public Future<Void> updateContactsServerData(Collection<Contact> updatedContacts) {
+    public Future<Void> updateContactsServerData(Collection<Contact> updatedContacts, Collection<UserId> newFriends) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
@@ -187,6 +188,9 @@ public class ContactsDb {
             }
             if (updatedRows > 0) {
                 notifyContactsChanged();
+                if (!newFriends.isEmpty()) {
+                    notifyNewFriends(newFriends);
+                }
             }
             return null;
         });
@@ -194,11 +198,13 @@ public class ContactsDb {
 
     public Future<Void> updateNormalizedPhoneData(@NonNull List<NormalizedPhoneData> normalizedPhoneDataList) {
         return databaseWriteExecutor.submit(() -> {
+            final List<UserId> newFriends = new ArrayList<>();
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             db.beginTransaction();
             int updatedRows = 0;
             try {
                 for (NormalizedPhoneData normalizedPhoneData : normalizedPhoneDataList) {
+                    Contact existing = readContact(normalizedPhoneData.userId);
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_FRIEND, normalizedPhoneData.friend);
                     values.put(ContactsTable.COLUMN_USER_ID, normalizedPhoneData.userId.rawId());
@@ -209,6 +215,9 @@ public class ContactsDb {
                             SQLiteDatabase.CONFLICT_ABORT);
                     Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedContactRows + " rows updated for " + normalizedPhoneData.normalizedPhone + " " + normalizedPhoneData.userId + " " + normalizedPhoneData.avatarId + " " + normalizedPhoneData.friend);
                     updatedRows += updatedContactRows;
+                    if (normalizedPhoneData.friend && (existing == null || !existing.friend)) {
+                        newFriends.add(normalizedPhoneData.userId);
+                    }
                 }
                 Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedRows + " rows updated for " + normalizedPhoneDataList.size() + " contacts");
                 db.setTransactionSuccessful();
@@ -217,6 +226,7 @@ public class ContactsDb {
             }
             if (updatedRows > 0) {
                 notifyContactsChanged();
+                notifyNewFriends(newFriends);
             }
             return null;
         });
@@ -673,6 +683,14 @@ public class ContactsDb {
             }
         }
         return blocklist;
+    }
+
+    private void notifyNewFriends(@NonNull Collection<UserId> newFriends) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onNewFriends(newFriends);
+            }
+        }
     }
 
     private void notifyContactsChanged() {

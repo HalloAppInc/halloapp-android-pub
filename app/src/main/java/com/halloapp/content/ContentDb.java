@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -78,6 +79,7 @@ public class ContentDb {
         public void onPostAdded(@NonNull Post post) {}
         public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) { }
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
@@ -728,6 +730,10 @@ public class ContentDb {
         return postsDb.getPendingPostSeenReceipts();
     }
 
+    public void updatePostAudience(@NonNull Map<UserId, Collection<Post>> shareMap) {
+        postsDb.updatePostAudience(shareMap);
+    }
+
     @WorkerThread
     public void cleanup() {
         Log.i("ContentDb.cleanup");
@@ -736,6 +742,11 @@ public class ContentDb {
             Log.i("ContentDb.cleanup: vacuum");
             observers.notifyFeedCleanup();
         }
+    }
+
+    @NonNull
+    public Collection<Post> getShareablePosts() {
+        return postsDb.getShareablePosts();
     }
 
     // TODO (ds): remove
