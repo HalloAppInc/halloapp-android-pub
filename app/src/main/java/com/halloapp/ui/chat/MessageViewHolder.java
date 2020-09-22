@@ -368,7 +368,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             if (message.isOutgoing()) {
                 contactLoader.cancel(nameView);
                 nameView.setVisibility(View.GONE);
-            } else if ((prevMessage == null || !prevMessage.senderUserId.equals(message.senderUserId)) && message.chatId instanceof GroupId) {
+            } else if ((prevMessage == null || !prevMessage.senderUserId.equals(message.senderUserId) || prevMessage.isLocalMessage()) && message.chatId instanceof GroupId) {
                 contactLoader.load(nameView, message.senderUserId);
                 nameView.setVisibility(View.VISIBLE);
             } else {
