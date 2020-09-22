@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 
+import com.halloapp.content.PostsManager;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -53,6 +54,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private ContactsDb contactsDb;
     private GroupsSync groupsSync;
     private AvatarLoader avatarLoader;
+    private PostsManager postsManager;
     private Notifications notifications;
     private ForegroundChat foregroundChat;
     private PresenceLoader presenceLoader;
@@ -73,6 +75,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
                             AvatarLoader.getInstance(),
+                            PostsManager.getInstance(),
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),
                             PresenceLoader.getInstance(),
@@ -95,6 +98,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ContactsDb contactsDb,
             @NonNull GroupsSync groupsSync,
             @NonNull AvatarLoader avatarLoader,
+            @NonNull PostsManager postsManager,
             @NonNull Notifications notifications,
             @NonNull ForegroundChat foregroundChat,
             @NonNull PresenceLoader presenceLoader,
@@ -110,6 +114,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.contactsDb = contactsDb;
         this.groupsSync = groupsSync;
         this.avatarLoader = avatarLoader;
+        this.postsManager = postsManager;
         this.notifications = notifications;
         this.foregroundChat = foregroundChat;
         this.presenceLoader = presenceLoader;
@@ -128,6 +133,7 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         });
         bgWorkers.execute(blockListManager::ensureInitialBlockListFetch);
+        bgWorkers.execute(postsManager::ensurePostsShared);
 
         connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
@@ -265,6 +271,18 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onChatStateReceived(UserId user, ChatState chatState) {
         presenceLoader.reportChatState(user, chatState);
+    }
+
+    @Override
+    public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId) {
+        Post post = new Post(0, senderUserId, postId, 0, Post.TRANSFERRED_NO, Post.SEEN_NO, null);
+        contentDb.retractPost(post);
+    }
+
+    @Override
+    public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, @NonNull UserId postSenderId, long timestamp) {
+        Comment comment = new Comment(0, postSenderId, postId, commentSenderId, id, null, timestamp, !commentSenderId.isMe(), true, null);
+        contentDb.retractComment(comment);
     }
 
     @Override

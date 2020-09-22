@@ -35,6 +35,7 @@ import com.halloapp.util.TimeFormatter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,6 +67,11 @@ public class SocialHistoryPopup {
 
         @Override
         public void onContactsReset() {
+        }
+
+        @Override
+        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
+
         }
     };
 

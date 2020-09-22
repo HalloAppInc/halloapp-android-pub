@@ -12,4 +12,5 @@ public class AudienceTable implements BaseColumns {
 
     public static final String COLUMN_POST_ID = "post_id";
     public static final String COLUMN_USER_ID = "user_id";
+    public static final String COLUMN_EXCLUDED = "excluded";
 }

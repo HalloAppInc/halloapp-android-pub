@@ -65,6 +65,7 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
+import java.util.Collection;
 import java.util.List;
 
 public class CommentsActivity extends HalloActivity {
@@ -111,6 +112,11 @@ public class CommentsActivity extends HalloActivity {
 
         @Override
         public void onContactsReset() {
+        }
+
+        @Override
+        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
+
         }
     };
 
