@@ -5,15 +5,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.id.UserId;
-import com.halloapp.util.Log;
-import com.halloapp.util.Preconditions;
-import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -29,10 +23,7 @@ public class FeedItem {
     public final @Type int type;
     public final @NonNull String id;
     public final String parentPostId;
-    public final String parentPostSenderId;
-    public String publisherId;
-    public String publisherName;
-    public Long timestamp;
+    public final UserId parentPostSenderId;
 
     public final @Nullable String payload;
 
@@ -44,71 +35,12 @@ public class FeedItem {
         this.parentPostSenderId = null;
     }
 
-    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @NonNull String parentPostSenderId, @Nullable String payload) {
+    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @NonNull UserId parentPostSenderId, @Nullable String payload) {
         this.id = id;
         this.type = type;
         this.payload = payload;
         this.parentPostId = parentPostId;
         this.parentPostSenderId = parentPostSenderId;
-    }
-
-    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @NonNull UserId parentPostSenderId, @Nullable String payload) {
-        this(type, id, parentPostId, parentPostSenderId.rawId(), payload);
-    }
-
-    @Nullable
-    public static FeedItem parseFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
-        switch (parser.getName()) {
-            case "post":
-                return parsePostFeedItem(parser);
-            case "comment":
-                return parseCommentFeedItem(parser);
-            default:
-                return null;
-        }
-    }
-
-    @Nullable
-    public static FeedItem parsePostFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String timestampStr = parser.getAttributeValue(null, "timestamp");
-        String uid = parser.getAttributeValue(null, "uid");
-        String id = parser.getAttributeValue(null, "id");
-        if (id == null) {
-            Log.e("FeedItem/parsePostFeedItem no id set");
-            return null;
-        }
-        String payload = Xml.readText(parser);
-        FeedItem post = new FeedItem(Type.POST, id, payload);
-        post.publisherId = uid;
-        if (timestampStr != null) {
-            post.timestamp = Long.parseLong(timestampStr);
-        }
-        return post;
-    }
-
-    @Nullable
-    public static FeedItem parseCommentFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String timestampStr = parser.getAttributeValue(null, "timestamp");
-        String publisherId = parser.getAttributeValue(null, "publisher_uid");
-        String publisherName = parser.getAttributeValue(null, "publisher_name");
-        String postId = parser.getAttributeValue(null, "post_id");
-        String postUid = parser.getAttributeValue(null, "post_uid");
-
-        String id = parser.getAttributeValue(null, "id");
-        if (id == null) {
-            Log.e("FeedItem/parsePostFeedItem no id set");
-            return null;
-        }
-
-        String payload = Xml.readText(parser);
-        
-        FeedItem comment = new FeedItem(Type.COMMENT, id, postId, postUid, payload);
-        comment.publisherName = publisherName;
-        comment.publisherId = publisherId;
-        if (timestampStr != null) {
-            comment.timestamp = Long.parseLong(timestampStr);
-        }
-        return comment;
     }
 
     private String getType() {
@@ -127,7 +59,7 @@ public class FeedItem {
         builder.attribute("id", id);
         if (parentPostSenderId != null && parentPostId != null) {
             builder.attribute("post_id", parentPostId);
-            builder.attribute("post_uid", parentPostSenderId);
+            builder.attribute("post_uid", parentPostSenderId.rawId());
         }
         if (payload == null) {
             builder.closeEmptyElement();

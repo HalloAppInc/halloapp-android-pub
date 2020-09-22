@@ -18,7 +18,6 @@ import com.halloapp.proto.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
-import com.halloapp.xmpp.feed.FeedItem;
 
 import org.jivesoftware.smack.packet.NamedElement;
 import org.xmlpull.v1.XmlPullParser;
@@ -137,17 +136,6 @@ public class PublishedEntry {
         }
     }
 
-    static @NonNull List<PublishedEntry> getFeedEntries(@NonNull List<FeedItem> feedItems) {
-        final List<PublishedEntry> entries = new ArrayList<>();
-        for (FeedItem item : feedItems) {
-            final PublishedEntry entry = getFeedEntry(item);
-            if (entry != null && entry.valid()) {
-                entries.add(entry);
-            }
-        }
-        return entries;
-    }
-
     static @NonNull List<PublishedEntry> getEntries(@NonNull List<? extends NamedElement> items) {
         final List<PublishedEntry> entries = new ArrayList<>();
         for (NamedElement item : items) {
@@ -161,19 +149,6 @@ public class PublishedEntry {
             }
         }
         return entries;
-    }
-
-    static @Nullable PublishedEntry getFeedEntry(@NonNull FeedItem feedItem) {
-        if (feedItem.payload != null) {
-            PublishedEntry.Builder entryBuilder = readEncodedEntryString(feedItem.payload);
-            entryBuilder.id(feedItem.id);
-            entryBuilder.timestamp(feedItem.timestamp);
-            if (feedItem.publisherId != null) {
-                entryBuilder.user(feedItem.publisherId);
-            }
-            return entryBuilder.build();
-        }
-        return null;
     }
 
     private static @Nullable PublishedEntry getEntry(@NonNull PubSubItem item) {

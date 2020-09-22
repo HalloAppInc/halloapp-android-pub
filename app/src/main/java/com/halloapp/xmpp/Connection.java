@@ -27,7 +27,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
-import com.halloapp.xmpp.feed.FeedMessageElement;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
 import com.halloapp.xmpp.groups.GroupChangeMessage;
@@ -151,8 +150,6 @@ public class Connection {
         public void onPresenceReceived(UserId user, Long lastSeen) {}
         public void onChatStateReceived(UserId user, ChatState chatState) {}
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
-        public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, @NonNull UserId postSenderId, long timestamp) {}
     }
 
     private Connection(
@@ -213,7 +210,6 @@ public class Connection {
         ProviderManager.addExtensionProvider(GroupChatMessage.ELEMENT, GroupChatMessage.NAMESPACE, new GroupChatMessage.Provider());
         ProviderManager.addExtensionProvider(MemberElement.ELEMENT, MemberElement.NAMESPACE, new MemberElement.Provider());
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
-        ProviderManager.addExtensionProvider(FeedMessageElement.ELEMENT, FeedMessageElement.NAMESPACE, new FeedMessageElement.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
         ProviderManager.addIQProvider(InvitesResponseIq.ELEMENT, InvitesResponseIq.NAMESPACE, new InvitesResponseIq.Provider());
@@ -635,35 +631,23 @@ public class Connection {
         });
     }
 
-    public Future<Boolean> sharePosts(final Map<UserId, Collection<Post>> shareMap) {
-        return executor.submit(() -> {
+    public void sharePost(@NonNull Post post, final @NonNull UserId userId) {
+        executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot share posts, no connection");
-                return false;
+                Log.e("connection: cannot send post, no connection");
+                return;
             }
             try {
-                List<SharePosts> sharePosts = new ArrayList<>();
-                for (UserId user : shareMap.keySet()) {
-                    Collection<Post> postsToShare = shareMap.get(user);
-                    if (postsToShare == null) {
-                        continue;
-                    }
-                    ArrayList<FeedItem> itemList = new ArrayList<>(postsToShare.size());
-                    for (Post post : postsToShare) {
-                        FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
-                        itemList.add(sharedPost);
-                    }
-                    sharePosts.add(new SharePosts(user, itemList));
-                }
+                FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
+                SharePosts sharePosts = new SharePosts(userId, Collections.singletonList(sharedPost));
                 FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
                 updateIq.setTo(connection.getXMPPServiceDomain());
 
                 connection.createStanzaCollectorAndSend(updateIq).nextResultOrThrow();
+                //connectionObservers.notifyOutgoingPostSent(post.id);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
-                return false;
             }
-            return true;
         });
     }
 
@@ -793,7 +777,7 @@ public class Connection {
                         postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
                     }
                     FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
-                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
+                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
                     requestIq.setTo(connection.getXMPPServiceDomain());
                     connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
                 } else {
@@ -1017,87 +1001,6 @@ public class Connection {
         }
     }
 
-    private boolean processFeedPubSubItems(@NonNull FeedMessageElement element, @NonNull String ackId) {
-        if (element.action == FeedMessageElement.Action.SHARE || element.action == FeedMessageElement.Action.PUBLISH) {
-            final List<Post> posts = new ArrayList<>();
-            final List<Comment> comments = new ArrayList<>();
-            for (FeedItem item : element.feedItemList) {
-                PublishedEntry entry = PublishedEntry.getFeedEntry(item);
-                if (entry == null) {
-                    continue;
-                }
-                final UserId senderUserId = getUserId(item.publisherId);
-                if (senderUserId != null && !senderUserId.isMe()) {
-                    if (entry.type == PublishedEntry.ENTRY_FEED) {
-                        final Post post = new Post(0,
-                                senderUserId,
-                                entry.id,
-                                entry.timestamp,
-                                entry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO,
-                                Post.SEEN_NO,
-                                entry.text
-                        );
-                        for (PublishedEntry.Media entryMedia : entry.media) {
-                            post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.sha256hash,
-                                    entryMedia.width, entryMedia.height));
-                        }
-                        for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            post.mentions.add(mention);
-                        }
-                        posts.add(post);
-                    } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
-                        final Comment comment = new Comment(0,
-                                getUserId(item.parentPostSenderId),
-                                entry.feedItemId,
-                                senderUserId,
-                                entry.id,
-                                entry.parentCommentId,
-                                entry.timestamp,
-                                true,
-                                false,
-                                entry.text
-                        );
-                        for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            comment.mentions.add(mention);
-                        }
-                        comments.add(comment);
-                    }
-                }
-            }
-
-            final Map<UserId, String> names = new HashMap<>();
-            for (FeedItem item : element.feedItemList) {
-                if (item.type == FeedItem.Type.COMMENT) {
-                    if (item.publisherId != null && item.publisherName != null) {
-                        names.put(new UserId(item.publisherId), item.publisherName);
-                    }
-                }
-            }
-            if (!names.isEmpty()) {
-                connectionObservers.notifyUserNamesReceived(names);
-            }
-
-            if (!posts.isEmpty() || !comments.isEmpty()) {
-                connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
-            }
-            return !posts.isEmpty() || !comments.isEmpty();
-        } else if (element.action == FeedMessageElement.Action.RETRACT) {
-            for (FeedItem item : element.feedItemList) {
-                if (item.type == FeedItem.Type.COMMENT) {
-                    connectionObservers.notifyCommentRetracted(item.id, getUserId(item.publisherId), item.parentPostId, getUserId(item.parentPostSenderId), item.timestamp);
-                } else if (item.type == FeedItem.Type.POST) {
-                    connectionObservers.notifyPostRetracted(getUserId(item.publisherId), item.id);
-                }
-            }
-        }
-        return false;
-    }
-
     private boolean processFeedPubSubItems(@NonNull UserId feedUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
         Preconditions.checkNotNull(connection);
         final List<PublishedEntry> entries = PublishedEntry.getEntries(items);
@@ -1105,7 +1008,7 @@ public class Connection {
         final List<Comment> comments = new ArrayList<>();
         for (PublishedEntry entry : entries) {
             final UserId senderUserId = entry.user == null ? feedUserId : getUserId(entry.user);
-            if (senderUserId != null && !senderUserId.isMe()) {
+            if (!senderUserId.isMe()) {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     final Post post = new Post(0,
                             feedUserId,
@@ -1147,7 +1050,6 @@ public class Connection {
                 }
             }
         }
-
         final Map<UserId, String> names = new HashMap<>();
         for (NamedElement item : items) {
             if (item instanceof PubSubItem) {
@@ -1322,24 +1224,15 @@ public class Connection {
             if (msg.getType() == org.jivesoftware.smack.packet.Message.Type.error) {
                 Log.w("connection: got error message " + msg);
             } else {
-                if (!Constants.NEW_FEED_API) {
-                    final EventElement event = packet.getExtension(PubSubNamespace.event.name(), PubSubNamespace.event.getXmlns());
-                    if (event != null && EventElementType.items.equals(event.getEventType())) {
-                        final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
-                        if (itemsElem != null) {
-                            String node = itemsElem.getNode();
-                            if (isFeedNodeId(node)) {
-                                Log.i("connection: got feed pubsub " + msg);
-                                handled = processFeedPubSubItems(getFeedUserId(node), itemsElem.getItems(), msg.getStanzaId());
-                            }
+                final EventElement event = packet.getExtension(PubSubNamespace.event.name(), PubSubNamespace.event.getXmlns());
+                if (event != null && EventElementType.items.equals(event.getEventType())) {
+                    final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
+                    if (itemsElem != null) {
+                        String node = itemsElem.getNode();
+                        if (isFeedNodeId(node)) {
+                            Log.i("connection: got feed pubsub " + msg);
+                            handled = processFeedPubSubItems(getFeedUserId(node), itemsElem.getItems(), msg.getStanzaId());
                         }
-                    }
-                }
-                if (!handled) {
-                    final FeedMessageElement feedMessage = packet.getExtension(FeedMessageElement.ELEMENT, FeedMessageElement.NAMESPACE);
-                    if (feedMessage != null) {
-                        Log.i("connection: got feed item  " + msg);
-                        handled = processFeedPubSubItems(feedMessage, msg.getStanzaId());
                     }
                 }
                 if (!handled) {

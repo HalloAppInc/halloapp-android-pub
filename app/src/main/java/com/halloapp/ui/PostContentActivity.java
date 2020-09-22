@@ -42,8 +42,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
-import java.util.Collection;
-
 public class PostContentActivity extends HalloActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
@@ -75,11 +73,6 @@ public class PostContentActivity extends HalloActivity {
 
         @Override
         public void onContactsReset() {
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

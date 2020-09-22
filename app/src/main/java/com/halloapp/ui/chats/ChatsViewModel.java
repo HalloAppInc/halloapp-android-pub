@@ -56,11 +56,6 @@ public class ChatsViewModel extends AndroidViewModel {
         @Override
         public void onContactsReset() {
         }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
-        }
     };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {

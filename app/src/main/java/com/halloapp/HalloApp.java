@@ -21,12 +21,9 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.EncryptedSessionManager;
-import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
-
-import java.util.Collection;
 
 public class HalloApp extends Application {
 
@@ -63,11 +60,6 @@ public class HalloApp extends Application {
             @Override
             public void onContactsReset() {
                 Preferences.getInstance().setLastContactsSyncTime(0);
-            }
-
-            @Override
-            public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
             }
         });
 

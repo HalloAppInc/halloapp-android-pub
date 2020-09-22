@@ -26,10 +26,8 @@ import com.halloapp.util.Preconditions;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 class PostsDb {
 
@@ -98,16 +96,6 @@ class PostsDb {
                 audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
                 audienceUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
                 db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
-            }
-        }
-        final List<UserId> excludeList = post.getExcludeList();
-        if (excludeList != null) {
-            for (UserId userId : excludeList) {
-                final ContentValues excludedUser = new ContentValues();
-                excludedUser.put(AudienceTable.COLUMN_POST_ID, post.id);
-                excludedUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
-                excludedUser.put(AudienceTable.COLUMN_EXCLUDED, true);
-                db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, excludedUser, SQLiteDatabase.CONFLICT_IGNORE);
             }
         }
         mentionsDb.addMentions(post);
@@ -200,31 +188,6 @@ class PostsDb {
         } catch (SQLException ex) {
             Log.e("ContentDb.setIncomingPostsSeen: failed");
             throw ex;
-        }
-    }
-
-    @WorkerThread
-    void updatePostAudience(@NonNull Map<UserId, Collection<Post>> shareMap) {
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            for (UserId user : shareMap.keySet()) {
-                Collection<Post> posts = shareMap.get(user);
-                if (posts == null) {
-                    continue;
-                }
-                for (Post post : posts) {
-                    final ContentValues audienceUser = new ContentValues();
-                    audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
-                    audienceUser.put(AudienceTable.COLUMN_USER_ID, user.rawId());
-                    db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception e ) {
-            Log.e("PostsDb/updatePostAudience failed to update audience for post", e);
-        } finally {
-            db.endTransaction();
         }
     }
 
@@ -567,7 +530,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, boolean unseenOnly) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
@@ -656,7 +619,7 @@ class PostsDb {
                 "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
-                    (count == null ? "" : ("LIMIT " + count));
+            "LIMIT " + count;
 
         try (final Cursor cursor = db.rawQuery(sql, selectionArgs)) {
 
@@ -678,11 +641,8 @@ class PostsDb {
                             cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
-                    List<UserId> audienceList = new ArrayList<>();
-                    List<UserId> excludeList = new ArrayList<>();
-                    getPostAudienceInfo(post.id, audienceList, excludeList);
+                    List<UserId> audienceList = getPostAudienceInfo(post.id);
                     post.setAudience(cursor.getString(7), audienceList);
-                    post.setExcludeList(excludeList);
                     post.commentCount = cursor.getInt(15);
                     post.unseenCommentCount = post.commentCount - cursor.getInt(16);
                     final String firstCommentId = cursor.getString(18);
@@ -714,7 +674,7 @@ class PostsDb {
                             cursor.getInt(14)));
                 }
             }
-            if (post != null && (count == null || cursor.getCount() < count)) {
+            if (post != null && cursor.getCount() < count) {
                 mentionsDb.fillMentions(post);
                 posts.add(post);
             }
@@ -783,11 +743,7 @@ class PostsDb {
                             cursor.getInt(4),
                             cursor.getInt(5),
                             cursor.getString(6));
-                    List<UserId> audienceList = new ArrayList<>();
-                    List<UserId> excludeList = new ArrayList<>();
-                    getPostAudienceInfo(post.id, audienceList, excludeList);
-                    post.setAudience(cursor.getString(7), audienceList);
-                    post.setExcludeList(excludeList);
+                    post.setAudience(cursor.getString(7), getPostAudienceInfo(post.id));
                     mentionsDb.fillMentions(post);
                     post.seenByCount = cursor.getInt(15);
                 }
@@ -973,47 +929,6 @@ class PostsDb {
         return mentionedComments;
     }
 
-    @WorkerThread
-    @Nullable Comment getComment(@NonNull String commentId) {
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-
-        final String sql =
-                "SELECT " +
-                        CommentsTable._ID + ", " +
-                        CommentsTable.COLUMN_POST_SENDER_USER_ID + ", " +
-                        CommentsTable.COLUMN_POST_ID + ", " +
-                        CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", " +
-                        CommentsTable.COLUMN_COMMENT_ID + ", " +
-                        CommentsTable.COLUMN_PARENT_ID + ", " +
-                        CommentsTable.COLUMN_TIMESTAMP + ", " +
-                        CommentsTable.COLUMN_TRANSFERRED + ", " +
-                        CommentsTable.COLUMN_TEXT + ", " +
-                        CommentsTable.COLUMN_SEEN + " " +
-                        "FROM " + CommentsTable.TABLE_NAME + " " +
-                        "WHERE comments.comment_id<>? " +
-                        "AND comments.timestamp>" + getPostExpirationTime() + " " +
-                        "LIMIT " + 1;
-        try (final Cursor cursor = db.rawQuery(sql, new String[] {commentId})) {
-            while (cursor.moveToNext()) {
-
-                final Comment comment = new Comment(
-                        cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
-                        cursor.getString(2),
-                        new UserId(cursor.getString(3)),
-                        cursor.getString(4),
-                        cursor.getString(5),
-                        cursor.getLong(6),
-                        cursor.getInt(7) == 1,
-                        cursor.getInt(9) == 1,
-                        cursor.getString(8));
-                mentionsDb.fillMentions(comment);
-                return comment;
-            }
-        }
-        return null;
-    }
-
     /*
     * returns "important" comments only
     * */
@@ -1122,23 +1037,19 @@ class PostsDb {
     }
 
     @WorkerThread
-    void getPostAudienceInfo(@NonNull String postId, @NonNull List<UserId> audienceList, @NonNull List<UserId> excludeList) {
+    @NonNull List<UserId> getPostAudienceInfo(@NonNull String postId) {
+        final List<UserId> audienceList = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(AudienceTable.TABLE_NAME,
-                new String [] {AudienceTable.COLUMN_USER_ID, AudienceTable.COLUMN_EXCLUDED},
+                new String [] {AudienceTable.COLUMN_USER_ID},
                 AudienceTable.COLUMN_POST_ID + "=?",
                 new String [] {postId}, null, null, AudienceTable._ID + " DESC")) {
             while (cursor.moveToNext()) {
-                boolean excluded = cursor.getInt(1) == 1;
-                UserId userId = new UserId(cursor.getString(0));
-                if (excluded) {
-                    excludeList.add(userId);
-                } else {
-                    audienceList.add(userId);
-                }
+                audienceList.add(new UserId(cursor.getString(0)));
             }
         }
         Log.i("ContentDb.getPostAudienceInfo: audienceList.size=" + audienceList.size());
+        return audienceList;
     }
 
     @WorkerThread
@@ -1219,11 +1130,7 @@ class PostsDb {
                             cursor.getInt(5),
                             cursor.getString(6));
                     mentionsDb.fillMentions(post);
-                    List<UserId> audienceList = new ArrayList<>();
-                    List<UserId> excludeList = new ArrayList<>();
-                    getPostAudienceInfo(post.id, audienceList, excludeList);
-                    post.setAudience(cursor.getString(7), audienceList);
-                    post.setExcludeList(excludeList);
+                    post.setAudience(cursor.getString(7), getPostAudienceInfo(post.id));
                 }
                 if (!cursor.isNull(8)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
@@ -1303,11 +1210,6 @@ class PostsDb {
         }
         Log.i("ContentDb.getPendingPostSeenReceipts: receipts.size=" + receipts.size());
         return receipts;
-    }
-
-    @NonNull
-    List<Post> getShareablePosts() {
-        return getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, false);
     }
 
     @WorkerThread

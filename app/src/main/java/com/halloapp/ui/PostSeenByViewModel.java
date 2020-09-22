@@ -20,7 +20,6 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -72,11 +71,6 @@ public class PostSeenByViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsReset() {
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -266,7 +265,6 @@ public class ContactsSync {
         }
 
         final Collection<Contact> updatedContacts = new ArrayList<>();
-        final Collection<UserId> newFriends = new HashSet<>();
         for (ContactInfo contactsSyncResult : contactSyncResults) {
             final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
             if (phoneContacts == null) {
@@ -275,13 +273,9 @@ public class ContactsSync {
             }
             for (Contact contact : phoneContacts) {
                 boolean contactUpdated = false;
-                boolean isNewFriend = false;
                 if (contact.friend != ("friends".equals(contactsSyncResult.role))) {
                     contact.friend = !contact.friend;
                     contactUpdated = true;
-                    if (contact.friend) {
-                        isNewFriend = true;
-                    }
                     Log.i("ContactsSync.performContactSync: update friendship for " + contact.addressBookName + " to " + contact.friend);
                 }
                 if (!Objects.equals(contact.userId == null ? null : contact.userId.rawId(), contactsSyncResult.userId)) {
@@ -311,15 +305,12 @@ public class ContactsSync {
                 if (contactUpdated) {
                     updatedContacts.add(contact);
                 }
-                if (isNewFriend) {
-                    newFriends.add(contact.userId);
-                }
             }
         }
 
         if (!updatedContacts.isEmpty()) {
             try {
-                ContactsDb.getInstance().updateContactsServerData(updatedContacts, newFriends).get();
+                ContactsDb.getInstance().updateContactsServerData(updatedContacts).get();
                 Map<UserId, String> nameMap = new HashMap<>();
                 for (Contact contact : updatedContacts) {
                     nameMap.put(contact.userId, contact.halloName);

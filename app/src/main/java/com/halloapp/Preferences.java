@@ -17,7 +17,6 @@ public class Preferences {
 
     private static final String PREF_KEY_LAST_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
-    private static final String PREF_KEY_REQUIRE_SHARE_POSTS = "require_share_posts";
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
@@ -102,18 +101,6 @@ public class Preferences {
     public void setRequireFullContactsSync(boolean requireFullContactsSync) {
         if (!getPreferences().edit().putBoolean(PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, requireFullContactsSync).commit()) {
             Log.e("preferences: failed to set required full contacts sync");
-        }
-    }
-
-    @WorkerThread
-    public boolean getRequireSharePosts() {
-        return getPreferences().getBoolean(PREF_KEY_REQUIRE_SHARE_POSTS, false);
-    }
-
-    @WorkerThread
-    public void setRequireSharePosts(boolean requireSharePosts) {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_REQUIRE_SHARE_POSTS, requireSharePosts).commit()) {
-            Log.e("preferences: failed to set required share posts");
         }
     }
 

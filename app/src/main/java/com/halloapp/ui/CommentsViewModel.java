@@ -26,7 +26,6 @@ import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -100,11 +99,6 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsReset() {
-
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
 
         }
     };

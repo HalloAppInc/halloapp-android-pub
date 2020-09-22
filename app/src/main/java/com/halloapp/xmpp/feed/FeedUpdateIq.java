@@ -11,8 +11,6 @@ import org.jivesoftware.smack.packet.IQ;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class FeedUpdateIq extends IQ {
@@ -36,7 +34,7 @@ public class FeedUpdateIq extends IQ {
     private @Nullable @PrivacyList.Type String audienceType;
     private @Nullable List<UserId> audienceList;
 
-    private @NonNull final List<SharePosts> sharePosts = new ArrayList<>();
+    private @Nullable SharePosts sharePosts;
 
     public FeedUpdateIq(@Action int action, @NonNull FeedItem feedItem) {
         super(ELEMENT, NAMESPACE);
@@ -47,13 +45,13 @@ public class FeedUpdateIq extends IQ {
         this.feedItem = feedItem;
     }
 
-    public FeedUpdateIq(@NonNull Collection<SharePosts> posts) {
+    public FeedUpdateIq(@NonNull SharePosts sharePosts) {
         super(ELEMENT, NAMESPACE);
         this.action = Action.SHARE;
 
         setType(Type.set);
 
-        sharePosts.addAll(posts);
+        this.sharePosts = sharePosts;
     }
 
     private String getActionString() {
@@ -78,10 +76,8 @@ public class FeedUpdateIq extends IQ {
         xml.xmlnsAttribute(NAMESPACE);
         xml.attribute(ATTRIBUTE_ACTION, getActionString());
         xml.rightAngleBracket();
-        if (action == Action.SHARE && !sharePosts.isEmpty()) {
-            for (SharePosts sharePost : sharePosts) {
-                sharePost.toNode(xml);
-            }
+        if (action == Action.SHARE && sharePosts != null) {
+            sharePosts.toNode(xml);
         } else {
             feedItem.toNode(xml);
             if (audienceType != null && audienceList != null) {
