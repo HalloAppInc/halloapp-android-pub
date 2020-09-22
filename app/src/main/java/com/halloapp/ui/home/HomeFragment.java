@@ -26,8 +26,10 @@ import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.FeedNuxBottomSheetDialogFragment;
 import com.halloapp.ui.MainNavFragment;
+import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -48,6 +50,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
     private FrameLayout nuxFeedContainer;
     private View nuxFeed;
     private View nuxActivityCenter;
+    private View inviteView;
+    private View footerPlaceholder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -182,7 +186,22 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
+        footerPlaceholder = inflater.inflate(R.layout.home_invite_placeholder, null);
+        adapter.addFooter(footerPlaceholder);
+
+        inviteView = root.findViewById(R.id.home_invite);
+        inviteView.setOnClickListener(v -> startActivity(new Intent(requireContext(), InviteFriendsActivity.class)));
+        postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                refreshInviteNux();
+            }
+        });
+
         postsView.setAdapter(adapter);
+
+        inviteView.getViewTreeObserver().addOnGlobalLayoutListener(this::refreshInviteNux);
 
         socialHistoryPopup = new SocialHistoryPopup(requireContext(), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
         socialHistoryPopup.setOnItemClickListener(commentsGroup -> {
@@ -198,6 +217,27 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         });
 
         return root;
+    }
+
+    private void refreshInviteNux() {
+        if (adapter.getItemCount() - 1 == layoutManager.findLastVisibleItemPosition()) {
+            if (footerPlaceholder.getTop() > inviteView.getTop()) {
+                int dist = footerPlaceholder.getTop() - inviteView.getTop();
+                int height = inviteView.getHeight() / 2;
+                if (dist > height) {
+                    inviteView.setVisibility(View.INVISIBLE);
+                } else {
+                    float alpha = 1.0f - ((float) dist / (float) height);
+                    inviteView.setVisibility(View.VISIBLE);
+                    inviteView.setAlpha(alpha);
+                }
+            } else {
+                inviteView.setAlpha(1.0f);
+                inviteView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            inviteView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
