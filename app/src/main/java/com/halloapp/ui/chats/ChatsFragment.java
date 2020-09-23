@@ -265,7 +265,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                         } else if (groupChatState.typingUsers.size() > 0) {
                             typingView.setText(getString(R.string.group_many_users_typing));
                         }
-                    }else {
+                    } else {
                         infoContainer.setVisibility(View.VISIBLE);
                         typingView.setVisibility(View.GONE);
                     }
@@ -282,6 +282,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     presenceLiveData.removeObserver(presenceObserver);
                     presenceLiveData = null;
                 }
+
+                // Reset visibility for these views
+                infoContainer.setVisibility(View.VISIBLE);
+                typingView.setVisibility(View.GONE);
             }
 
             void bindTo(@NonNull Chat chat) {

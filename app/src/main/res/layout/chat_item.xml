@@ -97,6 +97,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@+id/info_barrier"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="2dp"
             android:singleLine="true"
             android:ellipsize="end"
