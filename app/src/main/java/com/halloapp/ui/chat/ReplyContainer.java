@@ -3,6 +3,7 @@ package com.halloapp.ui.chat;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Outline;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -83,8 +84,12 @@ class ReplyContainer {
             public void showResult(@NonNull View view, @Nullable ReplyLoader.Result result) {
                 if (result != null) {
                     nameView.setText(result.name);
-                    if (result.mentions != null) {
+                    textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
+                    if (result.mentions != null && !result.mentions.isEmpty()) {
                         parent.getTextContentLoader().load(textView, result);
+                    } else if (result.text == null && result.thumb == null) {
+                        textView.setText(R.string.reply_original_not_found);
+                        textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
                     } else {
                         textView.setText(result.text);
                     }

@@ -1,5 +1,6 @@
 package com.halloapp.xmpp.groups;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.halloapp.content.Media;
@@ -86,6 +87,7 @@ public class GroupChatMessage implements ExtensionElement {
     }
 
     public Message getMessage(Jid from, String id) {
+        String rawReplyMessageId = chatMessage.getChatReplyMessageId();
         final Message message = new Message(0,
                 groupId,
                 new UserId(from.getLocalpartOrNull().toString()),
@@ -97,7 +99,7 @@ public class GroupChatMessage implements ExtensionElement {
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),
                 chatMessage.getFeedPostMediaIndex(),
-                chatMessage.getChatReplyMessageId(),
+                TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
                 chatMessage.getChatReplyMessageMediaIndex(),
                 new UserId(chatMessage.getChatReplyMessageSenderId()),
                 0);

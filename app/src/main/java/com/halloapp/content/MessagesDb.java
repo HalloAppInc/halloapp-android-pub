@@ -106,18 +106,18 @@ class MessagesDb {
 
                 ContentItem replyItem = null;
                 int mediaIndex = -1;
-                if (replyPost != null) {
-                    replyItem = replyPost;
-                    mediaIndex = message.replyPostMediaIndex;
-                    replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
-                    replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
-                } else if (replyMessage != null) {
+                if (message.replyMessageId != null) {
                     replyItem = replyMessage;
                     mediaIndex = message.replyMessageMediaIndex;
                     replyValues.put(RepliesTable.COLUMN_POST_ID, ""); // TODO(jack)
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_ID, message.replyMessageId);
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX, message.replyMessageMediaIndex);
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
+                } else if (replyPost != null) {
+                    replyItem = replyPost;
+                    mediaIndex = message.replyPostMediaIndex;
+                    replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
+                    replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
                 } else {
                     Log.e("Content item for reply is null");
                 }

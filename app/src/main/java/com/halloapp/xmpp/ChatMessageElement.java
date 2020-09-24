@@ -1,5 +1,6 @@
 package com.halloapp.xmpp;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -139,6 +140,7 @@ public class ChatMessageElement implements ExtensionElement {
                 }
             }
         }
+        String rawReplyMessageId = chatMessage.getChatReplyMessageId();
         final Message message = new Message(0,
                 ChatId.fromString(from.getLocalpartOrNull().toString()),
                 new UserId(from.getLocalpartOrNull().toString()),
@@ -150,7 +152,7 @@ public class ChatMessageElement implements ExtensionElement {
                 chatMessage.getText(),
                 chatMessage.getFeedPostId(),
                 chatMessage.getFeedPostMediaIndex(),
-                chatMessage.getChatReplyMessageId(),
+                TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
                 chatMessage.getChatReplyMessageMediaIndex(),
                 new UserId(chatMessage.getChatReplyMessageSenderId()),
                 0);

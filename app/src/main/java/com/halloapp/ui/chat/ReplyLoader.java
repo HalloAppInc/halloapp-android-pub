@@ -60,13 +60,10 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
                 }
             } else if (message.replyMessageId != null) {
                 UserId originalSenderId = me.getUser().equals(message.replyMessageSenderId.rawId()) ? UserId.ME : message.replyMessageSenderId;
-                Message replyMessage = contentDb.getMessage(message.chatId, originalSenderId, message.replyMessageId);
-                if (replyMessage != null) {
-                    if (replyMessage.senderUserId.isMe()) {
-                        name = view.getContext().getString(R.string.me);
-                    } else {
-                        name = contactsDb.getContact(replyMessage.senderUserId).getDisplayName();
-                    }
+                if (originalSenderId.isMe()) {
+                    name = view.getContext().getString(R.string.me);
+                } else {
+                    name = contactsDb.getContact(originalSenderId).getDisplayName();
                 }
             }
 
