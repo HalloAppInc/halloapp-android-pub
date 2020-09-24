@@ -434,7 +434,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     String senderName = sender.userId.rawId().equals(me.user.getValue()) ? itemView.getContext().getString(R.string.me) : sender.getDisplayName();
                     List<String> names = new ArrayList<>();
                     for (int i=1; i<result.size(); i++) {
-                        names.add(result.get(i).getDisplayName());
+                        Contact contact = result.get(i);
+                        names.add(contact.userId.rawId().equals(me.user.getValue()) ? systemMessage.getResources().getString(R.string.me) : contact.getDisplayName());
                     }
                     String formatted = ListFormatter.format(itemView.getContext(), names);
                     systemMessage.setText(itemView.getContext().getString(string, senderName, formatted));
