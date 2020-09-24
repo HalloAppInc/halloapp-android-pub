@@ -20,7 +20,6 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
-import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
 class ReplyContainer {
@@ -58,19 +57,19 @@ class ReplyContainer {
 
     void bindTo(@NonNull Message message) {
         containerView.setOnClickListener(v -> {
-            // TODO(jack): Scroll to message
-            if (message.replyPostId == null) {
-                return;
-            }
-            final Intent intent = new Intent(containerView.getContext(), PostContentActivity.class);
-            intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME : message.chatId);
-            intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
-            intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, message.replyPostMediaIndex);
-            if (containerView.getContext() instanceof Activity) {
-                final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)(containerView.getContext()), mediaThumbView, mediaThumbView.getTransitionName());
-                parent.startActivity(intent, options);
-            } else {
-                parent.startActivity(intent);
+            if (message.replyMessageId != null) {
+                 parent.scrollToOriginal(message);
+            } else if (message.replyPostId != null) {
+                final Intent intent = new Intent(containerView.getContext(), PostContentActivity.class);
+                intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME : message.chatId);
+                intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
+                intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+                if (containerView.getContext() instanceof Activity) {
+                    final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) (containerView.getContext()), mediaThumbView, mediaThumbView.getTransitionName());
+                    parent.startActivity(intent, options);
+                } else {
+                    parent.startActivity(intent);
+                }
             }
         });
         if (message.replyPostId != null) {

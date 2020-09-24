@@ -18,16 +18,18 @@ import androidx.paging.PagedList;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
@@ -51,6 +53,7 @@ public class ChatViewModel extends AndroidViewModel {
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
     private final Me me;
+    private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final Connection connection;
     private final ContactsDb contactsDb;
@@ -127,6 +130,7 @@ public class ChatViewModel extends AndroidViewModel {
         this.chatId = chatId;
 
         me = Me.getInstance();
+        bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
         connection = Connection.getInstance();
@@ -302,6 +306,14 @@ public class ChatViewModel extends AndroidViewModel {
         }
     }
 
+    public LiveData<Long> getRepliedMessageRowId(Message replyingMessage) {
+        MutableLiveData<Long> rowIdLiveData = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            Message originalMessage = ContentDb.getInstance(getApplication()).getMessage(replyingMessage.chatId, replyingMessage.replyMessageSenderId, replyingMessage.replyMessageId);
+            rowIdLiveData.postValue(Preconditions.checkNotNull(originalMessage).rowId);
+        });
+        return rowIdLiveData;
+    }
 
     public static class Factory implements ViewModelProvider.Factory {
 

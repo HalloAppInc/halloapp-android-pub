@@ -134,6 +134,7 @@ public class ChatActivity extends HalloActivity {
     private boolean blocked;
     private String chatName;
 
+    private LinearLayoutManager layoutManager;
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
 
@@ -229,7 +230,7 @@ public class ChatActivity extends HalloActivity {
         sendButton.setOnClickListener(v -> sendMessage());
         findViewById(R.id.media).setOnClickListener(v -> pickMedia());
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(false);
         chatView.setLayoutManager(layoutManager);
@@ -962,6 +963,20 @@ public class ChatActivity extends HalloActivity {
         @Override
         public void setReplyMessageMediaIndex(long rowId, int pos) {
             replyMessageMediaIndexMap.put(rowId, pos);
+        }
+
+        @Override
+        void scrollToOriginal(Message replyingMessage) {
+            viewModel.getRepliedMessageRowId(replyingMessage).observe(ChatActivity.this, rowId -> {
+                viewModel.reloadMessagesAt(rowId);
+                int c = adapter.getItemCount();
+                for (int i=0; i<c; i++) {
+                    if (adapter.getItemId(i) == rowId) {
+                        layoutManager.scrollToPosition(i);
+                        break;
+                    }
+                }
+            });
         }
 
         @Override

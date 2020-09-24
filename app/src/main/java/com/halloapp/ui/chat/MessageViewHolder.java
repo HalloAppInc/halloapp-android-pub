@@ -74,6 +74,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         abstract ReplyLoader getReplyLoader();
         abstract void unblockContactFromTap();
         abstract void setReplyMessageMediaIndex(long rowId, int pos);
+        abstract void scrollToOriginal(Message replyingMessage);
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
