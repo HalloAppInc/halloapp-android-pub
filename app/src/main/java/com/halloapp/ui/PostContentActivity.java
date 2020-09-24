@@ -65,21 +65,11 @@ public class PostContentActivity extends HalloActivity {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
-
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
             contactLoader.resetCache();
             mainHandler.post(() -> updatePost());
-        }
-
-        @Override
-        public void onContactsReset() {
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

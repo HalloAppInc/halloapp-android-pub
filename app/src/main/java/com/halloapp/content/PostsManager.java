@@ -46,17 +46,7 @@ public class PostsManager {
         return instance;
     }
 
-    private final ContactsDb.Observer observer = new ContactsDb.Observer() {
-        @Override
-        public void onContactsChanged() {
-
-        }
-
-        @Override
-        public void onContactsReset() {
-
-        }
-
+    private final ContactsDb.Observer observer = new ContactsDb.BaseObserver() {
         @Override
         public void onNewFriends(@NonNull Collection<UserId> newFriends) {
             if (!Constants.NEW_FEED_API) {

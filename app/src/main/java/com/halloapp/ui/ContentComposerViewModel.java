@@ -65,22 +65,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     private boolean shouldDeleteTempFiles = true;
 
-    private ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
+    private ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
             if (mentionableContacts != null) {
                 mentionableContacts.invalidate();
             }
-        }
-
-        @Override
-        public void onContactsReset() {
-
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

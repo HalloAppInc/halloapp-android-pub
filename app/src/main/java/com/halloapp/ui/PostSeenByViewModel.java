@@ -62,21 +62,11 @@ public class PostSeenByViewModel extends AndroidViewModel {
         }
     };
 
-    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
-
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
             mainHandler.post(seenByList::invalidate);
             mainHandler.post(friendsList::invalidate);
-        }
-
-        @Override
-        public void onContactsReset() {
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

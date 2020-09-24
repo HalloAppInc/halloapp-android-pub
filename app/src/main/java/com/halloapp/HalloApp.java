@@ -54,20 +54,10 @@ public class HalloApp extends Application {
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ContentDb.getInstance(this).addObserver(MainContentDbObserver.getInstance(this));
-        ContactsDb.getInstance().addObserver(new ContactsDb.Observer() {
-
-            @Override
-            public void onContactsChanged() {
-            }
-
+        ContactsDb.getInstance().addObserver(new ContactsDb.BaseObserver() {
             @Override
             public void onContactsReset() {
                 Preferences.getInstance().setLastContactsSyncTime(0);
-            }
-
-            @Override
-            public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
             }
         });
 

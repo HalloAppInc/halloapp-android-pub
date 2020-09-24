@@ -64,21 +64,11 @@ public class PostsFragment extends HalloFragment {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
-
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
             contactLoader.resetCache();
             mainHandler.post(adapter::notifyDataSetChanged);
-        }
-
-        @Override
-        public void onContactsReset() {
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

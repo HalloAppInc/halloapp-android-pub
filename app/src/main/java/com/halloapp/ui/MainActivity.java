@@ -76,21 +76,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private ProfileNuxViewModel profileNuxViewModel;
 
-    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
-
-        @Override
-        public void onContactsChanged() {
-        }
-
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsReset() {
             startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
             finish();
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 

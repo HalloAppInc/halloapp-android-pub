@@ -47,6 +47,18 @@ public class ContactsDb {
         void onNewFriends(@NonNull Collection<UserId> newFriends);
     }
 
+    public static class BaseObserver implements Observer {
+
+        @Override
+        public void onContactsChanged() { }
+
+        @Override
+        public void onContactsReset() { }
+
+        @Override
+        public void onNewFriends(@NonNull Collection<UserId> newFriends) { }
+    }
+
     public static ContactsDb getInstance() {
         if (instance == null) {
             synchronized(ContactsDb.class) {

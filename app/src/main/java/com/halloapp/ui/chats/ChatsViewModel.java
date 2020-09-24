@@ -46,20 +46,10 @@ public class ChatsViewModel extends AndroidViewModel {
 
     private Parcelable savedScrollState;
 
-    private final ContactsDb.Observer contactsObserver = new ContactsDb.Observer() {
-
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
             chatsList.invalidate();
-        }
-
-        @Override
-        public void onContactsReset() {
-        }
-
-        @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-
         }
     };
 
