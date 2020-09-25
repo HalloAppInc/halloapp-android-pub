@@ -28,6 +28,7 @@ import com.halloapp.ui.FeedNuxBottomSheetDialogFragment;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -48,6 +49,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
     private FrameLayout nuxFeedContainer;
     private View nuxFeed;
     private View nuxActivityCenter;
+
+    private View inviteView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +94,16 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+
+        inviteView = root.findViewById(R.id.home_invite);
+        inviteView.setOnClickListener(v -> startActivity(new Intent(requireContext(), InviteFriendsActivity.class)));
+        postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                refreshInviteNux();
+            }
+        });
 
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         if (viewModel.getSavedScrollState() != null) {
@@ -198,6 +211,29 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         });
 
         return root;
+    }
+
+    private void refreshInviteNux() {
+        int lastItem = adapter.getItemCount() - 1;
+        if (lastItem == layoutManager.findLastVisibleItemPosition()) {
+            View v = layoutManager.findViewByPosition(lastItem);
+            if (v != null && v.getBottom() > inviteView.getTop()) {
+                int dist = v.getBottom() - inviteView.getTop();
+                int height = inviteView.getHeight() / 2;
+                if (dist > height) {
+                    inviteView.setVisibility(View.INVISIBLE);
+                } else {
+                    float alpha = 1.0f - ((float) dist / (float) height);
+                    inviteView.setVisibility(View.VISIBLE);
+                    inviteView.setAlpha(alpha);
+                }
+            } else {
+                inviteView.setAlpha(1.0f);
+                inviteView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            inviteView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
