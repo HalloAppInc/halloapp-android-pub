@@ -59,11 +59,10 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
                     name = contactsDb.getContact((UserId) message.chatId).getDisplayName();
                 }
             } else if (message.replyMessageId != null) {
-                UserId originalSenderId = me.getUser().equals(message.replyMessageSenderId.rawId()) ? UserId.ME : message.replyMessageSenderId;
-                if (originalSenderId.isMe()) {
+                if (message.replyMessageSenderId.isMe()) {
                     name = view.getContext().getString(R.string.me);
                 } else {
-                    name = contactsDb.getContact(originalSenderId).getDisplayName();
+                    name = contactsDb.getContact(message.replyMessageSenderId).getDisplayName();
                 }
             }
 

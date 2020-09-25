@@ -498,8 +498,7 @@ public class ContentDb {
     public void addMessage(@NonNull Message message, boolean unseen, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             final Post replyPost = message.replyPostId == null ? null : getPost(message.replyPostId);
-            UserId originalSenderId = message.replyMessageSenderId == null ? null : me.getUser().equals(message.replyMessageSenderId.rawId()) ? UserId.ME : message.replyMessageSenderId;
-            final Message replyMessage = message.replyMessageId == null ? null : getMessage(message.chatId, originalSenderId, message.replyMessageId);
+            final Message replyMessage = message.replyMessageId == null ? null : getMessage(message.chatId, message.replyMessageSenderId, message.replyMessageId);
             if (messagesDb.addMessage(message, unseen, replyPost, replyMessage)) {
                 observers.notifyMessageAdded(message);
             }

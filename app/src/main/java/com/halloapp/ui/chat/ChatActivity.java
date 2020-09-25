@@ -707,7 +707,7 @@ public class ChatActivity extends HalloActivity {
                 replyPostMediaIndex,
                 replyMessage != null ? replyMessage.id : null,
                 replyMessageMediaIndex ,
-                replyMessage != null ? (replyMessage.senderUserId.isMe() ? new UserId(me.getUser()) : replyMessage.senderUserId) : null,
+                replyMessage != null ? replyMessage.senderUserId : null,
                 0);
         replyPostId = null;
         replyPostMediaIndex = -1;

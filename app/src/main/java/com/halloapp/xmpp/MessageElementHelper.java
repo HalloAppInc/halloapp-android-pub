@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -81,7 +82,7 @@ public class MessageElementHelper {
         if (message.replyMessageId != null) {
             chatMessageBuilder.setChatReplyMessageId(message.replyMessageId);
             chatMessageBuilder.setChatReplyMessageMediaIndex(message.replyMessageMediaIndex);
-            chatMessageBuilder.setChatReplyMessageSenderId(message.replyMessageSenderId.rawId());
+            chatMessageBuilder.setChatReplyMessageSenderId(message.replyMessageSenderId.isMe() ? Me.getInstance().getUser() : message.replyMessageSenderId.rawId());
         }
         return chatMessageBuilder.build();
     }
