@@ -242,6 +242,9 @@ public class ContentComposerActivity extends HalloActivity {
         if (replyPostId != null) {
             editText.requestFocus();
         }
+        if (chatId != null) {
+            audienceHelp.setVisibility(View.GONE);
+        }
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
