@@ -141,10 +141,6 @@
             android:label="@string/title_profile"/>
 
         <activity
-            android:name=".ui.VideoPlaybackActivity"
-            android:theme="@style/AppTheme.MediaPlayer"/>
-
-        <activity
             android:name=".ui.mediapicker.MediaPickerActivity"
             android:theme="@style/AppTheme.MediaPickerActivity"
             android:label="@string/gallery"/>
