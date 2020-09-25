@@ -1,5 +1,6 @@
 package com.halloapp.ui.profile;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,8 +23,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
-import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -32,6 +33,7 @@ import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
+import com.halloapp.widget.SnackbarHelper;
 
 public class ProfileFragment extends PostsFragment {
 
@@ -41,6 +43,9 @@ public class ProfileFragment extends PostsFragment {
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private ImageView avatarView;
+    private TextView nameView;
+
+    private MenuItem blockMenuItem;
 
     private UserId profileUserId;
 
@@ -114,7 +119,7 @@ public class ProfileFragment extends PostsFragment {
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
-        final TextView nameView = headerView.findViewById(R.id.name);
+        nameView = headerView.findViewById(R.id.name);
         if (profileUserId.isMe()) {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
@@ -128,6 +133,8 @@ public class ProfileFragment extends PostsFragment {
                 }
             });
         }
+
+        viewModel.getIsBlocked().observe(getViewLifecycleOwner(), this::updateMenu);
 
         avatarView = headerView.findViewById(R.id.avatar);
         avatarLoader.load(avatarView, profileUserId, false);
@@ -158,6 +165,16 @@ public class ProfileFragment extends PostsFragment {
         adapter.notifyDataSetChanged();
     }
 
+    private void updateMenu(Boolean isBlocked) {
+        if (blockMenuItem != null) {
+            if (isBlocked == null || !isBlocked) {
+                blockMenuItem.setTitle(R.string.block);
+            } else {
+                blockMenuItem.setTitle(R.string.unblock);
+            }
+        }
+    }
+
     @Override
     protected boolean shouldOpenProfileOnNamePress() {
         return false;
@@ -166,17 +183,29 @@ public class ProfileFragment extends PostsFragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         if (profileUserId.isMe()) {
-            inflater.inflate(R.menu.profile_menu, menu);
+            inflater.inflate(R.menu.my_profile_menu, menu);
+        } else {
+            inflater.inflate(R.menu.other_profile_menu, menu);
+            blockMenuItem = menu.findItem(R.id.block);
+            updateMenu(viewModel.getIsBlocked().getValue());
         }
         super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.settings: {
                 startActivity(new Intent(getContext(), SettingsActivity.class));
+                return true;
+            }
+            case R.id.block: {
+                Boolean isBlocked = viewModel.getIsBlocked().getValue();
+                if (isBlocked == null || !isBlocked) {
+                    blockContact();
+                } else {
+                    unBlockContact();
+                }
                 return true;
             }
             default: {
@@ -185,4 +214,42 @@ public class ProfileFragment extends PostsFragment {
         }
     }
 
+    private void blockContact() {
+        String chatName = nameView.getText().toString();
+        ProgressDialog blockDialog = ProgressDialog.show(requireContext(), null, getString(R.string.blocking_user_in_progress, chatName), true);
+        blockDialog.show();
+
+        viewModel.blockContact(profileUserId).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            blockDialog.cancel();
+            if (success) {
+                SnackbarHelper.showInfo(nameView, getString(R.string.blocking_user_successful, chatName));
+                blockMenuItem.setTitle(getString(R.string.unblock));
+                viewModel.sendSystemMessage(Message.USAGE_BLOCK, profileUserId);
+            } else {
+                SnackbarHelper.showWarning(nameView, getString(R.string.blocking_user_failed_check_internet, chatName));
+            }
+        });
+    }
+
+    private void unBlockContact() {
+        String chatName = nameView.getText().toString();
+        ProgressDialog unblockDialog = ProgressDialog.show(requireContext(), null, getString(R.string.unblocking_user_in_progress, chatName), true);
+        unblockDialog.show();
+        viewModel.unblockContact(new UserId(profileUserId.rawId())).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            unblockDialog.cancel();
+            if (success) {
+                SnackbarHelper.showInfo(nameView, getString(R.string.unblocking_user_successful, chatName));
+                blockMenuItem.setTitle(getString(R.string.block));
+                viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, profileUserId);
+            } else {
+                SnackbarHelper.showWarning(nameView, getString(R.string.unblocking_user_failed_check_internet, chatName));
+            }
+        });
+    }
 }
