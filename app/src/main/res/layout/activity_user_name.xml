@@ -44,7 +44,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/Widget.Button"
         android:id="@+id/update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
