@@ -50,6 +50,7 @@
     <color name="contacts_list_item_header_text_color">@color/color_secondary</color>
     <color name="search_highlight">#ff33b5e5</color>
     <color name="swipe_delete_background">#d93025</color>
+    <color name="swipe_reply_background">@color/color_secondary</color>
     <color name="retract_comment_tint">#80808080</color>
     <color name="avatar_crop_overlay">#c4c4c4c4</color>
     <color name="change_avatar_background">@android:color/white</color>

@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -49,6 +50,7 @@ import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
@@ -57,6 +59,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
@@ -76,6 +79,7 @@ import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.PostEditText;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -134,6 +138,7 @@ public class ChatActivity extends HalloActivity {
     private boolean blocked;
     private String chatName;
 
+    private ItemTouchHelper itemTouchHelper;
     private LinearLayoutManager layoutManager;
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -412,6 +417,40 @@ public class ChatActivity extends HalloActivity {
             replyContainer.setVisibility(View.GONE);
         }
         viewModel.replyMessage.getLiveData().observe(this, this::updateMessageReply);
+
+        itemTouchHelper = new ItemTouchHelper(new SwipeListItemHelper(
+                Preconditions.checkNotNull(getDrawable(R.drawable.ic_reply_white)),
+                ContextCompat.getColor(this, R.color.swipe_reply_background),
+                getResources().getDimensionPixelSize(R.dimen.swipe_reply_icon_margin)) {
+
+            @Override
+            public boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {
+                switch (viewHolder.getItemViewType()) {
+                    case ChatAdapter.VIEW_TYPE_SYSTEM:
+                    case ChatAdapter.VIEW_TYPE_INCOMING_RETRACTED:
+                    case ChatAdapter.VIEW_TYPE_OUTGOING_RETRACTED:
+                        return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // workaround to reset swiped out view
+                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                itemTouchHelper.attachToRecyclerView(null);
+                itemTouchHelper.attachToRecyclerView(chatView);
+
+                final Message message = ((MessageViewHolder)viewHolder).getMessage();
+                if (message == null || message.isRetracted()) {
+                    return;
+                }
+
+                replyMessageRowId = message.rowId;
+                viewModel.updateMessageRowId(message.rowId);
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(chatView);
     }
 
     @Override

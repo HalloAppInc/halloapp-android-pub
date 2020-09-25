@@ -33,6 +33,7 @@
     <dimen name="contacts_list_item_header_text_size">20sp</dimen>
     <dimen name="contacts_list_item_header_width">56dp</dimen>
     <dimen name="swipe_delete_icon_margin">24dp</dimen>
+    <dimen name="swipe_reply_icon_margin">24dp</dimen>
     <dimen name="avatar_crop_overlay_stroke">3dp</dimen>
     <dimen name="reply_min_width">240dp</dimen>
     <dimen name="reply_media_corner_radius">7dp</dimen>

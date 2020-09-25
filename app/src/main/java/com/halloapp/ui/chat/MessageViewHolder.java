@@ -176,6 +176,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
+    Message getMessage() {
+        return message;
+    }
+
     private static @DrawableRes int getMessageBackground(@NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {
         boolean outgoing = message.isOutgoing();
         // Disable corner changing for now till we can polish them later
