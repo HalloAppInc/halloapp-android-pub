@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
+import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -141,6 +142,7 @@ public class ChatMessageElement implements ExtensionElement {
             }
         }
         String rawReplyMessageId = chatMessage.getChatReplyMessageId();
+        String rawSenderId = chatMessage.getChatReplyMessageSenderId();
         final Message message = new Message(0,
                 ChatId.fromString(from.getLocalpartOrNull().toString()),
                 new UserId(from.getLocalpartOrNull().toString()),
@@ -154,7 +156,7 @@ public class ChatMessageElement implements ExtensionElement {
                 chatMessage.getFeedPostMediaIndex(),
                 TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
                 chatMessage.getChatReplyMessageMediaIndex(),
-                new UserId(chatMessage.getChatReplyMessageSenderId()),
+                rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
                 0);
         for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(
