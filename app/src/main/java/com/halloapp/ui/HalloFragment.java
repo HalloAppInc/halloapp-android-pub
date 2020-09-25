@@ -2,7 +2,9 @@ package com.halloapp.ui;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.halloapp.util.Log;
@@ -30,6 +32,30 @@ public class HalloFragment extends Fragment {
             }
         }
         Log.i(sb.toString());
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        logTrace("onCreate");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        logTrace("onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        logTrace("onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        logTrace("onDestroy");
     }
 
     @Override
