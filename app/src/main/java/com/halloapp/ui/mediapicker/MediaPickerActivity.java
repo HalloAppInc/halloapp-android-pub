@@ -22,12 +22,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
-import androidx.paging.PagedListAdapter;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -129,7 +126,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         viewModel.original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
         viewModel.state = getIntent().getBundleExtra(CropImageActivity.EXTRA_STATE);
         viewModel.mediaList.observe(this, mediaItems -> {
-            adapter.submitList(mediaItems);
+            adapter.setPagedList(mediaItems);
             progressView.setVisibility(View.GONE);
             emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
         });
@@ -447,20 +444,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     }
 
-    private static final DiffUtil.ItemCallback<GalleryItem> DIFF_CALLBACK = new DiffUtil.ItemCallback<GalleryItem>() {
-
-        @Override
-        public boolean areItemsTheSame(GalleryItem oldItem, GalleryItem newItem) {
-            return oldItem.id == newItem.id;
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull GalleryItem oldItem, @NonNull GalleryItem newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
-
-    public class MediaItemsAdapter extends PagedListAdapter<GalleryItem, MediaItemViewHolder> {
+    public class MediaItemsAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         public final static int LAYOUT_DAY_LARGE = 1;
         public final static int LAYOUT_DAY_SMALL = 2;
         public final static int LAYOUT_MONTH = 3;
@@ -483,7 +467,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         private final SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
         private final SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
 
-        private  class Pointer {
+        private class Pointer {
             public int type;
             public int position;
 
@@ -496,29 +480,35 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         private int gridLayout = LAYOUT_DAY_SMALL;
         private ArrayList<String> headers = new ArrayList<>();
         private ArrayList<Pointer> pointers = new ArrayList<>();
+        private PagedList<GalleryItem> items;
+
+        private PagedList.Callback pagedListCallback = new PagedList.Callback() {
+            @Override
+            public void onChanged(int position, int count) {
+            }
+
+            @Override
+            public void onInserted(int position, int count) {
+                buildHeaders();
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+            }
+        };
 
         MediaItemsAdapter() {
-            super(DIFF_CALLBACK);
+            super();
             setHasStableIds(true);
         }
 
-        @Nullable
-        @Override
-        protected GalleryItem getItem(int position) {
-            if (pointers.get(position).type == TYPE_ITEM) {
-                return getCurrentList().get(pointers.get(position).position);
-            } else {
-                return null;
-            }
-        }
+        public void setPagedList(PagedList<GalleryItem> items) {
+            this.items = items;
+            this.items.addWeakCallback(null, pagedListCallback);
 
-        public long getItemId(int position) {
-            if (pointers.get(position).type == TYPE_ITEM) {
-                return Preconditions.checkNotNull(getItem(position)).id;
-            } else {
-                // The minus is to avoid accidental collision with item ids
-                return -headers.get(pointers.get(position).position).hashCode();
-            }
+            buildHeaders();
+            notifyDataSetChanged();
         }
 
         public int getGridLayout() {
@@ -527,7 +517,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         public void setGridLayout(int layout) {
             gridLayout = layout;
-            buildHeaders(getCurrentList());
+            buildHeaders();
         }
 
         @Override
@@ -538,50 +528,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         @Override
         public int getItemViewType(int position) {
             return pointers.get(position).type;
-        }
-
-        private boolean notSameMonth(GalleryItem l, GalleryItem r) {
-            return l.year != r.year || l.month != r.month;
-        }
-
-        private boolean notSameDay(GalleryItem l, GalleryItem r) {
-            return l.year != r.year || l.month != r.month || l.day != r.day;
-        }
-
-        private boolean shouldAddHeader(int position, GalleryItem current, GalleryItem prev) {
-            return position == 0 ||
-                    (gridLayout == LAYOUT_MONTH && notSameMonth(current, prev)) ||
-                    (gridLayout == LAYOUT_DAY_SMALL && notSameDay(current, prev)) ||
-                    (gridLayout == LAYOUT_DAY_LARGE && notSameDay(current, prev));
-        }
-
-        public void buildHeaders(@Nullable PagedList<GalleryItem> pagedList) {
-            headers.clear();
-            pointers.clear();
-
-            if (pagedList != null) {
-                for (int i = 0; i < pagedList.getLoadedCount(); ++i) {
-                    GalleryItem item = pagedList.get(i);
-
-                    if (shouldAddHeader(i, item, i == 0 ? null : pagedList.get(i - 1))) {
-                        pointers.add(new Pointer(TYPE_HEADER, headers.size()));
-
-                        if (gridLayout == LAYOUT_DAY_LARGE || gridLayout == LAYOUT_DAY_SMALL) {
-                            headers.add(dayFormat.format(new Date(item.date)));
-                        } else {
-                            headers.add(monthFormat.format(new Date(item.date)));
-                        }
-                    }
-
-                    pointers.add(new Pointer(TYPE_ITEM, i));
-                }
-            }
-        }
-
-        @Override
-        public void submitList(@Nullable PagedList<GalleryItem> pagedList) {
-            buildHeaders(pagedList);
-            super.submitList(pagedList);
         }
 
         @Override
@@ -595,10 +541,67 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         @Override
         public void onBindViewHolder(@NonNull MediaItemViewHolder holder, int position) {
-            if (getItemViewType(position) == TYPE_HEADER) {
-                holder.bindTo(headers.get(pointers.get(position).position));
+            Pointer p = pointers.get(position);
+
+            if (p.type == TYPE_HEADER) {
+                holder.bindTo(headers.get(p.position));
             } else {
-                holder.bindTo(Preconditions.checkNotNull(getItem(position)));
+                holder.bindTo(Preconditions.checkNotNull(items.get(p.position)));
+                items.loadAround(p.position);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            Pointer p = pointers.get(position);
+
+            if (p.type == TYPE_ITEM) {
+                return Preconditions.checkNotNull(items.get(p.position)).id;
+            } else {
+                // The minus is to avoid accidental collision with item ids
+                return -headers.get(p.position).hashCode();
+            }
+        }
+
+        private boolean notSameMonth(GalleryItem l, GalleryItem r) {
+            return l.year != r.year || l.month != r.month;
+        }
+
+        private boolean notSameDay(GalleryItem l, GalleryItem r) {
+            return l.year != r.year || l.month != r.month || l.day != r.day;
+        }
+
+        private boolean shouldAddHeader(int position) {
+            GalleryItem current = items.get(position);
+            GalleryItem prev = position == 0 ? null : items.get(position - 1);
+
+            return position == 0 ||
+                    (gridLayout == LAYOUT_MONTH && notSameMonth(current, prev)) ||
+                    (gridLayout == LAYOUT_DAY_SMALL && notSameDay(current, prev)) ||
+                    (gridLayout == LAYOUT_DAY_LARGE && notSameDay(current, prev));
+        }
+
+        public void buildHeaders() {
+            headers.clear();
+            pointers.clear();
+
+            if (items == null) {
+                return;
+            }
+
+            for (int i = 0; i < items.getLoadedCount(); ++i) {
+                if (shouldAddHeader(i)) {
+                    GalleryItem item = items.get(i);
+                    pointers.add(new Pointer(TYPE_HEADER, headers.size()));
+
+                    if (gridLayout == LAYOUT_DAY_LARGE || gridLayout == LAYOUT_DAY_SMALL) {
+                        headers.add(dayFormat.format(new Date(item.date)));
+                    } else {
+                        headers.add(monthFormat.format(new Date(item.date)));
+                    }
+                }
+
+                pointers.add(new Pointer(TYPE_ITEM, i));
             }
         }
     }
