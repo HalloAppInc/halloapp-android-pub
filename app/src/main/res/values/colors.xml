@@ -62,7 +62,7 @@
     <color name="settings_text_entry_background">@android:color/white</color>
     <color name="avatars_footer_divider">@android:color/white</color>
     <color name="thick_progress_spinner">#696969</color>
-
+    <color name="seen_by_divider">@color/black_20</color>
     <color name="settings_header_background">@color/color_secondary</color>
 
     <color name="mention_color">@color/color_secondary</color>

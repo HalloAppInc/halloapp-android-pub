@@ -169,6 +169,14 @@ public class PostSeenByActivity extends HalloActivity {
         }
     }
 
+    static class DividerListItem implements ListItem {
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_DIVIDER;
+        }
+    }
+
     static class EmptyListItem implements ListItem {
         final boolean showInvite;
 
@@ -187,6 +195,7 @@ public class PostSeenByActivity extends HalloActivity {
         static final int VIEW_TYPE_HEADER = 0;
         static final int VIEW_TYPE_CONTACT = 1;
         static final int VIEW_TYPE_EMPTY = 2;
+        static final int VIEW_TYPE_DIVIDER = 3;
 
         private List<PostSeenByViewModel.SeenByContact> seenByContacts;
         private List<Contact> friends;
@@ -226,21 +235,20 @@ public class PostSeenByActivity extends HalloActivity {
             final Set<UserId> seenByUserIds = new HashSet<>();
             boolean emptyDeliveredTo = friends == null || friends.isEmpty();
             boolean emptyViewedBy = seenByContacts == null || seenByContacts.isEmpty();
-            if (!emptyViewedBy || emptyDeliveredTo) {
-                headerIndexes.add(listItems.size());
-                listItems.add(new HeaderListItem(getString(R.string.seen_by)));
-                if (!emptyViewedBy) {
-                    for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
-                        listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
-                        seenByUserIds.add(seenByContact.contact.userId);
-                    }
-                } else {
-                    listItems.add(new EmptyListItem(false));
+            headerIndexes.add(listItems.size());
+            listItems.add(new HeaderListItem(getString(R.string.seen_by)));
+            if (!emptyViewedBy) {
+                for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
+                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
+                    seenByUserIds.add(seenByContact.contact.userId);
                 }
+            } else {
+                listItems.add(new EmptyListItem(false));
             }
             if (emptyViewedBy || !emptyDeliveredTo) {
                 boolean headerAdded = false;
                 if (emptyViewedBy) {
+                    listItems.add(new DividerListItem());
                     headerAdded = true;
                     headerIndexes.add(listItems.size());
                     listItems.add(new HeaderListItem(getString(R.string.other_friends)));
@@ -279,6 +287,9 @@ public class PostSeenByActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_EMPTY: {
                     return new EmptyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_empty_item, parent, false));
+                }
+                case VIEW_TYPE_DIVIDER: {
+                    return new DividerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_divider_item, parent, false));
                 }
             }
             throw new IllegalStateException("unknown item type");
@@ -354,6 +365,11 @@ public class PostSeenByActivity extends HalloActivity {
                 nameView.setText(contact.getDisplayName());
                 phoneView.setText(contact.getDisplayPhone());
                 timeView.setText("");
+                if (item.timestamp == -1) {
+                    itemView.setAlpha(0.6f);
+                } else {
+                    itemView.setAlpha(1.0f);
+                }
             }
         }
 
@@ -369,6 +385,13 @@ public class PostSeenByActivity extends HalloActivity {
             @Override
             void bindTo(@NonNull HeaderListItem item) {
                 titleView.setText(item.title);
+            }
+        }
+
+        private class DividerViewHolder extends ViewHolder<DividerListItem> {
+
+            DividerViewHolder(@NonNull View itemView) {
+                super(itemView);
             }
         }
 
