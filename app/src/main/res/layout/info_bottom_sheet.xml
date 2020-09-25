@@ -63,6 +63,7 @@
             style="?attr/buttonBarButtonStyle"
             android:maxLines="1"
             android:text="@string/cancel"
+            android:textSize="16sp"
             android:textColor="@color/color_secondary"
             android:visibility="gone"
             android:layout_height="wrap_content" />
@@ -72,6 +73,7 @@
             style="?attr/buttonBarButtonStyle"
             android:maxLines="1"
             android:textColor="@color/color_secondary"
+            android:textSize="16sp"
             android:text="@string/ok"
             android:layout_height="wrap_content" />
     </LinearLayout>
