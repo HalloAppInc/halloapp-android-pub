@@ -58,6 +58,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -86,6 +87,7 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
+    public static final String EXTRA_NAVIGATE_TO_CHAT = "navigate_to_chat";
 
     private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap =
             new HashMap<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer>();
@@ -334,8 +336,9 @@ public class ContentComposerActivity extends HalloActivity {
                 contentItem.addToStorage(ContentDb.getInstance(getBaseContext()));
                 setResult(RESULT_OK);
                 finish();
-
-                if (Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                if (chatId != null && getIntent() != null && getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_CHAT, false)) {
+                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chatId));
+                } else if (Intent.ACTION_SEND.equals(getIntent().getAction()) ||
                         Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
                     final Intent intent = new Intent(getBaseContext(), MainActivity.class);
                     intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
