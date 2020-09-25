@@ -187,6 +187,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onInvitesAccepted(contacts, ackId);
+            }
+        }
+    }
+
     public void notifyUserNamesReceived(@NonNull Map<UserId, String> names) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

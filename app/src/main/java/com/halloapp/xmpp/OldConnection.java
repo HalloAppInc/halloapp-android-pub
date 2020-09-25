@@ -1337,8 +1337,13 @@ public class OldConnection extends Connection {
                 if (!handled) {
                     final ContactList contactList = packet.getExtension(ContactList.ELEMENT, ContactList.NAMESPACE);
                     if (contactList != null) {
-                        Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
-                        connectionObservers.notifyContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
+                        if (((org.jivesoftware.smack.packet.Message) packet).getType() == org.jivesoftware.smack.packet.Message.Type.headline) {
+                            Log.i("connection: got invite accepted " + msg);
+                            connectionObservers.notifyInvitesAccepted(contactList.contacts, packet.getStanzaId());
+                        } else {
+                            Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
+                            connectionObservers.notifyContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
+                        }
                         handled = true;
                     }
                 }

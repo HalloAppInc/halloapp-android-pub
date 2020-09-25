@@ -30,6 +30,7 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_PROFILE_NUX = "showed_profile_nux";
     private static final String PREF_KEY_SHOWED_MAKE_POST_NUX = "showed_make_post_nux";
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
+    private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
 
     private AppContext appContext;
     private SharedPreferences preferences;
@@ -209,6 +210,15 @@ public class Preferences {
         if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, true).commit()) {
             Log.e("preferences: failed to mark activity center nux shown");
         }
+    }
+
+    @WorkerThread
+    public int getAndIncrementNotificationId() {
+        int id = getPreferences().getInt(PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
+        if (!getPreferences().edit().putInt(PREF_KEY_NEXT_NOTIF_ID, id + 1).commit()) {
+            Log.e("preferences: failed to increment notif id");
+        }
+        return id;
     }
 
     @WorkerThread

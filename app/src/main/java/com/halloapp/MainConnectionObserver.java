@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 
@@ -255,6 +256,17 @@ public class MainConnectionObserver extends Connection.Observer {
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ConnectionObserver.onContactsChanged", e);
             }
+        });
+    }
+
+    @Override
+    public void onInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {
+        bgWorkers.execute(() -> {
+            for (ContactInfo contactInfo : contacts) {
+                Contact contact = contactsDb.getContact(new UserId(contactInfo.userId));
+                notifications.showInviteAcceptedNotification(contact);
+            }
+            connection.sendAck(ackId);
         });
     }
 

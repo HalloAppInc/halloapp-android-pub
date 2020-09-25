@@ -60,6 +60,7 @@ public class Notifications {
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
     private static final String MESSAGE_NOTIFICATION_CHANNEL_ID = "message_notifications";
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
+    private static final String INVITE_NOTIFICATION_CHANNEL_ID = "invite_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
 
@@ -67,6 +68,8 @@ public class Notifications {
     private static final int MESSAGE_NOTIFICATION_ID = 1;
     private static final int EXPIRATION_NOTIFICATION_ID = 2;
     private static final int LOGIN_FAILED_NOTIFICATION_ID = 3;
+
+    public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
@@ -115,11 +118,13 @@ public class Notifications {
             final NotificationChannel criticalNotificationsChannel = new NotificationChannel(CRITICAL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.critical_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             criticalNotificationsChannel.enableLights(true);
             criticalNotificationsChannel.enableVibration(true);
+            final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
             notificationManager.createNotificationChannel(messageNotificationsChannel);
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
+            notificationManager.createNotificationChannel(inviteNotificationsChannel);
 
             notificationManager.deleteNotificationChannel("new_post_notification"); // TODO (ds): remove
         }
@@ -458,6 +463,22 @@ public class Notifications {
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(LOGIN_FAILED_NOTIFICATION_ID, builder.build());
+    }
+
+    public void showInviteAcceptedNotification(@NonNull Contact contact) {
+        int id = preferences.getAndIncrementNotificationId();
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, INVITE_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(context.getString(R.string.invite_notification_text, contact.getShortName()))
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        final Intent contentIntent = new Intent(context, ChatActivity.class);
+        contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, contact.userId);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(id, builder.build());
     }
 
     public void clearLoginFailedNotification() {
