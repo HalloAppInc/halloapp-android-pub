@@ -7,13 +7,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.registration.CheckRegistration;
 
 public class CheckRegistrationTask extends AsyncTask<Void, Void, Void> {
 
     private final Me me;
     private final Preferences preferences;
 
-    public final MutableLiveData<CheckResult> result = new MutableLiveData<>();
+    public final MutableLiveData<CheckRegistration.CheckResult> result = new MutableLiveData<>();
 
     CheckRegistrationTask(@NonNull Me me, @NonNull Preferences preferences) {
         this.me = me;
@@ -22,17 +23,7 @@ public class CheckRegistrationTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        result.postValue(new CheckResult(me.isRegistered(), preferences.getLastContactsSyncTime()));
+        result.postValue(CheckRegistration.checkRegistration(me, preferences));
         return null;
-    }
-
-    static class CheckResult {
-        final boolean registered;
-        final long lastSyncTime;
-
-        CheckResult(boolean registered, long lastSyncTime) {
-            this.registered = registered;
-            this.lastSyncTime = lastSyncTime;
-        }
     }
 }

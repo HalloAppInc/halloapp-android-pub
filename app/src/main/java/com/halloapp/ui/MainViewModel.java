@@ -5,10 +5,13 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.SeenReceipt;
 import com.halloapp.id.ChatId;
+import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.Collection;
@@ -16,8 +19,11 @@ import java.util.Collection;
 public class MainViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Integer> unseenChatsCount;
+    final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
 
+    private final Me me;
     private final ContentDb contentDb;
+    private final Preferences preferences;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -39,13 +45,21 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
 
+        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
+        preferences = Preferences.getInstance();
         contentDb.addObserver(contentObserver);
 
         unseenChatsCount = new ComputableLiveData<Integer>() {
             @Override
             protected Integer compute() {
                 return contentDb.getUnseenChatsCount();
+            }
+        };
+        registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {
+            @Override
+            protected CheckRegistration.CheckResult compute() {
+                return CheckRegistration.checkRegistration(me, preferences);
             }
         };
     }

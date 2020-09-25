@@ -74,6 +74,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private SpeedDialView fabView;
     private View toolbarContainer;
 
+    private MainViewModel mainViewModel;
     private ProfileNuxViewModel profileNuxViewModel;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
@@ -95,6 +96,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_main);
+
+        View progress = findViewById(R.id.progress);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -139,8 +142,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         messagesTab.setClipToPadding(false);
 
         profileNuxViewModel = new ViewModelProvider(this).get(ProfileNuxViewModel.class);
-        final MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        viewModel.unseenChatsCount.getLiveData().observe(this,
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.unseenChatsCount.getLiveData().observe(this,
                 unseenChatsCount -> messageNotificationDrawable.setBadge(
                         unseenChatsCount == null || unseenChatsCount == 0 ? "" : String.format(Locale.getDefault(), "%d", unseenChatsCount)));
         fabView = findViewById(R.id.speed_dial);
@@ -159,6 +162,33 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         }
 
         ContactsDb.getInstance().addObserver(contactsObserver);
+
+        mainViewModel.registrationStatus.getLiveData().observe(this, checkResult -> {
+            if (checkResult == null) {
+                progress.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (!checkResult.registered) {
+                Log.i("MainActivity.onStart: not registered");
+                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (checkResult.lastSyncTime <= 0) {
+                Log.i("MainActivity.onStart: not synced");
+                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else {
+                final String[] perms = {Manifest.permission.READ_CONTACTS};
+                if (!EasyPermissions.hasPermissions(this, perms)) {
+                    EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
+                            REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
+                }
+            }
+            progress.setVisibility(View.GONE);
+        });
     }
 
     private void updateFab(@IdRes int id) {
@@ -256,27 +286,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         if (Connection.getInstance().clientExpired) {
             AppExpirationActivity.open(this, 0);
         }
-        final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(), Preferences.getInstance());
-        checkRegistrationTask.result.observe(this, checkResult -> {
-            if (!checkResult.registered) {
-                Log.i("MainActivity.onStart: not registered");
-                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-            } else if (checkResult.lastSyncTime <= 0) {
-                Log.i("MainActivity.onStart: not synced");
-                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-            } else {
-                final String[] perms = {Manifest.permission.READ_CONTACTS};
-                if (!EasyPermissions.hasPermissions(this, perms)) {
-                    EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
-                            REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
-                }
-            }
-        });
-        checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mainViewModel.registrationStatus.invalidate();
     }
 
     @Override

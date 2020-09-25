@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
@@ -86,6 +87,13 @@
             app:sdUseReverseAnimationOnClose="true"
             app:sdMainFabClosedSrc="@drawable/ic_add"
             app:sdOverlayLayout="@+id/overlay"/>
+
+        <FrameLayout
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/window_background"
+            android:elevation="6dp"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
