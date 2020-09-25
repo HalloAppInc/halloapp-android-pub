@@ -73,6 +73,8 @@ public class MyProfileFragment extends ProfileFragment implements MainNavFragmen
     private void showMakePostNux() {
         nuxContainer.removeAllViews();
         nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_make_first_post, nuxContainer, true);
+        nux.setOnClickListener(v -> {
+        });
         TransitionManager.beginDelayedTransition(nuxContainer, new Fade());
         nuxContainer.setVisibility(View.VISIBLE);
     }
