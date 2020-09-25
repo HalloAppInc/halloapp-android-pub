@@ -152,7 +152,7 @@ public class HomeViewModel extends AndroidViewModel {
         showActivityCenterNux = new ComputableLiveData<Boolean>() {
             @Override
             protected Boolean compute() {
-                return !preferences.getShowedActivityCenterNux();
+                return preferences.getShowedFeedNux() && !preferences.getShowedActivityCenterNux();
             }
         };
         showFeedNux = new ComputableLiveData<Boolean>() {
@@ -167,6 +167,7 @@ public class HomeViewModel extends AndroidViewModel {
         bgWorkers.execute(() -> {
             preferences.markFeedNuxShown();
             showFeedNux.invalidate();
+            showActivityCenterNux.invalidate();
         });
     }
 

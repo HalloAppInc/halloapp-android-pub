@@ -173,6 +173,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
             if (shouldShow) {
                 if (nuxActivityCenter == null) {
                     nuxActivityCenter = LayoutInflater.from(requireContext()).inflate(R.layout.nux_activity_center, nuxActivityCenterContainer, true);
+                    nuxActivityCenter.setOnClickListener(v -> {});
                 }
             } else {
                 nuxActivityCenterContainer.removeAllViews();
@@ -283,7 +284,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
     private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
         boolean hideBadge = socialHistory == null || socialHistory.unseenCount == 0;
         notificationDrawable.setBadge(hideBadge ? "" : "•");
-        if (!hideBadge && nuxActivityCenter != null) {
+        if (!hideBadge) {
             nuxActivityCenterContainer.setVisibility(View.VISIBLE);
         } else {
             nuxActivityCenterContainer.setVisibility(View.GONE);
