@@ -133,7 +133,6 @@ public class PostsFragment extends HalloFragment {
     protected class PostsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
         final List<View> headers = new ArrayList<>();
-        final List<View> footers = new ArrayList<>();
         final AsyncPagedListDiffer<Post> differ;
 
         static final int POST_TYPE_TEXT = 0x00;
@@ -243,10 +242,6 @@ public class PostsFragment extends HalloFragment {
             headers.add(view);
         }
 
-        public void addFooter(@NonNull View view) {
-            footers.add(view);
-        }
-
         public void submitList(@Nullable PagedList<Post> pagedList) {
             differ.submitList(pagedList);
         }
@@ -265,13 +260,13 @@ public class PostsFragment extends HalloFragment {
 
         @Override
         public int getItemCount() {
-            return headers.size() + differ.getItemCount() + footers.size();
+            return headers.size() + differ.getItemCount();
         }
 
         @Override
         public int getItemViewType(int position) {
             // negative view types are headers
-            if (position < headers.size() || position >= getItemCount() - footers.size()) {
+            if (position < headers.size()) {
                 return -position - 1;
             } else {
                 final Post post = Preconditions.checkNotNull(getItem(position));
@@ -283,20 +278,13 @@ public class PostsFragment extends HalloFragment {
 
         @Override
         public long getItemId(int position) {
-            if (position < headers.size() || position >= getItemCount() - footers.size()) {
-                return -position;
-            }
-            return Preconditions.checkNotNull(getItem(position)).rowId;
+            return position < headers.size() ? -position : Preconditions.checkNotNull(getItem(position)).rowId;
         }
 
         @Override
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType < 0) {
-                if (viewType >= -headers.size()) {
-                    return new HeaderViewHolder(headers.get(-viewType - 1));
-                } else {
-                    return new HeaderViewHolder(footers.get((getItemCount()+viewType)));
-                }
+                return new HeaderViewHolder(headers.get(-viewType - 1));
             } else {
                 View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
                 @LayoutRes int contentLayoutRes;
