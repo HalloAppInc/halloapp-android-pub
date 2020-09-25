@@ -11,12 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="2dp"
-        android:background="@color/message_background_incoming"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:textAppearance="?textAppearanceBody1"
+        android:textStyle="italic"
         tools:text="You blocked this contact" />
 
 </LinearLayout>
