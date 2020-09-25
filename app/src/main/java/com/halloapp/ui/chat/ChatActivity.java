@@ -828,6 +828,7 @@ public class ChatActivity extends HalloActivity {
         @Override
         public @NonNull
         MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            Log.i("ChatAdapter.onCreateViewHolder " + viewType);
             final @LayoutRes int layoutRes;
             switch (viewType) {
                 case VIEW_TYPE_INCOMING_TEXT: {

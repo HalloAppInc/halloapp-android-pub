@@ -42,6 +42,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -298,6 +299,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            Log.i("ContactsAdapter.onCreateViewHolder " + viewType);
             switch (viewType) {
                 case ITEM_TYPE_GROUP: {
                     return new CreateGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.create_group_item, parent, false));

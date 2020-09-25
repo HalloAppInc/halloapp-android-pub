@@ -38,6 +38,7 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
@@ -283,6 +284,7 @@ public class PostsFragment extends HalloFragment {
 
         @Override
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            Log.i("PostsAdapter.onCreateViewHolder " + viewType);
             if (viewType < 0) {
                 return new HeaderViewHolder(headers.get(-viewType - 1));
             } else {

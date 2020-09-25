@@ -151,6 +151,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         @Override
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            Log.i("ChatsAdapter.onCreateViewHolder " + viewType);
             if (viewType == TYPE_CHAT) {
                 return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
             } else {
