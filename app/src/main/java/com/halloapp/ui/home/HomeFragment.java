@@ -173,7 +173,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
             if (shouldShow) {
                 if (nuxActivityCenter == null) {
                     nuxActivityCenter = LayoutInflater.from(requireContext()).inflate(R.layout.nux_activity_center, nuxActivityCenterContainer, true);
-                    nuxActivityCenter.setOnClickListener(v -> {});
                 }
             } else {
                 nuxActivityCenterContainer.removeAllViews();

@@ -21,6 +21,8 @@
         android:paddingBottom="16dp"
         android:visibility="visible"
         android:background="@drawable/nux_bubble_background"
+        android:clickable="true"
+        android:focusable="true"
         android:elevation="4dp">
 
         <TextView
