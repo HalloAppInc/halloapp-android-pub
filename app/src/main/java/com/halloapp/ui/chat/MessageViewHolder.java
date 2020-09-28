@@ -295,7 +295,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 }
                 case Message.USAGE_NAME_CHANGE: {
                     if (message.senderUserId.rawId().equals(me.user.getValue())) {
-                        systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed, itemView.getContext().getString(R.string.me), message.text));
+                        systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed, itemView.getContext().getString(R.string.you), message.text));
                     } else {
                         contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                             @Override
@@ -405,7 +405,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     private void systemMessageSingleUser(@NonNull Message message, @StringRes int string) {
         if (message.senderUserId.rawId().equals(me.user.getValue())) {
-            systemMessage.setText(itemView.getContext().getString(string, itemView.getContext().getString(R.string.me)));
+            systemMessage.setText(itemView.getContext().getString(string, itemView.getContext().getString(R.string.you)));
         } else {
             contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
