@@ -4,10 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,13 +15,11 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +32,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
+import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -44,7 +40,6 @@ import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -301,7 +296,7 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
             this.filteredContacts = contacts;
             this.filterText = filterText;
-            this.filterTokens = getFilterTokens(filterText);
+            this.filterTokens = FilterUtils.getFilterTokens(filterText);
             notifyDataSetChanged();
         }
 
@@ -357,7 +352,7 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         @Override
         protected FilterResults performFiltering(@Nullable CharSequence prefix) {
             final FilterResults results = new FilterResults();
-            final List<String> filterTokens = getFilterTokens(prefix);
+            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
             if (filterTokens == null) {
                 results.values = contacts;
                 results.count = contacts.size();
@@ -365,25 +360,8 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 final ArrayList<Contact> filteredContacts = new ArrayList<>();
                 for (Contact contact : contacts) {
                     final String name = contact.getDisplayName();
-                    final List<String> words = getFilterTokens(name);
-                    if (words != null) {
-                        boolean match = true;
-                        for (String filterToken : filterTokens) {
-                            boolean tokenMatch = false;
-                            for (String word : words) {
-                                if (word.startsWith(filterToken)) {
-                                    tokenMatch = true;
-                                    break;
-                                }
-                            }
-                            if (!tokenMatch) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (match) {
-                            filteredContacts.add(contact);
-                        }
+                    if ( FilterUtils.matchTokens(name, filterTokens)) {
+                        filteredContacts.add(contact);
                     }
                 }
                 results.values = filteredContacts;
@@ -404,23 +382,6 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 emptyView.setVisibility(View.GONE);
             }
         }
-    }
-
-    static @Nullable List<String> getFilterTokens(final @Nullable CharSequence filterText) {
-        if (TextUtils.isEmpty(filterText)) {
-            return null;
-        }
-        final List<String> filterTokens = new ArrayList<>();
-        final BreakIterator boundary = BreakIterator.getWordInstance();
-        final String filterTextString = filterText.toString();
-        boundary.setText(filterTextString);
-        int start = boundary.first();
-        for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
-            if (end > start) {
-                filterTokens.add(filterTextString.substring(start, end).toLowerCase());
-            }
-        }
-        return filterTokens;
     }
 
     class ContactViewHolder extends RecyclerView.ViewHolder {
@@ -465,27 +426,9 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 avatarLoader.load(avatarView, contact.userId);
             }
             if (filterTokens != null && !filterTokens.isEmpty()) {
-                SpannableString formattedName = null;
-                final BreakIterator boundary = BreakIterator.getWordInstance();
                 final String name = contact.getDisplayName();
-                boundary.setText(name);
-                int start = boundary.first();
-                for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
-                    if (end <= start) {
-                        continue;
-                    }
-                    final String word = name.substring(start, end).toLowerCase();
-                    for (String filterToken : filterTokens) {
-                        if (word.startsWith(filterToken)) {
-                            if (formattedName == null) {
-                                formattedName = new SpannableString(name);
-                            }
-                            @ColorInt int searchHighlightColor = ContextCompat.getColor(itemView.getContext(), R.color.search_highlight);
-                            int spanEnd = Math.min(end, start + filterToken.length());
-                            formattedName.setSpan(new ForegroundColorSpan(searchHighlightColor), start, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                    }
-                }
+                CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), name, filterTokens);
+
                 if (formattedName != null) {
                     nameView.setText(formattedName);
                 } else {

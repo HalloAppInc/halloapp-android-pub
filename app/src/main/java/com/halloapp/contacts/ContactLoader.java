@@ -1,6 +1,5 @@
 package com.halloapp.contacts;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -22,7 +21,7 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
     private final LruCache<UserId, Contact> cache = new LruCache<>(512);
     private final ContactsDb contactsDb;
 
-    public ContactLoader(@NonNull Context context) {
+    public ContactLoader() {
         contactsDb = ContactsDb.getInstance();
     }
 

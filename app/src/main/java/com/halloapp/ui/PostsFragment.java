@@ -29,7 +29,6 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
-import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -43,7 +42,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class PostsFragment extends HalloFragment {
@@ -80,7 +78,7 @@ public class PostsFragment extends HalloFragment {
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
-        contactLoader = new ContactLoader(requireContext());
+        contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader(requireContext());
         avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader(requireContext());

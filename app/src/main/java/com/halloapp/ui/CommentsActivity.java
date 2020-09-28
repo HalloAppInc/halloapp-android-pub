@@ -65,7 +65,6 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
-import java.util.Collection;
 import java.util.List;
 
 public class CommentsActivity extends HalloActivity {
@@ -223,7 +222,7 @@ public class CommentsActivity extends HalloActivity {
         }
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
-        contactLoader = new ContactLoader(this);
+        contactLoader = new ContactLoader();
         avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
 

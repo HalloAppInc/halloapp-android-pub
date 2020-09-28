@@ -101,7 +101,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+
         toolbarContainer = findViewById(R.id.toolbar_container);
 
         final BottomNavigationView navView = findViewById(R.id.nav_view);

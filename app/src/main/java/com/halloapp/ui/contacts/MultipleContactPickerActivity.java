@@ -75,7 +75,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final SelectedAdapter avatarsAdapter = new SelectedAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
-    private final ContactLoader contactLoader = new ContactLoader(this);
+    private final ContactLoader contactLoader = new ContactLoader();
     private ContactsViewModel viewModel;
     private TextView emptyView;
     private EditText searchBox;

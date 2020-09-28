@@ -100,7 +100,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance(itemView.getContext());
         this.contentDb = ContentDb.getInstance(itemView.getContext());
-        this.contactLoader = new ContactLoader(itemView.getContext());
+        this.contactLoader = new ContactLoader();
 
         contentView = itemView.findViewById(R.id.content);
         statusView = itemView.findViewById(R.id.status);

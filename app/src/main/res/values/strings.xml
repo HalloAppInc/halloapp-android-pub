@@ -42,7 +42,7 @@
     <string name="posts_empty">Your posts will appear here</string>
     <string name="home_page_empty">Posts from your contacts will appear here</string>
     <string name="chats_page_empty">Your contacts &amp; messages will appear here</string>
-    <string name="chats_search_empty">No results found :(</string>
+    <string name="chats_search_empty">No chats found for \'%s\'</string>
     <string name="your_post_title">Your post</string>
     <string name="contact_profile_empty">%s\'s posts will appear here</string>
     <string name="contact_profile_not_friends">You are not friends with %s on HalloApp</string>

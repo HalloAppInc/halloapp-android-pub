@@ -78,7 +78,7 @@ public class GroupInfoActivity extends HalloActivity {
 
         me = Me.getInstance();
         avatarLoader = AvatarLoader.getInstance();
-        contactLoader = new ContactLoader(this);
+        contactLoader = new ContactLoader();
 
         groupId = getIntent().getParcelableExtra(GROUP_ID);
         if (groupId == null) {

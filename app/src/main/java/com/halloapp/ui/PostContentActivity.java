@@ -42,8 +42,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
-import java.util.Collection;
-
 public class PostContentActivity extends HalloActivity {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
@@ -191,7 +189,7 @@ public class PostContentActivity extends HalloActivity {
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
-        contactLoader = new ContactLoader(this);
+        contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader(this);
         avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
