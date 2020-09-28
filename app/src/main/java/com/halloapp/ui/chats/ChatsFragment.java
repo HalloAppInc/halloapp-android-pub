@@ -1,20 +1,29 @@
 package com.halloapp.ui.chats;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -46,6 +55,8 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.PresenceLoader;
 
+import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,12 +66,15 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final ContactLoader contactLoader = new ContactLoader(getContext());
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
+
     private ChatsViewModel viewModel;
 
     private LinearLayoutManager layoutManager;
 
     private FrameLayout nuxContainer;
     private View nux;
+    private View emptyView;
+    private TextView emptyViewMessage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,12 +92,49 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.chat_list_menu, menu);
+        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        final MenuItem closeMenuItem = menu.findItem(R.id.menu_clear);
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
+        closeMenuItem.setVisible(false);
+        ImageView closeBtn = searchView.findViewById(R.id.search_close_btn);
+        closeBtn.setEnabled(false);
+        closeBtn.setImageDrawable(null);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String text) {
+                searchView.clearFocus();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(final String text) {
+                adapter.getFilter().filter(text);
+                if (!TextUtils.isEmpty(text)) {
+                    closeMenuItem.setVisible(true);
+                } else {
+                    closeMenuItem.setVisible(false);
+                }
+                return false;
+            }
+        });
+        closeMenuItem.setOnMenuItemClickListener(item -> {
+            searchView.setQuery("", false);
+            return true;
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
 
         Log.i("ChatsFragment.onCreateView");
         final View root = inflater.inflate(R.layout.fragment_chats, container, false);
         final RecyclerView chatsView = root.findViewById(R.id.chats);
-        final View emptyView = root.findViewById(android.R.id.empty);
+        emptyView = root.findViewById(android.R.id.empty);
+        emptyViewMessage = root.findViewById(R.id.empty_text);
 
         nuxContainer = root.findViewById(R.id.nux_container);
 
@@ -137,15 +188,101 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onDestroyView();
     }
 
+    private class ChatsFilter extends Filter {
+
+        private final List<Chat> chats;
+
+        ChatsFilter(@NonNull List<Chat> chats) {
+            this.chats = chats;
+        }
+
+        @Override
+        protected FilterResults performFiltering(@Nullable CharSequence prefix) {
+            final FilterResults results = new FilterResults();
+            final List<String> filterTokens = getFilterTokens(prefix);
+            if (filterTokens == null) {
+                results.values = chats;
+                results.count = chats.size();
+            } else {
+                final ArrayList<Chat> filteredChats = new ArrayList<>();
+                for (Chat chat : chats) {
+                    final String name = chat.name;
+                    final List<String> words = getFilterTokens(name);
+                    if (words != null) {
+                        boolean match = true;
+                        for (String filterToken : filterTokens) {
+                            boolean tokenMatch = false;
+                            for (String word : words) {
+                                if (word.startsWith(filterToken)) {
+                                    tokenMatch = true;
+                                    break;
+                                }
+                            }
+                            if (!tokenMatch) {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (match) {
+                            filteredChats.add(chat);
+                        }
+                    }
+                }
+                results.values = filteredChats;
+                results.count = filteredChats.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            //noinspection unchecked
+            final List<Chat> filteredContacts = (List<Chat>) results.values;
+            adapter.setFilteredChats(filteredContacts, constraint);
+            if (filteredContacts.isEmpty()) {
+                emptyView.setVisibility(View.VISIBLE);
+                if (TextUtils.isEmpty(constraint)) {
+                    emptyViewMessage.setText(R.string.chats_page_empty);
+                } else {
+                    emptyViewMessage.setText(R.string.chats_search_empty);
+                }
+            } else {
+                emptyView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    static @Nullable List<String> getFilterTokens(final @Nullable CharSequence filterText) {
+        if (TextUtils.isEmpty(filterText)) {
+            return null;
+        }
+        final List<String> filterTokens = new ArrayList<>();
+        final BreakIterator boundary = BreakIterator.getWordInstance();
+        final String filterTextString = filterText.toString();
+        boundary.setText(filterTextString);
+        int start = boundary.first();
+        for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
+            if (end > start) {
+                filterTokens.add(filterTextString.substring(start, end).toLowerCase());
+            }
+        }
+        return filterTokens;
+    }
+
     private static final int TYPE_CHAT = 0;
     private static final int TYPE_INVITE = 1;
 
-    private class ChatsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
+    private class ChatsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> implements Filterable {
 
         private List<Chat> chats;
+        private List<Chat> filteredChats;
+        private CharSequence filterText;
+        private List<String> filterTokens;
 
         void setChats(@NonNull List<Chat> chats) {
             this.chats = chats;
+            this.filteredChats = new ArrayList<>(chats);
+            getFilter().filter(filterText);
             notifyDataSetChanged();
         }
 
@@ -162,19 +299,24 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
-            if (holder instanceof ViewHolder) {
-                ((ViewHolder) holder).bindTo(chats.get(position));
+            if (holder instanceof InviteViewHolder) {
+                return;
+            }
+            if (position < getFilteredContactsCount()) {
+                if (holder instanceof ViewHolder) {
+                    ((ViewHolder) holder).bindTo(filteredChats.get(position), filterTokens);
+                }
             }
         }
 
         @Override
         public int getItemCount() {
-            return chats == null ? 1 : chats.size() + 1;
+            return getFilteredContactsCount();
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (chats == null || chats.size() == position) {
+            if (filteredChats == null || filteredChats.size() == position) {
                 return TYPE_INVITE;
             }
             return TYPE_CHAT;
@@ -186,6 +328,22 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 ((ViewHolder) holder).detatchObservers();
             }
             super.onViewRecycled(holder);
+        }
+
+        void setFilteredChats(@NonNull List<Chat> contacts, CharSequence filterText) {
+            this.filteredChats = contacts;
+            this.filterText = filterText;
+            this.filterTokens = getFilterTokens(filterText);
+            notifyDataSetChanged();
+        }
+
+        private int getFilteredContactsCount() {
+            return filteredChats == null ? 1 : filteredChats.size() + 1;
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new ChatsFilter(chats);
         }
 
         class InviteViewHolder extends ViewHolderWithLifecycle {
@@ -289,11 +447,40 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 typingView.setVisibility(View.GONE);
             }
 
-            void bindTo(@NonNull Chat chat) {
+            void bindTo(@NonNull Chat chat, @Nullable List<String> filterTokens) {
                 this.chat = chat;
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
                 avatarLoader.load(avatarView, chat.chatId);
-                nameView.setText(chat.name);
+                if (filterTokens != null && !filterTokens.isEmpty()) {
+                    SpannableString formattedName = null;
+                    final BreakIterator boundary = BreakIterator.getWordInstance();
+                    final String name = chat.name;
+                    boundary.setText(name);
+                    int start = boundary.first();
+                    for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
+                        if (end <= start) {
+                            continue;
+                        }
+                        final String word = name.substring(start, end).toLowerCase();
+                        for (String filterToken : filterTokens) {
+                            if (word.startsWith(filterToken)) {
+                                if (formattedName == null) {
+                                    formattedName = new SpannableString(name);
+                                }
+                                @ColorInt int searchHighlightColor = ContextCompat.getColor(itemView.getContext(), R.color.search_highlight);
+                                int spanEnd = Math.min(end, start + filterToken.length());
+                                formattedName.setSpan(new ForegroundColorSpan(searchHighlightColor), start, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }
+                    }
+                    if (formattedName != null) {
+                        nameView.setText(formattedName);
+                    } else {
+                        nameView.setText(name);
+                    }
+                } else {
+                    nameView.setText(chat.name);
+                }
                 detatchObservers();
                 if (chat.chatId instanceof GroupId) {
                     groupChatStateLiveData = presenceLoader.getChatStateLiveData((GroupId) chat.chatId);
