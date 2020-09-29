@@ -5,6 +5,6 @@
         android:radius="14sp"/>
 
     <solid
-        android:color="@color/card_background" />
+        android:color="@color/date_separator" />
 
 </shape>
