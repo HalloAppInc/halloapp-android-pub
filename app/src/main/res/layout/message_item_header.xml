@@ -7,15 +7,17 @@
 
     <TextView
         android:id="@+id/new_messages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="22sp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="2dp"
-        android:gravity="center_horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:gravity="center"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
         android:textAppearance="?textAppearanceBody1"
-        android:background="@color/message_background_incoming"
+        android:background="@drawable/new_messages_separator_background"
+        android:textColor="@color/new_messages_text"
         android:singleLine="true"
         android:ellipsize="end"
         tools:text="6 new messages"/>
