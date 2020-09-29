@@ -994,7 +994,7 @@ public class OldConnection extends Connection {
                                     entryMedia.encKey, entryMedia.sha256hash,
                                     entryMedia.width, entryMedia.height));
                         }
-                        for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
+                        for (com.halloapp.proto.clients.Mention mentionProto : entry.mentions) {
                             Mention mention = Mention.parseFromProto(mentionProto);
                             processMention(mention);
                             post.mentions.add(mention);
@@ -1012,7 +1012,7 @@ public class OldConnection extends Connection {
                                 false,
                                 entry.text
                         );
-                        for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
+                        for (com.halloapp.proto.clients.Mention mentionProto : entry.mentions) {
                             Mention mention = Mention.parseFromProto(mentionProto);
                             processMention(mention);
                             comment.mentions.add(mention);
@@ -1072,7 +1072,7 @@ public class OldConnection extends Connection {
                                 entryMedia.encKey, entryMedia.sha256hash,
                                 entryMedia.width, entryMedia.height));
                     }
-                    for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
+                    for (com.halloapp.proto.clients.Mention mentionProto : entry.mentions) {
                         Mention mention = Mention.parseFromProto(mentionProto);
                         processMention(mention);
                         post.mentions.add(mention);
@@ -1090,7 +1090,7 @@ public class OldConnection extends Connection {
                             false,
                             entry.text
                     );
-                    for (com.halloapp.proto.Mention mentionProto : entry.mentions) {
+                    for (com.halloapp.proto.clients.Mention mentionProto : entry.mentions) {
                         Mention mention = Mention.parseFromProto(mentionProto);
                         processMention(mention);
                         comment.mentions.add(mention);

@@ -10,9 +10,9 @@ import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
-import com.halloapp.proto.ChatMessage;
-import com.halloapp.proto.Container;
-import com.halloapp.proto.MediaType;
+import com.halloapp.proto.clients.ChatMessage;
+import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.MediaType;
 import com.halloapp.util.Log;
 
 public class MessageElementHelper {
@@ -60,7 +60,7 @@ public class MessageElementHelper {
     public static ChatMessage messageToChatMessage(@NonNull Message message) {
         ChatMessage.Builder chatMessageBuilder = ChatMessage.newBuilder();
         for (Media media : message.media) {
-            com.halloapp.proto.Media.Builder mediaBuilder = com.halloapp.proto.Media.newBuilder();
+            com.halloapp.proto.clients.Media.Builder mediaBuilder = com.halloapp.proto.clients.Media.newBuilder();
             mediaBuilder.setType(getProtoMediaType(media.type));
             mediaBuilder.setWidth(media.width);
             mediaBuilder.setHeight(media.height);

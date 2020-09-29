@@ -9,8 +9,8 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.ChatMessage;
-import com.halloapp.proto.Container;
+import com.halloapp.proto.clients.ChatMessage;
+import com.halloapp.proto.clients.Container;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
 import com.halloapp.xmpp.MessageElementHelper;
@@ -105,7 +105,7 @@ public class GroupChatMessage implements ExtensionElement {
                 chatMessage.getChatReplyMessageMediaIndex(),
                 rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
                 0);
-        for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
+        for (com.halloapp.proto.clients.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(
                     MessageElementHelper.fromProtoMediaType(item.getType()),
                     item.getDownloadUrl(),
@@ -114,7 +114,7 @@ public class GroupChatMessage implements ExtensionElement {
                     item.getWidth(),
                     item.getHeight()));
         }
-        for (com.halloapp.proto.Mention item : chatMessage.getMentionsList()) {
+        for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
             message.mentions.add(Mention.parseFromProto(item));
         }
 

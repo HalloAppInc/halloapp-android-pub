@@ -9,8 +9,8 @@ import com.halloapp.Constants;
 import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.SessionSetupInfo;
-import com.halloapp.proto.IdentityKey;
-import com.halloapp.proto.SignedPreKey;
+import com.halloapp.proto.clients.IdentityKey;
+import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -79,7 +79,7 @@ public class KeyManager {
 
             List<byte[]> oneTimePreKeys = new ArrayList<>();
             for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
-                com.halloapp.proto.OneTimePreKey toAdd = com.halloapp.proto.OneTimePreKey.newBuilder()
+                com.halloapp.proto.clients.OneTimePreKey toAdd = com.halloapp.proto.clients.OneTimePreKey.newBuilder()
                         .setId(otpk.id)
                         .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
                         .build();

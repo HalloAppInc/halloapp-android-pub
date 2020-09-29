@@ -11,10 +11,10 @@ import androidx.annotation.StringDef;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
-import com.halloapp.proto.Comment;
-import com.halloapp.proto.Container;
-import com.halloapp.proto.MediaType;
-import com.halloapp.proto.Post;
+import com.halloapp.proto.clients.Comment;
+import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.MediaType;
+import com.halloapp.proto.clients.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
@@ -54,7 +54,7 @@ public class PublishedEntry {
     final String feedItemId;
     final String parentCommentId;
     final List<Media> media = new ArrayList<>();
-    final List<com.halloapp.proto.Mention> mentions = new ArrayList<>();
+    final List<com.halloapp.proto.clients.Mention> mentions = new ArrayList<>();
 
     public static class Media {
 
@@ -294,12 +294,12 @@ public class PublishedEntry {
         return containerBuilder.build().toByteArray();
     }
 
-    private List<com.halloapp.proto.Media> getMediaProtos() {
+    private List<com.halloapp.proto.clients.Media> getMediaProtos() {
         Preconditions.checkState(!media.isEmpty(), "Trying to get empty media proto");
 
-        List<com.halloapp.proto.Media> mediaList = new ArrayList<>();
+        List<com.halloapp.proto.clients.Media> mediaList = new ArrayList<>();
         for (Media item : media) {
-            com.halloapp.proto.Media.Builder mediaBuilder = com.halloapp.proto.Media.newBuilder();
+            com.halloapp.proto.clients.Media.Builder mediaBuilder = com.halloapp.proto.clients.Media.newBuilder();
             mediaBuilder.setType(getProtoMediaType(item.type));
             mediaBuilder.setWidth(item.width);
             mediaBuilder.setHeight(item.height);
@@ -331,9 +331,9 @@ public class PublishedEntry {
         return null;
     }
 
-    private static List<Media> fromMediaProtos(List<com.halloapp.proto.Media> mediaList) {
+    private static List<Media> fromMediaProtos(List<com.halloapp.proto.clients.Media> mediaList) {
         List<Media> ret = new ArrayList<>();
-        for (com.halloapp.proto.Media item : mediaList) {
+        for (com.halloapp.proto.clients.Media item : mediaList) {
             ret.add(new Media(fromProtoMediaType(
                     item.getType()),
                     item.getDownloadUrl(),
@@ -397,7 +397,7 @@ public class PublishedEntry {
         String feedItemId;
         String parentCommentId;
         List<Media> media;
-        List<com.halloapp.proto.Mention> mentions;
+        List<com.halloapp.proto.clients.Mention> mentions;
 
         Builder type(@EntryType int type) {
             this.type = type;
@@ -434,7 +434,7 @@ public class PublishedEntry {
             return this;
         }
 
-        Builder mentions(List<com.halloapp.proto.Mention> mentions) {
+        Builder mentions(List<com.halloapp.proto.clients.Mention> mentions) {
             this.mentions = mentions;
             return this;
         }

@@ -17,8 +17,8 @@ import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.proto.IdentityKey;
-import com.halloapp.proto.SignedPreKey;
+import com.halloapp.proto.clients.IdentityKey;
+import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
@@ -137,7 +137,7 @@ public class EncryptedSessionManager {
         Set<OneTimePreKey> keys = encryptedKeyStore.getNewBatchOfOneTimePreKeys();
         List<byte[]> protoKeys = new ArrayList<>();
         for (OneTimePreKey otpk : keys) {
-            com.halloapp.proto.OneTimePreKey protoKey = com.halloapp.proto.OneTimePreKey.newBuilder()
+            com.halloapp.proto.clients.OneTimePreKey protoKey = com.halloapp.proto.clients.OneTimePreKey.newBuilder()
                     .setId(otpk.id)
                     .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
                     .build();
@@ -190,7 +190,7 @@ public class EncryptedSessionManager {
 
             OneTimePreKey oneTimePreKey = null;
             if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {
-                com.halloapp.proto.OneTimePreKey otpk = com.halloapp.proto.OneTimePreKey.parseFrom(keysIq.oneTimePreKeys.get(0));
+                com.halloapp.proto.clients.OneTimePreKey otpk = com.halloapp.proto.clients.OneTimePreKey.parseFrom(keysIq.oneTimePreKeys.get(0));
                 byte[] bytes = otpk.getPublicKey().toByteArray();
                 if (bytes != null && bytes.length > 0) {
                     oneTimePreKey = new OneTimePreKey(new PublicXECKey(bytes), otpk.getId());

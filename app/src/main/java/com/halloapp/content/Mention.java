@@ -7,12 +7,12 @@ import com.halloapp.xmpp.Connection;
 
 public class Mention {
 
-    public static Mention parseFromProto(com.halloapp.proto.Mention protoMention) {
+    public static Mention parseFromProto(com.halloapp.proto.clients.Mention protoMention) {
         return new Mention(protoMention.getIndex(), new UserId(protoMention.getUserId()), protoMention.getName());
     }
 
-    public static com.halloapp.proto.Mention toProto(Mention mention) {
-        com.halloapp.proto.Mention.Builder builder = com.halloapp.proto.Mention.newBuilder();
+    public static com.halloapp.proto.clients.Mention toProto(Mention mention) {
+        com.halloapp.proto.clients.Mention.Builder builder = com.halloapp.proto.clients.Mention.newBuilder();
         builder.setIndex(mention.index);
         if (!TextUtils.isEmpty(mention.fallbackName)) {
             builder.setName(mention.fallbackName);

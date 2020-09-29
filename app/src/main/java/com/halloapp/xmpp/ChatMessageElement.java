@@ -16,8 +16,8 @@ import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.ChatMessage;
-import com.halloapp.proto.Container;
+import com.halloapp.proto.clients.ChatMessage;
+import com.halloapp.proto.clients.Container;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.stats.Stats;
@@ -158,7 +158,7 @@ public class ChatMessageElement implements ExtensionElement {
                 chatMessage.getChatReplyMessageMediaIndex(),
                 rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
                 0);
-        for (com.halloapp.proto.Media item : chatMessage.getMediaList()) {
+        for (com.halloapp.proto.clients.Media item : chatMessage.getMediaList()) {
             message.media.add(Media.createFromUrl(
                     MessageElementHelper.fromProtoMediaType(item.getType()),
                     item.getDownloadUrl(),
@@ -167,7 +167,7 @@ public class ChatMessageElement implements ExtensionElement {
                     item.getWidth(),
                     item.getHeight()));
         }
-        for (com.halloapp.proto.Mention item : chatMessage.getMentionsList()) {
+        for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
             message.mentions.add(Mention.parseFromProto(item));
         }
 
