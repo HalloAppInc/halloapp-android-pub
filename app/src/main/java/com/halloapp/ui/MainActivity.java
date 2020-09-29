@@ -283,7 +283,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onStart() {
         super.onStart();
         Notifications.getInstance(this).clearFeedNotifications();
-        if (Connection.getInstance().clientExpired) {
+        if (Connection.getInstance().getClientExpired()) {
             AppExpirationActivity.open(this, 0);
         }
         mainViewModel.registrationStatus.invalidate();
