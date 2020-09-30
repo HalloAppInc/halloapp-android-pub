@@ -166,6 +166,7 @@ public class OldConnection extends Connection {
         ProviderManager.addExtensionProvider(MemberElement.ELEMENT, MemberElement.NAMESPACE, new MemberElement.Provider());
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addExtensionProvider(FeedMessageElement.ELEMENT, FeedMessageElement.NAMESPACE, new FeedMessageElement.Provider());
+        ProviderManager.addExtensionProvider(NameMessage.ELEMENT, NameMessage.NAMESPACE, new NameMessage.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
         ProviderManager.addIQProvider(InvitesResponseIq.ELEMENT, InvitesResponseIq.NAMESPACE, new InvitesResponseIq.Provider());
@@ -1422,6 +1423,14 @@ public class OldConnection extends Connection {
                         Log.i("connection: got rerequest message " + msg);
                         connectionObservers.notifyMessageRerequest(getUserId(packet.getFrom()), rerequest.id, packet.getStanzaId());
                         handled = true;
+                    }
+                }
+                if (!handled) {
+                    final NameMessage nameMessage = packet.getExtension(NameMessage.ELEMENT, NameMessage.NAMESPACE);
+                    if (nameMessage != null) {
+                        Log.i("connection: got name message " + msg);
+                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(nameMessage.userId, nameMessage.name));
+                        sendAck(msg.getStanzaId());
                     }
                 }
             }
