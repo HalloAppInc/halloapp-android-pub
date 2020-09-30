@@ -1144,7 +1144,6 @@ class PostsDb {
                 }
             }
         }
-        Log.i("ContentDb.getPostAudienceInfo: audienceList.size=" + audienceList.size());
     }
 
     @WorkerThread
