@@ -33,6 +33,7 @@
         android:paddingStart="18dp"
         android:paddingEnd="18dp"
         android:background="@drawable/date_separator_background"
+        android:textColor="@color/date_separator_text"
         android:singleLine="true"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
