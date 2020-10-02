@@ -47,7 +47,7 @@ import me.relex.circleindicator.CircleIndicator3;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle {
 
-    private static final int[] colors = {
+    private static final int[] PARTICIPANT_COLORS = {
             Color.parseColor("#48b9dc"), // cyan
             Color.parseColor("#66cc56"), // green (light)
             Color.parseColor("#dc855c"), // rust
@@ -386,8 +386,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 nameView.setVisibility(View.GONE);
             } else if ((prevMessage == null || !prevMessage.senderUserId.equals(message.senderUserId) || prevMessage.isLocalMessage()) && message.chatId instanceof GroupId) {
                 contactLoader.load(nameView, message.senderUserId);
-                long colorIndex = Long.parseLong(message.senderUserId.rawId()) % colors.length;
-                nameView.setTextColor(colors[(int) colorIndex]);
+                long colorIndex = Long.parseLong(message.senderUserId.rawId()) % PARTICIPANT_COLORS.length;
+                nameView.setTextColor(PARTICIPANT_COLORS[(int) colorIndex]);
                 nameView.setVisibility(View.VISIBLE);
             } else {
                 nameView.setVisibility(View.GONE);
