@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -45,6 +46,16 @@ import java.util.List;
 import me.relex.circleindicator.CircleIndicator3;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle {
+
+    private static final int[] colors = {
+            Color.parseColor("#48b9dc"), // cyan
+            Color.parseColor("#66cc56"), // green (light)
+            Color.parseColor("#dc855c"), // rust
+            Color.parseColor("#dc485b"), // red
+            Color.parseColor("#b748dc"), // purple
+            Color.parseColor("#dcc848"), // yellow
+            Color.parseColor("#6348dc") // blue
+    };
 
     private final View contentView;
     private final ImageView statusView;
@@ -375,6 +386,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 nameView.setVisibility(View.GONE);
             } else if ((prevMessage == null || !prevMessage.senderUserId.equals(message.senderUserId) || prevMessage.isLocalMessage()) && message.chatId instanceof GroupId) {
                 contactLoader.load(nameView, message.senderUserId);
+                long colorIndex = Long.parseLong(message.senderUserId.rawId()) % colors.length;
+                nameView.setTextColor(colors[(int) colorIndex]);
                 nameView.setVisibility(View.VISIBLE);
             } else {
                 nameView.setVisibility(View.GONE);
