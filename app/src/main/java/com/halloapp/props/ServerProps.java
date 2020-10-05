@@ -160,6 +160,6 @@ public class ServerProps {
     }
 
     public synchronized boolean getGroupsEnabled() {
-        return BuildConfig.DEBUG || getIsInternalUser() || propGroupsEnabled.getValue();
+        return true;
     }
 }
