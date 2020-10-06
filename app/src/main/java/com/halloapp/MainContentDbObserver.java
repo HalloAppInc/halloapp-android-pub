@@ -69,9 +69,13 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
-        if (senderUserId.isMe()) {
-            connection.retractPost(postId);
+    public void onPostRetracted(@NonNull Post post) {
+        if (post.senderUserId.isMe()) {
+            if (post.getParentGroup() == null) {
+                connection.retractPost(post.id);
+            } else {
+                connection.retractGroupPost(post.getParentGroup(), post.id);
+            }
         }
     }
 
@@ -93,21 +97,28 @@ public class MainContentDbObserver implements ContentDb.Observer {
         if (comment.isOutgoing()) {
             connection.sendComment(comment);
         } else { // if (comment.isIncoming())
-            if (comment.postSenderUserId.isMe()) {
-                notifications.updateFeedNotifications();
+            Post parentPost = comment.getParentPost();
+            if (parentPost != null) {
+                if (parentPost.senderUserId.isMe()) {
+                    notifications.updateFeedNotifications();
+                }
             }
         }
     }
 
     @Override
-    public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-        if (commentSenderUserId.isMe()) {
-            connection.retractComment(postSenderUserId, postId, commentId);
+    public void onCommentRetracted(@NonNull Comment comment) {
+        if (comment.commentSenderUserId.isMe()) {
+            if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
+                connection.retractComment(comment.getPostSenderUserId(), comment.postId, comment.commentId);
+            } else {
+                connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.getParentPost().senderUserId, comment.postId, comment.commentId);
+            }
         }
     }
 
     @Override
-    public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
     }
 
     @Override

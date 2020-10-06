@@ -12,4 +12,9 @@
         android:title="@string/block"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/new_post"
+        android:title="New post"
+        app:showAsAction="never"/>
+
 </menu>

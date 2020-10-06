@@ -26,7 +26,6 @@ import com.halloapp.content.Post;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,29 +53,32 @@ class CommentsViewModel extends AndroidViewModel {
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
-        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
-            if (CommentsViewModel.this.postSenderUserId.equals(senderUserId) && CommentsViewModel.this.postId.equals(postId)) {
+        public void onPostRetracted(@NonNull Post post) {
+            if (CommentsViewModel.this.postSenderUserId.equals(post.senderUserId) && CommentsViewModel.this.postId.equals(post.id)) {
                 postDeleted.postValue(true);
             }
         }
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
-            if (CommentsViewModel.this.postSenderUserId.equals(comment.postSenderUserId) && CommentsViewModel.this.postId.equals(comment.postId)) {
-                contentDb.setCommentsSeen(comment.postSenderUserId, comment.postId);
+            if (CommentsViewModel.this.postId.equals(comment.postId)) {
+                Post parentPost = comment.getParentPost();
+                if (parentPost != null) {
+                    contentDb.setCommentsSeen(parentPost.senderUserId, comment.postId);
+                }
                 invalidateDataSource();
             }
         }
 
         @Override
-        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-            if (CommentsViewModel.this.postSenderUserId.equals(postSenderUserId) && CommentsViewModel.this.postId.equals(postId)) {
+        public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+            if (CommentsViewModel.this.postId.equals(postId)) {
                 invalidateDataSource();
             }
         }
 
         @Override
-        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        public void onCommentRetracted(@NonNull Comment comment) {
             if (CommentsViewModel.this.postSenderUserId.equals(postSenderUserId) && CommentsViewModel.this.postId.equals(postId)) {
                 invalidateDataSource();
             }

@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
@@ -69,8 +68,8 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
-            if (senderUserId.equals(userId)) {
+        public void onPostRetracted(@NonNull Post post) {
+            if (post.senderUserId.equals(userId)) {
                 invalidatePosts();
             }
         }
@@ -89,20 +88,17 @@ public class ProfileViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
-            if (comment.postSenderUserId.equals(userId)) {
+            Post parentPost = comment.getParentPost();
+            if (parentPost != null && parentPost.senderUserId.equals(userId)) {
                 invalidatePosts();
             }
         }
 
         @Override
-        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-            if (postSenderUserId.equals(userId)) {
+        public void onCommentRetracted(@NonNull Comment comment) {
+            if (userId.equals(comment.getPostSenderUserId())) {
                 invalidatePosts();
             }
-        }
-
-        @Override
-        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         }
 
         @Override

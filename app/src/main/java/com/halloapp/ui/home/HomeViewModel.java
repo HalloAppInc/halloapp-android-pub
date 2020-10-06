@@ -58,6 +58,9 @@ public class HomeViewModel extends AndroidViewModel {
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostAdded(@NonNull Post post) {
+            if (post.getParentGroup() != null) {
+                return;
+            }
             if (post.isOutgoing()) {
                 pendingOutgoing.set(true);
                 mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
@@ -71,7 +74,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+        public void onPostRetracted(@NonNull Post post) {
             invalidatePosts();
             invalidateSocialHistory();
         }
@@ -99,7 +102,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        public void onCommentRetracted(@NonNull Comment comment) {
             invalidatePosts();
             invalidateSocialHistory();
         }
@@ -140,7 +143,7 @@ public class HomeViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
 
-        dataSourceFactory = new PostsDataSource.Factory(contentDb, null);
+        dataSourceFactory = new PostsDataSource.Factory(contentDb, null, null);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
         socialHistory = new ComputableLiveData<SocialHistory>() {
@@ -209,6 +212,9 @@ public class HomeViewModel extends AndroidViewModel {
     private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut) {
         for (Comment comment : mentionedComments) {
             SocialActionEvent activity = SocialActionEvent.fromMentionedComment(comment);
+            if (activity == null) {
+                continue;
+            }
             if (activity.seen) {
                 seenOut.add(activity);
             } else {
@@ -244,9 +250,13 @@ public class HomeViewModel extends AndroidViewModel {
         final List<SocialActionEvent> unseenMentions = new ArrayList<>();
         SocialActionEvent lastActivity = null;
         for (Comment comment : comments) {
+            Post parentPost = comment.getParentPost();
+            if (parentPost == null) {
+                continue;
+            }
             if (comment.seen) {
-                if (lastActivity == null || !lastActivity.postId.equals(comment.postId) || !lastActivity.postSenderUserId.equals(comment.postSenderUserId)) {
-                    lastActivity = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
+                if (lastActivity == null || !lastActivity.postId.equals(comment.postId)) {
+                    lastActivity = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
                     lastActivity.seen = true;
                     seenComments.add(lastActivity);
                 }
@@ -255,10 +265,10 @@ public class HomeViewModel extends AndroidViewModel {
                     lastActivity.timestamp = comment.timestamp;
                 }
             } else {
-                final Pair<UserId, String> postKey = Pair.create(comment.postSenderUserId, comment.postId);
+                final Pair<UserId, String> postKey = Pair.create(parentPost.senderUserId, comment.postId);
                 SocialActionEvent commentsGroup = unseenComments.get(postKey);
                 if (commentsGroup == null) {
-                    commentsGroup = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, comment.postSenderUserId, comment.postId);
+                    commentsGroup = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
                     commentsGroup.seen = false;
                     unseenComments.put(postKey, commentsGroup);
                 }
@@ -330,8 +340,13 @@ public class HomeViewModel extends AndroidViewModel {
             return activity;
         }
 
+        @Nullable
         public static SocialActionEvent fromMentionedComment(@NonNull Comment comment) {
-            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_COMMENT, comment.postSenderUserId, comment.postId);
+            Post parentPost = comment.getParentPost();
+            if (parentPost == null) {
+                return null;
+            }
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_COMMENT, parentPost.senderUserId, comment.postId);
             activity.timestamp = comment.timestamp;
             activity.seen = comment.seen;
             activity.involvedUsers.add(comment.commentSenderUserId);

@@ -3,6 +3,7 @@ package com.halloapp.content;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -16,12 +17,13 @@ import java.util.Objects;
 public class Comment implements TextContent {
 
     public long rowId;
-    public final UserId postSenderUserId;
     public final String postId;
     public final UserId commentSenderUserId;
     public final String commentId;
     public final String parentCommentId;
     public final long timestamp;
+
+    private Post parentPost;
 
     public final boolean transferred;
     public boolean seen;
@@ -32,7 +34,6 @@ public class Comment implements TextContent {
 
     public Comment(
             long rowId,
-            UserId postSenderUserId,
             String postId,
             UserId commentSenderUserId,
             String commentId,
@@ -42,7 +43,6 @@ public class Comment implements TextContent {
             boolean seen,
             String text) {
         this.rowId = rowId;
-        this.postSenderUserId = postSenderUserId;
         this.postId = postId;
         this.commentSenderUserId = commentSenderUserId;
         this.commentId = commentId;
@@ -55,7 +55,7 @@ public class Comment implements TextContent {
 
     @Override
     public @NonNull String toString() {
-        return "{timestamp:" + timestamp + " postSender:" + postSenderUserId + ", post:" + postId + ", commentSender:" + commentSenderUserId + ", parentCommentId:" + parentCommentId + ", commentId:" + commentId + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
+        return "{timestamp:" + timestamp + ", post:" + postId + ", commentSender:" + commentSenderUserId + ", parentCommentId:" + parentCommentId + ", commentId:" + commentId + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
 
     public boolean isOutgoing() {
@@ -72,6 +72,23 @@ public class Comment implements TextContent {
 
     public boolean canBeRetracted() {
         return isOutgoing() && (timestamp + Constants.RETRACT_COMMENT_ALLOWED_TIME > System.currentTimeMillis());
+    }
+
+    public void setParentPost(@Nullable Post parentPost) {
+        this.parentPost = parentPost;
+    }
+
+    @Nullable
+    public Post getParentPost() {
+        return parentPost;
+    }
+
+    @Nullable
+    public UserId getPostSenderUserId() {
+        if (parentPost == null) {
+            return null;
+        }
+        return parentPost.senderUserId;
     }
 
     @Override
@@ -92,7 +109,6 @@ public class Comment implements TextContent {
         }
         final Comment comment = (Comment) o;
         return rowId == comment.rowId &&
-                Objects.equals(postSenderUserId, comment.postSenderUserId) &&
                 Objects.equals(postId, comment.postId) &&
                 Objects.equals(commentSenderUserId, comment.commentSenderUserId) &&
                 Objects.equals(commentId, comment.commentId) &&

@@ -52,8 +52,8 @@ public class FeedItem {
         this.parentPostSenderId = parentPostSenderId;
     }
 
-    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @NonNull UserId parentPostSenderId, @Nullable String payload) {
-        this(type, id, parentPostId, parentPostSenderId.rawId(), payload);
+    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @Nullable UserId parentPostSenderId, @Nullable String payload) {
+        this(type, id, parentPostId, parentPostSenderId == null ? null : parentPostSenderId.rawId(), payload);
     }
 
     @Nullable
@@ -66,6 +66,36 @@ public class FeedItem {
             default:
                 return null;
         }
+    }
+
+    @Nullable
+    public static FeedItem parseGroupFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
+        switch (parser.getName()) {
+            case "post":
+                return parseGroupPostFeedItem(parser);
+            case "comment":
+                return parseCommentFeedItem(parser);
+            default:
+                return null;
+        }
+    }
+
+    @Nullable
+    public static FeedItem parseGroupPostFeedItem(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String timestampStr = parser.getAttributeValue(null, "timestamp");
+        String uid = parser.getAttributeValue(null, "publisher_uid");
+        String id = parser.getAttributeValue(null, "id");
+        if (id == null) {
+            Log.e("FeedItem/parsePostFeedItem no id set");
+            return null;
+        }
+        String payload = Xml.readText(parser);
+        FeedItem post = new FeedItem(Type.POST, id, payload);
+        post.publisherId = uid;
+        if (timestampStr != null) {
+            post.timestamp = Long.parseLong(timestampStr);
+        }
+        return post;
     }
 
     @Nullable

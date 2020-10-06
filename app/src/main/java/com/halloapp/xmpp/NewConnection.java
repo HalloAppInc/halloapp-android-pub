@@ -150,12 +150,22 @@ public class NewConnection extends Connection {
     }
 
     @Override
+    public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
+
+    }
+
+    @Override
     public void sendComment(@NonNull Comment comment) {
 
     }
 
     @Override
-    public void retractComment(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+    public void retractComment(@Nullable UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+
+    }
+
+    @Override
+    public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
 
     }
 

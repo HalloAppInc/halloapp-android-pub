@@ -42,10 +42,10 @@ class ContentDbObservers {
         }
     }
 
-    void notifyPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+    void notifyPostRetracted(@NonNull Post post) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onPostRetracted(senderUserId, postId);
+                observer.onPostRetracted(post);
             }
         }
     }
@@ -74,18 +74,18 @@ class ContentDbObservers {
         }
     }
 
-    void notifyCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    void notifyCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
+                observer.onCommentUpdated(postId, commentSenderUserId, commentId);
             }
         }
     }
 
-    void notifyCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    void notifyCommentRetracted(@NonNull Comment comment) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onCommentRetracted(postSenderUserId, postId, commentSenderUserId, commentId);
+                observer.onCommentRetracted(comment);
             }
         }
     }

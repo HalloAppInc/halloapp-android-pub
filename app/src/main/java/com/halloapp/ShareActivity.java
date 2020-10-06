@@ -42,7 +42,7 @@ public class ShareActivity extends HalloActivity {
                         finish();
                         return;
                     }
-                    ChatId chatId = ChatId.fromString(selectedId);
+                    ChatId chatId = ChatId.fromNullable(selectedId);
                     contentComposer.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_NAVIGATE_TO_CHAT, true);

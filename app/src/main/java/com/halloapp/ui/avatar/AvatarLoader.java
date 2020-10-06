@@ -26,6 +26,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.Downloader;
+import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -96,9 +97,9 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 } else {
                     view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
                 }
-            } else {
-                // TODO: (clarkc) Add support for group profiles later on
-                view.setOnClickListener(null);
+            } else if (chatId instanceof GroupId) {
+                GroupId groupId = (GroupId) chatId;
+                view.setOnClickListener(v -> v.getContext().startActivity(ViewGroupFeedActivity.viewFeed(v.getContext(), groupId)));
             }
         }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);

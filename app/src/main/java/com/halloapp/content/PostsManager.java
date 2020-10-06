@@ -49,9 +49,6 @@ public class PostsManager {
     private final ContactsDb.Observer observer = new ContactsDb.BaseObserver() {
         @Override
         public void onNewFriends(@NonNull Collection<UserId> newFriends) {
-            if (!Constants.NEW_FEED_API) {
-                return;
-            }
             bgWorkers.execute(() -> {
                 synchronized (PostsManager.this) {
                     shareOperations++;
@@ -82,9 +79,6 @@ public class PostsManager {
 
     @WorkerThread
     public void ensurePostsShared() {
-        if (!Constants.NEW_FEED_API) {
-            return;
-        }
         synchronized (PostsManager.this) {
             if (shareOperations > 0 || !preferences.getRequireSharePosts()) {
                 return;

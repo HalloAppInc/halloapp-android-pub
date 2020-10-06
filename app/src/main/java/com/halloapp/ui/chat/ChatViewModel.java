@@ -24,6 +24,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.BgWorkers;
@@ -47,6 +48,7 @@ public class ChatViewModel extends AndroidViewModel {
     final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Post> replyPost;
+    final ComputableLiveData<Post> lastUnseenFeedPost;
     ComputableLiveData<Message> replyMessage;
     private ComputableLiveData<List<UserId>> blockListLiveData;
     final ComputableLiveData<String> replyName;
@@ -70,6 +72,21 @@ public class ChatViewModel extends AndroidViewModel {
     };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onPostAdded(@NonNull Post post) {
+            lastUnseenFeedPost.invalidate();
+        }
+
+        @Override
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+            lastUnseenFeedPost.invalidate();
+        }
+
+        @Override
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+            lastUnseenFeedPost.invalidate();
+        }
 
         @Override
         public void onMessageAdded(@NonNull Message message) {
@@ -162,6 +179,16 @@ public class ChatViewModel extends AndroidViewModel {
                 initialUnseen.set(chat != null ? chat.newMessageCount : 0);
                 incomingAddedCount.set(0);
                 return chat;
+            }
+        };
+
+        lastUnseenFeedPost = new ComputableLiveData<Post>() {
+            @Override
+            protected Post compute() {
+                if (chatId instanceof GroupId) {
+                    return contentDb.getLastUnseenGroupPost((GroupId) chatId);
+                }
+                return null;
             }
         };
 

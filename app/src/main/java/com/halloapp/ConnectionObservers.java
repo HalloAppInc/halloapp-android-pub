@@ -115,10 +115,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+    public void notifyOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onOutgoingCommentSent(postSenderUserId, postId, commentId);
+                observer.onOutgoingCommentSent(postId, commentId);
             }
         }
     }
@@ -299,18 +299,22 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyCommentRetracted(@NonNull String commentId, @NonNull UserId commentUid, @NonNull String postId, @NonNull UserId postUid, long timestamp) {
+    public void notifyCommentRetracted(@NonNull String commentId, @NonNull UserId commentUid, @NonNull String postId, long timestamp) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onCommentRevoked(commentId, commentUid, postId, postUid, timestamp);
+                observer.onCommentRevoked(commentId, commentUid, postId, timestamp);
             }
         }
     }
 
     public void notifyPostRetracted(@NonNull UserId postUid, @NonNull String postId) {
+        notifyPostRetracted(postUid, null, postId);
+    }
+
+    public void notifyPostRetracted(@NonNull UserId postUid, @Nullable GroupId groupId, @NonNull String postId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onPostRevoked(postUid, postId);
+                observer.onPostRevoked(postUid, postId, groupId);
             }
         }
     }

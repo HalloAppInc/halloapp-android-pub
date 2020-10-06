@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -54,6 +55,23 @@ public class ChatsViewModel extends AndroidViewModel {
     };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onPostAdded(@NonNull Post post) {
+            if (post.getParentGroup() != null) {
+                invalidateChats();
+            }
+        }
+
+        @Override
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+            invalidateChats();
+        }
+
+        @Override
+        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+            invalidateChats();
+        }
 
         public void onMessageAdded(@NonNull Message message) {
             invalidateChats();

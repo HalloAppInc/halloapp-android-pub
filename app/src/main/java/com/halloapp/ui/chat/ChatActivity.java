@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.TransitionManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -64,6 +65,8 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupInfoActivity;
+import com.halloapp.ui.groups.UnseenGroupPostLoader;
+import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
@@ -111,6 +114,7 @@ public class ChatActivity extends HalloActivity {
     private TextView replyNameView;
     private ImageView avatarView;
     private View footer;
+    private View feedRing;
 
     private ChatId chatId;
 
@@ -164,6 +168,7 @@ public class ChatActivity extends HalloActivity {
         subtitleView = findViewById(R.id.subtitle);
         avatarView = findViewById(R.id.avatar);
         footer = findViewById(R.id.footer);
+        feedRing = findViewById(R.id.feed_ring);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -407,6 +412,14 @@ public class ChatActivity extends HalloActivity {
                 finish();
             }
         });
+        viewModel.lastUnseenFeedPost.getLiveData().observe(this, post -> {
+            TransitionManager.beginDelayedTransition((ViewGroup) feedRing.getParent());
+            if (post == null) {
+                feedRing.setVisibility(View.GONE);
+            } else {
+                feedRing.setVisibility(View.VISIBLE);
+            }
+        });
         replyContainer = findViewById(R.id.reply_container);
         if (viewModel.replyPost != null) {
             viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
@@ -523,6 +536,7 @@ public class ChatActivity extends HalloActivity {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         menuItem = menu.findItem(R.id.block);
         menuItem.setVisible(chatId instanceof UserId);
+        menu.findItem(R.id.new_post).setVisible(chatId instanceof GroupId);
         viewModel.getBlockList().observe(this, userIds -> {
             blocked = updateBlockedContact(userIds);
             Log.i("ChatActivity: blocked = " + blocked);
@@ -554,6 +568,9 @@ public class ChatActivity extends HalloActivity {
                     unBlockContact(item);
                 }
                 return true;
+            }
+            case R.id.new_post: {
+                startActivity(ViewGroupFeedActivity.viewFeed(this, (GroupId) chatId));
             }
             default: {
                 return super.onOptionsItemSelected(item);

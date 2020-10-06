@@ -185,8 +185,8 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
-        contentDb.setCommentTransferred(postSenderUserId, postId, UserId.ME, commentId);
+    public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {
+        contentDb.setCommentTransferred(postId, UserId.ME, commentId);
     }
 
     @Override
@@ -286,14 +286,17 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
         Post post = new Post(0, senderUserId, postId, 0, Post.TRANSFERRED_NO, Post.SEEN_NO, null);
+        if (groupId != null) {
+            post.setParentGroup(groupId);
+        }
         contentDb.retractPost(post);
     }
 
     @Override
-    public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, @NonNull UserId postSenderId, long timestamp) {
-        Comment comment = new Comment(0, postSenderId, postId, commentSenderId, id, null, timestamp, !commentSenderId.isMe(), true, null);
+    public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {
+        Comment comment = new Comment(0, postId, commentSenderId, id, null, timestamp, !commentSenderId.isMe(), true, null);
         contentDb.retractComment(comment);
     }
 

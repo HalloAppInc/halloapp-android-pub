@@ -1,11 +1,11 @@
 package com.halloapp.xmpp.feed;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 
-import com.halloapp.Constants;
-import com.halloapp.util.Preconditions;
+import com.halloapp.id.GroupId;
+import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
-import com.halloapp.xmpp.ChatMessageElement;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
@@ -16,10 +16,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedMessageElement implements ExtensionElement {
+public class GroupFeedMessageElement implements ExtensionElement {
 
-    public static final String NAMESPACE = "halloapp:feed";
-    public static final String ELEMENT = "feed";
+    public static final String NAMESPACE = "halloapp:group:feed";
+    public static final String ELEMENT = "group_feed";
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Action.PUBLISH, Action.RETRACT, Action.SHARE})
@@ -29,11 +29,14 @@ public class FeedMessageElement implements ExtensionElement {
         int SHARE = 2;
     }
 
+    public final GroupId groupId;
+
     public final @Action int action;
 
     public final List<FeedItem> feedItemList = new ArrayList<>();
 
-    public FeedMessageElement(@Action int action, List<FeedItem> feedItems) {
+    public GroupFeedMessageElement(@NonNull GroupId groupId, @Action int action, List<FeedItem> feedItems) {
+        this.groupId = groupId;
         this.action = action;
         this.feedItemList.addAll(feedItems);
     }
@@ -53,12 +56,18 @@ public class FeedMessageElement implements ExtensionElement {
         return null;
     }
 
-    public static class Provider extends ExtensionElementProvider<FeedMessageElement> {
+    public static class Provider extends ExtensionElementProvider<GroupFeedMessageElement> {
 
         @Override
-        public FeedMessageElement parse(XmlPullParser parser, int initialDepth) throws Exception {
+        public GroupFeedMessageElement parse(XmlPullParser parser, int initialDepth) throws Exception {
             String actionStr = parser.getAttributeValue(null, "action");
             if (actionStr == null) {
+                return null;
+            }
+            String gid = parser.getAttributeValue(null, "gid");
+            GroupId groupId = GroupId.fromNullable(gid);
+            if (groupId == null) {
+                Log.e("GroupFeedMessageElement/parse gid is invalid");
                 return null;
             }
             @Action int action;
@@ -84,7 +93,7 @@ public class FeedMessageElement implements ExtensionElement {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
                 }
-                FeedItem feedItem = FeedItem.parseFeedItem(parser);
+                FeedItem feedItem = FeedItem.parseGroupFeedItem(parser);
                 if (feedItem == null) {
                     Xml.skip(parser);
                 } else {
@@ -94,7 +103,7 @@ public class FeedMessageElement implements ExtensionElement {
             if (feedItems.isEmpty()) {
                 return null;
             }
-            return new FeedMessageElement(action, feedItems);
+            return new GroupFeedMessageElement(groupId, action, feedItems);
         }
     }
 }

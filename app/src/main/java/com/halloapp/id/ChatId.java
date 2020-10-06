@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public abstract class ChatId implements Parcelable {
 
-    public @Nullable static ChatId fromString(@Nullable String s) {
+    public @Nullable static ChatId fromNullable(@Nullable String s) {
         if (s == null) {
             Log.w("Returning null ChatId for null String");
             return null;
@@ -65,7 +65,7 @@ public abstract class ChatId implements Parcelable {
         public ChatId createFromParcel(Parcel in) {
             String id = in.readString();
             id = id == null ? "" : id;
-            return fromString(id);
+            return fromNullable(id);
         }
 
         public ChatId[] newArray(int size) {

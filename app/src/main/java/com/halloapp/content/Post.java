@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -45,6 +46,8 @@ public class Post extends ContentItem {
     private @PrivacyList.Type String audienceType;
     private List<UserId> audienceList;
     private List<UserId> excludeList;
+
+    public GroupId parentGroup;
 
     public Post(
             long rowId,
@@ -140,6 +143,15 @@ public class Post extends ContentItem {
     @Override
     public @NonNull String toString() {
         return "Post {timestamp:" + timestamp + " sender:" + senderUserId + ", id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
+    }
+
+    public void setParentGroup(@NonNull GroupId group) {
+        this.parentGroup = group;
+    }
+
+    @Nullable
+    public GroupId getParentGroup() {
+        return parentGroup;
     }
 
     @Override

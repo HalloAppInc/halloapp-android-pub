@@ -190,7 +190,6 @@ public class CommentsActivity extends HalloActivity {
             }
             final Comment comment = new Comment(
                     0,
-                    userId,
                     postId,
                     UserId.ME,
                     RandomId.create(),
@@ -199,6 +198,7 @@ public class CommentsActivity extends HalloActivity {
                     false,
                     true,
                     postText);
+            comment.setParentPost(viewModel.post.getValue());
             comment.mentions.clear();
             for (Mention mention : textWithMentions.second) {
                 if (mention.index < 0 || mention.index >= postText.length()) {

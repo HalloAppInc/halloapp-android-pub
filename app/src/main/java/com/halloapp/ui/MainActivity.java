@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,14 +30,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
-import com.halloapp.Me;
 import com.halloapp.Notifications;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
@@ -53,7 +49,6 @@ import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -363,7 +358,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             case REQUEST_CODE_SELECT_CONTACT:
                 if (result == RESULT_OK) {
                     String rawId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
-                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, ChatId.fromString(rawId)));
+                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, ChatId.fromNullable(rawId)));
                 }
                 break;
         }

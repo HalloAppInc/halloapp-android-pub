@@ -14,6 +14,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.AudienceTable;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
@@ -28,6 +29,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +59,9 @@ class PostsDb {
         values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
         values.put(PostsTable.COLUMN_SEEN, post.seen);
         values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
+        if (post.getParentGroup() != null) {
+            values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
+        }
         if (post.text != null) {
             values.put(PostsTable.COLUMN_TEXT, post.text);
         }
@@ -460,7 +466,10 @@ class PostsDb {
             throw new SQLiteConstraintException("attempting to add expired comment");
         }
         final ContentValues values = new ContentValues();
-        values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, comment.postSenderUserId.rawId());
+        UserId postSenderId = comment.getPostSenderUserId();
+        if (postSenderId != null) {
+            values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, postSenderId.rawId());
+        }
         values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
         values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.commentSenderUserId.rawId());
         values.put(CommentsTable.COLUMN_COMMENT_ID, comment.commentId);
@@ -495,7 +504,10 @@ class PostsDb {
                     new String [] {comment.commentSenderUserId.rawId(), comment.commentId},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
-                values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, comment.postSenderUserId.rawId());
+                UserId postSenderUserId = comment.getPostSenderUserId();
+                if (postSenderUserId != null) {
+                    values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, postSenderUserId.rawId());
+                }
                 values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
                 values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.commentSenderUserId.rawId());
                 values.put(CommentsTable.COLUMN_COMMENT_ID, comment.commentId);
@@ -514,18 +526,17 @@ class PostsDb {
     }
 
     @WorkerThread
-    void setCommentTransferred(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    void setCommentTransferred(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         Log.i("ContentDb.setCommentTransferred: senderUserId=" + commentSenderUserId + " commentId=" + commentId);
         final ContentValues values = new ContentValues();
         values.put(CommentsTable.COLUMN_TRANSFERRED, true);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
-                    CommentsTable.COLUMN_POST_SENDER_USER_ID + "=? AND " +
                             CommentsTable.COLUMN_POST_ID + "=? AND " +
                             CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " +
                             CommentsTable.COLUMN_COMMENT_ID + "=?",
-                    new String [] {postSenderUserId.rawId(), postId, commentSenderUserId.rawId(), commentId},
+                    new String [] {postId, commentSenderUserId.rawId(), commentId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setCommentTransferred: failed");
@@ -573,7 +584,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, boolean unseenOnly) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
@@ -587,13 +598,22 @@ class PostsDb {
                 where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + Math.max(getPostExpirationTime(), timestamp);
             }
         }
-
+        List<String> args = new ArrayList<>();
         if (senderUserId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
-            selectionArgs = new String[] {senderUserId.rawId()};
+            args.add(senderUserId.rawId());
         }
         if (unseenOnly) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0";
+        }
+        if (groupId != null) {
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
+            args.add(groupId.rawId());
+        } else {
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+        }
+        if (!args.isEmpty()) {
+            selectionArgs = args.toArray(new String[0]);
         }
         String sql =
             "SELECT " +
@@ -605,6 +625,7 @@ class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -689,35 +710,39 @@ class PostsDb {
                     getPostAudienceInfo(post.id, audienceList, excludeList);
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
-                    post.commentCount = cursor.getInt(15);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(16);
-                    final String firstCommentId = cursor.getString(18);
+                    post.commentCount = cursor.getInt(16);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(17);
+                    GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
+                    if (parentGroupId != null) {
+                        post.setParentGroup(parentGroupId);
+                    }
+                    final String firstCommentId = cursor.getString(19);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(17),
-                                post.senderUserId,
+                        post.firstComment = new Comment(cursor.getLong(18),
                                 post.id,
-                                new UserId(cursor.getString(19)),
+                                new UserId(cursor.getString(20)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(21),
+                                cursor.getLong(22),
                                 true,
                                 true,
-                                cursor.getString(20));
+                                cursor.getString(21));
+                        post.firstComment.setParentPost(post);
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(22);
+                    post.seenByCount = cursor.getInt(23);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(9)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(9),
+                            cursor.getInt(10),
+                            cursor.getString(11),
+                            fileStore.getMediaFile(cursor.getString(12)),
                             null,
                             null,
-                            cursor.getInt(12),
                             cursor.getInt(13),
-                            cursor.getInt(14)));
+                            cursor.getInt(14),
+                            cursor.getInt(15)));
                 }
             }
             if (post != null && (count == null || cursor.getCount() < count)) {
@@ -747,6 +772,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -794,20 +820,24 @@ class PostsDb {
                     getPostAudienceInfo(post.id, audienceList, excludeList);
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
+                    GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
+                    if (parentGroupId != null) {
+                        post.setParentGroup(parentGroupId);
+                    }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(15);
+                    post.seenByCount = cursor.getInt(16);
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(9)) {
                     Preconditions.checkNotNull(post).media.add(new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
+                            cursor.getLong(9),
+                            cursor.getInt(10),
+                            cursor.getString(11),
+                            fileStore.getMediaFile(cursor.getString(12)),
                             null,
                             null,
-                            cursor.getInt(12),
                             cursor.getInt(13),
-                            cursor.getInt(14)));
+                            cursor.getInt(14),
+                            cursor.getInt(15)));
                 }
             }
         }
@@ -842,11 +872,11 @@ class PostsDb {
                 "SELECT * FROM comments_tree LIMIT " + count + " OFFSET " + start;
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        Post parentPost = getPost(postId);
         try (final Cursor cursor = db.rawQuery(sql, new String [] {postSenderUserId.rawId(), postId})) {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
                         cursor.getLong(1),
-                        postSenderUserId,
                         postId,
                         new UserId(cursor.getString(4)),
                         cursor.getString(5),
@@ -856,6 +886,7 @@ class PostsDb {
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 mentionsDb.fillMentions(comment);
+                comment.setParentPost(parentPost);
                 comments.add(comment);
             }
         }
@@ -958,12 +989,12 @@ class PostsDb {
                         "AS c ON " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "=c." + CommentsTable._ID + " " +
                         "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? LIMIT " + limit;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final HashMap<String, Post> postCache = new HashMap<>();
+        final HashSet<String> checkedIds = new HashSet<>();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{mentionedUserId.rawId(), CommentsTable.TABLE_NAME})) {
             while (cursor.moveToNext()) {
-
                 final Comment comment = new Comment(
                         cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         new UserId(cursor.getString(3)),
                         cursor.getString(4),
@@ -972,6 +1003,16 @@ class PostsDb {
                         cursor.getInt(7) == 1,
                         cursor.getInt(9) == 1,
                         cursor.getString(8));
+                if (checkedIds.contains(comment.postId)) {
+                    comment.setParentPost(postCache.get(comment.postId));
+                } else {
+                    Post parentPost = getPost(comment.postId);
+                    checkedIds.add(comment.postId);
+                    if (parentPost != null) {
+                        postCache.put(comment.postId, parentPost);
+                        comment.setParentPost(parentPost);
+                    }
+                }
                 mentionsDb.fillMentions(comment);
                 mentionedComments.add(comment);
             }
@@ -1001,10 +1042,8 @@ class PostsDb {
                         "LIMIT " + 1;
         try (final Cursor cursor = db.rawQuery(sql, new String[] {commentId})) {
             while (cursor.moveToNext()) {
-
                 final Comment comment = new Comment(
                         cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         new UserId(cursor.getString(3)),
                         cursor.getString(4),
@@ -1013,6 +1052,8 @@ class PostsDb {
                         cursor.getInt(7) == 1,
                         cursor.getInt(9) == 1,
                         cursor.getString(8));
+                Post parentPost = getPost(comment.postId);
+                comment.setParentPost(parentPost);
                 mentionsDb.fillMentions(comment);
                 return comment;
             }
@@ -1057,7 +1098,6 @@ class PostsDb {
 
                 final Comment comment = new Comment(
                         cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         new UserId(cursor.getString(3)),
                         cursor.getString(4),
@@ -1067,6 +1107,7 @@ class PostsDb {
                         cursor.getInt(9) == 1,
                         cursor.getString(8));
                 mentionsDb.fillMentions(comment);
+                comment.setParentPost(getPost(comment.postId));
                 comments.add(comment);
             }
         }
@@ -1078,6 +1119,8 @@ class PostsDb {
     @NonNull List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final HashMap<String, Post> postCache = new HashMap<>();
+        final HashSet<String> checkedIds = new HashSet<>();
         try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
                 new String [] {
                         CommentsTable._ID,
@@ -1095,7 +1138,6 @@ class PostsDb {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
                         cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         new UserId(cursor.getString(3)),
                         cursor.getString(4),
@@ -1104,6 +1146,16 @@ class PostsDb {
                         cursor.getInt(7) == 1,
                         cursor.getInt(8) == 1,
                         cursor.getString(9));
+                if (!checkedIds.contains(comment.postId)) {
+                    Post parentPost = getPost(comment.postId);
+                    if (parentPost != null) {
+                        postCache.put(comment.postId, parentPost);
+                        comment.setParentPost(parentPost);
+                    }
+                    checkedIds.add(comment.postId);
+                } else {
+                    comment.setParentPost(postCache.get(comment.postId));
+                }
                 comments.add(comment);
             }
         }
@@ -1272,7 +1324,6 @@ class PostsDb {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
                         cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         new UserId(cursor.getString(3)),
                         cursor.getString(4),
@@ -1312,7 +1363,7 @@ class PostsDb {
 
     @NonNull
     List<Post> getShareablePosts() {
-        return getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, false);
+        return getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false);
     }
 
     @WorkerThread

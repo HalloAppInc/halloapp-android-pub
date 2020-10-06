@@ -134,8 +134,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
         new LoadContentUrisTask(getApplication(), uris, editStates, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    void prepareContent(@Nullable ChatId chatId, @Nullable String text, @Nullable List<Mention> mentions) {
-        new PrepareContentTask(getApplication(), chatId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    void prepareContent(@Nullable ChatId chatId, @Nullable GroupId groupFeedGroupId, @Nullable String text, @Nullable List<Mention> mentions) {
+        new PrepareContentTask(getApplication(), chatId, groupFeedGroupId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -290,6 +290,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
         private final ChatId chatId;
+        private final GroupId groupId;
         private final String text;
         private final List<Media> media;
         private final List<Mention> mentions;
@@ -298,8 +299,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final String replyPostId;
         private final int replyPostMediaIndex;
 
-        PrepareContentTask(@NonNull Application application, @Nullable ChatId chatId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
+        PrepareContentTask(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
             this.chatId = chatId;
+            this.groupId = groupId;
             this.application = application;
             this.text = text;
             this.media = media;
@@ -353,34 +355,38 @@ public class ContentComposerViewModel extends AndroidViewModel {
             if (mentions != null) {
                 contentItem.mentions.addAll(mentions);
             }
-            if (Constants.NEW_FEED_API && contentItem instanceof Post) {
+            if (contentItem instanceof Post) {
                 Post contentPost = (Post) contentItem;
-                FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
-                List<UserId> audienceList;
-                @PrivacyList.Type String audienceType;
-                if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-                    List<Contact> contacts = contactsDb.getFriends();
-                    audienceList = new ArrayList<>(contacts.size());
-                    for (Contact contact : contacts) {
-                        audienceList.add(contact.userId);
-                    }
-                    audienceType = PrivacyList.Type.ALL;
-                } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-                    audienceList = feedPrivacy.onlyList;
-                    audienceType = PrivacyList.Type.ONLY;
+                if (groupId != null) {
+                    contentPost.setParentGroup(groupId);
                 } else {
-                    HashSet<UserId> excludedSet = new HashSet<>(feedPrivacy.exceptList);
-                    audienceType = PrivacyList.Type.EXCEPT;
-                    List<Contact> contacts = contactsDb.getFriends();
-                    audienceList = new ArrayList<>(contacts.size());
-                    for (Contact contact : contacts) {
-                        if (!excludedSet.contains(contact.userId)) {
+                    FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
+                    List<UserId> audienceList;
+                    @PrivacyList.Type String audienceType;
+                    if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+                        List<Contact> contacts = contactsDb.getFriends();
+                        audienceList = new ArrayList<>(contacts.size());
+                        for (Contact contact : contacts) {
                             audienceList.add(contact.userId);
                         }
+                        audienceType = PrivacyList.Type.ALL;
+                    } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
+                        audienceList = feedPrivacy.onlyList;
+                        audienceType = PrivacyList.Type.ONLY;
+                    } else {
+                        HashSet<UserId> excludedSet = new HashSet<>(feedPrivacy.exceptList);
+                        audienceType = PrivacyList.Type.EXCEPT;
+                        List<Contact> contacts = contactsDb.getFriends();
+                        audienceList = new ArrayList<>(contacts.size());
+                        for (Contact contact : contacts) {
+                            if (!excludedSet.contains(contact.userId)) {
+                                audienceList.add(contact.userId);
+                            }
+                        }
+                        contentPost.setExcludeList(feedPrivacy.exceptList);
                     }
-                    contentPost.setExcludeList(feedPrivacy.exceptList);
+                    contentPost.setAudience(audienceType, audienceList);
                 }
-                contentPost.setAudience(audienceType, audienceList);
             }
             this.contentItem.postValue(contentItem);
             return null;

@@ -20,5 +20,6 @@ public final class PostsTable implements BaseColumns {
     public static final String COLUMN_SEEN = "seen";
     public static final String COLUMN_TEXT = "text";
     public static final String COLUMN_AUDIENCE_TYPE = "audience_type";
+    public static final String COLUMN_GROUP_ID = "group_id";
 }
 

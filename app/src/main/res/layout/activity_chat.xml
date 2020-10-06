@@ -38,20 +38,33 @@
                     android:paddingStart="1dp"
                     android:paddingEnd="1dp">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/avatar"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/avatar_person" />
+                    <FrameLayout
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/avatar"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/avatar_person" />
+
+                        <ImageView
+                            android:id="@+id/feed_ring"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/group_feed_ring"
+                            android:layout_gravity="center"/>
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center_vertical"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp">
+                        android:paddingStart="3dp"
+                        android:paddingEnd="3dp"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:id="@+id/title"

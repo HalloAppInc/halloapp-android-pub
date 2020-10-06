@@ -144,7 +144,7 @@ public class ChatMessageElement implements ExtensionElement {
         String rawReplyMessageId = chatMessage.getChatReplyMessageId();
         String rawSenderId = chatMessage.getChatReplyMessageSenderId();
         final Message message = new Message(0,
-                ChatId.fromString(from.getLocalpartOrNull().toString()),
+                ChatId.fromNullable(from.getLocalpartOrNull().toString()),
                 new UserId(from.getLocalpartOrNull().toString()),
                 id,
                 timestamp,

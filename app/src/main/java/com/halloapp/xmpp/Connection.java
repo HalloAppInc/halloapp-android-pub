@@ -53,7 +53,7 @@ public abstract class Connection {
         public void onClientVersionExpired() {}
         public void onOutgoingPostSent(@NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
-        public void onOutgoingCommentSent(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {}
+        public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {}
         public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {}
@@ -78,8 +78,8 @@ public abstract class Connection {
         public void onPresenceReceived(UserId user, Long lastSeen) {}
         public void onChatStateReceived(UserId user, ChatState chatState) {}
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
-        public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, @NonNull UserId postSenderId, long timestamp) {}
+        public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId) {}
+        public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
     }
 
     public abstract void connect();
@@ -133,9 +133,13 @@ public abstract class Connection {
 
     public abstract void retractPost(final @NonNull String postId);
 
+    public abstract void retractGroupPost(final @NonNull GroupId groupId, @NonNull String postId);
+
     public abstract void sendComment(final @NonNull Comment comment);
 
-    public abstract void retractComment(final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
+    public abstract void retractComment(final @Nullable UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
+
+    public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
 

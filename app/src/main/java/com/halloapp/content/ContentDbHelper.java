@@ -25,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 30;
+    private static final int DATABASE_VERSION = 31;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -48,7 +48,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_TRANSFERRED + " INTEGER,"
                 + PostsTable.COLUMN_SEEN + " INTEGER,"
                 + PostsTable.COLUMN_TEXT + " TEXT,"
-                + PostsTable.COLUMN_AUDIENCE_TYPE + " TEXT"
+                + PostsTable.COLUMN_AUDIENCE_TYPE + " TEXT,"
+                + PostsTable.COLUMN_GROUP_ID + " TEXT"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
@@ -335,6 +336,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 29: {
                 upgradeFromVersion29(db);
             }
+            case 30: {
+                upgradeFromVersion30(db);
+            }
             break;
             default: {
                 onCreate(db);
@@ -575,6 +579,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + AudienceTable.COLUMN_USER_ID + ", "
                 + AudienceTable.COLUMN_EXCLUDED
                 + ");");
+    }
+
+    private void upgradeFromVersion30(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_GROUP_ID + " TEXT");
     }
 
     private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {

@@ -10,8 +10,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
@@ -32,6 +34,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
     final ComputableLiveData<List<Contact>> friendsList;
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
+    private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
 
@@ -40,9 +43,9 @@ public class PostSeenByViewModel extends AndroidViewModel {
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
-        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {
+        public void onPostRetracted(@NonNull Post retractedPost) {
             final Post post = PostSeenByViewModel.this.post.getLiveData().getValue();
-            if (post != null && post.senderUserId.equals(senderUserId) && post.id.equals(postId)) {
+            if (post != null && post.senderUserId.equals(retractedPost.senderUserId) && post.id.equals(retractedPost.id)) {
                 postDeleted.postValue(true);
             }
         }
@@ -73,6 +76,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
     private PostSeenByViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
 
+        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contentDb.addObserver(contentObserver);
 
@@ -97,13 +101,25 @@ public class PostSeenByViewModel extends AndroidViewModel {
             protected List<Contact> compute() {
                 Post post = contentDb.getPost(postId);
                 if (post != null) {
-                    List<UserId> audienceList = post.getAudienceList();
-                    if (audienceList != null) {
-                        List<Contact> sharedTo = new ArrayList<>();
-                        for (UserId userId : audienceList) {
-                            sharedTo.add(contactsDb.getContact(userId));
+                    if (post.getParentGroup() == null) {
+                        List<UserId> audienceList = post.getAudienceList();
+                        if (audienceList != null) {
+                            List<Contact> sharedTo = new ArrayList<>();
+                            for (UserId userId : audienceList) {
+                                sharedTo.add(contactsDb.getContact(userId));
+                            }
+                            return Contact.sort(sharedTo);
                         }
-                        return Contact.sort(sharedTo);
+                    } else {
+                        List<MemberInfo> members = contentDb.getGroupMembers(post.getParentGroup());
+                        List<Contact> audience = new ArrayList<>(members.size());
+                        for (MemberInfo info : members) {
+                            if (info.userId.rawId().equals(me.getUser())) {
+                                continue;
+                            }
+                            audience.add(contactsDb.getContact(info.userId));
+                        }
+                        return Contact.sort(audience);
                     }
                 }
                 return Contact.sort(contactsDb.getFriends());

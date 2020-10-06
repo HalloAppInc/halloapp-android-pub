@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.CropImageActivity;
@@ -56,6 +57,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     public static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
     public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
@@ -334,7 +336,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private void startContentComposer(@NonNull ArrayList<Uri> uris) {
         final Intent intent = new Intent(this, ContentComposerActivity.class);
         ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+        GroupId groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
         intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
+        intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
 

@@ -29,6 +29,8 @@ import com.halloapp.util.Preconditions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -51,13 +53,13 @@ public class ContentDb {
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
-        void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId);
+        void onPostRetracted(@NonNull Post post);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
-        void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
-        void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
+        void onCommentRetracted(@NonNull Comment comment);
+        void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
@@ -77,14 +79,14 @@ public class ContentDb {
 
     public static class DefaultObserver implements Observer {
         public void onPostAdded(@NonNull Post post) {}
-        public void onPostRetracted(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onPostRetracted(@NonNull Post post) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) { }
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
-        public void onCommentRetracted(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
-        public void onCommentUpdated(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
+        public void onCommentRetracted(@NonNull Comment comment) {}
+        public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
@@ -135,7 +137,6 @@ public class ContentDb {
 
     public void addFeedItems(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-
             for (Post post : posts) {
                 boolean duplicate = false;
                 final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -158,17 +159,29 @@ public class ContentDb {
                 // important to notify outside of transaction
                 if (!duplicate) {
                     if (post.isRetracted()) {
-                        observers.notifyPostRetracted(post.senderUserId, post.id);
+                        observers.notifyPostRetracted(post);
                     } else {
                         observers.notifyPostAdded(post);
                     }
                 }
             }
 
+            final HashMap<String, Post> postCache = new HashMap<>();
+            final HashSet<String> checkedIds = new HashSet<>();
             for (Comment comment : comments) {
+                if (checkedIds.contains(comment.postId)) {
+                    comment.setParentPost(postCache.get(comment.postId));
+                } else {
+                    Post parentPost = postsDb.getPost(comment.postId);
+                    if (parentPost != null) {
+                        comment.setParentPost(parentPost);
+                        postCache.put(comment.postId, parentPost);
+                    }
+                    checkedIds.add(comment.postId);
+                }
                 if (comment.isRetracted()) {
                     postsDb.retractComment(comment);
-                    observers.notifyCommentRetracted(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId);
+                    observers.notifyCommentRetracted(comment);
                 } else {
                     try {
                         postsDb.addComment(comment);
@@ -188,7 +201,7 @@ public class ContentDb {
     public void retractPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             postsDb.retractPost(post);
-            observers.notifyPostRetracted(post.senderUserId, post.id);
+            observers.notifyPostRetracted(post);
         });
     }
 
@@ -347,13 +360,32 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable Post getLastUnseenGroupPost(@NonNull GroupId groupId) {
+        List<Post> posts = getPosts(null, 10, true, null, groupId, true);
+        if (posts.isEmpty()) {
+            return null;
+        }
+        return posts.get(0);
+    }
+
+    @WorkerThread
     @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId) {
-        return getPosts(timestamp, count, after, senderUserId, false);
+        return getPosts(timestamp, count, after, senderUserId,null);
+    }
+
+    @WorkerThread
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId) {
+        return getPosts(timestamp, count, after, senderUserId, groupId, false);
     }
 
     @WorkerThread
     private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, boolean unseenOnly) {
-        return postsDb.getPosts(timestamp, count, after, senderUserId, unseenOnly);
+        return getPosts(timestamp, count, after, senderUserId, null, unseenOnly);
+    }
+
+    @WorkerThread
+    private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
+        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly);
     }
 
     @WorkerThread
@@ -382,15 +414,22 @@ public class ContentDb {
 
     public void retractComment(@NonNull Comment comment) {
         databaseWriteExecutor.execute(() -> {
-            postsDb.retractComment(comment);
-            observers.notifyCommentRetracted(comment.postSenderUserId, comment.postId, comment.commentSenderUserId, comment.commentId);
+            Comment dbComment = comment;
+            if (dbComment.rowId == 0) {
+                Comment temp = postsDb.getComment(comment.commentId);
+                if (temp != null) {
+                    dbComment = temp;
+                }
+            }
+            postsDb.retractComment(dbComment);
+            observers.notifyCommentRetracted(dbComment);
         });
     }
 
-    public void setCommentTransferred(@NonNull UserId postSenderUserId, @NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+    public void setCommentTransferred(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         databaseWriteExecutor.execute(() -> {
-            postsDb.setCommentTransferred(postSenderUserId, postId, commentSenderUserId, commentId);
-            observers.notifyCommentUpdated(postSenderUserId, postId, commentSenderUserId, commentId);
+            postsDb.setCommentTransferred(postId, commentSenderUserId, commentId);
+            observers.notifyCommentUpdated(postId, commentSenderUserId, commentId);
         });
     }
 

@@ -57,6 +57,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -85,6 +86,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_NAVIGATE_TO_CHAT = "navigate_to_chat";
@@ -115,6 +117,8 @@ public class ContentComposerActivity extends HalloActivity {
 
     @Nullable
     private ChatId chatId;
+    @Nullable
+    private GroupId groupId;
     private String replyPostId;
     private int replyPostMediaIndex;
 
@@ -233,17 +237,19 @@ public class ContentComposerActivity extends HalloActivity {
 
         if (savedInstanceState == null) {
             chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+            groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         } else {
             chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
+            groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
         if (replyPostId != null) {
             editText.requestFocus();
         }
-        if (chatId != null) {
+        if (chatId != null || groupId != null) {
             audienceHelp.setVisibility(View.GONE);
         }
 
@@ -477,6 +483,9 @@ public class ContentComposerActivity extends HalloActivity {
         if (chatId != null) {
             outState.putParcelable(EXTRA_CHAT_ID, chatId);
         }
+        if (groupId != null) {
+            outState.putParcelable(EXTRA_GROUP_ID, groupId);
+        }
     }
 
     @Override
@@ -577,8 +586,7 @@ public class ContentComposerActivity extends HalloActivity {
                 if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
                     Log.w("ContentComposerActivity: cannot send empty content");
                 } else {
-                    viewModel.prepareContent(
-                            getIntent().getParcelableExtra(EXTRA_CHAT_ID), postText.trim(), textAndMentions.second);
+                    viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second);
                 }
                 return true;
             }

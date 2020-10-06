@@ -9,7 +9,6 @@ import androidx.core.util.Pair;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
-import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
@@ -29,6 +28,8 @@ import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedMessageElement;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
+import com.halloapp.xmpp.feed.GroupFeedMessageElement;
+import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
 import com.halloapp.xmpp.groups.GroupChangeMessage;
 import com.halloapp.xmpp.groups.GroupChatMessage;
@@ -52,19 +53,13 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.NamedElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.sasl.SASLErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.debugger.android.AndroidDebugger;
-import org.jivesoftware.smackx.pubsub.EventElement;
-import org.jivesoftware.smackx.pubsub.EventElementType;
-import org.jivesoftware.smackx.pubsub.ItemsExtension;
-import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
-import org.jivesoftware.smackx.pubsub.packet.PubSubNamespace;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Domainpart;
@@ -166,6 +161,7 @@ public class OldConnection extends Connection {
         ProviderManager.addExtensionProvider(MemberElement.ELEMENT, MemberElement.NAMESPACE, new MemberElement.Provider());
         ProviderManager.addExtensionProvider(RerequestElement.ELEMENT, RerequestElement.NAMESPACE, new RerequestElement.Provider());
         ProviderManager.addExtensionProvider(FeedMessageElement.ELEMENT, FeedMessageElement.NAMESPACE, new FeedMessageElement.Provider());
+        ProviderManager.addExtensionProvider(GroupFeedMessageElement.ELEMENT, GroupFeedMessageElement.NAMESPACE, new GroupFeedMessageElement.Provider());
         ProviderManager.addExtensionProvider(NameMessage.ELEMENT, NameMessage.NAMESPACE, new NameMessage.Provider());
         ProviderManager.addIQProvider(ContactsSyncResponseIq.ELEMENT, ContactsSyncResponseIq.NAMESPACE, new ContactsSyncResponseIq.Provider());
         ProviderManager.addIQProvider(PrivacyListsResponseIq.ELEMENT, PrivacyListsResponseIq.NAMESPACE, new PrivacyListsResponseIq.Provider());
@@ -641,22 +637,43 @@ public class OldConnection extends Connection {
                 for (Mention mention : post.mentions) {
                     entry.mentions.add(Mention.toProto(mention));
                 }
-                if (Constants.NEW_FEED_API && post.getAudienceType() != null) {
-                    FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntryString());
+                if (post.getAudienceType() == null && post.getParentGroup() == null) {
+                    Log.e("connection: sendPost null audience type but not a group post");
+                    return;
+                }
+                FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntryString());
+                if (post.getParentGroup() == null) {
                     FeedUpdateIq publishIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
                     publishIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
                     publishIq.setTo(connection.getXMPPServiceDomain());
 
                     connection.createStanzaCollectorAndSend(publishIq).nextResultOrThrow();
                 } else {
-                    final SimplePayload payload = new SimplePayload(entry.toXml());
-                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, post.id, payload);
-                    pubSubHelper.publishItem(getMyFeedNodeId(), item);
-                    // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the post was acked here
+                    GroupFeedUpdateIq publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
+                    publishIq.setTo(connection.getXMPPServiceDomain());
+                    connection.createStanzaCollectorAndSend(publishIq).nextResultOrThrow();
                 }
                 connectionObservers.notifyOutgoingPostSent(post.id);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send post", e);
+            }
+        });
+    }
+
+    public void retractGroupPost(@NonNull GroupId groupId, final @NonNull String postId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot retract post, no connection");
+                return;
+            }
+            try {
+                GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+                requestIq.setTo((connection.getXMPPServiceDomain()));
+                connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
+                connectionObservers.notifyOutgoingPostSent(postId);
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: cannot retract post", e);
             }
         });
     }
@@ -668,23 +685,9 @@ public class OldConnection extends Connection {
                 return;
             }
             try {
-                if (Constants.NEW_FEED_API) {
-                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-                    requestIq.setTo((connection.getXMPPServiceDomain()));
-                    connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-                } else {
-                    final PublishedEntry entry = new PublishedEntry(
-                            PublishedEntry.ENTRY_FEED,
-                            null,
-                            0,
-                            connection.getUser().getLocalpart().toString(),
-                            null,
-                            null,
-                            null);
-                    final SimplePayload payload = new SimplePayload(entry.toXml());
-                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_FEED_POST, postId, payload);
-                    pubSubHelper.retractItem(getMyFeedNodeId(), item);
-                }
+                FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+                requestIq.setTo((connection.getXMPPServiceDomain()));
+                connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 connectionObservers.notifyOutgoingPostSent(postId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
@@ -711,59 +714,72 @@ public class OldConnection extends Connection {
                 for (Mention mention : comment.mentions) {
                     entry.mentions.add(Mention.toProto(mention));
                 }
-                if (Constants.NEW_FEED_API) {
-                    UserId postSender = comment.postSenderUserId;
-                    if (postSender.isMe()) {
-                        postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
-                    }
-                    FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, postSender, entry.getEncodedEntryString());
+                // Since we're sending a comment, we should have parent post set
+                UserId postSender = Preconditions.checkNotNull(comment.getPostSenderUserId());
+
+                // Preserve postSender for notify (since we convert me id into proper uid for send)
+                UserId postSenderForSend = postSender;
+                if (postSender.isMe()) {
+                    postSenderForSend = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
+                }
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, postSenderForSend, entry.getEncodedEntryString());
+                if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
                     FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
                     requestIq.setTo(connection.getXMPPServiceDomain());
                     connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
                 } else {
-                    final SimplePayload payload = new SimplePayload(entry.toXml());
-                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, comment.commentId, payload);
-                    pubSubHelper.publishItem(comment.postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(comment.postSenderUserId)), item);
+                    GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
+                    requestIq.setTo(connection.getXMPPServiceDomain());
+                    connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
                 }
-                // the {@link PubSubHelper#publishItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
-                connectionObservers.notifyOutgoingCommentSent(comment.postSenderUserId, comment.postId, comment.commentId);
+                connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot send comment", e);
             }
         });
     }
 
-    public void retractComment(final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId) {
+    public void retractGroupComment(final @NonNull GroupId groupId, final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot retract comment, no connection");
                 return;
             }
             try {
-                if (Constants.NEW_FEED_API) {
-                    UserId postSender = postSenderUserId;
-                    if (postSender.isMe()) {
-                        postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
-                    }
-                    FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
-                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
-                    requestIq.setTo(connection.getXMPPServiceDomain());
-                    connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
-                } else {
-                    final PublishedEntry entry = new PublishedEntry(
-                            PublishedEntry.ENTRY_COMMENT,
-                            null,
-                            0,
-                            connection.getUser().getLocalpart().toString(),
-                            null,
-                            postId,
-                            null);
-                    final SimplePayload payload = new SimplePayload(entry.toXml());
-                    final PubSubItem item = new PubSubItem(PubSubItem.PUB_SUB_ITEM_TYPE_COMMENT, commentId, payload);
-                    pubSubHelper.retractItem(postSenderUserId.isMe() ? getMyFeedNodeId() : getFeedNodeId(userIdToJid(postSenderUserId)), item);
+                UserId postSender = postSenderUserId;
+                if (postSender.isMe()) {
+                    postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
                 }
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
+                requestIq.setTo(connection.getXMPPServiceDomain());
+                connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
+
+                connectionObservers.notifyOutgoingCommentSent(postId, commentId);
+            } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
+                Log.e("connection: cannot retract comment", e);
+            }
+        });
+    }
+
+    // TODO: (clarkc) remove post sender user id when server tells us
+    public void retractComment(final @Nullable UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || connection == null) {
+                Log.e("connection: cannot retract comment, no connection");
+                return;
+            }
+            try {
+                UserId postSender = postSenderUserId;
+                if (postSender != null && postSender.isMe()) {
+                    postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
+                }
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
+                requestIq.setTo(connection.getXMPPServiceDomain());
+                connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
-                connectionObservers.notifyOutgoingCommentSent(postSenderUserId, postId, commentId);
+                connectionObservers.notifyOutgoingCommentSent(postId, commentId);
             } catch (SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XMPPException.XMPPErrorException e) {
                 Log.e("connection: cannot retract comment", e);
             }
@@ -970,57 +986,15 @@ public class OldConnection extends Connection {
         }
     }
 
-    private boolean processFeedPubSubItems(@NonNull FeedMessageElement element, @NonNull String ackId) {
+    private boolean processGroupFeedItems(@NonNull GroupFeedMessageElement element, @NonNull String ackId) {
         if (element.action == FeedMessageElement.Action.SHARE || element.action == FeedMessageElement.Action.PUBLISH) {
             final List<Post> posts = new ArrayList<>();
             final List<Comment> comments = new ArrayList<>();
-            for (FeedItem item : element.feedItemList) {
-                PublishedEntry entry = PublishedEntry.getFeedEntry(item);
-                if (entry == null) {
-                    continue;
-                }
-                final UserId senderUserId = getUserId(item.publisherId);
-                if (senderUserId != null && !senderUserId.isMe()) {
-                    if (entry.type == PublishedEntry.ENTRY_FEED) {
-                        final Post post = new Post(0,
-                                senderUserId,
-                                entry.id,
-                                entry.timestamp,
-                                entry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO,
-                                Post.SEEN_NO,
-                                entry.text
-                        );
-                        for (PublishedEntry.Media entryMedia : entry.media) {
-                            post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.sha256hash,
-                                    entryMedia.width, entryMedia.height));
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : entry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            post.mentions.add(mention);
-                        }
-                        posts.add(post);
-                    } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
-                        final Comment comment = new Comment(0,
-                                getUserId(item.parentPostSenderId),
-                                entry.feedItemId,
-                                senderUserId,
-                                entry.id,
-                                entry.parentCommentId,
-                                entry.timestamp,
-                                true,
-                                false,
-                                entry.text
-                        );
-                        for (com.halloapp.proto.clients.Mention mentionProto : entry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            comment.mentions.add(mention);
-                        }
-                        comments.add(comment);
-                    }
-                }
+
+            parseFeedItems(element.feedItemList, posts, comments);
+
+            for (Post post : posts) {
+                post.setParentGroup(element.groupId);
             }
 
             final Map<UserId, String> names = new HashMap<>();
@@ -1042,26 +1016,26 @@ public class OldConnection extends Connection {
         } else if (element.action == FeedMessageElement.Action.RETRACT) {
             for (FeedItem item : element.feedItemList) {
                 if (item.type == FeedItem.Type.COMMENT) {
-                    connectionObservers.notifyCommentRetracted(item.id, getUserId(item.publisherId), item.parentPostId, getUserId(item.parentPostSenderId), item.timestamp);
+                    connectionObservers.notifyCommentRetracted(item.id, getUserId(item.publisherId), item.parentPostId, item.timestamp);
                 } else if (item.type == FeedItem.Type.POST) {
-                    connectionObservers.notifyPostRetracted(getUserId(item.publisherId), item.id);
+                    connectionObservers.notifyPostRetracted(getUserId(item.publisherId), element.groupId, item.id);
                 }
             }
         }
         return false;
     }
 
-    private boolean processFeedPubSubItems(@NonNull UserId feedUserId, @NonNull List<? extends NamedElement> items, @NonNull String ackId) {
-        Preconditions.checkNotNull(connection);
-        final List<PublishedEntry> entries = PublishedEntry.getEntries(items);
-        final List<Post> posts = new ArrayList<>();
-        final List<Comment> comments = new ArrayList<>();
-        for (PublishedEntry entry : entries) {
-            final UserId senderUserId = entry.user == null ? feedUserId : getUserId(entry.user);
+    private void parseFeedItems(@NonNull List<FeedItem> feedItems, @NonNull List<Post> posts, @NonNull List<Comment> comments) {
+        for (FeedItem item : feedItems) {
+            PublishedEntry entry = PublishedEntry.getFeedEntry(item);
+            if (entry == null) {
+                continue;
+            }
+            final UserId senderUserId = getUserId(item.publisherId);
             if (senderUserId != null && !senderUserId.isMe()) {
                 if (entry.type == PublishedEntry.ENTRY_FEED) {
                     final Post post = new Post(0,
-                            feedUserId,
+                            senderUserId,
                             entry.id,
                             entry.timestamp,
                             entry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO,
@@ -1081,7 +1055,6 @@ public class OldConnection extends Connection {
                     posts.add(post);
                 } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
                     final Comment comment = new Comment(0,
-                            feedUserId,
                             entry.feedItemId,
                             senderUserId,
                             entry.id,
@@ -1100,23 +1073,41 @@ public class OldConnection extends Connection {
                 }
             }
         }
+    }
 
-        final Map<UserId, String> names = new HashMap<>();
-        for (NamedElement item : items) {
-            if (item instanceof PubSubItem) {
-                final PubSubItem pubSubItem = (PubSubItem) item;
-                if (pubSubItem.getPublisher() != null && pubSubItem.getPublisherName() != null) {
-                    names.put(new UserId(pubSubItem.getPublisher().getLocalpartOrNull().toString()), pubSubItem.getPublisherName());
+    private boolean processFeedPubSubItems(@NonNull FeedMessageElement element, @NonNull String ackId) {
+        if (element.action == FeedMessageElement.Action.SHARE || element.action == FeedMessageElement.Action.PUBLISH) {
+            final List<Post> posts = new ArrayList<>();
+            final List<Comment> comments = new ArrayList<>();
+
+            parseFeedItems(element.feedItemList, posts, comments);
+
+            final Map<UserId, String> names = new HashMap<>();
+            for (FeedItem item : element.feedItemList) {
+                if (item.type == FeedItem.Type.COMMENT) {
+                    if (item.publisherId != null && item.publisherName != null) {
+                        names.put(new UserId(item.publisherId), item.publisherName);
+                    }
+                }
+            }
+            if (!names.isEmpty()) {
+                connectionObservers.notifyUserNamesReceived(names);
+            }
+
+            if (!posts.isEmpty() || !comments.isEmpty()) {
+                connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
+            }
+            return !posts.isEmpty() || !comments.isEmpty();
+        } else if (element.action == FeedMessageElement.Action.RETRACT) {
+            for (FeedItem item : element.feedItemList) {
+                if (item.type == FeedItem.Type.COMMENT) {
+                    connectionObservers.notifyCommentRetracted(item.id, getUserId(item.publisherId), item.parentPostId, item.timestamp);
+                } else if (item.type == FeedItem.Type.POST) {
+                    connectionObservers.notifyPostRetracted(getUserId(item.publisherId), item.id);
                 }
             }
         }
-        if (!names.isEmpty()) {
-            connectionObservers.notifyUserNamesReceived(names);
-        }
-        if (!posts.isEmpty() || !comments.isEmpty()) {
-            connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
-        }
-        return !posts.isEmpty() || !comments.isEmpty();
+        return false;
     }
 
     private void parseFeedHistoryItems(UserId feedUserId, List<PubSubItem> items, Collection<Post> posts, Collection<Comment> comments) {
@@ -1139,7 +1130,6 @@ public class OldConnection extends Connection {
                 posts.add(post);
             } else if (entry.type == PublishedEntry.ENTRY_COMMENT) {
                 final Comment comment = new Comment(0,
-                        feedUserId,
                         entry.feedItemId,
                         getUserId(entry.user),
                         entry.id,
@@ -1280,24 +1270,16 @@ public class OldConnection extends Connection {
             if (msg.getType() == org.jivesoftware.smack.packet.Message.Type.error) {
                 Log.w("connection: got error message " + msg);
             } else {
-                if (!Constants.NEW_FEED_API) {
-                    final EventElement event = packet.getExtension(PubSubNamespace.event.name(), PubSubNamespace.event.getXmlns());
-                    if (event != null && EventElementType.items.equals(event.getEventType())) {
-                        final ItemsExtension itemsElem = (ItemsExtension) event.getEvent();
-                        if (itemsElem != null) {
-                            String node = itemsElem.getNode();
-                            if (isFeedNodeId(node)) {
-                                Log.i("connection: got feed pubsub " + msg);
-                                handled = processFeedPubSubItems(getFeedUserId(node), itemsElem.getItems(), msg.getStanzaId());
-                            }
-                        }
-                    }
+                final FeedMessageElement feedMessage = packet.getExtension(FeedMessageElement.ELEMENT, FeedMessageElement.NAMESPACE);
+                if (feedMessage != null) {
+                    Log.i("connection: got feed item  " + msg);
+                    handled = processFeedPubSubItems(feedMessage, msg.getStanzaId());
                 }
                 if (!handled) {
-                    final FeedMessageElement feedMessage = packet.getExtension(FeedMessageElement.ELEMENT, FeedMessageElement.NAMESPACE);
-                    if (feedMessage != null) {
-                        Log.i("connection: got feed item  " + msg);
-                        handled = processFeedPubSubItems(feedMessage, msg.getStanzaId());
+                    final GroupFeedMessageElement groupFeedMessage = packet.getExtension(GroupFeedMessageElement.ELEMENT, GroupFeedMessageElement.NAMESPACE);
+                    if (groupFeedMessage != null) {
+                        Log.i("connection: got group feed item  " + msg);
+                        handled = processGroupFeedItems(groupFeedMessage, msg.getStanzaId());
                     }
                 }
                 if (!handled) {
@@ -1316,7 +1298,7 @@ public class OldConnection extends Connection {
                         Log.i("connection: got delivery receipt " + msg);
                         final String threadId = deliveryReceipt.getThreadId();
                         final UserId userId = getUserId(packet.getFrom());
-                        connectionObservers.notifyOutgoingMessageDelivered(threadId == null ? userId : ChatId.fromString(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
+                        connectionObservers.notifyOutgoingMessageDelivered(threadId == null ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1329,7 +1311,7 @@ public class OldConnection extends Connection {
                         if (FEED_THREAD_ID.equals(threadId)) {
                             connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         } else {
-                            connectionObservers.notifyOutgoingMessageSeen(threadId == null ? userId : ChatId.fromString(threadId), userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
+                            connectionObservers.notifyOutgoingMessageSeen(threadId == null ? userId : ChatId.fromNullable(threadId), userId, seenReceipt.getId(), seenReceipt.getTimestamp(), packet.getStanzaId());
                         }
                         handled = true;
                     }
@@ -1337,13 +1319,8 @@ public class OldConnection extends Connection {
                 if (!handled) {
                     final ContactList contactList = packet.getExtension(ContactList.ELEMENT, ContactList.NAMESPACE);
                     if (contactList != null) {
-                        if (((org.jivesoftware.smack.packet.Message) packet).getType() == org.jivesoftware.smack.packet.Message.Type.headline) {
-                            Log.i("connection: got invite accepted " + msg);
-                            connectionObservers.notifyInvitesAccepted(contactList.contacts, packet.getStanzaId());
-                        } else {
-                            Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
-                            connectionObservers.notifyContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
-                        }
+                        Log.i("connection: got contact list " + msg + " size:" + contactList.contacts.size());
+                        connectionObservers.notifyContactsChanged(contactList.contacts, contactList.contactHashes, packet.getStanzaId());
                         handled = true;
                     }
                 }
@@ -1430,14 +1407,6 @@ public class OldConnection extends Connection {
                         handled = true;
                     }
                 }
-                if (!handled) {
-                    final NameMessage nameMessage = packet.getExtension(NameMessage.ELEMENT, NameMessage.NAMESPACE);
-                    if (nameMessage != null) {
-                        Log.i("connection: got name message " + msg);
-                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(nameMessage.userId, nameMessage.name));
-                        sendAck(msg.getStanzaId());
-                    }
-                }
             }
             if (!handled) {
                 Log.i("connection: got unknown message " + msg);
@@ -1445,7 +1414,6 @@ public class OldConnection extends Connection {
             }
         }
     }
-
     class HalloConnectionListener implements ConnectionListener {
 
         @Override
@@ -1470,4 +1438,5 @@ public class OldConnection extends Connection {
             connectionObservers.notifyDisconnected();
         }
     }
+
 }

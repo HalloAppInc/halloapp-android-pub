@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.AppContext;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
@@ -43,6 +44,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
+import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Log;
@@ -59,10 +61,13 @@ import java.util.Locale;
 public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
+
+    private final AppContext appContext = AppContext.getInstance();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
 
     private ContactLoader contactLoader;
+    private UnseenGroupPostLoader groupPostLoader;
 
     private ChatsViewModel viewModel;
 
@@ -78,6 +83,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onCreate(savedInstanceState);
 
         contactLoader = new ContactLoader();
+        groupPostLoader = new UnseenGroupPostLoader(appContext.get());
     }
 
     @Override
@@ -339,6 +345,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             final ImageView mediaIcon;
             final TextView typingView;
             final View infoContainer;
+            final View feedRing;
 
             private Chat chat;
 
@@ -359,6 +366,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 mediaIcon = itemView.findViewById(R.id.media_icon);
                 typingView = itemView.findViewById(R.id.typing_indicator);
                 infoContainer = itemView.findViewById(R.id.info_container);
+                feedRing = itemView.findViewById(R.id.feed_ring);
                 itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId)));
 
                 presenceObserver = presenceState -> {
@@ -411,6 +419,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 this.chat = chat;
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
                 avatarLoader.load(avatarView, chat.chatId);
+                groupPostLoader.load(feedRing, chat.chatId);
                 CharSequence name = chat.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
                     CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), chat.name, filterTokens);

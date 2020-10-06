@@ -745,7 +745,7 @@ class MessagesDb {
                     String rawReplySenderId = cursor.getString(21);
                     message = new Message(
                             rowId,
-                            ChatId.fromString(cursor.getString(1)),
+                            ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -841,7 +841,7 @@ class MessagesDb {
                     String rawReplySenderId = cursor.getString(21);
                     message = new Message(
                             cursor.getLong(0),
-                            ChatId.fromString(cursor.getString(1)),
+                            ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -937,7 +937,7 @@ class MessagesDb {
                     String rawReplySenderId = cursor.getString(23);
                     message = new Message(
                             cursor.getLong(0),
-                            ChatId.fromString(cursor.getString(1)),
+                            ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -1043,7 +1043,7 @@ class MessagesDb {
                     String rawReplySenderId = cursor.getString(21);
                     message = new Message(
                             rowId,
-                            ChatId.fromString(cursor.getString(1)),
+                            ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -1156,7 +1156,7 @@ class MessagesDb {
                     String rawReplySenderId = cursor.getString(23);
                     message = new Message(
                             rowId,
-                            ChatId.fromString(cursor.getString(1)),
+                            ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
                             cursor.getString(3),
                             cursor.getLong(4),
@@ -1334,7 +1334,7 @@ class MessagesDb {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
-                        ChatId.fromString(cursor.getString(1)),
+                        ChatId.fromNullable(cursor.getString(1)),
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
@@ -1372,7 +1372,7 @@ class MessagesDb {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
-                        ChatId.fromString(cursor.getString(1)),
+                        ChatId.fromNullable(cursor.getString(1)),
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
@@ -1410,7 +1410,7 @@ class MessagesDb {
             if (cursor.moveToNext()) {
                 return new Chat(
                         cursor.getLong(0),
-                        ChatId.fromString(cursor.getString(1)),
+                        ChatId.fromNullable(cursor.getString(1)),
                         cursor.getLong(2),
                         cursor.getInt(3),
                         cursor.getLong(4),
@@ -1465,7 +1465,7 @@ class MessagesDb {
                 null, null, null, null, null)) {
             while (cursor.moveToNext()) {
                 final SeenReceipt receipt = new SeenReceipt(
-                        ChatId.fromString(cursor.getString(0)),
+                        ChatId.fromNullable(cursor.getString(0)),
                         new UserId(cursor.getString(1)),
                         cursor.getString(2));
                 receipts.add(receipt);
