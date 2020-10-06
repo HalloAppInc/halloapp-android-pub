@@ -109,6 +109,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
         }
+        postsView.post(this::refreshInviteNux);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
@@ -154,7 +155,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
                 }
                 nuxFeedContainer.setVisibility(View.VISIBLE);
                 postsView.post(() -> {
-                    postsView.setPadding(0, nuxFeedContainer.getHeight(), 0, 0);
+                    postsView.setPadding(0, nuxFeedContainer.getHeight(), 0, postsView.getPaddingBottom());
                     postsView.scrollToPosition(0);
                 });
             } else {
@@ -163,7 +164,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
                 if (nuxFeed == null) {
                     return;
                 }
-                postsView.setPadding(0, 0, 0, 0);
+                postsView.setPadding(0, 0, 0, postsView.getPaddingBottom());
             }
         });
         viewModel.showActivityCenterNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
