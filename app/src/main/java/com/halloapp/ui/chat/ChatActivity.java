@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -435,6 +436,11 @@ public class ChatActivity extends HalloActivity {
                 getResources().getDimensionPixelSize(R.dimen.swipe_reply_icon_margin)) {
 
             @Override
+            public boolean isItemViewSwipeEnabled() {
+                return false; // initiate swipes manually by calling startSwipe()
+            }
+
+            @Override
             public boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {
                 switch (viewHolder.getItemViewType()) {
                     case ChatAdapter.VIEW_TYPE_SYSTEM:
@@ -462,6 +468,92 @@ public class ChatActivity extends HalloActivity {
             }
         });
         itemTouchHelper.attachToRecyclerView(chatView);
+
+        // Modified from ItemTouchHelper
+        chatView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            private static final int ACTIVE_POINTER_ID_NONE = -1;
+
+            private int activePointerId;
+            private float initialX;
+            private float initialY;
+
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent event) {
+                final int action = event.getActionMasked();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    activePointerId = event.getPointerId(0);
+                    initialX = event.getX();
+                    initialY = event.getY();
+                } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+                    activePointerId = ACTIVE_POINTER_ID_NONE;
+                } else if (activePointerId != ACTIVE_POINTER_ID_NONE) {
+                    final int index = event.findPointerIndex(activePointerId);
+                    if (index >= 0) {
+                        RecyclerView.ViewHolder vh = findSwipedView(event);
+                        if (vh instanceof MessageViewHolder) {
+                            MessageViewHolder mvh = (MessageViewHolder) vh;
+                            Message message = mvh.getMessage();
+                            View view = mvh.itemView;
+
+                            if (message.media != null && message.media.size() > 1) {
+                                View mediaPager = view.findViewById(R.id.media_pager);
+                                if (mediaPager != null) {
+                                    int[] loc = new int[2];
+                                    mediaPager.getLocationOnScreen(loc);
+                                    int x = loc[0];
+                                    int y = loc[1];
+
+                                    if (initialX > x && initialX < x + mediaPager.getWidth() && initialY > y && initialY < y + mediaPager.getHeight()) {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        if (vh != null) {
+                            itemTouchHelper.startSwipe(vh);
+                        }
+                    }
+                }
+
+                return false;
+            }
+            private RecyclerView.ViewHolder findSwipedView(MotionEvent motionEvent) {
+                final RecyclerView.LayoutManager lm = Preconditions.checkNotNull(chatView.getLayoutManager());
+                if (activePointerId == ACTIVE_POINTER_ID_NONE) {
+                    return null;
+                }
+                final int pointerIndex = motionEvent.findPointerIndex(activePointerId);
+                final float dx = motionEvent.getX(pointerIndex) - initialX;
+                final float dy = motionEvent.getY(pointerIndex) - initialY;
+                final float absDx = Math.abs(dx);
+                final float absDy = Math.abs(dy);
+
+                final float eps = 0.1f;
+                if (absDx < eps && absDy < eps) {
+                    return null;
+                }
+                if (absDx > absDy && lm.canScrollHorizontally()) {
+                    return null;
+                } else if (absDy > absDx && lm.canScrollVertically()) {
+                    return null;
+                }
+                View child = chatView.findChildViewUnder(initialX, initialY);
+                if (child == null) {
+                    return null;
+                }
+                return chatView.getChildViewHolder(child);
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
     }
 
     @Override
