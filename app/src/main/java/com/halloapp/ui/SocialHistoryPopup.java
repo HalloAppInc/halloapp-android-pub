@@ -171,7 +171,10 @@ public class SocialHistoryPopup {
 
         RefreshContactsTask(ContactsDb contactsDb, SocialEventsAdapter adapter) {
             this.contactsDb = contactsDb;
-            this.userIds = new HashSet<>(adapter.contacts.keySet());
+            this.userIds = new HashSet<>();
+            if (adapter.contacts != null) {
+                this.userIds.addAll(adapter.contacts.keySet());
+            }
             this.adapterRef = new WeakReference<>(adapter);
         }
 
