@@ -824,12 +824,11 @@ public class ChatActivity extends HalloActivity {
                 replyMediaThumbView.setVisibility(View.GONE);
                 replyMediaIconView.setVisibility(View.GONE);
             }
-            replyContainer.findViewById(R.id.reply_close).setOnClickListener(v -> {
-                replyMessageRowId = -1;
-                replyMessageMediaIndex = -1;
-                replyContainer.setVisibility(View.GONE);
-            });
+            replyContainer.findViewById(R.id.reply_close).setOnClickListener(v -> updateMessageReply(null));
         } else {
+            replyMessage = null;
+            replyMessageRowId = -1;
+            replyMessageMediaIndex = -1;
             replyContainer.setVisibility(View.GONE);
         }
     }
