@@ -56,7 +56,7 @@ public class PostsManager {
                         preferences.setRequireSharePosts(true);
                     }
                 }
-                sharePosts(newFriends);
+                sharePosts(newFriends, false);
             });
         }
     };
@@ -90,11 +90,11 @@ public class PostsManager {
         for (Contact contact : friends) {
             shareToIds.add(contact.userId);
         }
-        sharePosts(shareToIds);
+        sharePosts(shareToIds, true);
     }
 
     @WorkerThread
-    private void sharePosts(@NonNull Collection<UserId> friends) {
+    private void sharePosts(@NonNull Collection<UserId> friends, boolean dontResend) {
         Collection<Post> shareablePosts = contentDb.getShareablePosts();
         Map<UserId, Collection<Post>> shareMap = new HashMap<>();
         for (Post post : shareablePosts) {
@@ -121,8 +121,10 @@ public class PostsManager {
                 Log.e("PostsManager/sharePosts post doesnt have an audience");
                 continue;
             }
-            for (UserId user : currentAudience) {
-                friendSet.remove(user);
+            if (dontResend) {
+                for (UserId user : currentAudience) {
+                    friendSet.remove(user);
+                }
             }
             for (UserId user : friendSet) {
                 Collection<Post> mapColl = shareMap.get(user);
