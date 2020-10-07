@@ -25,8 +25,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.ComputableLiveData;
 
-import java.util.Collection;
-
 public class GroupFeedViewModel extends AndroidViewModel {
 
     private static final int ADAPTER_PAGE_SIZE = 50;
@@ -77,11 +75,6 @@ public class GroupFeedViewModel extends AndroidViewModel {
             if (parentPost != null && groupId.equals(parentPost.getParentGroup())) {
                 invalidatePosts();
             }
-        }
-
-        @Override
-        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-            invalidatePosts();
         }
 
         @Override

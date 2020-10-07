@@ -72,7 +72,6 @@ public class ContentDb {
         void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
         void onChatDeleted(@NonNull ChatId chatId);
-        void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments);
         void onFeedCleanup();
         void onDbCreated();
     }
@@ -99,7 +98,7 @@ public class ContentDb {
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
         public void onChatDeleted(@NonNull ChatId chatId) {}
-        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {}
+
         public void onFeedCleanup() {}
         public void onDbCreated() {}
     }
@@ -491,43 +490,6 @@ public class ContentDb {
     @WorkerThread
     public @NonNull List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
         return postsDb.getUnseenCommentsOnMyPosts(timestamp, count);
-    }
-
-    void addFeedHistory(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-        databaseWriteExecutor.execute(() -> {
-            final List<Post> addedHistoryPosts = new ArrayList<>();
-            final Collection<Comment> addedHistoryComments = new ArrayList<>();
-            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.beginTransaction();
-            try {
-                for (Post post : historyPosts) {
-                    try {
-                        postsDb.addPost(post);
-                        addedHistoryPosts.add(post);
-                        Log.i("ContentDb.addHistory: post added " + post);
-                    } catch (SQLiteConstraintException ex) {
-                        Log.i("ContentDb.addHistory: post duplicate " + post, ex);
-                    }
-                }
-                for (Comment comment : historyComments) {
-                    try {
-                        postsDb.addComment(comment);
-                        addedHistoryComments.add(comment);
-                        Log.i("ContentDb.addHistory: comment added " + comment);
-                    } catch (SQLiteConstraintException ex) {
-                        Log.i("ContentDb.addHistory: comment duplicate " + comment);
-                    }
-                }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-            // important to notify outside of transaction
-            if (!addedHistoryPosts.isEmpty() || !addedHistoryComments.isEmpty()) {
-                Collections.sort(addedHistoryPosts, (o1, o2) -> Long.compare(o2.timestamp, o1.timestamp)); // sort, so download would happen in reverse order
-                observers.notifyFeedHistoryAdded(addedHistoryPosts, addedHistoryComments);
-            }
-        });
     }
 
     public void addMessage(@NonNull Message message) {

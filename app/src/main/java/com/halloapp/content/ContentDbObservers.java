@@ -186,14 +186,6 @@ class ContentDbObservers {
         }
     }
 
-    void notifyFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-        synchronized (observers) {
-            for (ContentDb.Observer observer : observers) {
-                observer.onFeedHistoryAdded(historyPosts, historyComments);
-            }
-        }
-    }
-
     void notifyFeedCleanup() {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

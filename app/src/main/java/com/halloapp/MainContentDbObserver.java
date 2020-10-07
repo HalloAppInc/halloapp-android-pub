@@ -196,15 +196,6 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-        for (Post post : historyPosts) {
-            if (!post.media.isEmpty()) {
-                new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
-            }
-        }
-    }
-
-    @Override
     public void onFeedCleanup() {
     }
 

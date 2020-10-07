@@ -31,7 +31,6 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
 
-import java.util.Collection;
 import java.util.List;
 
 public class ProfileViewModel extends AndroidViewModel {
@@ -106,11 +105,6 @@ public class ProfileViewModel extends AndroidViewModel {
             if (postSenderUserId.equals(userId)) {
                 invalidatePosts();
             }
-        }
-
-        @Override
-        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
-            invalidatePosts();
         }
 
         @Override

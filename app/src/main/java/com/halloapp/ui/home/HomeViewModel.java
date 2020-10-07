@@ -27,7 +27,6 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,12 +108,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
-            invalidatePosts();
-            invalidateSocialHistory();
-        }
-
-        @Override
-        public void onFeedHistoryAdded(@NonNull Collection<Post> historyPosts, @NonNull Collection<Comment> historyComments) {
             invalidatePosts();
             invalidateSocialHistory();
         }
