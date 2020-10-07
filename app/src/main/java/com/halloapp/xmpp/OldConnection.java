@@ -930,48 +930,6 @@ public class OldConnection extends Connection {
         });
     }
 
-    // TODO (ds): remove
-    public Future<Pair<Collection<Post>, Collection<Comment>>> getFeedHistory() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || connection == null) {
-                Log.e("connection: cannot retrieve feed history, no connection");
-                return null;
-            }
-            try {
-                final List<Subscription> subscriptions = pubSubHelper.getSubscriptions();
-
-                final ArrayList<Post> historyPosts = new ArrayList<>();
-                final Collection<Comment> historyComments = new ArrayList<>();
-                for (Subscription subscription : subscriptions) {
-                    if (subscription.getJid() == null) {
-                        continue;
-                    }
-                    final String feedNodeId = subscription.getNode();
-                    if (!isFeedNodeId(feedNodeId)) {
-                        continue;
-                    }
-                    if (feedNodeId.equals(getMyFeedNodeId())) {
-                        continue;
-                    }
-                    try {
-                        parseFeedHistoryItems(getFeedUserId(feedNodeId), pubSubHelper.getItems(feedNodeId), historyPosts, historyComments);
-                    } catch (XMPPException.XMPPErrorException e) {
-                        Log.e("connection: retrieve feed history: no such node", e);
-                    }
-                }
-                try {
-                    parseFeedHistoryItems(UserId.ME, pubSubHelper.getItems(getMyFeedNodeId()), historyPosts, historyComments);
-                } catch (XMPPException.XMPPErrorException e) {
-                    Log.e("connection: retrieve feed history: no such node", e);
-                }
-                return Pair.create(historyPosts, historyComments);
-            } catch (SmackException.NotConnectedException | SmackException.NoResponseException | InterruptedException | XMPPException.XMPPErrorException e) {
-                Log.e("connection: cannot retrieve feed history", e);
-                return null;
-            }
-        });
-    }
-
     private void processMentions(@NonNull Collection<Mention> mentions) {
         for (Mention mention : mentions) {
             processMention(mention);

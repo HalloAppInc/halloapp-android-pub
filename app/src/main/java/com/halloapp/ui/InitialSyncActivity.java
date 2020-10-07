@@ -22,7 +22,6 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.util.DialogFragmentUtils;
 
@@ -112,7 +111,6 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
                                 if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
                                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                         startActivity(new Intent(getBaseContext(), MainActivity.class));
-                                        LoadPostsHistoryWorker.loadPostsHistory(InitialSyncActivity.this);
                                         ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
                                         finish();
                                     } else if (workInfo.getState().isFinished()) {

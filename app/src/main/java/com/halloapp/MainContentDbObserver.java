@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.LoadPostsHistoryWorker;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
@@ -212,6 +211,5 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onDbCreated() {
         // TODO (ds): restore from backup
-        LoadPostsHistoryWorker.loadPostsHistory(context);
     }
 }

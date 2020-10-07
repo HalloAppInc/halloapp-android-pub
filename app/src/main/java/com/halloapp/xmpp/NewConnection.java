@@ -203,12 +203,7 @@ public class NewConnection extends Connection {
     public void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
 
     }
-
-    @Override
-    public Future<Pair<Collection<Post>, Collection<Comment>>> getFeedHistory() {
-        return null;
-    }
-
+    
     @Override
     public UserId getUserId(@NonNull String user) {
         return null;

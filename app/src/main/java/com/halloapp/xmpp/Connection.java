@@ -155,9 +155,6 @@ public abstract class Connection {
 
     public abstract void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
 
-    // TODO (ds): remove
-    public abstract Future<Pair<Collection<Post>, Collection<Comment>>> getFeedHistory();
-
     public abstract UserId getUserId(@NonNull String user);
 
     public abstract boolean getClientExpired();
