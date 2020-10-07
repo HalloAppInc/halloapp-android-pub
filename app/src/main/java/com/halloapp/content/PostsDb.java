@@ -85,6 +85,9 @@ class PostsDb {
                     }
                 }
             }
+            if (mediaItem.encFile != null) {
+                mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
+            }
             if (mediaItem.width > 0 && mediaItem.height > 0) {
                 mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
                 mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
@@ -291,6 +294,7 @@ class PostsDb {
         Log.i("ContentDb.setMediaTransferred: post=" + post + " media=" + media);
         final ContentValues values = new ContentValues();
         values.put(MediaTable.COLUMN_FILE, media.file == null ? null : media.file.getName());
+        values.put(MediaTable.COLUMN_ENC_FILE, media.encFile == null ? null : media.encFile.getName());
         values.put(MediaTable.COLUMN_URL, media.url);
         if (media.encKey != null) {
             values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
@@ -630,6 +634,7 @@ class PostsDb {
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
@@ -651,6 +656,7 @@ class PostsDb {
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -710,39 +716,41 @@ class PostsDb {
                     getPostAudienceInfo(post.id, audienceList, excludeList);
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
-                    post.commentCount = cursor.getInt(16);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(17);
+                    post.commentCount = cursor.getInt(17);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(18);
                     GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
                     if (parentGroupId != null) {
                         post.setParentGroup(parentGroupId);
                     }
-                    final String firstCommentId = cursor.getString(19);
+                    final String firstCommentId = cursor.getString(20);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(18),
+                        post.firstComment = new Comment(cursor.getLong(19),
                                 post.id,
-                                new UserId(cursor.getString(20)),
+                                new UserId(cursor.getString(21)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(22),
+                                cursor.getLong(23),
                                 true,
                                 true,
-                                cursor.getString(21));
+                                cursor.getString(22));
                         post.firstComment.setParentPost(post);
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(23);
+                    post.seenByCount = cursor.getInt(24);
                 }
                 if (!cursor.isNull(9)) {
-                    Preconditions.checkNotNull(post).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(9),
                             cursor.getInt(10),
                             cursor.getString(11),
                             fileStore.getMediaFile(cursor.getString(12)),
                             null,
                             null,
-                            cursor.getInt(13),
                             cursor.getInt(14),
-                            cursor.getInt(15)));
+                            cursor.getInt(15),
+                            cursor.getInt(16));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(13));
+                    Preconditions.checkNotNull(post).media.add(media);
                 }
             }
             if (post != null && (count == null || cursor.getCount() < count)) {
@@ -777,6 +785,7 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
+                    "m." + MediaTable.COLUMN_ENC_FILE + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + "," +
@@ -790,6 +799,7 @@ class PostsDb {
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -825,19 +835,21 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(16);
+                    post.seenByCount = cursor.getInt(17);
                 }
                 if (!cursor.isNull(9)) {
-                    Preconditions.checkNotNull(post).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(9),
                             cursor.getInt(10),
                             cursor.getString(11),
                             fileStore.getMediaFile(cursor.getString(12)),
                             null,
                             null,
-                            cursor.getInt(13),
                             cursor.getInt(14),
-                            cursor.getInt(15)));
+                            cursor.getInt(15),
+                            cursor.getInt(16));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(13));
+                    Preconditions.checkNotNull(post).media.add(media);
                 }
             }
         }
@@ -913,6 +925,7 @@ class PostsDb {
                         "m." + MediaTable.COLUMN_TYPE + "," +
                         "m." + MediaTable.COLUMN_URL + "," +
                         "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_FILE + "," +
                         "m." + MediaTable.COLUMN_WIDTH + "," +
                         "m." + MediaTable.COLUMN_HEIGHT + "," +
                         "m." + MediaTable.COLUMN_TRANSFERRED + " " +
@@ -927,6 +940,7 @@ class PostsDb {
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -950,16 +964,18 @@ class PostsDb {
                     mentionedPosts.add(post);
                 }
                 if (!cursor.isNull(7)) {
-                    Preconditions.checkNotNull(post).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(10),
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(14),
                             cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getInt(16),
+                            cursor.getInt(17));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(post).media.add(media);
                 }
             }
         }
@@ -1232,6 +1248,7 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
+                    "m." + MediaTable.COLUMN_ENC_FILE + "," +
                     "m." + MediaTable.COLUMN_ENC_KEY + "," +
                     "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
@@ -1246,6 +1263,7 @@ class PostsDb {
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
@@ -1283,16 +1301,18 @@ class PostsDb {
                     post.setExcludeList(excludeList);
                 }
                 if (!cursor.isNull(8)) {
-                    Preconditions.checkNotNull(post).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(8),
                             cursor.getInt(9),
                             cursor.getString(10),
                             fileStore.getMediaFile(cursor.getString(11)),
-                            cursor.getBlob(12),
                             cursor.getBlob(13),
-                            cursor.getInt(14),
+                            cursor.getBlob(14),
                             cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getInt(16),
+                            cursor.getInt(17));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(12));
+                    Preconditions.checkNotNull(post).media.add(media);
                 }
             }
             if (post != null) {
@@ -1372,13 +1392,15 @@ class PostsDb {
 
         final String sql =
             "SELECT " +
-                "m." + MediaTable.COLUMN_FILE + " " +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + " " +
             "FROM " + PostsTable.TABLE_NAME + " " +
             "INNER JOIN (" +
                 "SELECT " +
                     MediaTable.COLUMN_PARENT_TABLE + "," +
                     MediaTable.COLUMN_PARENT_ROW_ID + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime();
@@ -1391,6 +1413,14 @@ class PostsDb {
                         deletedFiles++;
                     } else {
                         Log.i("ContentDb.cleanup: failed to delete " + mediaFile.getAbsolutePath());
+                    }
+                }
+                final File encFile = fileStore.getTmpFile(cursor.getString(1));
+                if (encFile != null) {
+                    if (encFile.delete()) {
+                        deletedFiles++;
+                    } else {
+                        Log.i("ContentDb.cleanup: failed to delete " + encFile.getAbsolutePath());
                     }
                 }
             }

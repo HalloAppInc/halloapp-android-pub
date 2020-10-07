@@ -31,6 +31,7 @@ public class Media {
     public final @MediaType int type;
     public String url;
     public File file;
+    public File encFile;
     public int width;
     public int height;
     public byte [] encKey;

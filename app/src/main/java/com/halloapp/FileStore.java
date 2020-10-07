@@ -74,7 +74,10 @@ public class FileStore {
         return tmpDir;
     }
 
-    public File getTmpFile(@NonNull String name) {
+    public File getTmpFile(@Nullable String name) {
+        if (name == null) {
+            return null;
+        }
         return new File(getTmpDir(), name);
     }
 

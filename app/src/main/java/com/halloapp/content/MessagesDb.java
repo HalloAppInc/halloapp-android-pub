@@ -86,6 +86,9 @@ class MessagesDb {
                         }
                     }
                 }
+                if (mediaItem.encFile != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
+                }
                 if (mediaItem.width > 0 && mediaItem.height > 0) {
                     mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
                     mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
@@ -388,6 +391,7 @@ class MessagesDb {
         Log.i("ContentDb.setMediaTransferred: message=" + message + " media=" + media);
         final ContentValues values = new ContentValues();
         values.put(MediaTable.COLUMN_FILE, media.file == null ? null : media.file.getName());
+        values.put(MediaTable.COLUMN_ENC_FILE, media.encFile == null ? null : media.encFile.getName());
         values.put(MediaTable.COLUMN_URL, media.url);
         if (media.encKey != null) {
             values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
@@ -697,6 +701,7 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
@@ -714,6 +719,7 @@ class MessagesDb {
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -742,7 +748,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(21);
+                    String rawReplySenderId = cursor.getString(22);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
@@ -753,25 +759,27 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(17),
-                            cursor.getInt(18),
-                            cursor.getString(19),
-                            cursor.getInt(20),
+                            cursor.getString(18),
+                            cursor.getInt(19),
+                            cursor.getString(20),
+                            cursor.getInt(21),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(10)) {
-                    Preconditions.checkNotNull(message).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(10),
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(14),
                             cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getInt(16),
+                            cursor.getInt(17));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(message).media.add(media);
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -803,6 +811,7 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
@@ -820,6 +829,7 @@ class MessagesDb {
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -838,7 +848,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
-                    String rawReplySenderId = cursor.getString(21);
+                    String rawReplySenderId = cursor.getString(22);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
@@ -849,25 +859,27 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(17),
-                            cursor.getInt(18),
-                            cursor.getString(19),
-                            cursor.getInt(20),
+                            cursor.getString(18),
+                            cursor.getInt(19),
+                            cursor.getString(20),
+                            cursor.getInt(21),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(10)) {
-                    Preconditions.checkNotNull(message).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(10),
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(14),
                             cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getInt(16),
+                            cursor.getInt(17));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(message).media.add(media);
                 }
             }
         }
@@ -893,6 +905,7 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
@@ -912,6 +925,7 @@ class MessagesDb {
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_ENC_KEY + ", " +
@@ -934,7 +948,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
-                    String rawReplySenderId = cursor.getString(23);
+                    String rawReplySenderId = cursor.getString(24);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
@@ -945,25 +959,27 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(19),
-                            cursor.getInt(20),
-                            cursor.getString(21),
-                            cursor.getInt(22),
+                            cursor.getString(20),
+                            cursor.getInt(21),
+                            cursor.getString(22),
+                            cursor.getInt(23),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(10)) {
-                    Preconditions.checkNotNull(message).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(10),
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
-                            cursor.getBlob(17),
                             cursor.getBlob(18),
-                            cursor.getInt(14),
+                            cursor.getBlob(19),
                             cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getInt(16),
+                            cursor.getInt(17));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(message).media.add(media);
                 }
             }
         }
@@ -995,6 +1011,7 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
                 "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
@@ -1012,6 +1029,7 @@ class MessagesDb {
                     MediaTable.COLUMN_TYPE + "," +
                     MediaTable.COLUMN_URL + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -1040,7 +1058,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(21);
+                    String rawReplySenderId = cursor.getString(22);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1051,25 +1069,27 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(17),
-                            cursor.getInt(18),
-                            cursor.getString(19),
-                            cursor.getInt(20),
+                            cursor.getString(18),
+                            cursor.getInt(19),
+                            cursor.getString(20),
+                            cursor.getInt(21),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(10)) {
-                    Preconditions.checkNotNull(message).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(10),
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
-                            cursor.getInt(14),
                             cursor.getInt(15),
-                            cursor.getInt(16)));
+                            cursor.getInt(16),
+                            cursor.getInt(17));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(message).media.add(media);
                 }
             }
             if (message != null && cursor.getCount() < count) {
@@ -1104,6 +1124,7 @@ class MessagesDb {
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
+                    "m." + MediaTable.COLUMN_ENC_FILE + "," +
                     "m." + MediaTable.COLUMN_ENC_KEY + "," +
                     "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
@@ -1123,6 +1144,7 @@ class MessagesDb {
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
@@ -1153,7 +1175,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(23);
+                    String rawReplySenderId = cursor.getString(24);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1164,25 +1186,27 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(19),
-                            cursor.getInt(20),
-                            cursor.getString(21),
-                            cursor.getInt(22),
+                            cursor.getString(20),
+                            cursor.getInt(21),
+                            cursor.getString(22),
+                            cursor.getInt(23),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                 }
                 if (!cursor.isNull(10)) {
-                    Preconditions.checkNotNull(message).media.add(new Media(
+                    Media media = new Media(
                             cursor.getLong(10),
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
-                            cursor.getBlob(14),
                             cursor.getBlob(15),
-                            cursor.getInt(16),
+                            cursor.getBlob(16),
                             cursor.getInt(17),
-                            cursor.getInt(18)));
+                            cursor.getInt(18),
+                            cursor.getInt(19));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(message).media.add(media);
                 }
             }
             if (message != null) {
@@ -1229,13 +1253,15 @@ class MessagesDb {
 
         final String sql =
             "SELECT " +
-                "m." + MediaTable.COLUMN_FILE + " " +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "INNER JOIN (" +
                 "SELECT " +
                     MediaTable.COLUMN_PARENT_TABLE + "," +
                     MediaTable.COLUMN_PARENT_ROW_ID + "," +
                     MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "WHERE " + MessagesTable.COLUMN_CHAT_ID  + "='" + chatId.rawId() + "'";
@@ -1249,6 +1275,14 @@ class MessagesDb {
                         filesDeleted++;
                     } else {
                         Log.i("ContentDb.deleteChat: failed to delete " + mediaFile.getAbsolutePath());
+                    }
+                }
+                final File encFile = fileStore.getTmpFile(cursor.getString(1));
+                if (encFile != null) {
+                    if (encFile.delete()) {
+                        filesDeleted++;
+                    } else {
+                        Log.i("ContentDb.deleteChat: failed to delete " + encFile.getAbsolutePath());
                     }
                 }
             }

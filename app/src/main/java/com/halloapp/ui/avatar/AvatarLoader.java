@@ -166,7 +166,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
                     if (!avatarFile.exists() || !Preconditions.checkNotNull(avatarId).equals(contactAvatarInfo.avatarId)) {
                         String url = "https://avatar-cdn.halloapp.net/" + avatarId;
-                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, p -> true);
                         contactAvatarInfo.avatarId = contact.avatarId;
                     }
                 } else {
@@ -180,7 +180,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
                     if (!avatarFile.exists() || !avatarId.equals(contactAvatarInfo.avatarId)) {
                         String url = "https://avatar-cdn.halloapp.net/" + avatarId;
-                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, avatarFile, p -> true);
+                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, p -> true);
                         contactAvatarInfo.avatarId = avatarId;
                     }
                 }

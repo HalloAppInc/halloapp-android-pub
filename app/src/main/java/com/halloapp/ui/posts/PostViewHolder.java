@@ -17,6 +17,8 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.media.DownloadMediaTask;
+import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -77,7 +79,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         if (statusView != null) {
             statusView.setOnClickListener(v -> {
-                UploadMediaTask.restartUpload(post, fileStore, contentDb, connection);
+                if (post.senderUserId.isMe()) {
+                    UploadMediaTask.restartUpload(post, fileStore, contentDb, connection);
+                } else {
+                    DownloadMediaTask.download(fileStore, contentDb, post);
+                }
             });
         }
 

@@ -8,6 +8,7 @@ import com.halloapp.FileStore;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
+import com.halloapp.content.Post;
 import com.halloapp.util.Log;
 import com.halloapp.util.RandomId;
 
@@ -36,10 +37,16 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
             }
             final Downloader.DownloadListener downloadListener = percent -> true;
             try {
+                final File encFile = media.encFile != null ? media.encFile : fileStore.getTmpFile(RandomId.create() + ".enc");
                 final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
-                Downloader.run(media.url, media.encKey, media.sha256hash, media.type, file, downloadListener);
+                media.encFile = encFile;
+                contentItem.setMediaTransferred(media, contentDb);
+                Downloader.run(media.url, media.encKey, media.sha256hash, media.type, encFile, file, downloadListener);
                 if (!file.setLastModified(contentItem.timestamp)) {
                     Log.w("DownloadMediaTask: failed to set last modified to " + file.getAbsolutePath());
+                }
+                if (!encFile.delete()) {
+                    Log.w("DownloadMediaTask: failed to delete temp enc file");
                 }
                 media.file = file;
                 media.transferred = Media.TRANSFERRED_YES;
@@ -56,5 +63,9 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
             }
         }
         return null;
+    }
+
+    public static void download(@NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Post post) {
+        new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
     }
 }
