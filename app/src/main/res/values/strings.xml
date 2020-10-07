@@ -296,7 +296,7 @@
     <string name="add_members">Add members</string>
     <string name="add_members_in_progress">Adding members…</string>
     <string name="failed_add_members">Failed to add members, try again later</string>
-    <string name="create_group">Create group</string>
+    <string name="create_group">Create new group</string>
     <string name="create_group_in_progress">Creating group %s…</string>
     <string name="new_group_title">Name your group</string>
     <string name="group_picker_title">Select members</string>
