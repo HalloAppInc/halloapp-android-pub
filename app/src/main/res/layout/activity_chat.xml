@@ -55,6 +55,7 @@
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:src="@drawable/group_feed_ring"
+                            android:visibility="gone"
                             android:layout_gravity="center"/>
                     </FrameLayout>
 
