@@ -109,7 +109,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
             }
         });
 
-        avatarLoader.load(avatarView, groupId);
+        avatarLoader.load(avatarView, groupId, false);
     }
 
     private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
@@ -190,7 +190,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        avatarLoader.load(avatarView, groupId);
+        avatarLoader.load(avatarView, groupId, false);
     }
 
     @Override
