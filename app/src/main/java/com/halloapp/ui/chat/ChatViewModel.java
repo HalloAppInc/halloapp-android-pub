@@ -23,6 +23,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -35,6 +36,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -49,6 +51,7 @@ public class ChatViewModel extends AndroidViewModel {
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Post> replyPost;
     final ComputableLiveData<Post> lastUnseenFeedPost;
+    final ComputableLiveData<List<Contact>> mentionableContacts;
     ComputableLiveData<Message> replyMessage;
     private ComputableLiveData<List<UserId>> blockListLiveData;
     final ComputableLiveData<String> replyName;
@@ -179,6 +182,24 @@ public class ChatViewModel extends AndroidViewModel {
                 initialUnseen.set(chat != null ? chat.newMessageCount : 0);
                 incomingAddedCount.set(0);
                 return chat;
+            }
+        };
+
+        mentionableContacts = new ComputableLiveData<List<Contact>>() {
+            @Override
+            protected List<Contact> compute() {
+                if (!(chatId instanceof GroupId)) {
+                    return null;
+                }
+                List<MemberInfo> members = contentDb.getGroupMembers((GroupId) chatId);
+                List<Contact> contacts = new ArrayList<>();
+                for (MemberInfo memberInfo : members) {
+                    if (memberInfo.userId.rawId().equals(me.getUser())) {
+                        continue;
+                    }
+                    contacts.add(contactsDb.getContact(memberInfo.userId));
+                }
+                return Contact.sort(contacts);
             }
         };
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.chat.ChatActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -19,6 +19,7 @@
             android:background="@color/window_background"
             android:elevation="@dimen/action_bar_elevation"
             android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
@@ -90,9 +91,12 @@
         </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
+            android:id="@+id/chat_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/footer">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chat"
@@ -129,6 +133,16 @@
 
         </FrameLayout>
 
+        <com.halloapp.ui.mentions.MentionPickerView
+            android:id="@+id/mention_picker_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@+id/footer"
+            android:visibility="invisible"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/footer"
             android:layout_width="match_parent"
@@ -138,7 +152,7 @@
             android:paddingBottom="2dp"
             android:elevation="3dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chat"
+            app:layout_constraintTop_toBottomOf="@+id/chat_container"
             app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -223,7 +237,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.halloapp.widget.PostEditText
+            <com.halloapp.widget.MentionableEntry
                 android:id="@+id/entry"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -267,7 +281,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.halloapp.widget.DrawDelegateView
         android:id="@+id/draw_delegate"

@@ -46,6 +46,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
 import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -67,6 +68,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
 
     private ContactLoader contactLoader;
+    private TextContentLoader textContentLoader;
     private UnseenGroupPostLoader groupPostLoader;
 
     private ChatsViewModel viewModel;
@@ -83,6 +85,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onCreate(savedInstanceState);
 
         contactLoader = new ContactLoader();
+        textContentLoader = new TextContentLoader(requireContext());
         groupPostLoader = new UnseenGroupPostLoader(appContext.get());
     }
 
@@ -526,6 +529,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
 
             private void bindMessageText(@Nullable String sender, @NonNull Message message) {
+                infoView.setTextColor(infoView.getResources().getColor(R.color.chat_message_preview));
                 final String text;
                 if (TextUtils.isEmpty(message.text)) {
                     if (message.media.size() == 1) {
@@ -548,11 +552,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     } else {
                         text = itemView.getContext().getString(R.string.album);
                     }
+                    infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
                 } else {
-                    text = message.text;
+                    textContentLoader.load(infoView, message);
                 }
-                infoView.setTextColor(infoView.getResources().getColor(R.color.chat_message_preview));
-                infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
             }
         }
     }

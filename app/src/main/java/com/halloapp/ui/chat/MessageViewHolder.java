@@ -30,6 +30,7 @@ import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Log;
 import com.halloapp.util.Rtl;
@@ -348,7 +349,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 return false;
             });
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(StringUtils.isFewEmoji(message.text) ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
-            textView.setText(message.text);
+            parent.getTextContentLoader().load(textView, message);
 
             if (TextUtils.isEmpty(message.text)) {
                 textView.setVisibility(View.GONE);

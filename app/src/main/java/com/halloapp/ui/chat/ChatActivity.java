@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.transition.TransitionManager;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -54,6 +56,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
@@ -66,9 +69,9 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupInfoActivity;
-import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -78,8 +81,8 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
-import com.halloapp.widget.PostEditText;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.PresenceLoader;
@@ -107,7 +110,8 @@ public class ChatActivity extends HalloActivity {
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
 
-    private PostEditText editText;
+    private MentionableEntry editText;
+    private MentionPickerView mentionPickerView;
     private View replyContainer;
 
     private TextView titleView;
@@ -192,7 +196,9 @@ public class ChatActivity extends HalloActivity {
 
         final ImageView sendButton = findViewById(R.id.send);
 
+        mentionPickerView = findViewById(R.id.mention_picker_view);
         editText = findViewById(R.id.entry);
+        editText.setMentionPickerView(mentionPickerView);
         editText.setText(ChatActivity.messageDrafts.get(chatId));
         editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)
                 .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
@@ -356,7 +362,12 @@ public class ChatActivity extends HalloActivity {
                 }
             }
         };
-
+        viewModel.mentionableContacts.getLiveData().observe(this, new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> contacts) {
+                mentionPickerView.setMentionableContacts(contacts);
+            }
+        });
         viewModel.messageList.observe(this, messages -> adapter.submitList(messages, newListCommitCallback));
         viewModel.chat.getLiveData().observe(this, chat -> {
             Log.i("ChatActivity: chat changed, newMessageCount=" + (chat == null ? "null" : chat.newMessageCount));
@@ -834,7 +845,8 @@ public class ChatActivity extends HalloActivity {
     }
 
     private void sendMessage() {
-        final String messageText = StringUtils.preparePostText(Preconditions.checkNotNull(editText.getText()).toString());
+        final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
+        final String messageText = StringUtils.preparePostText(textAndMentions.first);
         if (TextUtils.isEmpty(messageText)) {
             Log.w("ChatActivity: cannot send empty message");
             return;
@@ -855,6 +867,7 @@ public class ChatActivity extends HalloActivity {
                 replyMessageMediaIndex ,
                 replyMessage != null ? replyMessage.senderUserId : null,
                 0);
+        message.mentions.addAll(textAndMentions.second);
         replyPostId = null;
         replyPostMediaIndex = -1;
         replyMessage = null;

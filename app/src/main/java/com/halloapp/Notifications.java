@@ -23,6 +23,7 @@ import androidx.core.graphics.drawable.IconCompat;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
+import com.halloapp.content.Mention;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -37,6 +38,8 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.mentions.MentionsFormatter;
+import com.halloapp.ui.mentions.MentionsLoader;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
@@ -249,8 +252,8 @@ public class Notifications {
                         chatNames.add(chatName);
                     }
                     Person user = new Person.Builder().setIcon(icon).setName(message.senderUserId.isMe() ? context.getString(R.string.me) : chatName).setKey(message.chatId.rawId()).build();
-                    String previewText = getMessagePreviewIcon(message) + getMessagePreviewText(message);
-                    String textWithAttribution = message.chatId instanceof GroupId ? context.getString(R.string.chat_message_attribution, senderName, previewText) : previewText;
+                    CharSequence previewText = getMessagePreviewIcon(message) + getMessagePreviewText(message);
+                    CharSequence textWithAttribution = message.chatId instanceof GroupId ? context.getString(R.string.chat_message_attribution, senderName, previewText) : previewText;
                     style.addMessage(textWithAttribution, message.timestamp, user);
                 }
                 final String text = context.getResources().getQuantityString(R.plurals.new_messages_notification, chatMessages.size(), chatMessages.size(), ListFormatter.format(context, chatNames));
@@ -308,7 +311,7 @@ public class Notifications {
         });
     }
 
-    private String getMessagePreviewText(@NonNull Message message) {
+    private CharSequence getMessagePreviewText(@NonNull Message message) {
         if (TextUtils.isEmpty(message.text)) {
             if (message.media.size() == 1) {
                 final Media media = message.media.get(0);
@@ -329,7 +332,8 @@ public class Notifications {
                 return context.getString(R.string.album);
             }
         } else {
-            return message.text;
+            List<Mention> mentions = MentionsLoader.loadMentionNames(Me.getInstance(), contactsDb, message.mentions);
+            return MentionsFormatter.insertMentions(message.text, mentions);
         }
     }
 
