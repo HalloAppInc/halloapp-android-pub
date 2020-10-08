@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
@@ -484,6 +485,8 @@ public class ChatActivity extends HalloActivity {
         chatView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             private static final int ACTIVE_POINTER_ID_NONE = -1;
 
+            private int slop = ViewConfiguration.get(chatView.getContext()).getScaledTouchSlop();
+
             private int activePointerId;
             private float initialX;
             private float initialY;
@@ -539,8 +542,7 @@ public class ChatActivity extends HalloActivity {
                 final float absDx = Math.abs(dx);
                 final float absDy = Math.abs(dy);
 
-                final float eps = 0.1f;
-                if (absDx < eps && absDy < eps) {
+                if (absDx < slop && absDy < slop) {
                     return null;
                 }
                 if (absDx > absDy && lm.canScrollHorizontally()) {
