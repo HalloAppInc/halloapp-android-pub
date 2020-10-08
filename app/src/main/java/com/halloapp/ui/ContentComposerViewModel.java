@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
@@ -26,6 +27,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -60,6 +62,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private final String replyPostId;
     private final int replyPostMediaIndex;
 
+    private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
 
@@ -74,8 +77,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     };
 
-    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
+    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
+        me = Me.getInstance();
         contentDb = ContentDb.getInstance(application);
         contactsDb = ContactsDb.getInstance();
         this.replyPostId = replyPostId;
@@ -111,7 +115,22 @@ public class ContentComposerViewModel extends AndroidViewModel {
         mentionableContacts = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
-                return contactsDb.getFriends();
+                GroupId groupId = groupFeedId;
+                if (groupId == null) {
+                    if (!(chatId instanceof GroupId)) {
+                        return contactsDb.getFriends();
+                    }
+                    groupId = (GroupId) chatId;
+                }
+                List<MemberInfo> members = contentDb.getGroupMembers(groupId);
+                List<Contact> contacts = new ArrayList<>();
+                for (MemberInfo memberInfo : members) {
+                    if (memberInfo.userId.rawId().equals(me.getUser())) {
+                        continue;
+                    }
+                    contacts.add(contactsDb.getContact(memberInfo.userId));
+                }
+                return Contact.sort(contacts);
             }
         };
         contactsDb.addObserver(contactsObserver);
@@ -175,14 +194,16 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         private final Application application;
         private final ChatId chatId;
+        private final GroupId groupFeedId;
         private final Collection<Uri> uris;
         private final Bundle editStates;
         private final String replyId;
         private final int replyPostMediaIndex;
 
-        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyId, int replyPostMediaIndex) {
+        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyId, int replyPostMediaIndex) {
             this.application = application;
             this.chatId = chatId;
+            this.groupFeedId = groupFeedId;
             this.uris = uris;
             this.editStates = editStates;
             this.replyId = replyId;
@@ -193,7 +214,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContentComposerViewModel(application, chatId, uris, editStates, replyId, replyPostMediaIndex);
+                return (T) new ContentComposerViewModel(application, chatId, groupFeedId, uris, editStates, replyId, replyPostMediaIndex);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

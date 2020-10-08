@@ -305,7 +305,7 @@ public class ContentComposerActivity extends HalloActivity {
 
         expectedMediaCount = (uris != null) ? uris.size() : 0;
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         viewModel.loadingItem.observe(this, editItem -> {
             setProgressPreview(editItem, true);
         });
