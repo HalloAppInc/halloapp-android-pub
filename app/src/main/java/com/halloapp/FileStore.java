@@ -70,6 +70,12 @@ public class FileStore {
         return name == null ? null : new File(getMediaDir(), name);
     }
 
+    public File getCameraDir() { return cameraDir; }
+
+    public File getCameraFile(@Nullable String name) {
+        return name == null ? null : new File(getCameraDir(), name);
+    }
+
     public File getTmpDir() {
         return tmpDir;
     }

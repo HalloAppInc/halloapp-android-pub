@@ -36,6 +36,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -252,9 +253,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 break;
             }
             case R.id.add_post_camera: {
-                final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(this));
-                startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+                final Intent intent = new Intent(this, CameraActivity.class);
+                startActivity(intent);
                 break;
             }
         }

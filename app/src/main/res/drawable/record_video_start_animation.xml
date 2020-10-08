@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@drawable/ic_camera_capture">
+    <target android:name="color" android:animation="@animator/record_video_start"/>
+</animated-vector>

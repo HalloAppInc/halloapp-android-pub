@@ -87,6 +87,8 @@
     <color name="message_state_read">@color/color_secondary</color>
     <color name="media_button_background">#F3F2EF</color>
     <color name="media_button_background_pressed">#66F3F2EF</color>
+    <color name="camera_button_background">@color/cardview_light_background</color>
+    <color name="camera_button_background_pressed">@color/window_background</color>
 
     <color name="button_disabled_background">@color/black_20</color>
 

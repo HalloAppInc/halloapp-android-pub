@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Size;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class ContentComposerViewModel extends AndroidViewModel {
 
@@ -247,14 +249,27 @@ public class ContentComposerViewModel extends AndroidViewModel {
             final ContentResolver contentResolver = application.getContentResolver();
             final FileStore fileStore = FileStore.getInstance(application);
             int uriIndex = 0;
+            final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
             for (Uri uri : uris) {
-                @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
+                final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
+                @Media.MediaType int mediaType = Media.getMediaType(isLocalFile ?
+                        mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(uri.toString())) :
+                        contentResolver.getType(uri));
 
                 final File originalFile = fileStore.getTmpFileForUri(uri, null);
                 boolean fileCreated = false;
                 if (!originalFile.exists()) {
-                    FileUtils.uriToFile(application, uri, originalFile);
+                    if (isLocalFile) {
+                        try {
+                            FileUtils.copyFile(new File(uri.getPath()), originalFile);
+                        } catch (IOException e) {
+                            // Swallow the exception, the logic below will handle the case of empty file.
+                            Log.e("LoadContentUrisTask: doInBackground copyFile " + uri, e);
+                        }
+                    } else {
+                        FileUtils.uriToFile(application, uri, originalFile);
+                    }
                     fileCreated = true;
                 }
                 final Size originalSize = MediaUtils.getDimensions(originalFile, mediaType);

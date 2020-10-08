@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.camera.CameraActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/window_background"
+        app:layout_constraintBottom_toTopOf="@+id/content_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+        app:theme="@style/ActionBarComposer" />
+
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:padding="8dp"
+        android:clipToPadding="false">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cameraCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardCornerRadius="@dimen/content_composer_frame_border"
+            app:cardElevation="2dp"
+            android:visibility="gone">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <FrameLayout
+                    android:id="@+id/cameraFrame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constrainedHeight="true"
+                    app:layout_constraintBottom_toTopOf="@+id/cameraControls"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.otaliastudios.cameraview.CameraView
+                        android:id="@+id/cameraView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:keepScreenOn="true"
+                        app:cameraPictureSizeAspectRatio="4:3"
+                        app:cameraVideoSizeAspectRatio="4:3"
+                        app:cameraPictureFormat="jpeg"
+                        app:cameraPlaySounds="true"
+                        app:cameraPreview="texture"/>
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/cameraControls"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cameraFrame"
+                    android:orientation="horizontal"
+                    android:paddingTop="24dp"
+                    android:paddingBottom="20dp">
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/toggle_flash"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/camera_button"
+                        android:src="@drawable/ic_flash_off"/>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/capture"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/camera_button"
+                        android:src="@drawable/ic_camera_capture"/>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/flip_camera"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/camera_button"
+                        android:src="@drawable/ic_camera_flip"/>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

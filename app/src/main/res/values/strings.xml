@@ -80,6 +80,9 @@
         <item quantity="one">You can select up to %d item per post</item>
         <item quantity="other">You can select up to %d items per post</item>
     </plurals>
+
+    <string name="camera_record_audio_permission_rationale">To take photos and record videos we need permission to access the camera and record audio on your device</string>
+    <string name="camera_record_audio_permission_rationale_denied">To take photos and record videos we need permission to access the camera and record audio on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="contacts_permission_rationale">To connect with your friends and family we need permission to access contacts on your device</string>
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="storage_permission_rationale">Pick media we need a permission to access your device storage</string>
@@ -366,4 +369,7 @@
     <string name="activity_center_nux">This is your activity center. Tap to see your most recent activity.</string>
     <string name="home_feed_nux">Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp.</string>
     <string name="home_feed_nux_learn_more">Learn more</string>
+    <string name="camera_error_generic">Camera failure.</string>
+    <string name="camera_error_photo">Could not take a photo.</string>
+    <string name="camera_error_video">Could not record a video.</string>
 </resources>
