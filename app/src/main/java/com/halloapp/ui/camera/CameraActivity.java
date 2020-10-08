@@ -517,6 +517,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private void startComposerForUri(@NonNull Uri uri) {
         final Intent intent = new Intent(getBaseContext(), ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
+        intent.putExtra(ContentComposerActivity.EXTRA_CALLED_FROM_CAMERA, true);
         startActivity(intent);
     }
 }

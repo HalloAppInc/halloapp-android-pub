@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Size;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -20,9 +21,11 @@ import com.halloapp.util.FileUtils;
 import com.halloapp.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class CropImageViewModel extends AndroidViewModel {
     private final MutableLiveData<List<MediaModel>> mediaData = new MutableLiveData<>();
@@ -197,15 +200,28 @@ public class CropImageViewModel extends AndroidViewModel {
             final List<MediaModel> result = new ArrayList<>(uris.size());
             final ContentResolver resolver = application.getContentResolver();
             final FileStore store = FileStore.getInstance(application);
+            final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
             for (Uri uri : uris) {
+                final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
                 final File original = store.getTmpFileForUri(uri, null);
                 final File edit = store.getTmpFileForUri(uri, "edit");
 
-                @Media.MediaType int type = Media.getMediaType(resolver.getType(uri));
+                @Media.MediaType int type = Media.getMediaType(isLocalFile ?
+                        mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(uri.toString())) :
+                        resolver.getType(uri));
 
                 if (!original.exists()) {
-                    FileUtils.uriToFile(application, uri, original);
+                    if (isLocalFile) {
+                        try {
+                            FileUtils.copyFile(new File(uri.getPath()), original);
+                        } catch (IOException e) {
+                            // Swallow the exception, the logic below will handle the case of empty file.
+                            Log.e("LoadMediaTask: doInBackground copyFile " + uri, e);
+                        }
+                    } else {
+                        FileUtils.uriToFile(application, uri, original);
+                    }
                 }
 
                 Media originalMedia = mediaFromFile(type, original);

@@ -85,6 +85,7 @@ import java.util.Map;
 import me.relex.circleindicator.CircleIndicator;
 
 public class ContentComposerActivity extends HalloActivity {
+    public static final String EXTRA_CALLED_FROM_CAMERA = "called_from_camera";
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
@@ -109,6 +110,7 @@ public class ContentComposerActivity extends HalloActivity {
     private View audienceHelp;
     private View audienceNux;
 
+    private boolean calledFromCamera;
     private boolean calledFromPicker;
 
     private ImageButton deletePictureButton;
@@ -210,6 +212,7 @@ public class ContentComposerActivity extends HalloActivity {
                 uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             }
         }
+        calledFromCamera = getIntent().getBooleanExtra(EXTRA_CALLED_FROM_CAMERA, false);
 
         final Bundle editStates = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
 
@@ -344,7 +347,8 @@ public class ContentComposerActivity extends HalloActivity {
                 finish();
                 if (chatId != null && getIntent() != null && getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_CHAT, false)) {
                     startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chatId));
-                } else if (Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                } else if (calledFromCamera ||
+                        Intent.ACTION_SEND.equals(getIntent().getAction()) ||
                         Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
                     final Intent intent = new Intent(getBaseContext(), MainActivity.class);
                     intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
@@ -638,6 +642,10 @@ public class ContentComposerActivity extends HalloActivity {
         final Bundle editStates = data.getParcelableExtra(CropImageActivity.EXTRA_STATE);
 
         if (uris != null) {
+            if (uris.size() == 0) {
+                openMediaPicker();
+                return;
+            }
             // Clean old data
             final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
             if (mediaPairList != null && !mediaPairList.isEmpty()) {
