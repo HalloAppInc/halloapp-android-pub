@@ -1,11 +1,16 @@
 package com.halloapp.xmpp.groups;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.GroupsStanza;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 import com.halloapp.xmpp.HalloIq;
+import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
@@ -47,6 +52,11 @@ public class GroupsListResponseIq extends HalloIq {
         }
     }
 
+    private GroupsListResponseIq(List<GroupInfo> groupInfos) {
+        super(ELEMENT, NAMESPACE);
+        this.groupInfos.addAll(groupInfos);
+    }
+
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         return null;
@@ -55,6 +65,14 @@ public class GroupsListResponseIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         return null;
+    }
+
+    public static GroupsListResponseIq fromProto(GroupsStanza groupsStanza) {
+        List<GroupInfo> groupInfos = new ArrayList<>();
+        for (GroupStanza groupStanza : groupsStanza.getGroupStanzasList()) {
+            groupInfos.add(new GroupInfo(new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), new ArrayList<>()));
+        }
+        return new GroupsListResponseIq(groupInfos);
     }
 
     public static class Provider extends IQProvider<GroupsListResponseIq> {

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.common.util.Hex;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
@@ -19,6 +20,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -31,23 +33,34 @@ import com.halloapp.proto.server.ChatState;
 import com.halloapp.proto.server.ClientMode;
 import com.halloapp.proto.server.ClientVersion;
 import com.halloapp.proto.server.Contact;
+import com.halloapp.proto.server.ContactHash;
+import com.halloapp.proto.server.ContactList;
+import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.FeedItems;
+import com.halloapp.proto.server.GroupChat;
+import com.halloapp.proto.server.GroupMember;
+import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.Presence;
+import com.halloapp.proto.server.SeenReceipt;
+import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
-import com.halloapp.xmpp.feed.FeedMessageElement;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
+import com.halloapp.xmpp.feed.SharePosts;
+import com.halloapp.xmpp.groups.GroupChatMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
+import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.props.ServerPropsRequestIq;
 import com.halloapp.xmpp.props.ServerPropsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
@@ -59,6 +72,7 @@ import com.halloapp.xmpp.util.ResponseHandler;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.Async;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -93,6 +107,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+
+import static com.halloapp.xmpp.OldConnection.FEED_THREAD_ID;
 
 public class NewConnection extends Connection {
 
@@ -611,7 +627,35 @@ public class NewConnection extends Connection {
 
     @Override
     public Future<Boolean> sharePosts(Map<UserId, Collection<Post>> shareMap) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot share posts, no connection");
+                return false;
+            }
+            try {
+                List<SharePosts> sharePosts = new ArrayList<>();
+                for (UserId user : shareMap.keySet()) {
+                    Collection<Post> postsToShare = shareMap.get(user);
+                    if (postsToShare == null) {
+                        continue;
+                    }
+                    ArrayList<FeedItem> itemList = new ArrayList<>(postsToShare.size());
+                    for (Post post : postsToShare) {
+                        FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
+                        itemList.add(sharedPost);
+                    }
+                    sharePosts.add(new SharePosts(user, itemList));
+                }
+                FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
+                updateIq.setTo(SERVER_JID);
+
+                sendIqRequestAsync(updateIq).await();
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot send post", e);
+                return false;
+            }
+            return true;
+        });
     }
 
     @Override
@@ -664,12 +708,40 @@ public class NewConnection extends Connection {
 
     @Override
     public void retractPost(@NonNull String postId) {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot retract post, no connection");
+                return;
+            }
+            try {
+                FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+                requestIq.setTo(SERVER_JID);
+                sendIqRequestAsync(requestIq).await();
+                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
+                connectionObservers.notifyOutgoingPostSent(postId);
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot retract post", e);
+            }
+        });
     }
 
     @Override
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot retract post, no connection");
+                return;
+            }
+            try {
+                GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+                requestIq.setTo(SERVER_JID);
+                sendIqRequestAsync(requestIq).await();
+                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
+                connectionObservers.notifyOutgoingPostSent(postId);
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot retract post", e);
+            }
+        });
     }
 
     @Override
@@ -720,14 +792,53 @@ public class NewConnection extends Connection {
         });
     }
 
+    // TODO: (clarkc) remove post sender user id when server tells us
     @Override
     public void retractComment(@Nullable UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot retract comment, no connection");
+                return;
+            }
+            try {
+                UserId postSender = postSenderUserId;
+                if (postSender != null && postSender.isMe()) {
+                    postSender = new UserId(me.getUser());
+                }
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
+                requestIq.setTo(SERVER_JID);
+                sendIqRequestAsync(requestIq).await();
+                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
+                connectionObservers.notifyOutgoingCommentSent(postId, commentId);
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot retract comment", e);
+            }
+        });
     }
 
     @Override
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot retract group comment, no connection");
+                return;
+            }
+            try {
+                UserId postSender = postSenderUserId;
+                if (postSender.isMe()) {
+                    postSender = new UserId(me.getUser());
+                }
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
+                requestIq.setTo(SERVER_JID);
+                sendIqRequestAsync(requestIq).await();
 
+                connectionObservers.notifyOutgoingCommentSent(postId, commentId);
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot retract comment", e);
+            }
+        });
     }
 
     @Override
@@ -761,7 +872,28 @@ public class NewConnection extends Connection {
 
     @Override
     public void sendGroupMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
+        executor.execute(() -> {
+            if (message.isLocalMessage()) {
+                Log.i("connection: System message shouldn't be sent");
+                return;
+            }
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
 
+            GroupChatMessage groupChatMessage = new GroupChatMessage((GroupId)message.chatId, message);
+
+            Msg msg = Msg.newBuilder()
+                    .setId(message.id)
+                    .setType(Msg.Type.GROUPCHAT)
+                    .setGroupChat(groupChatMessage.toProto())
+                    .build();
+
+            ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+            Log.i("connection: sending group message " + message.id + " to " + message.chatId);
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+        });
     }
 
     // NOTE: Should NOT be called from executor.
@@ -796,7 +928,7 @@ public class NewConnection extends Connection {
 
     @Override
     public void sendRerequest(String encodedIdentityKey, @NonNull Jid originalSender, final @NonNull UserId senderUserId, @NonNull String messageId) {
-
+        // TODO(jack): Need to add ReRequest to Msg schema
     }
 
     @Override
@@ -814,12 +946,45 @@ public class NewConnection extends Connection {
 
     @Override
     public void sendPostSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot send seen receipt, no connection");
+                return;
+            }
+            String id = RandomId.create();
 
+            SeenReceiptElement seenReceiptElement = new SeenReceiptElement(FEED_THREAD_ID, postId);
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setSeenReceipt(seenReceiptElement.toProto())
+                    .setToUid(Long.parseLong(senderUserId.rawId()))
+                    .build();
+
+            ackHandlers.put(id, () -> connectionObservers.notifyIncomingPostSeenReceiptSent(senderUserId, postId));
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            Log.i("connection: sending post seen receipt " + postId + " to " + senderUserId);
+        });
     }
 
     @Override
     public void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot send message seen receipt, no connection");
+                return;
+            }
+            String id = RandomId.create();
 
+            SeenReceiptElement seenReceiptElement = new SeenReceiptElement(senderUserId.equals(chatId) ? null : chatId.rawId(), messageId);
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setSeenReceipt(seenReceiptElement.toProto())
+                    .setToUid(Long.parseLong(senderUserId.rawId()))
+                    .build();
+            ackHandlers.put(id, () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
+        });
     }
     
     @Override
@@ -931,7 +1096,7 @@ public class NewConnection extends Connection {
                 } else if (packet.hasChatState()) {
                     handleChatState(packet.getChatState());
                 } else {
-                    Log.w("Unrecognized subpacket");
+                    Log.w("Unrecognized top-level subpacket");
                 }
             } catch (InvalidProtocolBufferException e) { // TODO(jack): be explicit about when auth expected
                 try {
@@ -954,12 +1119,15 @@ public class NewConnection extends Connection {
                 Log.w("connection: got error message " + msg);
             } else {
                 if (msg.hasFeedItem()) {
+                    Log.i("connection: got feed item " + msg);
                     com.halloapp.proto.server.FeedItem feedItem = msg.getFeedItem();
                     handled = processFeedPubSubItems(Collections.singletonList(feedItem), msg.getId());
                 } else if (msg.hasFeedItems()) {
+                    Log.i("connection: got feed items " + msg);
                     FeedItems feedItems = msg.getFeedItems();
                     handled = processFeedPubSubItems(feedItems.getItemsList(), msg.getId());
                 } else if (msg.hasChatStanza()) {
+                    Log.i("connection: got chat stanza " + msg);
                     ChatStanza chatStanza = msg.getChatStanza();
                     ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
@@ -968,6 +1136,84 @@ public class NewConnection extends Connection {
                     processMentions(message.mentions);
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;
+                } else if (msg.hasGroupChat()) {
+                    Log.i("connection: got group chat " + msg);
+                    GroupChat groupChat = msg.getGroupChat();
+                    GroupChatMessage groupChatMessage = GroupChatMessage.fromProto(groupChat);
+                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+                    Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
+                    Message message = groupChatMessage.getMessage(fromJid, msg.getId());
+                    processMentions(message.mentions);
+                    connectionObservers.notifyIncomingMessageReceived(message);
+                    handled = true;
+                } else if (msg.hasDeliveryReceipt()) {
+                    Log.i("connection: got delivery receipt " + msg);
+                    DeliveryReceipt deliveryReceipt = msg.getDeliveryReceipt();
+                    final String threadId = deliveryReceipt.getThreadId();
+                    final UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyOutgoingMessageDelivered(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), msg.getId());
+                    handled = true;
+                } else if (msg.hasSeenReceipt()) {
+                    Log.i("connection: got seen receipt " + msg);
+                    SeenReceipt seenReceipt = msg.getSeenReceipt();
+                    final String threadId = seenReceipt.getThreadId();
+                    final UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    if (FEED_THREAD_ID.equals(threadId)) {
+                        connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), msg.getId());
+                    } else {
+                        connectionObservers.notifyOutgoingMessageSeen(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, seenReceipt.getId(), seenReceipt.getTimestamp(), msg.getId());
+                    }
+                    handled = true;
+                } else if (msg.hasContactHash()) {
+                    Log.i("connection: got contact hash " + msg);
+                    ContactHash contactHash = msg.getContactHash();
+                    connectionObservers.notifyContactsChanged(new ArrayList<>(), Collections.singletonList(Hex.bytesToStringLowercase(contactHash.getHash().toByteArray())), msg.getId());
+                    handled = true;
+                } else if (msg.hasContactList()) {
+                    Log.i("connection: got contact list " + msg);
+                    ContactList contactList = msg.getContactList();
+                    List<Contact> contacts = contactList.getContactsList();
+                    List<ContactInfo> infos = new ArrayList<>();
+                    for (Contact contact : contacts) {
+                        infos.add(new ContactInfo(contact));
+                    }
+                    connectionObservers.notifyContactsChanged(infos, new ArrayList<>(), msg.getId());
+                } else if (msg.hasWhisperKeys()) {
+                    Log.i("connection: got whisper keys " + msg);
+                    WhisperKeys whisperKeys = msg.getWhisperKeys();
+
+                    WhisperKeysMessage whisperKeysMessage = null;
+                    if (whisperKeys.getAction().equals(WhisperKeys.Action.UPDATE)) {
+                        whisperKeysMessage = new WhisperKeysMessage(new UserId(Long.toString(whisperKeys.getUid())));
+                    } else if (whisperKeys.getAction().equals(WhisperKeys.Action.NORMAL)) {
+                        whisperKeysMessage = new WhisperKeysMessage(whisperKeys.getOtpKeyCount());
+                    }
+                    connectionObservers.notifyWhisperKeysMessage(whisperKeysMessage, msg.getId());
+                    handled = true;
+                } else if (msg.hasAvatar()) {
+                    Log.i("connection: got avatar " + msg);
+                    Avatar avatar = msg.getAvatar();
+                    connectionObservers.notifyAvatarChangeMessageReceived(getUserId(Long.toString(avatar.getUid())), avatar.getId(), msg.getId());
+                    handled = true;
+                } else if (msg.hasGroupStanza()) {
+                    GroupStanza groupStanza = msg.getGroupStanza();
+
+                    UserId senderUserId = getUserId(Long.toString(groupStanza.getSenderUid()));
+                    String senderName = groupStanza.getSenderName();
+                    if (!TextUtils.isEmpty(senderName) && groupStanza.getSenderUid() != 0) {
+                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(senderUserId, senderName));
+                    }
+
+                    String ackId = msg.getId();
+                    GroupId groupId = new GroupId(groupStanza.getGid());
+                    List<GroupMember> members = groupStanza.getMembersList();
+                    if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
+                        List<MemberElement> elements = new ArrayList<>();
+                        for (GroupMember member : members) {
+                            elements.add(new MemberElement(member));
+                        }
+                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
+                    }
                 }
             }
             if (!handled) {
@@ -1055,6 +1301,8 @@ public class NewConnection extends Connection {
                     Iq ping = Iq.newBuilder().setId(iq.getId()).setType(Iq.Type.RESULT).setPing(Ping.newBuilder().build()).build();
                     sendPacket(Packet.newBuilder().setIq(ping).build());
                 }
+            } else {
+                Log.w("connection: unexpected iq type " + iq.getType());
             }
         }
 
@@ -1067,17 +1315,30 @@ public class NewConnection extends Connection {
             }
         }
 
-        // TODO(jack): these three handlers
         private void handlePresence(Presence presence) {
-            Log.d("JACK got presence " + presence);
+            long lastSeen = presence.getLastSeen() * 1000L;
+            connectionObservers.notifyPresenceReceived(getUserId(Long.toString(presence.getUid())), lastSeen > 0 ? lastSeen : null);
         }
 
         private void handleHaError(HaError haError) {
-            Log.d("JACK got haError " + haError);
+            Log.e("connection: server error: " + haError.getReason());
         }
 
         private void handleChatState(ChatState chatState) {
-            Log.d("JACK got chatState " + chatState);
+            com.halloapp.xmpp.ChatState state = null;
+            if (chatState.getThreadType().equals(ChatState.ThreadType.CHAT)) {
+                state = new com.halloapp.xmpp.ChatState(processChatStateType(chatState.getType()), getUserId(chatState.getThreadId()));
+            } else if (chatState.getThreadType().equals(ChatState.ThreadType.GROUP_CHAT)) {
+                state = new com.halloapp.xmpp.ChatState(processChatStateType(chatState.getType()), new GroupId(chatState.getThreadId()));
+            }
+            UserId from = getUserId(Long.toString(chatState.getFromUid()));
+            if (from != null && !from.isMe()) {
+                connectionObservers.notifyChatStateReceived(from, state);
+            }
+        }
+
+        private @com.halloapp.xmpp.ChatState.Type int processChatStateType(ChatState.Type type) {
+            return com.halloapp.proto.server.ChatState.Type.TYPING.equals(type) ? com.halloapp.xmpp.ChatState.Type.TYPING : com.halloapp.xmpp.ChatState.Type.AVAILABLE;
         }
     }
 

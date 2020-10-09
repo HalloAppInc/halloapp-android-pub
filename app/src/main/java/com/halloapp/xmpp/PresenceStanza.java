@@ -8,6 +8,7 @@ import com.halloapp.proto.server.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Localpart;
 
 public class PresenceStanza extends Stanza {
 
@@ -50,9 +51,13 @@ public class PresenceStanza extends Stanza {
     }
 
     public Presence toProto() {
-        return Presence.newBuilder()
-                .setId(getStanzaId())
-                .setType(Presence.Type.valueOf(type.toUpperCase()))
-                .build();
+        Localpart localPart = getTo().getLocalpartOrNull();
+        Presence.Builder builder = Presence.newBuilder();
+        builder.setId(getStanzaId());
+        builder.setType(Presence.Type.valueOf(type.toUpperCase()));
+        if (localPart != null) {
+            builder.setUid(Long.parseLong(localPart.toString()));
+        }
+        return builder.build();
     }
 }

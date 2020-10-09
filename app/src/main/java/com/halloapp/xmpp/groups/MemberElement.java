@@ -83,7 +83,7 @@ public class MemberElement implements ExtensionElement {
         reason = parser.getAttributeValue("", ATTRIBUTE_REASON);
     }
 
-    MemberElement(GroupMember groupMember) {
+    public MemberElement(GroupMember groupMember) {
         uid = new UserId(Long.toString(groupMember.getUid()));
         type = groupMember.getType().name().toLowerCase();
         name = groupMember.getName();

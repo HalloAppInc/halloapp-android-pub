@@ -3,6 +3,9 @@ package com.halloapp.xmpp.groups;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+
+import com.google.protobuf.ByteString;
 import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -11,8 +14,11 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.server.ChatStanza;
+import com.halloapp.proto.server.GroupChat;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
+import com.halloapp.xmpp.ChatMessageElement;
 import com.halloapp.xmpp.MessageElementHelper;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -128,6 +134,29 @@ public class GroupChatMessage implements ExtensionElement {
     }
     private String getEncodedEntryString() {
         return Base64.encodeToString(getEncodedEntry(), Base64.NO_WRAP);
+    }
+
+    public GroupChat toProto() {
+        GroupChat.Builder builder = GroupChat.newBuilder();
+        builder.setGid(groupId.rawId());
+        builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
+
+        return builder.build();
+    }
+
+    public static GroupChatMessage fromProto(@NonNull GroupChat groupChat) {
+        long timestamp = groupChat.getTimestamp() * 1000L;
+
+        String rawGroupId = groupChat.getGid();
+        String groupName = groupChat.getName();
+        String avatarId = groupChat.getAvatarId();
+        String senderRawId = Long.toString(groupChat.getSenderUid());
+        String senderName = groupChat.getSenderName();
+
+        ByteString plaintext = groupChat.getPayload();
+        ChatMessage chatMessage =  MessageElementHelper.readEncodedEntry(plaintext.toByteArray());
+
+        return new GroupChatMessage(new GroupId(rawGroupId), groupName, avatarId, new UserId(senderRawId), senderName, chatMessage, timestamp);
     }
 
     public static class Provider extends ExtensionElementProvider<GroupChatMessage> {

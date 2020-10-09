@@ -23,12 +23,12 @@ public class WhisperKeysMessage implements ExtensionElement {
     public final Integer count;
     public final UserId userId;
 
-    private WhisperKeysMessage(int count) {
+    public WhisperKeysMessage(int count) {
         this.count = count;
         this.userId = null;
     }
 
-    private WhisperKeysMessage(UserId userId) {
+    public WhisperKeysMessage(UserId userId) {
         this.count = null;
         this.userId = userId;
     }

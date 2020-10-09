@@ -2,6 +2,8 @@ package com.halloapp.xmpp;
 
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Log;
+import com.halloapp.xmpp.groups.GroupResponseIq;
+import com.halloapp.xmpp.groups.GroupsListResponseIq;
 
 import org.jivesoftware.smack.packet.IQ;
 
@@ -27,6 +29,10 @@ public abstract class HalloIq extends IQ {
     public static HalloIq fromProtoIq(Iq iq) {
         if (iq.hasWhisperKeys()) {
             return WhisperKeysResponseIq.fromProto(iq.getWhisperKeys());
+        } else if (iq.hasGroupsStanza()) {
+            return GroupsListResponseIq.fromProto(iq.getGroupsStanza());
+        } else if (iq.hasGroupStanza()) {
+            return GroupResponseIq.fromProto(iq.getGroupStanza());
         }
         Log.w("Unrecognized result IQ " + iq);
         return null;

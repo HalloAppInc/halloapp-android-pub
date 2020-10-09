@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import com.halloapp.proto.server.SeenReceipt;
+
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.provider.EmbeddedExtensionProvider;
@@ -64,6 +66,13 @@ public class SeenReceiptElement implements ExtensionElement {
         xml.optAttribute(ATTRIBUTE_THREAD_ID, threadId);
         xml.closeEmptyElement();
         return xml;
+    }
+
+    public SeenReceipt toProto() {
+        return SeenReceipt.newBuilder()
+                .setId(id)
+                .setThreadId(threadId)
+                .build();
     }
 
     public static class Provider extends EmbeddedExtensionProvider<SeenReceiptElement> {
