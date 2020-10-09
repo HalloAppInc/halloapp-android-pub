@@ -3,6 +3,7 @@ package com.halloapp.xmpp.feed;
 import androidx.annotation.NonNull;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.ShareStanza;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -37,4 +38,16 @@ public class SharePosts {
         return builder;
     }
 
+    public ShareStanza toProto() {
+        ShareStanza.Builder builder = ShareStanza.newBuilder();
+        builder.setUid(Long.parseLong(userIdToShareTo.rawId()));
+        for (FeedItem item : postsToShare) {
+            if (item.type != FeedItem.Type.POST) {
+                Log.d("SharePosts/toNode attempting to share non-post");
+                continue;
+            }
+            builder.addPostIds(item.id);
+        }
+        return builder.build();
+    }
 }

@@ -165,15 +165,19 @@ public class PublishedEntry {
 
     static @Nullable PublishedEntry getFeedEntry(@NonNull FeedItem feedItem) {
         if (feedItem.payload != null) {
-            PublishedEntry.Builder entryBuilder = readEncodedEntryString(feedItem.payload);
-            entryBuilder.id(feedItem.id);
-            entryBuilder.timestamp(feedItem.timestamp);
-            if (feedItem.publisherId != null) {
-                entryBuilder.user(feedItem.publisherId);
-            }
-            return entryBuilder.build();
+            return getFeedEntry(feedItem.payload, feedItem.id, feedItem.timestamp, feedItem.publisherId);
         }
         return null;
+    }
+
+    static PublishedEntry getFeedEntry(@NonNull String payload, @NonNull String id, long timestamp, String publisherId) {
+        PublishedEntry.Builder entryBuilder = readEncodedEntryString(payload);
+        entryBuilder.id(id);
+        entryBuilder.timestamp(timestamp);
+        if (publisherId != null) {
+            entryBuilder.user(publisherId);
+        }
+        return entryBuilder.build();
     }
 
     private static @Nullable PublishedEntry getEntry(@NonNull PubSubItem item) {

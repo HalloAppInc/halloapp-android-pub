@@ -3,6 +3,8 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.proto.server.Presence;
+
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
@@ -45,5 +47,12 @@ public class PresenceStanza extends Stanza {
         sb.append("type=").append(type);
         sb.append(']');
         return sb.toString();
+    }
+
+    public Presence toProto() {
+        return Presence.newBuilder()
+                .setId(getStanzaId())
+                .setType(Presence.Type.valueOf(type.toUpperCase()))
+                .build();
     }
 }

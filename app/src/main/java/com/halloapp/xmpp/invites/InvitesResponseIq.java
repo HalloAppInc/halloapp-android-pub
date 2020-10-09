@@ -2,8 +2,11 @@ package com.halloapp.xmpp.invites;
 
 import androidx.annotation.Nullable;
 
+import com.halloapp.proto.server.InvitesResponse;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
+import com.halloapp.xmpp.HalloIq;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
@@ -16,7 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class InvitesResponseIq extends IQ {
+public class InvitesResponseIq extends HalloIq {
 
     public static final String ELEMENT = "invites";
     public static final String NAMESPACE = "halloapp:invites";
@@ -101,6 +104,11 @@ public class InvitesResponseIq extends IQ {
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+        return null;
+    }
+
+    @Override
+    public Iq toProtoIq() {
         return null;
     }
 

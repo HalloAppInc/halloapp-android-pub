@@ -3,12 +3,16 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.proto.server.Contact;
+import com.halloapp.proto.server.ContactList;
+import com.halloapp.proto.server.Iq;
+
 import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;
 
 import java.util.Collection;
 
-public class ContactsSyncRequestIq extends IQ {
+public class ContactsSyncRequestIq extends HalloIq {
 
     private final static String ELEMENT = "contact_list";
     private final static String NAMESPACE = "halloapp:user:contacts";
@@ -70,5 +74,35 @@ public class ContactsSyncRequestIq extends IQ {
             }
         }
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        ContactList.Builder builder = ContactList.newBuilder();
+        builder.setType(isFullSync ? ContactList.Type.FULL : ContactList.Type.DELTA);
+        if (syncId != null) {
+            builder.setSyncId(syncId);
+            builder.setBatchIndex(index);
+            builder.setIsLast(lastBatch);
+        }
+        if (deletePhones != null) {
+            for (String phone : deletePhones) {
+                Contact contact = Contact.newBuilder()
+                        .setAction(Contact.Action.DELETE)
+                        .setNormalized(phone)
+                        .build();
+                builder.addContacts(contact);
+            }
+        }
+        if (addPhones != null) {
+            for (String phone : addPhones) {
+                Contact contact = Contact.newBuilder()
+                        .setAction(Contact.Action.ADD)
+                        .setRaw(phone)
+                        .build();
+                builder.addContacts(contact);
+            }
+        }
+        return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setContactList(builder.build()).build();
     }
 }

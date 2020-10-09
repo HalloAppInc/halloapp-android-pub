@@ -4,13 +4,18 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.server.Invite;
+import com.halloapp.proto.server.InvitesRequest;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.xmpp.HalloIq;
+
 import org.jivesoftware.smack.packet.IQ;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class InvitesRequestIq extends IQ {
+public class InvitesRequestIq extends HalloIq {
 
     public static final String ELEMENT = "invites";
     public static final String NAMESPACE = "halloapp:invites";
@@ -51,5 +56,14 @@ public class InvitesRequestIq extends IQ {
             xml.closeEmptyElement();
         }
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        InvitesRequest.Builder builder = InvitesRequest.newBuilder();
+        for (String phone : invitedNumbers) {
+            builder.addInvites(Invite.newBuilder().setPhone(phone).build());
+        }
+        return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setInvitesRequest(builder.build()).build();
     }
 }

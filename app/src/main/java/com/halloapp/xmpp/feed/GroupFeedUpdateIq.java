@@ -1,11 +1,18 @@
 package com.halloapp.xmpp.feed;
 
+import android.util.Base64;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.GroupFeedItem;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Post;
+import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -16,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class GroupFeedUpdateIq extends IQ {
+public class GroupFeedUpdateIq extends HalloIq {
 
     public static final String ELEMENT = "group_feed";
     public static final String NAMESPACE = "halloapp:group:feed";
@@ -63,5 +70,26 @@ public class GroupFeedUpdateIq extends IQ {
         xml.rightAngleBracket();
         feedItem.toNode(xml);
         return xml;
+    }
+
+    private GroupFeedItem.Action getProtoAction() {
+        switch (action) {
+            case Action.PUBLISH:
+                return GroupFeedItem.Action.PUBLISH;
+            case Action.RETRACT:
+                return GroupFeedItem.Action.RETRACT;
+        }
+        return null;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        Post.Builder builder = Post.newBuilder();
+        if (feedItem.payload != null) {
+            builder.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+        }
+
+        GroupFeedItem groupFeedItem = GroupFeedItem.newBuilder().setAction(getProtoAction()).setGid(groupId.rawId()).build();
+        return Iq.newBuilder().setType(Iq.Type.SET).setGroupFeedItem(groupFeedItem).build();
     }
 }

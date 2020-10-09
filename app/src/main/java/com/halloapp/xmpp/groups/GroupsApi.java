@@ -8,6 +8,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.util.Observable;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -50,7 +51,7 @@ public class GroupsApi {
 
     public Observable<Boolean> deleteGroup(@NonNull GroupId groupId) {
         final DeleteGroupIq requestIq = new DeleteGroupIq(groupId);
-        final Observable<IQ> observable = connection.sendRequestIq(requestIq);
+        final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return true;
         });
@@ -123,7 +124,7 @@ public class GroupsApi {
 
     public Observable<Boolean> leaveGroup(@NonNull GroupId groupId) {
         final LeaveGroupIq requestIq = new LeaveGroupIq(groupId);
-        final Observable<IQ> observable = connection.sendRequestIq(requestIq);
+        final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             // TODO(jack): mark group as left somehow
             return true;

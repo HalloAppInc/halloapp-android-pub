@@ -5,12 +5,16 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.GroupMember;
+import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.xmpp.HalloIq;
 
 import org.jivesoftware.smack.packet.IQ;
 
 import java.util.List;
 
-public class PromoteDemoteAdminsIq extends IQ {
+public class PromoteDemoteAdminsIq extends HalloIq {
 
     public static final String ELEMENT = "group";
     public static final String NAMESPACE = "halloapp:groups";
@@ -47,5 +51,31 @@ public class PromoteDemoteAdminsIq extends IQ {
             }
         }
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        GroupStanza.Builder builder = GroupStanza.newBuilder();
+        builder.setAction(GroupStanza.Action.MODIFY_ADMINS);
+        builder.setGid(groupId.rawId());
+        if (promoteUids != null) {
+            for (UserId uid : promoteUids) {
+                GroupMember groupMember = GroupMember.newBuilder()
+                        .setUid(Long.parseLong(uid.rawId()))
+                        .setAction(GroupMember.Action.PROMOTE)
+                        .build();
+                builder.addMembers(groupMember);
+            }
+        }
+        if (demoteUids != null) {
+            for (UserId uid : demoteUids) {
+                GroupMember groupMember = GroupMember.newBuilder()
+                        .setUid(Long.parseLong(uid.rawId()))
+                        .setAction(GroupMember.Action.DEMOTE)
+                        .build();
+                builder.addMembers(groupMember);
+            }
+        }
+        return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setGroupStanza(builder.build()).build();
     }
 }

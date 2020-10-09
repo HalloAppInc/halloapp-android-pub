@@ -834,7 +834,7 @@ public class OldConnection extends Connection {
         });
     }
 
-    public <T extends IQ> Observable<T> sendRequestIq(@NonNull IQ iq) {
+    public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
@@ -856,7 +856,7 @@ public class OldConnection extends Connection {
         return iqResponse;
     }
 
-    public void sendRerequest(final String encodedIdentityKey, final @NonNull Jid originalSender, final @NonNull String messageId) {
+    public void sendRerequest(final String encodedIdentityKey, final @NonNull Jid originalSender, final @NonNull UserId senderUserId, final @NonNull String messageId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {
                 Log.e("connection: cannot send message, no connection");
@@ -1244,7 +1244,8 @@ public class OldConnection extends Connection {
                     final ChatMessageElement chatMessage = packet.getExtension(ChatMessageElement.ELEMENT, ChatMessageElement.NAMESPACE);
                     if (chatMessage != null) {
                         Log.i("connection: got chat message " + msg);
-                        Message parsedMessage = chatMessage.getMessage(packet.getFrom(), packet.getStanzaId());
+                        UserId fromUserId = new UserId(packet.getFrom().getLocalpartOrThrow().toString());
+                        Message parsedMessage = chatMessage.getMessage(packet.getFrom(), fromUserId, packet.getStanzaId());
                         processMentions(parsedMessage.mentions);
                         connectionObservers.notifyIncomingMessageReceived(parsedMessage);
                         handled = true;

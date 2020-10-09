@@ -3,6 +3,10 @@ package com.halloapp.xmpp.privacy;
 import androidx.annotation.Nullable;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Packet;
+import com.halloapp.proto.server.UidElement;
+import com.halloapp.xmpp.HalloIq;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.XmlStringBuilder;
@@ -11,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SetPrivacyListIq extends IQ {
+public class SetPrivacyListIq extends HalloIq {
 
     public static final String ELEMENT = "privacy_list";
     public static final String NAMESPACE = "halloapp:user:privacy";
@@ -53,5 +57,26 @@ public class SetPrivacyListIq extends IQ {
         xmlStringBuilder.rightAngleBracket();
         xmlStringBuilder.append(uid.rawId());
         xmlStringBuilder.closeElement("uid");
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        com.halloapp.proto.server.PrivacyList.Builder builder = com.halloapp.proto.server.PrivacyList.newBuilder();
+        builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type));
+        for (UserId userId : usersAdd) {
+            addUid(builder, userId, true);
+        }
+        for (UserId userId : usersDelete) {
+            addUid(builder, userId, false);
+        }
+        return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setPrivacyList(builder.build()).build();
+    }
+
+    private void addUid(com.halloapp.proto.server.PrivacyList.Builder builder, UserId userId, boolean add) {
+        UidElement uidElement = UidElement.newBuilder()
+                .setAction(add ? UidElement.Action.ADD : UidElement.Action.DELETE)
+                .setUid(Long.parseLong(userId.rawId()))
+                .build();
+        builder.addUidElements(uidElement);
     }
 }

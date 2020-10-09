@@ -3,11 +3,13 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.WhisperKeys;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;
 
-public class WhisperKeysDownloadIq extends IQ {
+public class WhisperKeysDownloadIq extends HalloIq {
 
     private static final String ELEMENT = "whisper_keys";
     private static final String NAMESPACE = "halloapp:whisper:keys";
@@ -35,6 +37,11 @@ public class WhisperKeysDownloadIq extends IQ {
 
         xml.rightAngleBracket();
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        return Iq.newBuilder().setId(getStanzaId()).setWhisperKeys(WhisperKeys.newBuilder().setAction(WhisperKeys.Action.GET).setUid(Long.parseLong(userId.rawId())).build()).build();
     }
 }
 

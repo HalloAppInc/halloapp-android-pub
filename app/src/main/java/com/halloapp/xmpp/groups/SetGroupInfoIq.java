@@ -4,10 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.xmpp.HalloIq;
 
 import org.jivesoftware.smack.packet.IQ;
 
-public class SetGroupInfoIq extends IQ {
+public class SetGroupInfoIq extends HalloIq {
 
     public static final String ELEMENT = "group";
     public static final String NAMESPACE = "halloapp:groups";
@@ -42,5 +45,19 @@ public class SetGroupInfoIq extends IQ {
         }
         xml.rightAngleBracket();
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        GroupStanza.Builder builder = GroupStanza.newBuilder();
+        builder.setGid(groupId.rawId());
+        builder.setAction(GroupStanza.Action.SET_NAME);
+        if (name != null) {
+            builder.setName(name);
+        }
+        if (avatar != null) {
+            builder.setAvatarId(avatar);
+        }
+        return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setGroupStanza(builder.build()).build();
     }
 }

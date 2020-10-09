@@ -2,6 +2,8 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.server.Ack;
+
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
@@ -31,5 +33,9 @@ public class AckStanza extends Stanza {
         logCommonAttributes(sb);
         sb.append(']');
         return sb.toString();
+    }
+
+    public Ack toProto() {
+        return Ack.newBuilder().setId(getStanzaId()).build();
     }
 }

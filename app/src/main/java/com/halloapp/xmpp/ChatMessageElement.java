@@ -6,6 +6,7 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.Media;
@@ -18,6 +19,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.stats.Stats;
@@ -117,7 +119,7 @@ public class ChatMessageElement implements ExtensionElement {
         return xml;
     }
 
-    Message getMessage(Jid from, String id) {
+    Message getMessage(Jid from, UserId fromUserId, String id) {
         if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
             try {
                 UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
@@ -137,7 +139,7 @@ public class ChatMessageElement implements ExtensionElement {
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
-                    EncryptedSessionManager.getInstance().sendRerequest(from, id);
+                    EncryptedSessionManager.getInstance().sendRerequest(from, fromUserId, id);
                 }
             }
         }
@@ -176,6 +178,20 @@ public class ChatMessageElement implements ExtensionElement {
 
     private String getEncodedEntryString() {
         return Base64.encodeToString(getEncodedEntry(), Base64.NO_WRAP);
+    }
+
+    private byte[] getEncryptedEntry() {
+        try {
+            byte[] encodedEntry = getEncodedEntry();
+            byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
+            stats.reportEncryptSuccess();
+            return encryptedEntry;
+        } catch (GeneralSecurityException e) {
+            Log.e("Failed to encrypt", e);
+            Log.sendErrorReport("Encryption failure");
+            stats.reportEncryptError("encryption failed");
+        }
+        return null;
     }
 
     private String getEncryptedEntryString() {
@@ -222,6 +238,52 @@ public class ChatMessageElement implements ExtensionElement {
         final byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);
 
         return new ChatMessageElement(bytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp);
+    }
+
+    private static ChatMessageElement readEncryptedEntryProto(@NonNull byte[] encryptedBytes, byte[] identityKeyBytes, Integer oneTimePreKeyId, long timestamp) {
+        PublicEdECKey identityKey = new PublicEdECKey(identityKeyBytes);
+        return new ChatMessageElement(encryptedBytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp);
+    }
+
+    public ChatStanza toProto() {
+        ChatStanza.Builder builder = ChatStanza.newBuilder();
+        builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
+
+        if (sessionSetupInfo != null) {
+            builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
+            if (sessionSetupInfo.oneTimePreKeyId != null) {
+                builder.setOneTimePreKeyId(sessionSetupInfo.oneTimePreKeyId);
+            }
+        }
+
+        builder.setEncPayload(ByteString.copyFrom(getEncryptedEntry()));
+
+        return builder.build();
+    }
+
+    public static ChatMessageElement fromProto(@NonNull ChatStanza chatStanza) {
+        long timestamp = chatStanza.getTimestamp() * 1000L;
+
+        ByteString encrypted = chatStanza.getEncPayload();
+        ByteString plaintext = chatStanza.getPayload();
+
+        ChatMessage plaintextChatMessage = null;
+        if (plaintext != null) {
+            plaintextChatMessage = MessageElementHelper.readEncodedEntry(plaintext.toByteArray());
+        }
+
+        ChatMessageElement ret = null;
+        if (encrypted != null && encrypted.size() > 0) {
+            ByteString identityKey = chatStanza.getPublicKey();
+            ret = readEncryptedEntryProto(encrypted.toByteArray(), identityKey.toByteArray(), (int) chatStanza.getOneTimePreKeyId(), timestamp);
+            ret.plaintextChatMessage = plaintextChatMessage;
+        }
+
+        if (ret == null) {
+            ret = new ChatMessageElement(plaintextChatMessage, timestamp);
+        }
+
+        return ret;
     }
 
     public static class Provider extends ExtensionElementProvider<ChatMessageElement> {

@@ -2,6 +2,8 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Contact;
 import com.halloapp.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -46,6 +48,27 @@ public class ContactInfo {
             } else {
                 Xml.skip(parser);
             }
+        }
+    }
+
+    ContactInfo(@NonNull Contact contact) {
+        if (contact.getRaw() != null) {
+            phone = contact.getRaw();
+        }
+        if (contact.getNormalized() != null) {
+            normalizedPhone = contact.getNormalized();
+        }
+        if (contact.getRole() != null) {
+            role = contact.getRole().name().toLowerCase();
+        }
+        if (contact.getUid() != 0) {
+            userId = Long.toString(contact.getUid());
+        }
+        if (contact.getAvatarId() != null) {
+            avatarId = contact.getAvatarId();
+        }
+        if (contact.getName() != null) {
+            halloName = contact.getName();
         }
     }
 }

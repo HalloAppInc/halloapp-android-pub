@@ -99,9 +99,9 @@ public class EncryptedSessionManager {
         }
     }
 
-    public void sendRerequest(final @NonNull Jid originalSender, final @NonNull String messageId) {
+    public void sendRerequest(final @NonNull Jid originalSender, final @NonNull UserId senderUserId, final @NonNull String messageId) {
         String encodedIdentityKey = Base64.encodeToString(getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
-        connection.sendRerequest(encodedIdentityKey, originalSender, messageId);
+        connection.sendRerequest(encodedIdentityKey, originalSender, senderUserId, messageId);
     }
 
     public void sendMessage(final @NonNull Message message) {

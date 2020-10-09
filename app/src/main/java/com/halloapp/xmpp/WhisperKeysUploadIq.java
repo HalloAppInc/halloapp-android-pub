@@ -5,12 +5,16 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.WhisperKeys;
+
 import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;
 
 import java.util.List;
 
-public class WhisperKeysUploadIq extends IQ {
+public class WhisperKeysUploadIq extends HalloIq {
 
     public static final String ELEMENT = "whisper_keys";
     public static final String NAMESPACE = "halloapp:whisper:keys";
@@ -60,6 +64,20 @@ public class WhisperKeysUploadIq extends IQ {
         }
 
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        WhisperKeys.Builder builder = WhisperKeys.newBuilder();
+        builder.setAction(isFullUpload() ? WhisperKeys.Action.SET : WhisperKeys.Action.ADD);
+        if (isFullUpload()) {
+            builder.setIdentityKey(ByteString.copyFrom(identityKey));
+            builder.setSignedKey(ByteString.copyFrom(signedPreKey));
+        }
+        for (byte[] oneTimePreKey : oneTimePreKeys) {
+            builder.addOneTimeKeys(ByteString.copyFrom(oneTimePreKey));
+        }
+        return Iq.newBuilder().setId(getStanzaId()).setType(Iq.Type.SET).setWhisperKeys(builder.build()).build();
     }
 
     private static String encode(byte[] bytes) {

@@ -1,10 +1,18 @@
 package com.halloapp.xmpp.feed;
 
+import android.util.Base64;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Audience;
+import com.halloapp.proto.server.Comment;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Post;
+import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -15,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FeedUpdateIq extends IQ {
+public class FeedUpdateIq extends HalloIq {
 
     public static final String ELEMENT = "feed";
     public static final String NAMESPACE = "halloapp:feed";
@@ -97,5 +105,49 @@ public class FeedUpdateIq extends IQ {
             }
         }
         return xml;
+    }
+
+    private com.halloapp.proto.server.FeedItem.Action getProtoAction() {
+        switch (action) {
+            case Action.PUBLISH:
+                return com.halloapp.proto.server.FeedItem.Action.PUBLISH;
+            case Action.RETRACT:
+                return com.halloapp.proto.server.FeedItem.Action.RETRACT;
+            case Action.SHARE:
+                return com.halloapp.proto.server.FeedItem.Action.SHARE;
+        }
+        return null;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
+        builder.setAction(getProtoAction());
+
+        if (action == Action.SHARE && !sharePosts.isEmpty()) {
+            for (SharePosts sharePost : sharePosts) {
+                builder.addShareStanzas(sharePost.toProto());
+            }
+        } else if (feedItem.type == FeedItem.Type.POST) {
+            Post.Builder pb = Post.newBuilder();
+            if (audienceType != null && audienceList != null) {
+                List<Long> uids = new ArrayList<>();
+                for (UserId userId : audienceList) {
+                    uids.add(Long.parseLong(userId.rawId()));
+                }
+                pb.setAudience(Audience.newBuilder().setType(Audience.Type.valueOf(audienceType.toUpperCase())).addAllUids(uids).build());
+            }
+            pb.setId(feedItem.id);
+            pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            builder.setPost(pb.build());
+        } else if (feedItem.type == FeedItem.Type.COMMENT) {
+            Comment.Builder cb = Comment.newBuilder();
+            cb.setId(feedItem.id);
+            cb.setPostId(feedItem.parentPostId);
+            cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            builder.setComment(cb.build());
+        }
+
+        return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setFeedItem(builder.build()).build();
     }
 }

@@ -2,7 +2,9 @@ package com.halloapp.xmpp.privacy;
 
 import androidx.annotation.Nullable;
 
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Xml;
+import com.halloapp.xmpp.HalloIq;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
@@ -13,7 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PrivacyListsResponseIq extends IQ {
+public class PrivacyListsResponseIq extends HalloIq {
 
     public static final String ELEMENT = "privacy_lists";
     public static final String NAMESPACE = "halloapp:user:privacy";
@@ -52,6 +54,11 @@ public class PrivacyListsResponseIq extends IQ {
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+        return null;
+    }
+
+    @Override
+    public Iq toProtoIq() {
         return null;
     }
 

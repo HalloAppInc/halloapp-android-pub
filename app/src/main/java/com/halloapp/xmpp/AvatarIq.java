@@ -1,6 +1,10 @@
 package com.halloapp.xmpp;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Avatar;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.UploadAvatar;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -11,7 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public class AvatarIq extends IQ {
+public class AvatarIq extends HalloIq {
 
     public static final String ELEMENT = "avatar";
 
@@ -28,6 +32,18 @@ public class AvatarIq extends IQ {
     final int width;
     final String avatarId;
     final UserId userId;
+    final byte[] bytes;
+
+    AvatarIq(byte[] bytes) {
+        super(ELEMENT, NAMESPACE);
+        this.base64 = null;
+        this.numBytes = 0;
+        this.height = 0;
+        this.width = 0;
+        this.avatarId = null;
+        this.userId = null;
+        this.bytes = bytes;
+    }
 
     AvatarIq(Jid to, String base64, long numBytes, int height, int width) {
         super(ELEMENT, NAMESPACE);
@@ -39,6 +55,7 @@ public class AvatarIq extends IQ {
         this.width = width;
         this.avatarId = null;
         this.userId = null;
+        this.bytes = null;
     }
 
     AvatarIq(Jid to, UserId userId) {
@@ -51,6 +68,7 @@ public class AvatarIq extends IQ {
         this.width = 0;
         this.avatarId = null;
         this.userId = userId;
+        this.bytes = null;
     }
 
     private AvatarIq(String avatarId) {
@@ -61,6 +79,7 @@ public class AvatarIq extends IQ {
         this.width = 0;
         this.avatarId = avatarId;
         this.userId = null;
+        this.bytes = null;
     }
 
     @Override
@@ -77,6 +96,19 @@ public class AvatarIq extends IQ {
         }
 
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        if (userId != null) {
+            Avatar.Builder builder = Avatar.newBuilder();
+            builder.setUid(Long.parseLong(userId.rawId()));
+            return Iq.newBuilder().setType(Iq.Type.GET).setId(getStanzaId()).setAvatar(builder.build()).build();
+        } else {
+            UploadAvatar.Builder builder = UploadAvatar.newBuilder();
+            builder.setData(ByteString.copyFrom(bytes));
+            return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setUploadAvatar(builder.build()).build();
+        }
     }
 
     public static class Provider extends IQProvider<AvatarIq> {

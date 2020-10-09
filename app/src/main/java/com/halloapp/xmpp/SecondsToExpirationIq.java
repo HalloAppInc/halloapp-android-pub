@@ -3,6 +3,7 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 
 import com.halloapp.Constants;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
@@ -14,7 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public class SecondsToExpirationIq extends IQ {
+public class SecondsToExpirationIq extends HalloIq {
 
     final static String ELEMENT = "client_version";
     final static String NAMESPACE = "halloapp:client:version";
@@ -23,6 +24,10 @@ public class SecondsToExpirationIq extends IQ {
     private final static String ELEMENT_SECONDS_LEFT = "seconds_left";
 
     Integer secondsLeft = null;
+
+    SecondsToExpirationIq() {
+        super(ELEMENT, NAMESPACE);
+    }
 
     SecondsToExpirationIq(@NonNull Jid to) {
         super(ELEMENT, NAMESPACE);
@@ -57,6 +62,11 @@ public class SecondsToExpirationIq extends IQ {
         xml.append(Constants.USER_AGENT);
         xml.closeElement(ELEMENT_VERSION);
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        return null;
     }
 
     public static class Provider extends IQProvider<SecondsToExpirationIq> {

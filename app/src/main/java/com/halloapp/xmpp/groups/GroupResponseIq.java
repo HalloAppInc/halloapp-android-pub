@@ -1,8 +1,10 @@
 package com.halloapp.xmpp.groups;
 
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
+import com.halloapp.xmpp.HalloIq;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
@@ -13,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupResponseIq extends IQ {
+public class GroupResponseIq extends HalloIq {
 
     public static final String ELEMENT = "group";
     public static final String NAMESPACE = "halloapp:groups";
@@ -58,6 +60,11 @@ public class GroupResponseIq extends IQ {
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+        return null;
+    }
+
+    @Override
+    public Iq toProtoIq() {
         return null;
     }
 
