@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.ChatState;
 import com.halloapp.util.Log;
 
 import org.jivesoftware.smack.packet.Stanza;
@@ -62,5 +63,13 @@ public class ChatStateStanza extends Stanza {
         sb.append("type=").append(type);
         sb.append(']');
         return sb.toString();
+    }
+
+    public ChatState toProto() {
+        return ChatState.newBuilder()
+                .setType(ChatState.Type.valueOf(type.toUpperCase()))
+                .setThreadId(threadId)
+                .setThreadType(ChatState.ThreadType.valueOf(threadType.toUpperCase()))
+                .build();
     }
 }

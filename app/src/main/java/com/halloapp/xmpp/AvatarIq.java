@@ -111,6 +111,10 @@ public class AvatarIq extends HalloIq {
         }
     }
 
+    public static AvatarIq fromProto(Avatar avatar) {
+        return new AvatarIq(avatar.getId());
+    }
+
     public static class Provider extends IQProvider<AvatarIq> {
 
         @Override

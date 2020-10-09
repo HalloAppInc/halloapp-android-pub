@@ -2,7 +2,9 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.proto.server.ClientVersion;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
@@ -25,8 +27,9 @@ public class SecondsToExpirationIq extends HalloIq {
 
     Integer secondsLeft = null;
 
-    SecondsToExpirationIq() {
+    SecondsToExpirationIq(int secondsLeft) {
         super(ELEMENT, NAMESPACE);
+        this.secondsLeft = secondsLeft;
     }
 
     SecondsToExpirationIq(@NonNull Jid to) {
@@ -66,7 +69,18 @@ public class SecondsToExpirationIq extends HalloIq {
 
     @Override
     public Iq toProtoIq() {
-        return null;
+        return Iq.newBuilder()
+                .setType(Iq.Type.GET)
+                .setId(getStanzaId())
+                .setClientVersion(
+                        ClientVersion.newBuilder()
+                                .setVersion(BuildConfig.VERSION_NAME)
+                                .build())
+                .build();
+    }
+
+    public static SecondsToExpirationIq fromProto(ClientVersion clientVersion) {
+        return new SecondsToExpirationIq((int)clientVersion.getExpiresInSeconds());
     }
 
     public static class Provider extends IQProvider<SecondsToExpirationIq> {

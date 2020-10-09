@@ -61,8 +61,10 @@ public class InvitesRequestIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         InvitesRequest.Builder builder = InvitesRequest.newBuilder();
-        for (String phone : invitedNumbers) {
-            builder.addInvites(Invite.newBuilder().setPhone(phone).build());
+        if (invitedNumbers != null) {
+            for (String phone : invitedNumbers) {
+                builder.addInvites(Invite.newBuilder().setPhone(phone).build());
+            }
         }
         return Iq.newBuilder().setType(Iq.Type.SET).setId(getStanzaId()).setInvitesRequest(builder.build()).build();
     }

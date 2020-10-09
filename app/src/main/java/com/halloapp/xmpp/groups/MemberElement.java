@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.StringDef;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.GroupMember;
 import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
@@ -80,6 +81,15 @@ public class MemberElement implements ExtensionElement {
         action = parser.getAttributeValue("", ATTRIBUTE_ACTION);
         result = parser.getAttributeValue("", ATTRIBUTE_RESULT);
         reason = parser.getAttributeValue("", ATTRIBUTE_REASON);
+    }
+
+    MemberElement(GroupMember groupMember) {
+        uid = new UserId(Long.toString(groupMember.getUid()));
+        type = groupMember.getType().name().toLowerCase();
+        name = groupMember.getName();
+        action = groupMember.getAction().name().toLowerCase();
+        result = groupMember.getResult();
+        reason = groupMember.getReason();
     }
 
     @Override

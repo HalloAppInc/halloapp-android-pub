@@ -2,10 +2,14 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.PushRegister;
+import com.halloapp.proto.server.PushToken;
+
 import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;
 
-public class PushRegisterRequestIq extends IQ {
+public class PushRegisterRequestIq extends HalloIq {
 
     private static final String ELEMENT = "push_register";
     private static final String NAMESPACE = "halloapp:push:notifications";
@@ -31,6 +35,22 @@ public class PushRegisterRequestIq extends IQ {
         xml.append(token);
         xml.closeElement(ELEMENT_TOKEN);
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        return Iq.newBuilder()
+                .setId(getStanzaId())
+                .setType(Iq.Type.SET)
+                .setPushRegister(
+                        PushRegister.newBuilder()
+                                .setPushToken(
+                                        PushToken.newBuilder()
+                                                .setOs(PushToken.Os.ANDROID)
+                                                .setToken(token)
+                                                .build())
+                                .build())
+                .build();
     }
 }
 

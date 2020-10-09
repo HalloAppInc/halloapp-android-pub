@@ -2,6 +2,9 @@ package com.halloapp.xmpp.props;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.common.util.Hex;
+import com.halloapp.proto.server.Prop;
+import com.halloapp.proto.server.Props;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
@@ -23,7 +26,7 @@ public class ServerPropsResponseIq extends IQ {
 
     private static final String ELEMENT_PROP = "prop";
 
-    private final Map<String, String> propMap = new HashMap<>();
+    private Map<String, String> propMap = new HashMap<>();
     private String hash;
 
     protected ServerPropsResponseIq(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -46,6 +49,13 @@ public class ServerPropsResponseIq extends IQ {
         }
     }
 
+    private ServerPropsResponseIq(Map<String, String> propMap, String hash) {
+        super(ELEMENT, NAMESPACE);
+
+        this.propMap = propMap;
+        this.hash = hash;
+    }
+
     public Map<String, String> getProps() {
         return propMap;
     }
@@ -57,6 +67,15 @@ public class ServerPropsResponseIq extends IQ {
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         return null;
+    }
+
+    public static ServerPropsResponseIq fromProto(Props props) {
+        final Map<String, String> propMap = new HashMap<>();
+        final String hash = Hex.bytesToStringLowercase(props.getHash().toByteArray());
+        for (Prop prop : props.getPropsList()) {
+            propMap.put(prop.getName(), prop.getValue());
+        }
+        return new ServerPropsResponseIq(propMap, hash);
     }
 
     public static class Provider extends IQProvider<ServerPropsResponseIq> {

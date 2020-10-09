@@ -1,6 +1,8 @@
 package com.halloapp.xmpp.groups;
 
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.server.GroupMember;
+import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
@@ -58,6 +60,20 @@ public class GroupResponseIq extends HalloIq {
         }
     }
 
+    private GroupResponseIq(GroupStanza groupStanza) {
+        super(ELEMENT, NAMESPACE);
+        groupId = new GroupId(groupStanza.getGid());
+        name = groupStanza.getName();
+        description = null; // TODO(jack): fetch this once supported
+        avatar = groupStanza.getAvatarId();
+        action = groupStanza.getAction().name();
+        result = null;
+        memberElements = new ArrayList<>();
+        for (GroupMember groupMember : groupStanza.getMembersList()) {
+            memberElements.add(new MemberElement(groupMember));
+        }
+    }
+
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         return null;
@@ -66,6 +82,10 @@ public class GroupResponseIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         return null;
+    }
+
+    public static GroupResponseIq fromProto(GroupStanza groupStanza) {
+        return new GroupResponseIq(groupStanza);
     }
 
     // TODO(jack): What if IQ interface had getProvider() function to make adding providers easier?

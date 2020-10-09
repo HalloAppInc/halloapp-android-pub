@@ -25,6 +25,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
+import com.halloapp.proto.server.Avatar;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.proto.server.ChatState;
 import com.halloapp.proto.server.ClientMode;
@@ -46,6 +47,9 @@ import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedMessageElement;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
+import com.halloapp.xmpp.groups.GroupResponseIq;
+import com.halloapp.xmpp.props.ServerPropsRequestIq;
+import com.halloapp.xmpp.props.ServerPropsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
 import com.halloapp.xmpp.util.ExceptionHandler;
 import com.halloapp.xmpp.util.Observable;
@@ -53,6 +57,8 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 import com.halloapp.xmpp.util.ResponseHandler;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.Async;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -265,29 +271,86 @@ public class NewConnection extends Connection {
 
     @Override
     public void clientExpired() {
-
+        clientExpired = true;
+        disconnect();
     }
 
-    @Override
     public void disconnect() {
+        executor.execute(this::disconnectInBackground);
+    }
 
+    @WorkerThread
+    private void disconnectInBackground() {
+        if (sslSocket == null) {
+            Log.e("connection: cannot disconnect, no connection");
+            return;
+        }
+        if (isConnected()) {
+            Log.i("connection: disconnecting");
+//            connection.setReplyTimeout(1_000);
+            try {
+                sslSocket.close();
+            } catch (IOException e) {
+                Log.w("Failed to close socket", e);
+            }
+        }
+        sslSocket = null;
+        connectionObservers.notifyDisconnected();
     }
 
     @Override
     public void requestServerProps() {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: request server props: no connection");
+                return;
+            }
+            ServerPropsRequestIq requestIq = new ServerPropsRequestIq();
+            requestIq.setTo(SERVER_JID);
+            try {
+                Observable<ServerPropsResponseIq> observable = sendIqRequestAsync(requestIq).map(response -> ServerPropsResponseIq.fromProto(response.getProps()));
+                ServerPropsResponseIq responseIq = observable.await();
+                connectionObservers.notifyServerPropsReceived(responseIq.getProps(), responseIq.getHash());
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: failed to get server props", e);
+            }
+        });
     }
 
     @Override
     public Future<Integer> requestSecondsToExpiration() {
         return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: request seconds to expiration: no connection");
+                return null;
+            }
+            final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq(SERVER_JID);
+            try {
+                final SecondsToExpirationIq iqResponse = sendIqRequestAsync(secondsToExpirationIq).map(response -> SecondsToExpirationIq.fromProto(response.getClientVersion())).await();
+                return iqResponse.secondsLeft;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: request seconds to expiration", e);
+            }
             return null;
         });
     }
 
     @Override
     public Future<MediaUploadIq.Urls> requestMediaUpload(long fileSize) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: request media upload: no connection");
+                return null;
+            }
+            final MediaUploadIq mediaUploadIq = new MediaUploadIq(SERVER_JID, fileSize);
+            try {
+                final MediaUploadIq responseIq = sendIqRequestAsync(mediaUploadIq).map(response -> MediaUploadIq.fromProto(response.getUploadMedia())).await();
+                return responseIq.urls;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: request media upload", e);
+            }
+            return null;
+        });
     }
 
     @Override
@@ -316,17 +379,50 @@ public class NewConnection extends Connection {
 
     @Override
     public void sendPushToken(@NonNull String pushToken) {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: send push token: no connection");
+                return;
+            }
+            final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(SERVER_JID, pushToken);
+            try {
+                final Iq response = sendIqRequestAsync(pushIq).await();
+                Log.d("connection: response after setting the push token " + response.toString());
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot send push token", e);
+            }
+        });
     }
 
     @Override
     public Future<Boolean> sendName(@NonNull String name) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: send name: no connection");
+                return Boolean.FALSE;
+            }
+            final UserNameIq nameIq = new UserNameIq(SERVER_JID, name);
+            try {
+                final Iq response = sendIqRequestAsync(nameIq).await();
+                Log.d("connection: response after setting name " + response.toString());
+                return Boolean.TRUE;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot send name", e);
+                return Boolean.FALSE;
+            }
+        });
     }
 
     @Override
     public void subscribePresence(UserId userId) {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: request presence subscription: no connection");
+                return;
+            }
+            PresenceStanza stanza = new PresenceStanza(userIdToJid(userId), "subscribe");
+            sendPacket(Packet.newBuilder().setPresence(stanza.toProto()).build());
+        });
     }
 
     @Override
@@ -345,7 +441,18 @@ public class NewConnection extends Connection {
 
     @Override
     public void updateChatState(@NonNull ChatId chat, int state) {
-
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: update chat state: no connection");
+                return;
+            }
+//            try {
+                ChatStateStanza stanza = new ChatStateStanza(SERVER_JID, state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
+                sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
+//            } catch (InterruptedException | SmackException.NotConnectedException e) {
+//                Log.e("Failed to update chat state", e);
+//            }
+        });
     }
 
     @Override
@@ -369,7 +476,7 @@ public class NewConnection extends Connection {
 
     @Override
     public void uploadMoreOneTimePreKeys(@NonNull List<byte[]> oneTimePreKeys) {
-
+        uploadKeys(null, null, oneTimePreKeys);
     }
 
     @Override
@@ -394,27 +501,94 @@ public class NewConnection extends Connection {
 
     @Override
     public Future<Integer> getOneTimeKeyCount() {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: get one time key count: no connection");
+                return null;
+            }
+            final WhisperKeysCountIq countIq = new WhisperKeysCountIq(SERVER_JID);
+            try {
+                final WhisperKeysResponseIq response = sendIqRequestAsync(countIq).map(res -> WhisperKeysResponseIq.fromProto(res.getWhisperKeys())).await();
+                Log.d("connection: response for get key count  " + response.toString());
+                return response.count;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot get one time key count", e);
+            }
+            return null;
+        });
     }
 
     @Override
     public Future<Void> sendStats(List<Stats.Counter> counters) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: send stats: no connection");
+                return null;
+            }
+            final StatsIq statsIq = new StatsIq(SERVER_JID, counters);
+            try {
+                final Iq response = sendIqRequestAsync(statsIq).await();
+                Log.d("connection: response for send stats  " + response.toString());
+                return null;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("connection: cannot send stats", e);
+            }
+            return null;
+        });
     }
 
     @Override
     public Future<String> setAvatar(String base64, long numBytes, int width, int height) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot update avatar, no connection");
+                return null;
+            }
+            try {
+                final AvatarIq avatarIq = new AvatarIq(SERVER_JID, base64, numBytes, height, width);
+                final AvatarIq response = sendIqRequestAsync(avatarIq).map(res -> AvatarIq.fromProto(res.getAvatar())).await();
+                return response.avatarId;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.w("connection: cannot update avatar", e);
+            }
+            return null;
+        });
     }
 
     @Override
     public Future<String> setGroupAvatar(GroupId groupId, String base64) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot set group avatar, no connection");
+                return null;
+            }
+            try {
+                final GroupAvatarIq avatarIq = new GroupAvatarIq(SERVER_JID, groupId, base64);
+                final GroupResponseIq response = sendIqRequestAsync(avatarIq).map(res -> GroupResponseIq.fromProto(res.getGroupStanza())).await();
+                return response.avatar;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.w("connection: cannot update avatar", e);
+            }
+            return null;
+        });
     }
 
     @Override
     public Future<String> getAvatarId(UserId userId) {
-        return null;
+        return executor.submit(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot update avatar, no connection");
+                return null;
+            }
+            try {
+                final AvatarIq setAvatarIq = new AvatarIq(SERVER_JID, userId);
+                final AvatarIq response = sendIqRequestAsync(setAvatarIq).map(res -> AvatarIq.fromProto(res.getAvatar())).await();
+                return response.avatarId;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.w("connection: cannot update avatar", e);
+            }
+            return null;
+        });
     }
 
     @Override
@@ -650,12 +824,12 @@ public class NewConnection extends Connection {
     
     @Override
     public UserId getUserId(@NonNull String user) {
-        return null;
+        return isMe(user) ? UserId.ME : new UserId(user);
     }
 
     @Override
     public boolean getClientExpired() {
-        return false;
+        return clientExpired;
     }
 
     private void processMentions(@NonNull Collection<Mention> mentions) {
@@ -705,6 +879,7 @@ public class NewConnection extends Connection {
                     while (needMoreBytes) {
                         int c = inputStream.read(buf);
                         if (c < 0) {
+                            shutdown();
                             throw new IOException("No bytes read from input stream");
                         }
 
@@ -1057,5 +1232,10 @@ public class NewConnection extends Connection {
             };
             timer.schedule(timerTask, IQ_TIMEOUT_MS);
         }
+    }
+
+    // TODO(jack): Remove once XMPP is gone
+    private static Jid userIdToJid(@NonNull UserId userId) {
+        return JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(userId.rawId()), Domainpart.fromOrNull(XMPP_DOMAIN));
     }
 }

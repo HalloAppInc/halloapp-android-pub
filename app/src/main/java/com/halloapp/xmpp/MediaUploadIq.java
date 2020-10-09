@@ -2,6 +2,9 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.MediaUrl;
+import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -12,7 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
-public class MediaUploadIq extends IQ {
+public class MediaUploadIq extends HalloIq {
 
     final static String ELEMENT = "upload_media";
     final static String NAMESPACE = "ns:upload_media";
@@ -49,11 +52,32 @@ public class MediaUploadIq extends IQ {
         }
     }
 
+    private MediaUploadIq(String patch, String put, String get) {
+        super(ELEMENT, NAMESPACE);
+
+        urls.patchUrl = patch;
+        urls.putUrl = put;
+        urls.getUrl = get;
+    }
+
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         xml.attribute(ATTRIBUTE_FILESIZE, Long.toString(fileSize));
         xml.rightAngleBracket();
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        return Iq.newBuilder()
+                .setType(Iq.Type.GET)
+                .setUploadMedia(UploadMedia.newBuilder().setSize(fileSize))
+                .build();
+    }
+
+    public static MediaUploadIq fromProto(UploadMedia uploadMedia) {
+        MediaUrl mediaUrl = uploadMedia.getUrl();
+        return new MediaUploadIq(mediaUrl.getPatch(), mediaUrl.getPut(), mediaUrl.getGet());
     }
 
     public static class Provider extends IQProvider<MediaUploadIq> {

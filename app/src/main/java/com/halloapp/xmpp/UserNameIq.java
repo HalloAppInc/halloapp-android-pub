@@ -2,10 +2,13 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Name;
+
 import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;
 
-public class UserNameIq extends IQ {
+public class UserNameIq extends HalloIq {
 
     private static final String ELEMENT = "name";
     private static final String NAMESPACE = "halloapp:users:name";
@@ -26,5 +29,13 @@ public class UserNameIq extends IQ {
         xml.rightAngleBracket();
         xml.append(name);
         return xml;
+    }
+
+    @Override
+    public Iq toProtoIq() {
+        return Iq.newBuilder()
+                .setType(Iq.Type.SET)
+                .setName(Name.newBuilder().setName(name).build())
+                .build();
     }
 }
