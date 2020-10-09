@@ -294,5 +294,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.GroupFeedItem getGroupFeedItem();
 
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   * @return Whether the groupAvatar field is set.
+   */
+  boolean hasGroupAvatar();
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   * @return The groupAvatar.
+   */
+  com.halloapp.proto.server.UploadGroupAvatar getGroupAvatar();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

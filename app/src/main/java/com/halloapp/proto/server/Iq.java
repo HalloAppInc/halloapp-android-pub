@@ -148,6 +148,7 @@ public  final class Iq extends
     INVITES_RESPONSE(24),
     NOTIFICATION_PREFS(25),
     GROUP_FEED_ITEM(26),
+    GROUP_AVATAR(27),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -187,6 +188,7 @@ public  final class Iq extends
         case 24: return INVITES_RESPONSE;
         case 25: return NOTIFICATION_PREFS;
         case 26: return GROUP_FEED_ITEM;
+        case 27: return GROUP_AVATAR;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1492,6 +1494,56 @@ public  final class Iq extends
    */
   private void clearGroupFeedItem() {
     if (payloadCase_ == 26) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GROUP_AVATAR_FIELD_NUMBER = 27;
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupAvatar() {
+    return payloadCase_ == 27;
+  }
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.UploadGroupAvatar getGroupAvatar() {
+    if (payloadCase_ == 27) {
+       return (com.halloapp.proto.server.UploadGroupAvatar) payload_;
+    }
+    return com.halloapp.proto.server.UploadGroupAvatar.getDefaultInstance();
+  }
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   */
+  private void setGroupAvatar(com.halloapp.proto.server.UploadGroupAvatar value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 27;
+  }
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   */
+  private void mergeGroupAvatar(com.halloapp.proto.server.UploadGroupAvatar value) {
+    value.getClass();
+  if (payloadCase_ == 27 &&
+        payload_ != com.halloapp.proto.server.UploadGroupAvatar.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.UploadGroupAvatar.newBuilder((com.halloapp.proto.server.UploadGroupAvatar) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 27;
+  }
+  /**
+   * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+   */
+  private void clearGroupAvatar() {
+    if (payloadCase_ == 27) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2851,6 +2903,54 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupAvatar() {
+      return instance.hasGroupAvatar();
+    }
+    /**
+     * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.UploadGroupAvatar getGroupAvatar() {
+      return instance.getGroupAvatar();
+    }
+    /**
+     * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+     */
+    public Builder setGroupAvatar(com.halloapp.proto.server.UploadGroupAvatar value) {
+      copyOnWrite();
+      instance.setGroupAvatar(value);
+      return this;
+    }
+    /**
+     * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+     */
+    public Builder setGroupAvatar(
+        com.halloapp.proto.server.UploadGroupAvatar.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupAvatar(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+     */
+    public Builder mergeGroupAvatar(com.halloapp.proto.server.UploadGroupAvatar value) {
+      copyOnWrite();
+      instance.mergeGroupAvatar(value);
+      return this;
+    }
+    /**
+     * <code>.server.UploadGroupAvatar group_avatar = 27;</code>
+     */
+    public Builder clearGroupAvatar() {
+      copyOnWrite();
+      instance.clearGroupAvatar();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -2895,13 +2995,14 @@ public  final class Iq extends
             com.halloapp.proto.server.InvitesResponse.class,
             com.halloapp.proto.server.NotificationPrefs.class,
             com.halloapp.proto.server.GroupFeedItem.class,
+            com.halloapp.proto.server.UploadGroupAvatar.class,
           };
           java.lang.String info =
-              "\u0000\u001a\u0001\u0000\u0001\u001a\u001a\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001b\u0001\u0000\u0001\u001b\u001b\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019<\u0000\u001a<\u0000";
+              "\u0018<\u0000\u0019<\u0000\u001a<\u0000\u001b<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

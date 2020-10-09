@@ -218,5 +218,11 @@ public interface MsgOrBuilder extends
    */
   com.halloapp.proto.server.GroupFeedItem getGroupFeedItem();
 
+  /**
+   * <code>int32 retry_count = 21;</code>
+   * @return The retryCount.
+   */
+  int getRetryCount();
+
   public com.halloapp.proto.server.Msg.PayloadCase getPayloadCase();
 }

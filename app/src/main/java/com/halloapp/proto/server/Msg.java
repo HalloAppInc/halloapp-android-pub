@@ -1150,6 +1150,32 @@ public  final class Msg extends
     }
   }
 
+  public static final int RETRY_COUNT_FIELD_NUMBER = 21;
+  private int retryCount_;
+  /**
+   * <code>int32 retry_count = 21;</code>
+   * @return The retryCount.
+   */
+  @java.lang.Override
+  public int getRetryCount() {
+    return retryCount_;
+  }
+  /**
+   * <code>int32 retry_count = 21;</code>
+   * @param value The retryCount to set.
+   */
+  private void setRetryCount(int value) {
+    
+    retryCount_ = value;
+  }
+  /**
+   * <code>int32 retry_count = 21;</code>
+   */
+  private void clearRetryCount() {
+    
+    retryCount_ = 0;
+  }
+
   public static com.halloapp.proto.server.Msg parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2176,6 +2202,34 @@ public  final class Msg extends
       return this;
     }
 
+    /**
+     * <code>int32 retry_count = 21;</code>
+     * @return The retryCount.
+     */
+    @java.lang.Override
+    public int getRetryCount() {
+      return instance.getRetryCount();
+    }
+    /**
+     * <code>int32 retry_count = 21;</code>
+     * @param value The retryCount to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRetryCount(int value) {
+      copyOnWrite();
+      instance.setRetryCount(value);
+      return this;
+    }
+    /**
+     * <code>int32 retry_count = 21;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearRetryCount() {
+      copyOnWrite();
+      instance.clearRetryCount();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Msg)
   }
   @java.lang.Override
@@ -2214,12 +2268,13 @@ public  final class Msg extends
             com.halloapp.proto.server.GroupChatRetract.class,
             com.halloapp.proto.server.ChatRetract.class,
             com.halloapp.proto.server.GroupFeedItem.class,
+            "retryCount_",
           };
           java.lang.String info =
-              "\u0000\u0014\u0001\u0000\u0001\u0014\u0014\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u0015\u0001\u0000\u0001\u0015\u0015\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
-              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000";
+              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
