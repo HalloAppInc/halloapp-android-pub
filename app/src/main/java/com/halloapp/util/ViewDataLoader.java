@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +24,7 @@ import java.util.concurrent.Semaphore;
 public class ViewDataLoader<V extends View, R, K> {
 
     private final ExecutorService executor;
-    private final Map<View, Future> queue = new HashMap<>();
+    private final Map<View, Future> queue = new WeakHashMap<>();
     private final Map<K, Semaphore> keyLoadGuards = new HashMap<>();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
