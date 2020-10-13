@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.chat.ChatActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -19,7 +19,6 @@
             android:background="@color/window_background"
             android:elevation="@dimen/action_bar_elevation"
             android:gravity="center_vertical"
-            app:layout_constraintTop_toTopOf="parent"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
@@ -131,17 +130,13 @@
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
-        </FrameLayout>
+            <com.halloapp.ui.mentions.MentionPickerView
+                android:id="@+id/mention_picker_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
 
-        <com.halloapp.ui.mentions.MentionPickerView
-            android:id="@+id/mention_picker_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:layout_constraintBottom_toTopOf="@+id/footer"
-            android:visibility="invisible"/>
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/footer"
@@ -281,7 +276,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <com.halloapp.widget.DrawDelegateView
         android:id="@+id/draw_delegate"
