@@ -70,6 +70,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private static final String EXTRA_ACTION_RES = "action_res";
     private static final String EXTRA_SELECTED_IDS = "selected_ids";
     private static final String EXTRA_MAX_SELECTION = "max_selection";
+    private static final String EXTRA_ONLY_FRIENDS = "only_friends";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -90,11 +91,11 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private MenuItem finishMenuItem;
 
-    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title) {
-        return newPickerIntent(context, selectedIds, title, R.string.action_save, null);
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, boolean onlyFriends) {
+        return newPickerIntent(context, selectedIds, title, R.string.action_save, null, onlyFriends);
     }
 
-    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action, @Nullable Integer maxSelection) {
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action, @Nullable Integer maxSelection, boolean onlyFriends) {
         Intent intent = new Intent(context, MultipleContactPickerActivity.class);
         if (selectedIds != null) {
             if (maxSelection != null && maxSelection >= 1 && selectedIds.size() > maxSelection) {
@@ -105,6 +106,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         intent.putExtra(EXTRA_TITLE_RES, title);
         intent.putExtra(EXTRA_ACTION_RES, action);
         intent.putExtra(EXTRA_MAX_SELECTION, maxSelection);
+        intent.putExtra(EXTRA_ONLY_FRIENDS, onlyFriends);
         return intent;
     }
 
@@ -161,7 +163,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         avatarsView.setLayoutManager(avatarsLayoutManager);
         avatarsView.setAdapter(avatarsAdapter);
 
-        viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
+        boolean onlyFriends = getIntent().getBooleanExtra(EXTRA_ONLY_FRIENDS, false);
+        viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), onlyFriends)).get(ContactsViewModel.class);
         viewModel.contactList.getLiveData().observe(this, contacts -> {
             Map<UserId, Contact> map = new HashMap<>();
             for (Contact contact : contacts) {
