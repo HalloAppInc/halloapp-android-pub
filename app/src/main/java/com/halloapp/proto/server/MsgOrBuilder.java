@@ -219,6 +219,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupFeedItem getGroupFeedItem();
 
   /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   * @return Whether the rerequest field is set.
+   */
+  boolean hasRerequest();
+  /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   * @return The rerequest.
+   */
+  com.halloapp.proto.server.Rerequest getRerequest();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

@@ -923,7 +923,15 @@ public class NewConnection extends Connection {
 
     @Override
     public void sendRerequest(String encodedIdentityKey, @NonNull Jid originalSender, final @NonNull UserId senderUserId, @NonNull String messageId) {
-        // TODO(jack): Need to add ReRequest to Msg schema
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot send rerequest, no connection");
+                return;
+            }
+            RerequestElement rerequestElement = new RerequestElement(messageId, encodedIdentityKey);
+            Log.i("connection: sending rerequest for " + messageId + " to " + originalSender);
+            sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
+        });
     }
 
     @Override
@@ -1191,6 +1199,7 @@ public class NewConnection extends Connection {
                     connectionObservers.notifyAvatarChangeMessageReceived(getUserId(Long.toString(avatar.getUid())), avatar.getId(), msg.getId());
                     handled = true;
                 } else if (msg.hasGroupStanza()) {
+                    Log.i("connection: got group change message " + msg);
                     GroupStanza groupStanza = msg.getGroupStanza();
 
                     UserId senderUserId = getUserId(Long.toString(groupStanza.getSenderUid()));
@@ -1202,13 +1211,38 @@ public class NewConnection extends Connection {
                     String ackId = msg.getId();
                     GroupId groupId = new GroupId(groupStanza.getGid());
                     List<GroupMember> members = groupStanza.getMembersList();
-                    if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
-                        List<MemberElement> elements = new ArrayList<>();
+                    List<MemberElement> elements = new ArrayList<>();
+                    if (members != null) {
                         for (GroupMember member : members) {
                             elements.add(new MemberElement(member));
                         }
-                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
                     }
+
+                    handled = true;
+                    if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
+                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_MEMBERS)) {
+                        connectionObservers.notifyGroupMemberChangeReceived(groupId, elements, senderUserId, senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.LEAVE)) {
+                        connectionObservers.notifyGroupMemberLeftReceived(groupId, elements, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_ADMINS)) {
+                        connectionObservers.notifyGroupAdminChangeReceived(groupId, elements, senderUserId, senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_NAME)) {
+                        connectionObservers.notifyGroupNameChangeReceived(groupId, groupStanza.getName(), senderUserId, senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_AVATAR)) {
+                        connectionObservers.notifyGroupAvatarChangeReceived(groupId, groupStanza.getAvatarId(), senderUserId, senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.AUTO_PROMOTE_ADMINS)) {
+                        connectionObservers.notifyGroupAdminAutoPromoteReceived(groupId, elements, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.DELETE)) {
+                        connectionObservers.notifyGroupDeleteReceived(groupId, senderUserId, senderName, ackId);
+                    } else {
+                        handled = false;
+                        Log.w("Unrecognized group stanza action " + groupStanza.getAction());
+                    }
+                } else if (msg.hasRerequest()) {
+                    Log.i("connection: got rerequest message " + msg);
+                    connectionObservers.notifyMessageRerequest(getUserId(Long.toString(msg.getFromUid())), msg.getRerequest().getId(), msg.getId());
+                    handled = true;
                 }
             }
             if (!handled) {

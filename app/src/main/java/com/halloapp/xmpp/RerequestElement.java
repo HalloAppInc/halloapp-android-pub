@@ -1,5 +1,8 @@
 package com.halloapp.xmpp;
 
+import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.Rerequest;
+
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.provider.EmbeddedExtensionProvider;
@@ -44,6 +47,14 @@ public class RerequestElement implements ExtensionElement {
         xml.optAttribute(ATTRIBUTE_IDENTITY_KEY, identityKey);
         xml.closeEmptyElement();
         return xml;
+    }
+
+    public Msg toProto() {
+        Rerequest rerequest =  Rerequest.newBuilder().setId(id).build();
+        return Msg.newBuilder()
+                .setId(id)
+                .setRerequest(rerequest)
+                .build();
     }
 
     public static class Provider extends EmbeddedExtensionProvider<RerequestElement> {

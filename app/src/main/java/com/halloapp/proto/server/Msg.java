@@ -157,6 +157,7 @@ public  final class Msg extends
     GROUPCHAT_RETRACT(18),
     CHAT_RETRACT(19),
     GROUP_FEED_ITEM(20),
+    REREQUEST(22),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -188,6 +189,7 @@ public  final class Msg extends
         case 18: return GROUPCHAT_RETRACT;
         case 19: return CHAT_RETRACT;
         case 20: return GROUP_FEED_ITEM;
+        case 22: return REREQUEST;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1145,6 +1147,56 @@ public  final class Msg extends
    */
   private void clearGroupFeedItem() {
     if (payloadCase_ == 20) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int REREQUEST_FIELD_NUMBER = 22;
+  /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   */
+  @java.lang.Override
+  public boolean hasRerequest() {
+    return payloadCase_ == 22;
+  }
+  /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Rerequest getRerequest() {
+    if (payloadCase_ == 22) {
+       return (com.halloapp.proto.server.Rerequest) payload_;
+    }
+    return com.halloapp.proto.server.Rerequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   */
+  private void setRerequest(com.halloapp.proto.server.Rerequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 22;
+  }
+  /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   */
+  private void mergeRerequest(com.halloapp.proto.server.Rerequest value) {
+    value.getClass();
+  if (payloadCase_ == 22 &&
+        payload_ != com.halloapp.proto.server.Rerequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.Rerequest.newBuilder((com.halloapp.proto.server.Rerequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 22;
+  }
+  /**
+   * <code>.server.Rerequest rerequest = 22;</code>
+   */
+  private void clearRerequest() {
+    if (payloadCase_ == 22) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2203,6 +2255,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.Rerequest rerequest = 22;</code>
+     */
+    @java.lang.Override
+    public boolean hasRerequest() {
+      return instance.hasRerequest();
+    }
+    /**
+     * <code>.server.Rerequest rerequest = 22;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Rerequest getRerequest() {
+      return instance.getRerequest();
+    }
+    /**
+     * <code>.server.Rerequest rerequest = 22;</code>
+     */
+    public Builder setRerequest(com.halloapp.proto.server.Rerequest value) {
+      copyOnWrite();
+      instance.setRerequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.Rerequest rerequest = 22;</code>
+     */
+    public Builder setRerequest(
+        com.halloapp.proto.server.Rerequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRerequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.Rerequest rerequest = 22;</code>
+     */
+    public Builder mergeRerequest(com.halloapp.proto.server.Rerequest value) {
+      copyOnWrite();
+      instance.mergeRerequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.Rerequest rerequest = 22;</code>
+     */
+    public Builder clearRerequest() {
+      copyOnWrite();
+      instance.clearRerequest();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -2269,12 +2369,13 @@ public  final class Msg extends
             com.halloapp.proto.server.ChatRetract.class,
             com.halloapp.proto.server.GroupFeedItem.class,
             "retryCount_",
+            com.halloapp.proto.server.Rerequest.class,
           };
           java.lang.String info =
-              "\u0000\u0015\u0001\u0000\u0001\u0015\u0015\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u0016\u0001\u0000\u0001\u0016\u0016\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
-              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004";
+              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
