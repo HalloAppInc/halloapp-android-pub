@@ -426,7 +426,6 @@ public class ChatActivity extends HalloActivity {
             }
         });
         viewModel.lastUnseenFeedPost.getLiveData().observe(this, post -> {
-            TransitionManager.beginDelayedTransition((ViewGroup) feedRing.getParent());
             if (post == null) {
                 feedRing.setVisibility(View.GONE);
             } else {

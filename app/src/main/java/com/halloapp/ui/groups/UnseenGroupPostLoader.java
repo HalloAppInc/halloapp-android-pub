@@ -36,7 +36,6 @@ public class UnseenGroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
 
             @Override
             public void showResult(@NonNull View view, Post lastPost) {
-                TransitionManager.beginDelayedTransition((ViewGroup) view.getParent());
                 if (lastPost == null) {
                     view.setVisibility(View.GONE);
                 } else {
