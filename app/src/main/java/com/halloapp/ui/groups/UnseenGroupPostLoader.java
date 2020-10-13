@@ -20,8 +20,13 @@ public class UnseenGroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
 
     private final ContentDb contentDb;
 
+    private int shortAnimationDuration;
+
     public UnseenGroupPostLoader(@NonNull Context context) {
         contentDb = ContentDb.getInstance(context);
+
+        shortAnimationDuration = context.getResources().getInteger(
+                android.R.integer.config_shortAnimTime);
     }
 
     @MainThread
@@ -39,7 +44,12 @@ public class UnseenGroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
                 if (lastPost == null) {
                     view.setVisibility(View.GONE);
                 } else {
+                    view.setAlpha(0f);
                     view.setVisibility(View.VISIBLE);
+                    view.animate()
+                            .alpha(1f)
+                            .setDuration(shortAnimationDuration)
+                            .setListener(null);
                 }
             }
 
