@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +18,7 @@ import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.util.Rtl;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.ContentPhotoView;
@@ -115,7 +118,11 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 Intent intent = new Intent(v.getContext(), MediaExplorerActivity.class);
                 intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
                 intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
-                parent.startActivity(intent);
+
+                ThreadUtils.runWithoutStrictModeRestrictions(() -> {
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(v.getContext(), R.anim.slide_up, R.anim.keep_still);
+                    parent.startActivity(intent, options);
+                });
             });
         } else {
             holder.imageView.setOnClickListener(null);

@@ -88,7 +88,7 @@ public class MediaExplorerActivity extends HalloActivity {
             }
         });
 
-        pager.setCurrentItem(getIntent().getIntExtra(EXTRA_SELECTED, 0));
+        pager.setCurrentItem(getIntent().getIntExtra(EXTRA_SELECTED, 0), false);
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
     }
@@ -204,6 +204,7 @@ public class MediaExplorerActivity extends HalloActivity {
 
     private void onSwipeDown() {
         finish();
+        overridePendingTransition(0, R.anim.slide_down);
     }
 
     private void toggleSystemUI() {
