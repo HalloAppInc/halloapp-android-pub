@@ -83,8 +83,11 @@ public class MediaExplorerActivity extends HalloActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                handlePlaybackOnPageChange(position);
-                updatePlaybackControlsVisibility();
+
+                if (0 <= position && position < data.size()) {
+                    handlePlaybackOnPageChange(position);
+                    updatePlaybackControlsVisibility();
+                }
             }
         });
 
