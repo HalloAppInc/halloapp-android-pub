@@ -1312,6 +1312,8 @@ class PostsDb {
     @NonNull List<Comment> getPendingComments() {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final HashSet<String> checkedPosts = new HashSet<>();
+        final HashMap<String, Post> posts = new HashMap<>();
         try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
                 new String [] {
                         CommentsTable._ID,
@@ -1336,6 +1338,14 @@ class PostsDb {
                         cursor.getInt(6) == 1,
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
+                if (!checkedPosts.contains(comment.postId)) {
+                    Post parentPost = getPost(comment.postId);
+                    checkedPosts.add(comment.postId);
+                    if (parentPost != null) {
+                        posts.put(comment.postId, parentPost);
+                    }
+                }
+                comment.setParentPost(posts.get(comment.postId));
                 comments.add(comment);
             }
         }
