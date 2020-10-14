@@ -108,7 +108,7 @@ public class GroupInfoActivity extends HalloActivity {
         addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
         adapter.addHeader(addMembersView);
         addMembersView.setOnClickListener(v -> {
-            startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.add_members, true), REQUEST_CODE_ADD_MEMBERS);
+            startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.add_members, false), REQUEST_CODE_ADD_MEMBERS);
         });
 
         View.OnClickListener openEditGroupListener = v -> {
