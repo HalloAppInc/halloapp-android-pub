@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
@@ -33,7 +34,7 @@ import java.io.IOException;
 public class EditImageView extends androidx.appcompat.widget.AppCompatImageView {
     @FunctionalInterface
     public interface ImageLoadedListener {
-        void loaded();
+        void loaded(Bitmap originalBitmap, Bitmap croppedBitmap);
     }
 
     private enum CropRegionSection {
@@ -94,11 +95,22 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         setOnTouchListener(new GestureListener());
     }
 
-    public void setAsyncImageFile(@Nullable File file, @Nullable State state, @Nullable ImageLoadedListener listener) {
+    @WorkerThread
+    @Nullable
+    private Bitmap loadBitmap(@Nullable File file, int maxWidth, int maxHeight) {
+        try {
+            return file != null ? MediaUtils.decodeImage(file, maxWidth, maxHeight) : null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void setAsyncImageFile(@Nullable File originalFile, @Nullable File croppedFile, @Nullable State state, @Nullable ImageLoadedListener listener) {
         setImageDrawable(null);
         clearValues();
 
-        if (file == null) {
+        if (originalFile == null) {
             return;
         }
 
@@ -110,13 +122,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             final int maxWidth = Math.round(displayMetrics.widthPixels * MAX_SCALE);
             final int maxHeight = Math.round(displayMetrics.heightPixels * MAX_SCALE);
 
-            final Bitmap bitmap;
-            try {
-                bitmap = MediaUtils.decodeImage(file, maxWidth, maxHeight);
-            } catch (IOException e) {
-                e.printStackTrace();
+            final Bitmap bitmap = loadBitmap(originalFile, maxWidth, maxHeight);
+            if (bitmap == null) {
                 return;
             }
+
+            final Bitmap cropped = state != null ? loadBitmap(croppedFile, maxWidth, maxHeight) : null;
 
             post(() -> {
                 setImageBitmap(bitmap);
@@ -133,7 +144,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                 updateImage();
 
                 if (listener != null) {
-                    listener.loaded();
+                    listener.loaded(bitmap, cropped);
                 }
             });
         });

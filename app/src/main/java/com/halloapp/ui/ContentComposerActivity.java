@@ -67,6 +67,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.widget.ContentComposerScrollView;
 import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
@@ -576,7 +577,9 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_SHOW_ADD, calledFromPicker);
 
             cropResultProcessed = false;
-            startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, CropImageActivity.TRANSITION_VIEW_NAME).toBundle());
+            ThreadUtils.runWithoutStrictModeRestrictions(() -> {
+                startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, CropImageActivity.TRANSITION_VIEW_NAME).toBundle());
+            });
         }
     }
 

@@ -23,7 +23,7 @@ import java.io.IOException;
 public class ImageCropper {
     @FunctionalInterface
     public interface ImageCroppedListener {
-        void cropped();
+        void cropped(Bitmap originalBitmap, Bitmap croppedBitmap);
     }
 
     private static Size getMaxSize(@NonNull Context context) {
@@ -74,7 +74,7 @@ public class ImageCropper {
             }
 
             if (listener != null) {
-                new Handler(context.getMainLooper()).post(listener::cropped);
+                new Handler(context.getMainLooper()).post(() -> listener.cropped(bitmap, cropped));
             }
         }).start();
     }
