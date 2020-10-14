@@ -25,7 +25,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 32;
+    private static final int DATABASE_VERSION = 33;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -176,7 +176,6 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + CommentsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + CommentsTable.TABLE_NAME + " ("
                 + CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + CommentsTable.COLUMN_POST_SENDER_USER_ID + " TEXT NOT NULL,"
                 + CommentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
                 + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " TEXT NOT NULL,"
                 + CommentsTable.COLUMN_COMMENT_ID + " TEXT NOT NULL,"
@@ -243,7 +242,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
-                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
                 + "END;");
@@ -343,6 +342,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 31: {
                 upgradeFromVersion31(db);
             }
+            case 32: {
+                upgradeFromVersion32(db);
+            }
             break;
             default: {
                 onCreate(db);
@@ -379,7 +381,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID
                 + ");");
 
-        removeColumns(db, MessagesTable.TABLE_NAME, new String [] {
+        recreateTable(db, MessagesTable.TABLE_NAME, new String [] {
                 MessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
                 MessagesTable.COLUMN_CHAT_ID + " TEXT NOT NULL",
                 MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL",
@@ -412,7 +414,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + RepliesTable.COLUMN_MEDIA_PREVIEW_FILE + " TEXT"
                 + ");");
 
-        removeColumns(db, MessagesTable.TABLE_NAME, new String [] {
+        recreateTable(db, MessagesTable.TABLE_NAME, new String [] {
                 MessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
                 MessagesTable.COLUMN_CHAT_ID + " TEXT NOT NULL",
                 MessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL",
@@ -495,7 +497,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 + " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 + " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
-                + " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                + " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND post_sender_user_id=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 + " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 + "END;");
 
@@ -551,7 +553,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
-                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + CommentsTable.COLUMN_POST_SENDER_USER_ID + "=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND post_sender_user_id=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
                 + "END;");
@@ -593,7 +595,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_ENC_FILE + " FILE");
     }
 
-    private void removeColumns(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
+    private void upgradeFromVersion32(@NonNull SQLiteDatabase db) {
+        recreateTable(db, CommentsTable.TABLE_NAME, new String[]{
+                CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
+                CommentsTable.COLUMN_POST_ID + " TEXT NOT NULL",
+                CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " TEXT NOT NULL",
+                CommentsTable.COLUMN_COMMENT_ID + " TEXT NOT NULL",
+                CommentsTable.COLUMN_PARENT_ID + " INTEGER",
+                CommentsTable.COLUMN_TIMESTAMP + " INTEGER",
+                CommentsTable.COLUMN_TRANSFERRED + " INTEGER",
+                CommentsTable.COLUMN_SEEN + " INTEGER",
+                CommentsTable.COLUMN_TEXT + " TEXT"});
+    }
+
+    private void recreateTable(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
         final StringBuilder schema = new StringBuilder();
         for (String column : columns) {
             if (schema.length() != 0) {

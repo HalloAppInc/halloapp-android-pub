@@ -784,10 +784,6 @@ public class ContentDb {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=?", new String[]{oldId});
 
                 values.clear();
-                values.put(CommentsTable.COLUMN_POST_SENDER_USER_ID, newId);
-                db.update(CommentsTable.TABLE_NAME, values, CommentsTable.COLUMN_POST_SENDER_USER_ID + "=?", new String[]{oldId});
-
-                values.clear();
                 values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, newId);
                 db.update(SeenTable.TABLE_NAME, values, SeenTable.COLUMN_SEEN_BY_USER_ID + "=?", new String[]{oldId});
             }
