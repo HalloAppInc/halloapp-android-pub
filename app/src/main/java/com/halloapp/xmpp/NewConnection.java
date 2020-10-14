@@ -1258,7 +1258,13 @@ public class NewConnection extends Connection {
 
             for (com.halloapp.proto.server.FeedItem item : items) {
                 if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.RETRACT)) {
-                    // TODO(jack): handle retraction
+                    if (item.hasComment()) {
+                        com.halloapp.proto.server.Comment comment = item.getComment();
+                        connectionObservers.notifyCommentRetracted(comment.getId(), getUserId(Long.toString(comment.getPublisherUid())), comment.getPostId(), comment.getTimestamp());
+                    } else if (item.hasPost()) {
+                        com.halloapp.proto.server.Post post = item.getPost();
+                        connectionObservers.notifyPostRetracted(getUserId(Long.toString(post.getPublisherUid())), post.getId());
+                    }
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
@@ -1270,7 +1276,7 @@ public class NewConnection extends Connection {
                         PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
 
                         // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
-                        Post np = new Post(-1, new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getId(), publishedEntry.timestamp, publishedEntry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, publishedEntry.text);
+                        Post np = new Post(-1, getUserId(Long.toString(protoPost.getPublisherUid())), protoPost.getId(), publishedEntry.timestamp, publishedEntry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, publishedEntry.text);
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                                     entryMedia.encKey, entryMedia.sha256hash,
@@ -1290,7 +1296,7 @@ public class NewConnection extends Connection {
 
                         final Comment comment = new Comment(0,
                                 publishedEntry.feedItemId,
-                                new UserId(Long.toString(protoComment.getPublisherUid())),
+                                getUserId(Long.toString(protoComment.getPublisherUid())),
                                 publishedEntry.id,
                                 publishedEntry.parentCommentId,
                                 publishedEntry.timestamp,
