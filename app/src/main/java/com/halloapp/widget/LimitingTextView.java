@@ -95,8 +95,8 @@ public class LimitingTextView extends AppCompatTextView {
             truncatedText.clearSpans();
             truncatedText.append(originalText);
             Linkify.addLinks(truncatedText, Linkify.WEB_URLS);
-            URLSpan[] spans = truncatedText.getSpans(truncatePos, truncatePos, URLSpan.class);
-            for (URLSpan span : spans) {
+            ClickableSpan[] spans = truncatedText.getSpans(truncatePos, truncatePos, URLSpan.class);
+            for (ClickableSpan span : spans) {
                 int spanEnd = truncatedText.getSpanEnd(span);
                 int spanStart = truncatedText.getSpanStart(span);
                 if (spanEnd > truncatePos && spanStart < truncatePos) {

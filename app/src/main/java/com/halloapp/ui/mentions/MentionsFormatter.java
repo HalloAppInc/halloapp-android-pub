@@ -58,7 +58,7 @@ public class MentionsFormatter {
 
     private static CharSequence createSpan(@NonNull Mention mention, @Nullable MentionClickListener mentionClickListener) {
         SpannableString mentionString = new SpannableString("@" + mention.fallbackName);
-        mentionString.setSpan(new MentionSpan(mention, mentionClickListener), 0, mentionString.length(),  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        mentionString.setSpan(new MentionSpan(mention, mentionClickListener), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return mentionString;
     }
 
