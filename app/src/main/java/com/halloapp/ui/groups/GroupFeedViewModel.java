@@ -78,6 +78,11 @@ public class GroupFeedViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+            invalidatePosts();
+        }
+
+        @Override
         public void onFeedCleanup() {
             invalidatePosts();
         }
