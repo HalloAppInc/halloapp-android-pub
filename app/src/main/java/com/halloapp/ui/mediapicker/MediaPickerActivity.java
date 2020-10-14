@@ -423,7 +423,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             if (selected.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
                 tv.setTextColor(getResources().getColor(R.color.color_accent));
             } else {
-                tv.setTextColor(Color.BLACK);
+                tv.setTextColor(getResources().getColor(R.color.primary_text));
             }
         }
     }
