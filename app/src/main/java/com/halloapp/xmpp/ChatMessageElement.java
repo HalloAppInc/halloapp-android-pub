@@ -20,7 +20,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.ChatStanza;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.util.Xml;

@@ -29,7 +29,7 @@ import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.settings.SettingsProfile;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;

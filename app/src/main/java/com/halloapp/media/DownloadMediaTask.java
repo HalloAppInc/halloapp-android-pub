@@ -9,7 +9,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 
 import java.io.File;

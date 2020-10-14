@@ -41,7 +41,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.MentionsLoader;
 import com.halloapp.util.ListFormatter;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;

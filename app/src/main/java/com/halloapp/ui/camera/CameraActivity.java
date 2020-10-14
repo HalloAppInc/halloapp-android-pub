@@ -35,7 +35,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.GlobalUI;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;

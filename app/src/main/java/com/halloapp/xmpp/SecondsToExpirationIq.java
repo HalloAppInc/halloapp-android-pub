@@ -6,10 +6,9 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.proto.server.ClientVersion;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;

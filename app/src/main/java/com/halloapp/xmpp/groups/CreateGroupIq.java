@@ -6,10 +6,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.util.Log;
 import com.halloapp.xmpp.HalloIq;
-
-import org.jivesoftware.smack.packet.IQ;
 
 import java.util.List;
 

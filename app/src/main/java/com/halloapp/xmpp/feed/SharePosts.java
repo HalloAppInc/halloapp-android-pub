@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.ShareStanza;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import org.jivesoftware.smack.packet.IQ;
 

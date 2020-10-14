@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.PostsFragment;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;

@@ -8,7 +8,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 import com.halloapp.xmpp.privacy.PrivacyListApi;

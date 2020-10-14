@@ -10,11 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class FileStore {
+
+    private static final int MAX_LOG_FILES = 3;
 
     private static FileStore instance;
 
@@ -22,6 +27,7 @@ public class FileStore {
     private final File tmpDir;
     private final File cameraDir;
     private final File avatarDir;
+    private final File logDir;
 
     public static FileStore getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -48,6 +54,7 @@ public class FileStore {
             tmpDir = prepareDir(new File(context.getCacheDir(), "media"));
             cameraDir = prepareDir(new File(context.getCacheDir(), "camera"));
             avatarDir = prepareDir(new File(context.getFilesDir(), "avatars"));
+            logDir = prepareDir(new File(context.getFilesDir(), "logs"));
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -68,6 +75,27 @@ public class FileStore {
 
     public File getMediaFile(@Nullable String name) {
         return name == null ? null : new File(getMediaDir(), name);
+    }
+
+    public void purgeOldLogFiles() {
+        File[] fileArr = logDir.listFiles();
+        List<File> logFiles = new ArrayList<>();
+        if (fileArr != null) {
+            for (File f : fileArr) {
+                if (f.isFile() && f.getName().endsWith(".log")) {
+                    logFiles.add(f);
+                }
+            }
+        }
+        Collections.sort(logFiles, (o1, o2) -> (int) (o1.lastModified() - o2.lastModified()));
+        if (logFiles.size() > MAX_LOG_FILES) {
+            while (logFiles.size() > MAX_LOG_FILES) {
+                File f = logFiles.remove(0);
+                if (!f.delete()) {
+                    Log.e("Failed to delete log file");
+                }
+            }
+        }
     }
 
     public File getCameraDir() { return cameraDir; }
@@ -97,6 +125,14 @@ public class FileStore {
 
     public File getAvatarFile(String jid) {
         return new File(avatarDir, jid + ".jpg");
+    }
+
+    public File getLogDir() {
+        return logDir;
+    }
+
+    public File getLogFile(String timestamp) {
+        return new File(logDir, "halloapp-" + timestamp + ".log");
     }
 
     @WorkerThread

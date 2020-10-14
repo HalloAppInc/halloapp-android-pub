@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.CommentsActivity;
@@ -30,7 +29,7 @@ import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.DialogFragmentUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;

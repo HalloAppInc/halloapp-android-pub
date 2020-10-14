@@ -53,7 +53,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;

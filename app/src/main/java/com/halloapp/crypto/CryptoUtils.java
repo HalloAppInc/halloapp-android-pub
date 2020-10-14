@@ -14,7 +14,7 @@ import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;

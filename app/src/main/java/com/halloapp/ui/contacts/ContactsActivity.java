@@ -42,7 +42,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 

@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
 

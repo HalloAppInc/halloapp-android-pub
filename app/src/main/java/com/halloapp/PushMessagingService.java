@@ -3,7 +3,7 @@ package com.halloapp;
 import androidx.annotation.NonNull;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 public class PushMessagingService extends FirebaseMessagingService {

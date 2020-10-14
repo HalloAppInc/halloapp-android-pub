@@ -12,7 +12,7 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;

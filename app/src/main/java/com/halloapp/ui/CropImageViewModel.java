@@ -18,7 +18,7 @@ import com.halloapp.FileStore;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;

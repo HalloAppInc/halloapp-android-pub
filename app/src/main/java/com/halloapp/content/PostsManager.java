@@ -3,19 +3,16 @@ package com.halloapp.content;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.goterl.lazycode.lazysodium.interfaces.Hash;
 import com.halloapp.AppContext;
-import com.halloapp.Constants;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PostsManager {
 

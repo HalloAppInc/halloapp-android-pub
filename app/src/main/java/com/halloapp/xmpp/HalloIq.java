@@ -1,7 +1,7 @@
 package com.halloapp.xmpp;
 
 import com.halloapp.proto.server.Iq;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.GroupsListResponseIq;
 

@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
 import com.google.android.gms.tasks.Task;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.util.HashSet;
 import java.util.Set;

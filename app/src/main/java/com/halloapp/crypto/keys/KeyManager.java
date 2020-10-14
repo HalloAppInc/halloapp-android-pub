@@ -11,7 +11,7 @@ import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.nio.ByteBuffer;

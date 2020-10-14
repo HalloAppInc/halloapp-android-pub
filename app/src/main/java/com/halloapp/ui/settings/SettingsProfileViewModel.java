@@ -25,9 +25,8 @@ import com.halloapp.Me;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 

@@ -96,7 +96,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 public abstract class TestActivity extends HalloActivity {
     private static final int REQUEST_CODE_TEST = 1;

@@ -1,11 +1,8 @@
 package com.halloapp.xmpp.props;
 
-import androidx.annotation.Nullable;
-
 import com.google.android.gms.common.util.Hex;
 import com.halloapp.proto.server.Prop;
 import com.halloapp.proto.server.Props;
-import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -15,9 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class ServerPropsResponseIq extends IQ {
 

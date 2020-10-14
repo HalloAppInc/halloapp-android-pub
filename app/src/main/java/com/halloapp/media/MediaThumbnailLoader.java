@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 import com.halloapp.content.Media;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.ContentPhotoView;

@@ -15,7 +15,7 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
 import java.io.File;

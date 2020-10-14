@@ -21,7 +21,6 @@ import com.halloapp.content.Message;
 import com.halloapp.content.ReplyPreview;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mentions.TextContent;
-import com.halloapp.util.Log;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.List;

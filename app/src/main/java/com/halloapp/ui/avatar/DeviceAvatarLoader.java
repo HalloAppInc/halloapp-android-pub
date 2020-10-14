@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.ViewDataLoader;
 
 import java.io.IOException;

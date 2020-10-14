@@ -22,7 +22,7 @@ import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
 import java.io.File;

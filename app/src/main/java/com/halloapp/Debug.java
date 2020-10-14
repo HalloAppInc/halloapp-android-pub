@@ -23,7 +23,7 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.SnackbarHelper;

@@ -1,12 +1,12 @@
-package com.halloapp.util;
+package com.halloapp.util.logs;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.google.firebase.crashlytics.internal.Logger;
 import com.google.firebase.crashlytics.internal.persistence.FileStoreImpl;
+import com.halloapp.FileStore;
 import com.halloapp.util.crashlytics.QueueFile;
 
 import java.io.BufferedInputStream;
@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -32,6 +31,17 @@ public class LogManager {
             }
         }
         return instance;
+    }
+
+    @WorkerThread
+    public void zipLocalLogs(@NonNull Context context, File output) {
+        File logDir = FileStore.getInstance(context).getLogDir();
+        File[] logFiles = logDir.listFiles();
+        if (logFiles == null) {
+            Log.e("LogManager/zipCrashlyticsLogs no logs to zip up");
+            return;
+        }
+        zip(logFiles, output);
     }
 
     @WorkerThread

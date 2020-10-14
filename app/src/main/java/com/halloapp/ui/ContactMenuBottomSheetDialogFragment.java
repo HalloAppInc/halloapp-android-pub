@@ -19,16 +19,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.privacy.HideFuturePostsDialogFragment;
-import com.halloapp.ui.profile.ProfileViewModel;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DialogFragmentUtils;
-import com.halloapp.util.Log;
-import com.halloapp.util.Preconditions;
 
 public class ContactMenuBottomSheetDialogFragment extends BottomSheetDialogFragment {
 

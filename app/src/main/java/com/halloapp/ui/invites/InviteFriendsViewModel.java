@@ -11,7 +11,7 @@ import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.invites.InvitesApi;
 import com.halloapp.xmpp.invites.InvitesResponseIq;

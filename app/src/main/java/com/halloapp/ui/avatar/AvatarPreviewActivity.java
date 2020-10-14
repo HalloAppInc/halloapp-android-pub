@@ -16,7 +16,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.CropPhotoView;

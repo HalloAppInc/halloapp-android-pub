@@ -13,7 +13,7 @@ import com.halloapp.content.Message;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.MediaType;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 public class MessageElementHelper {
 

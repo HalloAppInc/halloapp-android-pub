@@ -18,7 +18,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
 

@@ -37,7 +37,7 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 

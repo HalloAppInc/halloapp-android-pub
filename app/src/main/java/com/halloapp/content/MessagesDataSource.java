@@ -5,7 +5,7 @@ import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
 
 import com.halloapp.id.ChatId;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.util.List;
 

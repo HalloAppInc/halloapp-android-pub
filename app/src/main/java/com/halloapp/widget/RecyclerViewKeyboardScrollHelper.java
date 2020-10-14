@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.BuildConfig;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 /**
  * Helper class for maintaining a consistent scroll position when the keyboard is opened

@@ -41,7 +41,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.SnackbarHelper;

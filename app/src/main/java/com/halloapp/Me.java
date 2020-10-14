@@ -11,7 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

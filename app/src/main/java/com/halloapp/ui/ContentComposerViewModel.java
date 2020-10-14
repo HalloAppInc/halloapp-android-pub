@@ -37,7 +37,7 @@ import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.privacy.PrivacyList;

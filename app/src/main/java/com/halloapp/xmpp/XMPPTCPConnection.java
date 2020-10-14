@@ -1,7 +1,6 @@
 package com.halloapp.xmpp;
 
-import com.halloapp.props.ServerProps;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
 import org.jivesoftware.smack.AbstractConnectionListener;
@@ -69,7 +68,6 @@ import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smack.util.dns.SmackDaneProvider;
 import org.jivesoftware.smack.util.dns.SmackDaneVerifier;
-import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.v1.XmlPullParser;

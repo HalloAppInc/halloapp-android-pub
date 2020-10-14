@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 public class IntegerProp implements Prop {
 

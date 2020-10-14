@@ -4,7 +4,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.id.GroupId;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;

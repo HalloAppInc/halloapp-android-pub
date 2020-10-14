@@ -18,7 +18,7 @@ import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.SeenTable;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 public class Preferences {

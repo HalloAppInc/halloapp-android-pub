@@ -1,13 +1,12 @@
 package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.ChatState;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.XmlStringBuilder;

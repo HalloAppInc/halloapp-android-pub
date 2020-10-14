@@ -1,6 +1,5 @@
 package com.halloapp.xmpp;
 
-import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;

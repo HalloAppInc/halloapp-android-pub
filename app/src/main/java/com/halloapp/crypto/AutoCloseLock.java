@@ -1,7 +1,5 @@
 package com.halloapp.crypto;
 
-import com.halloapp.util.Log;
-
 import java.util.concurrent.Semaphore;
 
 public class AutoCloseLock implements AutoCloseable {

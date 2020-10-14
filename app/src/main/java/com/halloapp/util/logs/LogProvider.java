@@ -1,4 +1,4 @@
-package com.halloapp;
+package com.halloapp.util.logs;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -16,9 +16,11 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
+import com.halloapp.Me;
+import com.halloapp.R;
 import com.halloapp.ui.settings.SettingsActivity;
-import com.halloapp.util.Log;
-import com.halloapp.util.LogManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,7 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class LogProvider extends ContentProvider {
-    private static final String AUTHORITY = "com.halloapp.LogProvider";
+    private static final String AUTHORITY = "com.halloapp.util.logs.LogProvider";
     private static final String LOG_FILE_NAME = "logcat.log";
     public static final String LOG_ZIP_NAME = "logs.zip";
     private static final String DEBUG_SUFFIX = " [DEBUG]";
@@ -56,7 +58,7 @@ public class LogProvider extends ContentProvider {
             @Override
             protected String doInBackground(Void... voids) {
                 File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
-                LogManager.getInstance().zipCrashlyticsLogs(context, file);
+                LogManager.getInstance().zipLocalLogs(context, file);
                 return Me.getInstance().getUser();
             }
 

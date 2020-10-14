@@ -1,15 +1,17 @@
-package com.halloapp.util;
+package com.halloapp.util.logs;
 
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.halloapp.BuildConfig;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.util.Preconditions;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,66 +20,56 @@ public class Log {
 
     private static final String TAG = "halloapp";
 
+    private static ProductionLogger logger;
+
     public static void v(String msg) {
-        if (BuildConfig.DEBUG) {
-            android.util.Log.v(TAG, msg);
-        }
+        log(android.util.Log.VERBOSE, msg, null);
     }
 
     public static void d(String msg) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/D/halloApp: " + msg);
-        if (BuildConfig.DEBUG) {
-            android.util.Log.d(TAG, msg);
-        }
+        log(android.util.Log.DEBUG, msg, null);
     }
 
     public static void i(String msg) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/I/halloApp: " + msg);
-        if (BuildConfig.DEBUG) {
-            android.util.Log.i(TAG, msg);
-        }
+        log(android.util.Log.INFO, msg, null);
     }
 
     public static void i(String msg, Throwable tr) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/I/halloApp: " + msg + "\n" + tr.getMessage());
-        if (BuildConfig.DEBUG) {
-            android.util.Log.i(TAG, msg + " " + tr.getMessage());
-        }
+        log(android.util.Log.INFO, msg, tr);
     }
 
     public static void w(String msg) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/W/halloApp: " + msg);
-        if (BuildConfig.DEBUG) {
-            android.util.Log.w(TAG, msg);
-        }
+        log(android.util.Log.WARN, msg, null);
     }
 
     public static void w(String msg, Throwable tr) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/W/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
-        if (BuildConfig.DEBUG) {
-            android.util.Log.w(TAG, msg, tr);
-        }
+        log(android.util.Log.WARN, msg, tr);
     }
 
     public static void e(String msg) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/E/halloApp: " + msg);
-        if (BuildConfig.DEBUG) {
-            android.util.Log.e(TAG, msg);
-        }
+        log(android.util.Log.ERROR, msg, null);
     }
 
     public static void e(String msg, Throwable tr) {
-        FirebaseCrashlytics.getInstance().log(Thread.currentThread().getName() +
-                "/E/halloApp: " + msg + "\n" + android.util.Log.getStackTraceString(tr));
-        if (BuildConfig.DEBUG) {
-            android.util.Log.e(TAG, msg, tr);
+        log(android.util.Log.ERROR, msg, tr);
+    }
+
+    public static void init(@NonNull FileStore fileStore) {
+        if (!BuildConfig.DEBUG) {
+            logger = new ProductionLogger(fileStore);
         }
+    }
+
+    private static void log(int priority, String msg, @Nullable Throwable tr) {
+        if (logger == null) {
+            if (tr == null) {
+                android.util.Log.println(priority, TAG, msg);
+            } else {
+                android.util.Log.println(priority, TAG, msg  + '\n' + android.util.Log.getStackTraceString(tr));
+            }
+            return;
+        }
+        logger.log(priority, msg, tr);
     }
 
     public static void sendErrorReport(String msg) {

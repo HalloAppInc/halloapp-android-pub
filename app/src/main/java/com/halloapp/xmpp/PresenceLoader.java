@@ -1,9 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.os.Handler;
-import android.os.Looper;
-
-import androidx.annotation.MainThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -13,7 +9,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;

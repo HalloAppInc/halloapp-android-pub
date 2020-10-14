@@ -27,7 +27,7 @@ import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.ChatState;

@@ -11,7 +11,7 @@ import androidx.appcompat.app.ActionBar;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 public class ViewProfileActivity extends HalloActivity {
 

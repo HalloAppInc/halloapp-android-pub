@@ -2,7 +2,6 @@ package com.halloapp.crypto.keys;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 

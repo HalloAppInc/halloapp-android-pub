@@ -206,8 +206,8 @@
         </provider>
 
         <provider
-            android:name="LogProvider"
-            android:authorities="com.halloapp.LogProvider"
+            android:name=".util.logs.LogProvider"
+            android:authorities="com.halloapp.util.logs.LogProvider"
             android:enabled="true"
             android:exported="false"
             android:grantUriPermissions="true" />

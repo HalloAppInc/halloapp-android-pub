@@ -28,7 +28,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactsActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
 

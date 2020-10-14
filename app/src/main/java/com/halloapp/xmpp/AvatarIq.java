@@ -5,9 +5,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Avatar;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.UploadAvatar;
-import com.halloapp.util.Log;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;

@@ -10,7 +10,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 

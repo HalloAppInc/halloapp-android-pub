@@ -28,7 +28,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.Downloader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;

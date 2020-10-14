@@ -7,7 +7,6 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
 import com.halloapp.util.TailInputStream;
 
 import java.io.BufferedOutputStream;
@@ -17,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.DigestInputStream;

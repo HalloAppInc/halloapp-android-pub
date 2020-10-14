@@ -7,7 +7,7 @@ import android.text.format.DateUtils;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

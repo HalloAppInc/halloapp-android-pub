@@ -12,7 +12,7 @@ import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 

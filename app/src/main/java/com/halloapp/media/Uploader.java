@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.FileInputStream;

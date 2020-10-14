@@ -8,12 +8,11 @@ import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.content.Mention;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.util.Collections;
 import java.util.List;

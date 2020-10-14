@@ -48,7 +48,7 @@ import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.FilterUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;

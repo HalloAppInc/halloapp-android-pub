@@ -7,7 +7,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.util.Collection;
 import java.util.HashSet;

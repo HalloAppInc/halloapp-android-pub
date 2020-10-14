@@ -27,7 +27,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.groups.MemberElement;

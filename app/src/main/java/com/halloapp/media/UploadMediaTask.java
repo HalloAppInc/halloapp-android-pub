@@ -14,7 +14,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;

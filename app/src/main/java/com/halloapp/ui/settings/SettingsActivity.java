@@ -17,7 +17,7 @@ import androidx.preference.PreferenceCategory;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
-import com.halloapp.LogProvider;
+import com.halloapp.util.logs.LogProvider;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
@@ -28,7 +28,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;

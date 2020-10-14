@@ -4,7 +4,6 @@ import androidx.annotation.StringDef;
 
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.GroupMember;
-import com.halloapp.util.Log;
 import com.halloapp.util.Preconditions;
 
 import org.jivesoftware.smack.packet.ExtensionElement;

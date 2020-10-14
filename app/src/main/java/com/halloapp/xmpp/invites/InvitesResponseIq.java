@@ -2,13 +2,11 @@ package com.halloapp.xmpp.invites;
 
 import androidx.annotation.Nullable;
 
-import com.halloapp.proto.server.InvitesResponse;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
 import com.halloapp.xmpp.HalloIq;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

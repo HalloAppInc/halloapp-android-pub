@@ -17,7 +17,7 @@ import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.util.ArrayList;

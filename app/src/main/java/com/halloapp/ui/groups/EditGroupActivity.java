@@ -26,7 +26,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.CenterToast;

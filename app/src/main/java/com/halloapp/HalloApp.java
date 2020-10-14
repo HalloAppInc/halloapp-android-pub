@@ -15,18 +15,13 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
-import com.halloapp.crypto.EncryptedSessionManager;
-import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
-
-import java.util.Collection;
 
 public class HalloApp extends Application {
 
@@ -35,6 +30,7 @@ public class HalloApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.init(FileStore.getInstance(this));
         Log.i("halloapp: onCreate");
         initSync();
 

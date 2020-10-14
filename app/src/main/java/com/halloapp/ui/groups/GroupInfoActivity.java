@@ -32,7 +32,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.groups.MemberElement;

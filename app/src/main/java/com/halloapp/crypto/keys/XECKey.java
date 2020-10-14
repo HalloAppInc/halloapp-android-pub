@@ -1,7 +1,7 @@
 package com.halloapp.crypto.keys;
 
 import com.google.crypto.tink.subtle.X25519;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
 import java.security.InvalidKeyException;

@@ -8,9 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
-import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
-import com.halloapp.util.Log;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;

@@ -4,11 +4,9 @@ import com.halloapp.id.GroupId;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.util.Log;
 import com.halloapp.util.Xml;
 import com.halloapp.xmpp.HalloIq;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
