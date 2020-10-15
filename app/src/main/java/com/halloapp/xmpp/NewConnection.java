@@ -219,10 +219,15 @@ public class NewConnection extends Connection {
 
             // TODO(jack): check client expiration
 
-            final AuthResult result = sendAndRecvAuth(authRequest);
+            final AuthResult authResult = sendAndRecvAuth(authRequest);
 
-            Log.i("connection: auth result: " + result);
-            if (!"success".equals(result.getResult())) {
+            Log.i("connection: auth result: " + authResult);
+            final String result = authResult.getResult();
+            if ("invalid client version".equals(result)) {
+                clientExpired();
+                connectionObservers.notifyClientVersionExpired();
+                return;
+            } else if (!"success".equals(result)) {
                 Log.e("connection: failed to login");
                 disconnectInBackground();
                 connectionObservers.notifyLoginFailed();
