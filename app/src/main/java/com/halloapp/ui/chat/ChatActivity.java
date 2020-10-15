@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -478,6 +480,10 @@ public class ChatActivity extends HalloActivity {
 
                 replyMessageRowId = message.rowId;
                 viewModel.updateMessageRowId(message.rowId);
+
+                editText.requestFocus();
+                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
             }
         });
         itemTouchHelper.attachToRecyclerView(chatView);
