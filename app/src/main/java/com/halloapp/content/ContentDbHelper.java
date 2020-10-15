@@ -632,6 +632,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "END;");
     }
 
+    /**
+     * Recreates a table with a new schema specified by columns.
+     *
+     * Be careful as triggers on the old table will be deleted, and WILL need to be recreated.
+     */
     private void recreateTable(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
         final StringBuilder schema = new StringBuilder();
         for (String column : columns) {
