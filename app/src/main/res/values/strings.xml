@@ -372,4 +372,6 @@
     <string name="camera_error_generic">Camera failure.</string>
     <string name="camera_error_photo">Could not take a photo.</string>
     <string name="camera_error_video">Could not record a video.</string>
+    <string name="discard_photo_title">Discard photo</string>
+    <string name="discard_photo_warning">Are you sure you want to discard your photo?</string>
 </resources>

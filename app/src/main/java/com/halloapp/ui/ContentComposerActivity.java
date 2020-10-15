@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -393,8 +394,17 @@ public class ContentComposerActivity extends HalloActivity {
         if (calledFromPicker) {
             viewModel.doNotDeleteTempFiles();
             prepareResult();
+            super.onBackPressed();
+        } else if (calledFromCamera) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.discard_photo_title))
+                    .setMessage(getResources().getString(R.string.discard_photo_warning))
+                    .setPositiveButton(android.R.string.yes, (dialogInterface, which) -> super.onBackPressed())
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
     }
 
     private void openMediaPicker() {
