@@ -244,7 +244,8 @@ public class ChatActivity extends HalloActivity {
         Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         sendButton.setOnClickListener(v -> sendMessage());
-        findViewById(R.id.media).setOnClickListener(v -> pickMedia());
+        final View media = findViewById(R.id.media);
+        media.setOnClickListener(v -> pickMedia());
 
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
@@ -290,7 +291,7 @@ public class ChatActivity extends HalloActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                media.setVisibility(TextUtils.isEmpty(s) ? View.VISIBLE : View.GONE);
             }
 
             @Override
