@@ -12,6 +12,7 @@ import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -152,8 +153,27 @@ public class Notifications {
             return;
         }
         executor.execute(() -> {
-            final String newPostsNotificationText = getNewPostsNotificationText();
-            final String newCommentsNotificationText = getNewCommentsNotificationText();
+            String newPostsNotificationText = null;
+            String newCommentsNotificationText = null;
+            List<Post> unseenPosts = getNewPosts();
+            List<Comment> unseenComments = getNewComments();
+            HashSet<String> postIds = new HashSet<>();
+            if (unseenComments == null && unseenPosts == null) {
+                final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.cancel(FEED_NOTIFICATION_ID);
+            }
+            if (unseenPosts != null) {
+                newPostsNotificationText = getNewPostsNotificationText(unseenPosts);
+                for (Post post : unseenPosts) {
+                    postIds.add(post.id);
+                }
+            }
+            if (unseenComments != null) {
+                newCommentsNotificationText = getNewCommentsNotificationText(unseenComments);
+                for (Comment comment : unseenComments) {
+                    postIds.add(comment.postId);
+                }
+            }
             if (TextUtils.isEmpty(newPostsNotificationText) && TextUtils.isEmpty(newCommentsNotificationText)) {
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.cancel(FEED_NOTIFICATION_ID);
@@ -166,7 +186,7 @@ public class Notifications {
                 } else {
                     text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
                 }
-                showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text));
+                showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text), postIds);
             }
         });
     }
@@ -359,7 +379,8 @@ public class Notifications {
         }
     }
 
-    private String getNewPostsNotificationText() {
+    @Nullable
+    private List<Post> getNewPosts() {
         if (!preferences.getNotifyPosts()) {
             return null;
         }
@@ -367,6 +388,22 @@ public class Notifications {
         if (unseenPosts.isEmpty()) {
             return null;
         }
+        return unseenPosts;
+    }
+
+    @Nullable
+    private List<Comment> getNewComments() {
+        if (!preferences.getNotifyComments()) {
+            return null;
+        }
+        final List<Comment> unseenComments = ContentDb.getInstance().getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
+        if (unseenComments.isEmpty()) {
+            return null;
+        }
+        return unseenComments;
+    }
+
+    private String getNewPostsNotificationText(@NonNull List<Post> unseenPosts) {
         final Set<UserId> userIds = new HashSet<>();
         for (Post post : unseenPosts) {
             Log.d("Notifications.update: " + post);
@@ -389,14 +426,7 @@ public class Notifications {
         return text;
     }
 
-    private String getNewCommentsNotificationText() {
-        if (!preferences.getNotifyComments()) {
-            return null;
-        }
-        final List<Comment> unseenComments = ContentDb.getInstance().getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
-        if (unseenComments.isEmpty()) {
-            return null;
-        }
+    private String getNewCommentsNotificationText(@NonNull List<Comment> unseenComments) {
         final Set<UserId> userIds = new HashSet<>();
         final Set<String> postIds = new HashSet<>();
         for (Comment comment : unseenComments) {
@@ -416,7 +446,7 @@ public class Notifications {
                 context.getString(R.string.new_comments_on_multiple_posts_notification, ListFormatter.format(context, names));
     }
 
-    private void showFeedNotification(@NonNull String title, @NonNull String body) {
+    private void showFeedNotification(@NonNull String title, @NonNull String body, @NonNull HashSet<String> postIds) {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(context, R.color.color_accent))
@@ -427,6 +457,12 @@ public class Notifications {
         final Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+        if (postIds.size() == 1) {
+            for (String id : postIds) {
+                contentIntent.putExtra(MainActivity.EXTRA_POST_ID, id);
+                break;
+            }
+        }
         builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;

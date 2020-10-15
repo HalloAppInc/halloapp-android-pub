@@ -58,6 +58,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host {
 
+    public static final String EXTRA_POST_ID = "target_post";
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String NAV_TARGET_FEED = "feed";
     public static final String NAV_TARGET_MESSAGES = "messages";
@@ -381,6 +382,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (NAV_TARGET_MESSAGES.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_messages);
+        }
+        String extraPostId = intent.getStringExtra(EXTRA_POST_ID);
+        if (extraPostId != null) {
+            Intent viewIntent = new Intent(this, CommentsActivity.class);
+            viewIntent.putExtra(CommentsActivity.EXTRA_POST_ID, extraPostId);
+            startActivity(viewIntent);
         }
     }
 
