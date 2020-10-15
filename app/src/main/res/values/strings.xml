@@ -233,7 +233,7 @@
     <string name="action_save">Save</string>
     <string name="invite_friends">Invite friends</string>
     <string name="invite_a_friend">Invite a friend</string>
-    <string name="invite_text">Join me on HalloApp — a simple, private, and secure way to stay in touch with friends and family. Get it at https://halloapp.com/dl</string>
+    <string name="invite_text">Join me on HalloApp — a simple and private way to stay in touch with friends and family. Get it at https://halloapp.com/dl</string>
     <string name="share_via">Share via…</string>
     <string name="name_hint">Your name</string>
     <string name="name_must_be_specified">Name must be specified</string>
