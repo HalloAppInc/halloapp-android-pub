@@ -641,7 +641,6 @@ public class ChatActivity extends HalloActivity {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         menuItem = menu.findItem(R.id.block);
         menuItem.setVisible(chatId instanceof UserId);
-        menu.findItem(R.id.new_post).setVisible(chatId instanceof GroupId);
         viewModel.getBlockList().observe(this, userIds -> {
             blocked = updateBlockedContact(userIds);
             Log.i("ChatActivity: blocked = " + blocked);
@@ -673,9 +672,6 @@ public class ChatActivity extends HalloActivity {
                     unBlockContact(item);
                 }
                 return true;
-            }
-            case R.id.new_post: {
-                startActivity(ViewGroupFeedActivity.viewFeed(this, (GroupId) chatId));
             }
             default: {
                 return super.onOptionsItemSelected(item);

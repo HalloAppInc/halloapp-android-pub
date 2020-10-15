@@ -10,6 +10,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.concurrent.Callable;
@@ -17,11 +18,13 @@ import java.util.concurrent.Callable;
 public class UnseenGroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
 
     private final ContentDb contentDb;
+    private final ServerProps serverProps;
 
     private int shortAnimationDuration;
 
     public UnseenGroupPostLoader(@NonNull Context context) {
         contentDb = ContentDb.getInstance();
+        serverProps = ServerProps.getInstance();
 
         shortAnimationDuration = context.getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -30,7 +33,7 @@ public class UnseenGroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
     @MainThread
     public void load(@NonNull View view, @NonNull ChatId chatId) {
         final Callable<Post> loader = () -> {
-            if (chatId instanceof GroupId) {
+            if (chatId instanceof GroupId && serverProps.getGroupFeedEnabled()) {
                 return contentDb.getLastUnseenGroupPost((GroupId) chatId);
             }
             return null;

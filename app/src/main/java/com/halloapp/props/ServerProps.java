@@ -28,6 +28,7 @@ public class ServerProps {
     private static final String PROP_INTERNAL_USER = "dev";
     private static final String PROP_GROUPS_ENABLED = "groups";
     private static final String PROP_MAX_GROUP_SIZE = "max_group_size";
+    private static final String PROP_GROUP_FEED = "group_feed";
 
     private static ServerProps instance;
 
@@ -52,6 +53,7 @@ public class ServerProps {
     private final BooleanProp propInternalUser = createProp(PROP_INTERNAL_USER, false);
     private final IntegerProp propMaxGroupSize = createProp(PROP_MAX_GROUP_SIZE, 25);
     private final BooleanProp propGroupsEnabled = createProp(PROP_GROUPS_ENABLED, false);
+    private final BooleanProp propGroupFeedEnabled = createProp(PROP_GROUP_FEED, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -160,5 +162,9 @@ public class ServerProps {
 
     public synchronized boolean getGroupsEnabled() {
         return true;
+    }
+
+    public synchronized boolean getGroupFeedEnabled() {
+        return propGroupFeedEnabled.getValue();
     }
 }

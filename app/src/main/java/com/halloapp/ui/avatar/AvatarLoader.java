@@ -26,6 +26,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.Downloader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.logs.Log;
@@ -47,6 +48,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private final Context context;
     private final Connection connection;
     private final ContactsDb contactsDb;
+    private final ServerProps serverProps;
     private final LruCache<String, Bitmap> cache;
 
     private Bitmap defaultUserAvatar;
@@ -56,17 +58,18 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(AppContext.getInstance().get(), Connection.getInstance(), ContactsDb.getInstance());
+                    instance = new AvatarLoader(AppContext.getInstance().get(), Connection.getInstance(), ContactsDb.getInstance(), ServerProps.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Context context, @NonNull Connection connection, @NonNull ContactsDb contactsDb) {
+    private AvatarLoader(@NonNull Context context, @NonNull Connection connection, @NonNull ContactsDb contactsDb, @NonNull ServerProps serverProps) {
         this.context = context.getApplicationContext();
         this.connection = connection;
         this.contactsDb = contactsDb;
+        this.serverProps = serverProps;
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -97,9 +100,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 } else {
                     view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
                 }
-            } else if (chatId instanceof GroupId) {
+            } else if (chatId instanceof GroupId && serverProps.getGroupFeedEnabled()) {
                 GroupId groupId = (GroupId) chatId;
                 view.setOnClickListener(v -> v.getContext().startActivity(ViewGroupFeedActivity.viewFeed(v.getContext(), groupId)));
+            } else {
+                view.setOnClickListener(null);
             }
         }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
