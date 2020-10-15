@@ -130,6 +130,7 @@ public class NewConnection extends Connection {
     public InputStream inputStream;
     private boolean isAuthenticated;
     private AuthResult authResult;
+
     private PacketWriter packetWriter = new PacketWriter();
     private PacketReader packetReader = new PacketReader();
     private IqRouter iqRouter = new IqRouter();
@@ -197,6 +198,7 @@ public class NewConnection extends Connection {
 
             packetWriter.init();
             packetReader.init();
+            iqRouter.reset();
 
             ClientVersion clientVersion = ClientVersion.newBuilder()
                     .setVersion(BuildConfig.VERSION_NAME)
@@ -217,7 +219,7 @@ public class NewConnection extends Connection {
 
             final AuthResult result = sendAndRecvAuth(authRequest);
             Log.i("connection: auth result: " + result);
-            if ("failure".equals(result.getResult())) {
+            if (!"success".equals(result.getResult())) {
                 Log.e("connection: failed to login");
                 disconnectInBackground();
                 connectionObservers.notifyLoginFailed();
@@ -298,6 +300,10 @@ public class NewConnection extends Connection {
 
     @WorkerThread
     private void disconnectInBackground() {
+        packetWriter.shutdown();
+        packetReader.shutdown();
+        iqRouter.reset();
+
         if (sslSocket == null) {
             Log.e("connection: cannot disconnect, no connection");
             return;
@@ -312,6 +318,7 @@ public class NewConnection extends Connection {
             }
         }
         sslSocket = null;
+
         connectionObservers.notifyDisconnected();
     }
 
@@ -1044,6 +1051,7 @@ public class NewConnection extends Connection {
                 try {
                     InputStream is = inputStream;
                     if (is == null) {
+                        disconnect();
                         throw new IOException("Input stream is null");
                     }
 
@@ -1053,7 +1061,7 @@ public class NewConnection extends Connection {
                     while (needMoreBytes) {
                         int c = inputStream.read(buf);
                         if (c < 0) {
-                            shutdown();
+                            disconnect();
                             throw new IOException("No bytes read from input stream");
                         }
 
@@ -1113,6 +1121,7 @@ public class NewConnection extends Connection {
                     handleAuth(authResult);
                 } catch (InvalidProtocolBufferException f) {
                     Log.e("Failed to parse incoming protobuf; was not auth", f);
+                    disconnect();
                 }
             }
         }
@@ -1435,6 +1444,7 @@ public class NewConnection extends Connection {
 
                         OutputStream os = outputStream;
                         if (os == null) {
+                            disconnect();
                             throw new IOException("Output stream is null");
                         }
 
@@ -1493,6 +1503,12 @@ public class NewConnection extends Connection {
             } catch (InterruptedException | ObservableErrorException e) {
                 throw new ExecutionException(e);
             }
+        }
+
+        void reset() {
+            responses.clear();
+            successCallbacks.clear();
+            failureCallbacks.clear();
         }
 
         private void setCallbacks(String id, ResponseHandler<Iq> success, ExceptionHandler failure) {
