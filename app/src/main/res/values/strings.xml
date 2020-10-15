@@ -225,6 +225,7 @@
     <string name="online">Online</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="yesterday_at_time">yesterday at %s</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="select_contact">New message</string>
     <string name="search_contacts">Search contacts</string>

@@ -113,7 +113,15 @@ public class TimeFormatter {
         if (timestamp > now - 60_000) {
             return context.getString(R.string.last_seen_less_minute);
         }
-        return context.getString(R.string.last_seen, DateUtils.getRelativeTimeSpanString(timestamp));
+
+        CharSequence dateString;
+        if (DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)) {
+            dateString = context.getString(R.string.yesterday_at_time, DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME));
+        } else {
+            dateString = DateUtils.getRelativeTimeSpanString(timestamp);
+        }
+
+        return context.getString(R.string.last_seen, dateString);
 
     }
 }
