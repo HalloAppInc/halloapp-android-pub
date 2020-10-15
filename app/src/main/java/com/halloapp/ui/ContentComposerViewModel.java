@@ -82,7 +82,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         me = Me.getInstance();
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contactsDb = ContactsDb.getInstance();
         this.replyPostId = replyPostId;
         this.replyPostMediaIndex = replyPostMediaIndex;
@@ -247,7 +247,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             final List<EditMediaPair> mediaPairList = new ArrayList<>();
 
             final ContentResolver contentResolver = application.getContentResolver();
-            final FileStore fileStore = FileStore.getInstance(application);
+            final FileStore fileStore = FileStore.getInstance();
             int uriIndex = 0;
             final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
@@ -355,7 +355,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, null, 0);
             if (media != null) {
                 for (Media mediaItem : media) {
-                    final File postFile = FileStore.getInstance(application).getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
+                    final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
                     switch (mediaItem.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {

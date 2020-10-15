@@ -98,7 +98,7 @@ public class GroupFeedViewModel extends AndroidViewModel {
         this.groupId = groupId;
 
         blockListManager = BlockListManager.getInstance();
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance();
 

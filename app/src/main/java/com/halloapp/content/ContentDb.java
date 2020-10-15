@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
@@ -103,23 +104,24 @@ public class ContentDb {
         public void onDbCreated() {}
     }
 
-    public static ContentDb getInstance(final @NonNull Context context) {
+    public static ContentDb getInstance() {
         if (instance == null) {
             synchronized (ContentDb.class) {
                 if (instance == null) {
-                    instance = new ContentDb(context);
+                    instance = new ContentDb(Me.getInstance(), FileStore.getInstance(), AppContext.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private ContentDb(final @NonNull Context context) {
+    private ContentDb(@NonNull Me me, @NonNull final FileStore fileStore, final @NonNull AppContext appContext) {
+        Context context = appContext.get();
         databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
-        me = Me.getInstance();
+        this.me = me;
         mentionsDb = new MentionsDb(databaseHelper);
-        messagesDb = new MessagesDb(mentionsDb, databaseHelper, FileStore.getInstance(context));
-        postsDb = new PostsDb(mentionsDb, databaseHelper, FileStore.getInstance(context));
+        messagesDb = new MessagesDb(mentionsDb, databaseHelper, fileStore);
+        postsDb = new PostsDb(mentionsDb, databaseHelper, fileStore);
     }
 
     public void addObserver(@NonNull Observer observer) {

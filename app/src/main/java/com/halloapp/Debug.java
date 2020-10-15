@@ -96,10 +96,10 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {
-                    ContentDb.getInstance(activity).setCommentsSeen(true);
+                    ContentDb.getInstance().setCommentsSeen(true);
                 }
                 case DEBUG_MENU_SET_INCOMING_POSTS_UNSEEN: {
-                    ContentDb.getInstance(activity).setIncomingPostsSeen(Post.SEEN_NO);
+                    ContentDb.getInstance().setIncomingPostsSeen(Post.SEEN_NO);
                 }
                 case DEBUG_MENU_CLEANUP_POSTS: {
                     new CleanupPostsTask(activity.getApplication()).execute();
@@ -184,7 +184,7 @@ public class Debug {
             //noinspection SwitchStatementWithTooFewBranches
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
-                    ContentDb.getInstance(activity).setCommentsSeen(userId, postId, false);
+                    ContentDb.getInstance().setCommentsSeen(userId, postId, false);
                     break;
                 }
             }
@@ -251,9 +251,9 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ContentDb.getInstance(application).deleteDb();
-            FileUtils.deleteRecursive(FileStore.getInstance(application).getMediaDir());
-            FileUtils.deleteRecursive(FileStore.getInstance(application).getTmpDir());
+            ContentDb.getInstance().deleteDb();
+            FileUtils.deleteRecursive(FileStore.getInstance().getMediaDir());
+            FileUtils.deleteRecursive(FileStore.getInstance().getTmpDir());
             restart(application);
             return null;
         }
@@ -285,8 +285,8 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ContentDb.getInstance(application).cleanup();
-            FileStore.getInstance(application).cleanup();
+            ContentDb.getInstance().cleanup();
+            FileStore.getInstance().cleanup();
             return null;
         }
     }

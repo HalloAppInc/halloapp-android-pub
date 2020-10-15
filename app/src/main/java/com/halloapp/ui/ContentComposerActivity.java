@@ -344,7 +344,7 @@ public class ContentComposerActivity extends HalloActivity {
         });
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {
-                contentItem.addToStorage(ContentDb.getInstance(getBaseContext()));
+                contentItem.addToStorage(ContentDb.getInstance());
                 setResult(RESULT_OK);
                 finish();
                 if (chatId != null && getIntent() != null && getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_CHAT, false)) {

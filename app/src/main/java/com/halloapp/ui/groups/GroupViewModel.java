@@ -82,7 +82,7 @@ public class GroupViewModel extends AndroidViewModel {
         this.groupId = groupId;
 
         me = Me.getInstance();
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
         groupsApi = GroupsApi.getInstance();
 

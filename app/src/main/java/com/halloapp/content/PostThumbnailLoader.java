@@ -47,7 +47,7 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
         this.dimensionLimit = dimensionLimit;
         this.context = context.getApplicationContext();
         me = Me.getInstance();
-        contentDb = ContentDb.getInstance(context);
+        contentDb = ContentDb.getInstance();
         contactsDb = ContactsDb.getInstance();
 
         textSizeMax = context.getResources().getDimensionPixelSize(R.dimen.text_post_thumbnail_max_text_size);

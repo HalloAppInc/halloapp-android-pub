@@ -18,7 +18,6 @@ import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.media.DownloadMediaTask;
-import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -63,8 +62,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.parent = parent;
 
         this.connection = Connection.getInstance();
-        this.fileStore = FileStore.getInstance(itemView.getContext());
-        this.contentDb = ContentDb.getInstance(itemView.getContext());
+        this.fileStore = FileStore.getInstance();
+        this.contentDb = ContentDb.getInstance();
 
         avatarView = itemView.findViewById(R.id.avatar);
         nameView = itemView.findViewById(R.id.name);
@@ -119,7 +118,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         postContentLayout.setOnSeenListener(() -> {
             if (post.seen == Post.SEEN_NO && post.isIncoming()) {
                 post.seen = Post.SEEN_YES_PENDING;
-                ContentDb.getInstance(itemView.getContext()).setIncomingPostSeen(post.senderUserId, post.id);
+                ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id);
             }
         });
 

@@ -46,7 +46,7 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
 
         me = Me.getInstance();
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         preferences = Preferences.getInstance();
         contentDb.addObserver(contentObserver);
 

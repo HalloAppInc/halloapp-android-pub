@@ -122,7 +122,7 @@ public class ChatsViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
 
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
 
         preferences = Preferences.getInstance();
@@ -138,7 +138,7 @@ public class ChatsViewModel extends AndroidViewModel {
             @Override
             protected List<Chat> compute() {
 
-                final List<Chat> chats = ContentDb.getInstance(application).getChats();
+                final List<Chat> chats = ContentDb.getInstance().getChats();
                 Map<ChatId, Chat> chatsMap = new HashMap<>();
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);

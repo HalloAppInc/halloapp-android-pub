@@ -197,7 +197,7 @@ public class Notifications {
     public void updateMessageNotifications() {
         executor.execute(() -> {
 
-            final List<Message> messages = ContentDb.getInstance(context).getUnseenMessages(UNSEEN_MESSAGES_LIMIT);
+            final List<Message> messages = ContentDb.getInstance().getUnseenMessages(UNSEEN_MESSAGES_LIMIT);
             Log.i("Notifications.updateMessageNotifications: " + messages.size() + " messages");
 
             // group messages by chat IDs
@@ -246,7 +246,7 @@ public class Notifications {
                     if (senders.add(message.senderUserId)) {
                         names.add(senderName);
                     }
-                    final Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(context).getChat(message.chatId));
+                    final Chat chat = Preconditions.checkNotNull(ContentDb.getInstance().getChat(message.chatId));
                     String chatName = message.chatId instanceof GroupId ? chat.name : senderName;
                     if (chatName != null && chats.add(message.chatId)) {
                         chatNames.add(chatName);
@@ -363,7 +363,7 @@ public class Notifications {
         if (!preferences.getNotifyPosts()) {
             return null;
         }
-        final List<Post> unseenPosts = ContentDb.getInstance(context).getUnseenPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+        final List<Post> unseenPosts = ContentDb.getInstance().getUnseenPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
         if (unseenPosts.isEmpty()) {
             return null;
         }
@@ -393,7 +393,7 @@ public class Notifications {
         if (!preferences.getNotifyComments()) {
             return null;
         }
-        final List<Comment> unseenComments = ContentDb.getInstance(context).getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
+        final List<Comment> unseenComments = ContentDb.getInstance().getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
         if (unseenComments.isEmpty()) {
             return null;
         }

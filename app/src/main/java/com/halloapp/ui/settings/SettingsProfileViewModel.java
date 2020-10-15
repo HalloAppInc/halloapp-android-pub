@@ -175,7 +175,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                         if (avatarId == null) {
                             return Result.failure();
                         }
-                        final File outFile = FileStore.getInstance(getApplicationContext()).getAvatarFile(UserId.ME.rawId());
+                        final File outFile = FileStore.getInstance().getAvatarFile(UserId.ME.rawId());
                         FileUtils.copyFile(avatarFile, outFile);
                         AvatarLoader avatarLoader = AvatarLoader.getInstance();
                         avatarLoader.reportMyAvatarChanged(avatarId);

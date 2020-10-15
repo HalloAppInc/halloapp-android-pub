@@ -29,11 +29,11 @@ public class FileStore {
     private final File avatarDir;
     private final File logDir;
 
-    public static FileStore getInstance(final @NonNull Context context) {
+    public static FileStore getInstance() {
         if (instance == null) {
             synchronized(FileStore.class) {
                 if (instance == null) {
-                    instance = new FileStore(context);
+                    instance = new FileStore(AppContext.getInstance());
                 }
             }
         }
@@ -45,7 +45,8 @@ public class FileStore {
         return TextUtils.isEmpty(suffix) ? baseName : String.format("%s-%s", baseName, suffix);
     }
 
-    private FileStore(@NonNull Context context) {
+    private FileStore(@NonNull AppContext appContext) {
+        Context context = appContext.get();
         final StrictMode.ThreadPolicy threadPolicy = StrictMode.getThreadPolicy();
         StrictMode.allowThreadDiskReads();
         StrictMode.allowThreadDiskWrites();

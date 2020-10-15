@@ -217,6 +217,12 @@ public class NewConnection extends Connection {
 
             final AuthResult result = sendAndRecvAuth(authRequest);
             Log.i("connection: auth result: " + result);
+            if ("failure".equals(result.getResult())) {
+                Log.e("connection: failed to login");
+                disconnectInBackground();
+                connectionObservers.notifyLoginFailed();
+                return;
+            }
             connectionObservers.notifyConnected();
             isAuthenticated = true;
         } catch (IOException e) {

@@ -35,7 +35,7 @@ public class LogManager {
 
     @WorkerThread
     public void zipLocalLogs(@NonNull Context context, File output) {
-        File logDir = FileStore.getInstance(context).getLogDir();
+        File logDir = FileStore.getInstance().getLogDir();
         File[] logFiles = logDir.listFiles();
         if (logFiles == null) {
             Log.e("LogManager/zipCrashlyticsLogs no logs to zip up");

@@ -70,7 +70,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         groupNameLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(application).getChat(groupId));
+                Chat chat = Preconditions.checkNotNull(ContentDb.getInstance().getChat(groupId));
                 return chat.name;
             }
         };
@@ -198,7 +198,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
                         if (avatarId == null) {
                             return Result.failure();
                         }
-                        final File outFile = FileStore.getInstance(getApplicationContext()).getAvatarFile(groupId.rawId());
+                        final File outFile = FileStore.getInstance().getAvatarFile(groupId.rawId());
                         FileUtils.copyFile(avatarFile, outFile);
                         AvatarLoader avatarLoader = AvatarLoader.getInstance();
                         avatarLoader.reportAvatarUpdate(groupId, avatarId);

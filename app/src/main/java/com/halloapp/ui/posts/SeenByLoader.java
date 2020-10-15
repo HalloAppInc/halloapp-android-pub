@@ -28,7 +28,7 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
     };
 
     public SeenByLoader(@NonNull Context context) {
-        contentDb = ContentDb.getInstance(context);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
     }
 

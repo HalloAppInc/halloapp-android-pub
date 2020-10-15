@@ -19,13 +19,9 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenByInfo;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 
 public class PostSeenByViewModel extends AndroidViewModel {
 
@@ -77,7 +73,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
         super(application);
 
         me = Me.getInstance();
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
 
         contactsDb = ContactsDb.getInstance();

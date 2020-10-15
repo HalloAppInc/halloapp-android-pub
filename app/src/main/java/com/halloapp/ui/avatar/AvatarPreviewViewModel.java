@@ -119,7 +119,7 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
         @Override
         protected AvatarPreviewViewModel.TranscodeResult doInBackground(Void... voids) {
             if (media != null) {
-                transcodedFile = FileStore.getInstance(application).getTmpFile("avatar");
+                transcodedFile = FileStore.getInstance().getTmpFile("avatar");
                 try {
                     return transcode(media.file, transcodedFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
                 } catch (IOException | NoSuchAlgorithmException e) {
@@ -206,7 +206,7 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
         protected Media doInBackground(Void... voids) {
             final ContentResolver contentResolver = application.getContentResolver();
             @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
-            final File file = FileStore.getInstance(application).getTmpFile(RandomId.create());
+            final File file = FileStore.getInstance().getTmpFile(RandomId.create());
             FileUtils.uriToFile(application, uri, file);
             final Size size = MediaUtils.getDimensions(file, mediaType);
             if (size != null) {

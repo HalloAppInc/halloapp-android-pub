@@ -27,8 +27,8 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
 
     public TransferPendingItemsTask(@NonNull Context context) {
         this.connection = Connection.getInstance();
-        this.fileStore = FileStore.getInstance(context);
-        this.contentDb = ContentDb.getInstance(context);
+        this.fileStore = FileStore.getInstance();
+        this.contentDb = ContentDb.getInstance();
         this.encryptedSessionManager = EncryptedSessionManager.getInstance();
     }
 

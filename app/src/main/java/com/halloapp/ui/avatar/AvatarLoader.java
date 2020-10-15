@@ -135,7 +135,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @WorkerThread
     private Bitmap getAvatarImpl(@NonNull ChatId chatId) {
-        FileStore fileStore = FileStore.getInstance(context);
+        FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(chatId.rawId());
 
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(chatId);
@@ -170,7 +170,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                         contactAvatarInfo.avatarId = contact.avatarId;
                     }
                 } else {
-                    Chat chat = Preconditions.checkNotNull(ContentDb.getInstance(context).getChat(chatId));
+                    Chat chat = Preconditions.checkNotNull(ContentDb.getInstance().getChat(chatId));
                     avatarId = chat.groupAvatarId;
 
                     if (TextUtils.isEmpty(avatarId)) {
@@ -258,7 +258,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         contactAvatarInfo.avatarCheckTimestamp = 0;
         contactsDb.updateContactAvatarInfo(contactAvatarInfo);
 
-        FileStore fileStore = FileStore.getInstance(context);
+        FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(UserId.ME.rawId());
         if (avatarFile.exists()) {
             if (!avatarFile.delete()) {
@@ -269,7 +269,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportAvatarUpdate(@NonNull ChatId chatId, @NonNull String avatarId) {
-        FileStore fileStore = FileStore.getInstance(context);
+        FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(chatId.rawId());
         if (avatarFile.exists()) {
             if (!avatarFile.delete()) {

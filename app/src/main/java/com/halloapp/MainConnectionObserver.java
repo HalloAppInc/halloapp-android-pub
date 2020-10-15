@@ -71,7 +71,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             context,
                             Me.getInstance(),
                             BgWorkers.getInstance(),
-                            ContentDb.getInstance(context),
+                            ContentDb.getInstance(),
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),

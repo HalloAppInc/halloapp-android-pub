@@ -417,7 +417,7 @@ public class ChatActivity extends HalloActivity {
                     }
                 });
             }
-            ContentDb.getInstance(this).setChatSeen(chatId);
+            ContentDb.getInstance().setChatSeen(chatId);
         });
         avatarLoader.load(avatarView, chatId);
         viewModel.deleted.observe(this, deleted -> {
@@ -602,7 +602,7 @@ public class ChatActivity extends HalloActivity {
         Notifications.getInstance(this).clearMessageNotifications(chatId);
         if (adapter.firstUnseenMessageRowId >= 0) {
             Log.i("ChatActivity.onStart mark " + chatId + " as seen");
-            ContentDb.getInstance(this).setChatSeen(chatId);
+            ContentDb.getInstance().setChatSeen(chatId);
         }
     }
 
@@ -661,7 +661,7 @@ public class ChatActivity extends HalloActivity {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(getBaseContext().getString(R.string.delete_chat_confirmation));
                 builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(this).deleteChat(chatId));
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().deleteChat(chatId));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
                 return true;
@@ -875,7 +875,7 @@ public class ChatActivity extends HalloActivity {
         replyMessage = null;
         replyMessageMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
-        message.addToStorage(ContentDb.getInstance(this));
+        message.addToStorage(ContentDb.getInstance());
     }
 
     private void pickMedia() {

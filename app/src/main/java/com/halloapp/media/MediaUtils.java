@@ -348,7 +348,7 @@ public class MediaUtils {
 
     public static Uri getImageCaptureUri(@NonNull Context context) {
         return FileProvider.getUriForFile(context, "com.halloapp.fileprovider",
-                FileStore.getInstance(context).getImageCaptureFile());
+                FileStore.getInstance().getImageCaptureFile());
     }
 
     public static @NonNull Bitmap getCircledBitmap(@NonNull Bitmap bitmap) {

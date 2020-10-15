@@ -3,7 +3,6 @@ package com.halloapp.content;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -35,7 +34,7 @@ public class PostsManager {
         if (instance == null) {
             synchronized (PostsManager.class) {
                 if (instance == null) {
-                    instance = new PostsManager(BgWorkers.getInstance(), ContentDb.getInstance(AppContext.getInstance().get()), Connection.getInstance(), ContactsDb.getInstance(), Preferences.getInstance());
+                    instance = new PostsManager(BgWorkers.getInstance(), ContentDb.getInstance(), Connection.getInstance(), ContactsDb.getInstance(), Preferences.getInstance());
                 }
             }
         }

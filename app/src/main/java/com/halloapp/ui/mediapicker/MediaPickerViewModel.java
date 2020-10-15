@@ -162,7 +162,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            final FileStore store = FileStore.getInstance(getApplication());
+            final FileStore store = FileStore.getInstance();
 
             for (Uri uri : uris) {
                 final File original = store.getTmpFileForUri(uri, null);

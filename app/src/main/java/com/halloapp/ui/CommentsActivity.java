@@ -206,7 +206,7 @@ public class CommentsActivity extends HalloActivity {
                 }
                 comment.mentions.add(mention);
             }
-            ContentDb.getInstance(Preconditions.checkNotNull(getBaseContext())).addComment(comment);
+            ContentDb.getInstance().addComment(comment);
             editText.setText(null);
             final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -277,7 +277,7 @@ public class CommentsActivity extends HalloActivity {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(CommentsActivity.this);
                 builder.setMessage(getBaseContext().getString(R.string.retract_comment_confirmation));
                 builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(CommentsActivity.this).retractComment(comment));
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
             }
@@ -406,7 +406,7 @@ public class CommentsActivity extends HalloActivity {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(context.getString(R.string.retract_comment_confirmation));
                 builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance(getBaseContext()).retractComment(comment));
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
             });

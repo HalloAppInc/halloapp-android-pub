@@ -9,6 +9,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.content.ContentDb;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -34,7 +35,7 @@ public class Registration {
         if (instance == null) {
             synchronized(Registration.class) {
                 if (instance == null) {
-                    instance = new Registration(Me.getInstance(), Connection.getInstance());
+                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance());
                 }
             }
         }
@@ -42,10 +43,12 @@ public class Registration {
     }
 
     private Me me;
+    private ContentDb contentDb;
     private Connection connection;
 
-    private Registration(@NonNull Me me, @NonNull Connection connection) {
+    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         this.me = me;
+        this.contentDb = contentDb;
         this.connection = connection;
     }
 
@@ -112,6 +115,11 @@ public class Registration {
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
         RegistrationVerificationResult verificationResult = verifyRegistration(phone, code, me.getName());
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
+            String uid = me.getUser();
+            if (!Preconditions.checkNotNull(verificationResult.user).equals(uid)) {
+                // New user, we should clear data
+                ContentDb.getInstance().deleteDb();
+            }
             me.saveRegistration(
                     Preconditions.checkNotNull(verificationResult.user),
                     Preconditions.checkNotNull(verificationResult.password),

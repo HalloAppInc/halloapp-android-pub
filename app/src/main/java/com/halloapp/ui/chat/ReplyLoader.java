@@ -38,7 +38,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
     ReplyLoader(@NonNull Context context, int dimensionLimit) {
         this.dimensionLimit = dimensionLimit;
         this.me = Me.getInstance();
-        this.contentDb = ContentDb.getInstance(context);
+        this.contentDb = ContentDb.getInstance();
         this.contactsDb = ContactsDb.getInstance();
     }
 

@@ -107,7 +107,7 @@ class CommentsViewModel extends AndroidViewModel {
         this.postSenderUserId = postSenderUserId;
         this.postId = postId;
 
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance();
 
@@ -238,7 +238,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         protected Post doInBackground(Void... voids) {
-            return ContentDb.getInstance(application).getPost(postId);
+            return ContentDb.getInstance().getPost(postId);
         }
 
         @Override

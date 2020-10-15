@@ -30,7 +30,6 @@ public class HalloApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.init(FileStore.getInstance(this));
         Log.i("halloapp: onCreate");
         initSync();
 
@@ -49,7 +48,7 @@ public class HalloApp extends Application {
         }
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
-        ContentDb.getInstance(this).addObserver(MainContentDbObserver.getInstance(this));
+        ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));
         ContactsDb.getInstance().addObserver(new ContactsDb.BaseObserver() {
             @Override
             public void onContactsReset() {
@@ -74,8 +73,9 @@ public class HalloApp extends Application {
      * Synchronous init, try to do as little work here as possible
      */
     private void initSync() {
-        Log.i("HalloApp init");
         appContext.setApplicationContext(this);
+        Log.init(FileStore.getInstance());
+        Log.i("HalloApp init");
 
         Log.wrapCrashlytics();
 

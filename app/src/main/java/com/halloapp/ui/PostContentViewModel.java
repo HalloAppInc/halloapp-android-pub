@@ -42,13 +42,13 @@ public class PostContentViewModel extends AndroidViewModel {
         this.senderUserId = senderUserId;
         this.postId = postId;
 
-        contentDb = ContentDb.getInstance(application);
+        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
 
         post = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                return ContentDb.getInstance(application).getPost(postId);
+                return ContentDb.getInstance().getPost(postId);
             }
         };
     }

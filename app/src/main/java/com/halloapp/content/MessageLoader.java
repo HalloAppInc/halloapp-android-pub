@@ -20,7 +20,7 @@ public class MessageLoader extends ViewDataLoader<View, Message, Long> {
     private final LruCache<Long, Message> cache;
 
     public MessageLoader(@NonNull Context context) {
-        contentDb = ContentDb.getInstance(context);
+        contentDb = ContentDb.getInstance();
         cache = new LruCache<>(1024);
     }
 

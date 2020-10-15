@@ -130,7 +130,7 @@ public class PostSeenByActivity extends HalloActivity {
                     .setMessage(getString(R.string.retract_post_confirmation))
                     .setCancelable(true)
                     .setPositiveButton(R.string.yes, (dialog, which) ->
-                            ContentDb.getInstance(this).retractPost(post))
+                            ContentDb.getInstance().retractPost(post))
                     .setNegativeButton(R.string.no, null)
                     .show();
         }

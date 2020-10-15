@@ -501,7 +501,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private File generateTempCameraFile(@Media.MediaType int mediaType) {
-        File tempFile = FileStore.getInstance(this).getCameraFile(RandomId.create() + "." + Media.getFileExt(mediaType));
+        File tempFile = FileStore.getInstance().getCameraFile(RandomId.create() + "." + Media.getFileExt(mediaType));
         Log.d("CameraActivity: generateTempFile " + Uri.fromFile(tempFile));
         return  tempFile;
     }

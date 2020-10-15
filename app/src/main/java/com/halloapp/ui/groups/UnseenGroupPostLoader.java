@@ -2,11 +2,9 @@ package com.halloapp.ui.groups;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.transition.TransitionManager;
 
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
@@ -23,7 +21,7 @@ public class UnseenGroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
     private int shortAnimationDuration;
 
     public UnseenGroupPostLoader(@NonNull Context context) {
-        contentDb = ContentDb.getInstance(context);
+        contentDb = ContentDb.getInstance();
 
         shortAnimationDuration = context.getResources().getInteger(
                 android.R.integer.config_shortAnimTime);

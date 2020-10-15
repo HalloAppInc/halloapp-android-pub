@@ -46,8 +46,8 @@ public class DailyWorker extends Worker {
     @Override
     public @NonNull Result doWork() {
         Log.i("DailyWorker.doWork");
-        ContentDb.getInstance(getApplicationContext()).cleanup();
-        FileStore.getInstance(getApplicationContext()).cleanup();
+        ContentDb.getInstance().cleanup();
+        FileStore.getInstance().cleanup();
         ContactsSync.getInstance(getApplicationContext()).startContactsSync(true);
         schedule(getApplicationContext());
         return Result.success();

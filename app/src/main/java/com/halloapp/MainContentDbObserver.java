@@ -45,8 +45,8 @@ public class MainContentDbObserver implements ContentDb.Observer {
     private MainContentDbObserver(@NonNull Context context) {
         this.context = context.getApplicationContext();
         this.connection = Connection.getInstance();
-        this.fileStore = FileStore.getInstance(context);
-        this.contentDb = ContentDb.getInstance(context);
+        this.fileStore = FileStore.getInstance();
+        this.contentDb = ContentDb.getInstance();
         this.notifications = Notifications.getInstance(context);
         this.encryptedSessionManager = EncryptedSessionManager.getInstance();
     }

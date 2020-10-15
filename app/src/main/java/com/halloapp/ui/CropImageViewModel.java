@@ -199,7 +199,7 @@ public class CropImageViewModel extends AndroidViewModel {
         protected List<MediaModel> doInBackground(Void... voids) {
             final List<MediaModel> result = new ArrayList<>(uris.size());
             final ContentResolver resolver = application.getContentResolver();
-            final FileStore store = FileStore.getInstance(application);
+            final FileStore store = FileStore.getInstance();
             final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
             for (Uri uri : uris) {

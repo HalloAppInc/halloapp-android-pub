@@ -153,7 +153,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
                         if (avatarId == null) {
                             return Result.failure();
                         }
-                        final File outFile = FileStore.getInstance(getApplicationContext()).getAvatarFile(groupId.rawId());
+                        final File outFile = FileStore.getInstance().getAvatarFile(groupId.rawId());
                         FileUtils.copyFile(avatarFile, outFile);
 
                         // TODO(jack): make all the avatar code support GroupIds
