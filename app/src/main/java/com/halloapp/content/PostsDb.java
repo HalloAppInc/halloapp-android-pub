@@ -559,8 +559,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    boolean setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, boolean seen) {
-        Log.i("ContentDb.setCommentsSeen: postSenderUserId=" + postSenderUserId+ " postId=" + postId);
+    boolean setCommentsSeen(@NonNull String postId, boolean seen) {
+        Log.i("ContentDb.setCommentsSeen: postId=" + postId);
         final ContentValues values = new ContentValues();
         values.put(CommentsTable.COLUMN_SEEN, seen);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -846,7 +846,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    long getLastSeenCommentRowId(@NonNull UserId postSenderUserId, @NonNull String postId) {
+    long getLastSeenCommentRowId(@NonNull String postId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
                 "SELECT MAX(" + CommentsTable._ID + ") FROM " + CommentsTable.TABLE_NAME + " " +
@@ -861,7 +861,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
+    @NonNull List<Comment> getComments(@NonNull String postId, int start, int count) {
         final String sql =
                 "WITH RECURSIVE " +
                     "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text) AS ( " +

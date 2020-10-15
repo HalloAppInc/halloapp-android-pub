@@ -184,7 +184,7 @@ public class Debug {
             //noinspection SwitchStatementWithTooFewBranches
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
-                    ContentDb.getInstance().setCommentsSeen(userId, postId, false);
+                    ContentDb.getInstance().setCommentsSeen(postId, false);
                     break;
                 }
             }

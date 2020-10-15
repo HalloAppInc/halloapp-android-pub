@@ -130,14 +130,13 @@ public class CommentsActivity extends HalloActivity {
 
         keyboardScrollHelper = new RecyclerViewKeyboardScrollHelper(commentsView);
 
-        final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         final View replyIndicator = findViewById(R.id.reply_indicator);
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), userId, postId)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
         viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {
         }));
 
@@ -173,7 +172,7 @@ public class CommentsActivity extends HalloActivity {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
         });
-        viewModel.loadPost(userId, postId);
+        viewModel.loadPost(postId);
 
         replyIndicatorCloseButton.setOnClickListener(v -> resetReplyIndicator());
 
@@ -485,7 +484,6 @@ public class CommentsActivity extends HalloActivity {
                 mediaThumbnailLoader.load(imageView, media.get(position));
                 imageView.setOnClickListener(v -> {
                     final Intent intent = new Intent(imageView.getContext(), PostContentActivity.class);
-                    intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId);
                     intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
                     intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, position);
                     if (imageView.getContext() instanceof Activity) {

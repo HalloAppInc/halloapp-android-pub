@@ -443,26 +443,29 @@ public class ContentDb {
         });
     }
 
-    public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
-        setCommentsSeen(postSenderUserId, postId, true);
+    public void setCommentsSeen(@NonNull String postId) {
+        setCommentsSeen(postId, true);
     }
 
-    public void setCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, boolean seen) {
+    public void setCommentsSeen(@NonNull String postId, boolean seen) {
         databaseWriteExecutor.execute(() -> {
-            if (postsDb.setCommentsSeen(postSenderUserId, postId, seen)) {
-                observers.notifyCommentsSeen(postSenderUserId, postId);
+            if (postsDb.setCommentsSeen(postId, seen)) {
+                Post post = postsDb.getPost(postId);
+                if (post != null) {
+                    observers.notifyCommentsSeen(post.senderUserId, postId);
+                }
             }
         });
     }
 
     @WorkerThread
-    public long getLastSeenCommentRowId(@NonNull UserId postSenderUserId, @NonNull String postId) {
-        return postsDb.getLastSeenCommentRowId(postSenderUserId, postId);
+    public long getLastSeenCommentRowId(@NonNull String postId) {
+        return postsDb.getLastSeenCommentRowId(postId);
     }
 
     @WorkerThread
-    @NonNull List<Comment> getComments(@NonNull UserId postSenderUserId, @NonNull String postId, int start, int count) {
-        return postsDb.getComments(postSenderUserId, postId, start, count);
+    @NonNull List<Comment> getComments(@NonNull String postId, int start, int count) {
+        return postsDb.getComments(postId, start, count);
     }
 
     /*

@@ -11,28 +11,25 @@ import java.util.List;
 public class CommentsDataSource extends PositionalDataSource<Comment> {
 
     private final ContentDb contentDb;
-    private final UserId postSenderUserId;
     private final String postId;
 
     public static class Factory extends DataSource.Factory<Integer, Comment> {
 
         private final ContentDb contentDb;
-        private final UserId postSenderUserId;
         private final String postId;
 
         private CommentsDataSource latestSource;
 
-        public Factory(@NonNull ContentDb contentDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
+        public Factory(@NonNull ContentDb contentDb, @NonNull String postId) {
             this.contentDb = contentDb;
-            this.postSenderUserId = postSenderUserId;
             this.postId = postId;
-            latestSource = new CommentsDataSource(contentDb, postSenderUserId, postId);
+            latestSource = new CommentsDataSource(contentDb, postId);
         }
 
         @Override
         public @NonNull DataSource<Integer, Comment> create() {
             if (latestSource.isInvalid()) {
-                latestSource = new CommentsDataSource(contentDb, postSenderUserId, postId);
+                latestSource = new CommentsDataSource(contentDb, postId);
             }
             return latestSource;
         }
@@ -42,21 +39,20 @@ public class CommentsDataSource extends PositionalDataSource<Comment> {
         }
     }
 
-    private CommentsDataSource(@NonNull ContentDb contentDb, @NonNull UserId postSenderUserId, @NonNull String postId) {
+    private CommentsDataSource(@NonNull ContentDb contentDb, @NonNull String postId) {
         this.contentDb = contentDb;
-        this.postSenderUserId = postSenderUserId;
         this.postId = postId;
 
     }
 
     @Override
     public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull LoadInitialCallback<Comment> callback) {
-        final List<Comment> comments = contentDb.getComments(postSenderUserId, postId, params.requestedStartPosition, params.requestedLoadSize);
+        final List<Comment> comments = contentDb.getComments(postId, params.requestedStartPosition, params.requestedLoadSize);
         callback.onResult(comments, params.requestedStartPosition);
     }
 
     @Override
     public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull LoadRangeCallback<Comment> callback) {
-        callback.onResult(contentDb.getComments(postSenderUserId, postId, params.startPosition, params.loadSize));
+        callback.onResult(contentDb.getComments(postId, params.startPosition, params.loadSize));
     }
 }

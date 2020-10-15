@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
@@ -42,11 +43,12 @@ class CommentsViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
 
-    private final UserId postSenderUserId;
     private final String postId;
     private final CommentsDataSource.Factory dataSourceFactory;
 
     private LoadUserTask loadUserTask;
+
+    private Observer<Post> postObserver;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -54,7 +56,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onPostRetracted(@NonNull Post post) {
-            if (CommentsViewModel.this.postSenderUserId.equals(post.senderUserId) && CommentsViewModel.this.postId.equals(post.id)) {
+            if (CommentsViewModel.this.postId.equals(post.id)) {
                 postDeleted.postValue(true);
             }
         }
@@ -64,7 +66,7 @@ class CommentsViewModel extends AndroidViewModel {
             if (CommentsViewModel.this.postId.equals(comment.postId)) {
                 Post parentPost = comment.getParentPost();
                 if (parentPost != null) {
-                    contentDb.setCommentsSeen(parentPost.senderUserId, comment.postId);
+                    contentDb.setCommentsSeen(comment.postId);
                 }
                 invalidateDataSource();
             }
@@ -79,7 +81,7 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentRetracted(@NonNull Comment comment) {
-            if (CommentsViewModel.this.postSenderUserId.equals(postSenderUserId) && CommentsViewModel.this.postId.equals(postId)) {
+            if (CommentsViewModel.this.postId.equals(comment.postId)) {
                 invalidateDataSource();
             }
         }
@@ -101,10 +103,9 @@ class CommentsViewModel extends AndroidViewModel {
         }
     };
 
-    private CommentsViewModel(@NonNull Application application, @NonNull UserId postSenderUserId, @NonNull String postId) {
+    private CommentsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
 
-        this.postSenderUserId = postSenderUserId;
         this.postId = postId;
 
         contentDb = ContentDb.getInstance();
@@ -114,30 +115,19 @@ class CommentsViewModel extends AndroidViewModel {
         lastSeenCommentRowId = new ComputableLiveData<Long>() {
             @Override
             protected Long compute() {
-                long rowId = contentDb.getLastSeenCommentRowId(postSenderUserId, postId);
-                contentDb.setCommentsSeen(postSenderUserId, postId);
+                long rowId = contentDb.getLastSeenCommentRowId(postId);
+                contentDb.setCommentsSeen(postId);
                 return rowId;
             }
         };
 
-        dataSourceFactory = new CommentsDataSource.Factory(contentDb, postSenderUserId, postId);
+        dataSourceFactory = new CommentsDataSource.Factory(contentDb, postId);
         commentList = new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
-
         mentionableContacts = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
                 HashSet<UserId> contactSet = new HashSet<>();
                 HashMap<UserId, String> mentionSet = new HashMap<>();
-                if (!postSenderUserId.isMe()) {
-                    // Allow mentioning poster
-                    contactSet.add(postSenderUserId);
-                } else {
-                    // Otherwise we can mention everyone in our friends since they should be able to see our post
-                    List<Contact> friends = contactsDb.getFriends();
-                    for(Contact contact : friends) {
-                        contactSet.add(contact.userId);
-                    }
-                }
                 Post parentPost = post.getValue();
                 if (parentPost != null) {
                     // Allow mentioning every mention from the post
@@ -145,6 +135,16 @@ class CommentsViewModel extends AndroidViewModel {
                         if (!mention.userId.isMe()) {
                             mentionSet.put(mention.userId, mention.fallbackName);
                             contactSet.add(mention.userId);
+                        }
+                    }
+                    if (!parentPost.senderUserId.isMe()) {
+                        // Allow mentioning poster
+                        contactSet.add(parentPost.senderUserId);
+                    } else {
+                        // Otherwise we can mention everyone in our friends since they should be able to see our post
+                        List<Contact> friends = contactsDb.getFriends();
+                        for(Contact contact : friends) {
+                            contactSet.add(contact.userId);
                         }
                     }
                 }
@@ -170,6 +170,8 @@ class CommentsViewModel extends AndroidViewModel {
                 return contactList;
             }
         };
+        postObserver = post -> mentionableContacts.invalidate();
+        post.observeForever(postObserver);
         contactsDb.addObserver(contactsObserver);
     }
 
@@ -177,6 +179,7 @@ class CommentsViewModel extends AndroidViewModel {
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
         contactsDb.removeObserver(contactsObserver);
+        post.removeObserver(postObserver);
     }
 
     void loadReplyUser(@NonNull UserId userId) {
@@ -195,8 +198,8 @@ class CommentsViewModel extends AndroidViewModel {
         replyContact.setValue(null);
     }
 
-    void loadPost(@NonNull UserId userId, @NonNull String postId) {
-        new LoadPostTask(getApplication(), userId, postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    void loadPost(@NonNull String postId) {
+        new LoadPostTask(getApplication(), postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     static class LoadUserTask extends AsyncTask<Void, Void, Contact> {
@@ -224,14 +227,12 @@ class CommentsViewModel extends AndroidViewModel {
 
     static class LoadPostTask extends AsyncTask<Void, Void, Post> {
 
-        private final UserId userId;
         private final String postId;
         private final MutableLiveData<Post> post;
         private final Application application;
 
-        LoadPostTask(@NonNull Application application, @NonNull UserId userId, @NonNull String postId, @NonNull MutableLiveData<Post> post) {
+        LoadPostTask(@NonNull Application application, @NonNull String postId, @NonNull MutableLiveData<Post> post) {
             this.application = application;
-            this.userId = userId;
             this.postId = postId;
             this.post = post;
         }
@@ -250,12 +251,10 @@ class CommentsViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final UserId postSenderUserId;
         private final String postId;
 
-        Factory(@NonNull Application application, @NonNull UserId postSenderUserId, @NonNull String postId) {
+        Factory(@NonNull Application application, @NonNull String postId) {
             this.application = application;
-            this.postSenderUserId = postSenderUserId;
             this.postId = postId;
         }
 
@@ -263,7 +262,7 @@ class CommentsViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(application, postSenderUserId, postId);
+                return (T) new CommentsViewModel(application, postId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
