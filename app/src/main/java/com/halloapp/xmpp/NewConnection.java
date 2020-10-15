@@ -48,6 +48,7 @@ import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -153,6 +154,7 @@ public class NewConnection extends Connection {
 
     @WorkerThread
     private void connectInBackground() {
+        ThreadUtils.setSocketTag();
         if (me == null) {
             Log.i("connection: me is null");
             return;
@@ -218,6 +220,7 @@ public class NewConnection extends Connection {
             // TODO(jack): check client expiration
 
             final AuthResult result = sendAndRecvAuth(authRequest);
+
             Log.i("connection: auth result: " + result);
             if (!"success".equals(result.getResult())) {
                 Log.e("connection: failed to login");
@@ -1046,6 +1049,7 @@ public class NewConnection extends Connection {
         }
 
         private void parsePackets() {
+            ThreadUtils.setSocketTag();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             while (!done) {
                 try {
@@ -1433,6 +1437,7 @@ public class NewConnection extends Connection {
         }
 
         private void writePackets() {
+            ThreadUtils.setSocketTag();
             try {
                 while (!done) {
                     try { // TODO(jack): Await login success

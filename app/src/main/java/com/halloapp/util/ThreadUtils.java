@@ -1,5 +1,6 @@
 package com.halloapp.util;
 
+import android.net.TrafficStats;
 import android.os.StrictMode;
 
 public class ThreadUtils {
@@ -14,5 +15,9 @@ public class ThreadUtils {
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         runnable.run();
         StrictMode.setThreadPolicy(original);
+    }
+
+    public static void setSocketTag() {
+        TrafficStats.setThreadStatsTag((int) Thread.currentThread().getId());
     }
 }
