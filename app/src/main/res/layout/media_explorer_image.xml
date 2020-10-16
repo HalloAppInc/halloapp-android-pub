@@ -3,7 +3,6 @@
     android:id="@+id/image"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/media_pager_child_padding">
+    android:layout_height="match_parent">
 
 </com.github.chrisbanes.photoview.PhotoView>

@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -74,6 +75,7 @@ public class MediaExplorerActivity extends HalloActivity {
 
         pager = findViewById(R.id.media_pager);
         pager.setAdapter(new MediaExplorerAdapter(data));
+        pager.setPageTransformer(new MarginPageTransformer(getResources().getDimensionPixelSize(R.dimen.explorer_pager_margin)));
 
         CircleIndicator3 indicator = findViewById(R.id.media_pager_indicator);
         indicator.setViewPager(pager);
