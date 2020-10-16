@@ -17,7 +17,6 @@ public class PostContentViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
 
-    private final UserId senderUserId;
     private final String postId;
     private final ContentDb contentDb;
 
@@ -25,7 +24,7 @@ public class PostContentViewModel extends AndroidViewModel {
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            if (seenByUserId.equals(PostContentViewModel.this.senderUserId) && postId.equals(PostContentViewModel.this.postId)) {
+            if (postId.equals(PostContentViewModel.this.postId)) {
                 invalidatePost();
             }
         }
@@ -36,10 +35,9 @@ public class PostContentViewModel extends AndroidViewModel {
         }
     };
 
-    private PostContentViewModel(@NonNull Application application, @NonNull UserId senderUserId, @NonNull String postId) {
+    private PostContentViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
 
-        this.senderUserId = senderUserId;
         this.postId = postId;
 
         contentDb = ContentDb.getInstance();
@@ -65,12 +63,10 @@ public class PostContentViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final UserId senderUserId;
         private final String postId;
 
-        Factory(@NonNull Application application, @NonNull UserId senderUserId, @NonNull String postId) {
+        Factory(@NonNull Application application, @NonNull String postId) {
             this.application = application;
-            this.senderUserId = senderUserId;
             this.postId = postId;
         }
 
@@ -78,7 +74,7 @@ public class PostContentViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(PostContentViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostContentViewModel(application, senderUserId, postId);
+                return (T) new PostContentViewModel(application, postId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
