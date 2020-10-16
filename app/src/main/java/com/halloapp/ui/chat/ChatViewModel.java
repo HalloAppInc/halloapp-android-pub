@@ -28,6 +28,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -62,6 +63,7 @@ public class ChatViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final Connection connection;
     private final ContactsDb contactsDb;
+    private final ServerProps serverProps;
     private final AtomicInteger outgoingAddedCount = new AtomicInteger(0);
     private final AtomicInteger incomingAddedCount = new AtomicInteger(0);
     private final AtomicInteger initialUnseen = new AtomicInteger(0);
@@ -155,6 +157,7 @@ public class ChatViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
+        serverProps = ServerProps.getInstance();
 
         blockListManager = BlockListManager.getInstance();
 
@@ -206,7 +209,7 @@ public class ChatViewModel extends AndroidViewModel {
         lastUnseenFeedPost = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                if (chatId instanceof GroupId) {
+                if (serverProps.getGroupFeedEnabled() && chatId instanceof GroupId) {
                     return contentDb.getLastUnseenGroupPost((GroupId) chatId);
                 }
                 return null;

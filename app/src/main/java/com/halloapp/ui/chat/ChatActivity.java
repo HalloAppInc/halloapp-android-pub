@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,7 +71,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupInfoActivity;
-import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -133,6 +132,7 @@ public class ChatActivity extends HalloActivity {
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
     private ReplyLoader replyLoader;
+    private UnseenGroupPostLoader unseenGroupPostLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
     private ActionMode actionMode;
@@ -191,6 +191,7 @@ public class ChatActivity extends HalloActivity {
         avatarLoader = AvatarLoader.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
+        unseenGroupPostLoader = new UnseenGroupPostLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
