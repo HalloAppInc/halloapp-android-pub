@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.halloapp.FileStore;
@@ -27,12 +28,16 @@ public class FileLogger {
 
     private LinkedBlockingQueue<LogLine> logQueue;
 
+    private boolean logging;
+
+    private LoggingThread loggingThread;
+
     public FileLogger(@NonNull FileStore fileStore) {
         this.fileStore = fileStore;
 
         logQueue = new LinkedBlockingQueue<>(MAX_LOG_QUEUE);
-
-        LoggingThread loggingThread = new LoggingThread();
+        logging = true;
+        loggingThread = new LoggingThread();
         loggingThread.start();
     }
 
@@ -55,6 +60,9 @@ public class FileLogger {
     }
 
     public void log(int priority, @NonNull String message, @Nullable Throwable t) {
+        if (!logging) {
+            return;
+        }
         String tag = Thread.currentThread().getName();
         try {
             logQueue.add(new LogLine(priority, tag, message, t));
@@ -96,7 +104,7 @@ public class FileLogger {
         public void run() {
             fileStore.purgeOldLogFiles();
 
-            while (true) {
+            while (logging || !logQueue.isEmpty()) {
                 try {
                     LogLine logLine = logQueue.poll(5, TimeUnit.SECONDS);
                     if (logLine == null) {
@@ -106,6 +114,13 @@ public class FileLogger {
                     writeLogToDisk(logLine);
                 } catch (InterruptedException | IOException e) {
                 }
+            }
+            try {
+                if (outputStream != null) {
+                    outputStream.flush();
+                }
+                FileUtils.closeSilently(outputStream);
+            } catch (Exception e) {
             }
         }
 
@@ -133,6 +148,9 @@ public class FileLogger {
                 writePriority(logLine.priority);
                 outputStream.write(logLine.message);
                 outputStream.write('\n');
+                if (logLine.t != null) {
+                    outputStream.write(android.util.Log.getStackTraceString(logLine.t));
+                }
                 return;
             }
 
@@ -150,10 +168,22 @@ public class FileLogger {
                     i = end;
                 } while (i < newline);
             }
+            if (logLine.t != null) {
+                outputStream.write(android.util.Log.getStackTraceString(logLine.t));
+            }
         }
 
         private String getFileTimestamp() {
             return timeFormatter.format(new Date());
+        }
+    }
+
+    @WorkerThread
+    public void flushLogs() {
+        logging = false;
+        try {
+            loggingThread.join();
+        } catch (InterruptedException e) {
         }
     }
 }

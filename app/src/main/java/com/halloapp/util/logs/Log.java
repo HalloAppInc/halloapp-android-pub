@@ -141,6 +141,10 @@ public class Log {
     public static void wrapCrashlytics() {
         Thread.UncaughtExceptionHandler original = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            if (logger != null) {
+                Log.e("UNCAUGHT EXCEPTION", throwable);
+                logger.flushLogs();
+            }
             // Remove irrelevant stack elements so that Crashlytics grouping works
             StackTraceElement[] stackTrace = throwable.getStackTrace();
             int i = 0;
