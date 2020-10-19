@@ -1156,8 +1156,14 @@ public class NewConnection extends Connection {
                 } else if (msg.hasChatStanza()) {
                     Log.i("connection: got chat stanza " + msg);
                     ChatStanza chatStanza = msg.getChatStanza();
-                    ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
+                    String senderName = chatStanza.getSenderName();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+
+                    if (!TextUtils.isEmpty(senderName)) {
+                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
+                    }
+
+                    ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
                     Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
                     Message message = chatMessageElement.getMessage(fromJid, fromUserId, msg.getId());
                     processMentions(message.mentions);
@@ -1166,8 +1172,14 @@ public class NewConnection extends Connection {
                 } else if (msg.hasGroupChat()) {
                     Log.i("connection: got group chat " + msg);
                     GroupChat groupChat = msg.getGroupChat();
-                    GroupChatMessage groupChatMessage = GroupChatMessage.fromProto(groupChat);
+                    String senderName = groupChat.getSenderName();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+
+                    if (!TextUtils.isEmpty(senderName)) {
+                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
+                    }
+
+                    GroupChatMessage groupChatMessage = GroupChatMessage.fromProto(groupChat);
                     Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
                     Message message = groupChatMessage.getMessage(fromJid, msg.getId());
                     processMentions(message.mentions);
