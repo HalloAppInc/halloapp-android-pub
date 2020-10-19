@@ -69,10 +69,12 @@ public class SeenReceiptElement implements ExtensionElement {
     }
 
     public SeenReceipt toProto() {
-        return SeenReceipt.newBuilder()
-                .setId(id)
-                .setThreadId(threadId)
-                .build();
+        SeenReceipt.Builder builder = SeenReceipt.newBuilder();
+         builder.setId(id);
+         if (threadId != null) {
+             builder.setThreadId(threadId);
+         }
+         return builder.build();
     }
 
     public static class Provider extends EmbeddedExtensionProvider<SeenReceiptElement> {
