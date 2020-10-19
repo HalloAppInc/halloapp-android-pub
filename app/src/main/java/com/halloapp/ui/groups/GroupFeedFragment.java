@@ -62,7 +62,7 @@ public class GroupFeedFragment extends PostsFragment {
 
     @LayoutRes
     protected int getLayout() {
-        return R.layout.fragment_profile;
+        return R.layout.fragment_group_feed;
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
