@@ -30,6 +30,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.id.GroupId;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
@@ -61,6 +62,8 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class CameraActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+    public static final String EXTRA_GROUP_FEED_ID = "group_feed_id";
+
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
 
     private static final int PENDING_OPERATION_NONE = 0;
@@ -518,6 +521,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         final Intent intent = new Intent(getBaseContext(), ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
         intent.putExtra(ContentComposerActivity.EXTRA_CALLED_FROM_CAMERA, true);
+        if (getIntent().hasExtra(EXTRA_GROUP_FEED_ID)) {
+            intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, (GroupId) getIntent().getParcelableExtra(EXTRA_GROUP_FEED_ID));
+        }
         startActivity(intent);
     }
 }

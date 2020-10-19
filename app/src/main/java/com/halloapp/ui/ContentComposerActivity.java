@@ -61,6 +61,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -349,6 +350,10 @@ public class ContentComposerActivity extends HalloActivity {
                 finish();
                 if (chatId != null && getIntent() != null && getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_CHAT, false)) {
                     startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chatId));
+                } else if (groupId != null) {
+                    final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 } else if (calledFromCamera ||
                         Intent.ACTION_SEND.equals(getIntent().getAction()) ||
                         Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {

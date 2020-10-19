@@ -26,6 +26,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -137,9 +138,9 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 break;
             }
             case R.id.add_post_camera: {
-                final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(this));
-                startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+                final Intent intent = new Intent(this, CameraActivity.class);
+                intent.putExtra(CameraActivity.EXTRA_GROUP_FEED_ID, groupId);
+                startActivity(intent);
                 break;
             }
         }
