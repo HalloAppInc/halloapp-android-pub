@@ -833,7 +833,7 @@ public class OldConnection extends Connection {
         });
     }
 
-    public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
+    public <T extends IQ> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
             if (!reconnectIfNeeded() || connection == null) {

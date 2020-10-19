@@ -20,6 +20,7 @@ import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
 
+import org.jivesoftware.smack.packet.IQ;
 import org.jxmpp.jid.Jid;
 
 import java.util.Collection;
@@ -144,7 +145,7 @@ public abstract class Connection {
 
     public abstract void sendGroupMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
 
-    public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
+    public abstract <T extends IQ> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 
     // TODO(jack): Jid and UserId params represent same thing; remove Jid once we've switched to Protobuf
     public abstract void sendRerequest(final String encodedIdentityKey, final @NonNull Jid originalSender, final @NonNull UserId senderUserId, final @NonNull String messageId);

@@ -69,6 +69,7 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 import com.halloapp.xmpp.util.ResponseHandler;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.Async;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -914,7 +915,7 @@ public class NewConnection extends Connection {
 
     // NOTE: Should NOT be called from executor.
     @Override
-    public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
+    public <T extends IQ> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
             if (!reconnectIfNeeded() || sslSocket == null) {

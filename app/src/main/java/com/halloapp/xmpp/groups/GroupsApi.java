@@ -51,7 +51,7 @@ public class GroupsApi {
 
     public Observable<Boolean> deleteGroup(@NonNull GroupId groupId) {
         final DeleteGroupIq requestIq = new DeleteGroupIq(groupId);
-        final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);
+        final Observable<IQ> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return true;
         });
