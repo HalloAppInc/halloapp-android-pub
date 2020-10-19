@@ -1,6 +1,7 @@
 package com.halloapp.xmpp;
 
 import android.os.HandlerThread;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1255,7 +1256,7 @@ public class OldConnection extends Connection {
                         Log.i("connection: got delivery receipt " + msg);
                         final String threadId = deliveryReceipt.getThreadId();
                         final UserId userId = getUserId(packet.getFrom());
-                        connectionObservers.notifyOutgoingMessageDelivered(threadId == null ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
+                        connectionObservers.notifyOutgoingMessageDelivered(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), packet.getStanzaId());
                         handled = true;
                     }
                 }
