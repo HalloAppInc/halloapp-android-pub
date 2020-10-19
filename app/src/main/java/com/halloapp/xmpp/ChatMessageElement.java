@@ -46,6 +46,7 @@ public class ChatMessageElement implements ExtensionElement {
 
     private ChatMessage chatMessage;
     private final long timestamp;
+    private final String senderName;
     private final UserId recipientUserId;
     private final SessionSetupInfo sessionSetupInfo;
     private final byte[] encryptedBytes;
@@ -56,14 +57,16 @@ public class ChatMessageElement implements ExtensionElement {
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
         this.chatMessage = MessageElementHelper.messageToChatMessage(message);
         this.timestamp = 0;
+        this.senderName = null;
         this.recipientUserId = recipientUserId;
         this.sessionSetupInfo = sessionSetupInfo;
         this.encryptedBytes = null;
     }
 
-    private ChatMessageElement(byte[] encryptedBytes, SessionSetupInfo sessionSetupInfo, long timestamp) {
+    private ChatMessageElement(byte[] encryptedBytes, SessionSetupInfo sessionSetupInfo, long timestamp, String senderName) {
         this.chatMessage = null;
         this.timestamp = timestamp;
+        this.senderName = senderName;
         this.recipientUserId = null;
         this.sessionSetupInfo = sessionSetupInfo;
         this.encryptedBytes = encryptedBytes;
@@ -72,6 +75,7 @@ public class ChatMessageElement implements ExtensionElement {
     private ChatMessageElement(@NonNull ChatMessage chatMessage, long timestamp) {
         this.chatMessage = chatMessage;
         this.timestamp = timestamp;
+        this.senderName = null;
         this.recipientUserId = null;
         this.sessionSetupInfo = null;
         this.encryptedBytes = null;
@@ -79,6 +83,10 @@ public class ChatMessageElement implements ExtensionElement {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public String getSenderName() {
+        return senderName;
     }
 
     @Override
@@ -218,7 +226,7 @@ public class ChatMessageElement implements ExtensionElement {
         return containerBuilder.build().toByteArray();
     }
 
-    private static ChatMessageElement readEncryptedEntry(@NonNull XmlPullParser parser, long timestamp) throws Exception {
+    private static ChatMessageElement readEncryptedEntry(@NonNull XmlPullParser parser, long timestamp, String senderName) throws Exception {
         final String oneTimePreKeyIdString = parser.getAttributeValue(null, ATTRIBUTE_ONE_TIME_PRE_KEY_ID);
         final String identityKeyString = parser.getAttributeValue(null, ATTRIBUTE_IDENTITY_KEY);
 
@@ -237,12 +245,12 @@ public class ChatMessageElement implements ExtensionElement {
         final String encryptedEntry = Xml.readText(parser);
         final byte[] bytes = Base64.decode(encryptedEntry, Base64.NO_WRAP);
 
-        return new ChatMessageElement(bytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp);
+        return new ChatMessageElement(bytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp, senderName);
     }
 
-    private static ChatMessageElement readEncryptedEntryProto(@NonNull byte[] encryptedBytes, byte[] identityKeyBytes, Integer oneTimePreKeyId, long timestamp) {
+    private static ChatMessageElement readEncryptedEntryProto(@NonNull byte[] encryptedBytes, byte[] identityKeyBytes, Integer oneTimePreKeyId, long timestamp, String senderName) {
         PublicEdECKey identityKey = new PublicEdECKey(identityKeyBytes);
-        return new ChatMessageElement(encryptedBytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp);
+        return new ChatMessageElement(encryptedBytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp, senderName);
     }
 
     public ChatStanza toProto() {
@@ -275,7 +283,7 @@ public class ChatMessageElement implements ExtensionElement {
         ChatMessageElement ret = null;
         if (encrypted != null && encrypted.size() > 0) {
             ByteString identityKey = chatStanza.getPublicKey();
-            ret = readEncryptedEntryProto(encrypted.toByteArray(), identityKey.toByteArray(), (int) chatStanza.getOneTimePreKeyId(), timestamp);
+            ret = readEncryptedEntryProto(encrypted.toByteArray(), identityKey.toByteArray(), (int) chatStanza.getOneTimePreKeyId(), timestamp, chatStanza.getSenderName());
             ret.plaintextChatMessage = plaintextChatMessage;
         }
 
@@ -295,6 +303,7 @@ public class ChatMessageElement implements ExtensionElement {
             if (timestampStr != null) {
                 timestamp = Long.parseLong(timestampStr) * 1000L;
             }
+            final String senderName = parser.getAttributeValue(null, "sender_name");
 
             ChatMessage plaintextChatMessage = null;
             ChatMessageElement chatMessageElement = null;
@@ -306,7 +315,7 @@ public class ChatMessageElement implements ExtensionElement {
                 if (name.equals(ELEMENT_ENCRYPTED)) {
                     try {
                         if (Constants.ENCRYPTION_TURNED_ON) {
-                            chatMessageElement = readEncryptedEntry(parser, timestamp);
+                            chatMessageElement = readEncryptedEntry(parser, timestamp, senderName);
                             chatMessageElement.plaintextChatMessage = plaintextChatMessage;
                         }
                     } catch (Exception e) {

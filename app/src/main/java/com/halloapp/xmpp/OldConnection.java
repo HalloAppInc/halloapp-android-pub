@@ -1244,6 +1244,12 @@ public class OldConnection extends Connection {
                     if (chatMessage != null) {
                         Log.i("connection: got chat message " + msg);
                         UserId fromUserId = new UserId(packet.getFrom().getLocalpartOrThrow().toString());
+                        String senderName = chatMessage.getSenderName();
+
+                        if (!TextUtils.isEmpty(senderName)) {
+                            connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
+                        }
+
                         Message parsedMessage = chatMessage.getMessage(packet.getFrom(), fromUserId, packet.getStanzaId());
                         processMentions(parsedMessage.mentions);
                         connectionObservers.notifyIncomingMessageReceived(parsedMessage);
