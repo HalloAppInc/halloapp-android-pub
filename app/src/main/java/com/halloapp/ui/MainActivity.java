@@ -59,6 +59,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host {
 
     public static final String EXTRA_POST_ID = "target_post";
+    public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String NAV_TARGET_FEED = "feed";
     public static final String NAV_TARGET_MESSAGES = "messages";
@@ -384,9 +385,16 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             navView.setSelectedItemId(R.id.navigation_messages);
         }
         String extraPostId = intent.getStringExtra(EXTRA_POST_ID);
+        boolean showCommentsActivity = intent.getBooleanExtra(EXTRA_POST_SHOW_COMMENTS, false);
         if (extraPostId != null) {
-            Intent viewIntent = new Intent(this, CommentsActivity.class);
-            viewIntent.putExtra(CommentsActivity.EXTRA_POST_ID, extraPostId);
+            Intent viewIntent;
+            if (showCommentsActivity) {
+                viewIntent = new Intent(this, CommentsActivity.class);
+                viewIntent.putExtra(CommentsActivity.EXTRA_POST_ID, extraPostId);
+            } else {
+                viewIntent = new Intent(this, PostContentActivity.class);
+                viewIntent.putExtra(PostContentActivity.EXTRA_POST_ID, extraPostId);
+            }
             startActivity(viewIntent);
         }
     }

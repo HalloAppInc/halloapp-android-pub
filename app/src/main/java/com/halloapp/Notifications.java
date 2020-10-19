@@ -157,22 +157,15 @@ public class Notifications {
             String newCommentsNotificationText = null;
             List<Post> unseenPosts = getNewPosts();
             List<Comment> unseenComments = getNewComments();
-            HashSet<String> postIds = new HashSet<>();
             if (unseenComments == null && unseenPosts == null) {
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.cancel(FEED_NOTIFICATION_ID);
             }
             if (unseenPosts != null) {
                 newPostsNotificationText = getNewPostsNotificationText(unseenPosts);
-                for (Post post : unseenPosts) {
-                    postIds.add(post.id);
-                }
             }
             if (unseenComments != null) {
                 newCommentsNotificationText = getNewCommentsNotificationText(unseenComments);
-                for (Comment comment : unseenComments) {
-                    postIds.add(comment.postId);
-                }
             }
             if (TextUtils.isEmpty(newPostsNotificationText) && TextUtils.isEmpty(newCommentsNotificationText)) {
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -186,7 +179,7 @@ public class Notifications {
                 } else {
                     text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
                 }
-                showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text), postIds);
+                showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text), unseenPosts, unseenComments);
             }
         });
     }
@@ -446,7 +439,18 @@ public class Notifications {
                 context.getString(R.string.new_comments_on_multiple_posts_notification, ListFormatter.format(context, names));
     }
 
-    private void showFeedNotification(@NonNull String title, @NonNull String body, @NonNull HashSet<String> postIds) {
+    private void showFeedNotification(@NonNull String title, @NonNull String body, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
+        HashSet<String> postIds = new HashSet<>();
+        if (unseenPosts != null) {
+            for (Post post : unseenPosts) {
+                postIds.add(post.id);
+            }
+        }
+        if (unseenComments != null) {
+            for (Comment comment : unseenComments) {
+                postIds.add(comment.postId);
+            }
+        }
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(context, R.color.color_accent))
@@ -460,6 +464,9 @@ public class Notifications {
         if (postIds.size() == 1) {
             for (String id : postIds) {
                 contentIntent.putExtra(MainActivity.EXTRA_POST_ID, id);
+                if (unseenComments != null && !unseenComments.isEmpty()) {
+                    contentIntent.putExtra(MainActivity.EXTRA_POST_SHOW_COMMENTS, true);
+                }
                 break;
             }
         }
