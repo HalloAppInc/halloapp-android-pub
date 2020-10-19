@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,12 +20,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -96,6 +99,31 @@ public class ViewGroupFeedActivity extends HalloActivity {
         addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
         addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
         addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+
+        BottomNavigationView bottomNav = findViewById(R.id.nav_view);
+        bottomNav.setSelectedItemId(R.id.navigation_messages);
+        bottomNav.setOnNavigationItemSelectedListener(item -> {
+            Intent homeIntent = new Intent(this, MainActivity.class);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            String navTarget;
+            switch (item.getItemId()) {
+                default:
+                case R.id.navigation_home:
+                    navTarget = MainActivity.NAV_TARGET_FEED;
+                    break;
+                case R.id.navigation_messages:
+                    navTarget = MainActivity.NAV_TARGET_MESSAGES;
+                    break;
+                case R.id.navigation_profile:
+                    navTarget = MainActivity.NAV_TARGET_PROFILE;
+                    break;
+            }
+            homeIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, navTarget);
+            startActivity(homeIntent);
+            finish();
+            overridePendingTransition(0, 0);
+            return true;
+        });
 
         final View newPostsView = findViewById(R.id.new_posts);
         newPostsView.setOnClickListener(v -> {

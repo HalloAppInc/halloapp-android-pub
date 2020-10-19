@@ -84,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar_container"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toTopOf="@id/nav_view"/>
 
     <TextView
         android:id="@+id/new_posts"
@@ -123,7 +123,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
         android:contentDescription="@string/add_post"
         app:sdExpansionMode="top"
@@ -134,5 +134,24 @@
         app:sdUseReverseAnimationOnClose="true"
         app:sdMainFabClosedSrc="@drawable/ic_add"
         app:sdOverlayLayout="@+id/overlay"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        app:elevation="0dp"
+        android:background="?android:attr/windowBackground"
+        app:itemIconTint="@drawable/nav_item_foreground"
+        app:itemTextColor="@drawable/nav_item_foreground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:itemTextAppearanceActive="@style/TextAppearance.BottomNavigationView"
+        app:itemTextAppearanceInactive="@style/TextAppearance.BottomNavigationView"
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

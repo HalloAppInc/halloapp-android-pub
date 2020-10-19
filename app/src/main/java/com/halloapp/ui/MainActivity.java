@@ -63,6 +63,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String NAV_TARGET_FEED = "feed";
     public static final String NAV_TARGET_MESSAGES = "messages";
+    public static final String NAV_TARGET_PROFILE = "profile";
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
@@ -383,6 +384,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (NAV_TARGET_MESSAGES.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_messages);
+        } else if (NAV_TARGET_PROFILE.equals(extraNotificationNavTarget)) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_profile);
         }
         String extraPostId = intent.getStringExtra(EXTRA_POST_ID);
         boolean showCommentsActivity = intent.getBooleanExtra(EXTRA_POST_SHOW_COMMENTS, false);
