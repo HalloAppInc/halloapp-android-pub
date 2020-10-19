@@ -35,11 +35,13 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.logs.Log;
@@ -48,6 +50,7 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +62,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
-    private static final int REQUEST_CODE_CREATE_GROUP = 2;
+    private static final int REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS = 2;
+    private static final int REQUEST_CODE_CREATE_GROUP = 3;
 
     private static final String EXTRA_SHOW_INVITE = "show_invite_option";
     private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
@@ -197,8 +201,8 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
     }
 
-    private void onCreateGroup() {
-        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.group_picker_title, R.string.next, serverProps.getMaxGroupSize(), false), REQUEST_CODE_CREATE_GROUP);
+    private void onCreateGroup(@Nullable Collection<UserId> initialIds) {
+        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, initialIds, R.string.group_picker_title, R.string.next, serverProps.getMaxGroupSize(), false), REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS);
     }
 
     @Override
@@ -219,13 +223,33 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
-            case REQUEST_CODE_CREATE_GROUP:
+            case REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS:
                 if (resultCode == RESULT_OK && data != null) {
                     List<UserId> userIds = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
-                    startActivity(CreateGroupActivity.newPickerIntent(this, userIds));
+                    startActivityForResult(CreateGroupActivity.newPickerIntent(this, userIds), REQUEST_CODE_CREATE_GROUP);
                 }
-                finish();
                 break;
+            case REQUEST_CODE_CREATE_GROUP: {
+                if (resultCode == RESULT_OK) {
+                    if (data == null) {
+                        Log.e("ContactsActivity/onActivityResult missing resulting group id");
+                        finish();
+                        break;
+                    }
+                    GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
+                    final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                    intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupId);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    List<UserId> userIds = null;
+                    if (data != null){
+                        userIds = data.getParcelableArrayListExtra(CreateGroupActivity.RESULT_USER_IDS);
+                    }
+                    onCreateGroup(userIds);
+                }
+                break;
+            }
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
@@ -526,7 +550,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         CreateGroupViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(v -> {
-                onCreateGroup();
+                onCreateGroup(null);
             });
         }
     }

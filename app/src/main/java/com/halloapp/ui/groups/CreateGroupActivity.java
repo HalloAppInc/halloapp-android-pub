@@ -57,6 +57,9 @@ import java.util.Locale;
 public class CreateGroupActivity extends HalloActivity {
     private static final String EXTRA_USER_IDS = "user_ids";
 
+    public static final String RESULT_GROUP_ID = "group_id";
+    public static final String RESULT_USER_IDS = "group_user_ids";
+
     private static final int CODE_CHANGE_AVATAR = 1;
 
     private CreateGroupViewModel viewModel;
@@ -68,7 +71,7 @@ public class CreateGroupActivity extends HalloActivity {
 
     private final ContactsAdapter adapter = new ContactsAdapter();
 
-    private List<UserId> userIds;
+    private ArrayList<UserId> userIds;
 
     private MenuItem createMenuItem;
 
@@ -100,6 +103,10 @@ public class CreateGroupActivity extends HalloActivity {
         if (userIds == null) {
             userIds = new ArrayList<>();
         }
+
+        Intent cancelIntent = new Intent();
+        cancelIntent.putParcelableArrayListExtra(RESULT_USER_IDS, userIds);
+        setResult(RESULT_CANCELED, cancelIntent);
 
         viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication(), userIds)).get(CreateGroupViewModel.class);
 
@@ -174,9 +181,9 @@ public class CreateGroupActivity extends HalloActivity {
                         } else if (state == WorkInfo.State.SUCCEEDED) {
                             String rawGroupId = workInfo.getOutputData().getString(CreateGroupViewModel.CreateGroupWorker.WORKER_OUTPUT_GROUP_ID);
                             GroupId groupId = new GroupId(Preconditions.checkNotNull(rawGroupId));
-                            final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupId);
-                            startActivity(intent);
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra(RESULT_GROUP_ID, groupId);
+                            setResult(RESULT_OK, resultIntent);
                             finish();
                         }
                         running = false;
