@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -143,6 +144,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
             PostContentActivity.this.startActivity(intent, options.toBundle());
+        }
+
+        @Override
+        public LifecycleOwner getLifecycleOwner() {
+            return PostContentActivity.this;
         }
     };
 

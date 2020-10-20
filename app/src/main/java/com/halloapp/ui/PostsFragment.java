@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -203,6 +204,11 @@ public class PostsFragment extends HalloFragment {
             @Override
             public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
                 PostsFragment.this.startActivity(intent, options.toBundle());
+            }
+
+            @Override
+            public LifecycleOwner getLifecycleOwner() {
+                return PostsFragment.this;
             }
 
             @Override

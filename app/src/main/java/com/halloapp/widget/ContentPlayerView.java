@@ -3,6 +3,8 @@ package com.halloapp.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Outline;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -17,6 +19,7 @@ public class ContentPlayerView extends PlayerView {
     private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
     private float cornerRadius;
     private float aspectRatio;
+    private boolean shouldPauseHiddenPlayer = false;
 
     public ContentPlayerView(Context context) {
         super(context);
@@ -58,6 +61,28 @@ public class ContentPlayerView extends PlayerView {
 
     private int computeConstrainedHeight(int width, int height) {
         return maxAspectRatio > 0 ? Math.min(height, (int) (width * maxAspectRatio)) : height;
+    }
+
+    public void setPauseHiddenPlayerOnScroll(boolean pause) {
+        if (pause) {
+            getViewTreeObserver().addOnScrollChangedListener(this::pauseHiddenPlayer);
+        } else if (shouldPauseHiddenPlayer) {
+            getViewTreeObserver().removeOnScrollChangedListener(this::pauseHiddenPlayer);
+        }
+
+        shouldPauseHiddenPlayer = pause;
+    }
+
+    private void pauseHiddenPlayer() {
+        if (getPlayer() != null && getPlayer().isPlaying()) {
+            Rect rect = new Rect();
+            Point point = new Point();
+            boolean isVisible = getGlobalVisibleRect(rect, point);
+
+            if (!isVisible) {
+                getPlayer().setPlayWhenReady(false);
+            }
+        }
     }
 
     @Override

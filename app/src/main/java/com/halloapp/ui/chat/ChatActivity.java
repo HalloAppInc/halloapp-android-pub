@@ -38,6 +38,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
@@ -1197,6 +1198,11 @@ public class ChatActivity extends HalloActivity {
         @Override
         public void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options) {
             ChatActivity.this.startActivity(intent, options.toBundle());
+        }
+
+        @Override
+        public LifecycleOwner getLifecycleOwner() {
+            return ChatActivity.this;
         }
 
         @Override

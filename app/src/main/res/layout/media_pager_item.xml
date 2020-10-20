@@ -14,26 +14,27 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
+        android:visibility="gone"
         app:contentPvCornerColor="@color/card_background"
         app:contentPvCornerRadius="@dimen/message_media_radius"
         tools:src="@mipmap/ic_launcher" />
+
+    <com.halloapp.widget.ContentPlayerView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:show_buffering="when_playing"
+        app:show_shuffle_button="false"
+        android:visibility="gone"
+        app:controller_layout_id="@layout/exo_player_composer_view"
+        app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
 
     <ProgressBar
         android:id="@+id/media_progress"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/play"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_gravity="center"
-        android:tint="@android:color/white"
-        android:alpha="0.7"
-        android:src="@drawable/ic_play"
-        android:contentDescription="@string/play"
         android:visibility="gone"/>
 
 </com.halloapp.widget.AspectRatioFrameLayout>
