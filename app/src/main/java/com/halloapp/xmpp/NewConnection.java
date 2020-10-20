@@ -18,6 +18,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.AutoCloseLock;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -133,6 +134,7 @@ public class NewConnection extends Connection {
     private boolean isAuthenticated;
     private AuthResult authResult;
 
+    private final Object startupShutdownLock = new Object();
     private PacketWriter packetWriter = new PacketWriter();
     private PacketReader packetReader = new PacketReader();
     private IqRouter iqRouter = new IqRouter();
@@ -199,9 +201,11 @@ public class NewConnection extends Connection {
             outputStream = sslSocket.getOutputStream();
             inputStream = sslSocket.getInputStream();
 
-            packetWriter.init();
-            packetReader.init();
-            iqRouter.reset();
+            synchronized (startupShutdownLock) {
+                packetWriter.init();
+                packetReader.init();
+                iqRouter.reset();
+            }
 
             ClientVersion clientVersion = ClientVersion.newBuilder()
                     .setVersion(BuildConfig.VERSION_NAME)
@@ -238,6 +242,8 @@ public class NewConnection extends Connection {
             isAuthenticated = true;
         } catch (IOException e) {
             Log.e("connection: cannot create connection", e);
+        } catch (InterruptedException e) {
+            Log.e("connection: interrupted creating connection", e);
         }
     }
 
@@ -304,15 +310,13 @@ public class NewConnection extends Connection {
     }
 
     public void disconnect() {
+        shutdownComponents();
         executor.execute(this::disconnectInBackground);
     }
 
+
     @WorkerThread
     private void disconnectInBackground() {
-        packetWriter.shutdown();
-        packetReader.shutdown();
-        iqRouter.reset();
-
         if (sslSocket == null) {
             Log.e("connection: cannot disconnect, no connection");
             return;
@@ -329,6 +333,16 @@ public class NewConnection extends Connection {
         sslSocket = null;
 
         connectionObservers.notifyDisconnected();
+    }
+
+    @WorkerThread
+    private void shutdownComponents() {
+        Log.i("Shutting down packet handlers");
+        synchronized (startupShutdownLock) {
+            packetWriter.shutdown();
+            packetReader.shutdown();
+            iqRouter.reset();
+        }
     }
 
     @Override
@@ -1532,7 +1546,17 @@ public class NewConnection extends Connection {
         void reset() {
             responses.clear();
             successCallbacks.clear();
+
+            Map<String, ExceptionHandler> failureCallbacksCopy = new HashMap<>(failureCallbacks);
             failureCallbacks.clear();
+
+            for (String key : failureCallbacksCopy.keySet()) {
+                Log.i("IqRouter marking " + key + " as failure during reset");
+                ExceptionHandler failure = failureCallbacksCopy.get(key);
+                if (failure != null) {
+                    failure.handleException(new TimeoutException("IqRouter reset while waiting for " + key));
+                }
+            }
         }
 
         private void setCallbacks(String id, ResponseHandler<Iq> success, ExceptionHandler failure) {

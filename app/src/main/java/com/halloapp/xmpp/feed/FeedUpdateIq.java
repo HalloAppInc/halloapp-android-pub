@@ -138,7 +138,9 @@ public class FeedUpdateIq extends HalloIq {
                 pb.setAudience(Audience.newBuilder().setType(Audience.Type.valueOf(audienceType.toUpperCase())).addAllUids(uids).build());
             }
             pb.setId(feedItem.id);
-            pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            if (feedItem.payload != null) {
+                pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            }
             builder.setPost(pb.build());
         } else if (feedItem.type == FeedItem.Type.COMMENT) {
             Comment.Builder cb = Comment.newBuilder();
@@ -147,7 +149,9 @@ public class FeedUpdateIq extends HalloIq {
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);
             }
-            cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            if (feedItem.payload != null) {
+                cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            }
             builder.setComment(cb.build());
         }
 

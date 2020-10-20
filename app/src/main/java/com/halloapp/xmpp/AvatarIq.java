@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import android.util.Base64;
+
 import com.google.protobuf.ByteString;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Avatar;
@@ -53,7 +55,7 @@ public class AvatarIq extends HalloIq {
         this.width = width;
         this.avatarId = null;
         this.userId = null;
-        this.bytes = null;
+        this.bytes = Base64.decode(base64, Base64.NO_WRAP);
     }
 
     AvatarIq(Jid to, UserId userId) {

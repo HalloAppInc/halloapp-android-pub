@@ -90,6 +90,10 @@ public class GroupFeedUpdateIq extends HalloIq {
         }
 
         GroupFeedItem groupFeedItem = GroupFeedItem.newBuilder().setAction(getProtoAction()).setGid(groupId.rawId()).build();
-        return Iq.newBuilder().setType(Iq.Type.SET).setGroupFeedItem(groupFeedItem).build();
+        return Iq.newBuilder()
+                .setId(getStanzaId())
+                .setType(Iq.Type.SET)
+                .setGroupFeedItem(groupFeedItem)
+                .build();
     }
 }
