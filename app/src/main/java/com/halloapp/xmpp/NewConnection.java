@@ -242,8 +242,6 @@ public class NewConnection extends Connection {
             isAuthenticated = true;
         } catch (IOException e) {
             Log.e("connection: cannot create connection", e);
-        } catch (InterruptedException e) {
-            Log.e("connection: interrupted creating connection", e);
         }
     }
 
