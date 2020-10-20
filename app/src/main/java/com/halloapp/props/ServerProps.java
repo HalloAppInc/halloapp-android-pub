@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -20,6 +21,7 @@ public class ServerProps {
 
     private static final String PREFS_NAME = "props";
 
+    private static final String PREF_KEY_APP_VERSION = "props:app_version";
     private static final String PREF_KEY_PROPS_HASH = "props:version_hash";
     private static final String PREF_KEY_LAST_PROPS_FETCH = "props:last_fetch";
 
@@ -78,6 +80,15 @@ public class ServerProps {
     }
 
     public void init() {
+        SharedPreferences preferences = getPreferences();
+        int savedVersionCode = preferences.getInt(PREF_KEY_APP_VERSION, 0);
+        if (savedVersionCode != BuildConfig.VERSION_CODE) {
+            clearPropHash();
+            Log.i("ServerProps/init app upgraded hash cleared");
+            if (!preferences.edit().putInt(PREF_KEY_APP_VERSION, BuildConfig.VERSION_CODE).commit()) {
+                Log.e("ServerProps/init failed to update app version");
+            }
+        }
         loadProps();
     }
 
@@ -137,6 +148,12 @@ public class ServerProps {
         }
         if (!preferences.edit().putString(PREF_KEY_PROPS_HASH, propHash).commit()) {
             Log.e("ServerProps/saveProps: failed to save hash");
+        }
+    }
+
+    private void clearPropHash() {
+        if (!getPreferences().edit().remove(PREF_KEY_PROPS_HASH).commit()) {
+            Log.e("ServerProps/saveProps: failed to clear hash");
         }
     }
 
