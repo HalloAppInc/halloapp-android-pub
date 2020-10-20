@@ -17,6 +17,7 @@
         android:paddingBottom="8dp"
         android:textAppearance="?textAppearanceBody1"
         android:textStyle="italic"
+        android:textSize="16sp"
         tools:text="You blocked this contact" />
 
 </LinearLayout>
