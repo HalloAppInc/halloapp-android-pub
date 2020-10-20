@@ -144,6 +144,9 @@ public class FeedUpdateIq extends HalloIq {
             Comment.Builder cb = Comment.newBuilder();
             cb.setId(feedItem.id);
             cb.setPostId(feedItem.parentPostId);
+            if (feedItem.parentCommentId != null) {
+                cb.setParentCommentId(feedItem.parentCommentId);
+            }
             cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
             builder.setComment(cb.build());
         }

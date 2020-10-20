@@ -29,6 +29,7 @@ public class FeedItem {
     public final @NonNull String id;
     public final String parentPostId;
     public final String parentPostSenderId;
+    public String parentCommentId;
     public String publisherId;
     public String publisherName;
     public Long timestamp;
@@ -41,6 +42,7 @@ public class FeedItem {
         this.payload = payload;
         this.parentPostId = null;
         this.parentPostSenderId = null;
+        this.parentCommentId = null;
     }
 
     public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @NonNull String parentPostSenderId, @Nullable String payload) {
@@ -122,6 +124,7 @@ public class FeedItem {
         String publisherName = parser.getAttributeValue(null, "publisher_name");
         String postId = parser.getAttributeValue(null, "post_id");
         String postUid = parser.getAttributeValue(null, "post_uid");
+        String parentCommentId = parser.getAttributeValue(null, "parent_comment_id");
 
         String id = parser.getAttributeValue(null, "id");
         if (id == null) {
@@ -134,6 +137,7 @@ public class FeedItem {
         FeedItem comment = new FeedItem(Type.COMMENT, id, postId, postUid, payload);
         comment.publisherName = publisherName;
         comment.publisherId = publisherId;
+        comment.parentCommentId = parentCommentId;
         if (timestampStr != null) {
             comment.timestamp = Long.parseLong(timestampStr);
         }
@@ -157,6 +161,9 @@ public class FeedItem {
         if (parentPostSenderId != null && parentPostId != null) {
             builder.attribute("post_id", parentPostId);
             builder.attribute("post_uid", parentPostSenderId);
+        }
+        if (parentCommentId != null) {
+            builder.attribute("parent_comment_id", parentCommentId);
         }
         if (payload == null) {
             builder.closeEmptyElement();

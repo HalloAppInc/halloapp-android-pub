@@ -789,6 +789,7 @@ public class NewConnection extends Connection {
                     postSenderForSend = new UserId(me.getUser());
                 }
                 FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, postSenderForSend, entry.getEncodedEntryString());
+                commentItem.parentCommentId = comment.parentCommentId;
                 if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
                     FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
                     requestIq.setTo(SERVER_JID);
