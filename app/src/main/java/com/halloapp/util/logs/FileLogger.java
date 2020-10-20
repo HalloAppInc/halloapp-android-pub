@@ -89,15 +89,15 @@ public class FileLogger {
 
     private class LoggingThread extends Thread {
 
-        private String fileTimestamp;
+        private String fileDate;
         private FileWriter outputStream;
 
-        private SimpleDateFormat timeFormatter;
-
+        private SimpleDateFormat logDateFormatter;
+        private SimpleDateFormat logTimeFormatter;
 
         private LoggingThread() {
-            timeFormatter = new SimpleDateFormat("yyyy-MM-dd",
-                    Locale.getDefault());
+            logDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            logTimeFormatter = new SimpleDateFormat("HH:mm:ss.SSS Z", Locale.getDefault());
         }
 
         @Override
@@ -125,15 +125,20 @@ public class FileLogger {
         }
 
         private void prepareLogFile() throws IOException {
-            String output = getFileTimestamp();
-            if (!output.equals(fileTimestamp)) {
+            String output = getFileDate();
+            if (!output.equals(fileDate)) {
                 File logFile = fileStore.getLogFile(output);
                 FileUtils.closeSilently(outputStream);
                 outputStream = null;
                 outputStream = new FileWriter(logFile, true);
-                fileTimestamp = output;
+                fileDate = output;
                 fileStore.purgeOldLogFiles();
             }
+        }
+
+        private void writeTimestamp() throws IOException {
+            outputStream.write(getLineTime());
+            outputStream.write(" ");
         }
 
         private void writePriority(int priority) throws IOException {
@@ -144,6 +149,7 @@ public class FileLogger {
 
         private void writeLogToDisk(@NonNull LogLine logLine) throws IOException {
             if (logLine.message.length() < MAX_LOG_LENGTH) {
+                writeTimestamp();
                 outputStream.write(logLine.tag);
                 writePriority(logLine.priority);
                 outputStream.write(logLine.message);
@@ -156,6 +162,12 @@ public class FileLogger {
 
             // Split by line, then ensure each line can fit into Log's maximum length.
             for (int i = 0, length = logLine.message.length(); i < length; i++) {
+                if (i == 0) {
+                    writeTimestamp();
+                } else {
+                    outputStream.write("    ");
+                }
+
                 int newline = logLine.message.indexOf('\n', i);
                 newline = newline != -1 ? newline : length;
                 do {
@@ -173,8 +185,12 @@ public class FileLogger {
             }
         }
 
-        private String getFileTimestamp() {
-            return timeFormatter.format(new Date());
+        private String getFileDate() {
+            return logDateFormatter.format(new Date());
+        }
+
+        private String getLineTime() {
+            return logTimeFormatter.format(new Date());
         }
     }
 
