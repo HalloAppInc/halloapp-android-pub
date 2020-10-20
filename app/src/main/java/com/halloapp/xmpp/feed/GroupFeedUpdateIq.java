@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Post;
@@ -84,16 +85,30 @@ public class GroupFeedUpdateIq extends HalloIq {
 
     @Override
     public Iq toProtoIq() {
-        Post.Builder builder = Post.newBuilder();
-        if (feedItem.payload != null) {
-            builder.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+        GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
+        builder.setAction(getProtoAction());
+        builder.setGid(groupId.rawId());
+
+        if (feedItem.type == FeedItem.Type.POST) {
+            Post.Builder pb = Post.newBuilder();
+            if (feedItem.payload != null) {
+                pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            }
+            pb.setId(feedItem.id);
+            builder.setPost(pb);
+        } else if (feedItem.type == FeedItem.Type.COMMENT) {
+            Comment.Builder cb = Comment.newBuilder();
+            if (feedItem.payload != null) {
+                cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+            }
+            cb.setId(feedItem.id);
+            builder.setComment(cb);
         }
 
-        GroupFeedItem groupFeedItem = GroupFeedItem.newBuilder().setAction(getProtoAction()).setGid(groupId.rawId()).build();
         return Iq.newBuilder()
-                .setId(getStanzaId())
+                .setId(feedItem.id)
                 .setType(Iq.Type.SET)
-                .setGroupFeedItem(groupFeedItem)
+                .setGroupFeedItem(builder)
                 .build();
     }
 }

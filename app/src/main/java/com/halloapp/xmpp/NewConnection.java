@@ -38,6 +38,7 @@ import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.FeedItems;
 import com.halloapp.proto.server.GroupChat;
+import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
@@ -55,7 +56,9 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
+import com.halloapp.xmpp.feed.FeedMessageElement;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
+import com.halloapp.xmpp.feed.GroupFeedMessageElement;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
 import com.halloapp.xmpp.groups.GroupChatMessage;
@@ -1167,6 +1170,10 @@ public class NewConnection extends Connection {
                     Log.i("connection: got feed items " + msg);
                     FeedItems feedItems = msg.getFeedItems();
                     handled = processFeedPubSubItems(feedItems.getItemsList(), msg.getId());
+                } else if (msg.hasGroupFeedItem()) {
+                    Log.i("connection: got group feed item " + msg);
+                    GroupFeedItem groupFeedItem = msg.getGroupFeedItem();
+                    handled = processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId());
                 } else if (msg.hasChatStanza()) {
                     Log.i("connection: got chat stanza " + msg);
                     ChatStanza chatStanza = msg.getChatStanza();
@@ -1373,6 +1380,78 @@ public class NewConnection extends Connection {
             }
 
             return !posts.isEmpty() || !comments.isEmpty();
+        }
+
+        private boolean processGroupFeedItems(@NonNull List<GroupFeedItem> items, @NonNull String ackId) {
+            final List<Post> posts = new ArrayList<>();
+            final List<Comment> comments = new ArrayList<>();
+            final Map<UserId, String> names = new HashMap<>();
+
+            for (GroupFeedItem item : items) {
+                if (item.getAction() == GroupFeedItem.Action.PUBLISH) {
+                    if (item.hasComment()) {
+                        com.halloapp.proto.server.Comment protoComment = item.getComment();
+                        byte[] payload = protoComment.getPayload().toByteArray();
+                        PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
+                        final Comment comment = new Comment(0,
+                                publishedEntry.feedItemId,
+                                getUserId(Long.toString(protoComment.getPublisherUid())),
+                                publishedEntry.id,
+                                publishedEntry.parentCommentId,
+                                publishedEntry.timestamp,
+                                true,
+                                false,
+                                publishedEntry.text);
+                        for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
+                            Mention mention = Mention.parseFromProto(mentionProto);
+                            processMention(mention);
+                            comment.mentions.add(mention);
+                        }
+                        comments.add(comment);
+                    } else if (item.hasPost()) {
+                        com.halloapp.proto.server.Post protoPost = item.getPost();
+                        if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
+                            names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
+                        }
+
+                        byte[] payload = protoPost.getPayload().toByteArray();
+                        PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
+
+                        // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
+                        Post post = new Post(-1, getUserId(Long.toString(protoPost.getPublisherUid())), protoPost.getId(), publishedEntry.timestamp, publishedEntry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, publishedEntry.text);
+                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
+                            post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
+                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.width, entryMedia.height));
+                        }
+                        for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
+                            Mention mention = Mention.parseFromProto(mentionProto);
+                            processMention(mention);
+                            post.mentions.add(mention);
+                        }
+                        post.setParentGroup(new GroupId(item.getGid()));
+                        posts.add(post);
+                    }
+
+                    if (!names.isEmpty()) {
+                        connectionObservers.notifyUserNamesReceived(names);
+                    }
+
+                    if (!posts.isEmpty() || !comments.isEmpty()) {
+                        connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
+                    }
+                    return !posts.isEmpty() || !comments.isEmpty();
+                } else if (item.getAction() == GroupFeedItem.Action.RETRACT) {
+                    if (item.hasComment()) {
+                        com.halloapp.proto.server.Comment comment = item.getComment();
+                        connectionObservers.notifyCommentRetracted(comment.getId(), getUserId(Long.toString(comment.getPublisherUid())), comment.getPostId(), comment.getTimestamp());
+                    } else if (item.hasPost()) {
+                        com.halloapp.proto.server.Post post = item.getPost();
+                        connectionObservers.notifyPostRetracted(getUserId(Long.toString(post.getPublisherUid())), new GroupId(item.getGid()), post.getId());
+                    }
+                }
+            }
+            return false;
         }
 
         private void handleIq(Iq iq) {

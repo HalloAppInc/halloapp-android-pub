@@ -4,6 +4,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
 
