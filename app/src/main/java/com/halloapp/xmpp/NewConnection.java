@@ -795,12 +795,7 @@ public class NewConnection extends Connection {
                 // Since we're sending a comment, we should have parent post set
                 UserId postSender = Preconditions.checkNotNull(comment.getPostSenderUserId());
 
-                // Preserve postSender for notify (since we convert me id into proper uid for send)
-                UserId postSenderForSend = postSender;
-                if (postSender.isMe()) {
-                    postSenderForSend = new UserId(me.getUser());
-                }
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, postSenderForSend, entry.getEncodedEntryString());
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, entry.getEncodedEntryString());
                 commentItem.parentCommentId = comment.parentCommentId;
                 if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
                     FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
@@ -831,11 +826,7 @@ public class NewConnection extends Connection {
                 return;
             }
             try {
-                UserId postSender = postSenderUserId;
-                if (postSender != null && postSender.isMe()) {
-                    postSender = new UserId(me.getUser());
-                }
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
                 FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
                 requestIq.setTo(SERVER_JID);
                 sendIqRequestAsync(requestIq).await();
@@ -855,11 +846,7 @@ public class NewConnection extends Connection {
                 return;
             }
             try {
-                UserId postSender = postSenderUserId;
-                if (postSender.isMe()) {
-                    postSender = new UserId(me.getUser());
-                }
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
                 GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
                 requestIq.setTo(SERVER_JID);
                 sendIqRequestAsync(requestIq).await();

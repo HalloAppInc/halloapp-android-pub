@@ -28,7 +28,6 @@ public class FeedItem {
     public final @Type int type;
     public final @NonNull String id;
     public final String parentPostId;
-    public final String parentPostSenderId;
     public String parentCommentId;
     public String publisherId;
     public String publisherName;
@@ -41,20 +40,14 @@ public class FeedItem {
         this.type = type;
         this.payload = payload;
         this.parentPostId = null;
-        this.parentPostSenderId = null;
         this.parentCommentId = null;
     }
 
-    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @NonNull String parentPostSenderId, @Nullable String payload) {
+    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @Nullable String payload) {
         this.id = id;
         this.type = type;
         this.payload = payload;
         this.parentPostId = parentPostId;
-        this.parentPostSenderId = parentPostSenderId;
-    }
-
-    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @Nullable UserId parentPostSenderId, @Nullable String payload) {
-        this(type, id, parentPostId, parentPostSenderId == null ? null : parentPostSenderId.rawId(), payload);
     }
 
     @Nullable
@@ -123,7 +116,6 @@ public class FeedItem {
         String publisherId = parser.getAttributeValue(null, "publisher_uid");
         String publisherName = parser.getAttributeValue(null, "publisher_name");
         String postId = parser.getAttributeValue(null, "post_id");
-        String postUid = parser.getAttributeValue(null, "post_uid");
         String parentCommentId = parser.getAttributeValue(null, "parent_comment_id");
 
         String id = parser.getAttributeValue(null, "id");
@@ -134,7 +126,7 @@ public class FeedItem {
 
         String payload = Xml.readText(parser);
         
-        FeedItem comment = new FeedItem(Type.COMMENT, id, postId, postUid, payload);
+        FeedItem comment = new FeedItem(Type.COMMENT, id, postId, payload);
         comment.publisherName = publisherName;
         comment.publisherId = publisherId;
         comment.parentCommentId = parentCommentId;
@@ -158,9 +150,8 @@ public class FeedItem {
         String elementName = getType();
         builder.halfOpenElement(elementName);
         builder.attribute("id", id);
-        if (parentPostSenderId != null && parentPostId != null) {
+        if (parentPostId != null) {
             builder.attribute("post_id", parentPostId);
-            builder.attribute("post_uid", parentPostSenderId);
         }
         if (parentCommentId != null) {
             builder.attribute("parent_comment_id", parentCommentId);

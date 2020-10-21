@@ -713,15 +713,7 @@ public class OldConnection extends Connection {
                 for (Mention mention : comment.mentions) {
                     entry.mentions.add(Mention.toProto(mention));
                 }
-                // Since we're sending a comment, we should have parent post set
-                UserId postSender = Preconditions.checkNotNull(comment.getPostSenderUserId());
-
-                // Preserve postSender for notify (since we convert me id into proper uid for send)
-                UserId postSenderForSend = postSender;
-                if (postSender.isMe()) {
-                    postSenderForSend = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
-                }
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, postSenderForSend, entry.getEncodedEntryString());
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, entry.getEncodedEntryString());
                 commentItem.parentCommentId = comment.parentCommentId;
                 if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
                     FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
@@ -746,11 +738,7 @@ public class OldConnection extends Connection {
                 return;
             }
             try {
-                UserId postSender = postSenderUserId;
-                if (postSender.isMe()) {
-                    postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
-                }
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
                 GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
                 requestIq.setTo(connection.getXMPPServiceDomain());
                 connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
@@ -770,11 +758,7 @@ public class OldConnection extends Connection {
                 return;
             }
             try {
-                UserId postSender = postSenderUserId;
-                if (postSender != null && postSender.isMe()) {
-                    postSender = new UserId(Preconditions.checkNotNull(connection).getUser().getLocalpart().toString());
-                }
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, postSender, null);
+                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
                 FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
                 requestIq.setTo(connection.getXMPPServiceDomain());
                 connection.createStanzaCollectorAndSend(requestIq).nextResultOrThrow();
