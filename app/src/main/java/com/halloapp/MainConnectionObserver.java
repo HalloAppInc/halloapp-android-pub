@@ -235,7 +235,7 @@ public class MainConnectionObserver extends Connection.Observer {
         Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
         if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
             contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-            encryptedSessionManager.sendMessage(message);
+            encryptedSessionManager.sendMessage(message, false);
         }
         connection.sendAck(stanzaId);
     }

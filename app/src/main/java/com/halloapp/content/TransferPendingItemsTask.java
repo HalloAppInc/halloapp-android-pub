@@ -64,7 +64,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                 }
             } else /*post.isOutgoing()*/ {
                 if (message.media.isEmpty()) {
-                    encryptedSessionManager.sendMessage(message);
+                    encryptedSessionManager.sendMessage(message, false);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
                 }

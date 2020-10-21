@@ -111,7 +111,7 @@ public class Message extends ContentItem {
 
     @Override
     public void send(@NonNull Connection connection) {
-        EncryptedSessionManager.getInstance().sendMessage(this);
+        EncryptedSessionManager.getInstance().sendMessage(this, true);
     }
 
     @Override

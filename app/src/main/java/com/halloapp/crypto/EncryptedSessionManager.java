@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Message;
@@ -16,18 +18,23 @@ import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.NewConnection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import org.jxmpp.jid.Jid;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -40,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 public class EncryptedSessionManager {
     private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 60 * 60 * 1000; // one hour
 
+    private final ServerProps serverProps = ServerProps.getInstance();
     private final Connection connection;
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
@@ -103,12 +111,24 @@ public class EncryptedSessionManager {
         connection.sendRerequest(encodedIdentityKey, originalSender, senderUserId, messageId);
     }
 
-    public void sendMessage(final @NonNull Message message) {
+    // Temporary for generating silent chat stanzas
+    private String genRandomString() {
+        Random random = new Random();
+        final int MIN_LEN = 2;
+        final int MAX_LEN = 256;
+        int len = MIN_LEN + random.nextInt(MAX_LEN - MIN_LEN);
+        byte[] bytes = new byte[len];
+        random.nextBytes(bytes);
+        return new String(bytes);
+    }
+
+    public void sendMessage(final @NonNull Message message, boolean generateSilentMessages) {
         if (message.chatId instanceof GroupId) {
             // TODO(jack): support groups encryption
             connection.sendGroupMessage(message, null);
             return;
         }
+
         final UserId recipientUserId = (UserId)message.chatId;
         try (AutoCloseLock autoCloseLock = acquireLock(recipientUserId)) {
             SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId);
@@ -117,6 +137,46 @@ public class EncryptedSessionManager {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
             connection.sendMessage(message, null);
+        }
+
+        if (generateSilentMessages && connection instanceof NewConnection) {
+            List<Message> silentMessages = new ArrayList<>();
+            List<Contact> users = ContactsDb.getInstance().getAllUsers();
+            int count = serverProps.getSilentChatMessageCount();
+            for (int i=0; i<count; i++) {
+                UserId recipient = users.get(new Random().nextInt(users.size())).userId;
+                String text = genRandomString();
+                Message gm = new Message(
+                        -1,
+                        recipient,
+                        UserId.ME,
+                        RandomId.create(),
+                        System.currentTimeMillis() * 1000L,
+                        Message.TYPE_CHAT,
+                        Message.USAGE_CHAT,
+                        Message.STATE_OUTGOING_SENT,
+                        text,
+                        null,
+                        -1,
+                        null,
+                        -1,
+                        null,
+                        0
+                );
+                silentMessages.add(gm);
+            }
+
+            for (Message silentMessage : silentMessages) {
+                final UserId recipient = (UserId)silentMessage.chatId;
+                try (AutoCloseLock autoCloseLock = acquireLock(recipient)) {
+                    SessionSetupInfo sessionSetupInfo = setUpSession(recipient);
+                    ((NewConnection)connection).sendSilentMessage(silentMessage, sessionSetupInfo);
+                } catch (Exception e) {
+                    Log.e("Failed to set up encryption session", e);
+                    Log.sendErrorReport("Failed to get session setup info");
+                    ((NewConnection)connection).sendSilentMessage(silentMessage, null);
+                }
+            }
         }
     }
 

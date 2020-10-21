@@ -47,6 +47,7 @@ import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.SeenReceipt;
+import com.halloapp.proto.server.SilentChatStanza;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -881,6 +882,36 @@ public class NewConnection extends Connection {
                     .setType(Msg.Type.CHAT)
                     .setToUid(Long.parseLong(message.chatId.rawId()))
                     .setChatStanza(chatMessageElement.toProto())
+                    .build();
+            ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+        });
+    }
+
+    public void sendSilentMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
+        executor.execute(() -> {
+            if (message.isLocalMessage()) {
+                Log.i("connection: System message shouldn't be sent");
+                return;
+            }
+            if (!reconnectIfNeeded() || sslSocket == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+            final UserId recipientUserId = (UserId)message.chatId;
+
+            ChatMessageElement chatMessageElement = new ChatMessageElement(
+                    message,
+                    recipientUserId,
+                    sessionSetupInfo);
+
+            SilentChatStanza silentChatStanza = SilentChatStanza.newBuilder().setChatStanza(chatMessageElement.toProto()).build();
+
+            Msg msg = Msg.newBuilder()
+                    .setId(message.id)
+                    .setType(Msg.Type.CHAT)
+                    .setToUid(Long.parseLong(message.chatId.rawId()))
+                    .setSilentChatStanza(silentChatStanza)
                     .build();
             ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
             sendPacket(Packet.newBuilder().setMsg(msg).build());
