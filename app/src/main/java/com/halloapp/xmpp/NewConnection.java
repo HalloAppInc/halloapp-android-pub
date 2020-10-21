@@ -18,7 +18,6 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.crypto.AutoCloseLock;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -50,15 +49,13 @@ import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ThreadUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
-import com.halloapp.xmpp.feed.FeedMessageElement;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
-import com.halloapp.xmpp.feed.GroupFeedMessageElement;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
 import com.halloapp.xmpp.groups.GroupChatMessage;
@@ -1464,6 +1461,8 @@ public class NewConnection extends Connection {
                 if (iq.hasPing()) {
                     Iq ping = Iq.newBuilder().setId(iq.getId()).setType(Iq.Type.RESULT).setPing(Ping.newBuilder().build()).build();
                     sendPacket(Packet.newBuilder().setIq(ping).build());
+                } else {
+                    Log.w("connection: unexpected GET iq " + iq);
                 }
             } else {
                 Log.w("connection: unexpected iq type " + iq.getType());
