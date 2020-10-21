@@ -230,6 +230,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.Rerequest getRerequest();
 
   /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   * @return Whether the silentChatStanza field is set.
+   */
+  boolean hasSilentChatStanza();
+  /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   * @return The silentChatStanza.
+   */
+  com.halloapp.proto.server.SilentChatStanza getSilentChatStanza();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

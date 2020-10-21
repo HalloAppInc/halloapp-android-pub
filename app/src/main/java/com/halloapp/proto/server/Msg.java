@@ -158,6 +158,7 @@ public  final class Msg extends
     CHAT_RETRACT(19),
     GROUP_FEED_ITEM(20),
     REREQUEST(22),
+    SILENT_CHAT_STANZA(23),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -190,6 +191,7 @@ public  final class Msg extends
         case 19: return CHAT_RETRACT;
         case 20: return GROUP_FEED_ITEM;
         case 22: return REREQUEST;
+        case 23: return SILENT_CHAT_STANZA;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1197,6 +1199,56 @@ public  final class Msg extends
    */
   private void clearRerequest() {
     if (payloadCase_ == 22) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SILENT_CHAT_STANZA_FIELD_NUMBER = 23;
+  /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   */
+  @java.lang.Override
+  public boolean hasSilentChatStanza() {
+    return payloadCase_ == 23;
+  }
+  /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SilentChatStanza getSilentChatStanza() {
+    if (payloadCase_ == 23) {
+       return (com.halloapp.proto.server.SilentChatStanza) payload_;
+    }
+    return com.halloapp.proto.server.SilentChatStanza.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   */
+  private void setSilentChatStanza(com.halloapp.proto.server.SilentChatStanza value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 23;
+  }
+  /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   */
+  private void mergeSilentChatStanza(com.halloapp.proto.server.SilentChatStanza value) {
+    value.getClass();
+  if (payloadCase_ == 23 &&
+        payload_ != com.halloapp.proto.server.SilentChatStanza.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SilentChatStanza.newBuilder((com.halloapp.proto.server.SilentChatStanza) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 23;
+  }
+  /**
+   * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+   */
+  private void clearSilentChatStanza() {
+    if (payloadCase_ == 23) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2303,6 +2355,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+     */
+    @java.lang.Override
+    public boolean hasSilentChatStanza() {
+      return instance.hasSilentChatStanza();
+    }
+    /**
+     * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SilentChatStanza getSilentChatStanza() {
+      return instance.getSilentChatStanza();
+    }
+    /**
+     * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+     */
+    public Builder setSilentChatStanza(com.halloapp.proto.server.SilentChatStanza value) {
+      copyOnWrite();
+      instance.setSilentChatStanza(value);
+      return this;
+    }
+    /**
+     * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+     */
+    public Builder setSilentChatStanza(
+        com.halloapp.proto.server.SilentChatStanza.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSilentChatStanza(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+     */
+    public Builder mergeSilentChatStanza(com.halloapp.proto.server.SilentChatStanza value) {
+      copyOnWrite();
+      instance.mergeSilentChatStanza(value);
+      return this;
+    }
+    /**
+     * <code>.server.SilentChatStanza silent_chat_stanza = 23;</code>
+     */
+    public Builder clearSilentChatStanza() {
+      copyOnWrite();
+      instance.clearSilentChatStanza();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -2370,12 +2470,14 @@ public  final class Msg extends
             com.halloapp.proto.server.GroupFeedItem.class,
             "retryCount_",
             com.halloapp.proto.server.Rerequest.class,
+            com.halloapp.proto.server.SilentChatStanza.class,
           };
           java.lang.String info =
-              "\u0000\u0016\u0001\u0000\u0001\u0016\u0016\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u0017\u0001\u0000\u0001\u0017\u0017\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
-              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000";
+              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
