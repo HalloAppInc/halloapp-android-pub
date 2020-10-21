@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.DigestInputStream;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -41,20 +42,20 @@ public class Downloader {
     }
 
     @WorkerThread
-    private static void decrypt(@NonNull InputStream inStream, long contentLength, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+    private static void decrypt(@NonNull InputStream inStream, long contentLength, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
         OutputStream outStream = null;
         try {
             outStream = new BufferedOutputStream(new FileOutputStream(localFile));
             MessageDigest digest = null;
             if (mediaKey != null) {
                 if (sha256hash == null) {
-                    throw new IOException("no received sha256hash");
+                    throw new GeneralSecurityException("no received sha256hash");
                 }
                 try {
                     digest = MessageDigest.getInstance("SHA-256");
                     inStream = new TailInputStream(new DigestInputStream(inStream, digest), 32);
                 } catch (NoSuchAlgorithmException e) {
-                    throw new IOException(e);
+                    throw new GeneralSecurityException(e);
                 }
                 outStream = new MediaDecryptOutputStream(mediaKey, type, outStream);
             }
@@ -75,10 +76,10 @@ public class Downloader {
                 final byte [] receivedHmac = ((TailInputStream)inStream).getTail();
                 final byte [] calculatedHmac = ((MediaDecryptOutputStream)outStream).getHmac();
                 if (!Arrays.equals(receivedHmac, calculatedHmac)) {
-                    throw new IOException("received hmac doesn't match calculated one");
+                    throw new GeneralSecurityException("received hmac doesn't match calculated one");
                 }
                 if (!Arrays.equals(sha256hash, digest.digest())) {
-                    throw new IOException("received sha256hash doesn't match calculated one");
+                    throw new GeneralSecurityException("received sha256hash doesn't match calculated one");
                 }
             }
         } finally {
@@ -106,8 +107,7 @@ public class Downloader {
         }
     }
 
-    @WorkerThread
-    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
         ThreadUtils.setSocketTag();
         InputStream inStream = null;
         HttpURLConnection connection = null;
@@ -140,7 +140,13 @@ public class Downloader {
                 download(inStream, contentLength, partialEnc, listener);
                 inStream = new FileInputStream(partialEnc);
             }
-            decrypt(inStream, connection.getContentLength(), mediaKey, sha256hash, type, localFile, listener);
+            try {
+                decrypt(inStream, connection.getContentLength(), mediaKey, sha256hash, type, localFile, listener);
+            } catch (IOException e) {
+                if (e.getCause() instanceof GeneralSecurityException) {
+                    throw (GeneralSecurityException) e.getCause();
+                }
+            }
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
