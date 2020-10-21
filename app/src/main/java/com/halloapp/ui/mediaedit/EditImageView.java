@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
@@ -56,11 +57,11 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final float borderThickness = getResources().getDimension(R.dimen.media_crop_region_border);
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
 
-    private RectF imageRect = new RectF();
+    private final RectF imageRect = new RectF();
     private RectF cropRect = new RectF();
-    private Path path = new Path();
-    private Paint shadowPaint = new Paint();
-    private Paint borderPaint = new Paint();
+    private final Path path = new Path();
+    private final Paint shadowPaint = new Paint();
+    private final Paint borderPaint = new Paint();
     private float offsetX = 0.0f;
     private float offsetY = 0.0f;
     private float scale = 1.0f;
@@ -97,9 +98,15 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     @WorkerThread
     @Nullable
-    private Bitmap loadBitmap(@Nullable File file, int maxWidth, int maxHeight) {
+    private Bitmap loadBitmap(@Nullable File file) {
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+        int limit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels));
+
         try {
-            return file != null ? MediaUtils.decodeImage(file, maxWidth, maxHeight) : null;
+            return file != null ? MediaUtils.decodeImage(file, limit, limit) : null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -115,19 +122,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         BgWorkers.getInstance().execute(() -> {
-            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            wm.getDefaultDisplay().getMetrics(displayMetrics);
-
-            final int maxWidth = Math.round(displayMetrics.widthPixels * MAX_SCALE);
-            final int maxHeight = Math.round(displayMetrics.heightPixels * MAX_SCALE);
-
-            final Bitmap bitmap = loadBitmap(originalFile, maxWidth, maxHeight);
+            final Bitmap bitmap = loadBitmap(originalFile);
             if (bitmap == null) {
                 return;
             }
 
-            final Bitmap cropped = state != null ? loadBitmap(croppedFile, maxWidth, maxHeight) : null;
+            final Bitmap cropped = state != null ? loadBitmap(croppedFile) : null;
 
             post(() -> {
                 setImageBitmap(bitmap);
@@ -508,16 +508,11 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     class GestureListener extends GestureDetector.SimpleOnGestureListener implements OnTouchListener, ScaleGestureDetector.OnScaleGestureListener {
-        private ScaleGestureDetector zoomDetector;
-        private GestureDetector dragDetector;
+        private final ScaleGestureDetector zoomDetector = new ScaleGestureDetector(getContext(), this);
+        private final GestureDetector dragDetector = new GestureDetector(getContext(), this);
         private boolean isStarted = false;
         private boolean isMultiTouch = false;
         private CropRegionSection section = CropRegionSection.NONE;
-
-        GestureListener() {
-            zoomDetector = new ScaleGestureDetector(getContext(), this);
-            dragDetector = new GestureDetector(getContext(), this);
-        }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override

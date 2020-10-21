@@ -6,8 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.Size;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -15,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.util.BgWorkers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,23 +25,17 @@ public class ImageCropper {
         void cropped(Bitmap originalBitmap, Bitmap croppedBitmap);
     }
 
-    private static Size getMaxSize(@NonNull Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(displayMetrics);
-
-        return new Size(
-            Math.round(displayMetrics.widthPixels * EditImageView.MAX_SCALE),
-            Math.round(displayMetrics.heightPixels * EditImageView.MAX_SCALE));
-    }
-
     public static void crop(@NonNull Context context, @NonNull File file, @NonNull File target, @NonNull EditImageView.State state, @Nullable ImageCroppedListener listener) {
-        new Thread(() -> {
-            Size maxSize = getMaxSize(context);
+        BgWorkers.getInstance().execute(() -> {
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+            int limit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels));
 
             final Bitmap bitmap;
             try {
-                bitmap = MediaUtils.decodeImage(file, maxSize.getWidth(), maxSize.getHeight());
+                bitmap = MediaUtils.decodeImage(file, limit, limit);
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -76,6 +69,6 @@ public class ImageCropper {
             if (listener != null) {
                 new Handler(context.getMainLooper()).post(() -> listener.cropped(bitmap, cropped));
             }
-        }).start();
+        });
     }
 }
