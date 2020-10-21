@@ -249,7 +249,7 @@ public class ChatMessageElement implements ExtensionElement {
     }
 
     private static ChatMessageElement readEncryptedEntryProto(@NonNull byte[] encryptedBytes, byte[] identityKeyBytes, Integer oneTimePreKeyId, long timestamp, String senderName) {
-        PublicEdECKey identityKey = new PublicEdECKey(identityKeyBytes);
+        PublicEdECKey identityKey = identityKeyBytes == null || identityKeyBytes.length == 0 ? null : new PublicEdECKey(identityKeyBytes);
         return new ChatMessageElement(encryptedBytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp, senderName);
     }
 
