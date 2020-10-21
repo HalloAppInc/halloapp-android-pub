@@ -8,6 +8,7 @@ import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.TailInputStream;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.BufferedOutputStream;
@@ -107,6 +108,7 @@ public class Downloader {
 
     @WorkerThread
     public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+        ThreadUtils.setSocketTag();
         InputStream inStream = null;
         HttpURLConnection connection = null;
         try {

@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class Uploader {
 
     @WorkerThread
     public static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener) throws IOException {
+        ThreadUtils.setSocketTag();
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
