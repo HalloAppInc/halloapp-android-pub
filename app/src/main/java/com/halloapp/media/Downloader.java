@@ -8,6 +8,7 @@ import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.TailInputStream;
+import com.halloapp.util.logs.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -132,6 +133,7 @@ public class Downloader {
             inStream = connection.getInputStream();
 
             int contentLength = connection.getContentLength();
+            Log.i("Downloader: content length: " + contentLength);
             if (partialEnc != null) {
                 download(inStream, contentLength, partialEnc, listener);
                 inStream = new FileInputStream(partialEnc);
