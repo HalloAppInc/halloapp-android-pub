@@ -1174,6 +1174,19 @@ public class NewConnection extends Connection {
                     processMentions(message.mentions);
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;
+                } else if (msg.hasSilentChatStanza()) { // TODO(jack): remove silent chat stanzas when no longer needed
+                    Log.i("connection: got silent chat stanza " + msg);
+                    ChatStanza chatStanza = msg.getSilentChatStanza().getChatStanza();
+                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+
+                    // NOTE: push names are not collected because eventually these messages will be removed
+
+                    ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
+                    Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
+                    Message message = chatMessageElement.getMessage(fromJid, fromUserId, msg.getId());
+                    processMentions(message.mentions);
+                    // Do not call connectionObservers; this message is not user-visible
+                    handled = true;
                 } else if (msg.hasGroupChat()) {
                     Log.i("connection: got group chat " + msg);
                     GroupChat groupChat = msg.getGroupChat();
