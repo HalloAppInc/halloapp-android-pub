@@ -2,6 +2,7 @@ package com.halloapp.util.stats;
 
 import android.text.format.DateUtils;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class Stats {
     }
 
     private void ensureTimer() {
-        if (!scheduled) {
+        if (!scheduled && !BuildConfig.DEBUG) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
