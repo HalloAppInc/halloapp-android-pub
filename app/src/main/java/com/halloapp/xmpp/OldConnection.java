@@ -1319,7 +1319,7 @@ public class OldConnection extends Connection {
                                 break;
                             }
                             case GroupChangeMessage.Action.MODIFY_MEMBERS: {
-                                connectionObservers.notifyGroupMemberChangeReceived(groupChangeMessage.groupId, groupChangeMessage.members, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
+                                connectionObservers.notifyGroupMemberChangeReceived(groupChangeMessage.groupId, groupChangeMessage.name, groupChangeMessage.avatarId, groupChangeMessage.members, groupChangeMessage.sender, groupChangeMessage.senderName, ackId);
                                 break;
                             }
                             case GroupChangeMessage.Action.LEAVE: {

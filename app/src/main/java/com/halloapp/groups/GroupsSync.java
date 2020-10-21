@@ -124,7 +124,7 @@ public class GroupsSync {
                 // TODO(jack): handle admin change (member updates)
 
                 Log.d("GroupsSync.performGroupSync adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupInfo.groupId);
-                contentDb.addRemoveGroupMembers(groupInfo.groupId, addedMembers, deletedMembers, null);
+                contentDb.addRemoveGroupMembers(groupInfo.groupId, null, null, addedMembers, deletedMembers, null);
             }
 
             return ListenableWorker.Result.success();

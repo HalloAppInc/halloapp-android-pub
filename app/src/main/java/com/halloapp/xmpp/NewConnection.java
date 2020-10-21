@@ -1276,7 +1276,7 @@ public class NewConnection extends Connection {
                     if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
                         connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_MEMBERS)) {
-                        connectionObservers.notifyGroupMemberChangeReceived(groupId, elements, senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.LEAVE)) {
                         connectionObservers.notifyGroupMemberLeftReceived(groupId, elements, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_ADMINS)) {

@@ -334,7 +334,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
         for (MemberElement memberElement : members) {
@@ -346,7 +346,7 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
-        contentDb.addRemoveGroupMembers(groupId, added, removed, () -> {
+        contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed, () -> {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
                 addSystemMessage(groupId, sender, Message.USAGE_ADD_MEMBERS, idList, null);
@@ -378,7 +378,7 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
-        contentDb.addRemoveGroupMembers(groupId, new ArrayList<>(), left, () -> {
+        contentDb.addRemoveGroupMembers(groupId, null, null, new ArrayList<>(), left, () -> {
             for (MemberInfo member : left) {
                 addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, () -> {
                     if (member.userId.rawId().equals(me.getUser())) {

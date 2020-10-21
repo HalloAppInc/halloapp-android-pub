@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.GroupMembersTable;
@@ -22,6 +23,7 @@ import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.GroupsSync;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -317,11 +319,20 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean addRemoveGroupMembers(@NonNull GroupId groupId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed) {
+    boolean addRemoveGroupMembers(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed) {
         Log.i("MessagesDb.addRemoveGroupMembers " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
+            boolean groupExists;
+            try (Cursor cursor = db.rawQuery("SELECT * FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()})) {
+                groupExists = cursor.getCount() > 0;
+            }
+            if (!groupExists) {
+                addGroupChat(new GroupInfo(groupId, groupName, null, avatarId, new ArrayList<>()));
+                GroupsSync.getInstance(AppContext.getInstance().get()).startGroupsSync();
+            }
+
             for (MemberInfo member : added) {
                 final ContentValues memberValues = new ContentValues();
                 memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupId.rawId());
