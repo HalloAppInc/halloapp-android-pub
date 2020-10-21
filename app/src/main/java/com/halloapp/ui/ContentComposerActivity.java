@@ -589,7 +589,6 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
-            intent.putExtra(CropImageActivity.EXTRA_SHOW_ADD, calledFromPicker);
 
             cropResultProcessed = false;
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {
