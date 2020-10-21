@@ -71,6 +71,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private SpeedDialView fabView;
     private View toolbarContainer;
+    private BottomNavigationView navView;
 
     private MainViewModel mainViewModel;
     private ProfileNuxViewModel profileNuxViewModel;
@@ -102,7 +103,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
         toolbarContainer = findViewById(R.id.toolbar_container);
 
-        final BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         final AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
                 R.id.navigation_messages,
@@ -217,9 +218,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
                 @Override
                 public void onToggleChanged(boolean isOpen) {
-                    if (id == R.id.navigation_profile && isOpen) {
-                        profileNuxViewModel.onFabToggled();
-                    }
                 }
             });
             fabView.setOnActionSelectedListener(actionItem -> {
@@ -304,6 +302,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                     || ev.getY() > fabView.getY() + fabView.getHeight()
                     || ev.getY() < fabView.getY()) {
                 fabView.close();
+            }
+        }
+        if (navView.getSelectedItemId() == R.id.navigation_profile) {
+            if (profileNuxViewModel.dismissMakePostNuxIfOpen()) {
+                return true;
             }
         }
         return super.dispatchTouchEvent(ev);

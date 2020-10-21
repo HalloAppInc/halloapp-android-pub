@@ -54,16 +54,18 @@ public class ProfileNuxViewModel extends AndroidViewModel {
         });
     }
 
-    public void onFabToggled() {
+    public boolean dismissMakePostNuxIfOpen() {
         Integer currentNux = showNux.getLiveData().getValue();
         if (currentNux == null) {
-            return;
+            return false;
         }
         if (currentNux == 2) {
             bgWorkers.execute(() -> {
                 preferences.markMakePostNuxShown();
                 showNux.invalidate();
             });
+            return true;
         }
+        return false;
     }
 }
