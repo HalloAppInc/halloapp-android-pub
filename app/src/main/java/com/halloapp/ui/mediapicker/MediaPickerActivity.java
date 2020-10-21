@@ -10,6 +10,8 @@ import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -385,10 +388,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                         getMenuInflater().inflate(R.menu.media_picker_action_mode, menu);
 
-                        if (pickerPurpose == PICKER_PURPOSE_RESULT) {
-                            MenuItem menuItem = menu.findItem(R.id.select);
-                            menuItem.setTitle(R.string.done);
-                        }
+                        MenuItem menuItem = menu.findItem(R.id.select);
+                        SpannableString ss = new SpannableString(getString(pickerPurpose == PICKER_PURPOSE_RESULT ? R.string.done : R.string.next));
+                        ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), R.color.color_secondary)), 0, ss.length(), 0);
+                        menuItem.setTitle(ss);
 
                         return true;
                     }
