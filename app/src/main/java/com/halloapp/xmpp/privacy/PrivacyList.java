@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.UidElement;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
@@ -72,6 +73,19 @@ public class PrivacyList implements ExtensionElement {
                 }
             } else {
                 Xml.skip(parser);
+            }
+        }
+    }
+
+    PrivacyList(com.halloapp.proto.server.PrivacyList privacyList) {
+        this.type = privacyList.getType().name().toLowerCase();
+        for (UidElement uidElement : privacyList.getUidElementsList()) {
+            UserId userId = new UserId(Long.toString(uidElement.getUid()));
+            userIds.add(userId);
+            if (uidElement.getAction().equals(UidElement.Action.ADD)) {
+                typeMap.put(userId, TYPE_ADD);
+            } else if (uidElement.getAction().equals(UidElement.Action.DELETE)) {
+                typeMap.put(userId, TYPE_DELETE);
             }
         }
     }

@@ -2,6 +2,8 @@ package com.halloapp.xmpp.invites;
 
 import androidx.annotation.Nullable;
 
+import com.halloapp.proto.server.Invite;
+import com.halloapp.proto.server.InvitesResponse;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
@@ -79,7 +81,16 @@ public class InvitesResponseIq extends HalloIq {
         }
     }
 
-    private @Result int parseResult(@Nullable String resultStr, @Nullable String reasonStr) {
+    private InvitesResponseIq(int invitesLeft, Set<String> successfulInvites, Map<String, Integer> failedInvites) {
+        super(ELEMENT, NAMESPACE);
+        this.invitesLeft = invitesLeft;
+        this.successfulInvites.addAll(successfulInvites);
+        for (String key : failedInvites.keySet()) {
+            this.failedInvites.put(key, failedInvites.get(key));
+        }
+    }
+
+    private static @Result int parseResult(@Nullable String resultStr, @Nullable String reasonStr) {
         if ("ok".equals(resultStr)) {
             return Result.SUCCESS;
         }
@@ -108,6 +119,24 @@ public class InvitesResponseIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         return null;
+    }
+
+    public static InvitesResponseIq fromProto(InvitesResponse invitesResponse) {
+        int invitesLeft = invitesResponse.getInvitesLeft();
+        Map<String, Integer> failedInvites = new HashMap<>();
+        Set<String> successfulInvites = new HashSet<>();
+        for (Invite invite : invitesResponse.getInvitesList()) {
+            String phone = invite.getPhone();
+            if (phone != null) {
+                @Result int result = parseResult(invite.getResult(), invite.getReason());
+                if (result == Result.SUCCESS) {
+                    successfulInvites.add(phone);
+                } else {
+                    failedInvites.put(phone, result);
+                }
+            }
+        }
+        return new InvitesResponseIq(invitesLeft, successfulInvites, failedInvites);
     }
 
     public static class Provider extends IQProvider<InvitesResponseIq> {

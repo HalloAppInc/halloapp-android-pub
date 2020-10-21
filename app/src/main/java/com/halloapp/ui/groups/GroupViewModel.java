@@ -101,7 +101,7 @@ public class GroupViewModel extends AndroidViewModel {
             protected List<MemberInfo> compute() {
                 List<MemberInfo> members = contentDb.getGroupMembers(groupId);
                 for (MemberInfo member : members) {
-                    if (member.userId.rawId().equals(me.getUser())) {
+                    if (member.userId.isMe() || member.userId.rawId().equals(me.getUser())) {
                         userIsAdmin.postValue(MemberElement.Type.ADMIN.equals(member.type));
                         break;
                     }

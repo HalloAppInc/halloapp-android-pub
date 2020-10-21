@@ -2,6 +2,7 @@ package com.halloapp.xmpp.groups;
 
 import androidx.annotation.StringDef;
 
+import com.halloapp.Me;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.util.Preconditions;
@@ -83,7 +84,9 @@ public class MemberElement implements ExtensionElement {
     }
 
     public MemberElement(GroupMember groupMember) {
-        uid = new UserId(Long.toString(groupMember.getUid()));
+        String rawUid = Long.toString(groupMember.getUid());
+        boolean isMe = rawUid.equals(Me.getInstance().getUser());
+        uid = isMe ? UserId.ME : new UserId(rawUid);
         type = groupMember.getType().name().toLowerCase();
         name = groupMember.getName();
         action = groupMember.getAction().name().toLowerCase();

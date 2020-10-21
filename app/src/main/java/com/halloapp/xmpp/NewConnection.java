@@ -1585,7 +1585,7 @@ public class NewConnection extends Connection {
         public void onResponse(String id, Iq iq) {
             responses.put(id, iq);
 
-            ResponseHandler<Iq> callback = successCallbacks.get(id);
+            ResponseHandler<Iq> callback = successCallbacks.remove(id);
             if (callback != null) {
                 callback.handleResponse(iq);
             } else {
@@ -1595,11 +1595,11 @@ public class NewConnection extends Connection {
 
         public void onError(String id, String reason) {
             Log.d("IqRouter: got error for id " + id + " with reason " + reason);
-            ExceptionHandler callback = failureCallbacks.get(id);
+            ExceptionHandler callback = failureCallbacks.remove(id);
             if (callback != null) {
                 callback.handleException(new RuntimeException("IQ Error: " + reason)); // TODO(jack): custom exception
             } else {
-                Log.w("JACK no callback for " + id);
+                Log.w("IqRouter: no callback for " + id);
             }
         }
 

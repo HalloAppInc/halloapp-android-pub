@@ -417,7 +417,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     }
 
     private void systemMessageSingleUser(@NonNull Message message, @StringRes int string) {
-        if (message.senderUserId.rawId().equals(me.user.getValue())) {
+        if (message.senderUserId.isMe() || message.senderUserId.rawId().equals(me.user.getValue())) {
             systemMessage.setText(itemView.getContext().getString(string, itemView.getContext().getString(R.string.you)));
         } else {
             contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {

@@ -3,6 +3,8 @@ package com.halloapp.xmpp.privacy;
 import androidx.annotation.Nullable;
 
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.PrivacyListResult;
+import com.halloapp.proto.server.PrivacyLists;
 import com.halloapp.util.Xml;
 import com.halloapp.xmpp.HalloIq;
 
@@ -44,6 +46,12 @@ public class PrivacyListsResponseIq extends HalloIq {
         }
     }
 
+    private PrivacyListsResponseIq(String activeType, Map<String, PrivacyList> resultMap) {
+        super(ELEMENT, NAMESPACE);
+        this.activeType = activeType;
+        this.resultMap = resultMap;
+    }
+
     @Nullable
     public PrivacyList getPrivacyList(@PrivacyList.Type String type) {
         if (resultMap.containsKey(type)) {
@@ -60,6 +68,18 @@ public class PrivacyListsResponseIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         return null;
+    }
+
+    public static PrivacyListsResponseIq fromProto(PrivacyLists privacyLists) {
+        String activeType = privacyLists.getActiveType().name().toLowerCase();
+        Map<String, PrivacyList> resultMap = new HashMap<>();
+
+        for (com.halloapp.proto.server.PrivacyList privacyList : privacyLists.getListsList()) {
+            PrivacyList list = new PrivacyList(privacyList);
+            resultMap.put(list.type, list);
+        }
+
+        return new PrivacyListsResponseIq(activeType, resultMap);
     }
 
     public static class Provider extends IQProvider<PrivacyListsResponseIq> {

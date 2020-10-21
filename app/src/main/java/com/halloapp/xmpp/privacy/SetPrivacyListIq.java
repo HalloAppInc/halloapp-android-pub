@@ -62,7 +62,7 @@ public class SetPrivacyListIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         com.halloapp.proto.server.PrivacyList.Builder builder = com.halloapp.proto.server.PrivacyList.newBuilder();
-        builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type));
+        builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase()));
         for (UserId userId : usersAdd) {
             addUid(builder, userId, true);
         }
