@@ -302,7 +302,7 @@ public class ContactsDb {
                     values.put(AvatarsTable.COLUMN_CHAT_ID, contact.chatId.rawId());
                     db.insert(AvatarsTable.TABLE_NAME, null, values);
                 }
-                Log.i("ContactsDb.updateContactAvatarInfo");
+                Log.i("ContactsDb.updateContactAvatarInfo " + contact.chatId);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
