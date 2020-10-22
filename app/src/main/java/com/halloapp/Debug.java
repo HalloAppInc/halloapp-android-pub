@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -23,6 +24,7 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -52,6 +54,7 @@ public class Debug {
     private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
     private static final String DEBUG_MENU_FETCH_SERVER_PROPS = "Fetch server props";
     private static final String DEBUG_MENU_CRASH_PRECONDITION = "Preconditions crash null";
+    private static final String DEBUG_MENU_TRY_DUP_COMMENT = "Try insert duplicate comment";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -72,6 +75,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_FETCH_SERVER_PROPS);
         menu.getMenu().add(DEBUG_MENU_CRASH_PRECONDITION);
+        menu.getMenu().add(DEBUG_MENU_TRY_DUP_COMMENT);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -169,6 +173,37 @@ public class Debug {
                 case DEBUG_MENU_CRASH_PRECONDITION: {
                     Preconditions.checkNotNull(null);
                     break;
+                }
+                case DEBUG_MENU_TRY_DUP_COMMENT: {
+                    UserId senderUserId = new UserId(Me.getInstance().getUser());
+                    String postId = RandomId.create();
+                    long timestamp = System.currentTimeMillis() * 1000L;
+                    Post post = new Post(
+                            -1,
+                            senderUserId,
+                            postId,
+                            timestamp,
+                            Post.TRANSFERRED_NO,
+                            Post.SEEN_NO,
+                            "Main post text"
+                    );
+                    Comment comment = new Comment(
+                            -1,
+                            postId,
+                            senderUserId,
+                            RandomId.create(),
+                            null,
+                            timestamp,
+                            false,
+                            false,
+                            "TESTING COMMENT DUP"
+                    );
+                    comment.setParentPost(post);
+
+                    ContentDb contentDb = ContentDb.getInstance();
+                    contentDb.addPost(post);
+                    contentDb.addComment(comment);
+                    contentDb.addComment(comment);
                 }
             }
             return false;

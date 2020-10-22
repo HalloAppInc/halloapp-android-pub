@@ -2,10 +2,13 @@ package com.halloapp.content;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
@@ -25,7 +28,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 34;
+    private static final int DATABASE_VERSION = 35;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -348,6 +351,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 33: {
                 upgradeFromVersion33(db);
             }
+            case 34: {
+                upgradeFromVersion34(db);
+            }
             break;
             default: {
                 onCreate(db);
@@ -632,10 +638,22 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "END;");
     }
 
+    private void upgradeFromVersion34(@NonNull SQLiteDatabase db) {
+        // Remove constraint violations in comments table before adding back the index
+        db.execSQL("DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + BaseColumns._ID + " NOT IN "
+                + "(SELECT MIN(" + BaseColumns._ID + ") FROM " + CommentsTable.TABLE_NAME + " GROUP BY " + CommentsTable.COLUMN_COMMENT_ID + "," + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ")");
+
+        db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + CommentsTable.INDEX_COMMENT_KEY + " ON " + CommentsTable.TABLE_NAME + "("
+                + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", "
+                + CommentsTable.COLUMN_COMMENT_ID
+                + ");");
+    }
+
     /**
      * Recreates a table with a new schema specified by columns.
      *
-     * Be careful as triggers on the old table will be deleted, and WILL need to be recreated.
+     * Be careful as triggers AND indices on the old table will be deleted, and WILL need to be recreated.
      */
     private void recreateTable(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
         final StringBuilder schema = new StringBuilder();
