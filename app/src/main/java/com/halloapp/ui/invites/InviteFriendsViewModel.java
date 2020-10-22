@@ -21,6 +21,7 @@ import java.util.List;
 public class InviteFriendsViewModel extends AndroidViewModel {
 
     private Connection connection;
+    private ContactsDb contactsDb;
     private Preferences preferences;
 
     private final InvitesApi invitesApi;
@@ -30,9 +31,18 @@ public class InviteFriendsViewModel extends AndroidViewModel {
 
     public static final int RESPONSE_RETRYABLE = -1;
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+
+        @Override
+        public void onContactsChanged() {
+            contactList.invalidate();
+        }
+    };
+
     public InviteFriendsViewModel(@NonNull Application application) {
         super(application);
         connection = Connection.getInstance();
+        contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
 
         invitesApi = new InvitesApi(connection);
@@ -47,6 +57,7 @@ public class InviteFriendsViewModel extends AndroidViewModel {
             }
         };
 
+        contactsDb.addObserver(contactsObserver);
         fetchInvites();
     }
 
@@ -89,5 +100,10 @@ public class InviteFriendsViewModel extends AndroidViewModel {
             Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);
         });
         return inviteResult;
+    }
+
+    @Override
+    protected void onCleared() {
+        contactsDb.removeObserver(contactsObserver);
     }
 }
