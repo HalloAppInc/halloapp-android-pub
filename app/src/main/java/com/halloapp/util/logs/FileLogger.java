@@ -156,6 +156,7 @@ public class FileLogger {
                 outputStream.write('\n');
                 if (logLine.t != null) {
                     outputStream.write(android.util.Log.getStackTraceString(logLine.t));
+                    outputStream.write('\n');
                 }
                 return;
             }
@@ -182,6 +183,7 @@ public class FileLogger {
             }
             if (logLine.t != null) {
                 outputStream.write(android.util.Log.getStackTraceString(logLine.t));
+                outputStream.write('\n');
             }
         }
 
