@@ -193,7 +193,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
                 contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
             } catch (InterruptedException | ExecutionException | IOException | GeneralSecurityException e) {
-                Log.w("AvatarLoader: Failed getting avatar; resetting values", e);
+                Log.w("AvatarLoader: Failed getting avatar for " + chatId + "; resetting values", e);
                 contactAvatarInfo.avatarCheckTimestamp = 0;
                 contactAvatarInfo.avatarId = null;
                 return null;
