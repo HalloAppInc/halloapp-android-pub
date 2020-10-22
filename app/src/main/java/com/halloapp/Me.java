@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
@@ -131,6 +132,7 @@ public class Me {
         if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.saveRegistration: failed");
         } else {
+            EncryptedKeyStore.getInstance().setKeysUploaded(false);
             this.user.postValue(user);
         }
     }
