@@ -227,7 +227,7 @@ public class NewConnection extends Connection {
 
             final AuthResult authResult = sendAndRecvAuth(authRequest);
 
-            Log.i("connection: auth result: " + authResult);
+            Log.i("connection: auth result: " + ProtoPrinter.toString(authResult));
             final String result = authResult.getResult();
             if ("invalid client version".equals(result)) {
                 clientExpired();
@@ -433,7 +433,7 @@ public class NewConnection extends Connection {
             final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(SERVER_JID, pushToken);
             try {
                 final Iq response = sendIqRequestAsync(pushIq).await();
-                Log.d("connection: response after setting the push token " + response.toString());
+                Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response));
             } catch (ObservableErrorException | InterruptedException e) {
                 Log.e("connection: cannot send push token", e);
             }
@@ -450,7 +450,7 @@ public class NewConnection extends Connection {
             final UserNameIq nameIq = new UserNameIq(SERVER_JID, name);
             try {
                 final Iq response = sendIqRequestAsync(nameIq).await();
-                Log.d("connection: response after setting name " + response.toString());
+                Log.d("connection: response after setting name " + ProtoPrinter.toString(response));
                 return Boolean.TRUE;
             } catch (ObservableErrorException | InterruptedException e) {
                 Log.e("connection: cannot send name", e);
@@ -511,7 +511,7 @@ public class NewConnection extends Connection {
             final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(SERVER_JID, identityKey, signedPreKey, oneTimePreKeys);
             try {
                 final Iq response = sendIqRequestAsync(uploadIq).await();
-                Log.d("connection: response after uploading keys " + response.toString());
+                Log.d("connection: response after uploading keys " + ProtoPrinter.toString(response));
                 return Boolean.TRUE;
             } catch (InterruptedException e) {
                 Log.e("connection: cannot upload keys", e);
@@ -574,7 +574,7 @@ public class NewConnection extends Connection {
             final StatsIq statsIq = new StatsIq(SERVER_JID, counters);
             try {
                 final Iq response = sendIqRequestAsync(statsIq).await();
-                Log.d("connection: response for send stats  " + response.toString());
+                Log.d("connection: response for send stats  " + ProtoPrinter.toString(response));
                 return null;
             } catch (ObservableErrorException | InterruptedException e) {
                 Log.e("connection: cannot send stats", e);
@@ -1139,7 +1139,7 @@ public class NewConnection extends Connection {
         private void parsePacket(@NonNull byte[] bytes) {
             try {
                 Packet packet = Packet.parseFrom(bytes);
-                Log.d("connection: got incoming packet " + packet);
+                Log.i("connection: recv: " + ProtoPrinter.toString(packet));
 
                 if (packet.hasMsg()) {
                     handleMsg(packet.getMsg());
@@ -1175,22 +1175,22 @@ public class NewConnection extends Connection {
         private void handleMsg(Msg msg) {
             boolean handled = false;
             if (msg.getType() == Msg.Type.ERROR) {
-                Log.w("connection: got error message " + msg);
+                Log.w("connection: got error message " + ProtoPrinter.toString(msg));
             } else {
                 if (msg.hasFeedItem()) {
-                    Log.i("connection: got feed item " + msg);
+                    Log.i("connection: got feed item " + ProtoPrinter.toString(msg));
                     com.halloapp.proto.server.FeedItem feedItem = msg.getFeedItem();
                     handled = processFeedPubSubItems(Collections.singletonList(feedItem), msg.getId());
                 } else if (msg.hasFeedItems()) {
-                    Log.i("connection: got feed items " + msg);
+                    Log.i("connection: got feed items " + ProtoPrinter.toString(msg));
                     FeedItems feedItems = msg.getFeedItems();
                     handled = processFeedPubSubItems(feedItems.getItemsList(), msg.getId());
                 } else if (msg.hasGroupFeedItem()) {
-                    Log.i("connection: got group feed item " + msg);
+                    Log.i("connection: got group feed item " + ProtoPrinter.toString(msg));
                     GroupFeedItem groupFeedItem = msg.getGroupFeedItem();
                     handled = processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId());
                 } else if (msg.hasChatStanza()) {
-                    Log.i("connection: got chat stanza " + msg);
+                    Log.i("connection: got chat stanza " + ProtoPrinter.toString(msg));
                     ChatStanza chatStanza = msg.getChatStanza();
                     String senderName = chatStanza.getSenderName();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
@@ -1206,7 +1206,7 @@ public class NewConnection extends Connection {
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;
                 } else if (msg.hasSilentChatStanza()) { // TODO(jack): remove silent chat stanzas when no longer needed
-                    Log.i("connection: got silent chat stanza " + msg);
+                    Log.i("connection: got silent chat stanza " + ProtoPrinter.toString(msg));
                     ChatStanza chatStanza = msg.getSilentChatStanza().getChatStanza();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
 
@@ -1219,7 +1219,7 @@ public class NewConnection extends Connection {
                     // Do not call connectionObservers; this message is not user-visible
                     handled = true;
                 } else if (msg.hasGroupChat()) {
-                    Log.i("connection: got group chat " + msg);
+                    Log.i("connection: got group chat " + ProtoPrinter.toString(msg));
                     GroupChat groupChat = msg.getGroupChat();
                     String senderName = groupChat.getSenderName();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
@@ -1235,14 +1235,14 @@ public class NewConnection extends Connection {
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;
                 } else if (msg.hasDeliveryReceipt()) {
-                    Log.i("connection: got delivery receipt " + msg);
+                    Log.i("connection: got delivery receipt " + ProtoPrinter.toString(msg));
                     DeliveryReceipt deliveryReceipt = msg.getDeliveryReceipt();
                     final String threadId = deliveryReceipt.getThreadId();
                     final UserId userId = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyOutgoingMessageDelivered(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), msg.getId());
                     handled = true;
                 } else if (msg.hasSeenReceipt()) {
-                    Log.i("connection: got seen receipt " + msg);
+                    Log.i("connection: got seen receipt " + ProtoPrinter.toString(msg));
                     SeenReceipt seenReceipt = msg.getSeenReceipt();
                     final String threadId = seenReceipt.getThreadId();
                     final UserId userId = getUserId(Long.toString(msg.getFromUid()));
@@ -1253,12 +1253,12 @@ public class NewConnection extends Connection {
                     }
                     handled = true;
                 } else if (msg.hasContactHash()) {
-                    Log.i("connection: got contact hash " + msg);
+                    Log.i("connection: got contact hash " + ProtoPrinter.toString(msg));
                     ContactHash contactHash = msg.getContactHash();
                     connectionObservers.notifyContactsChanged(new ArrayList<>(), Collections.singletonList(Hex.bytesToStringLowercase(contactHash.getHash().toByteArray())), msg.getId());
                     handled = true;
                 } else if (msg.hasContactList()) {
-                    Log.i("connection: got contact list " + msg);
+                    Log.i("connection: got contact list " + ProtoPrinter.toString(msg));
                     ContactList contactList = msg.getContactList();
                     List<Contact> contacts = contactList.getContactsList();
                     List<ContactInfo> infos = new ArrayList<>();
@@ -1267,7 +1267,7 @@ public class NewConnection extends Connection {
                     }
                     connectionObservers.notifyContactsChanged(infos, new ArrayList<>(), msg.getId());
                 } else if (msg.hasWhisperKeys()) {
-                    Log.i("connection: got whisper keys " + msg);
+                    Log.i("connection: got whisper keys " + ProtoPrinter.toString(msg));
                     WhisperKeys whisperKeys = msg.getWhisperKeys();
 
                     WhisperKeysMessage whisperKeysMessage = null;
@@ -1279,12 +1279,12 @@ public class NewConnection extends Connection {
                     connectionObservers.notifyWhisperKeysMessage(whisperKeysMessage, msg.getId());
                     handled = true;
                 } else if (msg.hasAvatar()) {
-                    Log.i("connection: got avatar " + msg);
+                    Log.i("connection: got avatar " + ProtoPrinter.toString(msg));
                     Avatar avatar = msg.getAvatar();
                     connectionObservers.notifyAvatarChangeMessageReceived(getUserId(Long.toString(avatar.getUid())), avatar.getId(), msg.getId());
                     handled = true;
                 } else if (msg.hasGroupStanza()) {
-                    Log.i("connection: got group change message " + msg);
+                    Log.i("connection: got group change message " + ProtoPrinter.toString(msg));
                     GroupStanza groupStanza = msg.getGroupStanza();
 
                     UserId senderUserId = getUserId(Long.toString(groupStanza.getSenderUid()));
@@ -1325,13 +1325,13 @@ public class NewConnection extends Connection {
                         Log.w("Unrecognized group stanza action " + groupStanza.getAction());
                     }
                 } else if (msg.hasRerequest()) {
-                    Log.i("connection: got rerequest message " + msg);
+                    Log.i("connection: got rerequest message " + ProtoPrinter.toString(msg));
                     connectionObservers.notifyMessageRerequest(getUserId(Long.toString(msg.getFromUid())), msg.getRerequest().getId(), msg.getId());
                     handled = true;
                 }
             }
             if (!handled) {
-                Log.i("connection: got unknown message " + msg);
+                Log.i("connection: got unknown message " + ProtoPrinter.toString(msg));
                 sendAck(msg.getId());
             }
         }
@@ -1493,7 +1493,7 @@ public class NewConnection extends Connection {
                     Iq ping = Iq.newBuilder().setId(iq.getId()).setType(Iq.Type.RESULT).setPing(Ping.newBuilder().build()).build();
                     sendPacket(Packet.newBuilder().setIq(ping).build());
                 } else {
-                    Log.w("connection: unexpected GET iq " + iq);
+                    Log.w("connection: unexpected GET iq " + ProtoPrinter.toString(iq));
                 }
             } else {
                 Log.w("connection: unexpected iq type " + iq.getType());
@@ -1505,7 +1505,7 @@ public class NewConnection extends Connection {
             if (handler != null) {
                 handler.run();
             } else {
-                Log.w("connection: ack doesn't match any pedning message " + ack);
+                Log.w("connection: ack doesn't match any pending message " + ProtoPrinter.toString(ack));
             }
         }
 
@@ -1553,7 +1553,7 @@ public class NewConnection extends Connection {
         }
 
         void sendPacket(Packet packet) {
-            Log.i("connection: send: " + packet + " size: " + packet.getSerializedSize());
+            Log.i("connection: send: " + ProtoPrinter.toString(packet));
             byte[] size = ByteBuffer.allocate(4).putInt(packet.getSerializedSize()).array();
             byte[] finalPacket = packet.toByteArray();
 
