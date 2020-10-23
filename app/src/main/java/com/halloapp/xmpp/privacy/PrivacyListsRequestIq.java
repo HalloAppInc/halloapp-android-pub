@@ -45,6 +45,10 @@ public class PrivacyListsRequestIq extends HalloIq {
         for (String type : requestedTypes) {
             builder.addLists(com.halloapp.proto.server.PrivacyList.newBuilder().setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase())));
         }
-        return Iq.newBuilder().setType(Iq.Type.GET).setId(getStanzaId()).setPrivacyLists(builder.build()).build();
+        return Iq.newBuilder()
+                .setType(Iq.Type.GET)
+                .setId(getStanzaId())
+                .setPrivacyLists(builder.build())
+                .build();
     }
 }
