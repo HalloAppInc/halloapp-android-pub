@@ -19,6 +19,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -186,6 +187,9 @@ public class FeedPrivacyActivity extends HalloActivity {
             case PrivacyList.Type.ONLY:
                 settingRadioGroup.check(R.id.radio_only);
                 break;
+            default:
+                Log.w("unrecognized active privacy list type " + type);
+                return;
         }
         if (!animate) {
             RadioButton radioButton = settingRadioGroup.findViewById(settingRadioGroup.getCheckedRadioButtonId());
