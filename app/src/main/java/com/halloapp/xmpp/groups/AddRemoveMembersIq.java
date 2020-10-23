@@ -56,7 +56,7 @@ public class AddRemoveMembersIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         GroupStanza.Builder builder = GroupStanza.newBuilder();
-        builder.setAction(GroupStanza.Action.MODIFY_ADMINS);
+        builder.setAction(GroupStanza.Action.MODIFY_MEMBERS);
         builder.setGid(groupId.rawId());
         if (addUids != null) {
             for (UserId uid : addUids) {
