@@ -31,6 +31,10 @@ public  final class PrivacyLists extends
      * <code>EXCEPT = 2;</code>
      */
     EXCEPT(2),
+    /**
+     * <code>ONLY = 3;</code>
+     */
+    ONLY(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -46,6 +50,10 @@ public  final class PrivacyLists extends
      * <code>EXCEPT = 2;</code>
      */
     public static final int EXCEPT_VALUE = 2;
+    /**
+     * <code>ONLY = 3;</code>
+     */
+    public static final int ONLY_VALUE = 3;
 
 
     @java.lang.Override
@@ -72,6 +80,7 @@ public  final class PrivacyLists extends
         case 0: return ALL;
         case 1: return BLOCK;
         case 2: return EXCEPT;
+        case 3: return ONLY;
         default: return null;
       }
     }
