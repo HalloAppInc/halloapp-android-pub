@@ -80,7 +80,7 @@ public class FeedPrivacyManager {
 
     private void saveFeedPrivacy(@NonNull FeedPrivacy feedPrivacy) {
         contactsDb.setFeedExclusionList(feedPrivacy.exceptList);
-        contactsDb.setFeedShareList(feedPrivacy.exceptList);
+        contactsDb.setFeedShareList(feedPrivacy.onlyList);
         preferences.setFeedPrivacyActiveList(feedPrivacy.activeList);
         notifyFeedPrivacyChanged();
     }
