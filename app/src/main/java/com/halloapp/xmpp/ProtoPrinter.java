@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.google.protobuf.GeneratedMessageLite;
 import com.halloapp.BuildConfig;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,8 @@ public class ProtoPrinter {
     }
 
     public static String xml(@NonNull GeneratedMessageLite<?, ?> message) {
-        ProtoNode node = parse(tokenize(simplifiedInternal(message)));
+        String name = message.getClass().getSimpleName();
+        ProtoNode node = parse(tokenize(name + " { " + simplifiedInternal(message) + " }"));
         return maybePrependWarning(node.toXml());
     }
 

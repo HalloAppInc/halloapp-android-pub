@@ -42,7 +42,7 @@ public abstract class HalloIq extends IQ {
         } else if (iq.hasInvitesResponse()) {
             return InvitesResponseIq.fromProto(iq.getInvitesResponse());
         }
-        Log.w("Using empty result IQ due to unrecognized result IQ " + iq);
+        Log.w("Using empty result IQ due to unrecognized result IQ " + ProtoPrinter.toString(iq));
         return new EmptyResultIq(iq.getId());
     }
 
