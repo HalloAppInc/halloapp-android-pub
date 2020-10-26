@@ -248,20 +248,22 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             return;
         }
 
-        for (Media m: media) {
-            ContentPlayerView playerView = recyclerView.findViewWithTag(m);
+        if (media != null) {
+            for (Media m : media) {
+                ContentPlayerView playerView = recyclerView.findViewWithTag(m);
 
-            if (playerView != null) {
-                Player player = playerView.getPlayer();
+                if (playerView != null) {
+                    Player player = playerView.getPlayer();
 
-                if (player != null) {
-                    player.setPlayWhenReady(false);
-                    player.release();
+                    if (player != null) {
+                        player.setPlayWhenReady(false);
+                        player.release();
+                    }
+
+                    playerView.setPauseHiddenPlayerOnScroll(false);
+                    playerView.setPlayer(null);
+                    playerView.setTag(null);
                 }
-
-                playerView.setPauseHiddenPlayerOnScroll(false);
-                playerView.setPlayer(null);
-                playerView.setTag(null);
             }
         }
     }
