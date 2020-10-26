@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class FileLogger {
 
     private static final int MAX_LOG_LENGTH = 4000;
-    private static final int MAX_LOG_QUEUE = 1000;
+    private static final int MAX_LOG_QUEUE = 5000;
 
     private final FileStore fileStore;
 
