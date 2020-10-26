@@ -32,6 +32,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
@@ -291,12 +292,23 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
         public void initPlayer(Media media) {
             releasePlayer();
+
+            Uri uri;
+            if (media.file != null) {
+                uri = Uri.fromFile(media.file);
+            } else if (media.url != null) {
+                uri = Uri.parse(media.url);
+            } else {
+                Log.e("MediaPagerAdapter: video missing file and url.");
+                return;
+            }
+
             playerView.setPauseHiddenPlayerOnScroll(true);
             playerView.setTag(media);
             playerView.setControllerAutoShow(true);
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(media.file));
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
 
             SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
             playerView.setPlayer(player);
