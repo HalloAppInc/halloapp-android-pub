@@ -361,7 +361,9 @@ public class ChatViewModel extends AndroidViewModel {
         MutableLiveData<Long> rowIdLiveData = new MutableLiveData<>();
         bgWorkers.execute(() -> {
             Message originalMessage = ContentDb.getInstance().getMessage(replyingMessage.chatId, replyingMessage.replyMessageSenderId, replyingMessage.replyMessageId);
-            rowIdLiveData.postValue(Preconditions.checkNotNull(originalMessage).rowId);
+            if (originalMessage != null) {
+                rowIdLiveData.postValue(originalMessage.rowId);
+            }
         });
         return rowIdLiveData;
     }
