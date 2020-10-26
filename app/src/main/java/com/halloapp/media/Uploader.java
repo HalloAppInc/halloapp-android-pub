@@ -67,6 +67,7 @@ public class Uploader {
         final int bufferSize = 1024;
         final byte[] bytes = new byte[bufferSize];
         boolean cancelled = false;
+        int uploadPercent = 0;
         while (!cancelled) {
             final int count = in.read(bytes, 0, bufferSize);
             if (count == -1) {
@@ -75,8 +76,12 @@ public class Uploader {
             out.write(bytes, 0, count);
             outStreamSize += count;
             if (inStreamSize != 0 && listener != null) {
-                Log.i("Uploader:" + (outStreamSize * 100 / inStreamSize) + "%");
-                cancelled = !listener.onProgress(outStreamSize * 100 / inStreamSize);
+                int newUploadPercent = (outStreamSize * 100 / inStreamSize);
+                if (newUploadPercent != uploadPercent) {
+                    uploadPercent = newUploadPercent;
+                    Log.i("Uploader:" + uploadPercent + "%");
+                }
+                cancelled = !listener.onProgress(uploadPercent);
             }
         }
         out.close();

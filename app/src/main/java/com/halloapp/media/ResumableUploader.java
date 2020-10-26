@@ -78,6 +78,7 @@ public class ResumableUploader {
         final byte[] bytes = new byte[BUFFER_SIZE];
         boolean cancelled = false;
         in.skip(offset);
+        int uploadPercent = 0;
         while (!cancelled) {
             final int count = in.read(bytes, 0, BUFFER_SIZE);
             if (count == -1) {
@@ -86,8 +87,12 @@ public class ResumableUploader {
             out.write(bytes, 0, count);
             outStreamSize += count;
             if (inStreamSize != 0 && listener != null) {
-                Log.d("Resumable Uploader:" + ((outStreamSize + offset) * 100 / inStreamSize) + "%");
-                cancelled = !listener.onProgress(outStreamSize * 100 / inStreamSize);
+                int newUploadPercent = (int)((outStreamSize + offset) * 100 / inStreamSize);
+                if (newUploadPercent != uploadPercent) {
+                    uploadPercent = newUploadPercent;
+                    Log.d("Resumable Uploader:" + uploadPercent + "%");
+                }
+                cancelled = !listener.onProgress(uploadPercent);
             }
         }
         in.close();
