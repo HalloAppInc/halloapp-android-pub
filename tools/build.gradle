@@ -16,11 +16,15 @@ sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
 task importStrings(type: JavaExec) {
+    description = "Pulls strings from the Android Strings Google sheet and updates the corresponding strings.xml files"
+    group = "Localization"
     classpath = sourceSets.main.runtimeClasspath
     main = "com.halloapp.tools.StringImporterKt"
 }
 
 task exportStrings(type: JavaExec) {
+    description = "Output strings from all the supported locale strings.xml into strings.xlsx"
+    group = "Localization"
     classpath = sourceSets.main.runtimeClasspath
     main = "com.halloapp.tools.StringExporterKt"
 }
