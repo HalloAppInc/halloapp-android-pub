@@ -28,10 +28,13 @@ class StringImporter() {
     private val localizations = HashMap<String, LocalizedStrings>()
     private var enStrings: HashMap<String, StringResource> = HashMap()
     private var enPlurals: HashMap<String, PluralResource> = HashMap()
+    private val validator = StringValidator()
 
     fun outputStrings() {
+        println("Creating strings.xml files...")
         for (id in localizations.keys) {
             val stringsFile = getStringFile(id)
+            print("${stringsFile.absoluteFile.normalize()}...")
 
             val dbFactory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
             val dBuilder: DocumentBuilder = dbFactory.newDocumentBuilder()
@@ -78,7 +81,10 @@ class StringImporter() {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.transform(source, result)
+
+            println("Done!")
         }
+        println("Import completed successfully")
     }
 
     private fun createItemNode(doc: Document, quantity: String, text: String): Element {
@@ -107,6 +113,7 @@ class StringImporter() {
     fun parseSpreadsheet(file: File) {
         println(file.absolutePath)
         val workbook = XSSFWorkbook(file)
+        var parseSuccess = true
         for (sheet in workbook.sheetIterator()) {
             var sheetLocale: Locale? = null
             for (locale in supportedLocales) {
@@ -177,10 +184,22 @@ class StringImporter() {
                         continue
                     }
                     if (strName != null && !isEmpty(strValue)) {
+                        val localizedRes = StringResource(strName, strValue)
+                        val validation = validator.validateString(sheetLocale, currentResource, localizedRes)
+                        if (validation != null) {
+                            println("[ERROR] $validation")
+                            parseSuccess = false
+                            continue
+                        }
                         localizedStrings.strings.add(StringResource(strName, strValue))
                     }
                 }
             }
+        }
+        if (!parseSuccess) {
+            error("Parsing of excel file failed! See above errors")
+        } else {
+            println("Successfully processed: ${localizations.keys.joinToString()}")
         }
     }
 }
