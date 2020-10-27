@@ -1287,9 +1287,10 @@ public class NewConnection extends Connection {
                     Log.i("connection: got group change message " + ProtoPrinter.toString(msg));
                     GroupStanza groupStanza = msg.getGroupStanza();
 
-                    UserId senderUserId = getUserId(Long.toString(groupStanza.getSenderUid()));
+                    long rawUserId = groupStanza.getSenderUid();
+                    UserId senderUserId = rawUserId != 0 ? getUserId(Long.toString(rawUserId)) : null;
                     String senderName = groupStanza.getSenderName();
-                    if (!TextUtils.isEmpty(senderName) && groupStanza.getSenderUid() != 0) {
+                    if (!TextUtils.isEmpty(senderName) && rawUserId != 0) {
                         connectionObservers.notifyUserNamesReceived(Collections.singletonMap(senderUserId, senderName));
                     }
 
