@@ -29,7 +29,7 @@ public class Me {
     private static final String PREF_KEY_PHONE = "phone";
     private static final String PREF_KEY_NAME = "name";
 
-    private AppContext appContext;
+    private final AppContext appContext;
     private SharedPreferences preferences;
 
     public final MutableLiveData<String> name = new MutableLiveData<>();
