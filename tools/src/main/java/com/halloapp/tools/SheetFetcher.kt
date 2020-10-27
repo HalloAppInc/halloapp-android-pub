@@ -65,10 +65,6 @@ object SheetFetcher {
         return row[col] as String
     }
 
-    /**
-     * Prints the names and majors of students in a sample spreadsheet:
-     * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-     */
     @Throws(IOException::class, GeneralSecurityException::class)
     fun fetchStrings (enStrings: HashMap<String, StringResource>, enPlurals: HashMap<String, PluralResource>): HashMap<String,LocalizedStrings> {
         // Build a new authorized API client service.
