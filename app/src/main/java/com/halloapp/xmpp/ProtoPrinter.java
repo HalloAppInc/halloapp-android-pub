@@ -97,7 +97,7 @@ public class ProtoPrinter {
                 Pair<String, String> attribute = attributes.get(i);
                 String second = attribute.second;
                 if (second.length() > MAX_ATTR_LEN) {
-                    second = second.substring(0, PEEK_BEFORE) + "…" + second.substring(second.length() - PEEK_AFTER);
+                    second = second.substring(0, PEEK_BEFORE) + "..." + second.substring(second.length() - PEEK_AFTER);
                 }
                 sb.append(attribute.first).append("=").append(second);
                 if (i != attributes.size() - 1) {
