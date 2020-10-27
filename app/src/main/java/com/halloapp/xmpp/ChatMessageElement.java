@@ -264,7 +264,10 @@ public class ChatMessageElement implements ExtensionElement {
             }
         }
 
-        builder.setEncPayload(ByteString.copyFrom(getEncryptedEntry()));
+        byte[] encryptedEntry = getEncryptedEntry();
+        if (encryptedEntry != null) {
+            builder.setEncPayload(ByteString.copyFrom(encryptedEntry));
+        }
 
         return builder.build();
     }
