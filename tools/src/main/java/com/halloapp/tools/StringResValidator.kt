@@ -2,7 +2,7 @@ package com.halloapp.tools
 
 import java.util.*
 
-class StringValidator() {
+class StringResValidator() {
     fun validateString(locale: Locale, baseString: StringResource, localizedString: StringResource): String? {
         val baseFormatter = parseFormatter(baseString.text)
         val localizedFormatter = parseFormatter(localizedString.text)

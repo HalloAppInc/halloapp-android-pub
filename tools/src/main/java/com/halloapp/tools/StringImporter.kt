@@ -15,7 +15,9 @@ import javax.xml.transform.stream.StreamResult
 fun main() {
     val importer = StringImporter()
     importer.parseCurrentStrings(getStringFile(null))
-    importer.parseSpreadsheet(File("../strings.xlsx"))
+    // To import directly from an excel sheet
+    //importer.parseSpreadsheet(File("../strings.xlsx"))
+    importer.parseGoogleSheet()
     importer.outputStrings()
 }
 
@@ -25,10 +27,10 @@ class LocalizedStrings() {
 }
 
 class StringImporter() {
-    private val localizations = HashMap<String, LocalizedStrings>()
-    private var enStrings: HashMap<String, StringResource> = HashMap()
-    private var enPlurals: HashMap<String, PluralResource> = HashMap()
-    private val validator = StringValidator()
+    private var localizations = HashMap<String, LocalizedStrings>()
+    private val enStrings: HashMap<String, StringResource> = HashMap()
+    private val enPlurals: HashMap<String, PluralResource> = HashMap()
+    private val validator = StringResValidator()
 
     fun outputStrings() {
         println("Creating strings.xml files...")
@@ -108,6 +110,10 @@ class StringImporter() {
         for (plural in plurals) {
             enPlurals[plural.name] = plural
         }
+    }
+
+    fun parseGoogleSheet() {
+        localizations = SheetFetcher.fetchStrings(enStrings, enPlurals)
     }
 
     fun parseSpreadsheet(file: File) {
