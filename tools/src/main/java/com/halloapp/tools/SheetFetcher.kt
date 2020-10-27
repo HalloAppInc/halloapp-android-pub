@@ -24,7 +24,7 @@ object SheetFetcher {
     private const val TOKENS_DIRECTORY_PATH = "tokens"
 
     /** Spreadsheet: https://docs.google.com/spreadsheets/d/1s_AFv-HzTEZf66OD8x4CHs2PjV50pcGeY2YfVBpm8d4/ */
-    private const val STRINGS_SPREADSHEET_ID = "1s_AFv-HzTEZf66OD8x4CHs2PjV50pcGeY2YfVBpm8d4"
+    const val STRINGS_SPREADSHEET_ID = "1s_AFv-HzTEZf66OD8x4CHs2PjV50pcGeY2YfVBpm8d4"
 
     private val validator = StringResValidator()
 
@@ -64,18 +64,22 @@ object SheetFetcher {
         return row[col] as String
     }
 
+    /**
+     * Fetch the strings from the Google Doc Spreadsheet
+     * Stores parsed localizations in the localizations parameter
+     *
+     * @return returns true if we need to re-export, false otherwise
+     */
     @Throws(IOException::class, GeneralSecurityException::class)
-    fun fetchStrings (enStrings: HashMap<String, StringResource>, enPlurals: HashMap<String, PluralResource>): HashMap<String,LocalizedStrings> {
+    fun fetchStrings (enStrings: HashMap<String, StringResource>, enPlurals: HashMap<String, PluralResource>, localizationsOut: HashMap<String,LocalizedStrings>): Boolean {
         // Build a new authorized API client service.
         val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
         val service = Sheets.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
                 .setApplicationName(APPLICATION_NAME)
                 .build()
         val spreadsheet = service.spreadsheets()[STRINGS_SPREADSHEET_ID].execute()
-
-        val localizations = HashMap<String, LocalizedStrings>()
-
         var parseSuccess = true
+        var needExport = false
 
         for (sheet in spreadsheet.sheets) {
             var sheetLocale: Locale? = null
@@ -89,15 +93,16 @@ object SheetFetcher {
                 println("Unsupported locale found for sheet: " + sheet.properties.title)
                 continue;
             }
-            val localizedStrings: LocalizedStrings = localizations[sheetLocale.identifier]
+            val localizedStrings: LocalizedStrings = localizationsOut[sheetLocale.identifier]
                     ?: LocalizedStrings()
-            localizations[sheetLocale.identifier] = localizedStrings
+            localizationsOut[sheetLocale.identifier] = localizedStrings
 
             println("Processing ${sheet.properties.title}")
             val response: ValueRange = service.spreadsheets().values()[STRINGS_SPREADSHEET_ID, "${sheet.properties.title}!A2:M"]
                     .execute()
             val values: List<List<Any>> = response.getValues()
             if (sheet.properties.title.contains("Plurals")) {
+                val enPluralSet = HashSet(enPlurals.keys)
                 val iterator = values.iterator()
                 while (iterator.hasNext()) {
                     val row = iterator.next()
@@ -121,31 +126,33 @@ object SheetFetcher {
                     enmany = if (isEmpty(enmany)) null else enmany
                     var enother = getCell(row, 11)
                     enother = if (isEmpty(enother)) null else enother
-
+                    enPluralSet.remove(strName)
                     val currentPlural = enPlurals[strName]
                     if (currentPlural == null || currentPlural.other != enother || currentPlural.few != enfew || currentPlural.many != enmany || currentPlural.zero != enzero || currentPlural.one != enone || currentPlural.two != entwo) {
-                        println("English plural no longer matches for $strName, skipping")
+                        needExport = true
                     }
                     if (!isEmpty(zero) || !isEmpty(one) || !isEmpty(two) || !isEmpty(few) || !isEmpty(many) || !isEmpty(other)) {
                         localizedStrings.plurals.add(PluralResource(strName, zero, one, two, few, many, other))
                     }
                 }
+                if (enPluralSet.isNotEmpty()) {
+                    needExport = true
+                }
             } else {
+                val enStringSet = HashSet(enStrings.keys)
                 val iterator = values.iterator()
                 while (iterator.hasNext()) {
                     val row = iterator.next()
-                    if (getCell(row, 0) == null) {
-                        break
-                    }
-                    val strName = getCell(row, 0)
+                    val strName = getCell(row, 0) ?: break
                     val oldValue = getCell(row, 1)
                     val strValue = getCell(row, 2)
                     val currentResource = enStrings[strName]
+                    enStringSet.remove(strName)
                     if (currentResource == null || currentResource.text != oldValue) {
-                        println("English string no longer matches for $strName, skipping")
+                        needExport = true
                         continue
                     }
-                    if (strName != null && !isEmpty(strValue)) {
+                    if (!isEmpty(strValue)) {
                         val localizedRes = StringResource(strName, strValue!!)
                         val validation = validator.validateString(sheetLocale, currentResource, localizedRes)
                         if (validation != null) {
@@ -156,14 +163,32 @@ object SheetFetcher {
                         localizedStrings.strings.add(StringResource(strName, strValue))
                     }
                 }
+                if (enStringSet.isNotEmpty()) {
+                    needExport = true
+                }
             }
         }
 
         if (!parseSuccess) {
             error("Parsing of excel file failed! See above errors")
         } else {
-            println("Successfully processed: ${localizations.keys.joinToString()}")
+            println("Successfully processed: ${localizationsOut.keys.joinToString()}")
         }
-        return localizations
+
+        if (needExport) {
+            println("\nBase strings.xml has changed!")
+        }
+
+        for (locale in supportedLocales) {
+            if (!localizationsOut.containsKey(locale.identifier)) {
+                // There's a new locale!
+                needExport = true
+                print("\nNew supported locale ${locale.identifier} detected!")
+            }
+        }
+
+        println("\n")
+
+        return needExport
     }
 }

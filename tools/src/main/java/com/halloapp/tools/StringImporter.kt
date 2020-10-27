@@ -17,8 +17,21 @@ fun main() {
     importer.parseCurrentStrings(getStringFile(null))
     // To import directly from an excel sheet
     //importer.parseSpreadsheet(File("../strings.xlsx"))
-    importer.parseGoogleSheet()
+    val needsExport = importer.parseGoogleSheet()
     importer.outputStrings()
+    println()
+    if (needsExport) {
+        val stringsFile = File("../app/src/main/res")
+        val spreadSheetFile = File("../strings.xlsx")
+        print("Exporting strings to ${spreadSheetFile.absoluteFile.normalize()}...")
+
+        val exporter = StringExporter(stringsFile)
+
+        exporter.outputSpreadsheet(spreadSheetFile)
+        println("Done!\n\nMake sure to upload the updated sheet to: https://docs.google.com/spreadsheets/d/${SheetFetcher.STRINGS_SPREADSHEET_ID}/")
+    } else {
+        println("No need to export, string update complete!")
+    }
 }
 
 class LocalizedStrings() {
@@ -86,7 +99,7 @@ class StringImporter() {
 
             println("Done!")
         }
-        println("Import completed successfully")
+        println("\nImport completed successfully")
     }
 
     private fun createItemNode(doc: Document, quantity: String, text: String): Element {
@@ -112,8 +125,8 @@ class StringImporter() {
         }
     }
 
-    fun parseGoogleSheet() {
-        localizations = SheetFetcher.fetchStrings(enStrings, enPlurals)
+    fun parseGoogleSheet(): Boolean {
+        return SheetFetcher.fetchStrings(enStrings, enPlurals, localizations)
     }
 
     fun parseSpreadsheet(file: File) {

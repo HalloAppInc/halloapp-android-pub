@@ -15,8 +15,8 @@ dependencies {
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
-task importStrings(type: JavaExec) {
-    description = "Pulls strings from the Android Strings Google sheet and updates the corresponding strings.xml files"
+task updateStrings(type: JavaExec) {
+    description = "Pulls strings from the Android Strings Google sheet and updates the corresponding strings.xml files. Also exports if necessary"
     group = "Localization"
     classpath = sourceSets.main.runtimeClasspath
     main = "com.halloapp.tools.StringImporterKt"
