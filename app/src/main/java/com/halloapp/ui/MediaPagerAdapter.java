@@ -293,13 +293,8 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         public void initPlayer(Media media) {
             releasePlayer();
 
-            Uri uri;
-            if (media.file != null) {
-                uri = Uri.fromFile(media.file);
-            } else if (media.url != null) {
-                uri = Uri.parse(media.url);
-            } else {
-                Log.e("MediaPagerAdapter: video missing file and url.");
+            if (media.file == null) {
+                Log.w("MediaPagerAdapter: video missing file.");
                 return;
             }
 
@@ -308,7 +303,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             playerView.setControllerAutoShow(true);
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(media.file));
 
             SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
             playerView.setPlayer(player);
