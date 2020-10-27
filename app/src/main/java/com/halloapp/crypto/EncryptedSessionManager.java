@@ -1,5 +1,6 @@
 package com.halloapp.crypto;
 
+import android.text.format.DateUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -45,7 +46,7 @@ import java.util.concurrent.ExecutionException;
  * the Signal protocol should be routed through this class.
  */
 public class EncryptedSessionManager {
-    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 60 * 60 * 1000; // one hour
+    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = DateUtils.HOUR_IN_MILLIS;
 
     private final ServerProps serverProps = ServerProps.getInstance();
     private final Connection connection;
