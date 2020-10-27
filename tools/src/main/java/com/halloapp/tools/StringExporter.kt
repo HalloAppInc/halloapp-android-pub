@@ -227,7 +227,18 @@ fun parseStrings(doc: Document): List<StringResource> {
         if (stringNode.nodeType != Node.ELEMENT_NODE) {
             continue
         }
-        val strName = stringNode.attributes.getNamedItem("name").textContent
+        var strName: String? = null
+        var translatable: String? = null
+        for (i in 0 until stringNode.attributes.length) {
+            val node = stringNode.attributes.item(i)
+            when (node.nodeName) {
+                "name" -> strName = node.nodeValue
+                "translatable" -> translatable = node.nodeValue
+            }
+        }
+        if (strName == null || translatable == "false") {
+            continue
+        }
         val strValue = stringNode.textContent
 
         strings.add(StringResource(strName, strValue))
