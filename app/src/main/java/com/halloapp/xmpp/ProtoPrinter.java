@@ -43,7 +43,7 @@ public class ProtoPrinter {
     }
 
     public static String xml(@NonNull GeneratedMessageLite<?, ?> message) {
-        String name = message.getClass().getSimpleName();
+        String name = camelCaseToKebabCase(message.getClass().getSimpleName());
         ProtoNode node = parse(tokenize(name + " { " + simplifiedInternal(message) + " }"));
         return maybePrependWarning(node.toXml());
     }
@@ -201,5 +201,18 @@ public class ProtoPrinter {
             }
         }
         return -1;
+    }
+
+    private static String camelCaseToKebabCase(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<s.length(); i++) {
+            char c = s.charAt(i);
+            if (Character.isUpperCase(c) && i != 0 && (i != s.length() - 1 && Character.isLowerCase(s.charAt(i + 1)) || Character.isLowerCase(s.charAt(i - 1)))) {
+                sb.append('_');
+            }
+            sb.append(Character.toLowerCase(c));
+        }
+
+        return sb.toString();
     }
 }
