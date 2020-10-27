@@ -44,7 +44,6 @@ object SheetFetcher {
     @Throws(IOException::class)
     private fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
         // Load client secrets.
-        val credFile = File(CREDENTIALS_FILE_PATH)
         val cred = FileInputStream(CREDENTIALS_FILE_PATH)
         val clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, InputStreamReader(cred))
 
