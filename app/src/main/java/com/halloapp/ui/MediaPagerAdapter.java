@@ -160,6 +160,16 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                     exploreMedia(position);
                     return true;
                 }
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    if (holder.isPlaying()) {
+                        holder.pause();
+                    } else {
+                        holder.play();
+                    }
+                    return true;
+                }
             });
 
             ScaleGestureDetector scaleDetector = new ScaleGestureDetector(holder.playerView.getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -310,6 +320,24 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
             player.prepare(mediaSource);
+        }
+
+        public void play() {
+            Player player = playerView.getPlayer();
+            if (player != null) {
+                player.setPlayWhenReady(true);
+            }
+        }
+
+        public void pause() {
+            Player player = playerView.getPlayer();
+            if (player != null) {
+                player.setPlayWhenReady(false);
+            }
+        }
+
+        public boolean isPlaying() {
+            return playerView.getPlayer() != null && playerView.getPlayer().isPlaying();
         }
 
         public void releasePlayer() {
