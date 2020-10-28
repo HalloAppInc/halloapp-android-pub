@@ -460,7 +460,7 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public List<Contact> getAllUsers() {
+    public List<Contact> getUniqueContactsWithPhones() {
         final List<Contact> contacts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,

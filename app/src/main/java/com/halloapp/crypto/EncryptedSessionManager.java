@@ -77,12 +77,12 @@ public class EncryptedSessionManager {
     }
 
     // Should be used in a try-with-resources block for auto-release
-    private AutoCloseLock acquireLock(UserId userId) throws InterruptedException {
+    private AutoCloseLock acquireLock(@NonNull UserId userId) throws InterruptedException {
         lockMap.putIfAbsent(userId, new AutoCloseLock());
         return Preconditions.checkNotNull(lockMap.get(userId)).lock();
     }
 
-    public byte[] encryptMessage(byte[] message, UserId peerUserId) throws GeneralSecurityException {
+    public byte[] encryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId) throws GeneralSecurityException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             return messageCipher.convertForWire(message, peerUserId);
         } catch (InterruptedException e) {
@@ -90,7 +90,7 @@ public class EncryptedSessionManager {
         }
     }
 
-    public byte[] decryptMessage(byte[] message, UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
+    public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                 if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
@@ -142,7 +142,7 @@ public class EncryptedSessionManager {
 
         if (generateSilentMessages && connection instanceof NewConnection) {
             List<Message> silentMessages = new ArrayList<>();
-            List<Contact> users = ContactsDb.getInstance().getAllUsers();
+            List<Contact> users = ContactsDb.getInstance().getUsers();
             int count = serverProps.getSilentChatMessageCount();
             for (int i=0; i<count; i++) {
                 UserId recipient = users.get(new Random().nextInt(users.size())).userId;
