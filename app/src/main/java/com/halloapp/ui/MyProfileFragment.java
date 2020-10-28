@@ -1,79 +1,99 @@
 package com.halloapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-import androidx.transition.TransitionManager;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.transition.Fade;
-import androidx.transition.TransitionSet;
 
 import com.halloapp.R;
-import com.halloapp.ui.profile.ProfileFragment;
-import com.halloapp.util.Preconditions;
+import com.halloapp.id.UserId;
+import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.ui.settings.SettingsActivity;
+import com.halloapp.ui.settings.SettingsProfile;
+import com.halloapp.util.StringUtils;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
-public class MyProfileFragment extends ProfileFragment implements MainNavFragment {
+public class MyProfileFragment extends HalloFragment implements MainNavFragment {
 
-    private ProfileNuxViewModel nuxViewModel;
+    private MyProfileViewModel viewModel;
 
-    private FrameLayout nuxContainer;
-    private View nux;
+    private AvatarLoader avatarLoader = AvatarLoader.getInstance();
+
+    private ImageView avatarView;
 
     @Override
     public void resetScrollPosition() {
-        layoutManager.scrollToPosition(0);
     }
 
+    @Nullable
     @Override
-    protected int getLayout() {
-        return R.layout.fragment_my_profile;
-    }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(requireActivity()).get(MyProfileViewModel.class);
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = Preconditions.checkNotNull(super.onCreateView(inflater, container, savedInstanceState));
-        nuxViewModel = new ViewModelProvider(requireActivity()).get(ProfileNuxViewModel.class);
-        nuxContainer = root.findViewById(R.id.nux_container);
+        View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
-        nuxViewModel.showNux.getLiveData().observe(getViewLifecycleOwner(), nuxToShow -> {
-            if (nuxToShow == null) {
-                return;
-            }
-            if (nuxToShow == ProfileNuxViewModel.Nux.NUX_NONE) {
-                TransitionManager.beginDelayedTransition(nuxContainer);
-                nuxContainer.setVisibility(View.GONE);
-            } else if (nuxToShow == ProfileNuxViewModel.Nux.NUX_PROFILE) {
-                if (nux == null) {
-                    TransitionManager.beginDelayedTransition(nuxContainer);
-                    nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_bubble_up_arrow, nuxContainer, true);
-                    TextView text = nux.findViewById(R.id.nux_text);
-                    View btn = nux.findViewById(R.id.ok_btn);
-                    text.setText(R.string.profile_nux_text);
-                    btn.setOnClickListener(v -> nuxViewModel.closeProfileNux());
-                }
-            } else if (nuxToShow == ProfileNuxViewModel.Nux.NUX_MAKE_POST) {
-                if (nuxContainer.getVisibility() != View.GONE) {
-                    TransitionManager.beginDelayedTransition(nuxContainer);
-                    nuxContainer.setVisibility(View.GONE);
-                    //Transition to next nux,
-                    nuxContainer.postDelayed(this::showMakePostNux, 250);
-                } else {
-                    showMakePostNux();
-                }
-            }
+        NestedScrollView scrollView = root.findViewById(R.id.container);
+        scrollView.setOnScrollChangeListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
+
+        View profileContainer = root.findViewById(R.id.profile_container);
+        profileContainer.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), SettingsProfile.class));
         });
+
+        View about = root.findViewById(R.id.about);
+        about.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), AboutActivity.class));
+        });
+        View myPosts = root.findViewById(R.id.my_posts);
+        myPosts.setOnClickListener(v -> {
+            startActivity(ViewProfileActivity.viewProfile(v.getContext(), UserId.ME));
+        });
+
+        View settings = root.findViewById(R.id.settings);
+        settings.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), SettingsActivity.class));
+        });
+
+        View help = root.findViewById(R.id.help);
+        help.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), HelpActivity.class));
+        });
+
+        View invite = root.findViewById(R.id.invite);
+        invite.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), InviteFriendsActivity.class));
+        });
+
+        TextView number = root.findViewById(R.id.number);
+        TextView name = root.findViewById(R.id.name);
+
+        avatarView = root.findViewById(R.id.avatar);
+
+        viewModel.getName().observe(getViewLifecycleOwner(), name::setText);
+        viewModel.getPhone().observe(getViewLifecycleOwner(), phoneNumber -> {
+            number.setText(StringUtils.formatPhoneNumber(phoneNumber));
+        });
+
+        avatarLoader.load(avatarView, UserId.ME, false);
+
         return root;
     }
 
-    private void showMakePostNux() {
-        nuxContainer.removeAllViews();
-        nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_make_first_post, nuxContainer, true);
-        TransitionManager.beginDelayedTransition(nuxContainer, new Fade());
-        nuxContainer.setVisibility(View.VISIBLE);
+    @Override
+    public void onResume() {
+        super.onResume();
+        avatarLoader.load(avatarView, UserId.ME, false);
     }
 }

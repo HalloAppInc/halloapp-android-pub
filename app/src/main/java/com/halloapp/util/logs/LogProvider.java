@@ -18,9 +18,9 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.R;
-import com.halloapp.ui.settings.SettingsActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -67,7 +67,7 @@ public class LogProvider extends ContentProvider {
             protected void onPostExecute(String user) {
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("application/zip");
-                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {SettingsActivity.SUPPORT_EMAIL});
+                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {Constants.SUPPORT_EMAIL});
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME));
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME));
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
@@ -91,7 +91,7 @@ public class LogProvider extends ContentProvider {
 
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("plain/text");
-                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {SettingsActivity.SUPPORT_EMAIL});
+                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {Constants.SUPPORT_EMAIL});
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_FILE_NAME));

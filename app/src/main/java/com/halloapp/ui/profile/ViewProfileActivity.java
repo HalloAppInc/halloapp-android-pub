@@ -33,8 +33,11 @@ public class ViewProfileActivity extends HalloActivity {
             Log.e("ViewProfileActivity/onCreate must provide a user id");
             return;
         }
-
-        setTitle("");
+        if (userId.isMe()) {
+            setTitle(R.string.my_posts);
+        } else {
+            setTitle("");
+        }
         setContentView(R.layout.activity_view_profile);
         getSupportFragmentManager()
                 .beginTransaction()

@@ -27,25 +27,6 @@
 
     </com.halloapp.widget.HAPreferenceCategory>
 
-    <com.halloapp.widget.HAPreferenceCategory app:title="@string/about">
-
-        <Preference
-            app:key="send_logs"
-            app:title="@string/send_logs" />
-
-        <Preference
-            app:key="terms_and_policy"
-            app:title="@string/terms_of_service" />
-
-        <Preference
-            app:key="invite_friends"
-            app:title="@string/invite_a_friend"
-            app:summary=" "/>
-
-    </com.halloapp.widget.HAPreferenceCategory>
-
-    <com.halloapp.ui.settings.SettingsFooterPreference app:key="footer" app:layout="@layout/settings_version_footer"/>
-
     <com.halloapp.widget.HAPreferenceCategory app:key="debug" app:title="Debug" app:isPreferenceVisible="false">
 
         <SwitchPreferenceCompat

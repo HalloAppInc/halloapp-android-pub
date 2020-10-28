@@ -193,6 +193,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private void updateFab(@IdRes int id) {
         fabView.clearActionItems();
         if (id == R.id.navigation_messages) {
+            fabView.show();
             fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.new_chat));
             fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_chat));
             fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
@@ -207,7 +208,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 }
             });
             fabView.setOnActionSelectedListener(null);
-        } else {
+        } else if (id == R.id.navigation_home){
+            fabView.show();
             fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
             fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
             fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
@@ -227,6 +229,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
             addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
             addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+        } else {
+            fabView.hide();
         }
     }
 

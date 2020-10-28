@@ -27,14 +27,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Settings" parent="AppTheme">
-        <item name="actionBarStyle">@style/ActionBar.Settings</item>
-        <item name="actionBarTheme">@style/Theme.ActionBar.Settings</item>
-        <item name="colorPrimaryDark">@color/settings_header_background</item>
-        <item name="toolbarStyle">@style/Toolbar.Settings</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
-    </style>
-
     <style name="AppTheme.Black" parent="Theme.AppCompat">
         <item name="actionBarStyle">@style/ActionBarBlack</item>
         <item name="actionMenuTextColor">@android:color/white</item>

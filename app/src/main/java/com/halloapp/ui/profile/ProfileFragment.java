@@ -16,6 +16,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +45,7 @@ public class ProfileFragment extends PostsFragment {
 
     private ImageView avatarView;
     private TextView nameView;
+    private TextView subtitleView;
 
     private MenuItem blockMenuItem;
 
@@ -119,7 +121,16 @@ public class ProfileFragment extends PostsFragment {
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
+        subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
+        viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
+            subtitleView.setText(s);
+            if (s == null) {
+                subtitleView.setVisibility(View.GONE);
+            } else {
+                subtitleView.setVisibility(View.VISIBLE);
+            }
+        });
         if (profileUserId.isMe()) {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
@@ -182,9 +193,7 @@ public class ProfileFragment extends PostsFragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        if (profileUserId.isMe()) {
-            inflater.inflate(R.menu.my_profile_menu, menu);
-        } else {
+        if (!profileUserId.isMe()) {
             inflater.inflate(R.menu.other_profile_menu, menu);
             blockMenuItem = menu.findItem(R.id.block);
             updateMenu(viewModel.getIsBlocked().getValue());

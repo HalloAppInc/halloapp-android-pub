@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
@@ -30,12 +31,15 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 
 import java.util.List;
 
 public class ProfileViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
+
+    private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     private final BlockListManager blockListManager;
@@ -43,6 +47,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    private final ComputableLiveData<String> subtitleLiveData;
     private final ComputableLiveData<Contact> contactLiveData;
     private final MutableLiveData<Boolean> isBlocked;
 
@@ -123,6 +128,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
         this.userId = userId;
 
+        me = Me.getInstance();
         blockListManager = BlockListManager.getInstance();
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
@@ -130,6 +136,15 @@ public class ProfileViewModel extends AndroidViewModel {
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
+        subtitleLiveData = new ComputableLiveData<String>() {
+            @Override
+            protected String compute() {
+                if (userId.isMe()) {
+                    return StringUtils.formatPhoneNumber(me.getPhone());
+                }
+                return null;
+            }
+        };
         contactLiveData = new ComputableLiveData<Contact>() {
             @Override
             protected Contact compute() {
@@ -150,6 +165,10 @@ public class ProfileViewModel extends AndroidViewModel {
             List<UserId> blockList = blockListManager.getBlockList();
             isBlocked.postValue(blockList != null ? blockList.contains(userId) : null);
         });
+    }
+
+    public LiveData<String> getSubtitle() {
+        return subtitleLiveData.getLiveData();
     }
 
     public LiveData<Contact> getContact() {

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="17dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            android:background="@color/card_background"
+            android:elevation="2dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/terms_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/primary_text"
+                android:text="@string/terms_of_service"
+                android:paddingStart="24dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="15dp"
+                android:background="?selectableItemBackground"
+                android:paddingBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/window_background"/>
+
+            <TextView
+                android:id="@+id/send_logs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/primary_text"
+                android:text="@string/send_logs"
+                android:paddingStart="24dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="15dp"
+                android:background="?selectableItemBackground"
+                android:paddingBottom="16dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            tools:text="HalloApp Version 0.98"/>
+
+    </LinearLayout>
+
+</ScrollView>

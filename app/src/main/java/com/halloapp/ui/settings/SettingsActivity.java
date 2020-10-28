@@ -1,12 +1,9 @@
 package com.halloapp.ui.settings;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,34 +14,18 @@ import androidx.preference.PreferenceCategory;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
-import com.halloapp.util.logs.LogProvider;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
-import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.StringUtils;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 public class SettingsActivity extends HalloActivity {
-    public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
-    private static final String SUPPORT_EMAIL_URI = "mailto:" + SUPPORT_EMAIL;
-    private static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
-
-    private SettingsViewModel settingsViewModel;
-
-    private AvatarLoader avatarLoader;
-
-    private ImageView avatarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,34 +40,6 @@ public class SettingsActivity extends HalloActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        avatarLoader = AvatarLoader.getInstance();
-
-        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-
-        avatarView = findViewById(R.id.avatar);
-        final TextView nameView = findViewById(R.id.name);
-        final TextView phoneView = findViewById(R.id.phone);
-
-        final View profileContainer = findViewById(R.id.profile_container);
-
-        settingsViewModel.getName().observe(this, nameView::setText);
-        settingsViewModel.getPhone().observe(this, phoneNumber -> {
-            phoneView.setText(StringUtils.formatPhoneNumber(phoneNumber));
-        });
-
-        avatarLoader.load(avatarView, UserId.ME);
-
-        profileContainer.setOnClickListener(v -> {
-            startActivity(new Intent(this, SettingsProfile.class));
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        settingsViewModel.refresh();
-        avatarLoader.load(avatarView, UserId.ME);
     }
 
     public static class SettingsFragment extends HalloPreferenceFragment {
@@ -94,7 +47,6 @@ public class SettingsActivity extends HalloActivity {
         private ServerProps serverProps = ServerProps.getInstance();
 
         private Preference blocklistPreference;
-        private Preference inviteFriends;
         private Preference feedPrivacyPreference;
 
         @Override
@@ -121,38 +73,6 @@ public class SettingsActivity extends HalloActivity {
                 Intent intent = new Intent(requireContext(), FeedPrivacyActivity.class);
                 startActivity(intent);
                 return false;
-            });
-
-            inviteFriends = Preconditions.checkNotNull((findPreference("invite_friends")));
-            inviteFriends.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent(requireContext(), InviteFriendsActivity.class);
-                startActivity(intent);
-                return false;
-            });
-
-            final Preference sendLogsPreference = Preconditions.checkNotNull((findPreference("send_logs")));
-            sendLogsPreference.setOnPreferenceClickListener(preference -> {
-                Log.sendErrorReport("User sent logs");
-                requireActivity().finish();
-
-                if (BuildConfig.DEBUG) {
-                    LogProvider.openDebugLogcatIntent(requireContext());
-                } else {
-                    LogProvider.openEmailLogIntent(requireContext());
-                    CenterToast.show(requireContext(), R.string.send_logs);
-                }
-
-                return false;
-            });
-
-            final Preference termsOfServiceAndPolicyPreference = Preconditions.checkNotNull(findPreference("terms_and_policy"));
-            termsOfServiceAndPolicyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MAIN_WEBSITE_URL));
-                    startActivity(intent);
-                    return false;
-                }
             });
 
             final PreferenceCategory debugCategory = Preconditions.checkNotNull(findPreference("debug"));
@@ -189,15 +109,6 @@ public class SettingsActivity extends HalloActivity {
                     blocklistPreference.setSummary(getString(R.string.settings_block_list_none_summary));
                 } else {
                     blocklistPreference.setSummary(getResources().getQuantityString(R.plurals.settings_block_list_summary, list.size(), list.size()));
-                }
-            });
-            settingsViewModel.getInviteCount().observe(getViewLifecycleOwner(), count -> {
-                if (count == null || count == -1) {
-                    inviteFriends.setSummary(" ");
-                } else if (count == 0){
-                    inviteFriends.setSummary(getString(R.string.settings_invite_none_summary));
-                } else {
-                    inviteFriends.setSummary(getResources().getQuantityString(R.plurals.settings_invite_summary, count, count));
                 }
             });
             settingsViewModel.getFeedPrivacy().observe(getViewLifecycleOwner(), feedPrivacy -> {

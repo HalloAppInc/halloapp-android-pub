@@ -1,13 +1,12 @@
 package com.halloapp;
 
-import android.os.Build;
 import android.text.format.DateUtils;
-
-import com.halloapp.props.ServerProps;
 
 public class Constants {
 
     public static final String USER_AGENT = "HalloApp/Android" + BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
+    public static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
+    public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
     public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
     public static final long SHARE_OLD_POST_LIMIT = 7 * DateUtils.DAY_IN_MILLIS;
     public static final long RETRACT_COMMENT_ALLOWED_TIME = DateUtils.HOUR_IN_MILLIS;

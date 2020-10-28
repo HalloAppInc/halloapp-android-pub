@@ -127,8 +127,8 @@
     <string name="no_activity">No activity</string>
     <string name="failed_to_load_media">Failed to load media</string>
     <string name="settings">Settings</string>
-    <string name="send_logs">Send logs</string>
-    <string name="terms_of_service">Terms &amp; Privacy policy</string>
+    <string name="send_logs">Share feedback &amp; logs</string>
+    <string name="terms_of_service">Terms &amp; privacy policy</string>
     <string name="settings_block_list">Blocked contacts</string>
     <string name="settings_feed_privacy">Posts</string>
     <string name="settings_privacy">Privacy</string>
@@ -220,6 +220,8 @@
     <string name="view_profile">View profile</string>
     <string name="action_hide">Hide</string>
     <string name="hide_my_posts">Hide my posts</string>
+    <string name="my_posts">My posts</string>
+    <string name="about_halloapp">About HalloApp</string>
     <string name="last_seen">Last seen %s</string>
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
     <string name="online">Online</string>
@@ -344,7 +346,7 @@
         <item quantity="other">%d contacts selected</item>
     </plurals>
     <string name="settings_feed_selected_empty">No contacts selected</string>
-    <string name="settings_version_footer">Version %s</string>
+    <string name="settings_version_footer">HalloApp Version %s</string>
     <string name="connectivity_info_airplane_mode">Airplane mode on</string>
     <string name="connectivity_info_not_connected">No network</string>
     <string name="blocking_user_failed_check_internet">Couldn\'t block %s. Check your internet and try again.</string>
@@ -375,4 +377,6 @@
     <string name="camera_error_video">Could not record a video.</string>
     <string name="discard_photo_title">Discard photo</string>
     <string name="discard_photo_warning">Are you sure you want to discard your photo?</string>
+    <string name="about_text">HalloApp is here! And we’re building it for you and your loved ones. We’ve brought social apps back to basics, while adding a layer of security and privacy that we think everyone in the world should have access to. HalloApp will never use your personal information or show you ads. Instead, we plan to eventually offer additional features at a small cost.\n\nThank you for using and sharing HalloApp with your friends and family. We’re improving it every week.</string>
+    <string name="about_footer">If you have any questions or feedback email us at support@halloapp.com</string>
 </resources>

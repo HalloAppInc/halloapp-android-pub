@@ -6,12 +6,13 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.util.Preconditions;
 
-public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListener {
+public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListener implements NestedScrollView.OnScrollChangeListener{
 
     private final float scrolledElevation;
     private final ActionBar actionBar;
@@ -39,6 +40,11 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
         final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
         final float elevation = scrolled ? scrolledElevation : 0;
         updateElevation(elevation);
+    }
+
+    @Override
+    public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        updateElevation(scrollY == 0 ? 0 : scrolledElevation);
     }
 
     private void updateElevation(float elevation) {

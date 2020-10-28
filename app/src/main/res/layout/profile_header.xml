@@ -6,13 +6,12 @@
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingTop="30dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
-        android:layout_width="74dp"
-        android:layout_height="74dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/avatar_person"
         app:civ_border_color="@color/card_background"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +23,7 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="sans-serif-medium"
         android:textSize="20sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
@@ -32,5 +31,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/avatar"
         tools:text="Ded Pihtov" />
+
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        android:textSize="18sp"
+        android:textColor="@color/tertiary_text"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
