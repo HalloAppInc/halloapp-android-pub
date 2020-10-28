@@ -55,21 +55,20 @@ public class Log {
     }
 
     public static void init(@NonNull FileStore fileStore) {
-        if (!BuildConfig.DEBUG) {
-            logger = new ProductionLogger(fileStore);
-        }
+        logger = new ProductionLogger(fileStore);
     }
 
     private static void log(int priority, String msg, @Nullable Throwable tr) {
-        if (logger == null) {
+        if (BuildConfig.DEBUG) {
             if (tr == null) {
                 android.util.Log.println(priority, TAG, msg);
             } else {
                 android.util.Log.println(priority, TAG, msg  + '\n' + android.util.Log.getStackTraceString(tr));
             }
-            return;
         }
-        logger.log(priority, msg, tr);
+        if (logger != null) {
+            logger.log(priority, msg, tr);
+        }
     }
 
     public static void sendErrorReport(String msg) {

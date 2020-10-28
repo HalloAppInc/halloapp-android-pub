@@ -54,12 +54,13 @@ public class LogProvider extends ContentProvider {
 
     @MainThread
     public static void openEmailLogIntent(final Context context) {
+        LogUploaderWorker.uploadLogs(context);
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
                 File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
                 LogManager.getInstance().zipLocalLogs(context, file);
-                return Me.getInstance().getUser();
+                return Me.getInstance().getUser() + "-" + Me.getInstance().getPhone();
             }
 
             @Override
