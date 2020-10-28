@@ -23,13 +23,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="30dp"
         app:ci_width="5dp"
         app:ci_height="5dp"
         app:ci_margin="4dp"
-        app:ci_drawable="@drawable/pager_item_indicator_selected"
+        app:ci_drawable="@drawable/pager_item_indicator_selected_stroke"
         app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected_white"
-        app:ci_animator="@animator/pager_indicator"
+        app:ci_animator="@animator/explorer_pager_indicator"
         android:layoutDirection="ltr"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

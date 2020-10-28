@@ -66,6 +66,7 @@ public class MediaExplorerActivity extends HalloActivity {
 
         setContentView(R.layout.activity_media_explorer);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Preconditions.checkNotNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_arrow_left_stroke);
 
         data = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
         if (data == null || data.size() == 0) {
