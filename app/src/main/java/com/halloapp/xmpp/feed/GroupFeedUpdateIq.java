@@ -101,6 +101,12 @@ public class GroupFeedUpdateIq extends HalloIq {
             if (feedItem.payload != null) {
                 cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
             }
+            if (feedItem.parentCommentId != null) {
+                cb.setParentCommentId(feedItem.parentCommentId);
+            }
+            if (feedItem.parentPostId != null) {
+                cb.setPostId(feedItem.parentPostId);
+            }
             cb.setId(feedItem.id);
             builder.setComment(cb);
         }
