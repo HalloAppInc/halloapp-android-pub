@@ -1511,7 +1511,7 @@ public class NewConnection extends Connection {
         }
 
         private void handlePresence(Presence presence) {
-            long lastSeen = presence.getLastSeen() * 1000L;
+            long lastSeen = presence.getLastSeen();
             connectionObservers.notifyPresenceReceived(getUserId(Long.toString(presence.getUid())), lastSeen > 0 ? lastSeen : null);
         }
 
