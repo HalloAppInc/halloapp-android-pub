@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
@@ -31,7 +33,6 @@ import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.util.Rtl;
-import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.ContentPhotoView;
@@ -65,6 +66,10 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         void startActivity(@NonNull Intent intent);
         void startActivity(@NonNull Intent intent, @NonNull ActivityOptionsCompat options);
         LifecycleOwner getLifecycleOwner();
+    }
+
+    public static String getPagerTag(String contentId) {
+        return "pager-tag-" + contentId;
     }
 
     public static String getTransitionName(String contentId, int mediaIndex) {
@@ -152,12 +157,12 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         holder.playerView.setOnTouchListener(null);
 
         if (mediaItem.file != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-            holder.imageView.setOnClickListener(v -> exploreMedia(position));
+            holder.imageView.setOnClickListener(v -> exploreMedia(holder.imageView, position));
         } else if (mediaItem.file != null && mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             GestureDetector doubleTapDetector = new GestureDetector(holder.playerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    exploreMedia(position);
+                    exploreMedia(holder.playerView, position);
                     return true;
                 }
 
@@ -190,7 +195,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 @Override
                 public void onScaleEnd(ScaleGestureDetector detector) {
                     if (scale >= 1.0f) {
-                        exploreMedia(position);
+                        exploreMedia(holder.playerView, position);
                     }
                 }
             });
@@ -199,7 +204,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         }
     }
 
-    private void exploreMedia(int position) {
+    private void exploreMedia(View view, int position) {
         Context ctx = recyclerView.getContext();
         ArrayList<MediaExplorerActivity.Model> data = new ArrayList<>(media.size());
         for (final Media item : media) {
@@ -209,11 +214,15 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         Intent intent = new Intent(ctx, MediaExplorerActivity.class);
         intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
         intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
+        intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
 
-        ThreadUtils.runWithoutStrictModeRestrictions(() -> {
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(ctx, R.anim.slide_up, R.anim.keep_still);
-            parent.startActivity(intent, options);
-        });
+        if (ctx instanceof HalloActivity) {
+            HalloActivity activity = (HalloActivity)ctx;
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, view, view.getTransitionName());
+            activity.startActivityForResult(intent,  0, options.toBundle());
+        } else {
+            parent.startActivity(intent);
+        }
     }
 
     @Override

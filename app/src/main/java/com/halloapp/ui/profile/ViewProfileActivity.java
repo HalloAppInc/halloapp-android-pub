@@ -3,14 +3,18 @@ package com.halloapp.ui.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.util.logs.Log;
 
 public class ViewProfileActivity extends HalloActivity {
@@ -48,6 +52,32 @@ public class ViewProfileActivity extends HalloActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
+        }
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
+            String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
+            int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+
+            ViewPager2 pager = findViewById(R.id.profile_fragment_placeholder).findViewWithTag(MediaPagerAdapter.getPagerTag(contentId));
+
+            if (pager != null && pager.getCurrentItem() != position) {
+                postponeEnterTransition();
+
+                pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        startPostponedEnterTransition();
+                    }
+                });
+
+                pager.setCurrentItem(position, false);
+            }
         }
     }
 }

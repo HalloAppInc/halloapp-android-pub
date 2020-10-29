@@ -253,6 +253,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         if (!message.media.isEmpty() && mediaPagerAdapter != null) {
             mediaPagerAdapter.setMedia(message.media);
+            mediaPagerAdapter.setContentId(message.id);
             if (message.media.size() > 1) {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);
                 mediaPagerIndicator.setViewPager(mediaPagerView);
@@ -260,6 +261,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 mediaPagerIndicator.setVisibility(View.GONE);
             }
             final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
+            mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(message.id));
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
             parent.setReplyMessageMediaIndex(message.rowId, selPos == null ? 0 : selPos);
         }

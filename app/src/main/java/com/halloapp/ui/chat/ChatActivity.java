@@ -47,6 +47,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -68,21 +69,23 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.UnseenGroupPostLoader;
+import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
@@ -621,6 +624,32 @@ public class ChatActivity extends HalloActivity {
         scrollToNewMessageOnDataLoaded = true;
         viewModel.chat.invalidate();
         ForegroundChat.getInstance().setForegroundChatId(null);
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
+            String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
+            int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+
+            ViewPager2 pager = findViewById(R.id.chat).findViewWithTag(MediaPagerAdapter.getPagerTag(contentId));
+
+            if (pager != null && pager.getCurrentItem() != position) {
+                postponeEnterTransition();
+
+                pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        startPostponedEnterTransition();
+                    }
+                });
+
+                pager.setCurrentItem(position, false);
+            }
+        }
     }
 
     @Override

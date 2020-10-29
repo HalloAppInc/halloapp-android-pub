@@ -1,5 +1,6 @@
 package com.halloapp.ui.mediaexplorer;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -10,10 +11,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.SharedElementCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -31,6 +35,7 @@ import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 
@@ -38,12 +43,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator3;
 
 public class MediaExplorerActivity extends HalloActivity {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
+    public static final String EXTRA_CONTENT_ID = "content-id";
 
     private float swipeDistanceThreshold;
     private float swipeVelocityThreshold;
@@ -51,10 +58,14 @@ public class MediaExplorerActivity extends HalloActivity {
     private ViewPager2 pager;
     private ArrayList<Model> data = new ArrayList<>();
     private MotionEvent swipeDownStart;
+    private String contentId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        postponeEnterTransition();
 
         swipeDistanceThreshold = getResources().getDimension(R.dimen.swipe_down_distance_threshold);
         swipeVelocityThreshold = getResources().getDimension(R.dimen.swipe_down_velocity_threshold);
@@ -73,6 +84,8 @@ public class MediaExplorerActivity extends HalloActivity {
             finish();
             return;
         }
+
+        contentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
 
         pager = findViewById(R.id.media_pager);
         pager.setAdapter(new MediaExplorerAdapter(data));
@@ -97,6 +110,25 @@ public class MediaExplorerActivity extends HalloActivity {
         pager.setCurrentItem(getIntent().getIntExtra(EXTRA_SELECTED, 0), false);
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
+
+        pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                startPostponedEnterTransition();
+            }
+        });
+
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                int position = pager.getCurrentItem();
+                Model model = data.get(position);
+                View view = pager.findViewWithTag(model);
+
+                sharedElements.put(view.getTransitionName(), view);
+            }
+        });
     }
 
     @Override
@@ -209,8 +241,17 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private void onSwipeDown() {
-        finish();
-        overridePendingTransition(0, R.anim.slide_down);
+        onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_CONTENT_ID, contentId);
+        intent.putExtra(EXTRA_SELECTED, pager.getCurrentItem());
+
+        setResult(RESULT_OK, intent);
+        finishAfterTransition();
     }
 
     private void toggleSystemUI() {
@@ -277,7 +318,7 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private class ImageHolder extends DefaultHolder {
-        private PhotoView imageView;
+        private final PhotoView imageView;
 
         public ImageHolder(@NonNull View itemView) {
             super(itemView);
@@ -289,6 +330,8 @@ public class MediaExplorerActivity extends HalloActivity {
         @Override
         public void bindTo(@NonNull Model model, int position) {
             imageView.setTag(model);
+            imageView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
+
 
             BgWorkers.getInstance().execute(() -> {
                 Bitmap bitmap;
@@ -309,7 +352,7 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private class VideoHolder extends DefaultHolder {
-        private PlayerView playerView;
+        private final PlayerView playerView;
 
         public VideoHolder(@NonNull View itemView) {
             super(itemView);
@@ -327,6 +370,7 @@ public class MediaExplorerActivity extends HalloActivity {
         @Override
         public void bindTo(@NonNull Model model, int position) {
             playerView.setTag(model);
+            playerView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(model.uri);
@@ -340,7 +384,7 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private class MediaExplorerAdapter extends RecyclerView.Adapter<DefaultHolder> {
-        private ArrayList<Model> models = new ArrayList<>();
+        private final ArrayList<Model> models = new ArrayList<>();
 
         MediaExplorerAdapter(@NonNull List<Model> data) {
             models.addAll(data);

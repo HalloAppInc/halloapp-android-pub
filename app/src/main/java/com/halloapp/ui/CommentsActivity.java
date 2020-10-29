@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -43,21 +46,22 @@ import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
@@ -65,7 +69,9 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CommentsActivity extends HalloActivity {
 
@@ -117,6 +123,27 @@ public class CommentsActivity extends HalloActivity {
         setContentView(R.layout.activity_comments);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        setExitSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                Post post = viewModel.post.getValue();
+                RecyclerView gallery = findViewById(R.id.comments).findViewWithTag(post);
+                RecyclerView.LayoutManager layoutManager = gallery.getLayoutManager();
+
+                String name = names.get(0);
+                for (int i = 0; i < post.media.size(); ++i) {
+                    View view = layoutManager.findViewByPosition(i);
+
+                    if (view != null && name.equals(view.getTransitionName())) {
+                        sharedElements.put(name, view);
+                        return;
+                    }
+                }
+
+                super.onMapSharedElements(names, sharedElements);
+            }
+        });
 
         final RecyclerView commentsView = findViewById(R.id.comments);
         commentsView.setItemAnimator(null);
@@ -293,6 +320,39 @@ public class CommentsActivity extends HalloActivity {
     }
 
     @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
+            String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
+            int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+            Post post = viewModel.post.getValue();
+
+            if (!post.id.equals(contentId)) {
+                return;
+            }
+
+            RecyclerView gallery = findViewById(R.id.comments).findViewWithTag(post);
+            RecyclerView.LayoutManager layoutManager = gallery.getLayoutManager();
+            View view = layoutManager.findViewByPosition(position);
+
+            if (view == null || layoutManager.isViewPartiallyVisible(view, false, true)) {
+                postponeEnterTransition();
+
+                gallery.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        gallery.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        startPostponedEnterTransition();
+                    }
+                });
+
+                layoutManager.scrollToPosition(position);
+            }
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_REPLY_USER_ID, replyUserId == null ? null : replyUserId.rawId());
@@ -425,6 +485,7 @@ public class CommentsActivity extends HalloActivity {
             TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 
+            mediaGallery.setTag(post);
             if (post.media.isEmpty()) {
                 mediaGallery.setVisibility(View.GONE);
             } else {
@@ -483,9 +544,16 @@ public class CommentsActivity extends HalloActivity {
                 imageView.setAdjustViewBounds(true);
                 mediaThumbnailLoader.load(imageView, media.get(position));
                 imageView.setOnClickListener(v -> {
-                    final Intent intent = new Intent(imageView.getContext(), PostContentActivity.class);
-                    intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
-                    intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, position);
+                    ArrayList<MediaExplorerActivity.Model> data = new ArrayList<>(media.size());
+                    for (final Media item : media) {
+                        data.add(new MediaExplorerActivity.Model(Uri.fromFile(item.file), item.type));
+                    }
+
+                    Intent intent = new Intent(imageView.getContext(), MediaExplorerActivity.class);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, post.id);
+
                     if (imageView.getContext() instanceof Activity) {
                         final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(CommentsActivity.this, imageView, imageView.getTransitionName());
                         startActivity(intent, options.toBundle());

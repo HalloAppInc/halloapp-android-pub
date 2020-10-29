@@ -173,6 +173,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
             mediaPagerView.setNestedScrollingEnabled(false);
+            mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));
         }
         final Integer textLimit = parent.getTextLimits().get(post.rowId);
         textView.setLineLimit(textLimit != null ? textLimit :
