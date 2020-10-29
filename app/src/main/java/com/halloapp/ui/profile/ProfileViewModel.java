@@ -1,6 +1,5 @@
 package com.halloapp.ui.profile;
 
-import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -8,7 +7,6 @@ import android.os.Parcelable;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -35,14 +33,16 @@ import com.halloapp.util.StringUtils;
 
 import java.util.List;
 
-public class ProfileViewModel extends AndroidViewModel {
+public class ProfileViewModel extends ViewModel {
 
     final LiveData<PagedList<Post>> postList;
 
-    private final Me me;
-    private final ContentDb contentDb;
-    private final ContactsDb contactsDb;
-    private final BlockListManager blockListManager;
+    private final Me me = Me.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final ContentDb contentDb = ContentDb.getInstance();
+    private final ContactsDb contactsDb = ContactsDb.getInstance();
+    private final BlockListManager blockListManager = BlockListManager.getInstance();
+
     private final PostsDataSource.Factory dataSourceFactory;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -54,13 +54,6 @@ public class ProfileViewModel extends AndroidViewModel {
     private final UserId userId;
 
     private Parcelable savedScrollState;
-
-    private final BlockListManager.Observer blockListObserver = new BlockListManager.Observer() {
-        @Override
-        public void onBlockListChanged() {
-            updateIsBlocked();
-        }
-    };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -123,16 +116,10 @@ public class ProfileViewModel extends AndroidViewModel {
     };
 
 
-    public ProfileViewModel(@NonNull Application application, @NonNull UserId userId) {
-        super(application);
-
+    public ProfileViewModel(@NonNull UserId userId) {
         this.userId = userId;
 
-        me = Me.getInstance();
-        blockListManager = BlockListManager.getInstance();
-        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
-        contactsDb = ContactsDb.getInstance();
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
@@ -161,7 +148,7 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     private void updateIsBlocked() {
-        BgWorkers.getInstance().execute(() -> {
+        bgWorkers.execute(() -> {
             List<UserId> blockList = blockListManager.getBlockList();
             isBlocked.postValue(blockList != null ? blockList.contains(userId) : null);
         });
@@ -243,11 +230,9 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public static class Factory implements ViewModelProvider.Factory {
 
-        private final Application application;
         private final UserId profileUserId;
 
-        Factory(@NonNull Application application, @NonNull UserId profileUserId) {
-            this.application = application;
+        Factory(@NonNull UserId profileUserId) {
             this.profileUserId = profileUserId;
         }
 
@@ -255,7 +240,7 @@ public class ProfileViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ProfileViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ProfileViewModel(application, profileUserId);
+                return (T) new ProfileViewModel(profileUserId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
