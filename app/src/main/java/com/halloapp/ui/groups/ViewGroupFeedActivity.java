@@ -75,7 +75,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
             return;
         }
 
-        viewModel = new ViewModelProvider(this, new GroupFeedViewModel.Factory(getApplication(), groupId)).get(GroupFeedViewModel.class);
+        viewModel = new ViewModelProvider(this, new GroupFeedViewModel.Factory(groupId)).get(GroupFeedViewModel.class);
 
         setContentView(R.layout.activity_view_group_feed);
         getSupportFragmentManager()

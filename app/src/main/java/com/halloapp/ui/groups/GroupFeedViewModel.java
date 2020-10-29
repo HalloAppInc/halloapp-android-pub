@@ -25,14 +25,13 @@ import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.ComputableLiveData;
 
-public class GroupFeedViewModel extends AndroidViewModel {
+public class GroupFeedViewModel extends ViewModel {
 
     private static final int ADAPTER_PAGE_SIZE = 50;
 
     final LiveData<PagedList<Post>> postList;
-    private final ContentDb contentDb;
-    private final ContactsDb contactsDb;
-    private final BlockListManager blockListManager;
+    private final ContentDb contentDb = ContentDb.getInstance();
+
     private final PostsDataSource.Factory dataSourceFactory;
 
     private final GroupId groupId;
@@ -93,14 +92,10 @@ public class GroupFeedViewModel extends AndroidViewModel {
     };
 
 
-    public GroupFeedViewModel(@NonNull Application application, @NonNull GroupId groupId) {
-        super(application);
+    public GroupFeedViewModel(@NonNull GroupId groupId) {
         this.groupId = groupId;
 
-        blockListManager = BlockListManager.getInstance();
-        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
-        contactsDb = ContactsDb.getInstance();
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, groupId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, ADAPTER_PAGE_SIZE).build();
@@ -135,11 +130,9 @@ public class GroupFeedViewModel extends AndroidViewModel {
 
     public static class Factory implements ViewModelProvider.Factory {
 
-        private final Application application;
         private final GroupId groupId;
 
-        Factory(@NonNull Application application, @NonNull GroupId groupId) {
-            this.application = application;
+        Factory(@NonNull GroupId groupId) {
             this.groupId = groupId;
         }
 
@@ -147,7 +140,7 @@ public class GroupFeedViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(GroupFeedViewModel.class)) {
                 //noinspection unchecked
-                return (T) new GroupFeedViewModel(application, groupId);
+                return (T) new GroupFeedViewModel(groupId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
