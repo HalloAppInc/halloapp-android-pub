@@ -1,14 +1,19 @@
 package com.halloapp.xmpp;
 
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
 import com.google.protobuf.GeneratedMessageLite;
 import com.halloapp.BuildConfig;
+import com.halloapp.proto.server.Ack;
+import com.halloapp.proto.server.AuthResult;
+import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.Packet;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +38,11 @@ import java.util.List;
  * a manual toString() function, but it would have to be updated with each schema change.
  */
 public class ProtoPrinter {
+    private static final String START_TAG = "<![CLBDATA[";
+    private static final String END_TAG = "]]>";
 
     public static String toString(@NonNull GeneratedMessageLite<?, ?> message) {
-        return xml(message);
+        return BuildConfig.DEBUG ? xml(message) : production(message);
     }
 
     public static String simplified(@NonNull GeneratedMessageLite<?, ?> message) {
@@ -46,6 +53,29 @@ public class ProtoPrinter {
         String name = camelCaseToKebabCase(message.getClass().getSimpleName());
         ProtoNode node = parse(tokenize(name + " { " + simplifiedInternal(message) + " }"));
         return maybePrependWarning(node.toXml());
+    }
+
+    public static String production(@NonNull GeneratedMessageLite<?, ?> message) {
+        return base64(message);
+    }
+
+    private static String base64(@NonNull GeneratedMessageLite<?, ?> message) {
+        return START_TAG + getTypeChar(message) + Base64.encodeToString(message.toByteArray(), Base64.NO_WRAP) + END_TAG;
+    }
+
+    private static char getTypeChar(@NonNull GeneratedMessageLite<?, ?> message) {
+        if (message instanceof Packet) {
+            return 'P';
+        } else if (message instanceof Msg) {
+            return 'M';
+        } else if (message instanceof Iq) {
+            return 'I';
+        } else if (message instanceof Ack) {
+            return 'A';
+        } else if (message instanceof AuthResult) {
+            return 'R';
+        }
+        return '?';
     }
 
     private static String maybePrependWarning(String s) {
@@ -207,7 +237,7 @@ public class ProtoPrinter {
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<s.length(); i++) {
             char c = s.charAt(i);
-            if (Character.isUpperCase(c) && i != 0 && (i != s.length() - 1 && Character.isLowerCase(s.charAt(i + 1)) || Character.isLowerCase(s.charAt(i - 1)))) {
+            if (Character.isUpperCase(c) && i != 0 && i != s.length() - 1 && (Character.isLowerCase(s.charAt(i + 1)) || Character.isLowerCase(s.charAt(i - 1)))) {
                 sb.append('_');
             }
             sb.append(Character.toLowerCase(c));

@@ -99,6 +99,20 @@ public class FileStore {
         }
     }
 
+    // For debugging
+    public void purgeAllLogFiles() {
+        File[] fileArr = logDir.listFiles();
+        if (fileArr != null) {
+            for (File f : fileArr) {
+                if (f.isFile() && f.getName().endsWith(".log")) {
+                    if (!f.delete()) {
+                        Log.e("Failed to delete log file");
+                    }
+                }
+            }
+        }
+    }
+
     public File getCameraDir() { return cameraDir; }
 
     public File getCameraFile(@Nullable String name) {

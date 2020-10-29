@@ -24,10 +24,10 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.RandomId;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
@@ -55,6 +55,7 @@ public class Debug {
     private static final String DEBUG_MENU_FETCH_SERVER_PROPS = "Fetch server props";
     private static final String DEBUG_MENU_CRASH_PRECONDITION = "Preconditions crash null";
     private static final String DEBUG_MENU_TRY_DUP_COMMENT = "Try insert duplicate comment";
+    private static final String DEBUG_MENU_CLEAR_LOGS = "Clear logs";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -76,6 +77,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_FETCH_SERVER_PROPS);
         menu.getMenu().add(DEBUG_MENU_CRASH_PRECONDITION);
         menu.getMenu().add(DEBUG_MENU_TRY_DUP_COMMENT);
+        menu.getMenu().add(DEBUG_MENU_CLEAR_LOGS);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -204,6 +206,10 @@ public class Debug {
                     contentDb.addPost(post);
                     contentDb.addComment(comment);
                     contentDb.addComment(comment);
+                }
+                case DEBUG_MENU_CLEAR_LOGS: {
+                    bgWorkers.execute(() -> FileStore.getInstance().purgeAllLogFiles());
+                    break;
                 }
             }
             return false;
