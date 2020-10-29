@@ -1,29 +1,28 @@
 package com.halloapp.ui.groups;
 
-import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.ComputableLiveData;
+
+import java.util.List;
 
 public class GroupFeedViewModel extends ViewModel {
 
@@ -41,6 +40,8 @@ public class GroupFeedViewModel extends ViewModel {
     private Parcelable savedScrollState;
 
     public final ComputableLiveData<Chat> chat;
+
+    public final ComputableLiveData<List<MemberInfo>> members;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -104,6 +105,13 @@ public class GroupFeedViewModel extends ViewModel {
             @Override
             protected Chat compute() {
                 return contentDb.getChat(groupId);
+            }
+        };
+
+        members = new ComputableLiveData<List<MemberInfo>>() {
+            @Override
+            protected List<MemberInfo> compute() {
+                return contentDb.getGroupMembers(groupId);
             }
         };
     }

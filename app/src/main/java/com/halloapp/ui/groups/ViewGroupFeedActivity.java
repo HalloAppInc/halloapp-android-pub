@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,7 +14,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -55,9 +52,6 @@ public class ViewGroupFeedActivity extends HalloActivity {
 
     private GroupFeedViewModel viewModel;
 
-    private TextView titleView;
-    private ImageView avatarView;
-
     private GroupId groupId;
 
     private SpeedDialView fabView;
@@ -68,6 +62,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTitle("");
         groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
         if (groupId == null) {
             finish();
@@ -83,12 +78,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 .replace(R.id.profile_fragment_placeholder, GroupFeedFragment.newInstance(groupId))
                 .commit();
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-        titleView = findViewById(R.id.title);
-        avatarView = findViewById(R.id.avatar);
 
         fabView = findViewById(R.id.speed_dial);
         fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
@@ -130,14 +120,6 @@ public class ViewGroupFeedActivity extends HalloActivity {
             scrollUpOnDataLoaded = true;
             viewModel.reloadPostsAt(Long.MAX_VALUE);
         });
-
-        viewModel.chat.getLiveData().observe(this, chat -> {
-            if (chat != null) {
-                setTitle(chat.name);
-            }
-        });
-
-        avatarLoader.load(avatarView, groupId, false);
     }
 
     private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
@@ -215,15 +197,4 @@ public class ViewGroupFeedActivity extends HalloActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        avatarLoader.load(avatarView, groupId, false);
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        super.setTitle(title);
-        titleView.setText(title);
-    }
 }

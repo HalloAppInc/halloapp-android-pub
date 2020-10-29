@@ -379,4 +379,8 @@
     <string name="discard_photo_warning">Are you sure you want to discard your photo?</string>
     <string name="about_text">HalloApp is here! And we’re building it for you and your loved ones. We’ve brought social apps back to basics, while adding a layer of security and privacy that we think everyone in the world should have access to. HalloApp will never use your personal information or show you ads. Instead, we plan to eventually offer additional features at a small cost.\n\nThank you for using and sharing HalloApp with your friends and family. We’re improving it every week.</string>
     <string name="about_footer">If you have any questions or feedback email us at support@halloapp.com</string>
+    <plurals name="group_feed_members">
+        <item quantity="one">%d member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
 </resources>
