@@ -11,6 +11,7 @@ import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
@@ -209,7 +210,7 @@ public class NewConnection extends Connection {
             }
 
             ClientVersion clientVersion = ClientVersion.newBuilder()
-                    .setVersion(BuildConfig.VERSION_NAME)
+                    .setVersion(Constants.USER_AGENT)
                     .build();
             ClientMode clientMode = ClientMode.newBuilder()
                     .setMode(ClientMode.Mode.ACTIVE)
