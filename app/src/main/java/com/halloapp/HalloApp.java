@@ -20,6 +20,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
 import com.halloapp.props.ServerProps;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -67,6 +68,10 @@ public class HalloApp extends Application {
         DailyWorker.schedule(this);
 
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        BgWorkers.getInstance().execute(() -> {
+            ContentDb.getInstance().fixGroupPostTimeStamps();
+        });
     }
 
     /**

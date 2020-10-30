@@ -754,6 +754,13 @@ public class ContentDb {
         return postsDb.getShareablePosts();
     }
 
+    // TODO(clarkc): remove after version 100
+    public void fixGroupPostTimeStamps() {
+        Log.i("ContentDb.fixGroupPostTimestamps");
+        postsDb.fixGroupFeedTimestamps();
+        Log.i("ContentDb.groupPostTimestamp fix complete");
+    }
+
     // TODO (ds): remove
     public void migrateUserIds(Collection<Contact> contacts) {
         databaseWriteExecutor.execute(() -> {
