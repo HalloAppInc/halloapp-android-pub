@@ -112,16 +112,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        navView.setOnNavigationItemReselectedListener(item -> {
-            Fragment navigationFragment = getSupportFragmentManager().getPrimaryNavigationFragment();
-            if (navigationFragment != null) {
-                for (Fragment tabFragment : navigationFragment.getChildFragmentManager().getFragments()) {
-                    if (tabFragment instanceof MainNavFragment) {
-                        ((MainNavFragment) tabFragment).resetScrollPosition();
-                    }
-                }
-            }
-        });
+        navView.setOnNavigationItemReselectedListener(item -> scrollToTop());
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
         networkIndicatorView.bind(this);
@@ -188,6 +179,17 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             progress.setVisibility(View.GONE);
         });
+    }
+
+    private void scrollToTop() {
+        Fragment navigationFragment = getSupportFragmentManager().getPrimaryNavigationFragment();
+        if (navigationFragment != null) {
+            for (Fragment tabFragment : navigationFragment.getChildFragmentManager().getFragments()) {
+                if (tabFragment instanceof MainNavFragment) {
+                    ((MainNavFragment) tabFragment).resetScrollPosition();
+                }
+            }
+        }
     }
 
     private void updateFab(@IdRes int id) {
@@ -398,15 +400,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         String extraPostId = intent.getStringExtra(EXTRA_POST_ID);
         boolean showCommentsActivity = intent.getBooleanExtra(EXTRA_POST_SHOW_COMMENTS, false);
         if (extraPostId != null) {
-            Intent viewIntent;
             if (showCommentsActivity) {
-                viewIntent = new Intent(this, CommentsActivity.class);
+                Intent viewIntent = new Intent(this, CommentsActivity.class);
                 viewIntent.putExtra(CommentsActivity.EXTRA_POST_ID, extraPostId);
+                startActivity(viewIntent);
             } else {
-                viewIntent = new Intent(this, PostContentActivity.class);
-                viewIntent.putExtra(PostContentActivity.EXTRA_POST_ID, extraPostId);
+                scrollToTop();
             }
-            startActivity(viewIntent);
         }
     }
 
