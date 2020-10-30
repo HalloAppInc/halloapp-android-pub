@@ -982,7 +982,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
-            RerequestElement rerequestElement = new RerequestElement(messageId, encodedIdentityKey);
+            RerequestElement rerequestElement = new RerequestElement(encodedIdentityKey, senderUserId);
             Log.i("connection: sending rerequest for " + messageId + " to " + originalSender);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });

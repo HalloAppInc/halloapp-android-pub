@@ -848,7 +848,7 @@ public class OldConnection extends Connection {
             }
             try {
                 final org.jivesoftware.smack.packet.Message xmppMessage = new org.jivesoftware.smack.packet.Message(originalSender);
-                xmppMessage.addExtension(new RerequestElement(messageId, encodedIdentityKey));
+                xmppMessage.addExtension(new RerequestElement(encodedIdentityKey, senderUserId));
                 Log.i("connection: sending rerequest for " + messageId + " to " + originalSender);
                 connection.sendStanza(xmppMessage);
             } catch (SmackException.NotConnectedException | InterruptedException e) {

@@ -1,7 +1,13 @@
 package com.halloapp.xmpp;
 
+import com.google.protobuf.ByteString;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.KeyManager;
+import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Rerequest;
+import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
@@ -20,10 +26,12 @@ public class RerequestElement implements ExtensionElement {
 
     public final String id;
     public final String identityKey;
+    public final UserId originalSender;
 
-    public RerequestElement(String id, String identityKey) {
-        this.id = id;
+    public RerequestElement(String identityKey, UserId originalSender) {
+        this.id = RandomId.create();
         this.identityKey = identityKey;
+        this.originalSender = originalSender;
     }
 
     public static RerequestElement from(Message message) {
@@ -50,10 +58,23 @@ public class RerequestElement implements ExtensionElement {
     }
 
     public Msg toProto() {
-        Rerequest rerequest =  Rerequest.newBuilder().setId(id).build();
+        byte[] identityKey = null;
+        try {
+            identityKey = EncryptedKeyStore.getInstance().getMyPublicEd25519IdentityKey().getKeyMaterial();
+        } catch (Exception e) {
+            Log.w("Failed to get identity key bytes for rerequest", e);
+        }
+        
+        Rerequest.Builder builder =  Rerequest.newBuilder();
+        builder.setId(id);
+        if (identityKey != null) {
+            builder.setIdentityKey(ByteString.copyFrom(identityKey));
+        }
+
         return Msg.newBuilder()
                 .setId(id)
-                .setRerequest(rerequest)
+                .setToUid(Long.parseLong(originalSender.rawId()))
+                .setRerequest(builder)
                 .build();
     }
 
@@ -63,7 +84,7 @@ public class RerequestElement implements ExtensionElement {
         protected RerequestElement createReturnExtension(String currentElement, String currentNamespace, Map<String, String> attributeMap, List<? extends ExtensionElement> content) {
             final String id = attributeMap.get(ATTRIBUTE_ID);
             final String identityKey = attributeMap.get(ATTRIBUTE_IDENTITY_KEY);
-            return new RerequestElement(id, identityKey);
+            return new RerequestElement(identityKey, null);
         }
     }
 }
