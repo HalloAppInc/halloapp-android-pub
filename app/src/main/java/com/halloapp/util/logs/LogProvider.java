@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
+import android.text.format.DateFormat;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 public class LogProvider extends ContentProvider {
     private static final String AUTHORITY = "com.halloapp.util.logs.LogProvider";
@@ -68,7 +70,7 @@ public class LogProvider extends ContentProvider {
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("application/zip");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {Constants.SUPPORT_EMAIL});
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME));
+                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()));
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME));
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
                 context.startActivity(intent);
@@ -92,13 +94,19 @@ public class LogProvider extends ContentProvider {
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("plain/text");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {Constants.SUPPORT_EMAIL});
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
+                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()) + DEBUG_SUFFIX);
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_FILE_NAME));
 
                 context.startActivity(intent);
             }
         }.execute();
+    }
+
+    private static CharSequence getTimestamp() {
+        Context context = AppContext.getInstance().get();
+        Date date = new Date();
+        return DateFormat.getDateFormat(context).format(date) + " " + DateFormat.getTimeFormat(context).format(date);
     }
 
     private static void fetchLogcat() {
