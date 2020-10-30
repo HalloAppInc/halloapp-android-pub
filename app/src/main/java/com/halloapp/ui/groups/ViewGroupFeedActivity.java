@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
@@ -25,7 +23,6 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MainActivity;
-import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.logs.Log;
@@ -47,8 +44,6 @@ public class ViewGroupFeedActivity extends HalloActivity {
         intent.putExtra(EXTRA_GROUP_ID, groupId);
         return intent;
     }
-
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private GroupFeedViewModel viewModel;
 

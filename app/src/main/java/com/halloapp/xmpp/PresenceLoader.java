@@ -1,5 +1,10 @@
 package com.halloapp.xmpp;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -19,6 +24,9 @@ import java.util.Map;
 
 public class PresenceLoader {
 
+    private static final int MSG_CLEAR_TYPING = 1;
+    private static final int TYPING_CACHE_DELAY = 25_000;
+
     private static PresenceLoader instance;
 
     private final Connection connection;
@@ -28,7 +36,12 @@ public class PresenceLoader {
     private final Map<UserId, MutableLiveData<PresenceState>> map = new HashMap<>();
     private final Map<GroupId, MutableLiveData<GroupChatState>> groupChatStateMap = new HashMap<>();
 
-    private Map<UserId, ChatState> chatStateMap = new HashMap<>();
+    private final Map<UserId, ChatState> chatStateMap = new HashMap<>();
+
+    // Rely on map because Handlers depend on simple == to compare obj
+    private final Map<UserId, UserId> userIdMap = new HashMap<>();
+
+    private Handler chatStateUpdateHandler;
 
     public static PresenceLoader getInstance() {
         if (instance == null) {
@@ -62,6 +75,26 @@ public class PresenceLoader {
                 }
             }
         });
+        HandlerThread chatStateThread = new HandlerThread("ChatStateHandler");
+        chatStateThread.start();
+
+        chatStateUpdateHandler = new Handler(chatStateThread.getLooper()) {
+
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == MSG_CLEAR_TYPING) {
+                    synchronized (chatStateMap) {
+                        if (userIdMap.get((UserId) msg.obj) == msg.obj) {
+                            ChatState state = chatStateMap.get((UserId) msg.obj);
+                            if (state != null && state.type == ChatState.Type.TYPING) {
+                                reportChatState((UserId) msg.obj, new ChatState(ChatState.Type.AVAILABLE, state.chatId));
+                            }
+                        }
+                    }
+                }
+            }
+        };
     }
 
     public LiveData<PresenceState> getLastSeenLiveData(UserId userId) {
@@ -75,17 +108,51 @@ public class PresenceLoader {
     }
 
     public LiveData<GroupChatState> getChatStateLiveData(GroupId groupId) {
-        MutableLiveData<GroupChatState> mld = groupChatStateMap.get(groupId);
-        if (mld == null) {
-            mld = new MutableLiveData<>();
-            groupChatStateMap.put(groupId, mld);
+        synchronized (groupChatStateMap) {
+            MutableLiveData<GroupChatState> mld = groupChatStateMap.get(groupId);
+            if (mld == null) {
+                mld = new MutableLiveData<>();
+                groupChatStateMap.put(groupId, mld);
+            }
+            return mld;
         }
-        return mld;
+    }
+
+    private void clearScheduledTypingState(@NonNull UserId userId) {
+        if (userIdMap.containsKey(userId)) {
+            chatStateUpdateHandler.removeMessages(MSG_CLEAR_TYPING, userIdMap.remove(userId));
+        }
+    }
+
+    private void scheduleTypingStateClear(@NonNull UserId userId) {
+        if (userIdMap.containsKey(userId)) {
+            userId = userIdMap.get(userId);
+        } else {
+            userIdMap.put(userId, userId);
+        }
+        Message msg = new Message();
+        msg.what = MSG_CLEAR_TYPING;
+        msg.obj = userId;
+        chatStateUpdateHandler.sendMessageDelayed(msg, TYPING_CACHE_DELAY);
     }
 
     public void reportChatState(UserId userId, ChatState chatState) {
-        chatStateMap.put(userId, chatState);
-        if (chatState.chatId instanceof UserId){
+        synchronized (chatStateMap) {
+            clearScheduledTypingState(userId);
+            ChatState oldState = chatStateMap.remove(userId);
+            if (oldState != null && !chatState.chatId.equals(oldState.chatId)) {
+                if (oldState.type == ChatState.Type.TYPING) {
+                    // Cleanup old chat state
+                    updateChatState(userId, new ChatState(ChatState.Type.AVAILABLE, oldState.chatId));
+                }
+            }
+            chatStateMap.put(userId, chatState);
+            updateChatState(userId, chatState);
+        }
+    }
+
+    private void updateChatState(@NonNull UserId userId, ChatState chatState) {
+        if (chatState.chatId instanceof UserId) {
             MutableLiveData<PresenceState> mld = map.get(userId);
             if (mld == null) {
                 return;
@@ -94,9 +161,19 @@ public class PresenceLoader {
                 mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_ONLINE));
             } else {
                 mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_TYPING));
+                scheduleTypingStateClear(userId);
             }
-        } else if (chatState.chatId instanceof GroupId){
-            GroupId groupId = (GroupId) chatState.chatId;
+        } else if (chatState.chatId instanceof GroupId) {
+            updateGroupChatState(userId,
+                    (GroupId) chatState.chatId,
+                    new PresenceState(chatState.type == ChatState.Type.TYPING
+                            ? PresenceState.PRESENCE_STATE_TYPING
+                            : PresenceState.PRESENCE_STATE_ONLINE));
+        }
+    }
+
+    private void updateGroupChatState(@NonNull UserId userId, GroupId groupId, PresenceState presenceState) {
+        synchronized (groupChatStateMap) {
             MutableLiveData<GroupChatState> mld = groupChatStateMap.get(groupId);
             if (mld == null) {
                 return;
@@ -105,7 +182,7 @@ public class PresenceLoader {
             if (groupChatState == null) {
                 groupChatState = new GroupChatState();
             }
-            if (chatState.type == ChatState.Type.AVAILABLE) {
+            if (presenceState.state != PresenceState.PRESENCE_STATE_TYPING) {
                 groupChatState.typingUsers.remove(userId);
                 groupChatState.contactMap.remove(userId);
             } else {
@@ -124,15 +201,20 @@ public class PresenceLoader {
             Log.w("ReportPresence received unexpected presence for user " + userId);
             return;
         }
-        if (lastSeen != null) {
-            chatStateMap.remove(userId);
-            mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_OFFLINE, lastSeen * 1000L));
-        } else {
-            ChatState chatState = chatStateMap.get(userId);
-            if (chatState == null || chatState.type == ChatState.Type.AVAILABLE) {
-                mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_ONLINE));
+        synchronized (chatStateMap) {
+            if (lastSeen != null) {
+                ChatState oldState = chatStateMap.remove(userId);
+                if (oldState != null && oldState.chatId instanceof GroupId) {
+                    updateGroupChatState(userId, (GroupId) oldState.chatId, new PresenceState(PresenceState.PRESENCE_STATE_OFFLINE));
+                }
+                mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_OFFLINE, lastSeen * 1000L));
             } else {
-                mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_TYPING));
+                ChatState chatState = chatStateMap.get(userId);
+                if (chatState != null && userId.equals(chatState.chatId) && chatState.type == ChatState.Type.TYPING) {
+                    mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_TYPING));
+                } else {
+                    mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_ONLINE));
+                }
             }
         }
     }
@@ -153,8 +235,14 @@ public class PresenceLoader {
             MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
             mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_UNKNOWN));
         }
-
-        groupChatStateMap.clear();
+        synchronized (groupChatStateMap) {
+            for (GroupId groupId : groupChatStateMap.keySet()) {
+                MutableLiveData<GroupChatState> mld = groupChatStateMap.get(groupId);
+                if (mld != null) {
+                    mld.postValue(new GroupChatState());
+                }
+            }
+        }
     }
 
     public void onReconnect() {

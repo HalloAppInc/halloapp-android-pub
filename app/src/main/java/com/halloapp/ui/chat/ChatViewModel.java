@@ -339,6 +339,8 @@ public class ChatViewModel extends AndroidViewModel {
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
         blockListManager.removeObserver(blockListObserver);
+        mainHandler.removeCallbacks(resetComposingRunnable);
+        resetComposingRunnable.run();
     }
 
     int getOutgoingAdded() {
