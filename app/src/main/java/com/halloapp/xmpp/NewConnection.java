@@ -9,7 +9,6 @@ import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Me;
@@ -1553,7 +1552,7 @@ public class NewConnection extends Connection {
     private class PacketWriter {
         private static final int QUEUE_CAPACITY = 100;
 
-        private ArrayBlockingQueue<byte[]> queue = new ArrayBlockingQueue<byte[]>(QUEUE_CAPACITY, true);
+        private ArrayBlockingQueue<Packet> queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
 
         private volatile boolean done;
 
@@ -1567,27 +1566,27 @@ public class NewConnection extends Connection {
         }
 
         void sendPacket(Packet packet) {
-            Log.i("connection: send: " + ProtoPrinter.toString(packet));
-            byte[] size = ByteBuffer.allocate(4).putInt(packet.getSerializedSize()).array();
-            byte[] finalPacket = packet.toByteArray();
-
-            byte[] bytes = new byte[size.length + finalPacket.length];
-            System.arraycopy(size, 0, bytes, 0, size.length);
-            System.arraycopy(finalPacket, 0, bytes, size.length, finalPacket.length);
-
-            sendRawBytes(bytes);
+            boolean success = false;
+            while (!success) {
+                try {
+                    enqueue(packet);
+                    success = true;
+                } catch (InterruptedException e) {
+                    Log.w("Interrupted while enqueueing packet for send", e);
+                }
+            }
         }
 
         void sendRawBytes(byte[] bytes) {
             try {
-                enqueue(bytes);
-            } catch (InterruptedException e) {
-                Log.w("Interrupted enqueueing packet for writing", e);
+                outputStream.write(bytes);
+            } catch (Exception e) {
+                Log.w("Failed to write raw bytes", e);
             }
         }
 
-        private void enqueue(byte[] bytes) throws InterruptedException {
-            queue.put(bytes);
+        private void enqueue(Packet packet) throws InterruptedException {
+            queue.put(packet);
         }
 
         private void writePackets() {
@@ -1595,11 +1594,9 @@ public class NewConnection extends Connection {
             try {
                 while (!done) {
                     try { // TODO(jack): Await login success
-                        byte[] bytes = queue.take();
-                        if (bytes == null) {
-                            Log.w("Got null bytes in write queue");
-                            continue;
-                        }
+                        Packet packet = queue.take();
+                        Log.i("connection: send: " + ProtoPrinter.toString(packet));
+                        byte[] bytes = encodePacket(packet);
 
                         OutputStream os = outputStream;
                         if (os == null) {
@@ -1617,6 +1614,15 @@ public class NewConnection extends Connection {
                     Log.e("Packet Writer error", e);
                 }
             }
+        }
+
+        private byte[] encodePacket(@NonNull Packet packet) {
+            byte[] size = ByteBuffer.allocate(4).putInt(packet.getSerializedSize()).array();
+            byte[] finalPacket = packet.toByteArray();
+            byte[] bytes = new byte[size.length + finalPacket.length];
+            System.arraycopy(size, 0, bytes, 0, size.length);
+            System.arraycopy(finalPacket, 0, bytes, size.length, finalPacket.length);
+            return bytes;
         }
     }
 
