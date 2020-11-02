@@ -1133,6 +1133,7 @@ public class NewConnection extends Connection {
                     if (!done) {
                         Log.e("Packet Reader error", e);
                     }
+                    disconnect();
                 }
             }
         }
