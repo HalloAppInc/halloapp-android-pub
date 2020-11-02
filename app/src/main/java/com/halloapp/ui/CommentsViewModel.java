@@ -1,13 +1,11 @@
 package com.halloapp.ui;
 
-import android.app.Application;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -31,7 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-class CommentsViewModel extends AndroidViewModel {
+class CommentsViewModel extends ViewModel {
 
     final LiveData<PagedList<Comment>> commentList;
     final ComputableLiveData<Long> lastSeenCommentRowId;
@@ -40,8 +38,8 @@ class CommentsViewModel extends AndroidViewModel {
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
-    private final ContentDb contentDb;
-    private final ContactsDb contactsDb;
+    private final ContentDb contentDb = ContentDb.getInstance();
+    private final ContactsDb contactsDb = ContactsDb.getInstance();
 
     private final String postId;
     private final CommentsDataSource.Factory dataSourceFactory;
@@ -103,14 +101,10 @@ class CommentsViewModel extends AndroidViewModel {
         }
     };
 
-    private CommentsViewModel(@NonNull Application application, @NonNull String postId) {
-        super(application);
-
+    private CommentsViewModel(@NonNull String postId) {
         this.postId = postId;
 
-        contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
-        contactsDb = ContactsDb.getInstance();
 
         lastSeenCommentRowId = new ComputableLiveData<Long>() {
             @Override
@@ -187,7 +181,7 @@ class CommentsViewModel extends AndroidViewModel {
             loadUserTask.cancel(true);
         }
 
-        loadUserTask = new LoadUserTask(getApplication(), userId, replyContact);
+        loadUserTask = new LoadUserTask(userId, replyContact);
         loadUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -199,17 +193,15 @@ class CommentsViewModel extends AndroidViewModel {
     }
 
     void loadPost(@NonNull String postId) {
-        new LoadPostTask(getApplication(), postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadPostTask(postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     static class LoadUserTask extends AsyncTask<Void, Void, Contact> {
 
         private final UserId userId;
         private final MutableLiveData<Contact> contact;
-        private final Application application;
 
-        LoadUserTask(@NonNull Application application, @NonNull UserId userId, @NonNull MutableLiveData<Contact> contact) {
-            this.application = application;
+        LoadUserTask(@NonNull UserId userId, @NonNull MutableLiveData<Contact> contact) {
             this.userId = userId;
             this.contact = contact;
         }
@@ -229,10 +221,8 @@ class CommentsViewModel extends AndroidViewModel {
 
         private final String postId;
         private final MutableLiveData<Post> post;
-        private final Application application;
 
-        LoadPostTask(@NonNull Application application, @NonNull String postId, @NonNull MutableLiveData<Post> post) {
-            this.application = application;
+        LoadPostTask(@NonNull String postId, @NonNull MutableLiveData<Post> post) {
             this.postId = postId;
             this.post = post;
         }
@@ -250,11 +240,9 @@ class CommentsViewModel extends AndroidViewModel {
 
     public static class Factory implements ViewModelProvider.Factory {
 
-        private final Application application;
         private final String postId;
 
-        Factory(@NonNull Application application, @NonNull String postId) {
-            this.application = application;
+        Factory(@NonNull String postId) {
             this.postId = postId;
         }
 
@@ -262,7 +250,7 @@ class CommentsViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(application, postId);
+                return (T) new CommentsViewModel(postId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

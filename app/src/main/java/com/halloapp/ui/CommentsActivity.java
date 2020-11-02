@@ -163,7 +163,7 @@ public class CommentsActivity extends HalloActivity {
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(postId)).get(CommentsViewModel.class);
         viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {
         }));
 
