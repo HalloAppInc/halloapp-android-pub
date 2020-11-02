@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class ContactInfo {
 
@@ -59,7 +60,7 @@ public class ContactInfo {
             normalizedPhone = contact.getNormalized();
         }
         if (contact.getRole() != null) {
-            role = contact.getRole().name().toLowerCase();
+            role = contact.getRole().name().toLowerCase(Locale.US);
         }
         if (contact.getUid() != 0) {
             userId = Long.toString(contact.getUid());

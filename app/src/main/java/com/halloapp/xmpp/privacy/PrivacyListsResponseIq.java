@@ -15,6 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class PrivacyListsResponseIq extends HalloIq {
@@ -71,7 +72,7 @@ public class PrivacyListsResponseIq extends HalloIq {
     }
 
     public static PrivacyListsResponseIq fromProto(PrivacyLists privacyLists) {
-        String activeType = privacyLists.getActiveType().name().toLowerCase();
+        String activeType = privacyLists.getActiveType().name().toLowerCase(Locale.US);
         Map<String, PrivacyList> resultMap = new HashMap<>();
 
         for (com.halloapp.proto.server.PrivacyList privacyList : privacyLists.getListsList()) {

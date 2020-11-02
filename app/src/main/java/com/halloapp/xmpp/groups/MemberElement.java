@@ -15,6 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MemberElement implements ExtensionElement {
@@ -87,9 +88,9 @@ public class MemberElement implements ExtensionElement {
         String rawUid = Long.toString(groupMember.getUid());
         boolean isMe = rawUid.equals(Me.getInstance().getUser());
         uid = isMe ? UserId.ME : new UserId(rawUid);
-        type = groupMember.getType().name().toLowerCase();
+        type = groupMember.getType().name().toLowerCase(Locale.US);
         name = groupMember.getName();
-        action = groupMember.getAction().name().toLowerCase();
+        action = groupMember.getAction().name().toLowerCase(Locale.US);
         result = groupMember.getResult();
         reason = groupMember.getReason();
     }

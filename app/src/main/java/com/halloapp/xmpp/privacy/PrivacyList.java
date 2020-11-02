@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class PrivacyList implements ExtensionElement {
@@ -78,7 +79,7 @@ public class PrivacyList implements ExtensionElement {
     }
 
     PrivacyList(com.halloapp.proto.server.PrivacyList privacyList) {
-        this.type = privacyList.getType().name().toLowerCase();
+        this.type = privacyList.getType().name().toLowerCase(Locale.US);
         for (UidElement uidElement : privacyList.getUidElementsList()) {
             UserId userId = new UserId(Long.toString(uidElement.getUid()));
             userIds.add(userId);
