@@ -27,7 +27,8 @@ interface Props extends RouteComponentProps<ParamTypes> {
 }
 
 interface LogLine {
-  message: string,
+  raw: string,
+  flat: string, // with protobuf expanded
   level: string,
 }
 
@@ -111,7 +112,7 @@ class Log extends React.Component<Props, State>  {
     if (filterText === undefined || filterText.length === 0) {
       return logs
     }
-    return logs.filter(log => log.message.includes(filterText))
+    return logs.filter(log => log.flat.includes(filterText))
   }
 
   getVersionFF(fileName: string) {
@@ -151,7 +152,8 @@ class Log extends React.Component<Props, State>  {
         let logs: LogLine[] = []
         for (let i = 0; i < logLines.length; i++) {
           logs.push({
-            message: logLines[i],
+            raw: logLines[i],
+            flat: this.protofy(logLines[i], true),
             level: logLevels[i] as string,
           })
         }
@@ -235,10 +237,10 @@ class Log extends React.Component<Props, State>  {
         </div>
       )
     }
-    return this.protofy(s)
+    return this.protofy(s, false)
   }
 
-  protofy(s: string): any {
+  protofy(s: string, flat: boolean): any {
     let START_TAG = "<![CLBDATA["
     let END_TAG = "]]>"
 
@@ -249,7 +251,7 @@ class Log extends React.Component<Props, State>  {
       if (j >= 0) {
         let before = s.substr(0, i)
         let afterNoRec = s.substr(i + START_TAG.length + 1 + j + END_TAG.length)
-        let after = this.protofy(afterNoRec)
+        let after = this.protofy(afterNoRec, flat)
         let messageType: any
         let messageTypeName: string
         if (messageTypeChar === 'P') {
@@ -276,6 +278,9 @@ class Log extends React.Component<Props, State>  {
           let b64 = s.substr(i + START_TAG.length + 1, j)
           let msg = messageType.decode(Base64.toByteArray(b64))
           let obj = msg.toJSON()
+          if (flat) {
+            return before + this.messageObjectToString(obj, messageTypeName) + after
+          }
           return (
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'start'}}>
               <div>{before}</div>
@@ -331,7 +336,7 @@ class Log extends React.Component<Props, State>  {
 
   renderRow(index: number, key: string, style: React.CSSProperties) {
     let color = getColorForLetter(this.state.filteredLogs[index].level)
-    let line = this.state.filteredLogs[index].message
+    let line = this.state.filteredLogs[index].raw
     let linkified = this.linkify(line)
     return (
       <div key={key} style={{ ...style, display: "flex", justifyContent: "start", fontFamily: "monospace", backgroundColor: index === this.state.highlightedLine ? "#ECFF38" : index % 2 === 0 ? "#fff" : "#eee", paddingLeft: 5 }}>
@@ -370,7 +375,7 @@ class Log extends React.Component<Props, State>  {
     let len = this.state.filteredLogs.length
     for (let i = 0; i < len; i++) {
       let index = (len + startLine + i * (backwards ? -1 : 1)) % len
-      if (this.state.filteredLogs[index].message.includes(text)) {
+      if (this.state.filteredLogs[index].flat.includes(text)) {
         nextOccurrence = index;
         break;
       }
