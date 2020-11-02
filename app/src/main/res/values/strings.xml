@@ -42,6 +42,7 @@
     <string name="new_post">New post</string>
     <string name="chat_message_attribution">%s: %s</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
+    <string name="new_chat_name_placeholder">%s is using HalloApp! 🎉</string>
     <string name="posts_empty">Your posts will appear here</string>
     <string name="home_page_empty">Posts from your contacts will appear here</string>
     <string name="chats_page_empty">Your contacts &amp; messages will appear here</string>

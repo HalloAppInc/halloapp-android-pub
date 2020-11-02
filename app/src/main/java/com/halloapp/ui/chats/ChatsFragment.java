@@ -462,15 +462,30 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     });
                 } else {
                     viewModel.messageLoader.cancel(itemView);
-                    infoView.setText(getText(R.string.empty_chat_placeholder));
-                    infoView.setTextColor(getResources().getColor(R.color.empty_chat_placeholder));
-                    timeView.setText("");
+                    if (!chat.isGroup) {
+                        if (chat.timestamp == 0) {
+                            infoView.setText(getString(R.string.empty_chat_placeholder));
+                            infoView.setTextColor(getResources().getColor(R.color.empty_chat_placeholder));
+                        } else {
+                            infoView.setText(getString(R.string.new_chat_name_placeholder, chat.name));
+                            infoView.setTextColor(getResources().getColor(R.color.chat_message_preview));
+                        }
+                    } else {
+                        infoView.setText("");
+                    }
+                    if (chat.timestamp == 0) {
+                        timeView.setText("");
+                    }
                     statusView.setVisibility(View.GONE);
                     mediaIcon.setVisibility(View.GONE);
                 }
                 if (chat.newMessageCount > 0) {
                     newMessagesView.setVisibility(View.VISIBLE);
                     newMessagesView.setText(String.format(Locale.getDefault(), "%d", chat.newMessageCount));
+                    timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
+                } else if (chat.newMessageCount == Chat.MARKED_UNSEEN) {
+                    newMessagesView.setVisibility(View.VISIBLE);
+                    newMessagesView.setText(" ");
                     timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
                 } else {
                     timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.secondary_text));

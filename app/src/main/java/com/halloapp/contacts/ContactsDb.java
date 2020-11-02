@@ -186,6 +186,8 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, updateContact.normalizedPhone);
                     values.put(ContactsTable.COLUMN_AVATAR_ID, updateContact.avatarId);
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
+                    values.put(ContactsTable.COLUMN_NEW_CONNECTION, updateContact.newConnection);
+                    values.put(ContactsTable.COLUMN_CONNECTION_TIME, updateContact.connectionTime);
                     final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.rowId)},
@@ -215,10 +217,16 @@ public class ContactsDb {
             db.beginTransaction();
             int updatedRows = 0;
             try {
+                final long syncTime = System.currentTimeMillis();
                 for (NormalizedPhoneData normalizedPhoneData : normalizedPhoneDataList) {
                     Contact existing = readContact(normalizedPhoneData.userId);
+                    boolean newFriend = normalizedPhoneData.friend && (existing == null || !existing.friend);
                     final ContentValues values = new ContentValues();
                     values.put(ContactsTable.COLUMN_FRIEND, normalizedPhoneData.friend);
+                    if (newFriend) {
+                        values.put(ContactsTable.COLUMN_CONNECTION_TIME, syncTime);
+                        values.put(ContactsTable.COLUMN_NEW_CONNECTION, true);
+                    }
                     values.put(ContactsTable.COLUMN_USER_ID, normalizedPhoneData.userId.rawId());
                     values.put(ContactsTable.COLUMN_AVATAR_ID, normalizedPhoneData.avatarId);
                     final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
@@ -227,7 +235,7 @@ public class ContactsDb {
                             SQLiteDatabase.CONFLICT_ABORT);
                     Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedContactRows + " rows updated for " + normalizedPhoneData.normalizedPhone + " " + normalizedPhoneData.userId + " " + normalizedPhoneData.avatarId + " " + normalizedPhoneData.friend);
                     updatedRows += updatedContactRows;
-                    if (normalizedPhoneData.friend && (existing == null || !existing.friend)) {
+                    if (newFriend) {
                         newFriends.add(normalizedPhoneData.userId);
                     }
                 }
@@ -241,6 +249,19 @@ public class ContactsDb {
                 notifyNewFriends(newFriends);
             }
             return null;
+        });
+    }
+
+    public void markContactSeen(@NonNull UserId userId) {
+        databaseWriteExecutor.submit(() -> {
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            final ContentValues values = new ContentValues();
+            values.put(ContactsTable.COLUMN_NEW_CONNECTION, false);
+            int updatedRows = db.update(ContactsTable.TABLE_NAME, values, ContactsTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
+            Log.i("ContactsDb.markContactSeen " + updatedRows + " rows updated");
+            if (updatedRows > 0) {
+                notifyContactsChanged();
+            }
         });
     }
 
@@ -434,7 +455,9 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_NEW_CONNECTION,
+                        ContactsTable.COLUMN_CONNECTION_TIME
                 },
                 ContactsTable.COLUMN_FRIEND + "=1" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
@@ -451,6 +474,8 @@ public class ContactsDb {
                             cursor.getString(5),
                             new UserId(userIdStr),
                             cursor.getInt(7) == 1);
+                    contact.newConnection = cursor.getInt(8) == 1;
+                    contact.connectionTime = cursor.getLong(9);
                     contacts.add(contact);
                 }
             }
@@ -741,6 +766,8 @@ public class ContactsDb {
         static final String COLUMN_AVATAR_ID = "avatar_id";
         static final String COLUMN_USER_ID = "user_id";
         static final String COLUMN_FRIEND = "friend";
+        static final String COLUMN_NEW_CONNECTION = "new_connection";
+        static final String COLUMN_CONNECTION_TIME = "connection_time";
     }
 
     private static final class AvatarsTable implements BaseColumns {
@@ -802,7 +829,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 8;
+        private static final int DATABASE_VERSION = 9;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -820,7 +847,9 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT,"
                     + ContactsTable.COLUMN_AVATAR_ID + " TEXT,"
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
-                    + ContactsTable.COLUMN_FRIEND + " INTEGER"
+                    + ContactsTable.COLUMN_FRIEND + " INTEGER,"
+                    + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER,"
+                    + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
@@ -886,7 +915,9 @@ public class ContactsDb {
                 case 7: {
                     upgradeFromVersion7(db);
                 }
-
+                case 8: {
+                    upgradeFromVersion8(db);
+                }
                 break;
                 default: {
                     onCreate(db);
@@ -1015,6 +1046,11 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + FeedSelectedTable.INDEX_USER_ID + " ON " + FeedSelectedTable.TABLE_NAME + " ("
                     + FeedSelectedTable.COLUMN_USER_ID
                     + ");");
+        }
+
+        private void upgradeFromVersion8(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER");
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER");
         }
 
         private void deleteDb() {

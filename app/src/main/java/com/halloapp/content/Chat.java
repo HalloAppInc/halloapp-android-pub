@@ -3,7 +3,7 @@ package com.halloapp.content;
 import com.halloapp.id.ChatId;
 
 public class Chat {
-
+    public static final int MARKED_UNSEEN = -1;
     public final long rowId;
     public final ChatId chatId;
     public final long timestamp;

@@ -267,6 +267,8 @@ public class ContactsSync {
 
         final Collection<Contact> updatedContacts = new ArrayList<>();
         final Collection<UserId> newFriends = new HashSet<>();
+        final long syncTime = System.currentTimeMillis();
+        final boolean initialSync = Preferences.getInstance().getLastContactsSyncTime() == 0;
         for (ContactInfo contactsSyncResult : contactSyncResults) {
             final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
             if (phoneContacts == null) {
@@ -281,6 +283,10 @@ public class ContactsSync {
                     contactUpdated = true;
                     if (contact.friend) {
                         isNewFriend = true;
+                        if (!initialSync) {
+                            contact.newConnection = true;
+                            contact.connectionTime = syncTime;
+                        }
                     }
                     Log.i("ContactsSync.performContactSync: update friendship for " + contact.addressBookName + " to " + contact.friend);
                 }

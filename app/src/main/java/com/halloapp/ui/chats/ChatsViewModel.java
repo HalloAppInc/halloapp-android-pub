@@ -26,6 +26,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -146,22 +147,33 @@ public class ChatsViewModel extends AndroidViewModel {
                 final List<Contact> friends = ContactsDb.getInstance().getFriends();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
                 Collections.sort(friends, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
+                final List<Chat> friendChats = new ArrayList<>();
                 for (Contact friend : friends) {
                     if (friend.userId == null) {
                         continue;
                     }
                     Chat chat = chatsMap.get(friend.userId);
                     if (chat == null) {
-                        chat = new Chat(-1, friend.userId, 0, 0, -1L, -1L, friend.getDisplayName(), false, null, null, true);
-                        chats.add(chat);
+                        chat = new Chat(-1, friend.userId, friend.connectionTime, friend.newConnection ? Chat.MARKED_UNSEEN : 0, -1L, -1L, friend.getDisplayName(), false, null, null, true);
+                        if (friend.connectionTime > 0) {
+                            chats.add(chat);
+                        } else {
+                            friendChats.add(chat);
+                        }
                     }
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name) && chat.chatId instanceof UserId) {
-                        chat.name = ContactsDb.getInstance().getContact((UserId)chat.chatId).getDisplayName();
+                        chat.name = contactsDb.getContact((UserId)chat.chatId).getDisplayName();
                     }
                 }
-
+                Collections.sort(chats, (obj1, obj2) -> {
+                    if (obj1.timestamp == obj2.timestamp) {
+                        return collator.compare(obj1.name, obj2.name);
+                    }
+                    return obj1.timestamp < obj2.timestamp ? 1 : -1;
+                });
+                chats.addAll(friendChats);
                 return chats;
             }
         };
