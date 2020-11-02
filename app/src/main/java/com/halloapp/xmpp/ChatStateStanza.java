@@ -12,6 +12,8 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
 
+import java.util.Locale;
+
 public class ChatStateStanza extends Stanza {
 
     private static final String ELEMENT = "chat_state";
@@ -66,9 +68,9 @@ public class ChatStateStanza extends Stanza {
 
     public ChatState toProto() {
         return ChatState.newBuilder()
-                .setType(ChatState.Type.valueOf(type.toUpperCase()))
+                .setType(ChatState.Type.valueOf(type.toUpperCase(Locale.US)))
                 .setThreadId(threadId)
-                .setThreadType(ChatState.ThreadType.valueOf(threadType.toUpperCase()))
+                .setThreadType(ChatState.ThreadType.valueOf(threadType.toUpperCase(Locale.US)))
                 .build();
     }
 }

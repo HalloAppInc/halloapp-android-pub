@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class FeedUpdateIq extends HalloIq {
 
@@ -135,7 +136,7 @@ public class FeedUpdateIq extends HalloIq {
                 for (UserId userId : audienceList) {
                     uids.add(Long.parseLong(userId.rawId()));
                 }
-                pb.setAudience(Audience.newBuilder().setType(Audience.Type.valueOf(audienceType.toUpperCase())).addAllUids(uids).build());
+                pb.setAudience(Audience.newBuilder().setType(Audience.Type.valueOf(audienceType.toUpperCase(Locale.US))).addAllUids(uids).build());
             }
             pb.setId(feedItem.id);
             if (feedItem.payload != null) {

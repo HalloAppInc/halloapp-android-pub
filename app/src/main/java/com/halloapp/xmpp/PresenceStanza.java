@@ -10,6 +10,8 @@ import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
 
+import java.util.Locale;
+
 public class PresenceStanza extends Stanza {
 
     private static final String ELEMENT = "presence";
@@ -54,7 +56,7 @@ public class PresenceStanza extends Stanza {
         Localpart localPart = getTo().getLocalpartOrNull();
         Presence.Builder builder = Presence.newBuilder();
         builder.setId(getStanzaId());
-        builder.setType(Presence.Type.valueOf(type.toUpperCase()));
+        builder.setType(Presence.Type.valueOf(type.toUpperCase(Locale.US)));
         if (localPart != null) {
             builder.setUid(Long.parseLong(localPart.toString()));
         }

@@ -14,6 +14,7 @@ import org.jivesoftware.smack.util.XmlStringBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class SetPrivacyListIq extends HalloIq {
 
@@ -62,7 +63,7 @@ public class SetPrivacyListIq extends HalloIq {
     @Override
     public Iq toProtoIq() {
         com.halloapp.proto.server.PrivacyList.Builder builder = com.halloapp.proto.server.PrivacyList.newBuilder();
-        builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase()));
+        builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase(Locale.US)));
         for (UserId userId : usersAdd) {
             addUid(builder, userId, true);
         }
