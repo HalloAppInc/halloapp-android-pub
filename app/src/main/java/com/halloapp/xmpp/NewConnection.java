@@ -1648,7 +1648,7 @@ public class NewConnection extends Connection {
             Log.d("IqRouter: got error for id " + id + " with reason " + reason);
             ExceptionHandler callback = failureCallbacks.remove(id);
             if (callback != null) {
-                callback.handleException(new RuntimeException("IQ Error: " + reason)); // TODO(jack): custom exception
+                callback.handleException(new IqErrorException(id, reason));
             } else {
                 Log.w("IqRouter: no callback for " + id);
             }
@@ -1677,11 +1677,11 @@ public class NewConnection extends Connection {
             Map<String, ExceptionHandler> failureCallbacksCopy = new HashMap<>(failureCallbacks);
             failureCallbacks.clear();
 
-            for (String key : failureCallbacksCopy.keySet()) {
-                Log.i("IqRouter marking " + key + " as failure during reset");
-                ExceptionHandler failure = failureCallbacksCopy.get(key);
+            for (String id : failureCallbacksCopy.keySet()) {
+                Log.i("IqRouter marking " + id + " as failure during reset");
+                ExceptionHandler failure = failureCallbacksCopy.get(id);
                 if (failure != null) {
-                    failure.handleException(new TimeoutException("IqRouter reset while waiting for " + key));
+                    failure.handleException(new IqRouterResetException(id));
                 }
             }
         }
@@ -1711,7 +1711,7 @@ public class NewConnection extends Connection {
                         if (response == null) {
                             ExceptionHandler failure = failureCallbacks.get(id);
                             if (failure != null) {
-                                failure.handleException(new TimeoutException("Timeout for " + id));
+                                failure.handleException(new IqTimeoutException(id));
                             }
                         } else {
                             ResponseHandler<Iq> success = successCallbacks.get(id);
@@ -1724,6 +1724,24 @@ public class NewConnection extends Connection {
                 }
             };
             timer.schedule(timerTask, IQ_TIMEOUT_MS);
+        }
+    }
+
+    private static class IqTimeoutException extends Exception {
+        public IqTimeoutException(String id) {
+            super("Iq timeout for Iq with id " + id);
+        }
+    }
+
+    private static class IqRouterResetException extends Exception {
+        public IqRouterResetException(String id) {
+            super("IqRouter reset while waiting for " + id);
+        }
+    }
+
+    private static class IqErrorException extends Exception {
+        public IqErrorException(String id, String reason) {
+            super("Server returned error response for " + id + ": " + reason);
         }
     }
 
