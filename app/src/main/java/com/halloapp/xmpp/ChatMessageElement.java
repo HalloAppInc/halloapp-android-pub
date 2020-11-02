@@ -12,6 +12,7 @@ import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
@@ -139,10 +140,11 @@ public class ChatMessageElement implements ExtensionElement {
                 } else {
                     stats.reportDecryptSuccess();
                 }
-            } catch (GeneralSecurityException | ArrayIndexOutOfBoundsException e) {
-                Log.e("Failed to decrypt message, falling back to plaintext", e);
-                Log.sendErrorReport("Decryption failure");
-                stats.reportDecryptError("decryption failure");
+            } catch (CryptoException | ArrayIndexOutOfBoundsException e) {
+                String message = e instanceof CryptoException ? ((CryptoException) e).getMessage() : "aioobe";
+                Log.e("Failed to decrypt message: " + message + ", falling back to plaintext", e);
+                Log.sendErrorReport("Decryption failure: " + message);
+                stats.reportDecryptError(message);
                 chatMessage = plaintextChatMessage;
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
@@ -194,10 +196,11 @@ public class ChatMessageElement implements ExtensionElement {
             byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
             stats.reportEncryptSuccess();
             return encryptedEntry;
-        } catch (GeneralSecurityException e) {
-            Log.e("Failed to encrypt", e);
-            Log.sendErrorReport("Encryption failure");
-            stats.reportEncryptError("encryption failed");
+        } catch (CryptoException e) {
+            String message = e.getMessage();
+            Log.e("Failed to encrypt: " + message, e);
+            Log.sendErrorReport("Encryption failure: " + message);
+            stats.reportEncryptError(message);
         }
         return null;
     }
@@ -208,10 +211,11 @@ public class ChatMessageElement implements ExtensionElement {
             byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
             stats.reportEncryptSuccess();
             return Base64.encodeToString(encryptedEntry, Base64.NO_WRAP);
-        } catch (GeneralSecurityException e) {
-            Log.e("Failed to encrypt", e);
-            Log.sendErrorReport("Encryption failure");
-            stats.reportEncryptError("encryption failed");
+        } catch (CryptoException e) {
+            String message = e.getMessage();
+            Log.e("Failed to encrypt: " + message, e);
+            Log.sendErrorReport("Encryption failure: " + message);
+            stats.reportEncryptError(message);
         }
         return "";
     }

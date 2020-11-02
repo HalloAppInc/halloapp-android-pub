@@ -10,6 +10,7 @@ import com.halloapp.util.logs.Log;
 
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -27,7 +28,7 @@ class MessageCipher {
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
-    byte[] convertFromWire(byte[] message, UserId peerUserId) throws GeneralSecurityException {
+    byte[] convertFromWire(byte[] message, UserId peerUserId) throws CryptoException {
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
         byte[] previousChainLengthBytes = Arrays.copyOfRange(message, 36, 40);
@@ -49,21 +50,25 @@ class MessageCipher {
         byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
             Log.e("HMAC does not match; rejecting");
-            throw new GeneralSecurityException("HMAC mismatch");
+            throw new CryptoException("hmac mismatch");
         }
 
-        Cipher c = Cipher.getInstance("AES/CBC/PKCS7Padding"); // NOTE: for AES same as PKCS5
-        SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
-        c.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
-        byte[] ret =  c.doFinal(encryptedMessage);
+        try {
+            Cipher c = Cipher.getInstance("AES/CBC/PKCS7Padding"); // NOTE: for AES same as PKCS5
+            SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            c.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
+            byte[] ret = c.doFinal(encryptedMessage);
 
-        CryptoUtils.nullify(inboundMessageKey, aesKey, hmacKey, iv);
+            CryptoUtils.nullify(inboundMessageKey, aesKey, hmacKey, iv);
 
-        return ret;
+            return ret;
+        } catch (GeneralSecurityException e) {
+            throw new CryptoException("cipher dec failure", e);
+        }
     }
 
-    byte[] convertForWire(byte[] message, UserId peerUserId) throws GeneralSecurityException {
+    byte[] convertForWire(byte[] message, UserId peerUserId) throws CryptoException {
         MessageKey messageKey = keyManager.getNextOutboundMessageKey(peerUserId);
         byte[] outboundMessageKey = messageKey.getKeyMaterial();
 
@@ -71,21 +76,29 @@ class MessageCipher {
         byte[] hmacKey = Arrays.copyOfRange(outboundMessageKey, 32, 64);
         byte[] iv = Arrays.copyOfRange(outboundMessageKey, 64, 80);
 
-        Cipher c = Cipher.getInstance("AES/CBC/PKCS7Padding"); // NOTE: for AES same as PKCS5
-        SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
-        c.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
-        byte[] encryptedContents = c.doFinal(message);
+        try {
+            Cipher c = Cipher.getInstance("AES/CBC/PKCS7Padding"); // NOTE: for AES same as PKCS5
+            SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            c.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
+            byte[] encryptedContents = c.doFinal(message);
 
-        byte[] hmac = CryptoUtils.hmac(hmacKey, encryptedContents);
+            byte[] hmac = CryptoUtils.hmac(hmacKey, encryptedContents);
 
-        CryptoUtils.nullify(outboundMessageKey, aesKey, hmacKey, iv);
+            CryptoUtils.nullify(outboundMessageKey, aesKey, hmacKey, iv);
 
-        byte[] ephemeralKeyBytes = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)).getKeyMaterial();
-        byte[] ephemeralKeyIdBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId)).array();
-        byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
-        byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
+            try {
+                byte[] ephemeralKeyBytes = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)).getKeyMaterial();
+                byte[] ephemeralKeyIdBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId)).array();
+                byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
+                byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
 
-        return CryptoUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
+                return CryptoUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
+            } catch (InvalidKeyException e) {
+                throw new CryptoException("xec priv2pub failed", e);
+            }
+        } catch (GeneralSecurityException e) {
+            throw new CryptoException("cipher enc failure", e);
+        }
     }
 }

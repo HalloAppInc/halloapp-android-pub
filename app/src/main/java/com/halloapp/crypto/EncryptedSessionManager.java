@@ -82,19 +82,19 @@ public class EncryptedSessionManager {
         return Preconditions.checkNotNull(lockMap.get(userId)).lock();
     }
 
-    public byte[] encryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId) throws GeneralSecurityException {
+    public byte[] encryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             return messageCipher.convertForWire(message, peerUserId);
         } catch (InterruptedException e) {
-            throw new GeneralSecurityException("Interrupted during encryption", e);
+            throw new CryptoException("encryption interrupted", e);
         }
     }
 
-    public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws GeneralSecurityException {
+    public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                 if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
-                    throw new GeneralSecurityException("Cannot set up session without identity key");
+                    throw new CryptoException("no identity key");
                 }
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
             }
@@ -103,7 +103,7 @@ public class EncryptedSessionManager {
 
             return messageCipher.convertFromWire(message, peerUserId);
         } catch (InterruptedException e) {
-            throw new GeneralSecurityException("Interrupted during decryption", e);
+            throw new CryptoException("decryption interrupted", e);
         }
     }
 
@@ -210,7 +210,7 @@ public class EncryptedSessionManager {
         return encryptedKeyStore.getMyPublicEd25519IdentityKey();
     }
 
-    private SessionSetupInfo setUpSession(UserId peerUserId) throws GeneralSecurityException, InvalidProtocolBufferException, ExecutionException, InterruptedException {
+    private SessionSetupInfo setUpSession(UserId peerUserId) throws CryptoException {
         if (!Constants.ENCRYPTION_TURNED_ON || encryptedKeyStore.getPeerResponded(peerUserId)) {
             return null;
         }
@@ -220,45 +220,51 @@ public class EncryptedSessionManager {
             long now = System.currentTimeMillis();
             if (now - encryptedKeyStore.getLastDownloadAttempt(peerUserId) < MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS) {
                 Log.i("EncryptedSessionManager last download attempt too recent for " + peerUserId);
-                return null;
+                throw new CryptoException("last key dl too recent");
             }
             encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
 
-            WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).get();
-            if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
-                Log.i("EncryptedSessionManager no whisper keys returned");
-                return null;
-            }
-
-            IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
-            SignedPreKey signedPreKeyProto = SignedPreKey.parseFrom(keysIq.signedPreKey);
-
-            byte[] identityKeyBytes = identityKeyProto.getPublicKey().toByteArray();
-            byte[] signedPreKeyBytes = signedPreKeyProto.getPublicKey().toByteArray();
-
-            if (identityKeyBytes == null || identityKeyBytes.length == 0 || signedPreKeyBytes == null || signedPreKeyBytes.length == 0) {
-                Log.i("Did not get any keys for peer " + peerUserId);
-
-                return null;
-            }
-
-            PublicEdECKey peerIdentityKey = new PublicEdECKey(identityKeyBytes);
-            PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
-
-            byte[] signature = signedPreKeyProto.getSignature().toByteArray();
-            CryptoUtils.verify(signature, signedPreKeyBytes, peerIdentityKey);
-
-            OneTimePreKey oneTimePreKey = null;
-            if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {
-                com.halloapp.proto.clients.OneTimePreKey otpk = com.halloapp.proto.clients.OneTimePreKey.parseFrom(keysIq.oneTimePreKeys.get(0));
-                byte[] bytes = otpk.getPublicKey().toByteArray();
-                if (bytes != null && bytes.length > 0) {
-                    oneTimePreKey = new OneTimePreKey(new PublicXECKey(bytes), otpk.getId());
+            try {
+                WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).get();
+                if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
+                    Log.i("EncryptedSessionManager no whisper keys returned");
+                    throw new CryptoException("no whisper keys returned");
                 }
-            }
+                IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
+                SignedPreKey signedPreKeyProto = SignedPreKey.parseFrom(keysIq.signedPreKey);
 
-            keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
-            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+                byte[] identityKeyBytes = identityKeyProto.getPublicKey().toByteArray();
+                byte[] signedPreKeyBytes = signedPreKeyProto.getPublicKey().toByteArray();
+
+                if (identityKeyBytes == null || identityKeyBytes.length == 0 || signedPreKeyBytes == null || signedPreKeyBytes.length == 0) {
+                    Log.i("Did not get any keys for peer " + peerUserId);
+                    throw new CryptoException("empty whisper keys");
+                }
+
+                PublicEdECKey peerIdentityKey = new PublicEdECKey(identityKeyBytes);
+                PublicXECKey peerSignedPreKey = new PublicXECKey(signedPreKeyBytes);
+
+                byte[] signature = signedPreKeyProto.getSignature().toByteArray();
+                CryptoUtils.verify(signature, signedPreKeyBytes, peerIdentityKey);
+
+                OneTimePreKey oneTimePreKey = null;
+                if (keysIq.oneTimePreKeys != null && !keysIq.oneTimePreKeys.isEmpty()) {
+                    com.halloapp.proto.clients.OneTimePreKey otpk = com.halloapp.proto.clients.OneTimePreKey.parseFrom(keysIq.oneTimePreKeys.get(0));
+                    byte[] bytes = otpk.getPublicKey().toByteArray();
+                    if (bytes != null && bytes.length > 0) {
+                        oneTimePreKey = new OneTimePreKey(new PublicXECKey(bytes), otpk.getId());
+                    }
+                }
+
+                keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
+                encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+            } catch (InvalidProtocolBufferException e) {
+                throw new CryptoException("protobuf parse failed", e);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new CryptoException("execution interrupted", e);
+            } catch (GeneralSecurityException e) {
+                throw new CryptoException("spk signature mismatch", e);
+            }
         }
 
         return new SessionSetupInfo(
