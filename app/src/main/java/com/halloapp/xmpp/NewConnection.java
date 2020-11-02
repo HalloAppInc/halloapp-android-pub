@@ -1347,10 +1347,18 @@ public class NewConnection extends Connection {
                 if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.RETRACT)) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment comment = item.getComment();
-                        connectionObservers.notifyCommentRetracted(comment.getId(), getUserId(Long.toString(comment.getPublisherUid())), comment.getPostId(), comment.getTimestamp());
+                        UserId publisherUserId = new UserId(Long.toString(comment.getPublisherUid()));
+                        if (comment.getPublisherUid() != 0 && comment.getPublisherName() != null) {
+                            names.put(publisherUserId, comment.getPublisherName());
+                        }
+                        connectionObservers.notifyCommentRetracted(comment.getId(), publisherUserId, comment.getPostId(), comment.getTimestamp());
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post post = item.getPost();
-                        connectionObservers.notifyPostRetracted(getUserId(Long.toString(post.getPublisherUid())), post.getId());
+                        UserId publisherUserId = new UserId(Long.toString(post.getPublisherUid()));
+                        if (post.getPublisherUid() != 0 && post.getPublisherName() != null) {
+                            names.put(publisherUserId, post.getPublisherName());
+                        }
+                        connectionObservers.notifyPostRetracted(publisherUserId, post.getId());
                     }
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
@@ -1377,6 +1385,9 @@ public class NewConnection extends Connection {
                         posts.add(np);
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
+                        if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
+                            names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
+                        }
 
                         byte[] payload = protoComment.getPayload().toByteArray();
                         PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
