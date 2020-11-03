@@ -186,6 +186,7 @@ public class ProfileFragment extends PostsFragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadAvatar();
         adapter.notifyDataSetChanged();
     }
 
