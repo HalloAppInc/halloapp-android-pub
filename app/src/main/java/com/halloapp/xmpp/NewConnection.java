@@ -182,7 +182,7 @@ public class NewConnection extends Connection {
 
         Log.i("connection: connecting...");
 
-        final String host = DEBUG_HOST; //preferences.getUseDebugHost() ? DEBUG_HOST : HOST; // TODO(jack)
+        final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
 
         try {
             final InetAddress address = InetAddress.getByName(host);
