@@ -95,7 +95,9 @@
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".ui.groups.GroupInfoActivity" />
+            android:name=".ui.groups.GroupInfoActivity"
+            android:label="@string/group_info_title"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.groups.EditGroupActivity" />

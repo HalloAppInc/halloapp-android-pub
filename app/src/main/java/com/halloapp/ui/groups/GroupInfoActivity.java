@@ -3,12 +3,14 @@ package com.halloapp.ui.groups;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,13 +30,14 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.groups.MemberElement;
 
@@ -87,10 +91,17 @@ public class GroupInfoActivity extends HalloActivity {
             return;
         }
 
+        if (Build.VERSION.SDK_INT >= 28) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
         setContentView(R.layout.activity_group_info);
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        setTitle("");
 
         viewModel = new ViewModelProvider(this, new GroupViewModel.Factory(getApplication(), groupId)).get(GroupViewModel.class);
 
