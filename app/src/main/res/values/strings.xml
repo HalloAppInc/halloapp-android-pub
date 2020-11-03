@@ -225,7 +225,7 @@
     <string name="about_halloapp">About HalloApp</string>
     <string name="last_seen">Last seen %s</string>
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
-    <string name="online">Online</string>
+    <string name="online">online</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="yesterday_at_time">yesterday at %s</string>
@@ -361,9 +361,9 @@
     <string name="hide_future_posts_confirmation">Are you sure you want to hide all your future posts from %s? You can always change this later.</string>
     <string name="feed_privacy_hide_success">Feed privacy updated. Hiding posts from %s</string>
     <string name="feed_privacy_hide_failure">Failed to update feed privacy, check your internet and try again</string>
-    <string name="user_typing">Typing…</string>
+    <string name="user_typing">typing…</string>
     <string name="group_user_typing">%s is typing…</string>
-    <string name="group_many_users_typing">Multiple users typing…</string>
+    <string name="group_many_users_typing">multiple users typing…</string>
     <string name="feed_nux_bottom_sheet_title">About HalloApp</string>
     <string name="feed_nux_bottom_sheet_text">Home feed allows you to share text, photo, and video updates that disappear after 30 days.\n\nIf you want to share updates with someone, both parties must have each other\'s numbers saved on their phones.\n\nYou can share your updates with your entire contact list or only with selected people. Go to settings to change feed privacy.</string>
     <string name="messages_nux_text">This is where you’ll find messages from your friends &amp; family. When someone new joins HalloApp you can see them here.</string>
