@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.PostsFragment;
@@ -40,6 +41,7 @@ public class ProfileFragment extends PostsFragment {
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
     private final Me me = Me.getInstance();
+    private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private ImageView avatarView;
@@ -53,6 +55,14 @@ public class ProfileFragment extends PostsFragment {
     protected LinearLayoutManager layoutManager;
 
     private ProfileViewModel viewModel;
+
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+
+        @Override
+        public void onContactsChanged() {
+            avatarView.post(ProfileFragment.this::loadAvatar);
+        }
+    };
 
     public static ProfileFragment newProfileFragment(@NonNull UserId userId) {
         ProfileFragment profileFragment = new ProfileFragment();
@@ -79,6 +89,7 @@ public class ProfileFragment extends PostsFragment {
         if (viewModel != null && layoutManager != null) {
             viewModel.saveScrollState(layoutManager.onSaveInstanceState());
         }
+        contactsDb.removeObserver(contactsObserver);
         super.onDestroyView();
     }
 
@@ -147,7 +158,7 @@ public class ProfileFragment extends PostsFragment {
         viewModel.getIsBlocked().observe(getViewLifecycleOwner(), this::updateMenu);
 
         avatarView = headerView.findViewById(R.id.avatar);
-        avatarLoader.load(avatarView, profileUserId, false);
+        loadAvatar();
 
         if (profileUserId.isMe()) {
             final View.OnClickListener editProfileClickListener = v -> {
@@ -160,8 +171,12 @@ public class ProfileFragment extends PostsFragment {
         adapter.addHeader(headerView);
 
         postsView.setAdapter(adapter);
-
+        contactsDb.addObserver(contactsObserver);
         return root;
+    }
+
+    private void loadAvatar() {
+        avatarLoader.load(avatarView, profileUserId, false);
     }
 
     private void openProfileEditor() {
@@ -171,7 +186,6 @@ public class ProfileFragment extends PostsFragment {
     @Override
     public void onResume() {
         super.onResume();
-        avatarLoader.load(avatarView, profileUserId, false);
         adapter.notifyDataSetChanged();
     }
 
