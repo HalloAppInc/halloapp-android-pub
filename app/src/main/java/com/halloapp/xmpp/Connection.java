@@ -140,7 +140,7 @@ public abstract class Connection {
 
     public abstract void sendGroupMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
 
-    public abstract <T extends IQ> Observable<T> sendRequestIq(@NonNull HalloIq iq);
+    public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 
     public abstract void sendRerequest(final String encodedIdentityKey, final @NonNull UserId senderUserId, final @NonNull String messageId);
 

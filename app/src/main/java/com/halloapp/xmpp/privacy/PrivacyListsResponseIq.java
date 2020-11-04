@@ -20,35 +20,11 @@ import java.util.Map;
 
 public class PrivacyListsResponseIq extends HalloIq {
 
-    public static final String ELEMENT = "privacy_lists";
-    public static final String NAMESPACE = "halloapp:user:privacy";
-
-    static final String ELEMENT_PRIVACY_LIST = "privacy_list";
-
     public final @PrivacyList.Type String activeType;
 
-    public Map<String, PrivacyList> resultMap = new HashMap<>();
-
-    protected PrivacyListsResponseIq(XmlPullParser parser) throws IOException, XmlPullParserException {
-        super(ELEMENT, NAMESPACE);
-
-        activeType = parser.getAttributeValue(null, "active_type");
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            final String name = parser.getName();
-            if (ELEMENT_PRIVACY_LIST.equals(name)) {
-                PrivacyList list = new PrivacyList(parser);
-                resultMap.put(list.type, list);
-            } else {
-                Xml.skip(parser);
-            }
-        }
-    }
+    public final Map<String, PrivacyList> resultMap;
 
     private PrivacyListsResponseIq(String activeType, Map<String, PrivacyList> resultMap) {
-        super(ELEMENT, NAMESPACE);
         this.activeType = activeType;
         this.resultMap = resultMap;
     }
@@ -58,11 +34,6 @@ public class PrivacyListsResponseIq extends HalloIq {
         if (resultMap.containsKey(type)) {
             return resultMap.get(type);
         }
-        return null;
-    }
-
-    @Override
-    protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
         return null;
     }
 
@@ -82,13 +53,4 @@ public class PrivacyListsResponseIq extends HalloIq {
 
         return new PrivacyListsResponseIq(activeType, resultMap);
     }
-
-    public static class Provider extends IQProvider<PrivacyListsResponseIq> {
-
-        @Override
-        public PrivacyListsResponseIq parse(XmlPullParser parser, int initialDepth) throws IOException, XmlPullParserException {
-            return new PrivacyListsResponseIq(parser);
-        }
-    }
-
 }

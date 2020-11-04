@@ -11,29 +11,12 @@ import com.halloapp.proto.server.UploadGroupAvatar;
 
 public class GroupAvatarIq extends HalloIq {
 
-    public static final String ELEMENT = "group_avatar";
-
-    private static final String ATTRIBUTE_GROUP_ID = "gid";
-
-    public static final String NAMESPACE = "halloapp:groups";
-
     final GroupId groupId;
     final String base64;
 
     GroupAvatarIq(@NonNull GroupId groupId, @NonNull String base64) {
-        super(ELEMENT, NAMESPACE);
-        setType(Type.set);
         this.groupId = groupId;
         this.base64 = base64;
-    }
-
-    @Override
-    protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
-        xml.attribute(ATTRIBUTE_GROUP_ID, groupId.rawId());
-        xml.rightAngleBracket();
-        xml.append(base64);
-
-        return xml;
     }
 
     @Override

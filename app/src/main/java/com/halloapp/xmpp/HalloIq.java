@@ -1,31 +1,33 @@
 package com.halloapp.xmpp;
 
-import com.halloapp.BuildConfig;
+import androidx.annotation.NonNull;
+
 import com.halloapp.proto.server.Iq;
-import com.halloapp.proto.server.PrivacyLists;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 
-import org.jivesoftware.smack.packet.IQ;
+public abstract class HalloIq {
 
-/**
- * Temporarily extends Smack's IQ to aid in transition from xmpp to protobuf
- */
+    private String id;
 
-public abstract class HalloIq extends IQ {
-    public HalloIq(HalloIq iq) {
-        super(iq);
+    public HalloIq() {
+        this.id = RandomId.create();
     }
 
-    protected HalloIq(String childElementName) {
-        super(childElementName);
+    public HalloIq(@NonNull String id) {
+        this.id = id;
     }
 
-    protected HalloIq(String childElementName, String childElementNamespace) {
-        super(childElementName, childElementNamespace);
+    public void setStanzaId(String id) {
+        this.id = id;
+    }
+
+    public String getStanzaId() {
+        return id;
     }
 
     public abstract Iq toProtoIq();
@@ -48,17 +50,11 @@ public abstract class HalloIq extends IQ {
 
     private static class EmptyResultIq extends HalloIq {
         protected EmptyResultIq(String id) {
-            super("");
             setStanzaId(id);
         }
 
         @Override
         public Iq toProtoIq() {
-            return null;
-        }
-
-        @Override
-        protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
             return null;
         }
     }

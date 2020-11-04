@@ -73,10 +73,6 @@ import com.halloapp.xmpp.util.ResponseHandler;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.Async;
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -115,7 +111,6 @@ public class NewConnection extends Connection {
     private static final int REPLY_TIMEOUT = 20_000;
 
     public static final String FEED_THREAD_ID = "feed";
-    public static final String XMPP_DOMAIN = "s.halloapp.net";
 
     private final Me me;
     private final BgWorkers bgWorkers;
@@ -930,7 +925,7 @@ public class NewConnection extends Connection {
 
     // NOTE: Should NOT be called from executor.
     @Override
-    public <T extends IQ> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
+    public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
             if (!reconnectIfNeeded() || sslSocket == null) {
