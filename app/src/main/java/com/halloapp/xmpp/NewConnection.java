@@ -99,15 +99,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-
-import static com.halloapp.xmpp.OldConnection.FEED_THREAD_ID;
 
 public class NewConnection extends Connection {
 
@@ -117,6 +114,7 @@ public class NewConnection extends Connection {
     private static final int CONNECTION_TIMEOUT = 20_000;
     private static final int REPLY_TIMEOUT = 20_000;
 
+    public static final String FEED_THREAD_ID = "feed";
     public static final String XMPP_DOMAIN = "s.halloapp.net";
     private static final Jid SERVER_JID = JidCreate.bareFromOrThrowUnchecked(HOST); // TODO(jack): remove after switch
 
@@ -1127,7 +1125,6 @@ public class NewConnection extends Connection {
                     baos.write(leftovers);
 
                     parsePacket(nextPacket);
-                    // TODO(jack): Interrupted exception anywhere? Hmmm
                 } catch (Exception e) {
                     if (!done) {
                         Log.e("Packet Reader error", e);
