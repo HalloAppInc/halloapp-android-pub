@@ -9,7 +9,6 @@ import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -24,10 +23,9 @@ public class MediaUploadIq extends HalloIq {
     final Urls urls = new Urls();
     long fileSize = 0;
 
-    MediaUploadIq(@NonNull Jid to, long fileSize) {
+    MediaUploadIq(long fileSize) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.get);
-        setTo(to);
         this.fileSize = fileSize;
     }
 

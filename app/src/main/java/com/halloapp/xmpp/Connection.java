@@ -2,10 +2,8 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 
 import com.halloapp.ConnectionObservers;
-import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
@@ -21,7 +19,6 @@ import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
 
 import java.util.Collection;
 import java.util.List;
@@ -145,8 +142,7 @@ public abstract class Connection {
 
     public abstract <T extends IQ> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 
-    // TODO(jack): Jid and UserId params represent same thing; remove Jid once we've switched to Protobuf
-    public abstract void sendRerequest(final String encodedIdentityKey, final @NonNull Jid originalSender, final @NonNull UserId senderUserId, final @NonNull String messageId);
+    public abstract void sendRerequest(final String encodedIdentityKey, final @NonNull UserId senderUserId, final @NonNull String messageId);
 
     public abstract void sendAck(final @NonNull String id);
 

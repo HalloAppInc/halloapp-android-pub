@@ -6,9 +6,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.WhisperKeys;
 
-import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
-
 public class WhisperKeysDownloadIq extends HalloIq {
 
     private static final String ELEMENT = "whisper_keys";
@@ -20,10 +17,9 @@ public class WhisperKeysDownloadIq extends HalloIq {
     private final String forUser;
     private final UserId userId;
 
-    WhisperKeysDownloadIq(@NonNull Jid to, @NonNull String forUser, @NonNull UserId userId) {
+    WhisperKeysDownloadIq(@NonNull String forUser, @NonNull UserId userId) {
         super(ELEMENT, NAMESPACE);
         setType(Type.get);
-        setTo(to);
         this.forUser = forUser;
         this.userId = userId;
     }

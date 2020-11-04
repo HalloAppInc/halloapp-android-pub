@@ -1,12 +1,7 @@
 package com.halloapp.xmpp;
 
-import androidx.annotation.NonNull;
-
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.WhisperKeys;
-
-import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
 
 public class WhisperKeysCountIq extends HalloIq {
 
@@ -15,10 +10,9 @@ public class WhisperKeysCountIq extends HalloIq {
 
     public Integer count;
 
-    WhisperKeysCountIq(@NonNull Jid to) {
+    WhisperKeysCountIq() {
         super(ELEMENT, NAMESPACE);
         setType(Type.get);
-        setTo(to);
     }
 
     @Override

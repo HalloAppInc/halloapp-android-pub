@@ -9,9 +9,6 @@ import com.google.protobuf.ByteString;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.WhisperKeys;
 
-import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
-
 import java.util.List;
 
 public class WhisperKeysUploadIq extends HalloIq {
@@ -27,10 +24,9 @@ public class WhisperKeysUploadIq extends HalloIq {
     public byte[] signedPreKey;
     public List<byte[]> oneTimePreKeys;
 
-    WhisperKeysUploadIq(@NonNull Jid to, @Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
+    WhisperKeysUploadIq(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
         super(ELEMENT, NAMESPACE);
         setType(Type.set);
-        setTo(to);
         this.identityKey = identityKey;
         this.signedPreKey = signedPreKey;
         this.oneTimePreKeys = oneTimePreKeys;

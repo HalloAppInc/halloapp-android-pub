@@ -14,17 +14,14 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
-import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.proto.server.GroupChat;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Xml;
-import com.halloapp.xmpp.ChatMessageElement;
 import com.halloapp.xmpp.MessageElementHelper;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.util.XmlStringBuilder;
-import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
 
 public class GroupChatMessage implements ExtensionElement {
@@ -93,12 +90,12 @@ public class GroupChatMessage implements ExtensionElement {
         return xml;
     }
 
-    public Message getMessage(Jid from, String id) {
+    public Message getMessage(UserId senderUserId, String id) {
         String rawReplyMessageId = chatMessage.getChatReplyMessageId();
         String rawSenderId = chatMessage.getChatReplyMessageSenderId();
         final Message message = new Message(0,
                 groupId,
-                new UserId(from.getLocalpartOrNull().toString()),
+                senderUserId,
                 id,
                 timestamp,
                 Message.TYPE_CHAT,

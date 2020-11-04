@@ -7,7 +7,6 @@ import com.halloapp.proto.server.PushRegister;
 import com.halloapp.proto.server.PushToken;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
 
 public class PushRegisterRequestIq extends HalloIq {
 
@@ -18,10 +17,9 @@ public class PushRegisterRequestIq extends HalloIq {
 
     private final String token;
 
-    PushRegisterRequestIq(@NonNull Jid to, @NonNull String token) {
+    PushRegisterRequestIq(@NonNull String token) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.set);
-        setTo(to);
         this.token = token;
     }
 

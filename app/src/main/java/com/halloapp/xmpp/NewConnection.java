@@ -116,7 +116,6 @@ public class NewConnection extends Connection {
 
     public static final String FEED_THREAD_ID = "feed";
     public static final String XMPP_DOMAIN = "s.halloapp.net";
-    private static final Jid SERVER_JID = JidCreate.bareFromOrThrowUnchecked(HOST); // TODO(jack): remove after switch
 
     private Me me;
     private BgWorkers bgWorkers;
@@ -350,7 +349,6 @@ public class NewConnection extends Connection {
                 return;
             }
             ServerPropsRequestIq requestIq = new ServerPropsRequestIq();
-            requestIq.setTo(SERVER_JID);
             try {
                 Observable<ServerPropsResponseIq> observable = sendIqRequestAsync(requestIq).map(response -> ServerPropsResponseIq.fromProto(response.getProps()));
                 ServerPropsResponseIq responseIq = observable.await();
@@ -368,7 +366,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: request seconds to expiration: no connection");
                 return null;
             }
-            final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq(SERVER_JID);
+            final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq();
             try {
                 final SecondsToExpirationIq iqResponse = sendIqRequestAsync(secondsToExpirationIq).map(response -> SecondsToExpirationIq.fromProto(response.getClientVersion())).await();
                 return iqResponse.secondsLeft;
@@ -386,7 +384,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: request media upload: no connection");
                 return null;
             }
-            final MediaUploadIq mediaUploadIq = new MediaUploadIq(SERVER_JID, fileSize);
+            final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize);
             try {
                 final MediaUploadIq responseIq = sendIqRequestAsync(mediaUploadIq).map(response -> MediaUploadIq.fromProto(response.getUploadMedia())).await();
                 return responseIq.urls;
@@ -404,7 +402,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: sync contacts: no connection");
                 return null;
             }
-            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(SERVER_JID,
+            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(
                     addPhones, deletePhones, fullSync, syncId, index, lastBatch);
             try {
                 final Iq response = iqRouter.sendSync(contactsSyncIq.toProtoIq());
@@ -428,7 +426,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: send push token: no connection");
                 return;
             }
-            final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(SERVER_JID, pushToken);
+            final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken);
             try {
                 final Iq response = sendIqRequestAsync(pushIq).await();
                 Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response));
@@ -445,7 +443,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: send name: no connection");
                 return Boolean.FALSE;
             }
-            final UserNameIq nameIq = new UserNameIq(SERVER_JID, name);
+            final UserNameIq nameIq = new UserNameIq(name);
             try {
                 final Iq response = sendIqRequestAsync(nameIq).await();
                 Log.d("connection: response after setting name " + ProtoPrinter.toString(response));
@@ -464,7 +462,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: request presence subscription: no connection");
                 return;
             }
-            PresenceStanza stanza = new PresenceStanza(userIdToJid(userId), "subscribe");
+            PresenceStanza stanza = new PresenceStanza(userId, "subscribe");
             sendPacket(Packet.newBuilder().setPresence(stanza.toProto()).build());
         });
     }
@@ -477,7 +475,7 @@ public class NewConnection extends Connection {
                 return;
             }
             // TODO(jack): Uniquely-generated IDs without using Smack
-            PresenceStanza stanza = new PresenceStanza(SERVER_JID, available ? "available" : "away");
+            PresenceStanza stanza = new PresenceStanza(null, available ? "available" : "away");
             Packet packet = Packet.newBuilder().setPresence(stanza.toProto()).build();
             sendPacket(packet);
         });
@@ -491,7 +489,7 @@ public class NewConnection extends Connection {
                 return;
             }
 //            try {
-                ChatStateStanza stanza = new ChatStateStanza(SERVER_JID, state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
+                ChatStateStanza stanza = new ChatStateStanza(state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
                 sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
 //            } catch (InterruptedException | SmackException.NotConnectedException e) {
 //                Log.e("Failed to update chat state", e);
@@ -506,7 +504,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: upload keys: no connection");
                 return Boolean.FALSE;
             }
-            final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(SERVER_JID, identityKey, signedPreKey, oneTimePreKeys);
+            final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(identityKey, signedPreKey, oneTimePreKeys);
             try {
                 final Iq response = sendIqRequestAsync(uploadIq).await();
                 Log.d("connection: response after uploading keys " + ProtoPrinter.toString(response));
@@ -530,7 +528,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: download keys: no connection");
                 return null;
             }
-            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(SERVER_JID, userId.rawId(), userId);
+            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(userId.rawId(), userId);
             try {
                 Observable<WhisperKeysResponseIq> observable = sendIqRequestAsync(downloadIq).map(response -> WhisperKeysResponseIq.fromProto(response.getWhisperKeys()));
                 final WhisperKeysResponseIq response = observable.await();
@@ -550,7 +548,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: get one time key count: no connection");
                 return null;
             }
-            final WhisperKeysCountIq countIq = new WhisperKeysCountIq(SERVER_JID);
+            final WhisperKeysCountIq countIq = new WhisperKeysCountIq();
             try {
                 final WhisperKeysResponseIq response = sendIqRequestAsync(countIq).map(res -> WhisperKeysResponseIq.fromProto(res.getWhisperKeys())).await();
                 Log.d("connection: response for get key count  " + response.toString());
@@ -569,7 +567,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: send stats: no connection");
                 return null;
             }
-            final StatsIq statsIq = new StatsIq(SERVER_JID, counters);
+            final StatsIq statsIq = new StatsIq(counters);
             try {
                 final Iq response = sendIqRequestAsync(statsIq).await();
                 Log.d("connection: response for send stats  " + ProtoPrinter.toString(response));
@@ -589,7 +587,7 @@ public class NewConnection extends Connection {
                 return null;
             }
             try {
-                final AvatarIq avatarIq = new AvatarIq(SERVER_JID, base64, numBytes, height, width);
+                final AvatarIq avatarIq = new AvatarIq(base64, numBytes, height, width);
                 final AvatarIq response = sendIqRequestAsync(avatarIq).map(res -> AvatarIq.fromProto(res.getAvatar())).await();
                 return response.avatarId;
             } catch (ObservableErrorException | InterruptedException e) {
@@ -607,7 +605,7 @@ public class NewConnection extends Connection {
                 return null;
             }
             try {
-                final GroupAvatarIq avatarIq = new GroupAvatarIq(SERVER_JID, groupId, base64);
+                final GroupAvatarIq avatarIq = new GroupAvatarIq(groupId, base64);
                 final GroupResponseIq response = sendIqRequestAsync(avatarIq).map(res -> GroupResponseIq.fromProto(res.getGroupStanza())).await();
                 return response.avatar;
             } catch (ObservableErrorException | InterruptedException e) {
@@ -625,7 +623,7 @@ public class NewConnection extends Connection {
                 return null;
             }
             try {
-                final AvatarIq setAvatarIq = new AvatarIq(SERVER_JID, userId);
+                final AvatarIq setAvatarIq = new AvatarIq(userId);
                 final AvatarIq response = sendIqRequestAsync(setAvatarIq).map(res -> AvatarIq.fromProto(res.getAvatar())).await();
                 return response.avatarId;
             } catch (ObservableErrorException | InterruptedException e) {
@@ -643,7 +641,7 @@ public class NewConnection extends Connection {
                 return null;
             }
             try {
-                final AvatarIq getAvatarIq = new AvatarIq(SERVER_JID, new UserId(me.getUser()));
+                final AvatarIq getAvatarIq = new AvatarIq(new UserId(me.getUser()));
                 final Iq response = iqRouter.sendSync(getAvatarIq.toProtoIq());
                 return response.getAvatar().getId();
             } catch (ExecutionException e) {
@@ -675,7 +673,6 @@ public class NewConnection extends Connection {
                     sharePosts.add(new SharePosts(user, itemList));
                 }
                 FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
-                updateIq.setTo(SERVER_JID);
 
                 sendIqRequestAsync(updateIq).await();
             } catch (ObservableErrorException | InterruptedException e) {
@@ -716,13 +713,11 @@ public class NewConnection extends Connection {
                 if (post.getParentGroup() == null) {
                     FeedUpdateIq publishIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
                     publishIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
-                    publishIq.setTo(SERVER_JID);
 
                     Observable<Iq> observable = sendIqRequestAsync(publishIq);
                     observable.await();
                 } else {
                     GroupFeedUpdateIq publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
-                    publishIq.setTo(SERVER_JID);
 
                     Observable<Iq> observable = sendIqRequestAsync(publishIq);
                     observable.await();
@@ -743,7 +738,6 @@ public class NewConnection extends Connection {
             }
             try {
                 FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-                requestIq.setTo(SERVER_JID);
                 sendIqRequestAsync(requestIq).await();
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 connectionObservers.notifyOutgoingPostSent(postId);
@@ -762,7 +756,6 @@ public class NewConnection extends Connection {
             }
             try {
                 GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-                requestIq.setTo(SERVER_JID);
                 sendIqRequestAsync(requestIq).await();
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
                 connectionObservers.notifyOutgoingPostSent(postId);
@@ -798,13 +791,11 @@ public class NewConnection extends Connection {
                 commentItem.parentCommentId = comment.parentCommentId;
                 if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
                     FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
-                    requestIq.setTo(SERVER_JID);
 
                     Observable<Iq> observable = sendIqRequestAsync(requestIq);
                     observable.await();
                 } else {
                     GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
-                    requestIq.setTo(SERVER_JID);
 
                     Observable<Iq> observable = sendIqRequestAsync(requestIq);
                     observable.await();
@@ -827,7 +818,6 @@ public class NewConnection extends Connection {
             try {
                 FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
                 FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
-                requestIq.setTo(SERVER_JID);
                 sendIqRequestAsync(requestIq).await();
                 // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
                 connectionObservers.notifyOutgoingCommentSent(postId, commentId);
@@ -847,7 +837,6 @@ public class NewConnection extends Connection {
             try {
                 FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
                 GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
-                requestIq.setTo(SERVER_JID);
                 sendIqRequestAsync(requestIq).await();
 
                 connectionObservers.notifyOutgoingCommentSent(postId, commentId);
@@ -973,14 +962,14 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public void sendRerequest(String encodedIdentityKey, @NonNull Jid originalSender, final @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void sendRerequest(String encodedIdentityKey, final @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || sslSocket == null) {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
             RerequestElement rerequestElement = new RerequestElement(encodedIdentityKey, senderUserId);
-            Log.i("connection: sending rerequest for " + messageId + " to " + originalSender);
+            Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });
     }
@@ -992,7 +981,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: cannot send ack, no connection");
                 return;
             }
-            final AckStanza ack = new AckStanza(SERVER_JID, id);
+            final AckStanza ack = new AckStanza(id);
             Log.i("connection: sending ack for " + id);
             sendPacket(Packet.newBuilder().setAck(ack.toProto()).build());
         });
@@ -1198,8 +1187,7 @@ public class NewConnection extends Connection {
                     }
 
                     ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                    Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
-                    Message message = chatMessageElement.getMessage(fromJid, fromUserId, msg.getId());
+                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId());
                     processMentions(message.mentions);
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;
@@ -1211,8 +1199,7 @@ public class NewConnection extends Connection {
                     // NOTE: push names are not collected because eventually these messages will be removed
 
                     ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                    Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
-                    Message message = chatMessageElement.getMessage(fromJid, fromUserId, msg.getId());
+                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId());
                     processMentions(message.mentions);
                     // Do not call connectionObservers; this message is not user-visible
                     handled = true;
@@ -1227,8 +1214,7 @@ public class NewConnection extends Connection {
                     }
 
                     GroupChatMessage groupChatMessage = GroupChatMessage.fromProto(groupChat);
-                    Jid fromJid = JidCreate.bareFrom(Localpart.fromOrThrowUnchecked(fromUserId.rawId()), SERVER_JID.getDomain());
-                    Message message = groupChatMessage.getMessage(fromJid, msg.getId());
+                    Message message = groupChatMessage.getMessage(fromUserId, msg.getId());
                     processMentions(message.mentions);
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;

@@ -10,7 +10,6 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
 
 import org.jivesoftware.smack.provider.IQProvider;
-import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -31,10 +30,9 @@ public class SecondsToExpirationIq extends HalloIq {
         this.secondsLeft = secondsLeft;
     }
 
-    SecondsToExpirationIq(@NonNull Jid to) {
+    SecondsToExpirationIq() {
         super(ELEMENT, NAMESPACE);
         setType(Type.get);
-        setTo(to);
     }
 
     private SecondsToExpirationIq(@NonNull XmlPullParser parser) throws IOException, XmlPullParserException {

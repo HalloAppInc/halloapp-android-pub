@@ -10,7 +10,6 @@ import com.halloapp.util.logs.Log;
 
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.XmlStringBuilder;
-import org.jxmpp.jid.Jid;
 
 import java.util.Locale;
 
@@ -22,8 +21,7 @@ public class ChatStateStanza extends Stanza {
     public final String threadId;
     public final String threadType;
 
-    ChatStateStanza(@NonNull Jid to, @NonNull String type, @NonNull ChatId chatId) {
-        setTo(to);
+    ChatStateStanza(@NonNull String type, @NonNull ChatId chatId) {
         this.type = type;
         threadId = chatId.rawId();
         if (chatId instanceof UserId) {
@@ -36,8 +34,7 @@ public class ChatStateStanza extends Stanza {
         }
     }
 
-    ChatStateStanza(@NonNull Jid to, @NonNull String id, @NonNull String type, @NonNull String threadId, @NonNull String threadType) {
-        setTo(to);
+    ChatStateStanza(@NonNull String id, @NonNull String type, @NonNull String threadId, @NonNull String threadType) {
         setStanzaId(id);
         this.type = type;
         this.threadId = threadId;

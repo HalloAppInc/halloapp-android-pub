@@ -16,7 +16,6 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
@@ -29,10 +28,7 @@ import com.halloapp.util.Xml;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.util.XmlStringBuilder;
-import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
-
-import java.security.GeneralSecurityException;
 
 public class ChatMessageElement implements ExtensionElement {
 
@@ -128,11 +124,10 @@ public class ChatMessageElement implements ExtensionElement {
         return xml;
     }
 
-    Message getMessage(Jid from, UserId fromUserId, String id) {
+    Message getMessage(UserId fromUserId, String id) {
         if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
             try {
-                UserId userId = new UserId(from.getLocalpartOrThrow().asUnescapedString());
-                final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, userId, sessionSetupInfo);
+                final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, fromUserId, sessionSetupInfo);
                 chatMessage = MessageElementHelper.readEncodedEntry(dec);
                 if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
@@ -149,15 +144,15 @@ public class ChatMessageElement implements ExtensionElement {
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
-                    EncryptedSessionManager.getInstance().sendRerequest(from, fromUserId, id);
+                    EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id);
                 }
             }
         }
         String rawReplyMessageId = chatMessage.getChatReplyMessageId();
         String rawSenderId = chatMessage.getChatReplyMessageSenderId();
         final Message message = new Message(0,
-                ChatId.fromNullable(from.getLocalpartOrNull().toString()),
-                new UserId(from.getLocalpartOrNull().toString()),
+                fromUserId,
+                fromUserId,
                 id,
                 timestamp,
                 Message.TYPE_CHAT,

@@ -1,6 +1,5 @@
 package com.halloapp.xmpp;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.proto.server.Contact;
@@ -8,7 +7,6 @@ import com.halloapp.proto.server.ContactList;
 import com.halloapp.proto.server.Iq;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
 
 import java.util.Collection;
 
@@ -28,11 +26,10 @@ public class ContactsSyncRequestIq extends HalloIq {
     private final Collection<String> addPhones;
     private final Collection<String> deletePhones;
 
-    ContactsSyncRequestIq(@NonNull Jid to, @Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones,
+    ContactsSyncRequestIq(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones,
                           boolean isFullSync, @Nullable String syncId, int index, boolean lastBatch) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.set);
-        setTo(to);
         this.addPhones = addPhones;
         this.deletePhones = deletePhones;
         this.isFullSync = isFullSync;

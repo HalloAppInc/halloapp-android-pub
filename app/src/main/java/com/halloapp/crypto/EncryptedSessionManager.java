@@ -29,11 +29,8 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.NewConnection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
-import org.jxmpp.jid.Jid;
-
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -107,9 +104,9 @@ public class EncryptedSessionManager {
         }
     }
 
-    public void sendRerequest(final @NonNull Jid originalSender, final @NonNull UserId senderUserId, final @NonNull String messageId) {
+    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId) {
         String encodedIdentityKey = Base64.encodeToString(getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
-        connection.sendRerequest(encodedIdentityKey, originalSender, senderUserId, messageId);
+        connection.sendRerequest(encodedIdentityKey, senderUserId, messageId);
     }
 
     // Temporary for generating silent chat stanzas

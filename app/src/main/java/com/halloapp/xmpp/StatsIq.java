@@ -10,9 +10,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.stats.Dimensions;
 import com.halloapp.util.stats.Stats;
 
-import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,10 +30,9 @@ public class StatsIq extends HalloIq {
 
     private final List<Stats.Counter> counters;
 
-    StatsIq(@NonNull Jid to, @NonNull List<Stats.Counter> counters) {
+    StatsIq(@NonNull List<Stats.Counter> counters) {
         super(ELEMENT, NAMESPACE);
         setType(Type.set);
-        setTo(to);
         this.counters = counters;
     }
 

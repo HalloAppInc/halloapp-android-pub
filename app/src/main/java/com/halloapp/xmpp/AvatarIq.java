@@ -9,7 +9,6 @@ import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.UploadAvatar;
 
 import org.jivesoftware.smack.provider.IQProvider;
-import org.jxmpp.jid.Jid;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -45,10 +44,9 @@ public class AvatarIq extends HalloIq {
         this.bytes = bytes;
     }
 
-    AvatarIq(Jid to, String base64, long numBytes, int height, int width) {
+    AvatarIq(String base64, long numBytes, int height, int width) {
         super(ELEMENT, NAMESPACE);
         setType(Type.set);
-        setTo(to);
         this.base64 = base64;
         this.numBytes = numBytes;
         this.height = height;
@@ -58,10 +56,9 @@ public class AvatarIq extends HalloIq {
         this.bytes = Base64.decode(base64, Base64.NO_WRAP);
     }
 
-    AvatarIq(Jid to, UserId userId) {
+    AvatarIq(UserId userId) {
         super(ELEMENT, NAMESPACE);
         setType(Type.get);
-        setTo(to);
         this.base64 = null;
         this.numBytes = 0;
         this.height = 0;

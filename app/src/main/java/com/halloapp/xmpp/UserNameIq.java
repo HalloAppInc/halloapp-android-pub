@@ -6,7 +6,6 @@ import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Name;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jxmpp.jid.Jid;
 
 public class UserNameIq extends HalloIq {
 
@@ -17,10 +16,9 @@ public class UserNameIq extends HalloIq {
 
     private final String name;
 
-    UserNameIq(@NonNull Jid to, @NonNull String name) {
+    UserNameIq(@NonNull String name) {
         super(ELEMENT, NAMESPACE);
         setType(IQ.Type.set);
-        setTo(to);
         this.name = name;
     }
 
