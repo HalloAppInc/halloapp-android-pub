@@ -117,10 +117,10 @@ public class NewConnection extends Connection {
     public static final String FEED_THREAD_ID = "feed";
     public static final String XMPP_DOMAIN = "s.halloapp.net";
 
-    private Me me;
-    private BgWorkers bgWorkers;
-    private Preferences preferences;
-    private ConnectionObservers connectionObservers;
+    private final Me me;
+    private final BgWorkers bgWorkers;
+    private final Preferences preferences;
+    private final ConnectionObservers connectionObservers;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
@@ -133,9 +133,9 @@ public class NewConnection extends Connection {
     private AuthResult authResult;
 
     private final Object startupShutdownLock = new Object();
-    private PacketWriter packetWriter = new PacketWriter();
-    private PacketReader packetReader = new PacketReader();
-    private IqRouter iqRouter = new IqRouter();
+    private final PacketWriter packetWriter = new PacketWriter();
+    private final PacketReader packetReader = new PacketReader();
+    private final IqRouter iqRouter = new IqRouter();
 
     NewConnection(
             @NonNull Me me,
@@ -156,6 +156,7 @@ public class NewConnection extends Connection {
     @WorkerThread
     private void connectInBackground() {
         ThreadUtils.setSocketTag();
+        // noinspection ConstantConditions
         if (me == null) {
             Log.i("connection: me is null");
             return;
@@ -249,6 +250,7 @@ public class NewConnection extends Connection {
         if (sslSocket != null && isConnected() && isAuthenticated()) {
             return true;
         }
+        // noinspection ConstantConditions
         if (me == null) {
             Log.e("connection: cannot reconnect, me is null");
             return false;
@@ -319,7 +321,6 @@ public class NewConnection extends Connection {
         }
         if (isConnected()) {
             Log.i("connection: disconnecting");
-//            connection.setReplyTimeout(1_000);
             try {
                 sslSocket.close();
             } catch (IOException e) {
@@ -488,12 +489,8 @@ public class NewConnection extends Connection {
                 Log.e("connection: update chat state: no connection");
                 return;
             }
-//            try {
-                ChatStateStanza stanza = new ChatStateStanza(state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
-                sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
-//            } catch (InterruptedException | SmackException.NotConnectedException e) {
-//                Log.e("Failed to update chat state", e);
-//            }
+            ChatStateStanza stanza = new ChatStateStanza(state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
+            sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
         });
     }
 
@@ -1290,21 +1287,21 @@ public class NewConnection extends Connection {
 
                     handled = true;
                     if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
-                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_MEMBERS)) {
-                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.LEAVE)) {
                         connectionObservers.notifyGroupMemberLeftReceived(groupId, elements, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_ADMINS)) {
-                        connectionObservers.notifyGroupAdminChangeReceived(groupId, elements, senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupAdminChangeReceived(groupId, elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_NAME)) {
-                        connectionObservers.notifyGroupNameChangeReceived(groupId, groupStanza.getName(), senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupNameChangeReceived(groupId, groupStanza.getName(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_AVATAR)) {
-                        connectionObservers.notifyGroupAvatarChangeReceived(groupId, groupStanza.getAvatarId(), senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupAvatarChangeReceived(groupId, groupStanza.getAvatarId(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.AUTO_PROMOTE_ADMINS)) {
                         connectionObservers.notifyGroupAdminAutoPromoteReceived(groupId, elements, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.DELETE)) {
-                        connectionObservers.notifyGroupDeleteReceived(groupId, senderUserId, senderName, ackId);
+                        connectionObservers.notifyGroupDeleteReceived(groupId, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else {
                         handled = false;
                         Log.w("Unrecognized group stanza action " + groupStanza.getAction());
@@ -1535,7 +1532,7 @@ public class NewConnection extends Connection {
     private class PacketWriter {
         private static final int QUEUE_CAPACITY = 100;
 
-        private ArrayBlockingQueue<Packet> queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
+        private final ArrayBlockingQueue<Packet> queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
 
         private volatile boolean done;
 
@@ -1612,9 +1609,9 @@ public class NewConnection extends Connection {
     private class IqRouter {
         private static final long IQ_TIMEOUT_MS = 20_000;
 
-        private Map<String, Iq> responses = new ConcurrentHashMap<>();
-        private Map<String, ResponseHandler<Iq>> successCallbacks = new ConcurrentHashMap<>();
-        private Map<String, ExceptionHandler> failureCallbacks = new ConcurrentHashMap<>();
+        private final Map<String, Iq> responses = new ConcurrentHashMap<>();
+        private final Map<String, ResponseHandler<Iq>> successCallbacks = new ConcurrentHashMap<>();
+        private final Map<String, ExceptionHandler> failureCallbacks = new ConcurrentHashMap<>();
 
         public void onResponse(String id, Iq iq) {
             responses.put(id, iq);
@@ -1726,10 +1723,5 @@ public class NewConnection extends Connection {
         public IqErrorException(String id, String reason) {
             super("Server returned error response for " + id + ": " + reason);
         }
-    }
-
-    // TODO(jack): Remove once XMPP is gone
-    private static Jid userIdToJid(@NonNull UserId userId) {
-        return JidCreate.entityBareFrom(Localpart.fromOrThrowUnchecked(userId.rawId()), Domainpart.fromOrNull(XMPP_DOMAIN));
     }
 }
