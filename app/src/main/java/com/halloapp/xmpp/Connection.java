@@ -18,8 +18,6 @@ import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
 
-import org.jivesoftware.smack.packet.IQ;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

@@ -49,7 +49,7 @@ public class ChatMessageElement implements ExtensionElement {
     private final byte[] encryptedBytes;
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
 
-    private Stats stats = Stats.getInstance();
+    private final Stats stats = Stats.getInstance();
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
         this.chatMessage = MessageElementHelper.messageToChatMessage(message);
