@@ -10,7 +10,7 @@ import java.util.Collections;
 
 public class InvitesApi {
 
-    private Connection connection;
+    private final Connection connection;
 
     public InvitesApi(@NonNull Connection connection) {
         this.connection = connection;

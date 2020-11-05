@@ -301,7 +301,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onWhisperKeysMessage(WhisperKeysMessage message, @NonNull String ackId) {
+    public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {
         if (message.count != null) {
             int count = message.count;
             Log.i("OTPK count down to " + count + "; replenishing");

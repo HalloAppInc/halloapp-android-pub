@@ -13,7 +13,7 @@ import java.util.List;
 
 public class PrivacyListApi {
 
-    private Connection connection;
+    private final Connection connection;
 
     public PrivacyListApi(Connection connection) {
         this.connection = connection;

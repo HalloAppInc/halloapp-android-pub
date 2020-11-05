@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
@@ -35,10 +33,6 @@ public class MessageElementHelper {
         }
         Log.w("Unrecognized media type " + type);
         return MediaType.MEDIA_TYPE_UNSPECIFIED;
-    }
-
-    public static ChatMessage readEncodedEntryString(String entry) {
-        return readEncodedEntry(Base64.decode(entry, Base64.NO_WRAP));
     }
 
     public static ChatMessage readEncodedEntry(byte[] entry) {

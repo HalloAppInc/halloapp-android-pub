@@ -35,16 +35,6 @@ public class GroupFeedUpdateIq extends HalloIq {
         this.feedItem = feedItem;
     }
 
-    private String getActionString() {
-        switch (action) {
-            case Action.PUBLISH:
-                return "publish";
-            case Action.RETRACT:
-                return "retract";
-        }
-        return null;
-    }
-
     private GroupFeedItem.Action getProtoAction() {
         switch (action) {
             case Action.PUBLISH:

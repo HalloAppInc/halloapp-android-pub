@@ -6,7 +6,7 @@ import com.halloapp.util.BgWorkers;
 
 public class BackgroundObservable<T> extends MutableObservable<T> {
 
-    private @NonNull BgWorkers bgWorkers;
+    private final @NonNull BgWorkers bgWorkers;
 
     public BackgroundObservable(@NonNull BgWorkers bgWorkers) {
         this.bgWorkers = bgWorkers;

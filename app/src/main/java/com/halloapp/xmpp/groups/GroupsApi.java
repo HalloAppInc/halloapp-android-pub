@@ -111,15 +111,6 @@ public class GroupsApi {
         });
     }
 
-    // TODO(jack): What about remove avatar?
-    public Observable<String> setGroupAvatar(@NonNull GroupId groupId, String avatar) {
-        final SetGroupInfoIq requestIq = new SetGroupInfoIq(groupId, null, avatar);
-        final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
-        return observable.map(response -> {
-            return response.avatar;
-        });
-    }
-
     public Observable<Boolean> leaveGroup(@NonNull GroupId groupId) {
         final LeaveGroupIq requestIq = new LeaveGroupIq(groupId);
         final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);

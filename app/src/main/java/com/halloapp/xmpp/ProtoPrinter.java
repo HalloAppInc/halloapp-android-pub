@@ -22,31 +22,33 @@ import java.util.List;
 /**
  * Class for turning protobufs into cleaner human-readable strings
  *
- * This approach takes the default Protobuf toString() and makes some modifications to it. The main
- * drawback of this is that the toString() function does not have a spec and the output format
- * could change with future Protobuf updates. Additionally, the default toString() uses reflection
- * to inspect the names of the methods in order to traverse the structure; if Proguard changes
- * these names (i.e. like it does in release) then incorrect results will be printed.
- *
- * So how can we print these in production? One option is to tell proguard not to change
- * anything on classes extending GeneratedMessageLite (currently only fields are preserved),
- * but this leaks a lot of API information to anybody reverse-engineering the app. Probably
- * the best long-term solution is to store the raw protobuf contents in the logs with some
- * marker that tells a post-processor that it represents a protobuf; that post-processor then
- * looks at the included version number in order to fetch the relevant protobuf definitions
- * for conversion to string. We also could avoid all that server-side processing by writing
- * a manual toString() function, but it would have to be updated with each schema change.
+ * Two approaches are taken here:
+ * 1. In debug builds, we basically re-skin Google's default protobuf toString() implementation.
+ *    We parse the structure of the string returned by the protobuf function (which, by the way,
+ *    can be changed at any time and would break our debug logging) and then re-serialize it
+ *    to look like XML. This strategy is not used in production because the various Protobuf
+ *    Message classes are obfuscated by Proguard.
+ * 2. For prod builds, we use some special markers and write out the bytes comprising the
+ *    protobuf as base64. Then, when these log files are viewed using the log browser,
+ *    it will grab the base64 and parse it as whatever protobuf type it was labelled as
+ *    (see getTypeChar() for labelling; the base64 is prepended with this type char, which
+ *    allows the log browser to serialize without having to try all message types)
+ *    and replace the parsed portion of the log with the serialization.
  */
 public class ProtoPrinter {
     private static final String START_TAG = "<![CLBDATA[";
     private static final String END_TAG = "]]>";
 
     public static String toString(@NonNull GeneratedMessageLite<?, ?> message) {
-        return BuildConfig.DEBUG ? xml(message) : production(message);
+        return BuildConfig.DEBUG ? debug(message) : production(message);
     }
 
     public static String simplified(@NonNull GeneratedMessageLite<?, ?> message) {
         return maybePrependWarning(simplifiedInternal(message));
+    }
+
+    public static String debug(@NonNull GeneratedMessageLite<?, ?> message) {
+        return xml(message);
     }
 
     public static String xml(@NonNull GeneratedMessageLite<?, ?> message) {

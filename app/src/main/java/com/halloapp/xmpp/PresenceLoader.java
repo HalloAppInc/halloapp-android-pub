@@ -41,7 +41,7 @@ public class PresenceLoader {
     // Rely on map because Handlers depend on simple == to compare obj
     private final Map<UserId, UserId> userIdMap = new HashMap<>();
 
-    private Handler chatStateUpdateHandler;
+    private final Handler chatStateUpdateHandler;
 
     public static PresenceLoader getInstance() {
         if (instance == null) {

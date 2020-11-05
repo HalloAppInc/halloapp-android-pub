@@ -32,8 +32,8 @@ public class FeedUpdateIq extends HalloIq {
         int SHARE = 2;
     }
 
-    private @Action int action;
-    private @Nullable FeedItem feedItem;
+    private final @Action int action;
+    private final @Nullable FeedItem feedItem;
 
     private @Nullable @PrivacyList.Type String audienceType;
     private @Nullable List<UserId> audienceList;
@@ -47,6 +47,7 @@ public class FeedUpdateIq extends HalloIq {
 
     public FeedUpdateIq(@NonNull Collection<SharePosts> posts) {
         this.action = Action.SHARE;
+        this.feedItem = null;
         sharePosts.addAll(posts);
     }
 
@@ -76,7 +77,7 @@ public class FeedUpdateIq extends HalloIq {
             for (SharePosts sharePost : sharePosts) {
                 builder.addShareStanzas(sharePost.toProto());
             }
-        } else if (feedItem.type == FeedItem.Type.POST) {
+        } else if (feedItem != null && feedItem.type == FeedItem.Type.POST) {
             Post.Builder pb = Post.newBuilder();
             if (audienceType != null && audienceList != null) {
                 List<Long> uids = new ArrayList<>();
@@ -90,7 +91,7 @@ public class FeedUpdateIq extends HalloIq {
                 pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
             }
             builder.setPost(pb);
-        } else if (feedItem.type == FeedItem.Type.COMMENT) {
+        } else if (feedItem != null && feedItem.type == FeedItem.Type.COMMENT) {
             Comment.Builder cb = Comment.newBuilder();
             cb.setId(feedItem.id);
             cb.setPostId(feedItem.parentPostId);
