@@ -4,11 +4,9 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.id.UserId;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Xml;
+import com.halloapp.util.logs.Log;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -134,35 +132,5 @@ public class FeedItem {
             comment.timestamp = Long.parseLong(timestampStr);
         }
         return comment;
-    }
-
-    private String getType() {
-        switch (type) {
-            case Type.POST:
-                return "post";
-            case Type.COMMENT:
-                return "comment";
-        }
-        return "post";
-    }
-
-    public IQ.IQChildElementXmlStringBuilder toNode(IQ.IQChildElementXmlStringBuilder builder) {
-        String elementName = getType();
-        builder.halfOpenElement(elementName);
-        builder.attribute("id", id);
-        if (parentPostId != null) {
-            builder.attribute("post_id", parentPostId);
-        }
-        if (parentCommentId != null) {
-            builder.attribute("parent_comment_id", parentCommentId);
-        }
-        if (payload == null) {
-            builder.closeEmptyElement();
-        } else {
-            builder.rightAngleBracket();
-            builder.append(payload);
-            builder.closeElement(elementName);
-        }
-        return builder;
     }
 }

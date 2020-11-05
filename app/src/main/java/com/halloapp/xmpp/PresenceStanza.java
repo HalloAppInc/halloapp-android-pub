@@ -6,15 +6,9 @@ import androidx.annotation.Nullable;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Presence;
 
-import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.util.XmlStringBuilder;
-import org.jxmpp.jid.parts.Localpart;
-
 import java.util.Locale;
 
-public class PresenceStanza extends Stanza {
-
-    private static final String ELEMENT = "presence";
+public class PresenceStanza extends HalloStanza {
 
     public final UserId userId;
     public final String type;
@@ -24,23 +18,6 @@ public class PresenceStanza extends Stanza {
         this.userId = userId;
         this.type = type;
         this.lastSeen = null;
-    }
-
-    PresenceStanza(@Nullable UserId userId, @NonNull String id, @NonNull String type, @Nullable Long lastSeen) {
-        setStanzaId(id);
-        this.userId = userId;
-        this.type = type;
-        this.lastSeen = lastSeen;
-    }
-
-    @Override
-    public XmlStringBuilder toXML(String enclosingNamespace) {
-        final XmlStringBuilder buf = new XmlStringBuilder(enclosingNamespace);
-        buf.halfOpenElement(ELEMENT);
-        addCommonAttributes(buf, enclosingNamespace);
-        buf.attribute("type", type);
-        buf.closeEmptyElement();
-        return buf;
     }
 
     @Override

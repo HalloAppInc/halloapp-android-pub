@@ -10,24 +10,14 @@ import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 
-public abstract class HalloIq {
-
-    private String id;
+public abstract class HalloIq extends HalloStanza {
 
     public HalloIq() {
-        this.id = RandomId.create();
+        super();
     }
 
     public HalloIq(@NonNull String id) {
-        this.id = id;
-    }
-
-    public void setStanzaId(String id) {
-        this.id = id;
-    }
-
-    public String getStanzaId() {
-        return id;
+        super(id);
     }
 
     public abstract Iq toProtoIq();

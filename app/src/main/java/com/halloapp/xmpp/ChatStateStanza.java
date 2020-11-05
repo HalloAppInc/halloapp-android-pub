@@ -8,14 +8,9 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.ChatState;
 import com.halloapp.util.logs.Log;
 
-import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.util.XmlStringBuilder;
-
 import java.util.Locale;
 
-public class ChatStateStanza extends Stanza {
-
-    private static final String ELEMENT = "chat_state";
+public class ChatStateStanza extends HalloStanza {
 
     public final String type;
     public final String threadId;
@@ -32,25 +27,6 @@ public class ChatStateStanza extends Stanza {
             threadType = "chat";
             Log.e("ChatStateStanza invalid type of chat id for chat state");
         }
-    }
-
-    ChatStateStanza(@NonNull String id, @NonNull String type, @NonNull String threadId, @NonNull String threadType) {
-        setStanzaId(id);
-        this.type = type;
-        this.threadId = threadId;
-        this.threadType = threadType;
-    }
-
-    @Override
-    public XmlStringBuilder toXML(String enclosingNamespace) {
-        final XmlStringBuilder buf = new XmlStringBuilder(enclosingNamespace);
-        buf.halfOpenElement(ELEMENT);
-        addCommonAttributes(buf, enclosingNamespace);
-        buf.attribute("type", type);
-        buf.attribute("thread_id", threadId);
-        buf.attribute("thread_type", threadType);
-        buf.closeEmptyElement();
-        return buf;
     }
 
     @Override
