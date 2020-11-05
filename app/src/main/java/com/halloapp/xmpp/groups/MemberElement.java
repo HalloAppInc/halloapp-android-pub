@@ -5,34 +5,10 @@ import androidx.annotation.StringDef;
 import com.halloapp.Me;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.GroupMember;
-import com.halloapp.util.Preconditions;
 
-import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.jivesoftware.smack.util.XmlStringBuilder;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-public class MemberElement implements ExtensionElement {
-
-    public static final String NAMESPACE = "halloapp:groups";
-    public static final String ELEMENT = "member";
-
-    private static final String ELEMENT_UID = "uid";
-
-    private static final String ATTRIBUTE_UID = "uid"; // only mandatory one
-    private static final String ATTRIBUTE_TYPE = "type";
-    private static final String ATTRIBUTE_NAME = "name";
-    private static final String ATTRIBUTE_ACTION = "action";
-    private static final String ATTRIBUTE_RESULT = "result";
-    private static final String ATTRIBUTE_REASON = "reason";
-
-    public final Map<UserId, String> typeMap = new HashMap<>();
+public class MemberElement {
 
     public UserId uid;
     public @Type String type;
@@ -65,25 +41,6 @@ public class MemberElement implements ExtensionElement {
         String FAILED = "failed";
     }
 
-    MemberElement(UserId uid) {
-        this.uid = uid;
-    }
-
-    MemberElement(UserId uid, String action) {
-        this.uid = uid;
-        this.action = action;
-    }
-
-    MemberElement(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String parsedUid = parser.getAttributeValue("", ATTRIBUTE_UID);
-        uid = parsedUid == null ? null : new UserId(parsedUid);
-        type = parser.getAttributeValue("", ATTRIBUTE_TYPE);
-        name = parser.getAttributeValue("", ATTRIBUTE_NAME);
-        action = parser.getAttributeValue("", ATTRIBUTE_ACTION);
-        result = parser.getAttributeValue("", ATTRIBUTE_RESULT);
-        reason = parser.getAttributeValue("", ATTRIBUTE_REASON);
-    }
-
     public MemberElement(GroupMember groupMember) {
         String rawUid = Long.toString(groupMember.getUid());
         boolean isMe = rawUid.equals(Me.getInstance().getUser());
@@ -93,36 +50,5 @@ public class MemberElement implements ExtensionElement {
         action = groupMember.getAction().name().toLowerCase(Locale.US);
         result = groupMember.getResult();
         reason = groupMember.getReason();
-    }
-
-    @Override
-    public String getNamespace() {
-        return NAMESPACE;
-    }
-
-    @Override
-    public String getElementName() {
-        return ELEMENT;
-    }
-
-    @Override
-    public CharSequence toXML(String enclosingNamespace) {
-        final XmlStringBuilder buf = new XmlStringBuilder(enclosingNamespace);
-        buf.halfOpenElement(ELEMENT);
-        buf.xmlnsAttribute(NAMESPACE);
-        buf.attribute(ATTRIBUTE_UID, Preconditions.checkNotNull(uid).rawId());
-        if (action != null) {
-            buf.attribute(ATTRIBUTE_ACTION, action);
-        }
-        buf.closeEmptyElement();
-        return buf;
-    }
-
-    public static class Provider extends ExtensionElementProvider<MemberElement> {
-
-        @Override
-        public final MemberElement parse(XmlPullParser parser, int initialDepth) throws Exception {
-            return new MemberElement(parser);
-        }
     }
 }

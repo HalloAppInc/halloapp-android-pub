@@ -71,7 +71,6 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 import com.halloapp.xmpp.util.ResponseHandler;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.util.Async;
 
 import java.io.ByteArrayOutputStream;
@@ -960,7 +959,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
-            RerequestElement rerequestElement = new RerequestElement(encodedIdentityKey, senderUserId);
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, encodedIdentityKey);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });
