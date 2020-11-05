@@ -4,12 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.UidElement;
 import com.halloapp.xmpp.HalloIq;
-
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.util.XmlStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;

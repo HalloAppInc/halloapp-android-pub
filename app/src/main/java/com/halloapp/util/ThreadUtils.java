@@ -20,4 +20,11 @@ public class ThreadUtils {
     public static void setSocketTag() {
         TrafficStats.setThreadStatsTag((int) Thread.currentThread().getId());
     }
+
+    public static void go(Runnable runnable, String threadName) {
+        Thread thread = new Thread(runnable);
+        thread.setName(threadName);
+        thread.setDaemon(true);
+        thread.start();
+    }
 }

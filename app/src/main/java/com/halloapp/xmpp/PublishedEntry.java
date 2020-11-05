@@ -5,7 +5,6 @@ import android.util.Base64;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
 import com.google.protobuf.ByteString;
@@ -15,30 +14,15 @@ import com.halloapp.proto.clients.Comment;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.MediaType;
 import com.halloapp.proto.clients.Post;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.Xml;
-import com.halloapp.xmpp.feed.FeedItem;
+import com.halloapp.util.logs.Log;
 
-import org.jivesoftware.smack.packet.NamedElement;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlSerializer;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PublishedEntry {
-
-    private static final String ELEMENT = "entry";
-    private static final String NAMESPACE = "http://halloapp.com/published-entry";
-
-    private static final String ELEMENT_PROTOBUF_STAGE_ONE = "s1";
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ENTRY_FEED, ENTRY_COMMENT})
@@ -82,30 +66,6 @@ public class PublishedEntry {
             this.width = width;
             this.height = height;
         }
-
-        Media(@MediaType String type, String url, String encKey, String sha256hash, String widthText, String heightText) {
-            this.type = type;
-            this.url = url;
-
-            this.encKey = encKey == null ? null : Base64.decode(encKey, Base64.NO_WRAP);
-            this.sha256hash = sha256hash == null ? null : Base64.decode(sha256hash, Base64.NO_WRAP);
-
-            if (widthText != null) {
-                try {
-                    this.width = Integer.parseInt(widthText);
-                } catch (NumberFormatException ex) {
-                    Log.e("PublishedEntry: invalid width", ex);
-                }
-            }
-
-            if (heightText != null) {
-                try {
-                    this.height = Integer.parseInt(heightText);
-                } catch (NumberFormatException ex) {
-                    Log.e("PublishedEntry: invalid height", ex);
-                }
-            }
-        }
     }
 
     static @com.halloapp.content.Media.MediaType int getMediaType(@PublishedEntry.Media.MediaType String protocolMediaType) {
@@ -137,39 +97,6 @@ public class PublishedEntry {
         }
     }
 
-    static @NonNull List<PublishedEntry> getFeedEntries(@NonNull List<FeedItem> feedItems) {
-        final List<PublishedEntry> entries = new ArrayList<>();
-        for (FeedItem item : feedItems) {
-            final PublishedEntry entry = getFeedEntry(item);
-            if (entry != null && entry.valid()) {
-                entries.add(entry);
-            }
-        }
-        return entries;
-    }
-
-    static @NonNull List<PublishedEntry> getEntries(@NonNull List<? extends NamedElement> items) {
-        final List<PublishedEntry> entries = new ArrayList<>();
-        for (NamedElement item : items) {
-            if (item instanceof PubSubItem) {
-                final PublishedEntry entry = getEntry((PubSubItem)item);
-                if (entry != null && entry.valid()) {
-                    entries.add(entry);
-                }
-            } else {
-                Log.e("PublishedEntry.getEntries: unknown feed entry " + item);
-            }
-        }
-        return entries;
-    }
-
-    static @Nullable PublishedEntry getFeedEntry(@NonNull FeedItem feedItem) {
-        if (feedItem.payload != null) {
-            return getFeedEntry(feedItem.payload, feedItem.id, feedItem.timestamp, feedItem.publisherId);
-        }
-        return null;
-    }
-
     static PublishedEntry getFeedEntry(@NonNull String payload, @NonNull String id, long timestamp, String publisherId) {
         PublishedEntry.Builder entryBuilder = readEncodedEntryString(payload);
         entryBuilder.id(id);
@@ -178,45 +105,6 @@ public class PublishedEntry {
             entryBuilder.user(publisherId);
         }
         return entryBuilder.build();
-    }
-
-    private static @Nullable PublishedEntry getEntry(@NonNull PubSubItem item) {
-        final String xml = item.getPayload().toXML(null);
-        final XmlPullParser parser = android.util.Xml.newPullParser();
-        PublishedEntry.Builder entryBuilder = null;
-        try {
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(new StringReader(xml));
-            parser.nextTag();
-            entryBuilder = readEntry(parser);
-        } catch (XmlPullParserException | IOException e) {
-            Log.e("PublishedEntry.getEntry", e);
-        }
-        if (entryBuilder != null) {
-            entryBuilder.id(item.getId());
-            entryBuilder.timestamp(item.getTimestamp());
-            if (item.getPublisher() != null) {
-                entryBuilder.user(item.getPublisher().getLocalpartOrNull().toString());
-            }
-        }
-        return entryBuilder == null ? null : entryBuilder.build();
-    }
-
-    private static @Nullable PublishedEntry.Builder readEntry(@NonNull XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, null, ELEMENT);
-        PublishedEntry.Builder entryBuilder = new PublishedEntry.Builder();
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            final String name = Preconditions.checkNotNull(parser.getName());
-            if (name.equals(ELEMENT_PROTOBUF_STAGE_ONE)) {
-                entryBuilder = readEncodedEntryString(Xml.readText(parser));
-            } else {
-                Xml.skip(parser);
-            }
-        }
-        return entryBuilder;
     }
 
     PublishedEntry(@EntryType int type, String id, long timestamp, String user, String text, String feedItemId, String parentCommentId) {
@@ -231,28 +119,6 @@ public class PublishedEntry {
         }
         this.feedItemId = feedItemId;
         this.parentCommentId = parentCommentId;
-    }
-
-    @NonNull String toXml() {
-        final XmlSerializer serializer = android.util.Xml.newSerializer();
-        final StringWriter writer = new StringWriter();
-
-        try {
-            serializer.setOutput(writer);
-            serializer.setPrefix("", NAMESPACE);
-            serializer.startTag(NAMESPACE, ELEMENT);
-
-            serializer.startTag(NAMESPACE, ELEMENT_PROTOBUF_STAGE_ONE);
-            serializer.text(getEncodedEntryString());
-            serializer.endTag(NAMESPACE, ELEMENT_PROTOBUF_STAGE_ONE);
-
-            serializer.endTag(NAMESPACE, ELEMENT);
-            serializer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return writer.toString();
     }
 
     public String getEncodedEntryString() {
@@ -385,10 +251,6 @@ public class PublishedEntry {
     @Override
     public @NonNull String toString() {
         return "PublishedEntry[id=" + id + " type=" + type + " text=" + text + "]";
-    }
-
-    private boolean valid() {
-        return true; // timestamp != 0 && user != null && (text != null || !media.isEmpty());
     }
 
     @SuppressWarnings("UnusedReturnValue")

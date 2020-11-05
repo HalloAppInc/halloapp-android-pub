@@ -8,8 +8,6 @@ import com.halloapp.proto.server.Rerequest;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
-import org.jivesoftware.smack.packet.Message;
-
 public class RerequestElement {
 
     public final String id;

@@ -3,17 +3,9 @@ package com.halloapp.xmpp.privacy;
 import androidx.annotation.Nullable;
 
 import com.halloapp.proto.server.Iq;
-import com.halloapp.proto.server.PrivacyListResult;
 import com.halloapp.proto.server.PrivacyLists;
-import com.halloapp.util.Xml;
 import com.halloapp.xmpp.HalloIq;
 
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.provider.IQProvider;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

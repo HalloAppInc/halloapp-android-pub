@@ -70,9 +70,6 @@ import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ObservableErrorException;
 import com.halloapp.xmpp.util.ResponseHandler;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.util.Async;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -929,7 +926,7 @@ public class NewConnection extends Connection {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || sslSocket == null) {
                 Log.e("connection: cannot send iq " + iq + ", no connection");
-                iqResponse.setException(new SmackException.NotConnectedException());
+                iqResponse.setException(new NotConnectedException());
                 return;
             }
             Observable<Iq> observable = sendIqRequestAsync(iq);
@@ -1056,7 +1053,7 @@ public class NewConnection extends Connection {
 
         void init() {
             done = false;
-            Async.go(this::parsePackets, "Packet Reader"); // TODO(jack): Connection counter
+            ThreadUtils.go(this::parsePackets, "Packet Reader"); // TODO(jack): Connection counter
         }
 
         void shutdown() {
@@ -1532,7 +1529,7 @@ public class NewConnection extends Connection {
 
         void init() {
             done = false;
-            Async.go(this::writePackets, "Packet Writer"); // TODO(jack): Connection counter
+            ThreadUtils.go(this::writePackets, "Packet Writer"); // TODO(jack): Connection counter
         }
 
         void shutdown() {
@@ -1716,6 +1713,12 @@ public class NewConnection extends Connection {
     private static class IqErrorException extends Exception {
         public IqErrorException(String id, String reason) {
             super("Server returned error response for " + id + ": " + reason);
+        }
+    }
+
+    private static class NotConnectedException extends Exception {
+        public NotConnectedException() {
+            super("Could not connect to server");
         }
     }
 }
