@@ -25,8 +25,8 @@ public class PushRegisterRequestIq extends HalloIq {
                                         PushToken.newBuilder()
                                                 .setOs(PushToken.Os.ANDROID)
                                                 .setToken(token)
-                                                .build())
-                                .build())
+                                )
+                )
                 .build();
     }
 }
