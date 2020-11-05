@@ -76,7 +76,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.halloapp.widget.MentionableEntry
-            android:id="@+id/entry"
+            android:id="@+id/entry_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

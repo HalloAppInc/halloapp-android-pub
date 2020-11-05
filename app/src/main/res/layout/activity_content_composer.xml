@@ -27,8 +27,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-            app:theme="@style/ActionBarComposer" />
+            app:theme="@style/ActionBarComposer">
 
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/new_post"
+                    android:layout_gravity="start"
+                    style="@style/TextAppearance.Toolbar.Title" />
+
+                <TextView
+                    android:id="@+id/toolbar_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/composer_subtitle_height"
+                    android:layout_gravity="start"
+                    app:layout_anchor="@id/toolbar_title"
+                    app:layout_anchorGravity="bottom|start"
+                    style="@style/TextAppearance.Toolbar.Subtitle.Composer" />
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
             android:id="@+id/media_container"
@@ -50,230 +74,220 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:clipToPadding="false">
-
-                    <androidx.cardview.widget.CardView
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="@dimen/content_composer_frame_border"
-                        app:cardElevation="2dp">
+                        android:padding="8dp"
+                        android:clipToPadding="false">
 
-                        <LinearLayout
-                            android:orientation="vertical"
+                        <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="@dimen/content_composer_frame_border"
+                            app:cardElevation="2dp">
 
-                            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                            <LinearLayout
+                                android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <androidx.constraintlayout.widget.ConstraintLayout
-                                    android:id="@+id/loading"
+                                <androidx.coordinatorlayout.widget.CoordinatorLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="@dimen/media_pager_child_padding">
+                                    android:layout_height="wrap_content">
 
-                                    <com.halloapp.widget.ContentPhotoView
-                                        android:id="@+id/preview"
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:id="@+id/loading"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:visibility="gone"
-                                        app:layout_constraintLeft_toLeftOf="parent"
-                                        app:layout_constraintRight_toRightOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent"
-                                        app:layout_constraintBottom_toBottomOf="parent"
-                                        app:contentPvCornerRadius="@dimen/content_composer_media_border"/>
+                                        android:padding="@dimen/media_pager_child_padding">
 
-                                    <FrameLayout
-                                        android:id="@+id/progress"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="0dp"
-                                        app:layout_constraintDimensionRatio="0.8"
-                                        app:layout_constraintLeft_toLeftOf="parent"
-                                        app:layout_constraintRight_toRightOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent"
-                                        app:layout_constraintBottom_toBottomOf="parent">
-
-                                        <ProgressBar
-                                            android:layout_width="wrap_content"
+                                        <com.halloapp.widget.ContentPhotoView
+                                            android:id="@+id/preview"
+                                            android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:layout_gravity="center"/>
+                                            android:visibility="gone"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            app:contentPvCornerRadius="@dimen/content_composer_media_border"/>
 
-                                    </FrameLayout>
+                                        <FrameLayout
+                                            android:id="@+id/progress"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            app:layout_constraintDimensionRatio="0.8"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent"
+                                            app:layout_constraintBottom_toBottomOf="parent">
 
-                                </androidx.constraintlayout.widget.ConstraintLayout>
+                                            <ProgressBar
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"/>
 
-                                <com.halloapp.widget.MediaViewPager
-                                    android:id="@+id/media_pager"
+                                        </FrameLayout>
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                    <com.halloapp.widget.MediaViewPager
+                                        android:id="@+id/media_pager"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        tools:layout_height="192dp"/>
+
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/content_composer_button_margins"
+                                        android:translationY="@dimen/content_composer_button_bottom_offset"
+                                        app:layout_anchor="@id/media_pager"
+                                        app:layout_anchorGravity="bottom|left">
+
+                                        <ImageButton
+                                            android:id="@+id/add_media"
+                                            android:layout_height="wrap_content"
+                                            android:layout_width="wrap_content"
+                                            android:src="@drawable/ic_media_add"
+                                            android:background="@drawable/media_edit_button"
+                                            android:visibility="gone"/>
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginRight="@dimen/content_composer_button_margins"
+                                        android:translationY="@dimen/content_composer_button_bottom_offset"
+                                        app:layout_anchor="@id/media_pager"
+                                        app:layout_anchorGravity="bottom|right">
+
+
+                                        <ImageButton
+                                            android:id="@+id/delete"
+                                            android:layout_height="wrap_content"
+                                            android:layout_width="wrap_content"
+                                            android:src="@drawable/ic_media_delete"
+                                            android:background="@drawable/media_edit_button"
+                                            android:visibility="gone"/>
+
+                                        <ImageButton
+                                            android:id="@+id/crop"
+                                            android:layout_height="wrap_content"
+                                            android:layout_width="wrap_content"
+                                            android:src="@drawable/ic_media_crop"
+                                            android:background="@drawable/media_edit_button"
+                                            android:layout_marginLeft="@dimen/content_composer_button_margins"
+                                            android:visibility="gone"/>
+
+                                    </LinearLayout>
+
+                                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                                <me.relex.circleindicator.CircleIndicator
+                                    android:id="@+id/media_pager_indicator"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="8dp"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginBottom="8dp"
+                                    app:ci_width="5dp"
+                                    app:ci_height="5dp"
+                                    app:ci_margin="4dp"
+                                    app:ci_drawable="@drawable/pager_item_indicator_selected"
+                                    app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+                                    app:ci_animator="@animator/pager_indicator"/>
+
+                                <com.halloapp.widget.MentionableEntry
+                                    android:id="@+id/entry_card"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    tools:layout_height="192dp"/>
+                                    android:minHeight="@dimen/entry_card_min_height"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="@string/write_a_post"
+                                    android:textColorHint="@color/secondary_text"
+                                    android:importantForAutofill="no"
+                                    android:gravity="top"
+                                    android:inputType="textCapSentences|textMultiLine"
 
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:layout_marginRight="@dimen/content_composer_button_margins"
-                                    android:translationY="@dimen/content_composer_button_top_offset"
-                                    app:layout_anchor="@id/media_pager"
-                                    app:layout_anchorGravity="top|right">
+                                    android:paddingHorizontal="16dp"
 
-                                    <TextView
-                                        android:id="@+id/media_index"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="sans-serif-condensed"
-                                        android:textColor="@android:color/white"
-                                        android:textSize="@dimen/compose_index_text_size"
-                                        android:shadowColor="@color/black_80"
-                                        android:shadowRadius="4"
-                                        android:gravity="right"
-                                        android:paddingHorizontal="2dp"
-                                        android:layout_marginRight="6dp"
-                                        android:visibility="gone"/>
+                                    android:textAppearance="?textAppearanceListItemSmall"
+                                    android:textSize="@dimen/composer_text_size_large"
+                                    android:lineSpacingMultiplier="1.1"
+                                    android:visibility="gone" />
 
-                                </LinearLayout>
+                            </LinearLayout>
 
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:layout_marginRight="@dimen/content_composer_button_margins"
-                                    android:translationY="@dimen/content_composer_button_bottom_offset"
-                                    app:layout_anchor="@id/media_pager"
-                                    app:layout_anchorGravity="bottom|right">
+                        </androidx.cardview.widget.CardView>
 
-                                    <ImageButton
-                                        android:id="@+id/delete"
-                                        android:layout_height="wrap_content"
-                                        android:layout_width="wrap_content"
-                                        android:src="@drawable/ic_media_delete"
-                                        android:background="@drawable/media_edit_button"
-                                        android:visibility="gone"/>
+                        <LinearLayout
+                            android:id="@+id/audience_nux"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:orientation="vertical"
+                            android:layout_gravity="bottom"
+                            android:paddingEnd="8dp"
+                            android:elevation="6dp"
+                            android:clipToPadding="false"
+                            android:visibility="invisible">
 
-                                    <ImageButton
-                                        android:id="@+id/crop"
-                                        android:layout_height="wrap_content"
-                                        android:layout_width="wrap_content"
-                                        android:src="@drawable/ic_media_crop"
-                                        android:background="@drawable/media_edit_button"
-                                        android:layout_marginLeft="@dimen/content_composer_button_margins"
-                                        android:visibility="gone"/>
-
-                                </LinearLayout>
-
-                            </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-                            <me.relex.circleindicator.CircleIndicator
-                                android:id="@+id/media_pager_indicator"
-                                android:layout_width="wrap_content"
-                                android:layout_height="8dp"
-                                android:layout_gravity="center_horizontal"
-                                app:ci_width="5dp"
-                                app:ci_height="5dp"
-                                app:ci_margin="4dp"
-                                app:ci_drawable="@drawable/pager_item_indicator_selected"
-                                app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
-                                app:ci_animator="@animator/pager_indicator"
-                                android:layoutDirection="ltr"/>
-
-                            <com.halloapp.widget.MentionableEntry
-                                android:id="@+id/entry"
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:background="@null"
-                                android:hint="@string/write_a_description"
-                                android:textColorHint="@color/secondary_text"
-                                android:importantForAutofill="no"
-                                android:gravity="top"
-                                android:inputType="textCapSentences|textMultiLine"
+                                android:paddingLeft="16dp"
+                                android:paddingRight="16dp"
+                                android:paddingTop="16dp"
+                                android:paddingBottom="10dp"
+                                android:visibility="visible"
+                                android:background="@drawable/nux_bubble_background"
+                                android:elevation="4dp">
 
-                                android:paddingStart="16dp"
-                                android:paddingEnd="16dp"
-                                android:paddingTop="0dp"
-                                android:paddingBottom="4dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginBottom="16dp"
+                                <TextView
+                                    android:id="@+id/nux_text"
+                                    android:paddingLeft="12dp"
+                                    android:paddingRight="12dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    android:textSize="18sp"
+                                    android:lineSpacingMultiplier="1.2"
+                                    android:textColor="@android:color/white"
+                                    android:text="@string/post_audience_nux_text"/>
 
-                                android:textAppearance="?textAppearanceListItemSmall"
-                                android:textSize="@dimen/post_text_size"
-                                android:lineSpacingMultiplier="1.1"/>
+                                <TextView android:id="@+id/ok_btn"
+                                    android:layout_width="wrap_content"
+                                    android:layout_gravity="end"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/nux_text"
+                                    android:background="?selectableItemBackground"
+                                    android:maxLines="1"
+                                    android:textColor="@color/nux_button_text"
+                                    android:text="@string/ok"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textSize="18sp"
+                                    android:padding="8dp"
+                                    android:layout_height="wrap_content" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_nux_bubble_tail_up"
+                                android:elevation="4dp"
+                                android:scaleY="-1"
+                                android:tint="@color/color_secondary"
+                                android:layout_gravity="center_horizontal"/>
 
                         </LinearLayout>
 
-                    </androidx.cardview.widget.CardView>
-                    <LinearLayout
-                        android:id="@+id/audience_nux"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="8dp"
-                        android:orientation="vertical"
-                        android:layout_gravity="bottom"
-                        android:paddingEnd="8dp"
-                        android:elevation="6dp"
-                        android:clipToPadding="false"
-                        android:visibility="invisible">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp"
-                            android:paddingTop="16dp"
-                            android:paddingBottom="10dp"
-                            android:visibility="visible"
-                            android:background="@drawable/nux_bubble_background"
-                            android:elevation="4dp">
-
-                            <TextView
-                                android:id="@+id/nux_text"
-                                android:paddingLeft="12dp"
-                                android:paddingRight="12dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                android:textSize="18sp"
-                                android:lineSpacingMultiplier="1.2"
-                                android:textColor="@android:color/white"
-                                android:text="@string/post_audience_nux_text"/>
-
-                            <TextView android:id="@+id/ok_btn"
-                                android:layout_width="wrap_content"
-                                android:layout_gravity="end"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/nux_text"
-                                android:background="?selectableItemBackground"
-                                android:maxLines="1"
-                                android:textColor="@color/nux_button_text"
-                                android:text="@string/ok"
-                                android:fontFamily="sans-serif-medium"
-                                android:textSize="18sp"
-                                android:padding="8dp"
-                                android:layout_height="wrap_content" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_nux_bubble_tail_up"
-                            android:elevation="4dp"
-                            android:scaleY="-1"
-                            android:tint="@color/color_secondary"
-                            android:layout_gravity="center_horizontal"/>
-
-                    </LinearLayout>
-
-
-                </FrameLayout>
+                    </FrameLayout>
 
                     <LinearLayout
                         android:id="@+id/post_audience_help"
@@ -317,12 +331,13 @@
             app:layout_constraintBottom_toTopOf="@+id/footer"
             android:visibility="invisible"/>
 
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/card_background"
             android:elevation="3dp"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/media_container"
             app:layout_constraintEnd_toStartOf="parent"
@@ -408,7 +423,28 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </FrameLayout>
+            <com.halloapp.widget.MentionableEntry
+                android:id="@+id/entry_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/entry_bottom_unfocused_min_height"
+                android:layout_weight="0"
+                android:background="@null"
+                android:hint="@string/write_a_description"
+                android:textColorHint="@color/secondary_text"
+                android:importantForAutofill="no"
+                android:gravity="top"
+                android:inputType="textCapSentences|textMultiLine"
+
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+
+                android:textAppearance="?textAppearanceListItemSmall"
+                android:textSize="@dimen/composer_text_size"
+                android:lineSpacingMultiplier="1.1"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

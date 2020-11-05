@@ -205,7 +205,7 @@ public class ChatActivity extends HalloActivity {
         final ImageView sendButton = findViewById(R.id.send);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
-        editText = findViewById(R.id.entry);
+        editText = findViewById(R.id.entry_card);
         editText.setMentionPickerView(mentionPickerView);
         editText.setText(ChatActivity.messageDrafts.get(chatId));
         editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)

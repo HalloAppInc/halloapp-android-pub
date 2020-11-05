@@ -385,4 +385,7 @@
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>
     </plurals>
+    <string name="composer_sharing_all_summary">Sharing with my contacts</string>
+    <string name="composer_sharing_except_summary">Sharing with some of my contacts</string>
+    <string name="composer_sharing_only_summary">Sharing with %d of my contacts</string>
 </resources>

@@ -204,7 +204,7 @@ public class CommentsActivity extends HalloActivity {
         replyIndicatorCloseButton.setOnClickListener(v -> resetReplyIndicator());
 
         commentsView.setAdapter(adapter);
-        editText = findViewById(R.id.entry);
+        editText = findViewById(R.id.entry_card);
         editText.setMentionPickerView(mentionPickerView);
         final View sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {

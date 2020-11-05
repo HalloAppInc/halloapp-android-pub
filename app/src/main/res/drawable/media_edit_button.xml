@@ -3,8 +3,8 @@
     <item android:state_pressed="true" >
         <shape android:shape="oval">
             <size
-                android:width="30dp"
-                android:height="30dp" />
+                android:width="36dp"
+                android:height="36dp" />
 
             <solid
                 android:color="@color/media_button_background_pressed" />
@@ -14,8 +14,8 @@
     <item android:state_focused="true" >
         <shape android:shape="oval">
             <size
-                android:width="30dp"
-                android:height="30dp" />
+                android:width="36dp"
+                android:height="36dp" />
 
             <solid
                 android:color="@color/media_button_background_pressed" />
@@ -25,8 +25,8 @@
     <item>
         <shape android:shape="oval">
             <size
-                android:width="30dp"
-                android:height="30dp" />
+                android:width="36dp"
+                android:height="36dp" />
 
             <solid
                 android:color="@color/media_button_background" />

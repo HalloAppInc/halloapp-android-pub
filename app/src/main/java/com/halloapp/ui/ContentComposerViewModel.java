@@ -13,6 +13,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,6 +53,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class ContentComposerViewModel extends AndroidViewModel {
+    private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
+    private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
@@ -77,6 +80,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 mentionableContacts.invalidate();
             }
         }
+    };
+
+    private final FeedPrivacyManager.Observer feedPrivacyObserver = () -> {
+        feedPrivacyLiveData.invalidate();
     };
 
     ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
@@ -136,6 +143,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
             }
         };
         contactsDb.addObserver(contactsObserver);
+        feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
+            @Override
+            protected FeedPrivacy compute() {
+                return feedPrivacyManager.getFeedPrivacy();
+            }
+        };
+        feedPrivacyManager.addObserver(feedPrivacyObserver);
     }
 
 
@@ -149,6 +163,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     @Nullable List<EditMediaPair> getEditMedia() {
         return editMedia.getValue();
+    }
+
+    public LiveData<FeedPrivacy> getFeedPrivacy() {
+        return feedPrivacyLiveData.getLiveData();
     }
 
     void loadUris(@NonNull Collection<Uri> uris, @Nullable Bundle editStates) {

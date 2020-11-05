@@ -236,6 +236,10 @@
         <item name="android:textSize">14dp</item>
     </style>
 
+    <style name="TextAppearance.Toolbar.Subtitle.Composer" parent="TextAppearance.Toolbar.Subtitle">
+        <item name="android:textSize">@dimen/composer_subtitle_size</item>
+    </style>
+
     <style name="TextAppearance.Toolbar.Settings.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/white_87</item>
     </style>

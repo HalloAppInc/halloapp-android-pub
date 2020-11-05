@@ -35,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -52,7 +51,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -60,16 +58,17 @@ import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentComposerScrollView;
 import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
@@ -77,12 +76,12 @@ import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
@@ -95,8 +94,7 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_NAVIGATE_TO_CHAT = "navigate_to_chat";
 
-    private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap =
-            new HashMap<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer>();
+    private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap = new HashMap<>();
 
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
@@ -109,6 +107,7 @@ public class ContentComposerActivity extends HalloActivity {
     private CircleIndicator mediaPagerIndicator;
     private MediaPagerAdapter mediaPagerAdapter;
     private DrawDelegateView drawDelegateView;
+    private Toolbar toolbar;
     private View replyContainer;
     private View audienceHelp;
     private View audienceNux;
@@ -116,9 +115,9 @@ public class ContentComposerActivity extends HalloActivity {
     private boolean calledFromCamera;
     private boolean calledFromPicker;
 
+    private ImageButton addMediaButton;
     private ImageButton deletePictureButton;
     private ImageButton cropPictureButton;
-    private TextView mediaIndexView;
 
     @Nullable
     private ChatId chatId;
@@ -130,9 +129,10 @@ public class ContentComposerActivity extends HalloActivity {
     private int expectedMediaCount;
 
     private boolean prevEditEmpty;
-    private boolean cropResultProcessed = false;
+    private boolean updatedMediaProcessed = false;
 
     private static final int REQUEST_CODE_CROP = 1;
+    private static final int REQUEST_CODE_MORE_MEDIA = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +156,9 @@ public class ContentComposerActivity extends HalloActivity {
 
         setContentView(R.layout.activity_content_composer);
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mediaVerticalScrollView = findViewById(R.id.media_vertical_scroll);
@@ -168,11 +169,6 @@ public class ContentComposerActivity extends HalloActivity {
         textContentLoader = new TextContentLoader(this);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
-        editText = findViewById(R.id.entry);
-        editText.setMentionPickerView(mentionPickerView);
-        editText.setOnFocusChangeListener((view, hasFocus) -> {
-            mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
-        });
         audienceNux = findViewById(R.id.audience_nux);
         audienceHelp = findViewById(R.id.post_audience_help);
         View nuxOk = audienceNux.findViewById(R.id.ok_btn);
@@ -189,10 +185,11 @@ public class ContentComposerActivity extends HalloActivity {
 
         final View loadingView = findViewById(R.id.loading);
 
+        addMediaButton = findViewById(R.id.add_media);
         cropPictureButton = findViewById(R.id.crop);
         deletePictureButton = findViewById(R.id.delete);
-        mediaIndexView = findViewById(R.id.media_index);
 
+        addMediaButton.setOnClickListener(v -> addAdditionalMedia());
         cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
         deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
@@ -225,13 +222,11 @@ public class ContentComposerActivity extends HalloActivity {
                 SnackbarHelper.showInfo(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
-            editText.setHint(R.string.write_a_description);
+            editText = findViewById(R.id.entry_bottom);
         } else {
             loadingView.setVisibility(View.GONE);
-            editText.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.type_post_edit_minimum_hight));
+            editText = findViewById(R.id.entry_card);
             editText.requestFocus();
-            editText.setHint(R.string.write_a_post);
-            editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, editText.getContext().getResources().getDimension(R.dimen.compose_text_size_large));
             editText.setPreImeListener((keyCode, event) -> {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     finish();
@@ -240,6 +235,21 @@ public class ContentComposerActivity extends HalloActivity {
                 return false;
             });
         }
+        editText.setVisibility(View.VISIBLE);
+        editText.setMentionPickerView(mentionPickerView);
+
+        final boolean isMediaPost = uris != null;
+        final int minHeightUnfocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_unfocused_min_height);
+        final int minHeightFocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_focused_min_height);
+        editText.setOnFocusChangeListener((view, hasFocus) -> {
+            updateMediaButtons();
+            if (isMediaPost) {
+                final int minHeight = hasFocus ? minHeightFocused : minHeightUnfocused;
+                editText.setMinHeight(minHeight);
+                editText.setMinimumHeight(minHeight);
+            }
+            mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
+        });
 
         if (savedInstanceState == null) {
             chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
@@ -273,7 +283,7 @@ public class ContentComposerActivity extends HalloActivity {
 
                 final boolean useLargeText = (charSequence.length() < 180 && mediaPager.getVisibility() == View.GONE);
                 editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
-                        useLargeText ? R.dimen.compose_text_size_large : R.dimen.compose_text_size));
+                        useLargeText ? R.dimen.composer_text_size_large : R.dimen.composer_text_size));
             }
 
             @Override
@@ -312,9 +322,7 @@ public class ContentComposerActivity extends HalloActivity {
         expectedMediaCount = (uris != null) ? uris.size() : 0;
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
-        viewModel.loadingItem.observe(this, editItem -> {
-            setProgressPreview(editItem, true);
-        });
+        viewModel.loadingItem.observe(this, editItem -> setProgressPreview(editItem, true));
         viewModel.editMedia.observe(this, media -> {
             loadingView.setVisibility(View.GONE);
             setProgressPreview(viewModel.loadingItem.getValue(), false);
@@ -337,12 +345,7 @@ public class ContentComposerActivity extends HalloActivity {
             updateMediaButtons();
             updateAspectRatioForMedia(media);
         });
-        viewModel.mentionableContacts.getLiveData().observe(this, new Observer<List<Contact>>() {
-            @Override
-            public void onChanged(List<Contact> contacts) {
-                mentionPickerView.setMentionableContacts(contacts);
-            }
-        });
+        viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {
                 contentItem.addToStorage(ContentDb.getInstance());
@@ -364,17 +367,19 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             }
         });
+        final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
         if (viewModel.chatName != null) {
-            setTitle("");
+            titleView.setText("");
             viewModel.chatName.getLiveData().observe(this, name -> {
-                this.setTitle(name);
+                titleView.setText(name);
                 if (replyPostId != null) {
                     final TextView replyNameView = findViewById(R.id.reply_name);
                     replyNameView.setText(name);
                 }
             });
         } else {
-            setTitle(R.string.new_post);
+            titleView.setText(R.string.new_post);
+            viewModel.getFeedPrivacy().observe(this, this::updateSubtitle);
         }
 
         replyContainer = findViewById(R.id.reply_container);
@@ -382,6 +387,23 @@ public class ContentComposerActivity extends HalloActivity {
             viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
         } else {
             replyContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateSubtitle(final FeedPrivacy feedPrivacy) {
+        final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
+        if (feedPrivacy == null) {
+            Log.e("ContentComposerActivity: updateSubtitle received null FeedPrivacy");
+            subtitleView.setText("");
+        } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+            subtitleView.setText(R.string.composer_sharing_all_summary);
+        } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
+            subtitleView.setText(R.string.composer_sharing_except_summary);
+        } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
+            subtitleView.setText(getString(R.string.composer_sharing_only_summary, feedPrivacy.onlyList.size()));
+        } else {
+            Log.e("ContentComposerActivity: updateSubtitle received unexpected activeList - " + feedPrivacy.activeList);
+            subtitleView.setText("");
         }
     }
 
@@ -420,8 +442,7 @@ public class ContentComposerActivity extends HalloActivity {
         finish();
     }
 
-    private void prepareResult() {
-        final Intent intent = new Intent();
+    private void putExtraMediaDataInIntent(@NonNull final Intent intent) {
         final ArrayList<Uri> uris = new ArrayList<>();
         final Bundle editStates = new Bundle();
 
@@ -435,7 +456,11 @@ public class ContentComposerActivity extends HalloActivity {
 
         intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
         intent.putExtra(CropImageActivity.EXTRA_STATE, editStates);
+    }
 
+    private void prepareResult() {
+        final Intent intent = new Intent();
+        putExtraMediaDataInIntent(intent);
         setResult(MediaPickerActivity.RESULT_SELECT_MORE, intent);
     }
 
@@ -572,6 +597,14 @@ public class ContentComposerActivity extends HalloActivity {
         return true;
     }
 
+    private void addAdditionalMedia() {
+        final Intent intent = new Intent(this, MediaPickerActivity.class);
+        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_RESULT);
+        putExtraMediaDataInIntent(intent);
+        updatedMediaProcessed = false;
+        startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
+    }
+
     public void cropItem(final int currentItem) {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         if (mediaPairList != null && mediaPairList.size() > currentItem) {
@@ -590,11 +623,48 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
 
-            cropResultProcessed = false;
+            updatedMediaProcessed = false;
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {
                 startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, CropImageActivity.TRANSITION_VIEW_NAME).toBundle());
             });
         }
+    }
+
+    private void deleteItem(final int currentItem) {
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
+        if (mediaPairList == null || currentItem < 0 || mediaPairList.size() <= currentItem) {
+            return;
+        }
+
+        final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentItem);
+        if (mediaPair.original.type == Media.MEDIA_TYPE_VIDEO) {
+            final View mediaView = mediaPager.findViewWithTag(mediaPair);
+            final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
+            releaseVideoPlayer(mediaPair, contentPlayerView);
+        }
+
+        fullThumbnailLoader.remove(mediaPair.original.file);
+        if (mediaPair.edit != null) {
+            fullThumbnailLoader.remove(mediaPair.edit.file);
+        }
+        viewModel.deleteMediaItem(currentItem);
+        mediaPagerAdapter.setMediaPairList(mediaPairList);
+        if (!mediaPairList.isEmpty()) {
+            setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
+        } else {
+            openMediaPicker();
+            return;
+        }
+        if (mediaPairList.size() <= 1) {
+            mediaPagerIndicator.setVisibility(View.GONE);
+        } else {
+            mediaPagerIndicator.setVisibility(View.VISIBLE);
+            mediaPagerIndicator.setViewPager(mediaPager);
+        }
+        updateAspectRatioForMedia(mediaPairList);
+        invalidateOptionsMenu();
+        updateMediaButtons();
+        refreshVideoPlayers(getCurrentItem());
     }
 
     @Override
@@ -625,8 +695,8 @@ public class ContentComposerActivity extends HalloActivity {
         // the animated transition ends.
         if (resultCode == RESULT_OK && data.hasExtra(CropImageActivity.EXTRA_MEDIA)) {
             postponeEnterTransition();
-            onCropped(data);
-            cropResultProcessed = true;
+            onDataUpdated(data);
+            updatedMediaProcessed = true;
 
             mediaPager.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
@@ -641,19 +711,18 @@ public class ContentComposerActivity extends HalloActivity {
     @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
-        //noinspection SwitchStatementWithTooFewBranches
         switch (request) {
-            case REQUEST_CODE_CROP: {
-                if (result == RESULT_OK && !cropResultProcessed) {
-                    onCropped(data);
-                    cropResultProcessed = true;
+            case REQUEST_CODE_CROP:
+            case REQUEST_CODE_MORE_MEDIA:
+                if (result == RESULT_OK && !updatedMediaProcessed) {
+                    onDataUpdated(data);
+                    updatedMediaProcessed = true;
                 }
                 break;
-            }
         }
     }
 
-    private void onCropped(@NonNull final Intent data) {
+    private void onDataUpdated(@NonNull final Intent data) {
         final ArrayList<Uri> uris = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
         final int currentItem = data.getIntExtra(CropImageActivity.EXTRA_SELECTED, getCurrentItem());
         final Bundle editStates = data.getParcelableExtra(CropImageActivity.EXTRA_STATE);
@@ -703,53 +772,12 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
-    private void deleteItem(final int currentItem) {
-        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
-        if (mediaPairList == null || currentItem < 0 || mediaPairList.size() <= currentItem) {
-            return;
-        }
-
-        final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentItem);
-        if (mediaPair.original.type == Media.MEDIA_TYPE_VIDEO) {
-            final View mediaView = mediaPager.findViewWithTag(mediaPair);
-            final ContentPlayerView contentPlayerView = (mediaView != null) ? mediaView.findViewById(R.id.video) : null;
-            releaseVideoPlayer(mediaPair, contentPlayerView);
-        }
-
-        fullThumbnailLoader.remove(mediaPair.original.file);
-        if (mediaPair.edit != null) {
-            fullThumbnailLoader.remove(mediaPair.edit.file);
-        }
-        viewModel.deleteMediaItem(currentItem);
-        mediaPagerAdapter.setMediaPairList(mediaPairList);
-        if (!mediaPairList.isEmpty()) {
-            setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
-        } else {
-            openMediaPicker();
-            return;
-        }
-        if (mediaPairList.size() <= 1) {
-            mediaPagerIndicator.setVisibility(View.GONE);
-        } else {
-            mediaPagerIndicator.setVisibility(View.VISIBLE);
-            mediaPagerIndicator.setViewPager(mediaPager);
-        }
-        updateAspectRatioForMedia(mediaPairList);
-        invalidateOptionsMenu();
-        updateMediaButtons();
-        refreshVideoPlayers(getCurrentItem());
-    }
-
     private void updateMediaButtons() {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
         final int currentItem = getCurrentItem();
-        if (mediaPairList == null || mediaPairList.size() <= 1) {
-            mediaIndexView.setVisibility(View.GONE);
-        } else {
-            mediaIndexView.setText(String.format(Locale.getDefault(), "%d / %d", currentItem + 1, mediaPairList.size()));
-            mediaIndexView.setVisibility(View.VISIBLE);
-        }
-        if (mediaPairList != null && !mediaPairList.isEmpty()) {
+        final boolean editIsFocused = editText != null && editText.isFocused();
+        if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
+            addMediaButton.setVisibility(View.VISIBLE);
             final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
@@ -758,6 +786,7 @@ public class ContentComposerActivity extends HalloActivity {
                 cropPictureButton.setVisibility(View.GONE);
             }
         } else {
+            addMediaButton.setVisibility(View.GONE);
             cropPictureButton.setVisibility(View.GONE);
             deletePictureButton.setVisibility(View.GONE);
         }
