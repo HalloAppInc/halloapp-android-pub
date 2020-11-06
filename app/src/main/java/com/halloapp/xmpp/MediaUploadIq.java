@@ -23,6 +23,7 @@ public class MediaUploadIq extends HalloIq {
     public Iq toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
+                .setId(getStanzaId())
                 .setUploadMedia(UploadMedia.newBuilder().setSize(fileSize))
                 .build();
     }
