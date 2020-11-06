@@ -31,6 +31,10 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_MAKE_POST_NUX = "showed_make_post_nux";
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
+    private static final String PREF_KEY_VIDEO_BITRATE = "video_bitrate";
+    private static final String PREF_KEY_AUDIO_BITRATE = "audio_bitrate";
+    private static final String PREF_KEY_H264_RES = "h264_res";
+    private static final String PREF_KEY_H265_RES = "h265_res";
 
     private AppContext appContext;
     private SharedPreferences preferences;
@@ -224,5 +228,27 @@ public class Preferences {
     @WorkerThread
     public @PrivacyList.Type String getFeedPrivacyActiveList() {
         return getPreferences().getString(PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
+    }
+
+    @WorkerThread
+    public void resetVideoOverride() {
+        getPreferences().edit().remove(PREF_KEY_VIDEO_BITRATE).remove(PREF_KEY_AUDIO_BITRATE).remove(PREF_KEY_H265_RES).remove(PREF_KEY_H264_RES).apply();
+    }
+
+    @WorkerThread
+    public void saveVideoOverride() {
+        getPreferences().edit()
+                .putInt(PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE)
+                .putInt(PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE)
+                .putInt(PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264)
+                .putInt(PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265).apply();
+    }
+
+    @WorkerThread
+    public void loadVideoOverride() {
+        Constants.VIDEO_BITRATE = getPreferences().getInt(PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE);
+        Constants.AUDIO_BITRATE = getPreferences().getInt(PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
+        Constants.VIDEO_RESOLUTION_H264 = getPreferences().getInt(PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
+        Constants.VIDEO_RESOLUTION_H265 = getPreferences().getInt(PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
     }
 }

@@ -38,6 +38,10 @@
             app:key="debug_menu"
             app:title="DEBUG MENU"/>
 
+        <Preference
+            app:key="debug_config"
+            app:title="Debug Config"/>
+
     </com.halloapp.widget.HAPreferenceCategory>
 
 </PreferenceScreen>

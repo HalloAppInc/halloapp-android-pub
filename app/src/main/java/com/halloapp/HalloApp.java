@@ -34,6 +34,10 @@ public class HalloApp extends Application {
         Log.i("halloapp: onCreate");
         initSync();
 
+        if (ServerProps.getInstance().getIsInternalUser() || BuildConfig.DEBUG) {
+            Preferences.getInstance().loadVideoOverride();
+        }
+
         if (!BuildConfig.DEBUG) {
             Log.uploadUnsentReports();
         } else {

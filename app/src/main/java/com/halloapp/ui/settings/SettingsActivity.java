@@ -14,6 +14,7 @@ import androidx.preference.PreferenceCategory;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
+import com.halloapp.DebugActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.props.ServerProps;
@@ -93,6 +94,12 @@ public class SettingsActivity extends HalloActivity {
             debugPreference.setOnPreferenceClickListener(preference -> {
                 View prefView = getListView().getChildAt(preference.getOrder());
                 Debug.showDebugMenu(requireActivity(), prefView);
+                return false;
+            });
+
+            final Preference debugConfigPreference = Preconditions.checkNotNull(findPreference("debug_config"));
+            debugConfigPreference.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(getContext(), DebugActivity.class));
                 return false;
             });
         }
