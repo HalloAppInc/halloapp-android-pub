@@ -21,8 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 -keepattributes Signature
--keep class org.jivesoftware.smack.** { *; }
--keep class org.jivesoftware.smackx.** { *; }
 
 # Crashlytics needs these for deobfuscating crash reports better
 -keepattributes SourceFile,LineNumberTable
