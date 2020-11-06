@@ -130,10 +130,7 @@ public class PostsFragment extends HalloFragment {
         return true;
     }
 
-    protected class PostsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
-
-        final List<View> headers = new ArrayList<>();
-        final AsyncPagedListDiffer<Post> differ;
+    protected class PostsAdapter extends HeaderFooterAdapter<Post> {
 
         static final int POST_TYPE_TEXT = 0x00;
         static final int POST_TYPE_MEDIA = 0x01;
@@ -224,111 +221,75 @@ public class PostsFragment extends HalloFragment {
             final ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
 
                 public void onInserted(int position, int count) {
-                    adapterCallback.onInserted(position + headers.size(), count);
+                    adapterCallback.onInserted(position + getHeaderCount(), count);
                 }
 
                 public void onRemoved(int position, int count) {
-                    adapterCallback.onRemoved(position + headers.size(), count);
+                    adapterCallback.onRemoved(position + getHeaderCount(), count);
                 }
 
                 public void onMoved(int fromPosition, int toPosition) {
-                    adapterCallback.onMoved(fromPosition + headers.size(), toPosition + 1);
+                    adapterCallback.onMoved(fromPosition + getHeaderCount(), toPosition + 1);
                 }
 
                 public void onChanged(int position, int count, @Nullable Object payload) {
-                    adapterCallback.onChanged(position + headers.size(), count, payload);
+                    adapterCallback.onChanged(position + getHeaderCount(), count, payload);
                 }
             };
 
-            differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build());
-        }
-
-        public void addHeader(@NonNull View view) {
-            headers.add(view);
-        }
-
-        public void submitList(@Nullable PagedList<Post> pagedList) {
-            differ.submitList(pagedList);
-        }
-
-        public void submitList(@Nullable PagedList<Post> pagedList, @Nullable final Runnable commitCallback) {
-            differ.submitList(pagedList, commitCallback);
-        }
-
-        public @Nullable PagedList<Post> getCurrentList() {
-            return differ.getCurrentList();
-        }
-
-        public @Nullable Post getItem(int position) {
-            return position < headers.size() ? null : differ.getItem(position - headers.size());
+            setDiffer(new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build()));
         }
 
         @Override
-        public int getItemCount() {
-            return headers.size() + differ.getItemCount();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            // negative view types are headers
-            if (position < headers.size()) {
-                return -position - 1;
-            } else {
-                final Post post = Preconditions.checkNotNull(getItem(position));
-                return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
+        public int getViewTypeForItem(Post post) {
+            return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
                     (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
+        }
 
+        @Override
+        public long getIdForItem(Post post) {
+            return post.rowId;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
+            View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
+            @LayoutRes int contentLayoutRes;
+            switch (viewType & POST_TYPE_MASK) {
+                case POST_TYPE_TEXT: {
+                    contentLayoutRes = R.layout.post_item_text;
+                    break;
+                }
+                case POST_TYPE_MEDIA: {
+                    contentLayoutRes = R.layout.post_item_media;
+                    break;
+                }
+                case POST_TYPE_RETRACTED: {
+                    contentLayoutRes = R.layout.post_item_retracted;
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException();
+                }
             }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position < headers.size() ? -position : Preconditions.checkNotNull(getItem(position)).rowId;
-        }
-
-        @Override
-        public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            Log.i("PostsAdapter.onCreateViewHolder " + viewType);
-            if (viewType < 0) {
-                return new HeaderViewHolder(headers.get(-viewType - 1));
-            } else {
-                View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-                @LayoutRes int contentLayoutRes;
-                switch (viewType & POST_TYPE_MASK) {
-                    case POST_TYPE_TEXT: {
-                        contentLayoutRes = R.layout.post_item_text;
-                        break;
-                    }
-                    case POST_TYPE_MEDIA: {
-                        contentLayoutRes = R.layout.post_item_media;
-                        break;
-                    }
-                    case POST_TYPE_RETRACTED: {
-                        contentLayoutRes = R.layout.post_item_retracted;
-                        break;
-                    }
-                    default: {
-                        throw new IllegalArgumentException();
-                    }
+            final ViewGroup content = layout.findViewById(R.id.post_content);
+            LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
+            if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
+                return new RetractedPostViewHolder(layout, postViewHolderParent);
+            }
+            final ViewGroup footer = layout.findViewById(R.id.post_footer);
+            switch (viewType & POST_DIRECTION_MASK) {
+                case POST_DIRECTION_INCOMING: {
+                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                    return new IncomingPostViewHolder(layout, postViewHolderParent);
                 }
-                final ViewGroup content = layout.findViewById(R.id.post_content);
-                LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
-                if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
-                    return new RetractedPostViewHolder(layout, postViewHolderParent);
+                case POST_DIRECTION_OUTGOING: {
+                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
+                    return new OutgoingPostViewHolder(layout, postViewHolderParent);
                 }
-                final ViewGroup footer = layout.findViewById(R.id.post_footer);
-                switch (viewType & POST_DIRECTION_MASK) {
-                    case POST_DIRECTION_INCOMING: {
-                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                        return new IncomingPostViewHolder(layout, postViewHolderParent);
-                    }
-                    case POST_DIRECTION_OUTGOING: {
-                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
-                        return new OutgoingPostViewHolder(layout, postViewHolderParent);
-                    }
-                    default: {
-                        throw new IllegalArgumentException();
-                    }
+                default: {
+                    throw new IllegalArgumentException();
                 }
             }
         }

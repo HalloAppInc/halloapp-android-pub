@@ -30,6 +30,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -66,7 +67,7 @@ public class GroupInfoActivity extends HalloActivity {
 
     private GroupId groupId;
 
-    private MemberAdapter adapter = new MemberAdapter();
+    private final MemberAdapter adapter = new MemberAdapter();
 
     private TextView groupNameView;
     private RecyclerView membersView;
@@ -255,55 +256,30 @@ public class GroupInfoActivity extends HalloActivity {
         });
     }
 
-    private class MemberAdapter extends RecyclerView.Adapter<ViewHolderWithLifecycle> {
+    private class MemberAdapter extends HeaderFooterAdapter<MemberInfo> {
 
         private static final int TYPE_MEMBER = 1;
 
-        private List<View> headers = new ArrayList<>();
-        private List<MemberInfo> members = new ArrayList<>();
-
-        void addHeader(View header) {
-            headers.add(header);
-        }
-
         void submitMembers(List<MemberInfo> members) {
-            this.members = members;
-            notifyDataSetChanged();
-        }
-
-        private MemberInfo getItem(int position) {
-            return position < headers.size() ? null : members.get(position - headers.size());
+            submitItems(members);
         }
 
         @Override
-        public int getItemCount() {
-            return headers.size() + members.size();
+        public long getIdForItem(@NonNull MemberInfo memberInfo) {
+            return memberInfo.rowId;
         }
 
         @Override
-        public int getItemViewType(int position) {
-            // negative view types are headers
-            if (position < headers.size()) {
-                return -position - 1;
-            } else {
-                return TYPE_MEMBER;
-            }
+        public int getViewTypeForItem(@NonNull MemberInfo memberInfo) {
+            return TYPE_MEMBER;
         }
 
+        @NonNull
         @Override
-        public long getItemId(int position) {
-            return position < headers.size() ? -position : Preconditions.checkNotNull(getItem(position)).rowId;
-        }
-
-        @Override
-        public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType < 0) {
-                return new HeaderViewHolder(headers.get(-viewType - 1));
-            } else {
-                final @LayoutRes int layoutRes = R.layout.group_member;
-                final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
-                return new MemberViewHolder(layout);
-            }
+        public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
+            final @LayoutRes int layoutRes = R.layout.group_member;
+            final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+            return new MemberViewHolder(layout);
         }
 
         @Override
@@ -311,13 +287,6 @@ public class GroupInfoActivity extends HalloActivity {
             if (holder instanceof MemberViewHolder) {
                 ((MemberViewHolder)holder).bindTo(Preconditions.checkNotNull(getItem(position)));
             }
-        }
-    }
-
-    private static class HeaderViewHolder extends ViewHolderWithLifecycle {
-
-        HeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
         }
     }
 
