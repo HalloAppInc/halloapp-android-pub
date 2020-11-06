@@ -22,7 +22,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/terms_privacy"
+                android:id="@+id/terms_of_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -38,6 +38,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/window_background"/>
+
+
+            <TextView
+                android:id="@+id/privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/primary_text"
+                android:text="@string/privacy_policy"
+                android:paddingStart="24dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="15dp"
+                android:background="?selectableItemBackground"
+                android:paddingBottom="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="17dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            android:background="@color/card_background"
+            android:elevation="2dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/send_logs"

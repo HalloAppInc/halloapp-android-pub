@@ -26,9 +26,15 @@ public class HelpActivity extends HalloActivity {
         TextView versionTv = findViewById(R.id.app_version);
         versionTv.setText(getString(R.string.settings_version_footer, BuildConfig.VERSION_NAME));
 
-        View termsPrivacy = findViewById(R.id.terms_privacy);
-        termsPrivacy.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.MAIN_WEBSITE_URL));
+        View termsOfServiceView = findViewById(R.id.terms_of_service);
+        termsOfServiceView.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.TERMS_OF_SERVICE_URL));
+            startActivity(intent);
+        });
+
+        View privacyPolicyView = findViewById(R.id.privacy_policy);
+        privacyPolicyView.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PRIVACY_POLICY_URL));
             startActivity(intent);
         });
 

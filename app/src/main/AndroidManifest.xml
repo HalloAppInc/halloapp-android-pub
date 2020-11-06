@@ -83,10 +83,6 @@
             android:name=".ui.profile.ViewProfileActivity" />
 
         <activity
-            android:name=".ui.AboutActivity"
-            android:label="@string/about"/>
-
-        <activity
             android:name=".ui.HelpActivity"
             android:label="@string/help"/>
 

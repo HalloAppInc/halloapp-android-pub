@@ -5,7 +5,12 @@ import android.text.format.DateUtils;
 public class Constants {
 
     public static final String USER_AGENT = "HalloApp/Android" + BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
+
     public static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
+    public static final String ABOUT_PAGE_URL = "https://www.halloapp.com/about";
+    public static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy-policy";
+    public static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms-of-service";
+
     public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
     public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
     public static final long SHARE_OLD_POST_LIMIT = 7 * DateUtils.DAY_IN_MILLIS;

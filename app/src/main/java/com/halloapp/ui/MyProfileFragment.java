@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -54,7 +56,8 @@ public class MyProfileFragment extends HalloFragment implements MainNavFragment 
 
         View about = root.findViewById(R.id.about);
         about.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), AboutActivity.class));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.ABOUT_PAGE_URL));
+            startActivity(intent);
         });
         View myPosts = root.findViewById(R.id.my_posts);
         myPosts.setOnClickListener(v -> {
