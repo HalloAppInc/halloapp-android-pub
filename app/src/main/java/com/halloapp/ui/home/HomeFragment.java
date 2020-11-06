@@ -75,6 +75,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        parentViewGroup = container;
 
         setHasOptionsMenu(true);
 

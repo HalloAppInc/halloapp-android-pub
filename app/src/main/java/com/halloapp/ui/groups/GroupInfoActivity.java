@@ -112,13 +112,11 @@ public class GroupInfoActivity extends HalloActivity {
         membersView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
         membersView.setAdapter(adapter);
 
-        final View headerView = getLayoutInflater().inflate(R.layout.group_info_header, membersView, false);
-        adapter.addHeader(headerView);
+        final View headerView = adapter.addHeader(R.layout.group_info_header);
         avatarView = headerView.findViewById(R.id.avatar);
         avatarLoader.load(avatarView, groupId, false);
 
-        addMembersView = getLayoutInflater().inflate(R.layout.add_members_item, membersView, false);
-        adapter.addHeader(addMembersView);
+        addMembersView = adapter.addHeader(R.layout.add_members_item);
         addMembersView.setOnClickListener(v -> {
             startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, null, R.string.add_members, false), REQUEST_CODE_ADD_MEMBERS);
         });
@@ -134,7 +132,7 @@ public class GroupInfoActivity extends HalloActivity {
 
         viewModel.getChat().observe(this, chat -> groupNameView.setText(chat.name));
 
-        viewModel.getMembers().observe(this, members -> adapter.submitMembers(members));
+        viewModel.getMembers().observe(this, adapter::submitMembers);
 
         viewModel.getUserIsAdmin().observe(this, userIsAdmin -> updateVisibilities());
         viewModel.getChatIsActive().observe(this, chatIsActive -> updateVisibilities());
@@ -258,6 +256,22 @@ public class GroupInfoActivity extends HalloActivity {
 
     private class MemberAdapter extends HeaderFooterAdapter<MemberInfo> {
 
+        public MemberAdapter() {
+            super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
+                @NonNull
+                @Override
+                public Context getContext() {
+                    return membersView.getContext();
+                }
+
+                @NonNull
+                @Override
+                public ViewGroup getParentViewGroup() {
+                    return (ViewGroup) findViewById(android.R.id.content);
+                }
+            });
+        }
+
         private static final int TYPE_MEMBER = 1;
 
         void submitMembers(List<MemberInfo> members) {
@@ -292,9 +306,9 @@ public class GroupInfoActivity extends HalloActivity {
 
     private class MemberViewHolder extends ViewHolderWithLifecycle {
 
-        private View itemView;
-        private ImageView avatar;
-        private TextView name;
+        private final View itemView;
+        private final ImageView avatar;
+        private final TextView name;
 
         public MemberViewHolder(@NonNull View itemView) {
             super(itemView);

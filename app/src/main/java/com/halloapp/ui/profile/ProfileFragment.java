@@ -99,6 +99,7 @@ public class ProfileFragment extends PostsFragment {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        parentViewGroup = container;
 
         setHasOptionsMenu(true);
 
@@ -130,7 +131,7 @@ public class ProfileFragment extends PostsFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
+        final View headerView = adapter.addHeader(R.layout.profile_header);
         subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
@@ -167,8 +168,6 @@ public class ProfileFragment extends PostsFragment {
             avatarView.setOnClickListener(editProfileClickListener);
             nameView.setOnClickListener(editProfileClickListener);
         }
-
-        adapter.addHeader(headerView);
 
         postsView.setAdapter(adapter);
         contactsDb.addObserver(contactsObserver);

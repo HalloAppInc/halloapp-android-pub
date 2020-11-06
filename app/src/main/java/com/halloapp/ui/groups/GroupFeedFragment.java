@@ -20,8 +20,8 @@ import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
@@ -32,7 +32,7 @@ public class GroupFeedFragment extends PostsFragment {
 
     protected LinearLayoutManager layoutManager;
 
-    private AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private GroupFeedViewModel viewModel;
 
@@ -70,6 +70,7 @@ public class GroupFeedFragment extends PostsFragment {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        parentViewGroup = container;
 
         setHasOptionsMenu(true);
 
@@ -102,7 +103,7 @@ public class GroupFeedFragment extends PostsFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        final View headerView = getLayoutInflater().inflate(R.layout.profile_header, container, false);
+        final View headerView = adapter.addHeader(R.layout.profile_header);
         TextView subtitleView = headerView.findViewById(R.id.subtitle);
         TextView nameView = headerView.findViewById(R.id.name);
         viewModel.chat.getLiveData().observe(getViewLifecycleOwner(), chat -> {
@@ -123,8 +124,6 @@ public class GroupFeedFragment extends PostsFragment {
         ImageView avatarView = headerView.findViewById(R.id.avatar);
 
         avatarLoader.load(avatarView, groupId, false);
-
-        adapter.addHeader(headerView);
 
         postsView.setAdapter(adapter);
 

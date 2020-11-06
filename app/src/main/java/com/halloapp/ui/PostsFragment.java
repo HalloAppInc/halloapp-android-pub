@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
@@ -38,16 +38,13 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PostsFragment extends HalloFragment {
 
     protected final PostsAdapter adapter = new PostsAdapter();
+    protected ViewGroup parentViewGroup;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader;
@@ -103,13 +100,6 @@ public class PostsFragment extends HalloFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         drawDelegateView = requireActivity().findViewById(R.id.draw_delegate);
-    }
-
-    private static class HeaderViewHolder extends ViewHolderWithLifecycle {
-
-        HeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
     }
 
     private static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK = new DiffUtil.ItemCallback<Post>() {
@@ -215,6 +205,20 @@ public class PostsFragment extends HalloFragment {
         };
 
         PostsAdapter() {
+            super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
+                @NonNull
+                @Override
+                public Context getContext() {
+                    return requireContext();
+                }
+
+                @NonNull
+                @Override
+                public ViewGroup getParentViewGroup() {
+                    return parentViewGroup;
+                }
+            });
+
             setHasStableIds(true);
 
             final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);

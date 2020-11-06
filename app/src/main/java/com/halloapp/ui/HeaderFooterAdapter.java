@@ -1,8 +1,11 @@
 package com.halloapp.ui;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.paging.AsyncPagedListDiffer;
@@ -15,6 +18,7 @@ import java.util.List;
 
 public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
+    private final HeaderFooterAdapterParent parent;
     private final List<View> headers = new ArrayList<>();
     private final List<View> footers = new ArrayList<>();
 
@@ -22,7 +26,8 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
     private List<Item> items = new ArrayList<>();
     private AsyncPagedListDiffer<Item> differ;
 
-    public HeaderFooterAdapter() {
+    public HeaderFooterAdapter(@NonNull HeaderFooterAdapterParent parent) {
+        this.parent = parent;
         this.differ = null;
     }
 
@@ -30,12 +35,16 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
         this.differ = differ;
     }
 
-    public void addHeader(@NonNull View header) {
+    public View addHeader(@LayoutRes int layout) {
+        View header = LayoutInflater.from(parent.getContext()).inflate(layout, parent.getParentViewGroup(), false);
         headers.add(header);
+        return header;
     }
 
-    public void addFooter(@NonNull View footer) {
+    public View addFooter(@LayoutRes int layout) {
+        View footer = LayoutInflater.from(parent.getContext()).inflate(layout, parent.getParentViewGroup(), false);
         footers.add(footer);
+        return footer;
     }
 
     protected int getHeaderCount() {
@@ -123,5 +132,10 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
         MetaViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+    }
+
+    public interface HeaderFooterAdapterParent {
+        @NonNull Context getContext();
+        @NonNull ViewGroup getParentViewGroup();
     }
 }
