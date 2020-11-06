@@ -183,16 +183,11 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.refresh_contacts: {
-                ContactsSync.getInstance(this).startContactsSync(true);
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        if (item.getItemId() == R.id.refresh_contacts) {
+            ContactsSync.getInstance(this).startContactsSync(true);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

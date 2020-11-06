@@ -267,16 +267,11 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.finish: {
-                saveResult();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        if (item.getItemId() == R.id.finish) {
+            saveResult();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

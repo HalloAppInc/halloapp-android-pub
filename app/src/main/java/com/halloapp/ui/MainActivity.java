@@ -250,22 +250,15 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void onFabActionSelected(@IdRes int id) {
-        switch (id) {
-            case R.id.add_post_text: {
-                startActivity(new Intent(this, ContentComposerActivity.class));
-                break;
-            }
-            case R.id.add_post_gallery: {
-                final Intent intent = new Intent(this, MediaPickerActivity.class);
-                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
-                startActivity(intent);
-                break;
-            }
-            case R.id.add_post_camera: {
-                final Intent intent = new Intent(this, CameraActivity.class);
-                startActivity(intent);
-                break;
-            }
+        if (id == R.id.add_post_text) {
+            startActivity(new Intent(this, ContentComposerActivity.class));
+        } else if (id == R.id.add_post_gallery) {
+            final Intent intent = new Intent(this, MediaPickerActivity.class);
+            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
+            startActivity(intent);
+        } else if (id == R.id.add_post_camera) {
+            final Intent intent = new Intent(this, CameraActivity.class);
+            startActivity(intent);
         }
         fabView.close(false);
     }

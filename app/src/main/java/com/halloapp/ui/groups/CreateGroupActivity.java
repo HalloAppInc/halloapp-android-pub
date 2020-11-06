@@ -233,24 +233,19 @@ public class CreateGroupActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.create: {
-                final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
-                if (TextUtils.isEmpty(name)) {
-                    SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
-                    nameEditText.requestFocus();
-                    return true;
-                }
-
-                nameEditText.setEnabled(false);
-                viewModel.createGroup(name, userIds);
+        if (item.getItemId() == R.id.create) {
+            final String name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
+            if (TextUtils.isEmpty(name)) {
+                SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
+                nameEditText.requestFocus();
                 return true;
             }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+
+            nameEditText.setEnabled(false);
+            viewModel.createGroup(name, userIds);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter {

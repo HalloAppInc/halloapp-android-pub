@@ -41,13 +41,12 @@ public class FeedPrivacyActivity extends HalloActivity {
     private @PrivacyList.Type String selectedType;
 
     private @PrivacyList.Type String getSelectedType() {
-        switch (settingRadioGroup.getCheckedRadioButtonId()) {
-            case R.id.radio_all:
-                return PrivacyList.Type.ALL;
-            case R.id.radio_only:
-                return PrivacyList.Type.ONLY;
-            case R.id.radio_except:
-                return PrivacyList.Type.EXCEPT;
+        if (settingRadioGroup.getCheckedRadioButtonId() == R.id.radio_all) {
+            return PrivacyList.Type.ALL;
+        } else if (settingRadioGroup.getCheckedRadioButtonId() == R.id.radio_only) {
+            return PrivacyList.Type.ONLY;
+        } else if (settingRadioGroup.getCheckedRadioButtonId() == R.id.radio_except) {
+            return PrivacyList.Type.EXCEPT;
         }
         return PrivacyList.Type.INVALID;
     }

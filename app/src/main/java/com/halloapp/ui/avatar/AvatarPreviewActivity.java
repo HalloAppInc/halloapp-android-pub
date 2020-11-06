@@ -111,16 +111,11 @@ public class AvatarPreviewActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.rotate: {
-                imageView.setRotationBy(270);
-                viewModel.rotate();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        if (item.getItemId() == R.id.rotate) {
+            imageView.setRotationBy(270);
+            viewModel.rotate();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 }

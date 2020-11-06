@@ -693,28 +693,23 @@ public class ChatActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.clear_chat: {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getBaseContext().getString(R.string.delete_chat_confirmation));
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().deleteChat(chatId));
-                builder.setNegativeButton(R.string.no, null);
-                builder.show();
-                return true;
+        if (item.getItemId() == R.id.clear_chat) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getBaseContext().getString(R.string.delete_chat_confirmation));
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().deleteChat(chatId));
+            builder.setNegativeButton(R.string.no, null);
+            builder.show();
+            return true;
+        } else if (item.getItemId() == R.id.block) {
+            if (!blocked) {
+                blockContact(item);
+            } else {
+                unBlockContact(item);
             }
-            case R.id.block: {
-                if (!blocked) {
-                    blockContact(item);
-                } else {
-                    unBlockContact(item);
-                }
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void blockContact(MenuItem item) {
@@ -1100,25 +1095,23 @@ public class ChatActivity extends HalloActivity {
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.copy:
-                            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clipData = ClipData.newPlainText(getString(R.string.copy_text), text);
-                            clipboardManager.setPrimaryClip(clipData);
-                            if (actionMode != null) {
-                                actionMode.finish();
-                            }
-                            return true;
-                        case R.id.reply:
-                            replyMessageRowId = selectedMessageRowId;
-                            viewModel.updateMessageRowId(selectedMessageRowId);
-                            if (actionMode != null) {
-                                actionMode.finish();
-                            }
-                            return true;
-                        default:
-                            return false;
+                    if (item.getItemId() == R.id.copy) {
+                        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clipData = ClipData.newPlainText(getString(R.string.copy_text), text);
+                        clipboardManager.setPrimaryClip(clipData);
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
+                        return true;
+                    } else if (item.getItemId() == R.id.reply) {
+                        replyMessageRowId = selectedMessageRowId;
+                        viewModel.updateMessageRowId(selectedMessageRowId);
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
+                        return true;
                     }
+                    return true;
                 }
 
                 @Override

@@ -90,18 +90,13 @@ public class ViewGroupFeedActivity extends HalloActivity {
         bottomNav.setOnNavigationItemSelectedListener(item -> {
             Intent homeIntent = new Intent(this, MainActivity.class);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            String navTarget;
-            switch (item.getItemId()) {
-                default:
-                case R.id.navigation_home:
-                    navTarget = MainActivity.NAV_TARGET_FEED;
-                    break;
-                case R.id.navigation_messages:
-                    navTarget = MainActivity.NAV_TARGET_MESSAGES;
-                    break;
-                case R.id.navigation_profile:
-                    navTarget = MainActivity.NAV_TARGET_PROFILE;
-                    break;
+            String navTarget = MainActivity.NAV_TARGET_FEED;
+            if (item.getItemId() == R.id.navigation_home) {
+                navTarget = MainActivity.NAV_TARGET_FEED;
+            } else if (item.getItemId() == R.id.navigation_messages) {
+                navTarget = MainActivity.NAV_TARGET_MESSAGES;
+            } else if (item.getItemId() == R.id.navigation_profile) {
+                navTarget = MainActivity.NAV_TARGET_PROFILE;
             }
             homeIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, navTarget);
             startActivity(homeIntent);
@@ -128,26 +123,19 @@ public class ViewGroupFeedActivity extends HalloActivity {
     }
 
     private void onFabActionSelected(@IdRes int id) {
-        switch (id) {
-            case R.id.add_post_text: {
-                Intent intent = new Intent(this, ContentComposerActivity.class);
-                intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
-                startActivity(intent);
-                break;
-            }
-            case R.id.add_post_gallery: {
-                final Intent intent = new Intent(this, MediaPickerActivity.class);
-                intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
-                intent.putExtra(MediaPickerActivity.EXTRA_GROUP_ID, groupId);
-                startActivity(intent);
-                break;
-            }
-            case R.id.add_post_camera: {
-                final Intent intent = new Intent(this, CameraActivity.class);
-                intent.putExtra(CameraActivity.EXTRA_GROUP_FEED_ID, groupId);
-                startActivity(intent);
-                break;
-            }
+        if (id == R.id.add_post_text) {
+            Intent intent = new Intent(this, ContentComposerActivity.class);
+            intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
+            startActivity(intent);
+        } else if (id == R.id.add_post_gallery) {
+            final Intent intent = new Intent(this, MediaPickerActivity.class);
+            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
+            intent.putExtra(MediaPickerActivity.EXTRA_GROUP_ID, groupId);
+            startActivity(intent);
+        } else if (id == R.id.add_post_camera) {
+            final Intent intent = new Intent(this, CameraActivity.class);
+            intent.putExtra(CameraActivity.EXTRA_GROUP_FEED_ID, groupId);
+            startActivity(intent);
         }
         fabView.close(false);
     }

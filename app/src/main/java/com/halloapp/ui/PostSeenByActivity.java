@@ -112,16 +112,11 @@ public class PostSeenByActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.retract: {
-                onRetractPost();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        if (item.getItemId() == R.id.retract) {
+            onRetractPost();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void onRetractPost() {
@@ -342,16 +337,11 @@ public class PostSeenByActivity extends HalloActivity {
                     final PopupMenu menu = new PopupMenu(menuView.getContext(), menuView);
                     getMenuInflater().inflate(R.menu.contact_menu, menu.getMenu());
                     menu.setOnMenuItemClickListener(item -> {
-                        //noinspection SwitchStatementWithTooFewBranches
-                        switch (item.getItemId()) {
-                            case R.id.block: {
-                                SnackbarHelper.showInfo(itemView, R.string.block); // TODO (ds): add contact blocking
-                                return true;
-                            }
-                            default: {
-                                return false;
-                            }
+                        if (item.getItemId() == R.id.block) {
+                            SnackbarHelper.showInfo(itemView, R.string.block); // TODO (ds): add contact blocking
+                            return true;
                         }
+                        return false;
                     });
                     menu.show();
                 });

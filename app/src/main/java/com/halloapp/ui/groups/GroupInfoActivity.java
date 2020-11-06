@@ -178,29 +178,24 @@ public class GroupInfoActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.leave: {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getBaseContext().getString(R.string.leave_group_confirmation));
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> leaveGroup());
-                builder.setNegativeButton(R.string.no, null);
-                builder.show();
-                return true;
-            }
-            case R.id.delete: {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getBaseContext().getString(R.string.delete_group_confirmation));
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteGroup());
-                builder.setNegativeButton(R.string.no, null);
-                builder.show();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        if (item.getItemId() == R.id.leave) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getBaseContext().getString(R.string.leave_group_confirmation));
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> leaveGroup());
+            builder.setNegativeButton(R.string.no, null);
+            builder.show();
+            return true;
+        } else if (item.getItemId() == R.id.delete) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getBaseContext().getString(R.string.delete_group_confirmation));
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteGroup());
+            builder.setNegativeButton(R.string.no, null);
+            builder.show();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

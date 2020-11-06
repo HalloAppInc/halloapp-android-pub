@@ -669,22 +669,17 @@ public class ContentComposerActivity extends HalloActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.share: {
-                final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
-                final String postText = StringUtils.preparePostText(textAndMentions.first);
-                if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
-                    Log.w("ContentComposerActivity: cannot send empty content");
-                } else {
-                    viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second);
-                }
-                return true;
+        if (item.getItemId() == R.id.share) {
+            final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
+            final String postText = StringUtils.preparePostText(textAndMentions.first);
+            if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
+                Log.w("ContentComposerActivity: cannot send empty content");
+            } else {
+                viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second);
             }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

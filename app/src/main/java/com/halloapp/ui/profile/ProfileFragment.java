@@ -216,24 +216,19 @@ public class ProfileFragment extends PostsFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings: {
-                startActivity(new Intent(getContext(), SettingsActivity.class));
-                return true;
+        if (item.getItemId() == R.id.settings) {
+            startActivity(new Intent(getContext(), SettingsActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.block) {
+            Boolean isBlocked = viewModel.getIsBlocked().getValue();
+            if (isBlocked == null || !isBlocked) {
+                blockContact();
+            } else {
+                unBlockContact();
             }
-            case R.id.block: {
-                Boolean isBlocked = viewModel.getIsBlocked().getValue();
-                if (isBlocked == null || !isBlocked) {
-                    blockContact();
-                } else {
-                    unBlockContact();
-                }
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void blockContact() {

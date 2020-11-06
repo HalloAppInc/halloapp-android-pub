@@ -264,21 +264,16 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (item.getItemId()) {
-            case R.id.notifications: {
-                if (!socialHistoryPopup.isShowing() && getView() != null) {
-                    socialHistoryPopup.show(getView().getHeight() * 9 / 10);
-                    if (nuxActivityCenter != null) {
-                        viewModel.closeActivityCenterNux();
-                    }
+        if (item.getItemId() == R.id.notifications) {
+            if (!socialHistoryPopup.isShowing() && getView() != null) {
+                socialHistoryPopup.show(getView().getHeight() * 9 / 10);
+                if (nuxActivityCenter != null) {
+                    viewModel.closeActivityCenterNux();
                 }
-                return true;
             }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
