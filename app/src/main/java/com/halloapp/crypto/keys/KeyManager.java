@@ -71,7 +71,7 @@ public class KeyManager {
                     .build();
 
             PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
-            byte[] signature = CryptoUtils.sign(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
+            byte[] signature = CryptoUtils.verifyDetached(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
 
             SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
                     .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))

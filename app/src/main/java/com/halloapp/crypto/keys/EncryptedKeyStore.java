@@ -167,8 +167,6 @@ public class EncryptedKeyStore {
         setMyPrivateSignedPreKey(X25519.generatePrivateKey());
     }
 
-
-
     private void setMyEd25519IdentityKey(byte[] key) {
         storeBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY, key);
     }

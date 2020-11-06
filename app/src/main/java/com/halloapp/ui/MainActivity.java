@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.DrawableRes;
@@ -19,7 +18,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -57,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;

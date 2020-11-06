@@ -1,6 +1,7 @@
 package com.halloapp.registration;
 
 import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -10,6 +11,8 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -24,6 +27,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class Registration {
 
@@ -56,10 +62,10 @@ public class Registration {
     public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone) {
         Log.i("Registration.requestRegistration phone=" + phone);
         InputStream inStream = null;
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         try {
             final URL url = new URL("https://" + HOST + "/api/registration/request_sms");
-            connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setUseCaches(false);
@@ -113,30 +119,159 @@ public class Registration {
 
     @WorkerThread
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
-        RegistrationVerificationResult verificationResult = verifyRegistration(phone, code, me.getName());
+        RegistrationVerificationResult verificationResult;
+        if (Constants.NOISE_PROTOCOL) {
+            verificationResult = verifyRegistrationNoise(phone, code, me.getName());
+        } else {
+            verificationResult = verifyRegistration(phone, code, me.getName());
+        }
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             String uid = me.getUser();
             if (!Preconditions.checkNotNull(verificationResult.user).equals(uid)) {
                 // New user, we should clear data
                 ContentDb.getInstance().deleteDb();
             }
-            me.saveRegistration(
-                    Preconditions.checkNotNull(verificationResult.user),
-                    Preconditions.checkNotNull(verificationResult.password),
-                    Preconditions.checkNotNull(verificationResult.phone));
+            if (Constants.NOISE_PROTOCOL) {
+                me.saveRegistrationNoise(
+                        Preconditions.checkNotNull(verificationResult.user),
+                        Preconditions.checkNotNull(verificationResult.phone));
+            } else {
+                me.saveRegistration(
+                        Preconditions.checkNotNull(verificationResult.user),
+                        Preconditions.checkNotNull(verificationResult.password),
+                        Preconditions.checkNotNull(verificationResult.phone));
+            }
             connection.connect();
         }
         return verificationResult;
     }
 
     @WorkerThread
+    public RegistrationVerificationResult migrateRegistrationToNoise() {
+        InputStream inStream = null;
+        HttpsURLConnection connection = null;
+
+        final String uid = me.getUser();
+        final String password = me.getPassword();
+        try {
+            final URL url = new URL("https://" + HOST + "/api/registration/update_key");
+            connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
+            connection.setUseCaches(false);
+            connection.setAllowUserInteraction(false);
+            connection.setConnectTimeout(30_000);
+            connection.setReadTimeout(30_000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            JSONObject requestJson = new JSONObject();
+
+            byte[] keypair = CryptoUtils.generateEd25519KeyPair();
+            byte[] pub = Arrays.copyOfRange(keypair, 0, 32);
+            byte[] priv = Arrays.copyOfRange(keypair, 32, 96);
+            requestJson.put("s_ed_pub", Base64.encodeToString(pub, Base64.NO_WRAP));
+            byte[] sign = CryptoUtils.sign("HALLO".getBytes(), new PrivateEdECKey(priv));
+            requestJson.put("signed_phrase", Base64.encodeToString(sign, Base64.NO_WRAP));
+            requestJson.put("uid", uid);
+            requestJson.put("password", password);
+
+            connection.getOutputStream().write(requestJson.toString().getBytes());
+
+            final int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("Registration.verifyRegistration responseCode:" + responseCode);
+            }
+            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
+            final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
+            final String result = responseJson.optString("result");
+            if (!"ok".equals(result)) {
+                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+            }
+            me.saveNoiseKey(keypair);
+            return new RegistrationVerificationResult(uid, password, me.getPhone());
+        } catch (IOException e) {
+            Log.e("Registration.verifyRegistration", e);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+        } catch (JSONException e) {
+            Log.e("Registration.verifyRegistration", e);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+        } finally {
+            FileUtils.closeSilently(inStream);
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    @WorkerThread
+    private @NonNull RegistrationVerificationResult verifyRegistrationNoise(@NonNull String phone, @NonNull String code, @NonNull String name) {
+        Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
+        InputStream inStream = null;
+        HttpsURLConnection connection = null;
+        try {
+            final URL url = new URL("https://" + HOST + "/api/registration/register2");
+            connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
+            connection.setUseCaches(false);
+            connection.setAllowUserInteraction(false);
+            connection.setConnectTimeout(30_000);
+            connection.setReadTimeout(30_000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            JSONObject requestJson = new JSONObject();
+            requestJson.put("phone", phone);
+            requestJson.put("code", code);
+            requestJson.put("name", name);
+
+            byte[] keypair = CryptoUtils.generateEd25519KeyPair();
+            byte[] pub = Arrays.copyOfRange(keypair, 0, 32);
+            byte[] priv = Arrays.copyOfRange(keypair, 32, 96);
+            requestJson.put("s_ed_pub", Base64.encodeToString(pub, Base64.NO_WRAP));
+            byte[] sign = CryptoUtils.sign("HALLO".getBytes(), new PrivateEdECKey(priv));
+            requestJson.put("signed_phrase", Base64.encodeToString(sign, Base64.NO_WRAP));
+
+            connection.getOutputStream().write(requestJson.toString().getBytes());
+
+            final int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("Registration.verifyRegistration responseCode:" + responseCode);
+            }
+            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
+            final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
+            final String result = responseJson.optString("result");
+            final String normalizedPhone = responseJson.optString("phone");
+            final String uid = responseJson.optString("uid");
+            final String error = responseJson.optString("error");
+            if (!"ok".equals(result) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid)) {
+                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+            }
+            me.saveNoiseKey(keypair);
+            return new RegistrationVerificationResult(uid, null, phone);
+        } catch (IOException e) {
+            Log.e("Registration.verifyRegistration", e);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+        } catch (JSONException e) {
+            Log.e("Registration.verifyRegistration", e);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+        } finally {
+            FileUtils.closeSilently(inStream);
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    @WorkerThread
     private @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code, @NonNull String name) {
         Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
         InputStream inStream = null;
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         try {
             final URL url = new URL("https://" + HOST + "/api/registration/register");
-            connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setUseCaches(false);

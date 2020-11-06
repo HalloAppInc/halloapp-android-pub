@@ -100,6 +100,12 @@ public class CryptoUtils {
     }
 
     public static byte[] sign(byte[] message, PrivateEdECKey key) {
+        byte[] ret = new byte[Sign.ED25519_BYTES + message.length];
+        sign.cryptoSign(ret, message, message.length, key.getKeyMaterial());
+        return ret;
+    }
+
+    public static byte[] verifyDetached(byte[] message, PrivateEdECKey key) {
         byte[] ret = new byte[Sign.ED25519_BYTES];
         sign.cryptoSignDetached(ret, message, message.length, key.getKeyMaterial());
         return ret;
@@ -110,5 +116,9 @@ public class CryptoUtils {
             Log.w("Invalid Ed signature");
             throw new GeneralSecurityException("Invalid signature");
         }
+    }
+
+    public static boolean verifyOpen(byte[] msgBytes, byte[] cert, int certLen, byte[] publicKey) {
+        return sign.cryptoSignOpen(msgBytes, cert, certLen, publicKey);
     }
 }

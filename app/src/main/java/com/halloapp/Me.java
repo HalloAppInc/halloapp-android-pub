@@ -4,14 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
@@ -28,6 +32,9 @@ public class Me {
     private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_PHONE = "phone";
     private static final String PREF_KEY_NAME = "name";
+
+    private static final String PREF_KEY_MY_ED25519_NOISE_KEY = "my_ed25519_noise_key";
+    private static final String PREF_KEY_SERVER_PUBLIC_STATIC_KEY = "server_public_static_key";
 
     private final AppContext appContext;
     private SharedPreferences preferences;
@@ -85,7 +92,12 @@ public class Me {
                 }
             }
         }
-        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword()) && !TextUtils.isEmpty(getName());
+        if (Constants.NOISE_PROTOCOL) {
+            // TODO (clarkc) Remove getPassword() when migration is finished.
+            return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
+        } else {
+            return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword()) && !TextUtils.isEmpty(getName());
+        }
     }
 
     @WorkerThread
@@ -127,6 +139,17 @@ public class Me {
     }
 
     @WorkerThread
+    public synchronized void saveRegistrationNoise(@NonNull String user, @NonNull String phone) {
+        if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PHONE, phone).commit()) {
+            Log.e("Me.saveRegistration: failed");
+        } else {
+            EncryptedKeyStore.getInstance().setKeysUploaded(false);
+            this.user.postValue(user);
+        }
+    }
+
+
+    @WorkerThread
     public synchronized void saveRegistration(@NonNull String user, @NonNull String password, @NonNull String phone) {
         Log.i("Me.saveRegistration: " + user + " " + password);
         if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PASSWORD, password).putString(PREF_KEY_PHONE, phone).commit()) {
@@ -144,5 +167,52 @@ public class Me {
         } else {
             this.user.postValue(null);
         }
+    }
+
+    public void saveNoiseKey(byte[] noiseKeyPair) {
+        setMyEd25519NoiseKey(noiseKeyPair);
+    }
+
+    public void setServerStaticKey(byte[] publicServerStaticKey) {
+        storeBytes(PREF_KEY_SERVER_PUBLIC_STATIC_KEY, publicServerStaticKey);
+    }
+
+    @Nullable
+    public PublicEdECKey getServerStaticKey() {
+        byte[] serverStaticKey = retrieveBytes(PREF_KEY_SERVER_PUBLIC_STATIC_KEY);
+        if (serverStaticKey == null) {
+            return null;
+        }
+        return new PublicEdECKey(serverStaticKey);
+    }
+
+    private void setMyEd25519NoiseKey(byte[] key) {
+        storeBytes(PREF_KEY_MY_ED25519_NOISE_KEY, key);
+    }
+
+    public byte[] getMyEd25519NoiseKey() {
+        return retrieveBytes(PREF_KEY_MY_ED25519_NOISE_KEY);
+    }
+
+    private void storeBytes(String prefKey, byte[] bytes) {
+        getPreferences().edit().putString(prefKey, bytesToString(bytes)).apply();
+    }
+
+    @Nullable
+    private byte[] retrieveBytes(String prefKey) {
+        String stored = getPreferences().getString(prefKey, null);
+        return stringToBytes(stored);
+    }
+
+    private static String bytesToString(byte[] bytes) {
+        Preconditions.checkArgument(bytes != null);
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
+
+    private static byte[] stringToBytes(String string) {
+        if (string == null) {
+            return null;
+        }
+        return Base64.decode(string, Base64.NO_WRAP);
     }
 }

@@ -19,9 +19,13 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.noise.HANoiseSocket;
+import com.halloapp.noise.NoiseException;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
@@ -49,6 +53,7 @@ import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SilentChatStanza;
 import com.halloapp.proto.server.WhisperKeys;
+import com.halloapp.registration.Registration;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -75,7 +80,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,6 +99,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.ShortBufferException;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -103,6 +112,7 @@ public class NewConnection extends Connection {
     private static final String HOST = "s.halloapp.net";
     private static final String DEBUG_HOST = "s-test.halloapp.net";
     private static final int PORT = 5210;
+    private static final int NOISE_PORT = 5208;
     private static final int CONNECTION_TIMEOUT = 20_000;
     private static final int REPLY_TIMEOUT = 20_000;
 
@@ -117,7 +127,8 @@ public class NewConnection extends Connection {
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
     private String connectionPropHash;
-    private SSLSocket sslSocket = null;
+    private Socket socket = null;
+
     private OutputStream outputStream;
     public InputStream inputStream;
     private boolean isAuthenticated;
@@ -172,24 +183,39 @@ public class NewConnection extends Connection {
         Log.i("connection: connecting...");
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
-
         try {
             final InetAddress address = InetAddress.getByName(host);
             HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-            sslSocket = (SSLSocket) sslSocketFactory.createSocket(address, PORT);
-            sslSocket.setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
 
-            SSLSession session = sslSocket.getSession();
-            if (!hostnameVerifier.verify(host, session)) {
-                // TODO(jack)
+            if (Constants.NOISE_PROTOCOL) {
+                // TODO (clarkc) remove when we no longer need migration code to noise
+                if (me.getMyEd25519NoiseKey() == null) {
+                    Registration.RegistrationVerificationResult migrationResult = Registration.getInstance().migrateRegistrationToNoise();
+                    if (migrationResult.result != Registration.RegistrationVerificationResult.RESULT_OK) {
+                        disconnectInBackground();
+                        throw new IOException("Failed to migrate registration");
+                    }
+                }
+                HANoiseSocket noiseSocket = new HANoiseSocket(me, DEBUG_HOST, NOISE_PORT);
+                noiseSocket.authenticate(createAuthRequest());
+                this.socket = noiseSocket;
+                isAuthenticated = true;
+            } else {
+                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(address, PORT);
+                sslSocket.setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
+
+                SSLSession session = sslSocket.getSession();
+                this.socket = sslSocket;
+                if (!hostnameVerifier.verify(host, session)) {
+                    // TODO(jack)
 //                throw new SSLPeerUnverifiedException("Could not verify hostname " + host);
+                }
+
+                Log.i("connection: Established " + session.getProtocol() + " connection with " + session.getPeerHost() + " using " + session.getCipherSuite());
+                outputStream = socket.getOutputStream();
+                inputStream = socket.getInputStream();
             }
-
-            Log.i("connection: Established " + session.getProtocol() + " connection with " + session.getPeerHost() + " using " + session.getCipherSuite());
-
-            outputStream = sslSocket.getOutputStream();
-            inputStream = sslSocket.getInputStream();
 
             synchronized (startupShutdownLock) {
                 packetWriter.init();
@@ -197,48 +223,57 @@ public class NewConnection extends Connection {
                 iqRouter.reset();
             }
 
-            ClientVersion clientVersion = ClientVersion.newBuilder()
-                    .setVersion(Constants.USER_AGENT)
-                    .build();
-            ClientMode clientMode = ClientMode.newBuilder()
-                    .setMode(ClientMode.Mode.ACTIVE)
-                    .build();
 
-            AuthRequest authRequest = AuthRequest.newBuilder()
-                    .setUid(Long.parseLong(me.getUser()))
-                    .setPwd(me.getPassword())
-                    .setClientVersion(clientVersion)
-                    .setClientMode(clientMode)
-                    .setResource("android")
-                    .build();
-
-            // TODO(jack): check client expiration
-
-            final AuthResult authResult = sendAndRecvAuth(authRequest);
-
-            Log.i("connection: auth result: " + ProtoPrinter.toString(authResult));
-            final String result = authResult.getResult();
-            if ("invalid client version".equals(result)) {
-                clientExpired();
-                connectionObservers.notifyClientVersionExpired();
-                return;
-            } else if (!"success".equals(result)) {
-                Log.e("connection: failed to login");
-                disconnectInBackground();
-                connectionObservers.notifyLoginFailed();
-                return;
+            if (!Constants.NOISE_PROTOCOL) {
+                AuthResult authResult = sendAndRecvAuth(createAuthRequest());
+                // TODO(jack): check client expiration
+                Log.i("connection: auth result: " + ProtoPrinter.toString(authResult));
+                final String result = authResult.getResult();
+                if ("invalid client version".equals(result)) {
+                    clientExpired();
+                    connectionObservers.notifyClientVersionExpired();
+                    return;
+                } else if (!"success".equals(result)) {
+                    Log.e("connection: failed to login");
+                    disconnectInBackground();
+                    connectionObservers.notifyLoginFailed();
+                    return;
+                }
+            } else {
+                // TODO: (clarkc) Add authentication failure logic once we spec if out
+                //  Currently you're just disconnected so noise handshake would never be completed.
             }
             connectionObservers.notifyConnected();
             isAuthenticated = true;
-        } catch (IOException e) {
+            Log.i("connection: established");
+        } catch (IOException | NoiseException e) {
             Log.e("connection: cannot create connection", e);
         }
+    }
+
+    private AuthRequest createAuthRequest() {
+        ClientVersion clientVersion = ClientVersion.newBuilder()
+                .setVersion(Constants.USER_AGENT)
+                .build();
+        ClientMode clientMode = ClientMode.newBuilder()
+                .setMode(ClientMode.Mode.ACTIVE)
+                .build();
+
+        AuthRequest.Builder authRequestBuilder = AuthRequest.newBuilder()
+                .setUid(Long.parseLong(me.getUser()))
+                .setClientVersion(clientVersion)
+                .setClientMode(clientMode)
+                .setResource("android");
+        if (!Constants.NOISE_PROTOCOL) {
+            authRequestBuilder.setPwd(me.getPassword());
+        }
+        return authRequestBuilder.build();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @WorkerThread
     private boolean reconnectIfNeeded() {
-        if (sslSocket != null && isConnected() && isAuthenticated()) {
+        if (socket != null && isConnected() && isAuthenticated()) {
             return true;
         }
         // noinspection ConstantConditions
@@ -247,7 +282,7 @@ public class NewConnection extends Connection {
             return false;
         }
         connectInBackground();
-        return sslSocket != null && isConnected() && isAuthenticated();
+        return socket != null && isConnected() && isAuthenticated();
     }
 
     public AuthResult sendAndRecvAuth(AuthRequest authRequest) throws IOException {
@@ -274,7 +309,7 @@ public class NewConnection extends Connection {
     }
 
     public boolean isConnected() {
-        return sslSocket != null && sslSocket.isConnected() && !sslSocket.isClosed();
+        return socket != null && socket.isConnected() && !socket.isClosed();
     }
 
     public boolean isAuthenticated() {
@@ -306,19 +341,19 @@ public class NewConnection extends Connection {
 
     @WorkerThread
     private void disconnectInBackground() {
-        if (sslSocket == null) {
+        if (socket == null) {
             Log.e("connection: cannot disconnect, no connection");
             return;
         }
         if (isConnected()) {
             Log.i("connection: disconnecting");
             try {
-                sslSocket.close();
+                socket.close();
             } catch (IOException e) {
                 Log.w("Failed to close socket", e);
             }
         }
-        sslSocket = null;
+        socket = null;
 
         connectionObservers.notifyDisconnected();
     }
@@ -336,7 +371,7 @@ public class NewConnection extends Connection {
     @Override
     public void requestServerProps() {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: request server props: no connection");
                 return;
             }
@@ -354,7 +389,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<Integer> requestSecondsToExpiration() {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: request seconds to expiration: no connection");
                 return null;
             }
@@ -372,7 +407,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<MediaUploadIq.Urls> requestMediaUpload(long fileSize) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: request media upload: no connection");
                 return null;
             }
@@ -390,7 +425,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: sync contacts: no connection");
                 return null;
             }
@@ -414,7 +449,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendPushToken(@NonNull String pushToken) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: send push token: no connection");
                 return;
             }
@@ -431,7 +466,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<Boolean> sendName(@NonNull String name) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: send name: no connection");
                 return Boolean.FALSE;
             }
@@ -450,7 +485,7 @@ public class NewConnection extends Connection {
     @Override
     public void subscribePresence(UserId userId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: request presence subscription: no connection");
                 return;
             }
@@ -462,7 +497,7 @@ public class NewConnection extends Connection {
     @Override
     public void updatePresence(boolean available) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: update presence: no connection");
                 return;
             }
@@ -476,7 +511,7 @@ public class NewConnection extends Connection {
     @Override
     public void updateChatState(@NonNull ChatId chat, int state) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: update chat state: no connection");
                 return;
             }
@@ -488,7 +523,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<Boolean> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: upload keys: no connection");
                 return Boolean.FALSE;
             }
@@ -512,7 +547,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: download keys: no connection");
                 return null;
             }
@@ -532,7 +567,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<Integer> getOneTimeKeyCount() {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: get one time key count: no connection");
                 return null;
             }
@@ -551,7 +586,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<Void> sendStats(List<Stats.Counter> counters) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: send stats: no connection");
                 return null;
             }
@@ -570,7 +605,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<String> setAvatar(String base64, long numBytes, int width, int height) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot update avatar, no connection");
                 return null;
             }
@@ -588,7 +623,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<String> setGroupAvatar(GroupId groupId, String base64) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot set group avatar, no connection");
                 return null;
             }
@@ -606,7 +641,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<String> getAvatarId(UserId userId) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot update avatar, no connection");
                 return null;
             }
@@ -624,7 +659,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<String> getMyAvatarId() {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot get my avatar, no connection");
                 return null;
             }
@@ -642,7 +677,7 @@ public class NewConnection extends Connection {
     @Override
     public Future<Boolean> sharePosts(Map<UserId, Collection<Post>> shareMap) {
         return executor.submit(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot share posts, no connection");
                 return false;
             }
@@ -674,7 +709,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendPost(@NonNull Post post) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send post, no connection");
                 return;
             }
@@ -720,7 +755,7 @@ public class NewConnection extends Connection {
     @Override
     public void retractPost(@NonNull String postId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot retract post, no connection");
                 return;
             }
@@ -738,7 +773,7 @@ public class NewConnection extends Connection {
     @Override
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot retract post, no connection");
                 return;
             }
@@ -756,7 +791,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendComment(@NonNull Comment comment) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send comment, no connection");
                 return;
             }
@@ -799,7 +834,7 @@ public class NewConnection extends Connection {
     @Override
     public void retractComment(@Nullable UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot retract comment, no connection");
                 return;
             }
@@ -818,7 +853,7 @@ public class NewConnection extends Connection {
     @Override
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot retract group comment, no connection");
                 return;
             }
@@ -841,7 +876,7 @@ public class NewConnection extends Connection {
                 Log.i("connection: System message shouldn't be sent");
                 return;
             }
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message, no connection");
                 return;
             }
@@ -869,7 +904,7 @@ public class NewConnection extends Connection {
                 Log.i("connection: System message shouldn't be sent");
                 return;
             }
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message, no connection");
                 return;
             }
@@ -900,7 +935,7 @@ public class NewConnection extends Connection {
                 Log.i("connection: System message shouldn't be sent");
                 return;
             }
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message, no connection");
                 return;
             }
@@ -924,7 +959,7 @@ public class NewConnection extends Connection {
     public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send iq " + iq + ", no connection");
                 iqResponse.setException(new NotConnectedException());
                 return;
@@ -952,7 +987,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendRerequest(String encodedIdentityKey, final @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
@@ -965,7 +1000,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendAck(@NonNull String id) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send ack, no connection");
                 return;
             }
@@ -978,7 +1013,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendPostSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send seen receipt, no connection");
                 return;
             }
@@ -1000,7 +1035,7 @@ public class NewConnection extends Connection {
     @Override
     public void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || sslSocket == null) {
+            if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message seen receipt, no connection");
                 return;
             }
@@ -1065,43 +1100,51 @@ public class NewConnection extends Connection {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             while (!done) {
                 try {
-                    InputStream is = inputStream;
-                    if (is == null) {
-                        disconnect();
-                        throw new IOException("Input stream is null");
-                    }
-
-                    boolean needMoreBytes = true;
-                    byte[] buf = new byte[BUF_SIZE];
-                    int packetSize = 0;
-                    while (needMoreBytes) {
-                        int c = inputStream.read(buf);
-                        if (c < 0) {
+                    if (Constants.NOISE_PROTOCOL) {
+                        byte[] packet = ((HANoiseSocket) socket).readPacket();
+                        if (packet == null) {
                             disconnect();
-                            throw new IOException("No bytes read from input stream");
+                            throw new IOException("No more packets");
+                        }
+                        parsePacket(packet);
+                    } else {
+                        InputStream is = inputStream;
+                        if (is == null) {
+                            disconnect();
+                            throw new IOException("Input stream is null");
                         }
 
-                        baos.write(buf, 0, c);
+                        boolean needMoreBytes = true;
+                        byte[] buf = new byte[BUF_SIZE];
+                        int packetSize = 0;
+                        while (needMoreBytes) {
+                            int c = inputStream.read(buf);
+                            if (c < 0) {
+                                disconnect();
+                                throw new IOException("No bytes read from input stream");
+                            }
 
-                        if (baos.size() >= 4) {
-                            byte[] header = Arrays.copyOfRange(baos.toByteArray(), 0, 4);
-                            ByteBuffer wrapped = ByteBuffer.wrap(header); // big-endian by default
-                            packetSize = wrapped.getInt();
+                            baos.write(buf, 0, c);
 
-                            if (baos.size() >= packetSize + 4) {
-                                needMoreBytes = false;
+                            if (baos.size() >= 4) {
+                                byte[] header = Arrays.copyOfRange(baos.toByteArray(), 0, 4);
+                                ByteBuffer wrapped = ByteBuffer.wrap(header); // big-endian by default
+                                packetSize = wrapped.getInt();
+
+                                if (baos.size() >= packetSize + 4) {
+                                    needMoreBytes = false;
+                                }
                             }
                         }
+
+                        byte[] bytes = baos.toByteArray();
+                        byte[] nextPacket = Arrays.copyOfRange(bytes, 4, packetSize + 4);
+                        byte[] leftovers = Arrays.copyOfRange(bytes, packetSize + 4, bytes.length);
+
+                        baos.reset();
+                        baos.write(leftovers);
+                        parsePacket(nextPacket);
                     }
-
-                    byte[] bytes = baos.toByteArray();
-                    byte[] nextPacket = Arrays.copyOfRange(bytes, 4, packetSize + 4);
-                    byte[] leftovers = Arrays.copyOfRange(bytes, packetSize + 4, bytes.length);
-
-                    baos.reset();
-                    baos.write(leftovers);
-
-                    parsePacket(nextPacket);
                 } catch (Exception e) {
                     if (!done) {
                         Log.e("Packet Reader error", e);
@@ -1567,15 +1610,19 @@ public class NewConnection extends Connection {
                     try { // TODO(jack): Await login success
                         Packet packet = queue.take();
                         Log.i("connection: send: " + ProtoPrinter.toString(packet));
-                        byte[] bytes = encodePacket(packet);
 
-                        OutputStream os = outputStream;
-                        if (os == null) {
-                            disconnect();
-                            throw new IOException("Output stream is null");
+                        if (Constants.NOISE_PROTOCOL) {
+                            ((HANoiseSocket) socket).writePacket(packet);
+                        } else {
+                            byte[] bytes = encodePacket(packet);
+                            OutputStream os = outputStream;
+                            if (os == null) {
+                                disconnect();
+                                throw new IOException("Output stream is null");
+                            }
+
+                            outputStream.write(bytes);
                         }
-
-                        outputStream.write(bytes);
                     } catch (InterruptedException e) {
                         Log.w("Packet writing interrupted", e);
                     }
