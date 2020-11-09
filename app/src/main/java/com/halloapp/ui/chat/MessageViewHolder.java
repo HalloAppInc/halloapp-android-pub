@@ -440,6 +440,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     private void systemMessageAffectedList(@NonNull Message message, @StringRes int string) {
         String commaSeparatedMembers = message.text;
+        if (commaSeparatedMembers == null) {
+            Log.w("MessageViewHolder system message of type " + message.usage + " missing affected list " + message);
+            return;
+        }
         String[] parts = commaSeparatedMembers.split(",");
         List<UserId> userIds = new ArrayList<>();
         userIds.add(message.senderUserId);
