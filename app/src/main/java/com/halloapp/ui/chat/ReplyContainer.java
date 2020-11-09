@@ -2,6 +2,7 @@ package com.halloapp.ui.chat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Outline;
 import android.graphics.Typeface;
 import android.text.TextUtils;
@@ -13,13 +14,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
+import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.util.ViewDataLoader;
 
 class ReplyContainer {
@@ -30,6 +35,8 @@ class ReplyContainer {
     private final ImageView mediaThumbView;
     private final ImageView mediaIconView;
     private final MessageViewHolder.MessageViewHolderParent parent;
+
+    private static final int REPLY_NAME_ALPHA = 0x9A;
 
     ReplyContainer(@NonNull View containerView, @NonNull MessageViewHolder.MessageViewHolderParent parent) {
         this.containerView = containerView;
@@ -77,11 +84,13 @@ class ReplyContainer {
         } else {
             mediaThumbView.setTransitionName(MediaPagerAdapter.getTransitionName(message.replyMessageId, message.replyMessageMediaIndex));
         }
-        containerView.setBackgroundResource(message.isIncoming() ? R.drawable.reply_frame_incoming : R.drawable.reply_frame_outgoing);
+        containerView.setBackgroundResource(R.drawable.reply_frame_background);
+        containerView.setBackgroundTintList(ColorStateList.valueOf(GroupParticipants.getParticipantReplyBgColor(containerView.getContext(), message.replyMessageSenderId)));
         parent.getReplyLoader().load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
             @Override
             public void showResult(@NonNull View view, @Nullable ReplyLoader.Result result) {
                 if (result != null) {
+                    nameView.setTextColor(ColorUtils.setAlphaComponent(GroupParticipants.getParticipantNameColor(nameView.getContext(), message.replyMessageSenderId), REPLY_NAME_ALPHA));
                     nameView.setText(result.name);
                     textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
                     if (result.mentions != null && !result.mentions.isEmpty()) {

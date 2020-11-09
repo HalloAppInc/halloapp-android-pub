@@ -156,11 +156,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:paddingStart="8dp"
+                android:paddingStart="18dp"
                 android:paddingEnd="0dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:background="@drawable/reply_frame"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -173,7 +172,8 @@
                     android:fontFamily="sans-serif-medium"
                     android:textDirection="locale"
                     android:textAlignment="gravity"
-                    android:padding="2dp"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
                     app:layout_constraintTop_toTopOf="parent"
@@ -187,6 +187,7 @@
                     android:layout_height="16dp"
                     android:layout_marginEnd="6dp"
                     android:layout_marginTop="2dp"
+                    android:layout_marginStart="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/reply_text"
                     app:layout_constraintTop_toTopOf="@+id/reply_text"

@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,8 @@ public abstract class SwipeListItemHelper extends ItemTouchHelper.SimpleCallback
     private final Drawable icon;
     private final int backgroundColor;
     private final int iconMargin;
+
+    private @ColorInt int iconColor;
 
     private final RectF tmpRect = new RectF();
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -44,14 +47,24 @@ public abstract class SwipeListItemHelper extends ItemTouchHelper.SimpleCallback
         final int iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
         final int iconBottom = iconTop + icon.getIntrinsicHeight();
 
+        if (iconColor != 0) {
+            icon.setTint(iconColor);
+        } else {
+            icon.setTintList(null);
+        }
+
+        int iconWidth = icon.getIntrinsicWidth();
+        int alpha = Math.min(255, (int) (255 * ((Math.abs(dX) / 2f) / iconWidth)));
+        icon.setAlpha(alpha);
+
         if (dX > 0) {
             final int iconLeft = itemView.getLeft() + iconMargin;
-            final int iconRight = iconLeft + icon.getIntrinsicWidth();
+            final int iconRight = iconLeft + iconWidth;
             icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
             tmpRect.set(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + dX, itemView.getBottom());
         } else if (dX < 0) {
             final int iconRight = itemView.getRight() - iconMargin;
-            final int iconLeft = iconRight - icon.getIntrinsicWidth();
+            final int iconLeft = iconRight - iconWidth;
             icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
             tmpRect.set(itemView.getRight() + dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
         } else {
@@ -62,6 +75,10 @@ public abstract class SwipeListItemHelper extends ItemTouchHelper.SimpleCallback
             canvas.drawRect(tmpRect, paint);
             icon.draw(canvas);
         }
+    }
+
+    public void setIconTint(@ColorInt int color) {
+        this.iconColor = color;
     }
 
     protected boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {

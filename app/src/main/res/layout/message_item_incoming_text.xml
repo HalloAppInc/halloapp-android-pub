@@ -22,12 +22,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:background="@drawable/message_background_incoming"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="4dp">
 
             <FrameLayout
                 android:id="@+id/reply_container"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+            <include layout="@layout/message_sender_info" />
 
             <com.halloapp.widget.LimitingTextView
                 android:id="@+id/text"
@@ -35,22 +40,24 @@
                 android:layout_height="wrap_content"
                 android:autoLink="web"
                 android:lineSpacingMultiplier="1.1"
-                android:paddingStart="14dp"
-                android:paddingTop="9dp"
-                android:paddingEnd="14dp"
-                android:paddingBottom="9dp"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp"
                 android:textAppearance="?textAppearanceListItemSmall"
                 android:textSize="@dimen/message_text_size"
                 app:ltvReadMore="@string/read_more"
                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
 
+            <include
+                layout="@layout/message_timestamp_footer_incoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"/>
+
         </LinearLayout>
+
     </FrameLayout>
 
-    <include
-        layout="@layout/message_timestamp_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"/>
 
 </LinearLayout>

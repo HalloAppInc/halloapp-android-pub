@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Build;
@@ -74,6 +75,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupInfoActivity;
+import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -450,8 +452,8 @@ public class ChatActivity extends HalloActivity {
         }
         viewModel.replyMessage.getLiveData().observe(this, this::updateMessageReply);
 
-        itemTouchHelper = new ItemTouchHelper(new SwipeListItemHelper(
-                Preconditions.checkNotNull(getDrawable(R.drawable.ic_reply_white)),
+        SwipeListItemHelper swipeListItemHelper = new SwipeListItemHelper(
+                Preconditions.checkNotNull(getDrawable(R.drawable.ic_swipe_reply)),
                 ContextCompat.getColor(this, R.color.swipe_reply_background),
                 getResources().getDimensionPixelSize(R.dimen.swipe_reply_icon_margin)) {
 
@@ -490,7 +492,8 @@ public class ChatActivity extends HalloActivity {
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
             }
-        });
+        };
+        itemTouchHelper = new ItemTouchHelper(swipeListItemHelper);
         itemTouchHelper.attachToRecyclerView(chatView);
 
         // Modified from ItemTouchHelper
@@ -534,6 +537,7 @@ public class ChatActivity extends HalloActivity {
                                     }
                                 }
                             }
+                            swipeListItemHelper.setIconTint(GroupParticipants.getParticipantNameColor(ChatActivity.this, message.senderUserId));
                         }
                         if (vh != null) {
                             itemTouchHelper.startSwipe(vh);
@@ -764,6 +768,7 @@ public class ChatActivity extends HalloActivity {
 
     private void updatePostReply(@Nullable Post post) {
         if (post != null) {
+            updateReplyColors(post.senderUserId);
             replyContainer.setVisibility(View.VISIBLE);
             final TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
             textContentLoader.load(replyTextView, post);
@@ -816,8 +821,15 @@ public class ChatActivity extends HalloActivity {
         }
     }
 
+    private void updateReplyColors(@NonNull UserId userId) {
+        replyContainer.setBackgroundResource(R.drawable.reply_frame_background);
+        replyContainer.setBackgroundTintList(ColorStateList.valueOf(GroupParticipants.getParticipantReplyBgColor(this, userId)));
+        replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(this, userId));
+    }
+
     private void updateMessageReply(@Nullable Message message) {
         if (message != null) {
+            updateReplyColors(message.senderUserId);
             replyMessage = message;
             replyContainer.setVisibility(View.VISIBLE);
             contactLoader.load(replyNameView, message.senderUserId);
@@ -1007,8 +1019,6 @@ public class ChatActivity extends HalloActivity {
                     return VIEW_TYPE_OUTGOING_RETRACTED;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_OUTGOING_TEXT;
-                } else if (TextUtils.isEmpty(message.text)) {
-                    return VIEW_TYPE_OUTGOING_MEDIA_NO_CAPTION;
                 } else {
                     return VIEW_TYPE_OUTGOING_MEDIA;
                 }
@@ -1035,10 +1045,6 @@ public class ChatActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_OUTGOING_MEDIA: {
                     layoutRes = R.layout.message_item_outgoing_media;
-                    break;
-                }
-                case VIEW_TYPE_OUTGOING_MEDIA_NO_CAPTION: {
-                    layoutRes = R.layout.message_item_outgoing_media_no_caption;
                     break;
                 }
                 case VIEW_TYPE_INCOMING_RETRACTED: {

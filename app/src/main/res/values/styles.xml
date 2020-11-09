@@ -27,6 +27,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.Chat" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@color/chat_background</item>
+    </style>
+
     <style name="AppTheme.Black" parent="Theme.AppCompat">
         <item name="actionBarStyle">@style/ActionBarBlack</item>
         <item name="actionMenuTextColor">@android:color/white</item>

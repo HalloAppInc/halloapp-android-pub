@@ -27,12 +27,17 @@
 
             <FrameLayout
                 android:id="@+id/reply_container"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/media_pager"
-                android:layout_width="match_parent"
+                android:paddingTop="3dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <me.relex.circleindicator.CircleIndicator3
@@ -49,12 +54,14 @@
                 android:layout_marginBottom="8dp"
                 android:layoutDirection="ltr"/>
 
+            <include layout="@layout/message_sender_info" />
+
             <com.halloapp.widget.LimitingTextView
                 android:id="@+id/text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="9dp"
                 android:textAppearance="?textAppearanceListItemSmall"
@@ -64,14 +71,14 @@
                 app:ltvReadMore="@string/read_more"
                 tools:text="This is image caption"/>
 
+            <include
+                layout="@layout/message_timestamp_footer_incoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"/>
+
         </LinearLayout>
 
     </FrameLayout>
-
-    <include
-        layout="@layout/message_timestamp_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"/>
 
 </LinearLayout>

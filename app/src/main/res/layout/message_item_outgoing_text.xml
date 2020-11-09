@@ -20,19 +20,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:paddingTop="4dp"
             android:background="@drawable/message_background_outgoing"
             android:orientation="vertical">
 
             <FrameLayout
                 android:id="@+id/reply_container"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <com.halloapp.widget.MessageTextLayout
-                android:layout_width="wrap_content"
+                android:paddingTop="4dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="9dp"
                 android:layout_marginBottom="9dp">
 
                 <com.halloapp.widget.LimitingTextView
@@ -43,33 +46,45 @@
                     android:lineSpacingMultiplier="1.1"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
+                    android:layout_gravity="start"
                     android:textAppearance="?textAppearanceListItemSmall"
                     android:textSize="@dimen/message_text_size"
                     app:ltvReadMore="@string/read_more"
                     tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
 
-                <ImageView
-                    android:id="@+id/status"
-                    android:layout_width="14dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="bottom|end"
-                    android:scaleType="fitCenter"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="3.5dp"
-                    tools:src="@drawable/ic_messaging_delivered" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="bottom|end">
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/message_timestamp"
+                        android:textSize="10sp"
+                        tools:text="11:49 PM"/>
+
+                    <ImageView
+                        android:id="@+id/status"
+                        android:layout_width="14dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="10dp"
+                        tools:src="@drawable/ic_messaging_delivered" />
+
+                </LinearLayout>
 
             </com.halloapp.widget.MessageTextLayout>
 
         </LinearLayout>
 
     </FrameLayout>
-
-    <include
-        layout="@layout/message_timestamp_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"/>
 
 </LinearLayout>

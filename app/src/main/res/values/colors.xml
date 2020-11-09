@@ -44,8 +44,6 @@
     <color name="date_separator_text">@color/white_70</color>
     <color name="new_messages">#FDE79B</color>
     <color name="new_messages_text">#B99515</color>
-    <color name="reply_background">#ffffff</color>
-    <color name="reply_incoming_background">#1ACCCCCC</color>
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>
@@ -56,7 +54,7 @@
     <color name="contacts_list_item_header_text_color">@color/color_secondary</color>
     <color name="search_highlight">#ff33b5e5</color>
     <color name="swipe_delete_background">#d93025</color>
-    <color name="swipe_reply_background">@color/color_secondary</color>
+    <color name="swipe_reply_background">@android:color/transparent</color>
     <color name="retract_comment_tint">#80808080</color>
     <color name="avatar_crop_overlay">#c4c4c4c4</color>
     <color name="change_avatar_background">@android:color/white</color>
@@ -72,6 +70,8 @@
     <color name="seen_by_divider">@color/black_20</color>
     <color name="settings_header_background">@color/color_secondary</color>
 
+    <color name="chat_background">@color/window_background</color>
+
     <color name="mention_color">@color/color_secondary</color>
 
     <color name="unread_indicator">@color/color_secondary</color>
@@ -85,8 +85,11 @@
     <color name="empty_chat_placeholder">@color/black_30</color>
     <color name="post_timestamp">@color/black_30</color>
 
-    <color name="message_state_sent">@color/color_secondary_40_alpha</color>
-    <color name="message_state_read">@color/color_secondary</color>
+    <color name="message_timestamp">#94AAC8</color>
+
+    <color name="message_state_clock">#9DBBDD</color>
+    <color name="message_state_sent">#660063E4</color>
+    <color name="message_state_read">#0063E4</color>
     <color name="media_button_background">#98535353</color>
     <color name="media_button_background_pressed">#535353</color>
     <color name="camera_button_background">@color/cardview_light_background</color>
@@ -102,4 +105,40 @@
     <color name="hint_text">@color/black_30</color>
 
     <color name="nux_button_text">@color/white_70</color>
+
+    <color name="reply_text_color">@color/secondary_text</color>
+
+    <color name="group_me">#1A73E8</color>
+    <color name="group_me_bg">#E7EEF8</color>
+
+    <!-- Group Participant Colors -->
+    <color name="group_name_1">#DFA54D</color>
+    <color name="group_name_2">#AC7EFF</color>
+    <color name="group_name_3">#71B765</color>
+    <color name="group_name_4">#FF7BBA</color>
+    <color name="group_name_5">#45C0E7</color>
+    <color name="group_name_6">#F5813F</color>
+    <color name="group_name_7">#CFC823</color>
+    <color name="group_name_8">#5E8BFF</color>
+    <color name="group_name_9">#E86666</color>
+    <color name="group_name_10">#C37F19</color>
+    <color name="group_name_11">#63C3A1</color>
+    <color name="group_name_12">#D582E2</color>
+    <color name="group_name_13">#665BDF</color>
+    <color name="group_name_14">#98C026</color>
+
+    <color name="group_bg_1">#FFF7EA</color>
+    <color name="group_bg_2">#F5EFFF</color>
+    <color name="group_bg_3">#F0FDED</color>
+    <color name="group_bg_4">#F9EFF4</color>
+    <color name="group_bg_5">#F1FCFF</color>
+    <color name="group_bg_6">#FFF9F5</color>
+    <color name="group_bg_7">#FFFEED</color>
+    <color name="group_bg_8">#F4F2FF</color>
+    <color name="group_bg_9">#FFF8F2</color>
+    <color name="group_bg_10">#FFF8F2</color>
+    <color name="group_bg_11">#F0F8F5</color>
+    <color name="group_bg_12">#FEF8FF</color>
+    <color name="group_bg_13">#F0F8F5</color>
+    <color name="group_bg_14">#FBFFF1</color>
 </resources>

@@ -12,20 +12,24 @@
     <color name="gallery_placeholder">#424242</color>
     <color name="seen_comment_background">#383838</color>
     <color name="card_background">@color/cardview_dark_background</color>
-    <color name="reply_background">#4b4b4b</color>
     <color name="reply_indicator_background">#606060</color>
     <color name="text_post_thumbnail_color">#ffffffff</color>
     <color name="message_background_incoming">#424242</color>
-    <color name="message_background_outgoing">#7196D4</color>
+    <color name="message_background_outgoing">#5C7392</color>
     <color name="message_text_incoming">#efefef</color>
-    <color name="message_text_outgoing">#202020</color>
+    <color name="message_text_outgoing">#efefef</color>
     <color name="change_avatar_background">@android:color/white</color>
     <color name="home_navigation_divider">#292929</color>
     <color name="old_comments_indicator">#33FFFFFF</color>
     <color name="avatars_footer_divider">#292929</color>
     <color name="thick_progress_spinner">#9B9B9B</color>
 
+    <color name="chat_background">@android:color/black</color>
+
     <color name="seen_by_divider">@color/white_20</color>
+
+    <color name="message_state_sent">#66C3DDFF</color>
+    <color name="message_state_read">#C3DDFF</color>
 
     <color name="settings_header_background">#353535</color>
     <color name="settings_text_entry_background">@color/white_20</color>
@@ -44,4 +48,25 @@
     <color name="secondary_text_button">@color/white_70</color>
     <color name="tertiary_text">@color/white_40</color>
     <color name="hint_text">@color/white_30</color>
+
+    <color name="message_timestamp">#C3DDFF</color>
+
+    <color name="group_me">#C3DDFF</color>
+    <color name="group_me_bg">#495D78</color>
+
+    <!-- Group Participant Colors -->
+    <color name="group_bg_1">#685F50</color>
+    <color name="group_bg_2">#3C3745</color>
+    <color name="group_bg_3">#525C4A</color>
+    <color name="group_bg_4">#6C5468</color>
+    <color name="group_bg_5">#405B64</color>
+    <color name="group_bg_6">#5B4234</color>
+    <color name="group_bg_7">#5B5B41</color>
+    <color name="group_bg_8">#464C62</color>
+    <color name="group_bg_9">#554241</color>
+    <color name="group_bg_10">#564B41</color>
+    <color name="group_bg_11">#3D4B47</color>
+    <color name="group_bg_12">#4E4153</color>
+    <color name="group_bg_13">#33323E</color>
+    <color name="group_bg_14">#505341</color>
 </resources>

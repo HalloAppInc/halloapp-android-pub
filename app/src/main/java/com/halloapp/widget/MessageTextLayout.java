@@ -52,7 +52,9 @@ public class MessageTextLayout extends FrameLayout {
         int height = getMeasuredHeight();
         if (layout.getLineCount() == 1) {
             if (messageViewWidth + statusViewWidth <= widthSize) {
-                addWidth = statusViewWidth;
+                if (widthMode != MeasureSpec.EXACTLY) {
+                    width = messageViewWidth + statusViewWidth;
+                }
             } else {
                 addHeight = statusViewHeight;
             }

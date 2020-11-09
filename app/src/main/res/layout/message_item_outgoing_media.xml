@@ -30,6 +30,9 @@
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/media_pager"
+                android:paddingTop="3dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -48,10 +51,10 @@
                 android:layoutDirection="ltr"/>
 
             <com.halloapp.widget.MessageTextLayout
+                android:paddingTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_gravity="end"
                 android:layout_marginBottom="9dp">
 
                 <com.halloapp.widget.LimitingTextView
@@ -67,27 +70,39 @@
                     app:ltvReadMore="@string/read_more"
                     tools:text="This is image caption"/>
 
-                <ImageView
-                    android:id="@+id/status"
-                    android:layout_width="14dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginBottom="3.5dp"
-                    tools:src="@drawable/ic_messaging_seen" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="bottom|end">
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/message_timestamp"
+                        android:textSize="10sp"
+                        tools:text="11:49 PM"/>
+
+                    <ImageView
+                        android:id="@+id/status"
+                        android:layout_width="14dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="10dp"
+                        tools:src="@drawable/ic_messaging_delivered" />
+
+                </LinearLayout>
 
             </com.halloapp.widget.MessageTextLayout>
 
         </LinearLayout>
 
     </FrameLayout>
-
-    <include
-        layout="@layout/message_timestamp_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"/>
 
 </LinearLayout>

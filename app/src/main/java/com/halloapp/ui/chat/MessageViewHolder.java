@@ -1,6 +1,5 @@
 package com.halloapp.ui.chat;
 
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -30,6 +29,7 @@ import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -47,16 +47,6 @@ import java.util.List;
 import me.relex.circleindicator.CircleIndicator3;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle {
-
-    private static final int[] PARTICIPANT_COLORS = {
-            Color.parseColor("#48b9dc"), // cyan
-            Color.parseColor("#66cc56"), // green (light)
-            Color.parseColor("#dc855c"), // rust
-            Color.parseColor("#dc485b"), // red
-            Color.parseColor("#b748dc"), // purple
-            Color.parseColor("#dcc848"), // yellow
-            Color.parseColor("#6348dc") // blue
-    };
 
     private final View contentView;
     private final ImageView statusView;
@@ -160,7 +150,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (mediaPagerView != null) {
-            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_media_radius));
+            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius));
+            mediaPagerAdapter.setMediaInset(0, 0, 0, defaultMediaInset);
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
@@ -194,16 +186,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     private static @DrawableRes int getMessageBackground(@NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {
         boolean outgoing = message.isOutgoing();
-        // Disable corner changing for now till we can polish them later
-        /*if (mergeWithNext && mergeWithPrev) {
-            return outgoing ? R.drawable.message_background_outgoing_mid : R.drawable.message_background_incoming_mid;
-        }
-        if (mergeWithNext) {
-            return outgoing ? R.drawable.message_background_outgoing_start : R.drawable.message_background_incoming_start;
-        }
-        if (mergeWithPrev) {
-            return outgoing ? R.drawable.message_background_outgoing_end : R.drawable.message_background_incoming_end;
-        }*/
         return outgoing ? R.drawable.message_background_outgoing : R.drawable.message_background_incoming;
     }
 
@@ -390,8 +372,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 nameView.setVisibility(View.GONE);
             } else if ((prevMessage == null || !prevMessage.senderUserId.equals(message.senderUserId) || prevMessage.isLocalMessage()) && message.chatId instanceof GroupId) {
                 contactLoader.load(nameView, message.senderUserId);
-                long colorIndex = Long.parseLong(message.senderUserId.rawId()) % PARTICIPANT_COLORS.length;
-                nameView.setTextColor(PARTICIPANT_COLORS[(int) colorIndex]);
+                int color = GroupParticipants.getParticipantNameColor(nameView.getContext(), message.senderUserId);
+                nameView.setTextColor(color);
                 nameView.setVisibility(View.VISIBLE);
             } else {
                 nameView.setVisibility(View.GONE);
