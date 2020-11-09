@@ -407,6 +407,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     @Override
                     public void onDestroyActionMode(ActionMode mode) {
                         viewModel.deselectAll();
+                        finishWithSelected(new ArrayList<>());
                         actionMode = null;
                     }
                 });
