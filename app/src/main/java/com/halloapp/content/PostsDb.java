@@ -1043,7 +1043,7 @@ class PostsDb {
                         "AND comments.timestamp>" + getPostExpirationTime() + " " +
                         "LIMIT " + 1;
         try (final Cursor cursor = db.rawQuery(sql, new String[] {commentId})) {
-            while (cursor.moveToNext()) {
+            if (cursor.moveToNext()) {
                 final Comment comment = new Comment(
                         cursor.getLong(0),
                         cursor.getString(1),
@@ -1211,7 +1211,7 @@ class PostsDb {
                 seenByInfos.add(new SeenByInfo(new UserId(cursor.getString(0)), cursor.getLong(1)));
             }
         }
-        Log.i("ContentDb.getSeenBy: seenByInfos.size=" + seenByInfos.size());
+        Log.i("ContentDb.getSeenBy: seenByInfos.size=" + seenByInfos.size() + " for post " + postId);
         return seenByInfos;
     }
 

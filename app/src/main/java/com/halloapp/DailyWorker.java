@@ -39,6 +39,11 @@ public class DailyWorker extends Worker {
         WorkManager.getInstance(context).enqueueUniqueWork(DAILY_WORKER_ID, ExistingWorkPolicy.KEEP, dailyWorkRequest);
     }
 
+    static void scheduleDebug(@NonNull Context context) {
+        final OneTimeWorkRequest dailyWorkRequest = (new OneTimeWorkRequest.Builder(DailyWorker.class)).setInitialDelay(100, TimeUnit.MILLISECONDS).build();
+        WorkManager.getInstance(context).enqueueUniqueWork(DAILY_WORKER_ID, ExistingWorkPolicy.REPLACE, dailyWorkRequest);
+    }
+
     public DailyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }

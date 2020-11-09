@@ -56,6 +56,7 @@ public class Debug {
     private static final String DEBUG_MENU_CRASH_PRECONDITION = "Preconditions crash null";
     private static final String DEBUG_MENU_TRY_DUP_COMMENT = "Try insert duplicate comment";
     private static final String DEBUG_MENU_CLEAR_LOGS = "Clear logs";
+    private static final String DEBUG_MENU_RUN_DAILY_WORKER = "Run daily worker";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -78,6 +79,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CRASH_PRECONDITION);
         menu.getMenu().add(DEBUG_MENU_TRY_DUP_COMMENT);
         menu.getMenu().add(DEBUG_MENU_CLEAR_LOGS);
+        menu.getMenu().add(DEBUG_MENU_RUN_DAILY_WORKER);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -210,6 +212,9 @@ public class Debug {
                 case DEBUG_MENU_CLEAR_LOGS: {
                     bgWorkers.execute(() -> FileStore.getInstance().purgeAllLogFiles());
                     break;
+                }
+                case DEBUG_MENU_RUN_DAILY_WORKER: {
+                    DailyWorker.scheduleDebug(AppContext.getInstance().get());
                 }
             }
             return false;

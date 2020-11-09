@@ -1254,17 +1254,18 @@ public class NewConnection extends Connection {
                     DeliveryReceipt deliveryReceipt = msg.getDeliveryReceipt();
                     final String threadId = deliveryReceipt.getThreadId();
                     final UserId userId = getUserId(Long.toString(msg.getFromUid()));
-                    connectionObservers.notifyOutgoingMessageDelivered(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp(), msg.getId());
+                    connectionObservers.notifyOutgoingMessageDelivered(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, deliveryReceipt.getId(), deliveryReceipt.getTimestamp() * 1000L, msg.getId());
                     handled = true;
                 } else if (msg.hasSeenReceipt()) {
                     Log.i("connection: got seen receipt " + ProtoPrinter.toString(msg));
                     SeenReceipt seenReceipt = msg.getSeenReceipt();
                     final String threadId = seenReceipt.getThreadId();
                     final UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    final long timestamp = seenReceipt.getTimestamp() * 1000L;
                     if (FEED_THREAD_ID.equals(threadId)) {
-                        connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), seenReceipt.getTimestamp(), msg.getId());
+                        connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), timestamp, msg.getId());
                     } else {
-                        connectionObservers.notifyOutgoingMessageSeen(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, seenReceipt.getId(), seenReceipt.getTimestamp(), msg.getId());
+                        connectionObservers.notifyOutgoingMessageSeen(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, seenReceipt.getId(), timestamp, msg.getId());
                     }
                     handled = true;
                 } else if (msg.hasContactHash()) {
@@ -1365,7 +1366,7 @@ public class NewConnection extends Connection {
                         if (comment.getPublisherUid() != 0 && comment.getPublisherName() != null) {
                             names.put(publisherUserId, comment.getPublisherName());
                         }
-                        connectionObservers.notifyCommentRetracted(comment.getId(), publisherUserId, comment.getPostId(), comment.getTimestamp());
+                        connectionObservers.notifyCommentRetracted(comment.getId(), publisherUserId, comment.getPostId(), comment.getTimestamp() * 1000L);
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post post = item.getPost();
                         UserId publisherUserId = new UserId(Long.toString(post.getPublisherUid()));
@@ -1499,7 +1500,7 @@ public class NewConnection extends Connection {
                 } else if (item.getAction() == GroupFeedItem.Action.RETRACT) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment comment = item.getComment();
-                        connectionObservers.notifyCommentRetracted(comment.getId(), getUserId(Long.toString(comment.getPublisherUid())), comment.getPostId(), comment.getTimestamp());
+                        connectionObservers.notifyCommentRetracted(comment.getId(), getUserId(Long.toString(comment.getPublisherUid())), comment.getPostId(), comment.getTimestamp() * 1000L);
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post post = item.getPost();
                         connectionObservers.notifyPostRetracted(getUserId(Long.toString(post.getPublisherUid())), new GroupId(item.getGid()), post.getId());
