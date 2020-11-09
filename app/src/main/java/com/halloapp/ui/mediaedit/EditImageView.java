@@ -87,7 +87,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private void init() {
         setScaleType(ScaleType.MATRIX);
 
-        shadowPaint.setColor(getResources().getColor(R.color.black_50));
+        shadowPaint.setColor(getResources().getColor(R.color.black_70));
         shadowPaint.setStyle(Paint.Style.FILL);
         borderPaint.setColor(Color.WHITE);
         borderPaint.setStyle(Paint.Style.STROKE);
@@ -223,7 +223,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     public void computeInitialCropRegion() {
         cropRect.set(imageRect);
-        cropRect.inset(initialOffset, initialOffset);
+        cropRect.inset(borderThickness / 2, borderThickness / 2);
 
         final float w = cropRect.width();
         final float h = cropRect.height();
@@ -262,6 +262,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         computeClipBounds();
         computeInitialCropRegion();
         updateImage();
+        requestLayout();
     }
 
     public void zoom(float scale) {
