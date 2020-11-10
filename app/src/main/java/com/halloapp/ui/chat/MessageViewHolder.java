@@ -31,6 +31,7 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.ListFormatter;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
@@ -334,6 +335,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     systemMessageSingleUser(message, R.string.system_message_group_deleted);
                     break;
                 }
+                case Message.USAGE_CHAT:
                 default: {
                     Log.w("Unrecognized system message usage " + message.usage);
                 }
@@ -455,11 +457,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             public void showResult(@NonNull TextView view, @Nullable List<Contact> result) {
                 if (result != null) {
                     Contact sender = result.get(0);
-                    String senderName = sender.userId.rawId().equals(me.user.getValue()) ? itemView.getContext().getString(R.string.me) : sender.getDisplayName();
+                    String senderName = Preconditions.checkNotNull(sender.userId).rawId().equals(me.user.getValue()) ? itemView.getContext().getString(R.string.me) : sender.getDisplayName();
                     List<String> names = new ArrayList<>();
                     for (int i=1; i<result.size(); i++) {
                         Contact contact = result.get(i);
-                        names.add(contact.userId.rawId().equals(me.user.getValue()) ? systemMessage.getResources().getString(R.string.me) : contact.getDisplayName());
+                        names.add(Preconditions.checkNotNull(contact.userId).rawId().equals(me.user.getValue()) ? systemMessage.getResources().getString(R.string.me) : contact.getDisplayName());
                     }
                     String formatted = ListFormatter.format(itemView.getContext(), names);
                     systemMessage.setText(itemView.getContext().getString(string, senderName, formatted));
