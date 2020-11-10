@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class Observable<T> {
+    private static final int REPLY_TIMEOUT = 20_000;
+
     public abstract Observable<T> onResponse(ResponseHandler<T> handler);
     public abstract Observable<T> onError(ExceptionHandler handler);
     public abstract void cancel();
@@ -21,7 +24,12 @@ public abstract class Observable<T> {
     }
 
     private final CountDownLatch gate = new CountDownLatch(1);
+
     public T await() throws ObservableErrorException, InterruptedException {
+        return await(REPLY_TIMEOUT);
+    }
+
+    public T await(long timeoutMs) throws ObservableErrorException, InterruptedException {
         AtomicReference<T> response = new AtomicReference<>();
         this.onResponse(v -> {
             response.set(v);
@@ -33,8 +41,13 @@ public abstract class Observable<T> {
             error.set(v);
             gate.countDown();
         });
-
-        gate.await();
+        if (timeoutMs <= 0) {
+            gate.await();
+        } else {
+            if (!gate.await(timeoutMs, TimeUnit.MILLISECONDS)) {
+                throw new ObservableErrorException(new InterruptedException("timed out"));
+            }
+        }
         if (error.get() != null) {
             throw new ObservableErrorException(error.get());
         }

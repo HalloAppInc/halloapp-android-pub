@@ -19,8 +19,6 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.SessionSetupInfo;
-import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -82,7 +80,6 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,8 +96,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.ShortBufferException;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -114,7 +109,6 @@ public class NewConnection extends Connection {
     private static final int PORT = 5210;
     private static final int NOISE_PORT = 5208;
     private static final int CONNECTION_TIMEOUT = 20_000;
-    private static final int REPLY_TIMEOUT = 20_000;
 
     public static final String FEED_THREAD_ID = "feed";
 
@@ -316,11 +310,6 @@ public class NewConnection extends Connection {
         return isAuthenticated;
     }
 
-
-
-
-
-
     @Nullable
     @Override
     public String getConnectionPropHash() {
@@ -354,6 +343,9 @@ public class NewConnection extends Connection {
             }
         }
         socket = null;
+        synchronized (startupShutdownLock) {
+            iqRouter.reset();
+        }
 
         connectionObservers.notifyDisconnected();
     }
