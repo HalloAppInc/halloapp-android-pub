@@ -41,7 +41,7 @@ public class HANoiseSocket extends Socket {
     private static final String IK_PROTOCOL = "Noise_IK_25519_ChaChaPoly_BLAKE2b";
 
     /** First byte of packet size reserved for future use */
-    private static final int PACKET_SIZE_MASK = 0xFFF;
+    private static final int PACKET_SIZE_MASK = 0xFFFFFF;
 
     private static final int PUBLIC_KEY_SIZE = 32;
 
@@ -272,7 +272,7 @@ public class HANoiseSocket extends Socket {
                 Log.e("readNextMessage stream closed");
                 return null;
             }
-            readerOutputStream.write(recvBytes, 0, read);
+            readerOutputStream.write(recvBuffer, 0, read);
         }
         recvBytes = readerOutputStream.toByteArray();
         readerOutputStream.reset();
