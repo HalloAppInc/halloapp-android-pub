@@ -1210,7 +1210,7 @@ public class NewConnection extends Connection {
                     }
 
                     ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId());
+                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false);
                     processMentions(message.mentions);
                     connectionObservers.notifyIncomingMessageReceived(message);
                     handled = true;
@@ -1222,7 +1222,7 @@ public class NewConnection extends Connection {
                     // NOTE: push names are not collected because eventually these messages will be removed
 
                     ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId());
+                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true);
                     processMentions(message.mentions);
                     // Do not call connectionObservers; this message is not user-visible
                     handled = true;

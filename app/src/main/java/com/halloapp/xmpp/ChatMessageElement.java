@@ -69,7 +69,7 @@ public class ChatMessageElement {
         return senderName;
     }
 
-    Message getMessage(UserId fromUserId, String id) {
+    Message getMessage(UserId fromUserId, String id, boolean isSilentMessage) {
         if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
             try {
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, fromUserId, sessionSetupInfo);
@@ -87,7 +87,7 @@ public class ChatMessageElement {
                 stats.reportDecryptError(message);
                 chatMessage = plaintextChatMessage;
 
-                if (Constants.REREQUEST_SEND_ENABLED) {
+                if (!isSilentMessage && Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
                     EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id);
                 }
