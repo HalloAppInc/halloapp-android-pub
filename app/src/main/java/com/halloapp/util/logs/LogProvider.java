@@ -33,14 +33,16 @@ import java.io.OutputStream;
 import java.util.Date;
 
 public class LogProvider extends ContentProvider {
+    public static final String LOG_ZIP_NAME = "logs.zip";
+
     private static final String AUTHORITY = "com.halloapp.util.logs.LogProvider";
     private static final String LOG_FILE_NAME = "logcat.log";
-    public static final String LOG_ZIP_NAME = "logs.zip";
     private static final String DEBUG_SUFFIX = " [DEBUG]";
     private static final int MATCH_LOGCAT = 1;
     private static final int MATCH_CRASHLYTICS = 2;
+    private static final int EMAIL_LOCAL_PART_MAX_LENGTH = 64;
 
-    private AppContext appContext = AppContext.getInstance();
+    private final AppContext appContext = AppContext.getInstance();
 
     private static byte[] logcatData;
 
@@ -69,7 +71,7 @@ public class LogProvider extends ContentProvider {
             protected void onPostExecute(String user) {
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("application/zip");
-                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {Constants.SUPPORT_EMAIL});
+                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()));
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME));
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
@@ -93,7 +95,7 @@ public class LogProvider extends ContentProvider {
 
                 final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("plain/text");
-                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {Constants.SUPPORT_EMAIL});
+                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()) + DEBUG_SUFFIX);
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_FILE_NAME));
@@ -101,6 +103,18 @@ public class LogProvider extends ContentProvider {
                 context.startActivity(intent);
             }
         }.execute();
+    }
+
+    private static String getSupportEmail() {
+        String localPart = Constants.SUPPORT_EMAIL_LOCAL_PART
+                + "+" + Me.getInstance().getUser()
+                + "-" + Me.getInstance().getPhone()
+                + "+v" + BuildConfig.VERSION_NAME;
+        if (localPart.length() > EMAIL_LOCAL_PART_MAX_LENGTH) {
+            Log.w("Support email local part " + localPart + " exceeded max length; using untagged email address");
+            return Constants.SUPPORT_EMAIL;
+        }
+        return localPart + "@" + Constants.SUPPORT_EMAIL_DOMAIN;
     }
 
     private static CharSequence getTimestamp() {
