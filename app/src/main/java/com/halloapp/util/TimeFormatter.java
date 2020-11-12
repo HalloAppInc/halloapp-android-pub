@@ -8,6 +8,9 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class TimeFormatter {
 
     public static String formatTimeDiff(@NonNull Context context, long timeDiff, boolean longFormat) {
@@ -115,10 +118,16 @@ public class TimeFormatter {
         }
 
         CharSequence dateString;
-        if (DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)) {
-            dateString = context.getString(R.string.yesterday_at_time, DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME));
+        final String time = DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
+        if (TimeUtils.isSameDay(now, timestamp)) {
+            dateString = context.getString(R.string.today_at_time, time);
+        } else if (DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)) {
+            dateString = context.getString(R.string.yesterday_at_time, time);
+        } else if (timestamp > now - DateUtils.WEEK_IN_MILLIS) {
+            String dayOfWeekShort = new SimpleDateFormat("EE", Locale.getDefault()).format(timestamp);
+            dateString = context.getString(R.string.day_of_week_at_time, dayOfWeekShort, time);
         } else {
-            dateString = DateUtils.getRelativeTimeSpanString(timestamp);
+            dateString = DateUtils.getRelativeTimeSpanString(timestamp, now, 0, DateUtils.FORMAT_ABBREV_MONTH|DateUtils.FORMAT_SHOW_YEAR);
         }
 
         return context.getString(R.string.last_seen, dateString);

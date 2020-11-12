@@ -228,8 +228,10 @@
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
     <string name="online">online</string>
     <string name="today">Today</string>
+    <string name="today_at_time">Today at %s</string>
     <string name="yesterday">Yesterday</string>
-    <string name="yesterday_at_time">yesterday at %s</string>
+    <string name="yesterday_at_time">Yesterday at %s</string>
+    <string name="day_of_week_at_time">%s at %s</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="select_contact">New message</string>
     <string name="search_contacts">Search contacts</string>
