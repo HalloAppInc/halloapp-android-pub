@@ -1444,6 +1444,10 @@ public class NewConnection extends Connection {
                 if (item.getAction() == GroupFeedItem.Action.PUBLISH) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
+                        if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
+                            names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
+                        }
+
                         byte[] payload = protoComment.getPayload().toByteArray();
                         PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
                         final Comment comment = new Comment(0,
