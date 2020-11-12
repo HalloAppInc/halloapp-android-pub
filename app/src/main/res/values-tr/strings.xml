@@ -1,2 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<resources/>
+<resources>
+  <string name="next">İleri</string>
+  <string name="phone_number_hint">Telefon numarası</string>
+  <string name="request_registration_title">Hoşgeldin!</string>
+  <string name="new_post">Yeni gönderi</string>
+  <string name="your_post_title">Gönderi</string>
+  <string name="invalid_phone_number">Geçersiz numara</string>
+  <string name="share_option_post">Paylaş</string>
+  <string name="share_option_message">Mesaj at</string>
+  <string name="type_a_comment_hint">Yorum ekle</string>
+  <string name="comments">Yorumlar</string>
+  <string name="reply">Yanıtla</string>
+  <string name="close">Kapat</string>
+  <string name="new_posts">Yeni gönderiler</string>
+  <string name="see_all_comments">Yorumları gör</string>
+  <string name="add_comment">Yorum yaz</string>
+  <string name="yes">Evet</string>
+  <string name="no">Hayır</string>
+  <string name="ok">Tamam</string>
+  <string name="activity">Aktivite</string>
+  <string name="login_failed">Giriş Başarısız</string>
+  <string name="video">Video</string>
+  <string name="photo">Fotoraf</string>
+  <string name="delete">Sil</string>
+  <string name="search">Ara</string>
+  <string name="action_save">Kaydet</string>
+  <string name="share">Paylaş</string>
+  <string name="cancel">İptal et</string>
+  <string name="edit">Düzenle</string>
+  <string name="done">Tamam</string>
+  <string name="members_header">Katılımcılar (%s)</string>
+  <string name="add_members">Katılımcı ekle</string>
+  <string name="add_members_in_progress">Katılımcı ekleniyor…</string>
+  <string name="failed_add_members">Katılımcı ekleme başarısız, sonra tekrar deneyiniz</string>
+  <string name="create_group">Yeni grup oluştur</string>
+  <string name="create_group_in_progress">Oluşturuluyor %s…</string>
+  <string name="new_group_title">Gruba bir isim ver</string>
+  <string name="group_picker_title">Katılımcı seç</string>
+  <string name="button_create_group">Oluştur</string>
+  <string name="group_name_hint">Grup ismi</string>
+  <string name="failed_create_group">İşlem başarısız oldu, sonra tekrar deneyiniz</string>
+</resources>
