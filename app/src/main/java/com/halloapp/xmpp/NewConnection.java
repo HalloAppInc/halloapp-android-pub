@@ -890,6 +890,11 @@ public class NewConnection extends Connection {
         });
     }
 
+    private String getSilentIdFromMessage(@NonNull Message message) {
+        // Format: shhh:from:to:timestampInSeconds:retryCount
+        return "shhh:" + me.getUser() + ":" + message.chatId.rawId() + ":" + message.timestamp / 1000L + ":" + 0;
+    }
+
     public void sendSilentMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
         executor.execute(() -> {
             if (message.isLocalMessage()) {
@@ -910,7 +915,7 @@ public class NewConnection extends Connection {
             SilentChatStanza silentChatStanza = SilentChatStanza.newBuilder().setChatStanza(chatMessageElement.toProto()).build();
 
             Msg msg = Msg.newBuilder()
-                    .setId(message.id)
+                    .setId(getSilentIdFromMessage(message))
                     .setType(Msg.Type.CHAT)
                     .setToUid(Long.parseLong(message.chatId.rawId()))
                     .setSilentChatStanza(silentChatStanza)
