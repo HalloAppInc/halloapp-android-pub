@@ -46,6 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/composer_subtitle_height"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="2dp"
                     app:layout_anchor="@id/toolbar_title"
                     app:layout_anchorGravity="bottom|start"
                     style="@style/TextAppearance.Toolbar.Subtitle.Composer" />
@@ -198,7 +199,7 @@
                                     app:ci_margin="4dp"
                                     app:ci_drawable="@drawable/pager_item_indicator_selected"
                                     app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
-                                    app:ci_animator="@animator/pager_indicator"/>
+                                    app:ci_animator="@animator/pager_indicator_composer"/>
 
                                 <com.halloapp.widget.MentionableEntry
                                     android:id="@+id/entry_card"
@@ -428,6 +429,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/entry_bottom_unfocused_min_height"
+                android:maxHeight="@dimen/entry_bottom_max_height"
+                android:scrollbars="vertical"
                 android:layout_weight="0"
                 android:background="@null"
                 android:hint="@string/write_a_description"

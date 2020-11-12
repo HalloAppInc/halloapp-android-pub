@@ -422,13 +422,6 @@ public class ContentComposerActivity extends HalloActivity {
             viewModel.doNotDeleteTempFiles();
             prepareResult();
             super.onBackPressed();
-        } else if (calledFromCamera) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.discard_photo_title))
-                    .setMessage(getResources().getString(R.string.discard_photo_warning))
-                    .setPositiveButton(android.R.string.yes, (dialogInterface, which) -> super.onBackPressed())
-                    .setNegativeButton(android.R.string.no, null)
-                    .show();
         } else {
             super.onBackPressed();
         }
@@ -772,7 +765,7 @@ public class ContentComposerActivity extends HalloActivity {
         final int currentItem = getCurrentItem();
         final boolean editIsFocused = editText != null && editText.isFocused();
         if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
-            addMediaButton.setVisibility(View.VISIBLE);
+            addMediaButton.setVisibility(calledFromCamera ? View.GONE : View.VISIBLE);
             final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
             deletePictureButton.setVisibility(View.VISIBLE);
             if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
