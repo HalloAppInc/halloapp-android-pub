@@ -5,6 +5,11 @@ import Base64 from 'base64-js'
 
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 import CloseIcon from '@material-ui/icons/Close'
 
@@ -39,6 +44,8 @@ interface State {
   findText: string,
   findError: boolean,
   highlightedLine: number,
+  day: number,
+  dayNames: string[],
 }
 
 function getColorForLetter(s: string) {
@@ -82,9 +89,9 @@ function isLowerCase(s: string) {
 
 function camelCaseToKebabCase(s: string) {
   let ret = ""
-  for (let i=0; i<s.length; i++) {
+  for (let i = 0; i < s.length; i++) {
     let c = s.charAt(i)
-    if (isUpperCase(c) && i !== 0 && i !== s.length - 1 && (isLowerCase(s.charAt(i+1)) || isLowerCase(s.charAt(i-1)))) {
+    if (isUpperCase(c) && i !== 0 && i !== s.length - 1 && (isLowerCase(s.charAt(i + 1)) || isLowerCase(s.charAt(i - 1)))) {
       ret += "_"
     }
     ret += c.toLowerCase()
@@ -104,6 +111,8 @@ class Log extends React.Component<Props, State>  {
       findText: "",
       findError: false,
       highlightedLine: -1,
+      day: 0,
+      dayNames: [],
     }
     this.onKeyDown = this.onKeyDown.bind(this)
   }
@@ -123,7 +132,7 @@ class Log extends React.Component<Props, State>  {
 
     let parts2 = parts[1].split(".")
     let ret = ""
-    for (let i=0; i<parts2.length - 1; i++) {
+    for (let i = 0; i < parts2.length - 1; i++) {
       ret += parts2[i]
       if (i !== parts2.length - 2) {
         ret += "."
@@ -140,31 +149,46 @@ class Log extends React.Component<Props, State>  {
     document.addEventListener("keydown", this.onKeyDown, false);
     const id = this.props.match.params.id
     const file = this.props.match.params.file
-    LogCache.getFile(id, file)
-      .then(data => {
-        let logLines = data.split('\n')
-        let logLevels = logLines.map(l => getLetterFromLine(l))
-        for (let i = 1; i < logLevels.length; i++) {
-          if (logLevels[i] === undefined) {
-            logLevels[i] = logLevels[i - 1]
-          }
-        }
-        let logs: LogLine[] = []
-        for (let i = 0; i < logLines.length; i++) {
-          logs.push({
-            raw: logLines[i],
-            flat: this.protofy(logLines[i], true),
-            level: logLevels[i] as string,
-          })
-        }
-        let filtered = this.runFilter(logs, this.state.filterText)
-        this.setState({
-          logs: logs,
-          filteredLogs: filtered,
-        })
-      }).catch(err => {
-        console.log("Error fetching file for " + id + "/" + file + ": " + err)
+    LogCache.getEntryNames(id, file)
+    .then(names => {
+      let day = names.length - 1 // last day will be most recent
+      this.setState({
+        dayNames: names,
+        day: day, 
       })
+      this.fetchDay(id, file, day)
+    })
+    .catch(err => {
+      console.log("Failed to fetch entry names of zip " + err)
+    })
+  }
+
+  fetchDay(id: string, file: string, day: number) {
+    LogCache.getDayOfFile(id, file, day)
+    .then(data => {
+      let logLines = data.split('\n')
+      let logLevels = logLines.map(l => getLetterFromLine(l))
+      for (let i = 1; i < logLevels.length; i++) {
+        if (logLevels[i] === undefined) {
+          logLevels[i] = logLevels[i - 1]
+        }
+      }
+      let logs: LogLine[] = []
+      for (let i = 0; i < logLines.length; i++) {
+        logs.push({
+          raw: logLines[i],
+          flat: this.protofy(logLines[i], true),
+          level: logLevels[i] as string,
+        })
+      }
+      let filtered = this.runFilter(logs, this.state.filterText)
+      this.setState({
+        logs: logs,
+        filteredLogs: filtered,
+      })
+    }).catch(err => {
+      console.log("Error fetching file for " + id + "/" + file + ": " + err)
+    })
   }
 
   componentWillUnmount() {
@@ -227,7 +251,7 @@ class Log extends React.Component<Props, State>  {
       }
 
       let version = "v" + this.getVersion()
-      
+
       return (
         <div>
           {pre}
@@ -282,9 +306,9 @@ class Log extends React.Component<Props, State>  {
             return before + this.messageObjectToString(obj, messageTypeName) + after
           }
           return (
-            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'start'}}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
               <div>{before}</div>
-              <div style={{backgroundColor: "#ccc"}}>{this.messageObjectToString(obj, messageTypeName)}</div>
+              <div style={{ backgroundColor: "#ccc" }}>{this.messageObjectToString(obj, messageTypeName)}</div>
               <div>{after}</div>
             </div>
           )
@@ -302,7 +326,7 @@ class Log extends React.Component<Props, State>  {
     let keys = Object.keys(obj)
     let attributes = new Map<string, string>()
     let children: any[][] = []
-    for (let i=0; i<keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       let key = keys[i]
       let val = obj[key]
       if (val instanceof Object) {
@@ -418,15 +442,26 @@ class Log extends React.Component<Props, State>  {
     }
   }
 
+  updateDay(event: React.ChangeEvent<{ value: unknown }>) {
+    const id = this.props.match.params.id
+    const file = this.props.match.params.file
+    let day = event.target.value as number
+    this.setState({
+      day: day,
+    })
+    this.fetchDay(id, file, day)
+  }
+
   private filterText?: HTMLElement
   private findText?: HTMLElement
 
   render() {
+    console.log("in render; day=" + this.state.day)
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', }}>
         <div style={{ height: Constants.LOG_HEADER_HEIGHT, display: 'flex', flexDirection: 'column', justifyContent: 'space-around', color: '#eee', backgroundColor: Constants.COLOR_SECONDARY.main }}>
-          <div>USER: <Link to={"/user/" + this.props.match.params.id}>{this.props.match.params.id}</Link></div>
+          <div>USER: <Link to={"/user/" + this.props.match.params.id}>{this.props.match.params.id}</Link><br style={{lineHeight: "175%"}} />FILE: {this.props.match.params.file}</div>
         </div>
         <div style={{ height: Constants.LOG_HEADER_HEIGHT, display: 'flex', flexDirection: 'column', justifyContent: 'space-around', color: '#eee', backgroundColor: Constants.COLOR_SECONDARY.light }}>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -449,7 +484,21 @@ class Log extends React.Component<Props, State>  {
               }}
             />
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              FILE: {this.props.match.params.file}
+              <FormControl>
+                <InputLabel id="day_label">Day</InputLabel>
+                <Select
+                  labelId="day_label"
+                  id="day_select"
+                  value={this.state.day}
+                  onChange={ev => this.updateDay(ev)}
+                >
+                  {this.state.dayNames.map((day, i) => {
+                    return (
+                    <MenuItem key={day} value={i}>{day}</MenuItem>
+                    )
+                  })}
+                </Select>
+              </FormControl>
             </div>
             <TextField
               inputRef={input => this.findText = input ?? undefined}

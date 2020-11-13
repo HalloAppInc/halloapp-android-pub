@@ -111,6 +111,24 @@ class Wrapper {
             })
         })
     }
+
+    getRawFile(user: string, file: string) {
+        return new Promise<Buffer>((resolve, reject) => {
+            let s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+            let request: AWS.S3.GetObjectRequest = {
+                Bucket: LOG_BUCKET_NAME,
+                Key: user + "/" + file,
+            }
+            s3.getObject(request, (err, data) => {
+                if (err) {
+                    console.log("Error downloading zip: " + err);
+                    reject(err)
+                } else {
+                    resolve(data.Body! as Buffer)
+                }
+            })
+        })
+    }
 }
 
 export default new Wrapper()
