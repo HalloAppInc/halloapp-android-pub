@@ -14,6 +14,8 @@ import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.util.Observable;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -88,15 +90,11 @@ public class KeyManager {
                 oneTimePreKeys.add(toAdd.toByteArray());
             }
 
-            Future<Boolean> success = connection.uploadKeys(identityKeyProto.toByteArray(), signedPreKeyProto.toByteArray(), oneTimePreKeys);
             try {
-                if (success.get()) {
-                    encryptedKeyStore.setKeysUploaded(true);
-                    encryptedKeyStore.setKeysVersion(KEYS_VERSION);
-                } else {
-                    Log.e("Key upload failed");
-                }
-            } catch (InterruptedException | ExecutionException e) {
+                connection.uploadKeys(identityKeyProto.toByteArray(), signedPreKeyProto.toByteArray(), oneTimePreKeys).await();
+                encryptedKeyStore.setKeysUploaded(true);
+                encryptedKeyStore.setKeysVersion(KEYS_VERSION);
+            } catch (InterruptedException | ObservableErrorException e) {
                 Log.e("Exception awaiting key upload result", e);
             }
         } else {

@@ -21,7 +21,6 @@ import com.halloapp.xmpp.util.Observable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class Connection {
@@ -86,15 +85,15 @@ public abstract class Connection {
 
     public abstract void requestServerProps();
 
-    public abstract Future<Integer> requestSecondsToExpiration();
+    public abstract Observable<Integer> requestSecondsToExpiration();
 
-    public abstract Future<MediaUploadIq.Urls> requestMediaUpload(long fileSize);
+    public abstract Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize);
 
-    public abstract Future<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
+    public abstract Observable<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
 
     public abstract void sendPushToken(@NonNull final String pushToken);
 
-    public abstract Future<Boolean> sendName(@NonNull final String name);
+    public abstract Observable<Void> sendName(@NonNull final String name);
 
     public abstract void subscribePresence(UserId userId);
 
@@ -102,25 +101,25 @@ public abstract class Connection {
 
     public abstract void updateChatState(@NonNull ChatId chat, @ChatState.Type int state);
 
-    public abstract Future<Boolean> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys);
+    public abstract Observable<Void> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys);
 
     public abstract void uploadMoreOneTimePreKeys(@NonNull List<byte[]> oneTimePreKeys);
 
-    public abstract Future<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId);
+    public abstract Observable<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId);
 
-    public abstract Future<Integer> getOneTimeKeyCount();
+    public abstract Observable<Integer> getOneTimeKeyCount();
 
-    public abstract Future<Void> sendStats(List<Stats.Counter> counters);
+    public abstract void sendStats(List<Stats.Counter> counters);
 
-    public abstract Future<String> setAvatar(String base64, long numBytes, int width, int height);
+    public abstract Observable<String> setAvatar(String base64, long numBytes, int width, int height);
 
-    public abstract Future<String> setGroupAvatar(GroupId groupId, String base64);
+    public abstract Observable<String> setGroupAvatar(GroupId groupId, String base64);
 
-    public abstract Future<String> getAvatarId(UserId userId);
+    public abstract Observable<String> getAvatarId(UserId userId);
 
-    public abstract Future<String> getMyAvatarId();
+    public abstract Observable<String> getMyAvatarId();
 
-    public abstract Future<Boolean> sharePosts(final Map<UserId, Collection<Post>> shareMap);
+    public abstract Observable<Void> sharePosts(final Map<UserId, Collection<Post>> shareMap);
 
     public abstract void sendPost(final @NonNull Post post);
 

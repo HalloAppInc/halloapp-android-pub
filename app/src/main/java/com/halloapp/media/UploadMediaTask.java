@@ -18,6 +18,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -89,7 +90,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             if (media.transferred == Media.TRANSFERRED_NO) {
                 try {
                     long fileSize = encryptedFile.length();
-                    urls = connection.requestMediaUpload(fileSize).get();
+                    urls = connection.requestMediaUpload(fileSize).await();
                     if (urls == null) {
                         Log.e("Resumable Uploader: failed to get urls");
                         break;
@@ -100,8 +101,11 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                         media.transferred = Media.TRANSFERRED_RESUME;
                         contentItem.setMediaTransferred(media, contentDb);
                     }
-                } catch (ExecutionException | InterruptedException e) {
+                } catch (InterruptedException e) {
                     Log.e("Resumable Uploader ", e);
+                    break;
+                } catch (ObservableErrorException e) {
+                    Log.e("Resumable Uploader: failed to get urls", e);
                     break;
                 }
             } else if (media.transferred == Media.TRANSFERRED_RESUME) {

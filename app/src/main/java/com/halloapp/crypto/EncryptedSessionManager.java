@@ -28,6 +28,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.NewConnection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -222,7 +223,7 @@ public class EncryptedSessionManager {
             encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
 
             try {
-                WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).get();
+                WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
                 if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
                     Log.i("EncryptedSessionManager no whisper keys returned");
                     throw new CryptoException("no whisper keys returned");
@@ -257,7 +258,7 @@ public class EncryptedSessionManager {
                 encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
             } catch (InvalidProtocolBufferException e) {
                 throw new CryptoException("protobuf parse failed", e);
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (InterruptedException | ObservableErrorException e) {
                 throw new CryptoException("execution interrupted", e);
             } catch (GeneralSecurityException e) {
                 throw new CryptoException("spk signature mismatch", e);

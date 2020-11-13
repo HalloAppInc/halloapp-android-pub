@@ -33,6 +33,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.io.File;
 import java.io.IOException;
@@ -158,7 +159,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     if (userId.isMe()) {
                         avatarId = contactAvatarInfo.avatarId;
                         if (avatarId == null) {
-                            avatarId = connection.getMyAvatarId().get();
+                            avatarId = connection.getMyAvatarId().await();
                             contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
                         }
                     } else if (contact.friend) {
@@ -192,7 +193,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 }
 
                 contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
-            } catch (InterruptedException | ExecutionException | IOException | GeneralSecurityException e) {
+            } catch (InterruptedException | IOException | GeneralSecurityException | ObservableErrorException e) {
                 Log.w("AvatarLoader: Failed getting avatar for " + chatId + "; resetting values", e);
                 contactAvatarInfo.avatarCheckTimestamp = 0;
                 contactAvatarInfo.avatarId = null;

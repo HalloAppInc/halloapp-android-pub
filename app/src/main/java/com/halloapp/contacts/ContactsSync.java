@@ -26,6 +26,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -205,8 +206,8 @@ public class ContactsSync {
         if (!addressBookSyncResult.removed.isEmpty()) {
             try {
                 Connection.getInstance().syncContacts(null, addressBookSyncResult.removed,
-                        false, null, 0, true).get();
-            } catch (ExecutionException | InterruptedException e) {
+                        false, null, 0, true).await();
+            } catch (InterruptedException | ObservableErrorException e) {
                 Log.i("ContactsSync.performContactSync: failed to delete contacts", e);
                 return ListenableWorker.Result.failure();
             }
@@ -250,7 +251,7 @@ public class ContactsSync {
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE || lastBatch) {
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
                 try {
-                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, null, fullSync, syncId, batchIndex, lastBatch).get();
+                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, null, fullSync, syncId, batchIndex, lastBatch).await();
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
                         phonesBatch.clear();
@@ -258,7 +259,7 @@ public class ContactsSync {
                         Log.e("ContactsSync.performContactSync: failed to sync batch");
                         return ListenableWorker.Result.failure();
                     }
-                } catch (ExecutionException | InterruptedException e) {
+                } catch (InterruptedException | ObservableErrorException e) {
                     Log.e("ContactsSync.performContactSync: failed to sync batch", e);
                     return ListenableWorker.Result.failure();
                 }

@@ -29,6 +29,7 @@ import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -154,10 +155,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
             try {
                 if (!TextUtils.isEmpty(name)) {
-                    final Boolean result = Connection.getInstance().sendName(Preconditions.checkNotNull(name)).get();
-                    if (!Boolean.TRUE.equals(result)) {
-                        return Result.failure();
-                    }
+                    Connection.getInstance().sendName(Preconditions.checkNotNull(name)).await();
                     Me.getInstance().saveName(name);
                 }
                 if (avatarFilePath != null && avatarWidth > 0 && avatarHeight > 0) {
@@ -171,7 +169,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                         }
                         byte[] fileBytes = baos.toByteArray();
                         String base64 = Base64.encodeToString(fileBytes, Base64.NO_WRAP);
-                        String avatarId = Connection.getInstance().setAvatar(base64, fileBytes.length, avatarWidth, avatarHeight).get();
+                        String avatarId = Connection.getInstance().setAvatar(base64, fileBytes.length, avatarWidth, avatarHeight).await();
                         if (avatarId == null) {
                             return Result.failure();
                         }
@@ -182,13 +180,13 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
                         return Result.failure();
-                    } catch (InterruptedException | ExecutionException e) {
+                    } catch (InterruptedException | ObservableErrorException e) {
                         Log.e("Avatar upload interrupted", e);
                         return Result.failure();
                     }
                 }
                 return Result.success();
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (InterruptedException | ObservableErrorException e) {
                 Log.e("UpdateProfileWorker", e);
                 return Result.failure();
             }

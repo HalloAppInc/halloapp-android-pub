@@ -11,6 +11,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,12 +135,11 @@ public class PostsManager {
         boolean shared = true;
         if (!shareMap.isEmpty()) {
             try {
-                shared = connection.sharePosts(shareMap).get();
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e("PostsManager/sharePosts failed to share posts", e);
-            }
-            if (shared) {
+                connection.sharePosts(shareMap).await();
                 contentDb.updatePostAudience(shareMap);
+            } catch (InterruptedException | ObservableErrorException e) {
+                shared = false;
+                Log.e("PostsManager/sharePosts failed to share posts", e);
             }
         }
         synchronized (PostsManager.this) {

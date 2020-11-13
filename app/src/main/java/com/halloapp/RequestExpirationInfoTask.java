@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.concurrent.ExecutionException;
 
@@ -29,8 +30,8 @@ public class RequestExpirationInfoTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
-            return connection.requestSecondsToExpiration().get();
-        } catch (ExecutionException | InterruptedException e) {
+            return connection.requestSecondsToExpiration().await();
+        } catch (InterruptedException | ObservableErrorException e) {
             Log.e("RequestExpirationInfoTask: failed to get days_left", e);
         }
         return null;

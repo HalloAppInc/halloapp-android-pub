@@ -194,7 +194,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
                         }
                         byte[] fileBytes = baos.toByteArray();
                         String base64 = Base64.encodeToString(fileBytes, Base64.NO_WRAP);
-                        String avatarId = Connection.getInstance().setGroupAvatar(groupId, base64).get();
+                        String avatarId = Connection.getInstance().setGroupAvatar(groupId, base64).await();
                         if (avatarId == null) {
                             return Result.failure();
                         }
@@ -205,7 +205,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
                         return Result.failure();
-                    } catch (InterruptedException | ExecutionException e) {
+                    } catch (InterruptedException | ObservableErrorException e) {
                         Log.e("Avatar upload interrupted", e);
                         return Result.failure();
                     }

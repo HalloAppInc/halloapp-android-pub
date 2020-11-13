@@ -69,8 +69,8 @@ import com.halloapp.xmpp.props.ServerPropsRequestIq;
 import com.halloapp.xmpp.props.ServerPropsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
 import com.halloapp.xmpp.util.ExceptionHandler;
+import com.halloapp.xmpp.util.MutableObservable;
 import com.halloapp.xmpp.util.Observable;
-import com.halloapp.xmpp.util.ObservableErrorException;
 import com.halloapp.xmpp.util.ResponseHandler;
 
 import java.io.ByteArrayOutputStream;
@@ -91,10 +91,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -362,115 +360,55 @@ public class NewConnection extends Connection {
 
     @Override
     public void requestServerProps() {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: request server props: no connection");
-                return;
-            }
-            ServerPropsRequestIq requestIq = new ServerPropsRequestIq();
-            try {
-                Observable<ServerPropsResponseIq> observable = sendIqRequestAsync(requestIq).map(response -> ServerPropsResponseIq.fromProto(response.getProps()));
-                ServerPropsResponseIq responseIq = observable.await();
-                connectionObservers.notifyServerPropsReceived(responseIq.getProps(), responseIq.getHash());
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: failed to get server props", e);
-            }
-        });
+        ServerPropsRequestIq requestIq = new ServerPropsRequestIq();
+        sendIqRequestAsync(requestIq)
+                .onResponse(response -> {
+                    ServerPropsResponseIq responseIq = ServerPropsResponseIq.fromProto(response.getProps());
+                    connectionObservers.notifyServerPropsReceived(responseIq.getProps(), responseIq.getHash());
+                }).onError(e -> Log.e("connection: failed to get server props", e));
     }
 
     @Override
-    public Future<Integer> requestSecondsToExpiration() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: request seconds to expiration: no connection");
-                return null;
-            }
-            final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq();
-            try {
-                final SecondsToExpirationIq iqResponse = sendIqRequestAsync(secondsToExpirationIq).map(response -> SecondsToExpirationIq.fromProto(response.getClientVersion())).await();
-                return iqResponse.secondsLeft;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: request seconds to expiration", e);
-            }
-            return null;
-        });
+    public Observable<Integer> requestSecondsToExpiration() {
+        final SecondsToExpirationIq secondsToExpirationIq = new SecondsToExpirationIq();
+        return sendIqRequestAsync(secondsToExpirationIq).map(r -> SecondsToExpirationIq.fromProto(r.getClientVersion()).secondsLeft);
     }
 
     @Override
-    public Future<MediaUploadIq.Urls> requestMediaUpload(long fileSize) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: request media upload: no connection");
-                return null;
-            }
-            final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize);
-            try {
-                final MediaUploadIq responseIq = sendIqRequestAsync(mediaUploadIq).map(response -> MediaUploadIq.fromProto(response.getUploadMedia())).await();
-                return responseIq.urls;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: request media upload", e);
-            }
-            return null;
-        });
+    public Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize) {
+        final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize);
+        return sendIqRequestAsync(mediaUploadIq).map(response -> MediaUploadIq.fromProto(response.getUploadMedia()).urls);
     }
 
     @Override
-    public Future<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: sync contacts: no connection");
-                return null;
+    public Observable<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
+        final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(
+                addPhones, deletePhones, fullSync, syncId, index, lastBatch);
+
+        return sendIqRequestAsync(contactsSyncIq).map(response -> {
+            List<Contact> contacts = response.getContactList().getContactsList();
+            List<ContactInfo> ret = new ArrayList<>();
+            for (Contact contact : contacts) {
+                ret.add(new ContactInfo(contact));
             }
-            final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(
-                    addPhones, deletePhones, fullSync, syncId, index, lastBatch);
-            try {
-                final Iq response = iqRouter.sendSync(contactsSyncIq.toProtoIq());
-                List<Contact> contacts = response.getContactList().getContactsList();
-                List<ContactInfo> ret = new ArrayList<>();
-                for (Contact contact : contacts) {
-                    ret.add(new ContactInfo(contact));
-                }
-                return ret;
-            } catch (ExecutionException e) {
-                Log.e("connection: cannot sync contacts", e);
-            }
-            return null;
+            return ret;
         });
     }
 
     @Override
     public void sendPushToken(@NonNull String pushToken) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: send push token: no connection");
-                return;
-            }
-            final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken);
-            try {
-                final Iq response = sendIqRequestAsync(pushIq).await();
-                Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response));
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot send push token", e);
-            }
-        });
+        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken);
+        sendIqRequestAsync(pushIq)
+                .onResponse(response -> Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response)))
+                .onError(e -> Log.e("connection: cannot send push token", e));
     }
 
     @Override
-    public Future<Boolean> sendName(@NonNull String name) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: send name: no connection");
-                return Boolean.FALSE;
-            }
-            final UserNameIq nameIq = new UserNameIq(name);
-            try {
-                final Iq response = sendIqRequestAsync(nameIq).await();
-                Log.d("connection: response after setting name " + ProtoPrinter.toString(response));
-                return Boolean.TRUE;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot send name", e);
-                return Boolean.FALSE;
-            }
+    public Observable<Void> sendName(@NonNull String name) {
+        final UserNameIq nameIq = new UserNameIq(name);
+        return sendIqRequestAsync(nameIq).map(r -> {
+            Log.d("connection: response after setting name " + ProtoPrinter.toString(r));
+            return null;
         });
     }
 
@@ -513,21 +451,11 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public Future<Boolean> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: upload keys: no connection");
-                return Boolean.FALSE;
-            }
-            final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(identityKey, signedPreKey, oneTimePreKeys);
-            try {
-                final Iq response = sendIqRequestAsync(uploadIq).await();
-                Log.d("connection: response after uploading keys " + ProtoPrinter.toString(response));
-                return Boolean.TRUE;
-            } catch (InterruptedException e) {
-                Log.e("connection: cannot upload keys", e);
-                return Boolean.FALSE;
-            }
+    public Observable<Void> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
+        final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(identityKey, signedPreKey, oneTimePreKeys);
+        return sendIqRequestAsync(uploadIq).map(response -> {
+            Log.d("connection: response after uploading keys " + ProtoPrinter.toString(response));
+            return null;
         });
     }
 
@@ -537,328 +465,167 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public Future<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: download keys: no connection");
-                return null;
-            }
-            final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(userId.rawId(), userId);
-            try {
-                Observable<WhisperKeysResponseIq> observable = sendIqRequestAsync(downloadIq).map(response -> WhisperKeysResponseIq.fromProto(response.getWhisperKeys()));
-                final WhisperKeysResponseIq response = observable.await();
-                Log.d("connection: response after downloading keys " + response.toString());
-                return response;
-            } catch (InterruptedException e) {
-                Log.e("connection: cannot download keys", e);
-            }
-            return null;
+    public Observable<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId) {
+        final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(userId.rawId(), userId);
+        return sendIqRequestAsync(downloadIq).map(response -> {
+            Log.d("connection: response after downloading keys " + response.toString());
+            return WhisperKeysResponseIq.fromProto(response.getWhisperKeys());
         });
     }
 
     @Override
-    public Future<Integer> getOneTimeKeyCount() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: get one time key count: no connection");
-                return null;
-            }
-            final WhisperKeysCountIq countIq = new WhisperKeysCountIq();
-            try {
-                final WhisperKeysResponseIq response = sendIqRequestAsync(countIq).map(res -> WhisperKeysResponseIq.fromProto(res.getWhisperKeys())).await();
-                Log.d("connection: response for get key count  " + response.toString());
-                return response.count;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot get one time key count", e);
-            }
-            return null;
+    public Observable<Integer> getOneTimeKeyCount() {
+        final WhisperKeysCountIq countIq = new WhisperKeysCountIq();
+        return sendIqRequestAsync(countIq).map(response -> {
+            Log.d("connection: response for get key count  " + response.toString());
+            return WhisperKeysResponseIq.fromProto(response.getWhisperKeys()).count;
         });
     }
 
     @Override
-    public Future<Void> sendStats(List<Stats.Counter> counters) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: send stats: no connection");
-                return null;
-            }
-            final StatsIq statsIq = new StatsIq(counters);
-            try {
-                final Iq response = sendIqRequestAsync(statsIq).await();
-                Log.d("connection: response for send stats  " + ProtoPrinter.toString(response));
-                return null;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot send stats", e);
-            }
-            return null;
-        });
+    public void sendStats(List<Stats.Counter> counters) {
+        final StatsIq statsIq = new StatsIq(counters);
+        sendIqRequestAsync(statsIq)
+                .onResponse(response -> Log.d("connection: response for send stats  " + ProtoPrinter.toString(response)))
+                .onError(e -> Log.e("connection: cannot send stats", e));
     }
 
     @Override
-    public Future<String> setAvatar(String base64, long numBytes, int width, int height) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot update avatar, no connection");
-                return null;
-            }
-            try {
-                final AvatarIq avatarIq = new AvatarIq(base64, numBytes, height, width);
-                final AvatarIq response = sendIqRequestAsync(avatarIq).map(res -> AvatarIq.fromProto(res.getAvatar())).await();
-                return response.avatarId;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.w("connection: cannot update avatar", e);
-            }
-            return null;
-        });
+    public Observable<String> setAvatar(String base64, long numBytes, int width, int height) {
+        final AvatarIq avatarIq = new AvatarIq(base64, numBytes, height, width);
+        return sendIqRequestAsync(avatarIq).map(res -> AvatarIq.fromProto(res.getAvatar()).avatarId);
     }
 
     @Override
-    public Future<String> setGroupAvatar(GroupId groupId, String base64) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot set group avatar, no connection");
-                return null;
-            }
-            try {
-                final GroupAvatarIq avatarIq = new GroupAvatarIq(groupId, base64);
-                final GroupResponseIq response = sendIqRequestAsync(avatarIq).map(res -> GroupResponseIq.fromProto(res.getGroupStanza())).await();
-                return response.avatar;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.w("connection: cannot update avatar", e);
-            }
-            return null;
-        });
+    public Observable<String> setGroupAvatar(GroupId groupId, String base64) {
+        final GroupAvatarIq avatarIq = new GroupAvatarIq(groupId, base64);
+        return sendIqRequestAsync(avatarIq).map(res -> GroupResponseIq.fromProto(res.getGroupStanza()).avatar);
     }
 
     @Override
-    public Future<String> getAvatarId(UserId userId) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot update avatar, no connection");
-                return null;
-            }
-            try {
-                final AvatarIq setAvatarIq = new AvatarIq(userId);
-                final AvatarIq response = sendIqRequestAsync(setAvatarIq).map(res -> AvatarIq.fromProto(res.getAvatar())).await();
-                return response.avatarId;
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.w("connection: cannot update avatar", e);
-            }
-            return null;
-        });
+    public Observable<String> getAvatarId(UserId userId) {
+        final AvatarIq setAvatarIq = new AvatarIq(userId);
+        return sendIqRequestAsync(setAvatarIq).map(res -> AvatarIq.fromProto(res.getAvatar()).avatarId);
     }
 
     @Override
-    public Future<String> getMyAvatarId() {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot get my avatar, no connection");
-                return null;
-            }
-            try {
-                final AvatarIq getAvatarIq = new AvatarIq(new UserId(me.getUser()));
-                final Iq response = iqRouter.sendSync(getAvatarIq.toProtoIq());
-                return response.getAvatar().getId();
-            } catch (ExecutionException e) {
-                Log.w("connection: cannot get my avatar", e);
-            }
-            return null;
-        });
+    public Observable<String> getMyAvatarId() {
+        final AvatarIq getAvatarIq = new AvatarIq(new UserId(me.getUser()));
+        return sendIqRequestAsync(getAvatarIq).map(response -> response.getAvatar().getId());
     }
 
     @Override
-    public Future<Boolean> sharePosts(Map<UserId, Collection<Post>> shareMap) {
-        return executor.submit(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot share posts, no connection");
-                return false;
+    public Observable<Void> sharePosts(Map<UserId, Collection<Post>> shareMap) {
+        List<SharePosts> sharePosts = new ArrayList<>();
+        for (UserId user : shareMap.keySet()) {
+            Collection<Post> postsToShare = shareMap.get(user);
+            if (postsToShare == null) {
+                continue;
             }
-            try {
-                List<SharePosts> sharePosts = new ArrayList<>();
-                for (UserId user : shareMap.keySet()) {
-                    Collection<Post> postsToShare = shareMap.get(user);
-                    if (postsToShare == null) {
-                        continue;
-                    }
-                    ArrayList<FeedItem> itemList = new ArrayList<>(postsToShare.size());
-                    for (Post post : postsToShare) {
-                        FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
-                        itemList.add(sharedPost);
-                    }
-                    sharePosts.add(new SharePosts(user, itemList));
-                }
-                FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
-
-                sendIqRequestAsync(updateIq).await();
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot send post", e);
-                return false;
+            ArrayList<FeedItem> itemList = new ArrayList<>(postsToShare.size());
+            for (Post post : postsToShare) {
+                FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
+                itemList.add(sharedPost);
             }
-            return true;
-        });
+            sharePosts.add(new SharePosts(user, itemList));
+        }
+        FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
+        return sendIqRequestAsync(updateIq).map(r -> null);
     }
 
     @Override
     public void sendPost(@NonNull Post post) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send post, no connection");
-                return;
-            }
-            try {
-                final PublishedEntry entry = new PublishedEntry(
-                        PublishedEntry.ENTRY_FEED,
-                        null,
-                        post.timestamp,
-                        me.getUser(),
-                        post.text,
-                        null,
-                        null);
-                for (Media media : post.media) {
-                    entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
-                }
-                for (Mention mention : post.mentions) {
-                    entry.mentions.add(Mention.toProto(mention));
-                }
-                if (post.getAudienceType() == null && post.getParentGroup() == null) {
-                    Log.e("connection: sendPost null audience type but not a group post");
-                    return;
-                }
-                FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntryString());
-                if (post.getParentGroup() == null) {
-                    FeedUpdateIq publishIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
-                    publishIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
-
-                    Observable<Iq> observable = sendIqRequestAsync(publishIq);
-                    observable.await();
-                } else {
-                    GroupFeedUpdateIq publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
-
-                    Observable<Iq> observable = sendIqRequestAsync(publishIq);
-                    observable.await();
-                }
-                connectionObservers.notifyOutgoingPostSent(post.id);
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot send post", e);
-            }
-        });
+        final PublishedEntry entry = new PublishedEntry(
+                PublishedEntry.ENTRY_FEED,
+                null,
+                post.timestamp,
+                me.getUser(),
+                post.text,
+                null,
+                null);
+        for (Media media : post.media) {
+            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+        }
+        for (Mention mention : post.mentions) {
+            entry.mentions.add(Mention.toProto(mention));
+        }
+        if (post.getAudienceType() == null && post.getParentGroup() == null) {
+            Log.e("connection: sendPost null audience type but not a group post");
+            return;
+        }
+        FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntryString());
+        HalloIq publishIq;
+        if (post.getParentGroup() == null) {
+            FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
+            updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
+            publishIq = updateIq;
+        } else {
+            publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
+        }
+        sendIqRequestAsync(publishIq)
+                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id))
+                .onError(e -> Log.e("connection: cannot send post", e));
     }
 
     @Override
     public void retractPost(@NonNull String postId) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot retract post, no connection");
-                return;
-            }
-            try {
-                FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-                sendIqRequestAsync(requestIq).await();
-                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-                connectionObservers.notifyOutgoingPostSent(postId);
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot retract post", e);
-            }
-        });
+        FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+        sendIqRequestAsync(requestIq)
+                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
+                .onError(e -> Log.e("connection: cannot retract post", e));
     }
 
     @Override
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot retract post, no connection");
-                return;
-            }
-            try {
-                GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-                sendIqRequestAsync(requestIq).await();
-                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the post was acked here
-                connectionObservers.notifyOutgoingPostSent(postId);
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot retract post", e);
-            }
-        });
+        GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+        sendIqRequestAsync(requestIq)
+                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
+                .onError(e -> Log.e("connection: cannot retract post", e));
     }
 
     @Override
     public void sendComment(@NonNull Comment comment) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send comment, no connection");
-                return;
-            }
-            try {
-                final PublishedEntry entry = new PublishedEntry(
-                        PublishedEntry.ENTRY_COMMENT,
-                        null,
-                        comment.timestamp,
-                        me.getUser(),
-                        comment.text,
-                        comment.postId,
-                        comment.parentCommentId);
-                for (Mention mention : comment.mentions) {
-                    entry.mentions.add(Mention.toProto(mention));
-                }
-                // Since we're sending a comment, we should have parent post set
-                UserId postSender = Preconditions.checkNotNull(comment.getPostSenderUserId());
-
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, entry.getEncodedEntryString());
-                commentItem.parentCommentId = comment.parentCommentId;
-                if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
-                    FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
-
-                    Observable<Iq> observable = sendIqRequestAsync(requestIq);
-                    observable.await();
-                } else {
-                    GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
-
-                    Observable<Iq> observable = sendIqRequestAsync(requestIq);
-                    observable.await();
-                }
-                connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.commentId);
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot send comment", e);
-            }
-        });
+        final PublishedEntry entry = new PublishedEntry(
+                PublishedEntry.ENTRY_COMMENT,
+                null,
+                comment.timestamp,
+                me.getUser(),
+                comment.text,
+                comment.postId,
+                comment.parentCommentId);
+        for (Mention mention : comment.mentions) {
+            entry.mentions.add(Mention.toProto(mention));
+        }
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, entry.getEncodedEntryString());
+        commentItem.parentCommentId = comment.parentCommentId;
+        HalloIq requestIq;
+        if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
+            requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
+        } else {
+            requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
+        }
+        sendIqRequestAsync(requestIq)
+                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.commentId))
+                .onError(e -> Log.e("connection: cannot send comment", e));
     }
 
     // TODO: (clarkc) remove post sender user id when server tells us
     @Override
     public void retractComment(@Nullable UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot retract comment, no connection");
-                return;
-            }
-            try {
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
-                FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
-                sendIqRequestAsync(requestIq).await();
-                // the {@link PubSubHelper#retractItem(String, Item)} waits for IQ reply, so we can report the comment was acked here
-                connectionObservers.notifyOutgoingCommentSent(postId, commentId);
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot retract comment", e);
-            }
-        });
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
+        FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
+        sendIqRequestAsync(requestIq)
+                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
+                .onError(e -> Log.e("connection: cannot retract comment", e));
     }
 
     @Override
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
-        executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot retract group comment, no connection");
-                return;
-            }
-            try {
-                FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
-                GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
-                sendIqRequestAsync(requestIq).await();
-
-                connectionObservers.notifyOutgoingCommentSent(postId, commentId);
-            } catch (ObservableErrorException | InterruptedException e) {
-                Log.e("connection: cannot retract comment", e);
-            }
-        });
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
+        GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
+        sendIqRequestAsync(requestIq)
+                .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
+                .onError(e -> Log.e("connection: cannot retract comment", e));
     }
 
     @Override
@@ -954,30 +721,30 @@ public class NewConnection extends Connection {
     // NOTE: Should NOT be called from executor.
     @Override
     public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
-        BackgroundObservable<T> iqResponse = new BackgroundObservable<>(bgWorkers);
+        MutableObservable<T> iqResponse = new MutableObservable<>();
+        sendIqRequestAsync(iq).onResponse(resultIq -> {
+            try {
+                iqResponse.setResponse((T) HalloIq.fromProtoIq(resultIq));
+            } catch (ClassCastException e) {
+                iqResponse.setException(e);
+            }
+        }).onError(iqResponse::setException);
+        return iqResponse;
+    }
+
+    private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq) {
+        BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send iq " + iq + ", no connection");
                 iqResponse.setException(new NotConnectedException());
                 return;
             }
-            Observable<Iq> observable = sendIqRequestAsync(iq);
-            observable.onResponse(resultIq -> {
-                try {
-                    iqResponse.setResponse((T) HalloIq.fromProtoIq(resultIq));
-                } catch (ClassCastException e) {
-                    iqResponse.setException(e);
-                }
-            });
-            observable.onError(iqResponse::setException);
+            Iq protoIq = iq.toProtoIq();
+            iqRouter.sendAsync(protoIq)
+                    .onResponse(iqResponse::setResponse)
+                    .onError(iqResponse::setException);
         });
-        return iqResponse;
-    }
-
-    private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq) {
-        BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
-        Iq protoIq = iq.toProtoIq();
-        iqRouter.sendAsync(protoIq).onResponse(iqResponse::setResponse).onError(iqResponse::setException);
         return iqResponse;
     }
 
@@ -1680,14 +1447,6 @@ public class NewConnection extends Connection {
             setCallbacks(iq.getId(), observable::setResponse, observable::setException);
             sendPacket(packet);
             return observable;
-        }
-
-        public Iq sendSync(Iq iq) throws ExecutionException {
-            try {
-                return sendAsync(iq).await();
-            } catch (InterruptedException | ObservableErrorException e) {
-                throw new ExecutionException(e);
-            }
         }
 
         void reset() {

@@ -149,12 +149,12 @@ public class Debug {
                 case DEBUG_MENU_TEST_KEYS: {
                     try {
                         Connection.getInstance().uploadKeys(new byte[]{1, 2, 3, 4}, new byte[]{5, 6, 7, 8}, Collections.singletonList(new byte[]{10, 11, 12, 13}));
-                        WhisperKeysResponseIq response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).get();
+                        WhisperKeysResponseIq response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).await();
                         Log.d("DEBUG response " + response + " identity key: " + StringUtils.bytesToHexString(response.identityKey));
                         Connection.getInstance().uploadMoreOneTimePreKeys(Collections.singletonList(new byte[]{3, 3, 3, 3}));
-                        response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).get();
+                        response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).await();
                         Log.d("DEBUG response " + response + " identity key: " + StringUtils.bytesToHexString(response.identityKey));
-                        Log.d("DEBUG COUNT: " + Connection.getInstance().getOneTimeKeyCount().get());
+                        Log.d("DEBUG COUNT: " + Connection.getInstance().getOneTimeKeyCount().await());
                     } catch (Exception e) {
                         Log.w("DEBUG key failure", e);
                     }
