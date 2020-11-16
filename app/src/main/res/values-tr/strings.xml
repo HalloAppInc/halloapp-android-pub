@@ -27,6 +27,9 @@
   <string name="action_save">Kaydet</string>
   <string name="share">Paylaş</string>
   <string name="cancel">İptal et</string>
+  <string name="save">Kaydet</string>
+  <string name="invite_friends_title">Aileni ve arkadaşlarını davet et</string>
+  <string name="invite_action">Davet</string>
   <string name="edit">Düzenle</string>
   <string name="done">Tamam</string>
   <string name="members_header">Katılımcılar (%s)</string>
