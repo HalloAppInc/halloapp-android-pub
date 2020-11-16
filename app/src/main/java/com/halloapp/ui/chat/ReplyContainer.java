@@ -14,14 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.groups.GroupParticipants;
