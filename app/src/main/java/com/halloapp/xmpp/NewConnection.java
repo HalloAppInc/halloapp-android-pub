@@ -468,7 +468,7 @@ public class NewConnection extends Connection {
     public Observable<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId) {
         final WhisperKeysDownloadIq downloadIq = new WhisperKeysDownloadIq(userId.rawId(), userId);
         return sendIqRequestAsync(downloadIq).map(response -> {
-            Log.d("connection: response after downloading keys " + response.toString());
+            Log.d("connection: response after downloading keys " + ProtoPrinter.toString(response));
             return WhisperKeysResponseIq.fromProto(response.getWhisperKeys());
         });
     }
@@ -477,7 +477,7 @@ public class NewConnection extends Connection {
     public Observable<Integer> getOneTimeKeyCount() {
         final WhisperKeysCountIq countIq = new WhisperKeysCountIq();
         return sendIqRequestAsync(countIq).map(response -> {
-            Log.d("connection: response for get key count  " + response.toString());
+            Log.d("connection: response for get key count  " + ProtoPrinter.toString(response));
             return WhisperKeysResponseIq.fromProto(response.getWhisperKeys()).count;
         });
     }
