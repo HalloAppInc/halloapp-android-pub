@@ -171,7 +171,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                         return null;
                     }
 
-                    if (!avatarFile.exists() || !Preconditions.checkNotNull(avatarId).equals(contactAvatarInfo.avatarId)) {
+                    if (shouldDownloadAvatar(avatarFile, Preconditions.checkNotNull(avatarId), contactAvatarInfo)) {
                         String url = "https://avatar-cdn.halloapp.net/" + avatarId;
                         Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, p -> true);
                         contactAvatarInfo.avatarId = contact.avatarId;
@@ -185,7 +185,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                         return null;
                     }
 
-                    if (!avatarFile.exists() || !avatarId.equals(contactAvatarInfo.avatarId)) {
+                    if (shouldDownloadAvatar(avatarFile, avatarId, contactAvatarInfo)) {
                         String url = "https://avatar-cdn.halloapp.net/" + avatarId;
                         Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, p -> true);
                         contactAvatarInfo.avatarId = avatarId;
@@ -207,6 +207,10 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             return null;
         }
         return BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
+    }
+
+    private static boolean shouldDownloadAvatar(@NonNull File avatarFile, @NonNull String avatarId, ContactsDb.ContactAvatarInfo avatarInfo) {
+        return avatarInfo.avatarCheckTimestamp == 0 || !avatarFile.exists() || !avatarId.equals(avatarInfo.avatarId);
     }
 
     private @NonNull ContactsDb.ContactAvatarInfo getContactAvatarInfo(ChatId chatId) {
