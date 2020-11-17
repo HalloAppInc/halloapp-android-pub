@@ -194,6 +194,8 @@
     <string name="see_all_comments">See all comments</string>
     <string name="add_comment">Add a comment</string>
     <string name="refresh_contacts">Refresh contacts</string>
+    <string name="post_retracted_with_name">%s deleted their post</string>
+    <string name="post_retracted_by_me">You deleted your post</string>
     <string name="post_retracted_placeholder">This post has been deleted</string>
     <string name="message_retracted_placeholder">This message has been deleted</string>
     <string name="comment_retracted_placeholder">This comment has been deleted</string>

@@ -38,6 +38,7 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.ui.posts.SubtleRetractedPostViewHolder;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
@@ -258,9 +259,13 @@ public class PostsFragment extends HalloFragment {
         @NonNull
         @Override
         public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
+            int postType = viewType & POST_TYPE_MASK;
+            if (postType == POST_TYPE_RETRACTED) {
+                return new SubtleRetractedPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.retracted_post_item, parent, false), postViewHolderParent);
+            }
             View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
             @LayoutRes int contentLayoutRes;
-            switch (viewType & POST_TYPE_MASK) {
+            switch (postType) {
                 case POST_TYPE_TEXT: {
                     contentLayoutRes = R.layout.post_item_text;
                     break;
@@ -269,19 +274,12 @@ public class PostsFragment extends HalloFragment {
                     contentLayoutRes = R.layout.post_item_media;
                     break;
                 }
-                case POST_TYPE_RETRACTED: {
-                    contentLayoutRes = R.layout.post_item_retracted;
-                    break;
-                }
                 default: {
                     throw new IllegalArgumentException();
                 }
             }
             final ViewGroup content = layout.findViewById(R.id.post_content);
             LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
-            if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
-                return new RetractedPostViewHolder(layout, postViewHolderParent);
-            }
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
             switch (viewType & POST_DIRECTION_MASK) {
                 case POST_DIRECTION_INCOMING: {
@@ -302,6 +300,8 @@ public class PostsFragment extends HalloFragment {
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof PostViewHolder) {
                 ((PostViewHolder)holder).bindTo(Preconditions.checkNotNull(getItem(position)));
+            } else if (holder instanceof SubtleRetractedPostViewHolder) {
+                ((SubtleRetractedPostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)));
             }
         }
     }
