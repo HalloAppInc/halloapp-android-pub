@@ -12,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.Debug;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
@@ -155,6 +157,12 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
         TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
+        if (BuildConfig.DEBUG) {
+            timeView.setOnLongClickListener(v -> {
+                Debug.askSendLogsWithId(timeView.getContext(), post.id);
+                return false;
+            });
+        }
 
         final boolean noCaption = TextUtils.isEmpty(post.text);
 

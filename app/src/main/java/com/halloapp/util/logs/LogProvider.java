@@ -57,7 +57,7 @@ public class LogProvider extends ContentProvider {
     }
 
     @MainThread
-    public static void openEmailLogIntent(final Context context) {
+    public static void openEmailLogIntent(final Context context, @Nullable String contentId) {
         LogUploaderWorker.uploadLogs(context);
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -73,7 +73,7 @@ public class LogProvider extends ContentProvider {
                 intent.setType("application/zip");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()));
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME));
+                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + (contentId == null ? "" : "\ncontentId: " + contentId));
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
                 context.startActivity(intent);
             }
@@ -81,7 +81,7 @@ public class LogProvider extends ContentProvider {
     }
 
     @MainThread
-    public static void openDebugLogcatIntent(final Context context) {
+    public static void openDebugLogcatIntent(final Context context, @Nullable String contentId) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
@@ -97,7 +97,7 @@ public class LogProvider extends ContentProvider {
                 intent.setType("plain/text");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()) + DEBUG_SUFFIX);
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX);
+                intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX + (contentId == null ? "" : "\ncontentId: " + contentId));
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_FILE_NAME));
 
                 context.startActivity(intent);

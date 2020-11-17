@@ -25,11 +25,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -239,6 +240,12 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
+            if (BuildConfig.DEBUG) {
+                layout.findViewById(R.id.time).setOnLongClickListener(v -> {
+                    Debug.askSendLogsWithId(PostContentActivity.this, post.id);
+                    return false;
+                });
+            }
             @LayoutRes int contentLayoutRes;
             switch (viewType & POST_TYPE_MASK) {
                 case POST_TYPE_TEXT: {

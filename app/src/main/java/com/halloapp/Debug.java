@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
@@ -28,6 +29,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
@@ -262,6 +264,15 @@ public class Debug {
             });
         }
         menu.show();
+    }
+
+    public static void askSendLogsWithId(@NonNull Context context, @NonNull String contentId) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Send logs about ID '" + contentId + "'?");
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> LogProvider.openDebugLogcatIntent(context, contentId));
+        builder.setNegativeButton(R.string.no, null);
+        builder.show();
     }
 
     private static void restart(Context context) {

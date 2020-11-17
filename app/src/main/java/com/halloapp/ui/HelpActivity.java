@@ -43,9 +43,9 @@ public class HelpActivity extends HalloActivity {
             Log.sendErrorReport("User sent logs");
 
             if (BuildConfig.DEBUG) {
-                LogProvider.openDebugLogcatIntent(this);
+                LogProvider.openDebugLogcatIntent(this, null);
             } else {
-                LogProvider.openEmailLogIntent(this);
+                LogProvider.openEmailLogIntent(this, null);
             }
         });
     }
