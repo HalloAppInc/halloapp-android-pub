@@ -2,11 +2,13 @@ package com.halloapp.ui.mediaexplorer;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,9 +16,11 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.SharedElementCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.MarginPageTransformer;
@@ -38,6 +42,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +64,30 @@ public class MediaExplorerActivity extends HalloActivity {
     private ArrayList<Model> data = new ArrayList<>();
     private MotionEvent swipeDownStart;
     private String contentId;
+    private ImageView transitionImage;
+
+    final private Transition.TransitionListener transitionListener = new Transition.TransitionListener() {
+        @Override
+        public void onTransitionStart(Transition transition) {}
+
+        @Override
+        public void onTransitionEnd(Transition transition) {
+            transition.removeListener(this);
+
+            transitionImage.post(() -> {
+                pager.setAlpha(1);
+                transitionImage.setVisibility(View.GONE);
+                transitionImage.setImageBitmap(null);
+            });
+        }
+
+        @Override
+        public void onTransitionCancel(Transition transition) { }
+        @Override
+        public void onTransitionPause(Transition transition) { }
+        @Override
+        public void onTransitionResume(Transition transition) { }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,22 +140,78 @@ public class MediaExplorerActivity extends HalloActivity {
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
 
+
+        pager.setAlpha(0);
+        transitionImage = findViewById(R.id.transition_image);
+        transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, pager.getCurrentItem()));
+        transitionImage.setVisibility(View.VISIBLE);
+        getWindow().getSharedElementEnterTransition().addListener(transitionListener);
+
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                startPostponedEnterTransition();
+
+                final Model model = data.get(pager.getCurrentItem());
+                BgWorkers.getInstance().execute(() -> {
+                    Bitmap bitmap;
+                    try {
+                        bitmap = MediaUtils.decode(new File(model.uri.getPath()), model.type, Constants.MAX_IMAGE_DIMENSION);
+                    } catch (IOException e) {
+                        Log.e("MediaExplorerActivity: missing shared element enter transition media", e);
+                        return;
+                    }
+
+                    transitionImage.post(() -> {
+                        transitionImage.setImageBitmap(bitmap);
+                        startPostponedEnterTransition();
+                    });
+                });
             }
         });
 
         setEnterSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                int position = pager.getCurrentItem();
-                Model model = data.get(position);
-                View view = pager.findViewWithTag(model);
+                sharedElements.put(transitionImage.getTransitionName(), transitionImage);
+            }
 
-                sharedElements.put(view.getTransitionName(), view);
+            @Override
+            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                if (sharedElementSnapshots.size() < 1 || sharedElementSnapshots.get(0) == null) {
+                    return;
+                }
+
+                Rect snapshotFrame = getFrame(sharedElementSnapshots.get(0));
+                Rect containerFrame = getFrame(findViewById(R.id.main));
+
+                float scale = Math.min((float)containerFrame.width() / (float)snapshotFrame.width(), (float)containerFrame.height() / (float)snapshotFrame.height());
+                int width = (int)((float)snapshotFrame.width() * scale);
+                int height = (int)((float)snapshotFrame.height() * scale);
+
+                // Layout is executed only after the transition, where as setLeft, ..., have immediate
+                // effect but are not kept after transition
+                View view = sharedElements.get(0);
+                view.setLeft(containerFrame.centerX() - width / 2);
+                view.setTop(containerFrame.centerY() - height / 2);
+                view.setBottom(containerFrame.centerY() + height / 2);
+                view.setRight(containerFrame.centerX() + width / 2);
+
+                // Layout is executed only after the transition, but the state is kept
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)view.getLayoutParams();
+                params.width = width;
+                params.height = height;
+                params.topMargin = containerFrame.centerY() - height / 2;
+                params.leftMargin = containerFrame.centerX() - width / 2;
+                view.setLayoutParams(params);
+            }
+
+            @NonNull
+            private Rect getFrame(@NonNull View view) {
+                int[] location = new int[2];
+                view.getLocationInWindow(location);
+
+                return new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
             }
         });
     }
@@ -251,7 +336,25 @@ public class MediaExplorerActivity extends HalloActivity {
         intent.putExtra(EXTRA_SELECTED, pager.getCurrentItem());
 
         setResult(RESULT_OK, intent);
-        finishAfterTransition();
+
+        Model model = data.get(pager.getCurrentItem());
+        transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, pager.getCurrentItem()));
+
+        BgWorkers.getInstance().execute(() -> {
+            Bitmap bitmap;
+            try {
+                bitmap = MediaUtils.decode(new File(model.uri.getPath()), model.type, Constants.MAX_IMAGE_DIMENSION);
+            } catch (IOException e) {
+                Log.e("MediaExplorerActivity: missing shared element return transition media", e);
+                return;
+            }
+
+            transitionImage.post(() -> {
+                transitionImage.setImageBitmap(bitmap);
+                transitionImage.setVisibility(View.VISIBLE);
+                finishAfterTransition();
+            });
+        });
     }
 
     private void toggleSystemUI() {
@@ -330,15 +433,13 @@ public class MediaExplorerActivity extends HalloActivity {
         @Override
         public void bindTo(@NonNull Model model, int position) {
             imageView.setTag(model);
-            imageView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
-
 
             BgWorkers.getInstance().execute(() -> {
                 Bitmap bitmap;
                 try {
                     bitmap = MediaUtils.decodeImage(new File(model.uri.getPath()), Constants.MAX_IMAGE_DIMENSION);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e("MediaExplorerActivity: unable to bind image", e);
                     return;
                 }
 
@@ -370,7 +471,6 @@ public class MediaExplorerActivity extends HalloActivity {
         @Override
         public void bindTo(@NonNull Model model, int position) {
             playerView.setTag(model);
-            playerView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(model.uri);
