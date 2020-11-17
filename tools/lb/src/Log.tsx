@@ -35,6 +35,7 @@ interface LogLine {
   raw: string,
   flat: string, // with protobuf expanded
   level: string,
+  count: number, // reduce impact of overly-chatty log lines
 }
 
 interface State {
@@ -99,6 +100,15 @@ function camelCaseToKebabCase(s: string) {
   return ret
 }
 
+function stripLogLinePrefix(s: string) {
+  let ret = ""
+  let parts = s.split(":")
+  for (let i=3; i<parts.length; i++) { // 2 in time and 1 separator after thread name
+    ret += parts[i]
+  }
+  return ret
+}
+
 class Log extends React.Component<Props, State>  {
 
   constructor(props: Props) {
@@ -154,7 +164,7 @@ class Log extends React.Component<Props, State>  {
       let day = names.length - 1 // last day will be most recent
       this.setState({
         dayNames: names,
-        day: day, 
+        day: day,
       })
       this.fetchDay(id, file, day)
     })
@@ -173,14 +183,33 @@ class Log extends React.Component<Props, State>  {
           logLevels[i] = logLevels[i - 1]
         }
       }
+
       let logs: LogLine[] = []
-      for (let i = 0; i < logLines.length; i++) {
-        logs.push({
-          raw: logLines[i],
-          flat: this.protofy(logLines[i], true),
-          level: logLevels[i] as string,
-        })
+      let prev: LogLine = {
+        raw: logLines[0],
+        flat: this.protofy(logLines[0], true),
+        level: logLevels[0] as string,
+        count: 1,
       }
+      for (let i = 1; i < logLines.length; i++) {
+        let allowMatchPrev = /[0-9]/.test(logLines[i].charAt(0))
+        let prevRaw = stripLogLinePrefix(prev.raw)
+        let newRaw = stripLogLinePrefix(logLines[i])
+        if (allowMatchPrev && prevRaw !== undefined && prevRaw === newRaw && prev.level === logLevels[i]) {
+          prev = {...prev, count: prev.count + 1}
+        } else {
+          let logLine = {
+            raw: logLines[i],
+            flat: this.protofy(logLines[i], true),
+            level: logLevels[i] as string,
+            count: 1,
+          }
+          logs.push(prev)
+          prev = logLine
+        }
+      }
+      logs.push(prev)
+
       let filtered = this.runFilter(logs, this.state.filterText)
       this.setState({
         logs: logs,
@@ -361,9 +390,11 @@ class Log extends React.Component<Props, State>  {
   renderRow(index: number, key: string, style: React.CSSProperties) {
     let color = getColorForLetter(this.state.filteredLogs[index].level)
     let line = this.state.filteredLogs[index].raw
+    let count = this.state.filteredLogs[index].count
     let linkified = this.linkify(line)
     return (
-      <div key={key} style={{ ...style, display: "flex", justifyContent: "start", fontFamily: "monospace", backgroundColor: index === this.state.highlightedLine ? "#ECFF38" : index % 2 === 0 ? "#fff" : "#eee", paddingLeft: 5 }}>
+      <div key={key} style={{ ...style, display: "flex", flexDirection: "row", justifyContent: "start", justifyItems: "center", fontFamily: "monospace", backgroundColor: index === this.state.highlightedLine ? "#ECFF38" : index % 2 === 0 ? "#fff" : "#eee", paddingLeft: 5 }}>
+        {count === 1 ? null : <div style={{ borderRadius: 7, backgroundColor: Constants.COLOR_PRIMARY.main, height: "75%", padding: "1px" }}>x{count}</div>}
         <pre style={{ position: "relative", top: /*hack*/ -10, color: color }}>{linkified}</pre>
       </div>
     )
