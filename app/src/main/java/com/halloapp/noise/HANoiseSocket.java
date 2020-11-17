@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -56,8 +57,8 @@ public class HANoiseSocket extends Socket {
     private CipherState sendCrypto;
     private CipherState recvCrypto;
 
-    public HANoiseSocket(@NonNull Me me, @NonNull String hostName, final int port) throws IOException {
-        super(hostName, port);
+    public HANoiseSocket(@NonNull Me me, @NonNull InetAddress address, final int port) throws IOException {
+        super(address, port);
         this.me = me;
     }
 

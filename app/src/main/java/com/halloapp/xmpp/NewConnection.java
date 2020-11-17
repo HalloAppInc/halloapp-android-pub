@@ -188,7 +188,7 @@ public class NewConnection extends Connection {
                         throw new IOException("Failed to migrate registration");
                     }
                 }
-                HANoiseSocket noiseSocket = new HANoiseSocket(me, DEBUG_HOST, NOISE_PORT);
+                HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
                 noiseSocket.authenticate(createAuthRequest());
                 this.socket = noiseSocket;
                 isAuthenticated = true;
