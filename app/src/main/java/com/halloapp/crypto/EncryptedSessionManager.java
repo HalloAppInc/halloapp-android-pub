@@ -139,30 +139,33 @@ public class EncryptedSessionManager {
         }
 
         if (generateSilentMessages && connection instanceof NewConnection) {
-            List<Message> silentMessages = new ArrayList<>();
-            List<Contact> users = ContactsDb.getInstance().getUsers();
-            int count = serverProps.getSilentChatMessageCount();
-            for (int i=0; i<count; i++) {
-                UserId recipient = users.get(new Random().nextInt(users.size())).userId;
-                String text = genRandomString();
-                Message gm = new Message(
-                        -1,
-                        recipient,
-                        UserId.ME,
-                        RandomId.create(),
-                        System.currentTimeMillis() * 1000L,
-                        Message.TYPE_CHAT,
-                        Message.USAGE_CHAT,
-                        Message.STATE_OUTGOING_SENT,
-                        text,
-                        null,
-                        -1,
-                        null,
-                        -1,
-                        null,
-                        0
-                );
-                silentMessages.add(gm);
+            final List<Message> silentMessages = new ArrayList<>();
+            final List<Contact> users = ContactsDb.getInstance().getUsers();
+
+            if (!users.isEmpty()) {
+                int count = serverProps.getSilentChatMessageCount();
+                for (int i=0; i<count; i++) {
+                    UserId recipient = users.get(new Random().nextInt(users.size())).userId;
+                    String text = genRandomString();
+                    Message gm = new Message(
+                            -1,
+                            recipient,
+                            UserId.ME,
+                            RandomId.create(),
+                            System.currentTimeMillis() * 1000L,
+                            Message.TYPE_CHAT,
+                            Message.USAGE_CHAT,
+                            Message.STATE_OUTGOING_SENT,
+                            text,
+                            null,
+                            -1,
+                            null,
+                            -1,
+                            null,
+                            0
+                    );
+                    silentMessages.add(gm);
+                }
             }
 
             for (Message silentMessage : silentMessages) {
