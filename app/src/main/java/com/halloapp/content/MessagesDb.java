@@ -123,7 +123,7 @@ class MessagesDb {
                     mediaIndex = message.replyPostMediaIndex;
                     replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
                     replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
-                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
+                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId == null ? null : message.replyMessageSenderId.rawId());
                 } else {
                     Log.e("Content item for reply is null");
                 }

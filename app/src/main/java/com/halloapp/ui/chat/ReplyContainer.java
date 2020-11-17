@@ -82,13 +82,14 @@ class ReplyContainer {
         } else {
             mediaThumbView.setTransitionName(MediaPagerAdapter.getTransitionName(message.replyMessageId, message.replyMessageMediaIndex));
         }
+        UserId replyMessageSenderId = message.replyMessageSenderId != null ? message.replyMessageSenderId : UserId.ME;
         containerView.setBackgroundResource(R.drawable.reply_frame_background);
-        containerView.setBackgroundTintList(ColorStateList.valueOf(GroupParticipants.getParticipantReplyBgColor(containerView.getContext(), message.replyMessageSenderId)));
+        containerView.setBackgroundTintList(ColorStateList.valueOf(GroupParticipants.getParticipantReplyBgColor(containerView.getContext(), replyMessageSenderId)));
         parent.getReplyLoader().load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
             @Override
             public void showResult(@NonNull View view, @Nullable ReplyLoader.Result result) {
                 if (result != null) {
-                    nameView.setTextColor(ColorUtils.setAlphaComponent(GroupParticipants.getParticipantNameColor(nameView.getContext(), message.replyMessageSenderId), REPLY_NAME_ALPHA));
+                    nameView.setTextColor(ColorUtils.setAlphaComponent(GroupParticipants.getParticipantNameColor(nameView.getContext(), replyMessageSenderId), REPLY_NAME_ALPHA));
                     nameView.setText(result.name);
                     textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
                     if (result.mentions != null && !result.mentions.isEmpty()) {
