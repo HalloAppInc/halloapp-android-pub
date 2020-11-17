@@ -2,9 +2,12 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;

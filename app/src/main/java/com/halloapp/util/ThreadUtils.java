@@ -3,6 +3,8 @@ package com.halloapp.util;
 import android.net.TrafficStats;
 import android.os.StrictMode;
 
+import androidx.annotation.NonNull;
+
 public class ThreadUtils {
 
     /**
@@ -21,10 +23,12 @@ public class ThreadUtils {
         TrafficStats.setThreadStatsTag((int) Thread.currentThread().getId());
     }
 
-    public static void go(Runnable runnable, String threadName) {
+    @NonNull
+    public static Thread go(Runnable runnable, String threadName) {
         Thread thread = new Thread(runnable);
         thread.setName(threadName);
         thread.setDaemon(true);
         thread.start();
+        return thread;
     }
 }

@@ -196,7 +196,6 @@ public class NewConnection extends Connection {
                 SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(address, PORT);
                 sslSocket.setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
-
                 SSLSession session = sslSocket.getSession();
                 this.socket = sslSocket;
                 if (!hostnameVerifier.verify(host, session)) {
@@ -212,7 +211,7 @@ public class NewConnection extends Connection {
             synchronized (startupShutdownLock) {
                 packetWriter.init();
                 packetReader.init();
-                iqRouter.reset();
+                iqRouter.init();
             }
 
 
@@ -341,9 +340,6 @@ public class NewConnection extends Connection {
             }
         }
         socket = null;
-        synchronized (startupShutdownLock) {
-            iqRouter.reset();
-        }
 
         connectionObservers.notifyDisconnected();
     }
@@ -354,7 +350,7 @@ public class NewConnection extends Connection {
         synchronized (startupShutdownLock) {
             packetWriter.shutdown();
             packetReader.shutdown();
-            iqRouter.reset();
+            iqRouter.shutdown();
         }
     }
 
@@ -1339,18 +1335,26 @@ public class NewConnection extends Connection {
 
         private volatile boolean done;
 
+        private Thread writerThread;
+
         void init() {
+            queue.clear();
             done = false;
-            ThreadUtils.go(this::writePackets, "Packet Writer"); // TODO(jack): Connection counter
+            writerThread = ThreadUtils.go(this::writePackets, "Packet Writer"); // TODO(jack): Connection counter
         }
 
         void shutdown() {
             done = true;
+            if (writerThread != null) {
+                writerThread.interrupt();
+                writerThread = null;
+            }
+            queue.clear();
         }
 
         void sendPacket(Packet packet) {
             boolean success = false;
-            while (!success) {
+            while (!success && !done) {
                 try {
                     enqueue(packet);
                     success = true;
@@ -1420,6 +1424,8 @@ public class NewConnection extends Connection {
         private final Map<String, ResponseHandler<Iq>> successCallbacks = new ConcurrentHashMap<>();
         private final Map<String, ExceptionHandler> failureCallbacks = new ConcurrentHashMap<>();
 
+        private boolean done;
+
         public void onResponse(String id, Iq iq) {
             responses.put(id, iq);
 
@@ -1442,6 +1448,11 @@ public class NewConnection extends Connection {
         }
 
         public Observable<Iq> sendAsync(Iq iq) {
+            if (done) {
+                MutableObservable<Iq> observable = new MutableObservable<>();
+                observable.setException(new NotConnectedException());
+                return observable;
+            }
             BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
             Packet packet = Packet.newBuilder().setIq(iq).build();
             setCallbacks(iq.getId(), observable::setResponse, observable::setException);
@@ -1449,7 +1460,17 @@ public class NewConnection extends Connection {
             return observable;
         }
 
-        void reset() {
+        void init() {
+            done = false;
+            reset();
+        }
+
+        void shutdown() {
+            done = true;
+            reset();
+        }
+
+        private void reset() {
             responses.clear();
             successCallbacks.clear();
 
