@@ -16,6 +16,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
@@ -25,6 +26,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     private static MainContentDbObserver instance;
 
     private final Context context;
+    private final BgWorkers bgWorkers;
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
@@ -44,6 +46,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     private MainContentDbObserver(@NonNull Context context) {
         this.context = context.getApplicationContext();
+        this.bgWorkers = BgWorkers.getInstance();
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
@@ -128,7 +131,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onMessageAdded(@NonNull Message message) {
         if (message.isOutgoing()) {
             if (message.media.isEmpty()) {
-                encryptedSessionManager.sendMessage(message, true);
+                bgWorkers.execute(() -> encryptedSessionManager.sendMessage(message, true));
             } else {
                 new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
