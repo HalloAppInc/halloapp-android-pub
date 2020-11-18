@@ -62,10 +62,11 @@
         android:textAppearance="?textAppearanceListItemSecondary"
         tools:text="Yesterday"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/info_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/new_messages"
         app:layout_constraintTop_toBottomOf="@+id/name"
@@ -77,10 +78,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="0dp"
             android:paddingEnd="6dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/media_icon"
-            app:layout_constraintTop_toTopOf="@+id/info"
-            app:layout_constraintBottom_toBottomOf="@+id/info"
+            android:layout_gravity="center_vertical"
             tools:src="@drawable/ic_messaging_sent"/>
 
         <ImageView
@@ -88,10 +86,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginEnd="6dp"
-            app:layout_constraintStart_toEndOf="@+id/status"
-            app:layout_constraintEnd_toStartOf="@+id/info_barrier"
-            app:layout_constraintTop_toTopOf="@+id/info"
-            app:layout_constraintBottom_toBottomOf="@+id/info"
+            android:layout_gravity="center_vertical"
             android:tint="?android:textColorPrimary"
             tools:src="@drawable/ic_camera"/>
 
@@ -105,11 +100,8 @@
         <TextView
             android:id="@+id/info"
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/info_barrier"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="2dp"
             android:singleLine="true"
             android:ellipsize="end"
             android:textSize="14sp"
@@ -118,7 +110,7 @@
             android:textAlignment="gravity"
             tools:text="+1 (650) 555-3000"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/typing_indicator"
