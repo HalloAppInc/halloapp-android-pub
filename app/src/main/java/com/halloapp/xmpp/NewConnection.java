@@ -863,14 +863,12 @@ public class NewConnection extends Connection {
                     if (Constants.NOISE_PROTOCOL) {
                         byte[] packet = ((HANoiseSocket) socket).readPacket();
                         if (packet == null) {
-                            disconnect();
                             throw new IOException("No more packets");
                         }
                         parsePacket(packet);
                     } else {
                         InputStream is = inputStream;
                         if (is == null) {
-                            disconnect();
                             throw new IOException("Input stream is null");
                         }
 
@@ -880,7 +878,6 @@ public class NewConnection extends Connection {
                         while (needMoreBytes) {
                             int c = inputStream.read(buf);
                             if (c < 0) {
-                                disconnect();
                                 throw new IOException("No bytes read from input stream");
                             }
 
@@ -908,8 +905,8 @@ public class NewConnection extends Connection {
                 } catch (Exception e) {
                     if (!done) {
                         Log.e("Packet Reader error", e);
+                        disconnect();
                     }
-                    disconnect();
                 }
             }
         }
@@ -1391,7 +1388,6 @@ public class NewConnection extends Connection {
                             byte[] bytes = encodePacket(packet);
                             OutputStream os = outputStream;
                             if (os == null) {
-                                disconnect();
                                 throw new IOException("Output stream is null");
                             }
 
@@ -1404,6 +1400,7 @@ public class NewConnection extends Connection {
             } catch (Exception e) {
                 if (!done) {
                     Log.e("Packet Writer error", e);
+                    disconnect();
                 }
             }
         }
