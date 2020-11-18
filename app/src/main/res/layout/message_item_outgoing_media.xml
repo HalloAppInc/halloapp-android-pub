@@ -51,17 +51,20 @@
                 android:layoutDirection="ltr"/>
 
             <com.halloapp.widget.MessageTextLayout
+                android:id="@+id/message_text_container"
                 android:paddingTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="0dp"
                 android:layout_marginBottom="9dp">
 
                 <com.halloapp.widget.LimitingTextView
                     android:id="@+id/text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="8dp"
                     android:textAppearance="?textAppearanceListItemSmall"
                     android:textSize="@dimen/message_text_size"

@@ -39,6 +39,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.LimitingTextView;
+import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView nameView;
     private final TextView systemMessage;
     private final LimitingTextView textView;
+    private final MessageTextLayout messageTextLayout;
     private final ViewPager2 mediaPagerView;
     private final CircleIndicator3 mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
@@ -114,6 +116,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         systemMessage = itemView.findViewById(R.id.system_message);
+        messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
         if (textView != null) {
             textView.setOnLongClickListener(v -> {
@@ -333,8 +336,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 parent.getTextLimits().put(message.rowId, limit);
                 return false;
             });
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(StringUtils.isFewEmoji(message.text) ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
+            boolean emojisOnly = StringUtils.isFewEmoji(message.text);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(emojisOnly ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
             parent.getTextContentLoader().load(textView, message);
+
+            if (messageTextLayout != null) {
+                messageTextLayout.setForceSeparateLine(emojisOnly);
+            }
 
             if (TextUtils.isEmpty(message.text)) {
                 textView.setVisibility(View.GONE);

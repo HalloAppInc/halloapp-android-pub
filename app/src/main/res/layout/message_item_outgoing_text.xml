@@ -32,10 +32,13 @@
                 android:layout_height="wrap_content"/>
 
             <com.halloapp.widget.MessageTextLayout
+                android:id="@+id/message_text_container"
                 android:paddingTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="0dp"
                 android:layout_marginBottom="9dp">
 
                 <com.halloapp.widget.LimitingTextView
@@ -44,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:autoLink="web"
                     android:lineSpacingMultiplier="1.1"
-                    android:paddingStart="14dp"
+                    android:paddingStart="4dp"
                     android:paddingEnd="14dp"
                     android:layout_gravity="start"
                     android:textAppearance="?textAppearanceListItemSmall"

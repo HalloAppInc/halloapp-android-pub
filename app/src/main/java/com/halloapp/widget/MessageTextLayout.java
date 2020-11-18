@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class MessageTextLayout extends FrameLayout {
+
+    private boolean forceSeparateLine;
+
     public MessageTextLayout(@NonNull Context context) {
         super(context);
     }
@@ -25,6 +28,10 @@ public class MessageTextLayout extends FrameLayout {
 
     public MessageTextLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    public void setForceSeparateLine(boolean forceSeparateLine) {
+        this.forceSeparateLine = forceSeparateLine;
     }
 
     @Override
@@ -51,7 +58,7 @@ public class MessageTextLayout extends FrameLayout {
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         if (layout.getLineCount() == 1) {
-            if (messageViewWidth + statusViewWidth <= widthSize) {
+            if (messageViewWidth + statusViewWidth <= widthSize && !forceSeparateLine) {
                 if (widthMode != MeasureSpec.EXACTLY) {
                     width = messageViewWidth + statusViewWidth;
                 }
