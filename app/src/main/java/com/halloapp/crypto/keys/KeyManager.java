@@ -226,11 +226,7 @@ public class KeyManager {
         int newIndex = currentChainIndex + 1;
         encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, newIndex);
 
-        try {
-            return new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
-        } catch (InvalidKeyException e) {
-            throw new CryptoException("invalid_message_key", e);
-        }
+        return new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
     }
 
     private byte[] getNextInboundMessageKey(UserId peerUserId) throws CryptoException {
@@ -291,8 +287,9 @@ public class KeyManager {
             try {
                 MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, startIndex + i, inboundMessageKey);
                 encryptedKeyStore.storeSkippedMessageKey(peerUserId, messageKey);
-            } catch (InvalidKeyException e) {
-                Log.w("Cannot store invalid incoming message key for later use", e);
+            } catch (CryptoException e) {
+                Log.e("Cannot store invalid incoming message key for later use", e);
+                throw new CryptoException("skip_msg_key_" + e.getMessage());
             }
         }
     }
