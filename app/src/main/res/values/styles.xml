@@ -85,6 +85,7 @@
         <item name="actionMenuTextColor">@color/color_secondary</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:actionMenuTextAppearance">@style/AppTheme.MediaPickerActivity.MenuText</item>
+        <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
     </style>
 
     <style name="AppTheme.MediaPickerActivity.MenuText">

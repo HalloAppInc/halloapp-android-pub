@@ -406,9 +406,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
                     @Override
                     public void onDestroyActionMode(ActionMode mode) {
+                        final int size = viewModel.selectedSize();
                         viewModel.deselectAll();
-                        finishWithSelected(new ArrayList<>());
                         actionMode = null;
+
+                        if (size > 0) {
+                            finishWithSelected(new ArrayList<>());
+                        }
                     }
                 });
 
