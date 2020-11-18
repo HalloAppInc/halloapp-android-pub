@@ -165,7 +165,7 @@ public class KeyManager {
 
             CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
         } catch (GeneralSecurityException e) {
-            throw new CryptoException("setup has bad keys", e);
+            throw new CryptoException("setup_has_bad_keys", e);
         }
     }
 
@@ -213,7 +213,7 @@ public class KeyManager {
 
             CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
         } catch (GeneralSecurityException e) {
-            throw new CryptoException("setup received bad keys", e);
+            throw new CryptoException("setup_received_bad_keys", e);
         }
     }
 
@@ -229,7 +229,7 @@ public class KeyManager {
         try {
             return new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
         } catch (InvalidKeyException e) {
-            throw new CryptoException("invalid message key", e);
+            throw new CryptoException("invalid_message_key", e);
         }
     }
 
@@ -246,7 +246,7 @@ public class KeyManager {
             Log.i("KeyManager retrieving stored message key");
             byte[] messageKey = encryptedKeyStore.removeSkippedMessageKey(peerUserId, ephemeralKeyId, currentChainIndex);
             if (messageKey == null) {
-                throw new CryptoException("old message key not found");
+                throw new CryptoException("old_message_key_not_found");
             }
             return messageKey;
         }
@@ -314,7 +314,7 @@ public class KeyManager {
 
             return messageKey;
         } catch (GeneralSecurityException e) {
-            throw new CryptoException((isOutbound ? "outbound" : "inbound") + " sym ratchet failure", e);
+            throw new CryptoException((isOutbound ? "outbound" : "inbound") + "_sym_ratchet_failure", e);
         }
     }
 
@@ -343,7 +343,7 @@ public class KeyManager {
 
             CryptoUtils.nullify(ephemeralSecret, output, rootKey, chainKey);
         } catch (GeneralSecurityException e) {
-            throw new CryptoException((isOutbound ? "outbound" : "inbound") + " asym ratchet failure", e);
+            throw new CryptoException((isOutbound ? "outbound" : "inbound") + "_asym_ratchet_failure", e);
         }
     }
 

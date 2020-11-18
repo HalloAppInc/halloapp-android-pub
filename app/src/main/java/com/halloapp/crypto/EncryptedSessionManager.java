@@ -84,7 +84,7 @@ public class EncryptedSessionManager {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             return messageCipher.convertForWire(message, peerUserId);
         } catch (InterruptedException e) {
-            throw new CryptoException("encryption interrupted", e);
+            throw new CryptoException("enc_interrupted", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class EncryptedSessionManager {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                 if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
-                    throw new CryptoException("no identity key");
+                    throw new CryptoException("no_identity_key");
                 }
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
             }
@@ -101,7 +101,7 @@ public class EncryptedSessionManager {
 
             return messageCipher.convertFromWire(message, peerUserId);
         } catch (InterruptedException e) {
-            throw new CryptoException("decryption interrupted", e);
+            throw new CryptoException("dec_interrupted", e);
         }
     }
 
@@ -221,7 +221,7 @@ public class EncryptedSessionManager {
             long now = System.currentTimeMillis();
             if (now - encryptedKeyStore.getLastDownloadAttempt(peerUserId) < MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS) {
                 Log.i("EncryptedSessionManager last download attempt too recent for " + peerUserId);
-                throw new CryptoException("last key dl too recent");
+                throw new CryptoException("last_key_dl_too_recent");
             }
             encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
 
@@ -229,7 +229,7 @@ public class EncryptedSessionManager {
                 WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
                 if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
                     Log.i("EncryptedSessionManager no whisper keys returned");
-                    throw new CryptoException("no whisper keys returned");
+                    throw new CryptoException("no_whisper_keys_returned");
                 }
                 IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
                 SignedPreKey signedPreKeyProto = SignedPreKey.parseFrom(keysIq.signedPreKey);
@@ -239,7 +239,7 @@ public class EncryptedSessionManager {
 
                 if (identityKeyBytes == null || identityKeyBytes.length == 0 || signedPreKeyBytes == null || signedPreKeyBytes.length == 0) {
                     Log.i("Did not get any keys for peer " + peerUserId);
-                    throw new CryptoException("empty whisper keys");
+                    throw new CryptoException("empty_whisper_keys");
                 }
 
                 PublicEdECKey peerIdentityKey = new PublicEdECKey(identityKeyBytes);
@@ -260,11 +260,11 @@ public class EncryptedSessionManager {
                 keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
                 encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
             } catch (InvalidProtocolBufferException e) {
-                throw new CryptoException("protobuf parse failed", e);
+                throw new CryptoException("invalid_protobuf", e);
             } catch (InterruptedException | ObservableErrorException e) {
-                throw new CryptoException("execution interrupted", e);
+                throw new CryptoException("execution_interrupted", e);
             } catch (GeneralSecurityException e) {
-                throw new CryptoException("spk signature mismatch", e);
+                throw new CryptoException("spk_sig_mismatch", e);
             }
         }
 

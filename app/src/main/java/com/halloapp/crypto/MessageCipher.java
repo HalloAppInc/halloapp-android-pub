@@ -50,7 +50,7 @@ class MessageCipher {
         byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
             Log.e("HMAC does not match; rejecting");
-            throw new CryptoException("hmac mismatch");
+            throw new CryptoException("hmac_mismatch");
         }
 
         try {
@@ -64,7 +64,7 @@ class MessageCipher {
 
             return ret;
         } catch (GeneralSecurityException e) {
-            throw new CryptoException("cipher dec failure", e);
+            throw new CryptoException("cipher_dec_failure", e);
         }
     }
 
@@ -95,10 +95,10 @@ class MessageCipher {
 
                 return CryptoUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
             } catch (InvalidKeyException e) {
-                throw new CryptoException("xec priv2pub failed", e);
+                throw new CryptoException("xec_priv2pub_failed", e);
             }
         } catch (GeneralSecurityException e) {
-            throw new CryptoException("cipher enc failure", e);
+            throw new CryptoException("cipher_enc_failure", e);
         }
     }
 }
