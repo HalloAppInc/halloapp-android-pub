@@ -182,11 +182,13 @@ public class NewConnection extends Connection {
             if (Constants.NOISE_PROTOCOL) {
                 // TODO (clarkc) remove when we no longer need migration code to noise
                 if (me.getMyEd25519NoiseKey() == null) {
+                    Log.i("connection: migrating registration to noise");
                     Registration.RegistrationVerificationResult migrationResult = Registration.getInstance().migrateRegistrationToNoise();
                     if (migrationResult.result != Registration.RegistrationVerificationResult.RESULT_OK) {
                         disconnectInBackground();
                         throw new IOException("Failed to migrate registration");
                     }
+                    Log.i("connection: noise migration successful");
                 }
                 HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
                 noiseSocket.authenticate(createAuthRequest());
