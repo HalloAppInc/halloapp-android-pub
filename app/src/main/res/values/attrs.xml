@@ -10,7 +10,7 @@
 
     <declare-styleable name="ContentPhotoView">
         <attr name="contentPvCornerRadius" format="dimension" />
-        <attr name="contentPvCornerColor" format="color" />
+        <attr name="contentPvBorderColor" format="color" />
         <attr name="contentPvMaxAspectRatio" format="float" />
     </declare-styleable>
 

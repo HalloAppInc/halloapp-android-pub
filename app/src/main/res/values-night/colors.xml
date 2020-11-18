@@ -24,6 +24,8 @@
     <color name="avatars_footer_divider">#292929</color>
     <color name="thick_progress_spinner">#9B9B9B</color>
 
+    <color name="media_content_outline">#696969</color>
+
     <color name="chat_background">@android:color/black</color>
 
     <color name="seen_by_divider">@color/white_20</color>

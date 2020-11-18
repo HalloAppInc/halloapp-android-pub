@@ -15,7 +15,7 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:visibility="gone"
-        app:contentPvCornerColor="@color/card_background"
+        app:contentPvBorderColor="@color/media_content_outline"
         app:contentPvCornerRadius="@dimen/message_media_radius"
         tools:src="@mipmap/ic_launcher" />
 

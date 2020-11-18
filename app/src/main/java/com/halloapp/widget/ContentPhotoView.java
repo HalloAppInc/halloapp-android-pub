@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Outline;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -23,8 +22,9 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
 
     private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
 
+    private int borderColor;
     private float cornerRadius;
-    private final Paint cornerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint outlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private DrawDelegateView drawDelegateView;
     private ProgressBar progressView;
@@ -61,7 +61,9 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
     private void init(AttributeSet attrs, int defStyle) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ContentPhotoView, defStyle, 0);
 
-        cornerPaint.setColor(a.getColor(R.styleable.ContentPhotoView_contentPvCornerColor, 0));
+        borderColor = a.getColor(R.styleable.ContentPhotoView_contentPvBorderColor, 0);
+        outlinePaint.setColor(borderColor);
+        outlinePaint.setStyle(Paint.Style.STROKE);
         cornerRadius = a.getDimension(R.styleable.ContentPhotoView_contentPvCornerRadius, 0);
         maxAspectRatio = a.getFloat(R.styleable.ContentPhotoView_contentPvMaxAspectRatio, maxAspectRatio);
 
@@ -173,6 +175,11 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
             clippedBitmapDrawable.allowOverdraw(0);
         }
         super.onDraw(canvas);
+        if (getScale() == 1 && borderColor != 0) {
+            int w = getWidth();
+            int h = getHeight();
+            canvas.drawRoundRect(0, 0, w, h, cornerRadius, cornerRadius, outlinePaint);
+        }
     }
 
 }
