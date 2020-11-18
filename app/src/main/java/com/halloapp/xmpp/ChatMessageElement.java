@@ -80,8 +80,8 @@ public class ChatMessageElement {
                 } else {
                     stats.reportDecryptSuccess();
                 }
-            } catch (CryptoException | ArrayIndexOutOfBoundsException e) {
-                String message = e instanceof CryptoException ? ((CryptoException) e).getMessage() : "aioobe";
+            } catch (CryptoException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+                String message = e instanceof CryptoException ? e.getMessage() : e instanceof ArrayIndexOutOfBoundsException ? "aioobe" : "null_key";
                 Log.e("Failed to decrypt message: " + message + ", falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure: " + message);
                 stats.reportDecryptError(message);
@@ -132,8 +132,8 @@ public class ChatMessageElement {
             byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
             stats.reportEncryptSuccess();
             return encryptedEntry;
-        } catch (CryptoException e) {
-            String message = e.getMessage();
+        } catch (CryptoException | NullPointerException e) {
+            String message = e instanceof NullPointerException ? "null_key" : e.getMessage();
             Log.e("Failed to encrypt: " + message, e);
             Log.sendErrorReport("Encryption failure: " + message);
             stats.reportEncryptError(message);
