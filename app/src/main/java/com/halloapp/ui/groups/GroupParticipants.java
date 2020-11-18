@@ -3,9 +3,9 @@ package com.halloapp.ui.groups;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 
@@ -45,16 +45,16 @@ public class GroupParticipants {
             R.color.group_bg_14,
     };
 
-    public static int getParticipantNameColor(@NonNull Context context, @NonNull UserId userId) {
-        if (userId.isMe()) {
+    public static int getParticipantNameColor(@NonNull Context context, @Nullable UserId userId) {
+        if (userId == null || userId.isMe()) {
             return ContextCompat.getColor(context, R.color.group_me);
         }
         int colorIndex = (int) (Long.parseLong(userId.rawId()) % PARTICIPANT_COLORS.length);
         return ContextCompat.getColor(context, PARTICIPANT_COLORS[colorIndex]);
     }
 
-    public static int getParticipantReplyBgColor(@NonNull Context context, @NonNull UserId userId) {
-        if (userId.isMe()) {
+    public static int getParticipantReplyBgColor(@NonNull Context context, @Nullable UserId userId) {
+        if (userId == null || userId.isMe()) {
             return ContextCompat.getColor(context, R.color.group_me_bg);
         }
         int colorIndex = (int) (Long.parseLong(userId.rawId()) % PARTICIPANT_COLORS.length);
