@@ -32,6 +32,10 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
         actionBar = activity.getSupportActionBar();
     }
 
+    public void resetElevation() {
+        updateElevation(0);
+    }
+
     @CallSuper
     @Override
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

@@ -47,7 +47,10 @@ public class MyProfileFragment extends HalloFragment implements MainNavFragment 
         View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
 
         NestedScrollView scrollView = root.findViewById(R.id.container);
-        scrollView.setOnScrollChangeListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
+        ActionBarShadowOnScrollListener scrollListener = new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity());
+        scrollListener.resetElevation();
+
+        scrollView.setOnScrollChangeListener(scrollListener);
 
         View profileContainer = root.findViewById(R.id.profile_container);
         profileContainer.setOnClickListener(v -> {
