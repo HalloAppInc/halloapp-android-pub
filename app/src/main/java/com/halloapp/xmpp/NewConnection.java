@@ -993,6 +993,7 @@ public class NewConnection extends Connection {
                     Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true);
                     processMentions(message.mentions);
                     // Do not call connectionObservers; this message is not user-visible
+                    bgWorkers.execute(() -> sendAck(msg.getId()));
                     handled = true;
                 } else if (msg.hasGroupChat()) {
                     Log.i("connection: got group chat " + ProtoPrinter.toString(msg));
