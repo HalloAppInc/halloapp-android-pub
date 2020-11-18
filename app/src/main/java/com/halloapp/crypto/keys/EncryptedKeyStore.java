@@ -12,6 +12,7 @@ import androidx.security.crypto.MasterKeys;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.AppContext;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.util.logs.Log;
@@ -226,9 +227,14 @@ public class EncryptedKeyStore {
         return ret;
     }
 
-    public PrivateXECKey removeOneTimePreKeyById(int id) {
+    public PrivateXECKey removeOneTimePreKeyById(int id) throws CryptoException {
         String prefKey = getOneTimePreKeyPrefKey(id);
-        PrivateXECKey ret = new PrivateXECKey(retrieveCurve25519PrivateKey(prefKey));
+        byte[] rawKey = retrieveCurve25519PrivateKey(prefKey);
+        if (rawKey == null) {
+            Log.w("Could not find OTPK for id " + id);
+            throw new CryptoException("otpk_not_found");
+        }
+        PrivateXECKey ret = new PrivateXECKey(rawKey);
         getPreferences().edit().remove(prefKey).apply();
         return ret;
     }
