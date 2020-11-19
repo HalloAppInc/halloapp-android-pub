@@ -125,7 +125,8 @@ class CommentsViewModel extends ViewModel {
                 Post parentPost = post.getValue();
                 if (parentPost != null) {
                     // Allow mentioning every mention from the post
-                    for (Mention mention : parentPost.mentions) {
+                    final List<Mention> mentionsCopy = new ArrayList<>(parentPost.mentions);
+                    for (Mention mention : mentionsCopy) {
                         if (!mention.userId.isMe()) {
                             mentionSet.put(mention.userId, mention.fallbackName);
                             contactSet.add(mention.userId);
