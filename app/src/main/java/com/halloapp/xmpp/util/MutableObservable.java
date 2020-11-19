@@ -1,11 +1,14 @@
 package com.halloapp.xmpp.util;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.halloapp.util.Preconditions;
 
 public class MutableObservable<T> extends Observable<T> {
 
+    private boolean resolved;
     private T response;
-
     private Exception error;
 
     private boolean cancelled;
@@ -14,25 +17,29 @@ public class MutableObservable<T> extends Observable<T> {
     private @Nullable ExceptionHandler exceptionHandler;
 
     @Override
-    public synchronized Observable<T> onResponse(ResponseHandler<T> handler) {
+    public synchronized Observable<T> onResponse(@NonNull ResponseHandler<T> handler) {
         this.responseHandler = handler;
         maybeNotifyResponse();
         return this;
     }
 
     @Override
-    public synchronized Observable<T> onError(ExceptionHandler handler) {
+    public synchronized Observable<T> onError(@NonNull ExceptionHandler handler) {
         this.exceptionHandler = handler;
         maybeNotifyResponse();
         return this;
     }
 
-    public final synchronized void setResponse(T response) {
+    public final synchronized void setResponse(@Nullable T response) {
+        Preconditions.checkState(!resolved, "Trying to resolve to response but already resolved");
+        resolved = true;
         this.response = response;
         maybeNotifyResponse();
     }
 
-    public final synchronized void setException(Exception e) {
+    public final synchronized void setException(@NonNull Exception e) {
+        Preconditions.checkState(!resolved, "Trying to resolve to exception but already resolved");
+        resolved = true;
         this.error = e;
         maybeNotifyResponse();
     }
@@ -42,23 +49,23 @@ public class MutableObservable<T> extends Observable<T> {
     }
 
     private synchronized void maybeNotifyResponse() {
-        if (cancelled || (response == null && error == null)) {
+        if (cancelled || !resolved) {
             return;
         }
-        if (response != null && responseHandler != null) {
-            handleResponse(response);
-        } else if (error != null && exceptionHandler != null) {
+        if (error != null && exceptionHandler != null) {
             handleError(error);
+        } else if (responseHandler != null) {
+            handleResponse(response);
         }
     }
 
-    protected synchronized void handleResponse(T response) {
+    protected synchronized void handleResponse(@Nullable T response) {
         if (responseHandler != null) {
             responseHandler.handleResponse(response);
         }
     }
 
-    protected synchronized void handleError(Exception e) {
+    protected synchronized void handleError(@NonNull Exception e) {
         if (exceptionHandler != null) {
             exceptionHandler.handleException(e);
         }

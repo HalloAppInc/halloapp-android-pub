@@ -1,6 +1,7 @@
 package com.halloapp.xmpp.util;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.util.BgWorkers;
 
@@ -13,14 +14,14 @@ public class BackgroundObservable<T> extends MutableObservable<T> {
     }
 
     @Override
-    protected synchronized void handleResponse(T response) {
+    protected synchronized void handleResponse(@Nullable T response) {
         bgWorkers.execute(() -> {
             super.handleResponse(response);
         });
     }
 
     @Override
-    protected synchronized void handleError(Exception e) {
+    protected synchronized void handleError(@NonNull Exception e) {
         bgWorkers.execute(() -> {
             super.handleError(e);
         });
