@@ -1,7 +1,10 @@
 package com.halloapp.ui.mediaexplorer;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -57,12 +60,14 @@ public class MediaExplorerActivity extends HalloActivity {
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_CONTENT_ID = "content-id";
 
-    private float swipeDistanceThreshold;
-    private float swipeVelocityThreshold;
+    private int swipeExitStartThreshold;
+    private int swipeExitFinishThreshold;
+    private float swipeExitTransDistance;
 
     private ViewPager2 pager;
     private ArrayList<Model> data = new ArrayList<>();
-    private MotionEvent swipeDownStart;
+    private MotionEvent swipeExitStart;
+    private boolean isSwipeExitInProgress = false;
     private String contentId;
     private ImageView transitionImage;
 
@@ -75,9 +80,20 @@ public class MediaExplorerActivity extends HalloActivity {
             transition.removeListener(this);
 
             transitionImage.post(() -> {
-                pager.setAlpha(1);
-                transitionImage.setVisibility(View.GONE);
+                pager.setAlpha(1f);
+                transitionImage.setAlpha(0f);
                 transitionImage.setImageBitmap(null);
+                transitionImage.setLeft(0);
+                transitionImage.setTop(0);
+                transitionImage.setBottom(0);
+                transitionImage.setRight(0);
+
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)transitionImage.getLayoutParams();
+                params.width = 0;
+                params.height = 0;
+                params.topMargin = 0;
+                params.leftMargin = 0;
+                transitionImage.setLayoutParams(params);
             });
         }
 
@@ -96,8 +112,9 @@ public class MediaExplorerActivity extends HalloActivity {
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         postponeEnterTransition();
 
-        swipeDistanceThreshold = getResources().getDimension(R.dimen.swipe_down_distance_threshold);
-        swipeVelocityThreshold = getResources().getDimension(R.dimen.swipe_down_velocity_threshold);
+        swipeExitStartThreshold = getResources().getDimensionPixelSize(R.dimen.swipe_exit_start_threshold);
+        swipeExitFinishThreshold = getResources().getDimensionPixelSize(R.dimen.swipe_exit_finish_threshold);
+        swipeExitTransDistance = getResources().getDimension(R.dimen.swipe_exit_transition_distance);
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -140,11 +157,8 @@ public class MediaExplorerActivity extends HalloActivity {
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
 
-
-        pager.setAlpha(0);
         transitionImage = findViewById(R.id.transition_image);
         transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, pager.getCurrentItem()));
-        transitionImage.setVisibility(View.VISIBLE);
         getWindow().getSharedElementEnterTransition().addListener(transitionListener);
 
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -164,6 +178,8 @@ public class MediaExplorerActivity extends HalloActivity {
 
                     transitionImage.post(() -> {
                         transitionImage.setImageBitmap(bitmap);
+                        pager.setAlpha(0f);
+                        transitionImage.setAlpha(1f);
                         startPostponedEnterTransition();
                     });
                 });
@@ -188,21 +204,32 @@ public class MediaExplorerActivity extends HalloActivity {
                 float scale = Math.min((float)containerFrame.width() / (float)snapshotFrame.width(), (float)containerFrame.height() / (float)snapshotFrame.height());
                 int width = (int)((float)snapshotFrame.width() * scale);
                 int height = (int)((float)snapshotFrame.height() * scale);
+                int centerX = containerFrame.centerX();
+                int centerY = containerFrame.centerY();
+
+                Model model = data.get(pager.getCurrentItem());
+                View mediaView = pager.findViewWithTag(model);
+                if (mediaView != null) {
+                    centerX += mediaView.getTranslationX();
+                    centerY += mediaView.getTranslationY();
+                    width *= mediaView.getScaleX();
+                    height *= mediaView.getScaleY();
+                }
 
                 // Layout is executed only after the transition, where as setLeft, ..., have immediate
                 // effect but are not kept after transition
                 View view = sharedElements.get(0);
-                view.setLeft(containerFrame.centerX() - width / 2);
-                view.setTop(containerFrame.centerY() - height / 2);
-                view.setBottom(containerFrame.centerY() + height / 2);
-                view.setRight(containerFrame.centerX() + width / 2);
+                view.setLeft(centerX - width / 2);
+                view.setTop(centerY - height / 2);
+                view.setBottom(centerY + height / 2);
+                view.setRight(centerX + width / 2);
 
                 // Layout is executed only after the transition, but the state is kept
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)view.getLayoutParams();
                 params.width = width;
                 params.height = height;
-                params.topMargin = containerFrame.centerY() - height / 2;
-                params.leftMargin = containerFrame.centerX() - width / 2;
+                params.topMargin = centerY - height / 2;
+                params.leftMargin = centerX - width / 2;
                 view.setLayoutParams(params);
             }
 
@@ -218,21 +245,111 @@ public class MediaExplorerActivity extends HalloActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        return onTouchEventForSwipeExit(event) || super.dispatchTouchEvent(event);
+    }
+
+    private boolean onTouchEventForSwipeExit(MotionEvent event) {
         int action = event.getAction();
 
-        if (event.getPointerCount() == 1 && action == MotionEvent.ACTION_DOWN) {
-            swipeDownStart = MotionEvent.obtain(event);
-        } else if (event.getPointerCount() > 1 || action == MotionEvent.ACTION_CANCEL) {
-            swipeDownStart = null;
-        } else if (action == MotionEvent.ACTION_UP && swipeDownStart != null) {
-            if (isSwipeDown(swipeDownStart, event)) {
-                onSwipeDown();
-            }
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                if (event.getPointerCount() == 1 && shouldAllowSwipeExit()) {
+                    swipeExitStart = MotionEvent.obtain(event);
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (swipeExitStart != null && event.getPointerCount() > 1) {
+                    cancelSwipeExit();
+                } else if (isSwipeExitInProgress) {
+                    onSwipeExitMove(event);
+                } else if (swipeExitStart != null) {
+                    float distanceX = event.getX() - swipeExitStart.getX();
+                    float distanceY = event.getY() - swipeExitStart.getY();
 
-            swipeDownStart = null;
+                    if (distanceY > swipeExitStartThreshold && distanceY > Math.abs(distanceX)) {
+                        isSwipeExitInProgress = true;
+                        onSwipeExitMove(event);
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                cancelSwipeExit();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (swipeExitStart != null) {
+                    float distanceX = event.getX() - swipeExitStart.getX();
+                    float distanceY = event.getY() - swipeExitStart.getY();
+
+                    if (isSwipeExitInProgress && distanceX * distanceX + distanceY * distanceY > swipeExitFinishThreshold * swipeExitFinishThreshold) {
+                        finishSwipeExit();
+                    } else {
+                        cancelSwipeExit();
+                    }
+                }
+                break;
         }
 
-        return super.dispatchTouchEvent(event);
+        return isSwipeExitInProgress;
+    }
+
+    private boolean shouldAllowSwipeExit() {
+        Model model = data.get(pager.getCurrentItem());
+
+        if (model.type == Media.MEDIA_TYPE_IMAGE) {
+            PhotoView view = pager.findViewWithTag(model);
+            return Math.abs(view.getScale() - 1.0) < 0.2;
+        }
+
+        return true;
+    }
+
+    private void cancelSwipeExit() {
+        if (swipeExitStart != null && isSwipeExitInProgress) {
+            Model model = data.get(pager.getCurrentItem());
+            View view = pager.findViewWithTag(model);
+
+            View main = findViewById(R.id.main);
+            main.setBackgroundColor(Color.rgb(0, 0, 0));
+
+            AnimatorSet set = new AnimatorSet();
+            set.play(ObjectAnimator.ofFloat(main, "alpha", main.getAlpha(), 1.0f))
+                .with(ObjectAnimator.ofFloat(view, "translationX", view.getTranslationX(), 0f))
+                .with(ObjectAnimator.ofFloat(view, "translationY", view.getTranslationY(), 0f))
+                .with(ObjectAnimator.ofFloat(view, "scaleX", view.getScaleX(), 1.0f))
+                .with(ObjectAnimator.ofFloat(view, "scaleY", view.getScaleY(), 1.0f));
+            set.setDuration(300);
+            set.start();
+        }
+
+        swipeExitStart = null;
+        isSwipeExitInProgress = false;
+    }
+
+    private void finishSwipeExit() {
+         onBackPressed();
+    }
+
+    private void onSwipeExitMove(MotionEvent event) {
+        if (swipeExitStart != null && isSwipeExitInProgress) {
+            final float swipeExitScale = 0.8f;
+            final float swipeExitAlpha = 0.3f;
+
+            float distanceX = event.getX() - swipeExitStart.getX();
+            float distanceY = event.getY() - swipeExitStart.getY();
+            float progress = Math.min((distanceX * distanceX + distanceY * distanceY ) / (swipeExitTransDistance * swipeExitTransDistance), 1.0f);
+            float scale = 1 - progress + swipeExitScale * progress;
+            int alpha = (int)(255 * (1 - progress + swipeExitAlpha * progress));
+
+            Model model = data.get(pager.getCurrentItem());
+            View view = pager.findViewWithTag(model);
+            view.setTranslationX(distanceX);
+            view.setTranslationY(distanceY);
+            view.setScaleX(scale);
+            view.setScaleY(scale);
+
+            View main = findViewById(R.id.main);
+            main.setBackgroundColor(Color.argb(alpha, 0, 0, 0));
+        }
     }
 
     @Override
@@ -318,17 +435,6 @@ public class MediaExplorerActivity extends HalloActivity {
         }
     }
 
-    private boolean isSwipeDown(MotionEvent start, MotionEvent end) {
-        float distanceY = end.getY() - start.getY();
-        float time = end.getEventTime() - start.getEventTime();
-
-        return time > 0 && distanceY > swipeDistanceThreshold && (distanceY * 1000 / time) > swipeVelocityThreshold;
-    }
-
-    private void onSwipeDown() {
-        onBackPressed();
-    }
-
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
@@ -351,7 +457,7 @@ public class MediaExplorerActivity extends HalloActivity {
 
             transitionImage.post(() -> {
                 transitionImage.setImageBitmap(bitmap);
-                transitionImage.setVisibility(View.VISIBLE);
+                transitionImage.setAlpha(1f);
                 finishAfterTransition();
             });
         });

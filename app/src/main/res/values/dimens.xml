@@ -59,8 +59,9 @@
     <dimen name="entry_bottom_unfocused_min_height">100dp</dimen>
     <dimen name="entry_bottom_max_height">250dp</dimen>
     <dimen name="settings_divider_height">0.5dp</dimen>
-    <dimen name="swipe_down_distance_threshold">150dp</dimen>
-    <dimen name="swipe_down_velocity_threshold">1000dp</dimen>
+    <dimen name="swipe_exit_start_threshold">7dp</dimen>
+    <dimen name="swipe_exit_finish_threshold">40dp</dimen>
+    <dimen name="swipe_exit_transition_distance">80dp</dimen>
 
     <!-- Message Bubbles -->
     <dimen name="message_bubble_corner_radius">15dp</dimen>
