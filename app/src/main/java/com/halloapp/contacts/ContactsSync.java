@@ -310,7 +310,7 @@ public class ContactsSync {
                     Log.i("ContactsSync.performContactSync: update avatar id for " + contact.addressBookName + " to " + contact.avatarId);
                     contactUpdated = true;
                 }
-                if (!Objects.equals(contact.halloName, contactsSyncResult.halloName)) {
+                if (contact.userId != null && !Objects.equals(contact.halloName, contactsSyncResult.halloName)) {
                     contact.halloName = contactsSyncResult.halloName;
                     Log.i("ContactSync.performContactSync: update push name for " + contact.addressBookName + " to " + contact.halloName);
                     contactUpdated = true;
