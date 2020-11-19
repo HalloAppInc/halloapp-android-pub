@@ -32,7 +32,6 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
@@ -44,18 +43,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ChatViewModel extends AndroidViewModel {
 
     private final ChatId chatId;
-    private long messageRowId;
+    private UserId replySenderId;
+    private Long replyMessageRowId;
+    private String replyPostId;
 
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
     final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
-    final ComputableLiveData<Post> replyPost;
+    final ComputableLiveData<Reply> reply;
     final ComputableLiveData<Post> lastUnseenFeedPost;
     final ComputableLiveData<List<Contact>> mentionableContacts;
-    ComputableLiveData<Message> replyMessage;
     private ComputableLiveData<List<UserId>> blockListLiveData;
-    final ComputableLiveData<String> replyName;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
     private final Me me;
@@ -146,10 +145,12 @@ public class ChatViewModel extends AndroidViewModel {
         }
     };
 
-    public ChatViewModel(@NonNull Application application, @NonNull ChatId chatId, @Nullable UserId replySenderId, @Nullable String replyPostId) {
+    public ChatViewModel(@NonNull Application application, @NonNull ChatId chatId, @Nullable UserId initialReplySenderId, @Nullable String initialReplyPostId) {
         super(application);
 
         this.chatId = chatId;
+        this.replySenderId = initialReplySenderId;
+        this.replyPostId = initialReplyPostId;
 
         me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
@@ -219,33 +220,40 @@ public class ChatViewModel extends AndroidViewModel {
             }
         };
 
-        if (replyPostId != null && replySenderId != null) {
-            replyPost = new ComputableLiveData<Post>() {
-                @Override
-                protected Post compute() {
-                    return contentDb.getPost(replyPostId);
-                }
-            };
-            replyName = new ComputableLiveData<String>()
-            {
-                @Override
-                protected String compute() {
-                    if (replySenderId.isMe()) {
-                        return me.getName();
-                    }
-                    return contactsDb.getContact(replySenderId).getDisplayName();
-                }
-            };
-        } else {
-            replyPost = null;
-            replyName = null;
-        }
-
-        messageRowId = -1;
-        replyMessage = new ComputableLiveData<Message>() {
+        reply = new ComputableLiveData<Reply>() {
             @Override
-            protected Message compute() {
-                return contentDb.getMessage(messageRowId);
+            protected Reply compute() {
+                if (replyPostId != null) {
+                    Post post = contentDb.getPost(replyPostId);
+                    if (post != null) {
+                        String name = getName(replySenderId);
+                        if (name != null) {
+                            return new Reply(post, name);
+                        }
+                    }
+                }
+
+                if (replyMessageRowId != null) {
+                    Message message = contentDb.getMessage(replyMessageRowId);
+                    if (message != null) {
+                        String name = getName(message.senderUserId);
+                        if (name != null) {
+                            return new Reply(message, name);
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            private String getName(UserId sender) {
+                if (sender == null) {
+                    return null;
+                }
+                if (sender.isMe()) {
+                    return me.getName();
+                }
+                return contactsDb.getContact(sender).getDisplayName();
             }
         };
 
@@ -277,8 +285,15 @@ public class ChatViewModel extends AndroidViewModel {
     }
 
     public void updateMessageRowId(long rowId) {
-        messageRowId = rowId;
-        replyMessage.invalidate();
+        clearReplyInfo();
+        replyMessageRowId = rowId;
+        reply.invalidate();
+    }
+
+    private void clearReplyInfo() {
+        replySenderId = null;
+        replyMessageRowId = null;
+        replyPostId = null;
     }
 
     @NonNull
@@ -371,6 +386,24 @@ public class ChatViewModel extends AndroidViewModel {
             }
         });
         return rowIdLiveData;
+    }
+
+    public static class Reply {
+        final Post post;
+        final Message message;
+        final String name;
+
+        public Reply(@NonNull Post post, @NonNull String name) {
+            this.post = post;
+            this.message = null;
+            this.name = name;
+        }
+
+        public Reply(@NonNull Message message, @NonNull String name) {
+            this.post = null;
+            this.message = message;
+            this.name = name;
+        }
     }
 
     public static class Factory implements ViewModelProvider.Factory {

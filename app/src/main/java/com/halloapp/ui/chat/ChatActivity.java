@@ -443,14 +443,22 @@ public class ChatActivity extends HalloActivity {
                 feedRing.setVisibility(View.VISIBLE);
             }
         });
+
         replyContainer = findViewById(R.id.reply_container);
-        if (viewModel.replyPost != null) {
-            viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
-            viewModel.replyName.getLiveData().observe(this, replyNameView::setText);
-        } else {
-            replyContainer.setVisibility(View.GONE);
-        }
-        viewModel.replyMessage.getLiveData().observe(this, this::updateMessageReply);
+        viewModel.reply.getLiveData().observe(this, reply -> {
+            if (reply == null) {
+                replyContainer.setVisibility(View.GONE);
+                return;
+            }
+
+            if (reply.post != null) {
+                this.updatePostReply(reply.post);
+                replyNameView.setText(reply.name);
+            } else if (reply.message != null) {
+                this.updateMessageReply(reply.message);
+                replyNameView.setText(reply.name);
+            }
+        });
 
         SwipeListItemHelper swipeListItemHelper = new SwipeListItemHelper(
                 Preconditions.checkNotNull(getDrawable(R.drawable.ic_swipe_reply)),
