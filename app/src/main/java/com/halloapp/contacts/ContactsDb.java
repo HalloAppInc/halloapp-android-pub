@@ -459,7 +459,7 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NEW_CONNECTION,
                         ContactsTable.COLUMN_CONNECTION_TIME
                 },
-                ContactsTable.COLUMN_FRIEND + "=1" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
+                ContactsTable.COLUMN_FRIEND + "=1" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL" + " AND " + ContactsTable.COLUMN_USER_ID + " IS NOT NULL",
                 null, null, null, null)) {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
