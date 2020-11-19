@@ -31,7 +31,10 @@ class LogCache {
                             reject(err)
                         })
                 })
-                .catch(err => console.log("error fetching file " + err))
+                .catch(err => {
+                    console.log("error fetching file " + err)
+                    reject(err)
+                })
         })
     }
 
@@ -44,7 +47,10 @@ class LogCache {
                             let files = res.files.sort((a, b) => a.path > b.path ? 1 : -1) // oldest at top
                             resolve(files.map(file => file.path))
                         })
-                        .catch(err => console.log("Failed to open zip file " + err))
+                        .catch(err => {
+                            console.log("Failed to open zip file " + err)
+                            reject(err)
+                        })
                 })
         })
     }

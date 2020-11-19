@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton'
 import PersonIcon from '@material-ui/icons/Person'
 import ListIcon from '@material-ui/icons/ListAlt'
 
-import { BrowserRouter as Router, Switch, Route, Link, Redirect, useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import Dropzone from 'react-dropzone'
 
@@ -56,10 +56,6 @@ class Container extends Component<Props, State>  {
 
   genInsideRouter() {
     const { classes } = this.props
-
-    if (this.state.redirect) {
-      return <Redirect to="/log/local/local" />
-    }
 
     return (
       <div>
@@ -117,7 +113,6 @@ class Container extends Component<Props, State>  {
   }
 
   handleDroppedFiles(acceptedFiles: any) {
-    console.log("JACK GOT FILE " + acceptedFiles)
     let file = acceptedFiles[0]
     const reader = new FileReader()
     reader.onabort = () => console.log('file reading was aborted')
@@ -129,8 +124,7 @@ class Container extends Component<Props, State>  {
       for (let i=0; i<other.length; i++) {
         chars.push(String.fromCharCode(other[i]))
       }
-      let str = chars.reduce((c, p) => c + p)//String.fromCharCode.apply(null, Array.from(new Uint8Array(binaryStr)))
-      console.log("STR: " + str)
+      let str = chars.reduce((c, p) => c + p)
       try {
         LogCache.storeLocal(str)
       } catch (e) {
@@ -138,7 +132,7 @@ class Container extends Component<Props, State>  {
         localStorage.clear()
         LogCache.storeLocal(str)
       }
-      window.location.href = "/log/local/local"
+      window.location.href = "/log/local/txt"
     }
     reader.readAsArrayBuffer(file)
   }
