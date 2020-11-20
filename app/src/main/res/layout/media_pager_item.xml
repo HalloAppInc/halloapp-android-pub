@@ -27,7 +27,9 @@
         app:show_buffering="when_playing"
         app:show_shuffle_button="false"
         android:visibility="gone"
+        android:animateLayoutChanges="true"
         app:controller_layout_id="@layout/exo_player_composer_view"
+        app:show_timeout="1000"
         app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
 
     <ProgressBar
