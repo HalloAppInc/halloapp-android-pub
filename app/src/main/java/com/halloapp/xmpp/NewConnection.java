@@ -1425,25 +1425,42 @@ public class NewConnection extends Connection {
         private final Map<String, ExceptionHandler> failureCallbacks = new ConcurrentHashMap<>();
 
         private boolean done;
+        private final Object callbackRemovalLock = new Object(); // make sure exactly one callback is ever removed per id
+
+        private ResponseHandler<Iq> fetchSuccessCallback(String id) {
+            synchronized (callbackRemovalLock) {
+                ResponseHandler<Iq> callback = successCallbacks.remove(id);
+                failureCallbacks.remove(id);
+                return callback;
+            }
+        }
+
+        private ExceptionHandler fetchFailureCallback(String id) {
+            synchronized (callbackRemovalLock) {
+                ExceptionHandler callback = failureCallbacks.remove(id);
+                successCallbacks.remove(id);
+                return callback;
+            }
+        }
 
         public void onResponse(String id, Iq iq) {
             responses.put(id, iq);
 
-            ResponseHandler<Iq> callback = successCallbacks.remove(id);
+            ResponseHandler<Iq> callback = fetchSuccessCallback(id);
             if (callback != null) {
                 callback.handleResponse(iq);
             } else {
-                Log.w("no callback for " + id);
+                Log.w("IqRouter: no response callback for " + id);
             }
         }
 
         public void onError(String id, String reason) {
             Log.d("IqRouter: got error for id " + id + " with reason " + reason);
-            ExceptionHandler callback = failureCallbacks.remove(id);
+            ExceptionHandler callback = fetchFailureCallback(id);
             if (callback != null) {
                 callback.handleException(new IqErrorException(id, reason));
             } else {
-                Log.w("IqRouter: no callback for " + id);
+                Log.w("IqRouter: no error callback for " + id);
             }
         }
 
@@ -1471,11 +1488,14 @@ public class NewConnection extends Connection {
         }
 
         private void reset() {
-            responses.clear();
-            successCallbacks.clear();
+            Map<String, ExceptionHandler> failureCallbacksCopy;
+            synchronized (callbackRemovalLock) {
+                responses.clear();
+                successCallbacks.clear();
 
-            Map<String, ExceptionHandler> failureCallbacksCopy = new HashMap<>(failureCallbacks);
-            failureCallbacks.clear();
+                failureCallbacksCopy = new HashMap<>(failureCallbacks);
+                failureCallbacks.clear();
+            }
 
             for (String id : failureCallbacksCopy.keySet()) {
                 Log.i("IqRouter marking " + id + " as failure during reset");
@@ -1496,9 +1516,11 @@ public class NewConnection extends Connection {
         }
 
         private void clear(String id) {
-            responses.remove(id);
-            successCallbacks.remove(id);
-            failureCallbacks.remove(id);
+            synchronized (callbackRemovalLock) {
+                responses.remove(id);
+                successCallbacks.remove(id);
+                failureCallbacks.remove(id);
+            }
         }
 
         private void scheduleRemoval(String id) {
@@ -1507,23 +1529,33 @@ public class NewConnection extends Connection {
                 @Override
                 public void run() {
                     executor.execute(() -> {
-                        Iq response = responses.get(id);
-                        if (response == null) {
-                            ExceptionHandler failure = failureCallbacks.get(id);
-                            if (failure != null) {
-                                failure.handleException(new IqTimeoutException(id));
-                            }
-                        } else {
-                            ResponseHandler<Iq> success = successCallbacks.get(id);
-                            if (success != null) {
-                                success.handleResponse(response);
-                            }
-                        }
-                        clear(id);
+                        performRemoval(id);
                     });
                 }
             };
             timer.schedule(timerTask, IQ_TIMEOUT_MS);
+        }
+
+        private void performRemoval(String id) {
+            ExceptionHandler failure = null;
+            ResponseHandler<Iq> success = null;
+            Iq response;
+
+            synchronized (callbackRemovalLock) {
+                response = responses.get(id);
+                if (response == null) {
+                    failure = failureCallbacks.get(id);
+                } else {
+                    success = successCallbacks.get(id);
+                }
+                clear(id);
+            }
+
+            if (failure != null) {
+                failure.handleException(new IqTimeoutException(id));
+            } else if (success != null) {
+                success.handleResponse(response);
+            }
         }
     }
 
