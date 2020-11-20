@@ -9,6 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class ContentComposerScrollView extends ScrollView {
+    public interface OnOverScrolledListener {
+        void onOverScrolled(ContentComposerScrollView view, int scrollX, int scrollY, boolean clampedX, boolean clampedY);
+    }
+
+    public interface OnScrollChangeListener {
+        void onScrollChanged(ContentComposerScrollView view, int scrollX, int scrollY, int oldScrollX, int oldScrollY);
+    }
+
+    private OnScrollChangeListener onScrollChangeListener = null;
+    private OnOverScrolledListener onOverScrollChangeListener = null;
     private boolean shouldScrollToBottom = false;
 
     public ContentComposerScrollView(@NonNull Context context) {
@@ -23,8 +33,20 @@ public class ContentComposerScrollView extends ScrollView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setShouldScrollToBottom(boolean shouldScrollToBottom) {
-        this.shouldScrollToBottom = shouldScrollToBottom;
+    @Override
+    protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
+        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+        if (onOverScrollChangeListener != null) {
+            onOverScrollChangeListener.onOverScrolled(this, scrollX, scrollY, clampedX, clampedY);
+        }
+    }
+
+    @Override
+    protected void onScrollChanged(int x, int y, int oldX, int oldY) {
+        super.onScrollChanged(x, y, oldX, oldY);
+        if (onScrollChangeListener != null) {
+            onScrollChangeListener.onScrollChanged(this, x, y, oldX, oldY);
+        }
     }
 
     @Override
@@ -36,6 +58,18 @@ public class ContentComposerScrollView extends ScrollView {
                 scrollToBottom();
             });
         }
+    }
+
+    public void setOnScrollChangeListener(@NonNull OnScrollChangeListener onScrollChangeListener) {
+        this.onScrollChangeListener = onScrollChangeListener;
+    }
+
+    public void setOnOverScrollChangeListener(@NonNull OnOverScrolledListener onOverScrollChangeListener) {
+        this.onOverScrollChangeListener = onOverScrollChangeListener;
+    }
+
+    public void setShouldScrollToBottom(boolean shouldScrollToBottom) {
+        this.shouldScrollToBottom = shouldScrollToBottom;
     }
 
     private void scrollToBottom() {

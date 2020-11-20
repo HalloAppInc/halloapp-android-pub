@@ -100,7 +100,6 @@ public class ContentComposerActivity extends HalloActivity {
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
     private ContentComposerScrollView mediaVerticalScrollView;
-    private ViewTreeObserver.OnScrollChangedListener onScrollChangeListener;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
     private MediaViewPager mediaPager;
@@ -162,6 +161,18 @@ public class ContentComposerActivity extends HalloActivity {
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mediaVerticalScrollView = findViewById(R.id.media_vertical_scroll);
+        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
+        mediaVerticalScrollView.setOnScrollChangeListener((ContentComposerScrollView.OnScrollChangeListener) (view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            final float elevation = scrollY > 0 ? scrolledElevation : 0;
+            if (toolbar.getElevation() != elevation) {
+                toolbar.setElevation(elevation);
+            }
+        });
+        mediaVerticalScrollView.setOnOverScrollChangeListener((view, scrollX, scrollY, clampedX, clampedY) -> {
+            if (scrollY <= 0 && clampedY) {
+                clearEditFocus();
+            }
+        });
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -536,7 +547,6 @@ public class ContentComposerActivity extends HalloActivity {
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initializeOnScrollChangeListener();
             Log.d("ContentComposerActivity: init all video players onStart");
             initializeAllVideoPlayers();
         }
@@ -546,7 +556,6 @@ public class ContentComposerActivity extends HalloActivity {
     public void onResume() {
         super.onResume();
         if (Util.SDK_INT <= 23) {
-            initializeOnScrollChangeListener();
             Log.d("ContentComposerActivity: init all video players onResume");
             initializeAllVideoPlayers();
         }
@@ -556,7 +565,6 @@ public class ContentComposerActivity extends HalloActivity {
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
-            clearOnScrollChangeListener();
             Log.d("ContentComposerActivity: release all video players onPause");
             releaseAllVideoPlayers();
         }
@@ -566,7 +574,6 @@ public class ContentComposerActivity extends HalloActivity {
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-            clearOnScrollChangeListener();
             Log.d("ContentComposerActivity: release all video players onStop");
             releaseAllVideoPlayers();
         }
@@ -786,23 +793,6 @@ public class ContentComposerActivity extends HalloActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
-    }
-
-    private void initializeOnScrollChangeListener() {
-        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
-        onScrollChangeListener = () -> {
-            final ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
-            final float elevation = mediaVerticalScrollView.getScrollY() > 0 ? scrolledElevation : 0;
-            if (actionBar.getElevation() != elevation) {
-                actionBar.setElevation(elevation);
-            }
-        };
-        onScrollChangeListener.onScrollChanged();
-        mediaVerticalScrollView.getViewTreeObserver().addOnScrollChangedListener(onScrollChangeListener);
-    }
-
-    private void clearOnScrollChangeListener() {
-        mediaVerticalScrollView.getViewTreeObserver().removeOnScrollChangedListener(onScrollChangeListener);
     }
 
     private void refreshVideoPlayers(int currentPosition) {
