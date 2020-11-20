@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-        app:theme="@style/ActionBarComposer" />
+        app:theme="@style/ActionBar.Composer" />
 
     <FrameLayout
         android:id="@+id/content_container"

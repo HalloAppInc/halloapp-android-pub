@@ -22,36 +22,34 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/window_background"
+            android:gravity="center_vertical"
             app:layout_constraintBottom_toTopOf="@+id/media_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-            app:theme="@style/ActionBarComposer">
+            app:theme="@style/ActionBar.Composer">
 
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="@string/new_post"
-                    android:layout_gravity="start"
-                    style="@style/TextAppearance.Toolbar.Title" />
+                    android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer"/>
 
                 <TextView
                     android:id="@+id/toolbar_subtitle"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/composer_subtitle_height"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="2dp"
-                    app:layout_anchor="@id/toolbar_title"
-                    app:layout_anchorGravity="bottom|start"
-                    style="@style/TextAppearance.Toolbar.Subtitle.Composer" />
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Composer"/>
 
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

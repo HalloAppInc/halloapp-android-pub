@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents"
         android:elevation="@dimen/action_bar_elevation"
-        app:theme="@style/ActionBarComposer" />
+        app:theme="@style/ActionBar.Composer" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
