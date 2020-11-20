@@ -12,15 +12,15 @@ import androidx.collection.LruCache;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Post;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.content.ReplyPreview;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mentions.TextContent;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.List;
@@ -29,6 +29,7 @@ import java.util.concurrent.Callable;
 class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
 
     private final Me me;
+    private final Context context;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     private final int dimensionLimit;
@@ -38,6 +39,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
     ReplyLoader(@NonNull Context context, int dimensionLimit) {
         this.dimensionLimit = dimensionLimit;
         this.me = Me.getInstance();
+        this.context = context.getApplicationContext();
         this.contentDb = ContentDb.getInstance();
         this.contactsDb = ContactsDb.getInstance();
     }
@@ -48,14 +50,10 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
             String name = null;
             if (message.replyPostId != null) {
                 Post replyPost = contentDb.getPost(message.replyPostId);
-                if (replyPost != null) {
-                    if (replyPost.senderUserId.isMe()) {
-                        name = view.getContext().getString(R.string.me);
-                    } else {
-                        name = contactsDb.getContact(replyPost.senderUserId).getDisplayName();
-                    }
-                } else if (message.isOutgoing()) {
-                    name = contactsDb.getContact((UserId) message.chatId).getDisplayName();
+                if (message.replyMessageSenderId.isMe()) {
+                    name = view.getContext().getString(R.string.me);
+                } else {
+                    name = contactsDb.getContact(Preconditions.checkNotNull(replyPost).senderUserId).getDisplayName();
                 }
             } else if (message.replyMessageId != null) {
                 if (message.replyMessageSenderId.isMe()) {

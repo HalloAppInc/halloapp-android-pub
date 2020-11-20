@@ -100,6 +100,7 @@
     <string name="reply_to_self">Reply to myself</string>
     <string name="reply_to_contact">Reply to %s</string>
     <string name="reply_original_not_found">Original message not found</string>
+    <string name="reply_original_post_not_found">Original post not found</string>
     <string name="mentioned_you_in_their_post">&lt;b>%s&lt;/b> mentioned you in their post</string>
     <string name="mentioned_you_in_comment_on_your_post">&lt;b>%s&lt;/b> mentioned you in a comment on your post</string>
     <string name="mentioned_you_in_comment_on_own_post">&lt;b>%s&lt;/b> mentioned you in a comment on their post</string>

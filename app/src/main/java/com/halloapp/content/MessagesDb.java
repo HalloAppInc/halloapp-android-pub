@@ -29,9 +29,9 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.MemberElement;
 
 import java.io.File;
@@ -118,14 +118,12 @@ class MessagesDb {
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_ID, message.replyMessageId);
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX, message.replyMessageMediaIndex);
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
-                } else if (replyPost != null) {
+                } else {
                     replyItem = replyPost;
                     mediaIndex = message.replyPostMediaIndex;
                     replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
                     replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
                     replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId == null ? null : message.replyMessageSenderId.rawId());
-                } else {
-                    Log.e("Content item for reply is null");
                 }
 
                 if (replyItem != null) {

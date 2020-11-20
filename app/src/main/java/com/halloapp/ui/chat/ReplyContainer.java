@@ -95,7 +95,7 @@ class ReplyContainer {
                     if (result.mentions != null && !result.mentions.isEmpty()) {
                         parent.getTextContentLoader().load(textView, result);
                     } else if (result.text == null && result.thumb == null) {
-                        textView.setText(R.string.reply_original_not_found);
+                        textView.setText(message.replyPostId != null ? R.string.reply_original_post_not_found : R.string.reply_original_not_found);
                         textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
                     } else {
                         textView.setText(result.text);
