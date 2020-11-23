@@ -1,169 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="0dp"
     tools:context=".ui.RegistrationRequestActivity">
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_logo"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="36dp"
+        android:src="@drawable/ic_logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/entry_card"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".ui.RegistrationRequestActivity">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/loading"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:gravity="start"
-            android:fontFamily="sans-serif-medium"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:text="@string/request_registration_title"/>
-
-        <FrameLayout
-            android:id="@+id/loading"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/title"
-            app:layout_constraintTop_toTopOf="@id/title"
-            app:layout_constraintBottom_toBottomOf="@id/title">
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:indeterminateDrawable="@drawable/thick_progress_spinner"
-                android:indeterminateBehavior="repeat"
-                android:indeterminateDuration="1250"
-                android:padding="1dp"/>
-
-        </FrameLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/name_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            android:background="@drawable/registration_entry_background" >
-
-            <EditText
-                android:id="@+id/name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/counter"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@null"
-                android:hint="@string/name_hint"
-                android:padding="8dp"
-                android:autofillHints="personName"
-                android:inputType="textPersonName|textCapWords"/>
-
-            <TextView
-                android:id="@+id/counter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?android:textColorHint"
-                app:layout_constraintStart_toEndOf="@+id/name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:padding="8dp"
-                tools:text="1/25"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/phone_number_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="6dp"
-            android:background="@drawable/registration_entry_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name_layout">
-
-            <com.hbb20.CountryCodePicker
-                android:id="@+id/ccp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:ccp_countryPreference="us,in"
-                app:ccp_autoDetectCountry="true"
-                app:ccp_useFlagEmoji="true"
-                app:ccp_contentColor="?android:textColorPrimary"
-                app:ccpDialog_textColor="?android:textColorPrimary"
-                app:ccp_hintExampleNumberType="MOBILE"/>
-
-            <EditText
-                android:id="@+id/phone_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/phone_number_hint"
-                android:autofillHints="phoneNational"
-                android:inputType="phone"
-                android:background="@null"
-                tools:ignore="UnusedAttribute" />
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.Button"
-            android:id="@+id/next"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/next"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/phone_number_layout"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
-
-    <TextView
-        android:id="@+id/notes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/entry_card"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:gravity="bottom|start"
-        android:textColor="@color/secondary_text"
-        android:text="@string/request_registration_subtitle"/>
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            tools:context=".ui.RegistrationRequestActivity">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="start"
+                    android:text="@string/request_registration_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+                <FrameLayout
+                    android:id="@+id/loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible"
+                    tools:visibility="visible">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:indeterminateBehavior="repeat"
+                        android:indeterminateDrawable="@drawable/thick_progress_spinner"
+                        android:indeterminateDuration="1250"
+                        android:padding="1dp" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/registration_entry_background"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                app:layout_constraintTop_toBottomOf="@id/title">
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="personName"
+                    android:background="@null"
+                    android:hint="@string/name_hint"
+                    android:inputType="textPersonName|textCapWords"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/counter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/counter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="?android:textColorHint"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/name"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="1/25" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/phone_number_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/registration_entry_background"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/name_layout">
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/ccp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:ccpDialog_textColor="?android:textColorPrimary"
+                    app:ccp_autoDetectCountry="true"
+                    app:ccp_contentColor="?android:textColorPrimary"
+                    app:ccp_countryPreference="us,in"
+                    app:ccp_hintExampleNumberType="MOBILE"
+                    app:ccp_useFlagEmoji="true" />
+
+                <EditText
+                    android:id="@+id/phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="phoneNational"
+                    android:background="@null"
+                    android:hint="@string/phone_number_hint"
+                    android:inputType="phone"
+                    tools:ignore="UnusedAttribute" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/next"
+                style="@style/Widget.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/next"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />
+
+            <TextView
+                android:id="@+id/notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom|start"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:text="@string/request_registration_subtitle"
+                android:textColor="@color/secondary_text" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
