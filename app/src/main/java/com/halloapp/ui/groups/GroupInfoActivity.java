@@ -314,11 +314,12 @@ public class GroupInfoActivity extends HalloActivity {
         }
 
         void bindTo(@NonNull MemberInfo member) {
-            if (member.userId.rawId().equals(me.getUser())) {
+            if (member.userId.isMe() || member.userId.rawId().equals(me.getUser())) {
                 contactLoader.cancel(name);
                 name.setText(R.string.me);
                 avatarLoader.load(avatar, UserId.ME, false);
                 itemView.setOnClickListener(null);
+                itemView.setClickable(false);
                 return;
             }
 
