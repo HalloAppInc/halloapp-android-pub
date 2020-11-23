@@ -265,36 +265,36 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     break;
                 }
                 case Message.USAGE_CREATE_GROUP: {
-                    systemMessageSingleUser(message, R.string.system_message_group_created);
+                    systemMessageSingleUser(message, R.string.system_message_group_created_by_you, R.string.system_message_group_created);
                     break;
                 }
                 case Message.USAGE_ADD_MEMBERS: {
-                    systemMessageAffectedList(message, R.string.system_message_members_added);
+                    systemMessageAffectedList(message, R.string.system_message_members_added_by_you, R.string.system_message_members_added);
                     break;
                 }
                 case Message.USAGE_REMOVE_MEMBER: {
-                    systemMessageAffectedList(message, R.string.system_message_members_removed);
+                    systemMessageAffectedList(message, R.string.system_message_members_removed_by_you, R.string.system_message_members_removed);
                     break;
                 }
                 case Message.USAGE_MEMBER_LEFT: {
-                    systemMessageSingleUser(message, R.string.system_message_member_left);
+                    systemMessageSingleUser(message, R.string.system_message_member_you_left, R.string.system_message_member_left);
                     break;
                 }
                 case Message.USAGE_PROMOTE: {
-                    systemMessageAffectedList(message, R.string.system_message_members_promoted);
+                    systemMessageAffectedList(message, R.string.system_message_members_promoted_by_you, R.string.system_message_members_promoted);
                     break;
                 }
                 case Message.USAGE_DEMOTE: {
-                    systemMessageAffectedList(message, R.string.system_message_members_demoted);
+                    systemMessageAffectedList(message, R.string.system_message_members_demoted_by_you, R.string.system_message_members_demoted);
                     break;
                 }
                 case Message.USAGE_AUTO_PROMOTE: {
-                    systemMessageSingleUser(message, R.string.system_message_member_auto_promoted);
+                    systemMessageSingleUser(message, R.string.system_message_member_auto_promoted_you, R.string.system_message_member_auto_promoted);
                     break;
                 }
                 case Message.USAGE_NAME_CHANGE: {
-                    if (message.senderUserId.rawId().equals(me.user.getValue())) {
-                        systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed, itemView.getContext().getString(R.string.you), message.text));
+                    if (message.senderUserId.rawId().equals(me.user.getValue()) || message.senderUserId.isMe()) {
+                        systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed_by_you, message.text));
                     } else {
                         contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                             @Override
@@ -313,11 +313,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     break;
                 }
                 case Message.USAGE_AVATAR_CHANGE: {
-                    systemMessageSingleUser(message, R.string.system_message_group_avatar_changed);
+                    systemMessageSingleUser(message, R.string.system_message_group_avatar_changed_by_you, R.string.system_message_group_avatar_changed);
                     break;
                 }
                 case Message.USAGE_GROUP_DELETED: {
-                    systemMessageSingleUser(message, R.string.system_message_group_deleted);
+                    systemMessageSingleUser(message, R.string.system_message_group_deleted_by_you, R.string.system_message_group_deleted);
                     break;
                 }
                 case Message.USAGE_CHAT:
@@ -410,15 +410,15 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    private void systemMessageSingleUser(@NonNull Message message, @StringRes int string) {
+    private void systemMessageSingleUser(@NonNull Message message, @StringRes int meString, @StringRes int otherString) {
         if (message.senderUserId.isMe() || message.senderUserId.rawId().equals(me.user.getValue())) {
-            systemMessage.setText(itemView.getContext().getString(string, itemView.getContext().getString(R.string.you)));
+            systemMessage.setText(itemView.getContext().getString(meString));
         } else {
             contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        systemMessage.setText(itemView.getContext().getString(string, result.getDisplayName()));
+                        systemMessage.setText(itemView.getContext().getString(otherString, result.getDisplayName()));
                     }
                 }
 
@@ -430,7 +430,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    private void systemMessageAffectedList(@NonNull Message message, @StringRes int string) {
+    private void systemMessageAffectedList(@NonNull Message message, @StringRes int meString, @StringRes int otherString) {
         String commaSeparatedMembers = message.text;
         if (commaSeparatedMembers == null) {
             Log.w("MessageViewHolder system message of type " + message.usage + " missing affected list " + message);
@@ -447,14 +447,19 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             public void showResult(@NonNull TextView view, @Nullable List<Contact> result) {
                 if (result != null) {
                     Contact sender = result.get(0);
-                    String senderName = Preconditions.checkNotNull(sender.userId).rawId().equals(me.user.getValue()) || sender.userId.isMe() ? itemView.getContext().getString(R.string.you) : sender.getDisplayName();
+                    boolean senderIsMe = Preconditions.checkNotNull(sender.userId).rawId().equals(me.user.getValue()) || sender.userId.isMe();
                     List<String> names = new ArrayList<>();
                     for (int i=1; i<result.size(); i++) {
                         Contact contact = result.get(i);
                         names.add(Preconditions.checkNotNull(contact.userId).rawId().equals(me.user.getValue()) || contact.userId.isMe() ? systemMessage.getResources().getString(R.string.you) : contact.getDisplayName());
                     }
                     String formatted = ListFormatter.format(itemView.getContext(), names);
-                    systemMessage.setText(itemView.getContext().getString(string, senderName, formatted));
+                    if (senderIsMe) {
+                        systemMessage.setText(itemView.getContext().getString(meString, formatted));
+                    } else {
+                        String senderName = sender.getDisplayName();
+                        systemMessage.setText(itemView.getContext().getString(otherString, senderName, formatted));
+                    }
                 }
             }
 
