@@ -111,7 +111,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         .setCancelable(true);
                     builder.show();
                 } else {
-                    SnackbarHelper.showWarning(this, R.string.registration_failed);
+                    SnackbarHelper.showInfo(this, R.string.registration_failed);
                 }
                 nextButton.setVisibility(View.VISIBLE);
                 phoneNumberEditText.setEnabled(true);
@@ -185,13 +185,13 @@ public class RegistrationRequestActivity extends HalloActivity {
         } else {
             name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
             if (TextUtils.isEmpty(name)) {
-                SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
+                SnackbarHelper.showInfo(this, R.string.name_must_be_specified);
                 nameEditText.requestFocus();
                 return;
             }
         }
         if (!countryCodePicker.isValidFullNumber()) {
-            SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
+            SnackbarHelper.showInfo(this, R.string.invalid_phone_number);
             phoneNumberEditText.requestFocus();
             return;
         }
