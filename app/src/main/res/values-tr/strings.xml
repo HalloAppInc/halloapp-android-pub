@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
   <string name="next">İleri</string>
-  <string name="invite_notification_text">%s HalloApp'e davetini kabul etti &#127881;</string>
+  <string name="invite_notification_text">%s HalloApp\'e davetini kabul etti &#127881;</string>
   <string name="me">Ben</string>
   <string name="you">Sen</string>
   <string name="camera_post">Kamera</string>
