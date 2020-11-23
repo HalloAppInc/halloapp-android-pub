@@ -447,11 +447,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             public void showResult(@NonNull TextView view, @Nullable List<Contact> result) {
                 if (result != null) {
                     Contact sender = result.get(0);
-                    String senderName = Preconditions.checkNotNull(sender.userId).rawId().equals(me.user.getValue()) ? itemView.getContext().getString(R.string.me) : sender.getDisplayName();
+                    String senderName = Preconditions.checkNotNull(sender.userId).rawId().equals(me.user.getValue()) || sender.userId.isMe() ? itemView.getContext().getString(R.string.you) : sender.getDisplayName();
                     List<String> names = new ArrayList<>();
                     for (int i=1; i<result.size(); i++) {
                         Contact contact = result.get(i);
-                        names.add(Preconditions.checkNotNull(contact.userId).rawId().equals(me.user.getValue()) ? systemMessage.getResources().getString(R.string.me) : contact.getDisplayName());
+                        names.add(Preconditions.checkNotNull(contact.userId).rawId().equals(me.user.getValue()) || contact.userId.isMe() ? systemMessage.getResources().getString(R.string.you) : contact.getDisplayName());
                     }
                     String formatted = ListFormatter.format(itemView.getContext(), names);
                     systemMessage.setText(itemView.getContext().getString(string, senderName, formatted));
