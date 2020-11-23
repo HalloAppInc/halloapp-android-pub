@@ -304,6 +304,7 @@ public class GroupInfoActivity extends HalloActivity {
         private final View itemView;
         private final ImageView avatar;
         private final TextView name;
+        private final TextView admin;
 
         public MemberViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -311,9 +312,11 @@ public class GroupInfoActivity extends HalloActivity {
             this.itemView = itemView;
             avatar = itemView.findViewById(R.id.avatar);
             name = itemView.findViewById(R.id.name);
+            admin = itemView.findViewById(R.id.admin);
         }
 
         void bindTo(@NonNull MemberInfo member) {
+            admin.setVisibility(MemberElement.Type.ADMIN.equals(member.type) ? View.VISIBLE : View.GONE);
             if (member.userId.isMe() || member.userId.rawId().equals(me.getUser())) {
                 contactLoader.cancel(name);
                 name.setText(R.string.me);

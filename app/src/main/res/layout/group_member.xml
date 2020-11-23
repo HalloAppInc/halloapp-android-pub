@@ -24,7 +24,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/avatar"
         app:layout_constraintBottom_toBottomOf="@id/avatar"
         app:layout_constraintVertical_chainStyle="packed"
@@ -36,5 +35,24 @@
         android:textDirection="locale"
         android:textAlignment="gravity"
         tools:text="Ded Pihtov"/>
+
+    <TextView
+        android:id="@+id/admin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/avatar"
+        app:layout_constraintBottom_toBottomOf="@id/avatar"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:textColor="@color/black_50"
+        android:text="@string/admin"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:textAppearance="?textAppearanceListItem"
+        android:fontFamily="sans-serif-medium"
+        android:textDirection="locale"
+        android:textAlignment="gravity"
+        android:visibility="gone"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
