@@ -146,6 +146,7 @@ public class Downloader {
                 if (e.getCause() instanceof GeneralSecurityException) {
                     throw (GeneralSecurityException) e.getCause();
                 }
+                throw e;
             }
         } finally {
             FileUtils.closeSilently(inStream);
