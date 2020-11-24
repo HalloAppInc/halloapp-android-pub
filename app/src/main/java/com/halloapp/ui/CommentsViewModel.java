@@ -14,8 +14,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
@@ -38,6 +40,7 @@ class CommentsViewModel extends ViewModel {
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
+    private final Me me = Me.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
 
@@ -124,6 +127,19 @@ class CommentsViewModel extends ViewModel {
                 HashMap<UserId, String> mentionSet = new HashMap<>();
                 Post parentPost = post.getValue();
                 if (parentPost != null) {
+                    // Allow mentioning anybody in the group if it is a group post
+                    if (parentPost.parentGroup != null) {
+                        List<MemberInfo> members = contentDb.getGroupMembers(parentPost.parentGroup);
+                        List<Contact> contacts = new ArrayList<>();
+                        for (MemberInfo memberInfo : members) {
+                            if (memberInfo.userId.rawId().equals(me.getUser()) || memberInfo.userId.isMe()) {
+                                continue;
+                            }
+                            contacts.add(contactsDb.getContact(memberInfo.userId));
+                        }
+                        return Contact.sort(contacts);
+                    }
+
                     // Allow mentioning every mention from the post
                     final List<Mention> mentionsCopy = new ArrayList<>(parentPost.mentions);
                     for (Mention mention : mentionsCopy) {
