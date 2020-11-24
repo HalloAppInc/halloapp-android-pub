@@ -66,6 +66,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     private static final int REQUEST_CODE_CREATE_GROUP = 3;
 
     private static final String EXTRA_SHOW_INVITE = "show_invite_option";
+    private static final String EXTRA_SHOW_CREATE_GROUP = "show_create_group";
     private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
     public static final String RESULT_SELECTED_ID = "selected_id";
     public static final String RESULT_SELECTED_CONTACT = "selected_contact";
@@ -80,9 +81,17 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     public static Intent createBlocklistContactPicker(@NonNull Context context, @Nullable List<UserId> disabledUserIds) {
         Intent intent = new Intent(context, ContactsActivity.class);
         intent.putExtra(EXTRA_SHOW_INVITE, false);
+        intent.putExtra(EXTRA_SHOW_CREATE_GROUP, false);
         if (disabledUserIds != null) {
             intent.putParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS, new ArrayList<>(disabledUserIds));
         }
+        return intent;
+    }
+
+    public static Intent createSharePicker(@NonNull Context context) {
+        Intent intent = new Intent(context, ContactsActivity.class);
+        intent.putExtra(EXTRA_SHOW_INVITE, false);
+        intent.putExtra(EXTRA_SHOW_CREATE_GROUP, false);
         return intent;
     }
 
@@ -349,7 +358,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         private boolean shouldShowCreateGroupItem() {
-            return serverProps.getGroupsEnabled() && TextUtils.isEmpty(filterText);
+            return serverProps.getGroupsEnabled() && TextUtils.isEmpty(filterText) && getIntent().getBooleanExtra(EXTRA_SHOW_CREATE_GROUP, true);
         }
 
         protected void setInviteVisible(boolean visible) {

@@ -57,7 +57,7 @@ public class ShareActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent contactPicker = new Intent(this, ContactsActivity.class);
+        Intent contactPicker = ContactsActivity.createSharePicker(this);
         startActivityForResult(contactPicker, REQUEST_SELECT_CHAT);
     }
 }
