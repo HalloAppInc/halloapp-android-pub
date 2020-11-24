@@ -569,7 +569,17 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     }
                     infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
                 } else {
-                    textContentLoader.load(infoView, message);
+                    textContentLoader.load(infoView, message, new TextContentLoader.TextDisplayer() {
+                        @Override
+                        public void showResult(TextView tv, CharSequence text) {
+                            tv.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
+                        }
+
+                        @Override
+                        public void showPreview(TextView tv, CharSequence text) {
+                            tv.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
+                        }
+                    });
                 }
             }
         }

@@ -29,32 +29,52 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
         contactsDb = ContactsDb.getInstance();
     }
 
+    public interface TextDisplayer {
+        void showResult(TextView tv, CharSequence text);
+        void showPreview(TextView tv, CharSequence text);
+    }
+
     @MainThread
     public void load(@NonNull TextView view, @NonNull TextContent textContent) {
+        load(view, textContent, new TextDisplayer() {
+            @Override
+            public void showResult(TextView tv, CharSequence text) {
+                tv.setText(text);
+            }
+
+            @Override
+            public void showPreview(TextView tv, CharSequence text) {
+                tv.setText(text);
+            }
+        });
+    }
+
+    @MainThread
+    public void load(@NonNull TextView view, @NonNull TextContent textContent, @NonNull TextDisplayer textDisplayer) {
         List<Mention> mentions = textContent.getMentions();
         String text = textContent.getText();
         if (mentions.isEmpty()) {
-            view.setText(text);
+            textDisplayer.showResult(view, text);
             return;
         }
-        
+
         final Callable<List<Mention>> loader = () -> MentionsLoader.loadMentionNames(me, contactsDb, mentions);
         final ViewDataLoader.Displayer<TextView, List<Mention>> displayer = new ViewDataLoader.Displayer<TextView, List<Mention>>() {
 
             @Override
             public void showResult(@NonNull TextView view, @Nullable List<Mention> result) {
                 if (result == null) {
-                    view.setText(text);
+                    textDisplayer.showResult(view, text);
                     return;
                 }
-                view.setText(MentionsFormatter.insertMentions(text, result, ((v, mention) -> {
+                textDisplayer.showResult(view, MentionsFormatter.insertMentions(text, result, ((v, mention) -> {
                     v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
                 })));
             }
 
             @Override
             public void showLoading(@NonNull TextView view) {
-                view.setText(MentionsFormatter.insertMentions(text, mentions));
+                textDisplayer.showPreview(view, MentionsFormatter.insertMentions(text, mentions));
             }
         };
         load(view, loader, displayer, textContent, cache);
