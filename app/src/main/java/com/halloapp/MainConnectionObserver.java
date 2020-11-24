@@ -463,11 +463,15 @@ public class MainConnectionObserver extends Connection.Observer {
 
     private String toUserIdList(@NonNull List<MemberInfo> members) {
         Preconditions.checkArgument(!members.isEmpty());
-        StringBuilder sb = new StringBuilder(members.get(0).userId.rawId());
+        StringBuilder sb = new StringBuilder(userIdToString(members.get(0).userId));
         for (int i=1; i<members.size(); i++) {
-            sb.append(",").append(members.get(i).userId.rawId());
+            sb.append(",").append(userIdToString(members.get(i).userId));
         }
         return sb.toString();
+    }
+
+    private String userIdToString(@NonNull UserId userId) {
+        return userId.isMe() ? me.getUser() : userId.rawId();
     }
 
     private void addSystemMessage(@NonNull GroupId groupId, @NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
