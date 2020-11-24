@@ -429,6 +429,7 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         contentDb.setGroupAvatar(groupId, avatarId, () -> {
+            avatarLoader.reportAvatarUpdate(groupId, avatarId);
             addSystemMessage(groupId, sender, Message.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
         });
     }
