@@ -76,7 +76,7 @@ public class ChatMessageElement {
                 chatMessage = MessageElementHelper.readEncodedEntry(dec);
                 if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
-                    stats.reportDecryptError("plaintext mismatch");
+                    stats.reportDecryptError("plaintext_mismatch");
                 } else {
                     stats.reportDecryptSuccess();
                 }
