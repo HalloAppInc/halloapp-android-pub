@@ -134,7 +134,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 List<MemberInfo> members = contentDb.getGroupMembers(groupId);
                 List<Contact> contacts = new ArrayList<>();
                 for (MemberInfo memberInfo : members) {
-                    if (memberInfo.userId.rawId().equals(me.getUser())) {
+                    if (memberInfo.userId.rawId().equals(me.getUser()) || memberInfo.userId.isMe()) {
                         continue;
                     }
                     contacts.add(contactsDb.getContact(memberInfo.userId));
