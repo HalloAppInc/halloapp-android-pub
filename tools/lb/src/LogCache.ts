@@ -81,6 +81,14 @@ class LogCache {
     saveFile(user: string, fileName: string, contents: string) {
         localStorage.setItem(this.getKey(user, fileName), contents)
     }
+
+    storeLocal(contents: string) {
+        localStorage.setItem("local", contents)
+    }
+
+    getLocal() {
+        return localStorage.getItem("local")
+    }
 }
 
 export default new LogCache()

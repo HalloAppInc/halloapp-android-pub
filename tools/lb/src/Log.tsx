@@ -159,6 +159,24 @@ class Log extends React.Component<Props, State>  {
     document.addEventListener("keydown", this.onKeyDown, false);
     const id = this.props.match.params.id
     const file = this.props.match.params.file
+    
+    if (id === "local") {
+      this.setupForLocalLog()
+    } else {
+      this.setupForRemoteLog(id, file)
+    }
+  }
+
+  setupForLocalLog() {
+    let s = localStorage.getItem("local")
+    if (s === null) {
+      console.log("local log not found")
+      return
+    }
+    this.processRawString(s)
+  }
+
+  setupForRemoteLog(id: string, file: string) {
     LogCache.getEntryNames(id, file)
     .then(names => {
       let day = names.length - 1 // last day will be most recent
@@ -176,47 +194,51 @@ class Log extends React.Component<Props, State>  {
   fetchDay(id: string, file: string, day: number) {
     LogCache.getDayOfFile(id, file, day)
     .then(data => {
-      let logLines = data.split('\n')
-      let logLevels = logLines.map(l => getLetterFromLine(l))
-      for (let i = 1; i < logLevels.length; i++) {
-        if (logLevels[i] === undefined) {
-          logLevels[i] = logLevels[i - 1]
-        }
-      }
-
-      let logs: LogLine[] = []
-      let prev: LogLine = {
-        raw: logLines[0],
-        flat: this.protofy(logLines[0], true),
-        level: logLevels[0] as string,
-        count: 1,
-      }
-      for (let i = 1; i < logLines.length; i++) {
-        let allowMatchPrev = /[0-9]/.test(logLines[i].charAt(0))
-        let prevRaw = stripLogLinePrefix(prev.raw)
-        let newRaw = stripLogLinePrefix(logLines[i])
-        if (allowMatchPrev && prevRaw !== undefined && prevRaw === newRaw && prev.level === logLevels[i]) {
-          prev = {...prev, count: prev.count + 1}
-        } else {
-          let logLine = {
-            raw: logLines[i],
-            flat: this.protofy(logLines[i], true),
-            level: logLevels[i] as string,
-            count: 1,
-          }
-          logs.push(prev)
-          prev = logLine
-        }
-      }
-      logs.push(prev)
-
-      let filtered = this.runFilter(logs, this.state.filterText)
-      this.setState({
-        logs: logs,
-        filteredLogs: filtered,
-      })
+      this.processRawString(data)
     }).catch(err => {
       console.log("Error fetching file for " + id + "/" + file + ": " + err)
+    })
+  }
+
+  processRawString(s: string) {
+    let logLines = s.split('\n')
+    let logLevels = logLines.map(l => getLetterFromLine(l))
+    for (let i = 1; i < logLevels.length; i++) {
+      if (logLevels[i] === undefined) {
+        logLevels[i] = logLevels[i - 1]
+      }
+    }
+
+    let logs: LogLine[] = []
+    let prev: LogLine = {
+      raw: logLines[0],
+      flat: this.protofy(logLines[0], true),
+      level: logLevels[0] as string,
+      count: 1,
+    }
+    for (let i = 1; i < logLines.length; i++) {
+      let allowMatchPrev = /[0-9]/.test(logLines[i].charAt(0))
+      let prevRaw = stripLogLinePrefix(prev.raw)
+      let newRaw = stripLogLinePrefix(logLines[i])
+      if (allowMatchPrev && prevRaw !== undefined && prevRaw === newRaw && prev.level === logLevels[i]) {
+        prev = {...prev, count: prev.count + 1}
+      } else {
+        let logLine = {
+          raw: logLines[i],
+          flat: this.protofy(logLines[i], true),
+          level: logLevels[i] as string,
+          count: 1,
+        }
+        logs.push(prev)
+        prev = logLine
+      }
+    }
+    logs.push(prev)
+
+    let filtered = this.runFilter(logs, this.state.filterText)
+    this.setState({
+      logs: logs,
+      filteredLogs: filtered,
     })
   }
 

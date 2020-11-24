@@ -8,7 +8,9 @@ import IconButton from '@material-ui/core/IconButton'
 import PersonIcon from '@material-ui/icons/Person'
 import ListIcon from '@material-ui/icons/ListAlt'
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect, useHistory } from "react-router-dom";
+
+import Dropzone from 'react-dropzone'
 
 import UserList from './UserList'
 import User from './User'
@@ -17,6 +19,7 @@ import Constants from './Constants'
 import Search from './Search'
 
 import Logo from './icon.svg'
+import LogCache from './LogCache';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -38,16 +41,8 @@ interface Props extends WithStyles<typeof styles> {
 }
 
 interface State {
+  redirect: boolean,
 }
-
-/**
- * Open TODOs:
- * 1. Linking to user ids (caching of user list)
- * 2. Cache logs compressed, not uncompressed
- * 3. Show list of exceptions/stack traces in the file
- * 4. XML highlighting
- * 5. Compute protobufs once at load time so that can filter on protobuf contents
- */
 
 class Container extends Component<Props, State>  {
 
@@ -55,21 +50,41 @@ class Container extends Component<Props, State>  {
     super(props)
 
     this.state = {
+      redirect: false,
     }
   }
 
   genInsideRouter() {
     const { classes } = this.props
 
+    if (this.state.redirect) {
+      return <Redirect to="/log/local/local" />
+    }
+
     return (
       <div>
         <AppBar position="static" style={{ height: Constants.APP_BAR_HEIGHT, width: "100%", color: "#eee" }}>
           <Toolbar className={classes.toolbar}>
             <Link to="/">
-              <img src={Logo} alt="Logo" style={{ width: Constants.APP_BAR_HEIGHT, height: Constants.APP_BAR_HEIGHT }}/>
+              <img src={Logo} alt="Logo" style={{ width: Constants.APP_BAR_HEIGHT, height: Constants.APP_BAR_HEIGHT }} />
             </Link>
-              Log Browser
-              <div className={classes.actions}>
+            <Dropzone onDrop={acceptedFiles => this.handleDroppedFiles(acceptedFiles)}>
+              {({ getRootProps, getInputProps, isDragActive }) => (
+                <section>
+                  <div {...getRootProps()}>
+                    {isDragActive
+                      ? (
+                        <div>
+                          <input {...getInputProps()} />
+                          <p>Drop file to load</p>
+                        </div>
+                      )
+                      : "Log Browser"}
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+            <div className={classes.actions}>
               <Link to={"/search"}>
                 <IconButton>
                   <PersonIcon />
@@ -99,6 +114,33 @@ class Container extends Component<Props, State>  {
         </Switch>
       </div>
     )
+  }
+
+  handleDroppedFiles(acceptedFiles: any) {
+    console.log("JACK GOT FILE " + acceptedFiles)
+    let file = acceptedFiles[0]
+    const reader = new FileReader()
+    reader.onabort = () => console.log('file reading was aborted')
+    reader.onerror = () => console.log('file reading has failed')
+    reader.onload = (event) => {
+      const binaryStr = reader.result as ArrayBuffer
+      let other = new Uint8Array(binaryStr)
+      let chars = []
+      for (let i=0; i<other.length; i++) {
+        chars.push(String.fromCharCode(other[i]))
+      }
+      let str = chars.reduce((c, p) => c + p)//String.fromCharCode.apply(null, Array.from(new Uint8Array(binaryStr)))
+      console.log("STR: " + str)
+      try {
+        LogCache.storeLocal(str)
+      } catch (e) {
+        console.log("Storing logs failed; trying again after clearing")
+        localStorage.clear()
+        LogCache.storeLocal(str)
+      }
+      window.location.href = "/log/local/local"
+    }
+    reader.readAsArrayBuffer(file)
   }
 
   render() {
