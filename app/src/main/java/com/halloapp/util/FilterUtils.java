@@ -25,7 +25,7 @@ public class FilterUtils {
         }
         final List<String> filterTokens = new ArrayList<>();
         final BreakIterator boundary = BreakIterator.getWordInstance();
-        final String filterTextString = filterText.toString();
+        final String filterTextString = Preconditions.checkNotNull(filterText).toString();
         boundary.setText(filterTextString);
         int start = boundary.first();
         for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {

@@ -42,9 +42,9 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.FilterUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -599,7 +599,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             if (position < contacts.size()) {
                 Contact contact = contacts.get(position);
-                holder.bindTo(contacts.get(position).userId);
+                holder.bindTo(Preconditions.checkNotNull(contact.userId));
             }
         }
 

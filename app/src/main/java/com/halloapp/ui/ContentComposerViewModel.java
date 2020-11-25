@@ -159,6 +159,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             cleanTmpFiles();
         }
         contactsDb.removeObserver(contactsObserver);
+        feedPrivacyManager.removeObserver(feedPrivacyObserver);
     }
 
     @Nullable List<EditMediaPair> getEditMedia() {
@@ -174,7 +175,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void prepareContent(@Nullable ChatId chatId, @Nullable GroupId groupFeedGroupId, @Nullable String text, @Nullable List<Mention> mentions) {
-        new PrepareContentTask(getApplication(), chatId, groupFeedGroupId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(chatId, groupFeedGroupId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -317,7 +318,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     }
                 } else {
                     if (fileCreated && originalFile.exists()) {
-                        originalFile.delete();
+                        if (!originalFile.delete()) {
+                            Log.e("ContentComposerViewModel failed to delete " + originalFile.getAbsolutePath());
+                        }
                     }
                     Log.e("PostComposerActivity: failed to load " + uri);
                 }
@@ -348,15 +351,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final String text;
         private final List<Media> media;
         private final List<Mention> mentions;
-        private final Application application;
         private final MutableLiveData<ContentItem> contentItem;
         private final String replyPostId;
         private final int replyPostMediaIndex;
 
-        PrepareContentTask(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
+        PrepareContentTask(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
             this.chatId = chatId;
             this.groupId = groupId;
-            this.application = application;
             this.text = text;
             this.media = media;
             this.mentions = mentions;

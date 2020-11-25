@@ -45,8 +45,8 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.util.FilterUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.text.BreakIterator;
