@@ -2,7 +2,6 @@ package com.halloapp.ui;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
 import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -23,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -33,7 +31,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
@@ -380,9 +377,9 @@ public class ContentComposerActivity extends HalloActivity {
         });
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
         if (viewModel.chatName != null) {
-            titleView.setText("");
+            titleView.setText(R.string.new_message);
             viewModel.chatName.getLiveData().observe(this, name -> {
-                titleView.setText(name);
+                updateMessageSubtitle(name);
                 if (replyPostId != null) {
                     final TextView replyNameView = findViewById(R.id.reply_name);
                     replyNameView.setText(name);
@@ -390,7 +387,7 @@ public class ContentComposerActivity extends HalloActivity {
             });
         } else {
             titleView.setText(R.string.new_post);
-            viewModel.getFeedPrivacy().observe(this, this::updateSubtitle);
+            viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
         }
 
         replyContainer = findViewById(R.id.reply_container);
@@ -401,20 +398,31 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
-    private void updateSubtitle(final FeedPrivacy feedPrivacy) {
+    private void updatePostSubtitle(final FeedPrivacy feedPrivacy) {
         final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
         if (feedPrivacy == null) {
-            Log.e("ContentComposerActivity: updateSubtitle received null FeedPrivacy");
+            Log.e("ContentComposerActivity: updatePostSubtitle received null FeedPrivacy");
             subtitleView.setText("");
         } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
             subtitleView.setText(R.string.composer_sharing_all_summary);
         } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
             subtitleView.setText(R.string.composer_sharing_except_summary);
         } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-            subtitleView.setText(getString(R.string.composer_sharing_only_summary, feedPrivacy.onlyList.size()));
+            final int onlySize = feedPrivacy.onlyList.size();
+            subtitleView.setText(getResources().getQuantityString(R.plurals.composer_sharing_only_summary, onlySize, onlySize));
         } else {
-            Log.e("ContentComposerActivity: updateSubtitle received unexpected activeList - " + feedPrivacy.activeList);
+            Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
             subtitleView.setText("");
+        }
+    }
+
+    private void updateMessageSubtitle(final String name) {
+        final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
+        if (name == null) {
+            Log.e("ContentComposerActivity: updateMessageSubtitle received null name");
+            subtitleView.setText("");
+        } else {
+            subtitleView.setText(getString(R.string.composer_sharing_message, name));
         }
     }
 

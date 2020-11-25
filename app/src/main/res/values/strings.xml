@@ -40,6 +40,7 @@
     <string name="set_avatar_done">Done</string>
     <string name="set_avatar_reset">Reset</string>
     <string name="new_post">New post</string>
+    <string name="new_message">New message</string>
     <string name="chat_message_attribution">%s: %s</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
     <string name="new_chat_name_placeholder">%s is using HalloApp! 🎉</string>
@@ -402,5 +403,8 @@
     </plurals>
     <string name="composer_sharing_all_summary">Sharing with my contacts</string>
     <string name="composer_sharing_except_summary">Sharing with some of my contacts</string>
-    <string name="composer_sharing_only_summary">Sharing with %d of my contacts</string>
+    <plurals name="composer_sharing_only_summary">
+        <item quantity="other">Sharing with %d of my contacts</item>
+    </plurals>
+    <string name="composer_sharing_message">Sending to %s</string>
 </resources>
