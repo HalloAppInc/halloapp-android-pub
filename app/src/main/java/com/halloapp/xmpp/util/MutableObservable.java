@@ -52,8 +52,10 @@ public class MutableObservable<T> extends Observable<T> {
         if (cancelled || !resolved) {
             return;
         }
-        if (error != null && exceptionHandler != null) {
-            handleError(error);
+        if (error != null) {
+            if (exceptionHandler != null) {
+                handleError(error);
+            }
         } else if (responseHandler != null) {
             handleResponse(response);
         }
