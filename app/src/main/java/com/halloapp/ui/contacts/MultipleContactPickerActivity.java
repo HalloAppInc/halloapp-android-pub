@@ -452,25 +452,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             updateSelectionIcon();
             avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
             if (filterTokens != null && !filterTokens.isEmpty()) {
-                SpannableString formattedName = null;
-                final BreakIterator boundary = BreakIterator.getWordInstance();
-                final String name = contact.getDisplayName();
-                boundary.setText(name);
-                int start = boundary.first();
-                for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
-                    if (end <= start) {
-                        continue;
-                    }
-                    final String word = name.substring(start, end).toLowerCase();
-                    for (String filterToken : filterTokens) {
-                        if (word.startsWith(filterToken)) {
-                            if (formattedName == null) {
-                                formattedName = new SpannableString(name);
-                            }
-                            formattedName.setSpan(new ForegroundColorSpan(ContextCompat.getColor(itemView.getContext(), R.color.search_highlight)), start, Math.min(end, start + filterToken.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                    }
-                }
+                String name = contact.getDisplayName();
+                CharSequence formattedName = FilterUtils.formatMatchingText(MultipleContactPickerActivity.this, name, filterTokens);
                 if (formattedName != null) {
                     nameView.setText(formattedName);
                 } else {
