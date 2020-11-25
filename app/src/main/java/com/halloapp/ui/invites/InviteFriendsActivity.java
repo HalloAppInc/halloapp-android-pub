@@ -336,33 +336,15 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         }
     }
 
-    private class ContactsFilter extends Filter {
-
-        private final List<Contact> contacts;
+    private class ContactsFilter extends FilterUtils.ItemFilter<Contact> {
 
         ContactsFilter(@NonNull List<Contact> contacts) {
-            this.contacts = contacts;
+            super(contacts);
         }
 
         @Override
-        protected FilterResults performFiltering(@Nullable CharSequence prefix) {
-            final FilterResults results = new FilterResults();
-            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
-            if (filterTokens == null) {
-                results.values = contacts;
-                results.count = contacts.size();
-            } else {
-                final ArrayList<Contact> filteredContacts = new ArrayList<>();
-                for (Contact contact : contacts) {
-                    final String name = contact.getDisplayName();
-                    if ( FilterUtils.matchTokens(name, filterTokens)) {
-                        filteredContacts.add(contact);
-                    }
-                }
-                results.values = filteredContacts;
-                results.count = filteredContacts.size();
-            }
-            return results;
+        protected String itemToString(Contact contact) {
+            return contact.getDisplayName();
         }
 
         @Override

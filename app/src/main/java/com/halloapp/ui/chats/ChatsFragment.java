@@ -191,33 +191,15 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onDestroyView();
     }
 
-    private class ChatsFilter extends Filter {
-
-        private final List<Chat> chats;
+    private class ChatsFilter extends FilterUtils.ItemFilter<Chat> {
 
         ChatsFilter(@NonNull List<Chat> chats) {
-            this.chats = chats;
+            super(chats);
         }
 
         @Override
-        protected FilterResults performFiltering(@Nullable CharSequence prefix) {
-            final FilterResults results = new FilterResults();
-            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
-            if (filterTokens == null) {
-                results.values = chats;
-                results.count = chats.size();
-            } else {
-                final ArrayList<Chat> filteredChats = new ArrayList<>();
-                for (Chat chat : chats) {
-                    final String name = chat.name;
-                    if (FilterUtils.matchTokens(name, filterTokens)) {
-                        filteredChats.add(chat);
-                    }
-                }
-                results.values = filteredChats;
-                results.count = filteredChats.size();
-            }
-            return results;
+        protected String itemToString(Chat chat) {
+            return chat.name;
         }
 
         @Override
