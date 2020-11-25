@@ -41,6 +41,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.FilterUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
@@ -332,7 +333,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
             this.filteredContacts = contacts;
             this.filterText = filterText;
-            this.filterTokens = getFilterTokens(filterText);
+            this.filterTokens = FilterUtils.getFilterTokens(filterText);
             notifyDataSetChanged();
         }
 
@@ -389,7 +390,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         @Override
         protected FilterResults performFiltering(@Nullable CharSequence prefix) {
             final FilterResults results = new FilterResults();
-            final List<String> filterTokens = getFilterTokens(prefix);
+            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
             if (filterTokens == null) {
                 results.values = contacts;
                 results.count = contacts.size();
@@ -397,7 +398,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 final ArrayList<Contact> filteredContacts = new ArrayList<>();
                 for (Contact contact : contacts) {
                     final String name = contact.getDisplayName();
-                    final List<String> words = getFilterTokens(name);
+                    final List<String> words = FilterUtils.getFilterTokens(name);
                     if (words != null) {
                         boolean match = true;
                         for (String filterToken : filterTokens) {
@@ -437,24 +438,6 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             }
         }
     }
-
-    static @Nullable List<String> getFilterTokens(final @Nullable CharSequence filterText) {
-        if (TextUtils.isEmpty(filterText)) {
-            return null;
-        }
-        final List<String> filterTokens = new ArrayList<>();
-        final BreakIterator boundary = BreakIterator.getWordInstance();
-        final String filterTextString = filterText.toString();
-        boundary.setText(filterTextString);
-        int start = boundary.first();
-        for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
-            if (end > start) {
-                filterTokens.add(filterTextString.substring(start, end).toLowerCase());
-            }
-        }
-        return filterTokens;
-    }
-
 
     class ContactViewHolder extends ContactsActivity.ViewHolder {
 
