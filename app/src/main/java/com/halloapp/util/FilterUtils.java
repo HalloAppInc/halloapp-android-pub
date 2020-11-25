@@ -5,6 +5,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.view.View;
+import android.widget.Filter;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -81,5 +84,37 @@ public class FilterUtils {
             }
         }
         return match;
+    }
+
+    public static abstract class ItemFilter<Item> extends Filter {
+
+        private final List<Item> items;
+
+        public ItemFilter(@NonNull List<Item> items) {
+            this.items = items;
+        }
+
+        @Override
+        protected FilterResults performFiltering(@Nullable CharSequence prefix) {
+            final FilterResults results = new FilterResults();
+            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
+            if (filterTokens == null) {
+                results.values = items;
+                results.count = items.size();
+            } else {
+                final ArrayList<Item> filteredItems = new ArrayList<>();
+                for (Item item : items) {
+                    final String s = itemToString(item);
+                    if (matchTokens(s, filterTokens)) {
+                        filteredItems.add(item);
+                    }
+                }
+                results.values = filteredItems;
+                results.count = filteredItems.size();
+            }
+            return results;
+        }
+
+        protected abstract String itemToString(Item item);
     }
 }

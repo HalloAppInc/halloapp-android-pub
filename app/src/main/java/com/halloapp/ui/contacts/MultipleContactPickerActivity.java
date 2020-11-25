@@ -379,50 +379,15 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
     }
 
-    private class ContactsFilter extends Filter {
-
-        private final List<Contact> contacts;
+    private class ContactsFilter extends FilterUtils.ItemFilter<Contact> {
 
         ContactsFilter(@NonNull List<Contact> contacts) {
-            this.contacts = contacts;
+            super(contacts);
         }
 
         @Override
-        protected FilterResults performFiltering(@Nullable CharSequence prefix) {
-            final FilterResults results = new FilterResults();
-            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
-            if (filterTokens == null) {
-                results.values = contacts;
-                results.count = contacts.size();
-            } else {
-                final ArrayList<Contact> filteredContacts = new ArrayList<>();
-                for (Contact contact : contacts) {
-                    final String name = contact.getDisplayName();
-                    final List<String> words = FilterUtils.getFilterTokens(name);
-                    if (words != null) {
-                        boolean match = true;
-                        for (String filterToken : filterTokens) {
-                            boolean tokenMatch = false;
-                            for (String word : words) {
-                                if (word.startsWith(filterToken)) {
-                                    tokenMatch = true;
-                                    break;
-                                }
-                            }
-                            if (!tokenMatch) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (match) {
-                            filteredContacts.add(contact);
-                        }
-                    }
-                }
-                results.values = filteredContacts;
-                results.count = filteredContacts.size();
-            }
-            return results;
+        protected String itemToString(Contact contact) {
+            return contact.getDisplayName();
         }
 
         @Override

@@ -396,50 +396,15 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
     }
 
-    private class ContactsFilter extends Filter {
+    private class ContactsFilter extends FilterUtils.ItemFilter<Contact> {
 
-        private final List<Contact> contacts;
-
-        ContactsFilter(@NonNull List<Contact> contacts) {
-            this.contacts = contacts;
+        public ContactsFilter(@NonNull List<Contact> contacts) {
+            super(contacts);
         }
 
         @Override
-        protected FilterResults performFiltering(@Nullable CharSequence prefix) {
-            final FilterResults results = new FilterResults();
-            final List<String> filterTokens = FilterUtils.getFilterTokens(prefix);
-            if (filterTokens == null) {
-                results.values = contacts;
-                results.count = contacts.size();
-            } else {
-                final ArrayList<Contact> filteredContacts = new ArrayList<>();
-                for (Contact contact : contacts) {
-                    final String name = contact.getDisplayName();
-                    final List<String> words = FilterUtils.getFilterTokens(name);
-                    if (words != null) {
-                        boolean match = true;
-                        for (String filterToken : filterTokens) {
-                            boolean tokenMatch = false;
-                            for (String word : words) {
-                                if (word.startsWith(filterToken)) {
-                                    tokenMatch = true;
-                                    break;
-                                }
-                            }
-                            if (!tokenMatch) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (match) {
-                            filteredContacts.add(contact);
-                        }
-                    }
-                }
-                results.values = filteredContacts;
-                results.count = filteredContacts.size();
-            }
-            return results;
+        protected String itemToString(Contact contact) {
+            return contact.getDisplayName();
         }
 
         @Override
