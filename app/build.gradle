@@ -21,8 +21,8 @@ android {
         applicationId "com.halloapp"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 109
-        versionName "0.109"
+        versionCode 110
+        versionName "0.110"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
