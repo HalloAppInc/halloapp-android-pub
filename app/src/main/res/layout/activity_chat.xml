@@ -71,6 +71,8 @@
                             android:id="@+id/title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:textAppearance="@style/TextAppearance.Toolbar.Title.Chat"
                             tools:text="Clark Chen"/>
 
@@ -79,6 +81,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="14dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Chat"
                             android:visibility="gone"/>
 
