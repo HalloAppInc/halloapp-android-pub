@@ -484,7 +484,9 @@ public class NewConnection extends Connection {
     public void sendStats(List<Stats.Counter> counters) {
         final StatsIq statsIq = new StatsIq(counters);
         sendIqRequestAsync(statsIq)
-                .onResponse(response -> Log.d("connection: response for send stats  " + ProtoPrinter.toString(response)))
+                .onResponse(response -> {
+                    Log.d("connection: response for send stats  " + (response == null ? "null" : ProtoPrinter.toString(response)));
+                })
                 .onError(e -> Log.e("connection: cannot send stats", e));
     }
 
