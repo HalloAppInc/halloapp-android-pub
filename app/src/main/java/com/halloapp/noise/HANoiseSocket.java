@@ -38,8 +38,8 @@ import javax.crypto.ShortBufferException;
 public class HANoiseSocket extends Socket {
 
     private static final String ROOT_PUB_CERT = "1dcd81dc096613759b186e93f354fff0a2f1e79390b8502a90bc461e08f98077";
-    private static final String XX_PROTOCOL = "Noise_XX_25519_ChaChaPoly_BLAKE2b";
-    private static final String IK_PROTOCOL = "Noise_IK_25519_ChaChaPoly_BLAKE2b";
+    private static final String XX_PROTOCOL = "Noise_XX_25519_AESGCM_SHA256";
+    private static final String IK_PROTOCOL = "Noise_IK_25519_AESGCM_SHA256";
 
     /** First byte of packet size reserved for future use */
     private static final int PACKET_SIZE_MASK = 0xFFFFFF;
