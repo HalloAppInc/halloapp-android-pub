@@ -46,13 +46,6 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     public static final float MAX_SCALE = 10.0f;
     public static final float MIN_SCALE = 1.0f;
 
-    // 'THRESHOLD_SCALE' is used together with 'threshold' to compute the minimum crop region size.
-    // 'threshold' is the recommended size for a tapable region. Both vertically and horizontally there
-    // are 3 different tapable regions (two borders and inside), thus 'THRESHOLD_SCALE' >= 3 is required.
-    // Current value of 4 is chosen to give more space for easier tapping on different parts of the crop region.
-    private static final float THRESHOLD_SCALE = 4;
-
-    private final float initialOffset = getResources().getDimension(R.dimen.media_crop_region_init_offset);
     private final float threshold = getResources().getDimension(R.dimen.media_crop_region_threshold);
     private final float borderThickness = getResources().getDimension(R.dimen.media_crop_region_border);
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
@@ -223,7 +216,6 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     public void computeInitialCropRegion() {
         cropRect.set(imageRect);
-        cropRect.inset(borderThickness / 2, borderThickness / 2);
 
         final float w = cropRect.width();
         final float h = cropRect.height();
@@ -370,12 +362,15 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     private CropRegionSection getCropSectionAt(float x, float y) {
-        boolean isTop = (cropRect.top < y) && (y < (cropRect.top + threshold));
-        boolean isBottom = ((cropRect.bottom - threshold) < y) && (y < cropRect.bottom);
-        boolean isLeft = (cropRect.left < x) && (x < (cropRect.left + threshold));
-        boolean isRight = ((cropRect.right - threshold) < x) && (x < cropRect.right);
-        boolean isInsideVertical = (cropRect.top + threshold) < y && y < (cropRect.bottom - threshold);
-        boolean isInsideHorizontal = (cropRect.left + threshold) < x && x < (cropRect.right - threshold);
+        float vThreshold = Math.min(threshold, cropRect.height() / 3);
+        float hThreshold = Math.min(threshold, cropRect.width() / 3);
+
+        boolean isTop = (cropRect.top < y) && (y < (cropRect.top + vThreshold));
+        boolean isBottom = ((cropRect.bottom - vThreshold) < y) && (y < cropRect.bottom);
+        boolean isLeft = (cropRect.left < x) && (x < (cropRect.left + hThreshold));
+        boolean isRight = ((cropRect.right - hThreshold) < x) && (x < cropRect.right);
+        boolean isInsideVertical = (cropRect.top + vThreshold) < y && y < (cropRect.bottom - vThreshold);
+        boolean isInsideHorizontal = (cropRect.left + hThreshold) < x && x < (cropRect.right - hThreshold);
 
         if (isTop && isLeft) {
             return CropRegionSection.TOP_LEFT;
@@ -459,30 +454,30 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
     }
 
-    private boolean isCropRegionWithinImage(RectF crop) {
-        final float offset = borderThickness / 2;
-        final RectF limit = new RectF(imageRect);
-        limit.inset(offset, offset);
-
-        return limit.contains(crop);
-    }
-
     private boolean isCropRegionTooSmall(RectF crop) {
-        return (crop.width() < threshold * THRESHOLD_SCALE) || (crop.height() < threshold * THRESHOLD_SCALE);
+        return crop.width() < threshold || crop.height() < threshold;
     }
 
     private boolean isCropRegionValid(RectF crop) {
-        return isCropRegionWithinImage(crop) && !isCropRegionTooSmall(crop);
+        return imageRect.contains(crop) && !isCropRegionTooSmall(crop);
     }
 
     private void updateCropRegionBy(CropRegionSection section, float deltaX, float deltaY) {
-        RectF computed = computeCropRegion(section, deltaX, deltaY);
-        keepWithinMaxRatio(computed, section);
+        RectF computedX = computeCropRegion(section, deltaX, 0);
+        keepWithinMaxRatio(computedX, section);
 
-        if (isCropRegionValid(computed)) {
-            cropRect = computed;
-            invalidate();
+        if (isCropRegionValid(computedX)) {
+            cropRect = computedX;
         }
+
+        RectF computedY = computeCropRegion(section, 0, deltaY);
+        keepWithinMaxRatio(computedY, section);
+
+        if (isCropRegionValid(computedY)) {
+            cropRect = computedY;
+        }
+
+        invalidate();
     }
 
     @Override
@@ -494,16 +489,22 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     private void drawShadow(Canvas canvas) {
+        RectF rect = new RectF(cropRect);
+        rect.inset(borderThickness / 2, borderThickness / 2);
+
         path.reset();
         path.addRect(imageRect, Path.Direction.CW);
-        path.addRoundRect(cropRect,borderRadius, borderRadius, Path.Direction.CW);
+        path.addRoundRect(rect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
         canvas.drawPath(path, shadowPaint);
     }
 
     private void drawBorder(Canvas canvas) {
+        RectF rect = new RectF(cropRect);
+        rect.inset(borderThickness / 2, borderThickness / 2);
+
         path.reset();
-        path.addRoundRect(cropRect, borderRadius, borderRadius, Path.Direction.CW);
+        path.addRoundRect(rect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
         canvas.drawPath(path, borderPaint);
     }
