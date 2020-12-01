@@ -68,6 +68,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public static final int PICKER_PURPOSE_AVATAR = 2;
     public static final int PICKER_PURPOSE_RESULT = 3;
     public static final int PICKER_PURPOSE_POST = 4;
+    public static final int PICKER_PURPOSE_GROUP_AVATAR = 5;
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
@@ -99,6 +100,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
             setTitle(R.string.avatar_picker_title);
+        } else if (pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
+            setTitle(R.string.group_avatar_picker_title);
         }
 
         final RecyclerView mediaView = findViewById(android.R.id.list);
@@ -118,7 +121,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         mediaView.setAdapter(adapter);
 
         MediaPickerViewModelFactory factory;
-        final boolean includeVideos = pickerPurpose != PICKER_PURPOSE_AVATAR;
+        final boolean includeVideos = !isAvatarPicker();
         if (savedInstanceState != null && savedInstanceState.getLongArray(KEY_SELECTED_MEDIA) != null) {
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
         } else if (getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA) != null) {
@@ -145,6 +148,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         setupZoom(mediaView);
         requestPermissions();
+    }
+
+    private boolean isAvatarPicker() {
+        return pickerPurpose == PICKER_PURPOSE_AVATAR || pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR;
     }
 
     private void notifyAdapterOnSelection(List<Long> selected) {
@@ -291,7 +298,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.media_picker, menu);
-        if (pickerPurpose == PICKER_PURPOSE_AVATAR || pickerPurpose == PICKER_PURPOSE_SEND) {
+        if (isAvatarPicker() || pickerPurpose == PICKER_PURPOSE_SEND) {
             MenuItem menuItem = menu.findItem(R.id.camera);
             menuItem.setVisible(true);
         }
@@ -361,7 +368,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         if (pickerPurpose == PICKER_PURPOSE_SEND || pickerPurpose == PICKER_PURPOSE_POST) {
             Preconditions.checkState(uris.size() > 0);
             startContentComposer(uris);
-        } else if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+        } else if (isAvatarPicker()) {
             Preconditions.checkState(uris.size() == 1);
             startAvatarPreview(uris.get(0));
         } else if (pickerPurpose == PICKER_PURPOSE_RESULT) {
@@ -677,7 +684,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
 
-            if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            if (isAvatarPicker()) {
                 selectionCounter.setVisibility(View.GONE);
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
@@ -723,7 +730,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void onItemClicked() {
-            if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
+            if (isAvatarPicker()) {
                 final ArrayList<Uri> uris = new ArrayList<>(1);
                 uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
                 handleSelection(uris);

@@ -135,7 +135,7 @@ public class EditGroupActivity extends HalloActivity {
         final View.OnClickListener changeAvatarListener = v -> {
             Log.d("EditGroupActivity request change avatar");
             final Intent intent = new Intent(this, MediaPickerActivity.class);
-            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
+            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_GROUP_AVATAR);
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
         };
         changeAvatarView.setOnClickListener(changeAvatarListener);
