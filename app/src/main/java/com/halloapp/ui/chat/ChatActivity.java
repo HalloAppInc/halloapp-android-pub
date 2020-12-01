@@ -777,6 +777,7 @@ public class ChatActivity extends HalloActivity {
     private void updatePostReply(@Nullable Post post) {
         if (post != null) {
             updateReplyColors(post.senderUserId);
+            replySenderId = post.senderUserId;
             replyContainer.setVisibility(View.VISIBLE);
             final TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
             textContentLoader.load(replyTextView, post);
@@ -916,7 +917,7 @@ public class ChatActivity extends HalloActivity {
                 replyPostMediaIndex,
                 replyMessage != null ? replyMessage.id : null,
                 replyMessageMediaIndex ,
-                replyMessage != null ? replyMessage.senderUserId : null,
+                replyMessage != null ? replyMessage.senderUserId : replySenderId,
                 0);
         message.mentions.addAll(textAndMentions.second);
         replyPostId = null;
