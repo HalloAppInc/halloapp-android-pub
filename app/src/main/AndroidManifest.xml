@@ -115,6 +115,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter
                 android:label="@string/share_option_post">
@@ -122,6 +123,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
 
@@ -132,6 +134,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter
                 android:label="@string/share_option_message">
@@ -139,6 +142,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
 

@@ -46,6 +46,7 @@ public class ShareActivity extends HalloActivity {
                     contentComposer.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_NAVIGATE_TO_CHAT, true);
+                    contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
                     startActivity(contentComposer);
                 }
                 finish();

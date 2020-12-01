@@ -245,6 +245,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
         editText.setVisibility(View.VISIBLE);
         editText.setMentionPickerView(mentionPickerView);
+        editText.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
 
         final boolean isMediaPost = uris != null;
         final int minHeightUnfocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_unfocused_min_height);
