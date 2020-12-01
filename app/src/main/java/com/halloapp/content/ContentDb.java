@@ -646,6 +646,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public boolean hasMessage(UserId senderUserId, String id) {
+        return messagesDb.hasMessage(senderUserId, id);
+    }
+
+    @WorkerThread
     public @Nullable Message getMessage(long rowId) {
         return messagesDb.getMessage(rowId);
     }

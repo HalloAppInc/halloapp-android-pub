@@ -14,6 +14,7 @@ import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -978,10 +979,18 @@ public class NewConnection extends Connection {
                         connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
                     }
 
-                    ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false);
-                    processMentions(message.mentions);
-                    connectionObservers.notifyIncomingMessageReceived(message);
+                    bgWorkers.execute(() -> {
+                        if (!ContentDb.getInstance().hasMessage(fromUserId, msg.getId())) {
+                            ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
+                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false);
+                            processMentions(message.mentions);
+                            connectionObservers.notifyIncomingMessageReceived(message);
+                        } else {
+                            Log.i("message id " + msg.getId() + " already present in DB; ignoring chat stanza and acking");
+                            sendAck(msg.getId());
+                        }
+                    });
+
                     handled = true;
                 } else if (msg.hasSilentChatStanza()) { // TODO(jack): remove silent chat stanzas when no longer needed
                     Log.i("connection: got silent chat stanza " + ProtoPrinter.toString(msg));

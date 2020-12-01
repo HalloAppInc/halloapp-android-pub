@@ -803,6 +803,20 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean hasMessage(UserId senderUserId, String id) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        String sql = "SELECT COUNT(*) FROM " + MessagesTable.TABLE_NAME
+                + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=?"
+                + " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{id, senderUserId.rawId()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0) > 0;
+            }
+        }
+        return false;
+    }
+
+    @WorkerThread
     @Nullable Message getMessage(long rowId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
