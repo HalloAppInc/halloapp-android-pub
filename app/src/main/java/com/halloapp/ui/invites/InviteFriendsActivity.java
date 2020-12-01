@@ -3,13 +3,18 @@ package com.halloapp.ui.invites;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -20,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +35,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
@@ -66,12 +73,40 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= 28) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
         setContentView(R.layout.activity_invite_friends);
 
         avatarLoader = AvatarLoader.getInstance();
         deviceAvatarLoader = new DeviceAvatarLoader(this);
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        EditText searchBox = findViewById(R.id.search_text);
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                adapter.getFilter().filter(s.toString());
+            }
+        });
+        searchBox.requestFocus();
 
         listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -83,7 +118,6 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 getResources().getDimension(R.dimen.contacts_list_item_header_text_size),
                 getResources().getColor(R.color.contacts_list_item_header_text_color),
                 adapter::getSectionName));
-        listView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         emptyView = findViewById(android.R.id.empty);
 
@@ -164,20 +198,6 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.device_contacts_menu, menu);
-        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(final String text) {
-                searchView.clearFocus();
-                return true;
-            }
-            @Override
-            public boolean onQueryTextChange(final String text) {
-                adapter.getFilter().filter(text);
-                return false;
-            }
-        });
         return true;
     }
 

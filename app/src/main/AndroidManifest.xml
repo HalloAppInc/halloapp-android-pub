@@ -102,8 +102,8 @@
             android:name=".DebugActivity" />
 
         <activity android:name=".ui.invites.InviteFriendsActivity"
-            android:label="@string/invite_friends_title"
-            android:windowSoftInputMode="adjustResize"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/invite_friends_title"/>
 
         <activity
             android:name=".ui.ContentComposerActivity"
