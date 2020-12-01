@@ -13,6 +13,7 @@
         android:layout_width="74dp"
         android:layout_height="74dp"
         android:layout_marginBottom="4dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/avatar_group"
         app:civ_border_color="@color/card_background"
         app:layout_constraintEnd_toEndOf="parent"
