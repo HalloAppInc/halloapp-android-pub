@@ -110,7 +110,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
                         List<MemberInfo> members = contentDb.getGroupMembers(post.getParentGroup());
                         List<Contact> audience = new ArrayList<>(members.size());
                         for (MemberInfo info : members) {
-                            if (info.userId.rawId().equals(me.getUser())) {
+                            if (info.userId.isMe()) {
                                 continue;
                             }
                             audience.add(contactsDb.getContact(info.userId));
