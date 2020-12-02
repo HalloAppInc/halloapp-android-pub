@@ -113,6 +113,9 @@ public class ChatActivity extends HalloActivity {
     private static final int REQUEST_CODE_COMPOSE = 1;
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
 
+    private static final int ADD_ANIMATION_DURATION = 60;
+    private static final int MOVE_ANIMATION_DURATION = 125;
+
     public static Map<ChatId, String> messageDrafts = new HashMap<>();
 
     private final ChatAdapter adapter = new ChatAdapter();
@@ -250,7 +253,10 @@ public class ChatActivity extends HalloActivity {
         });
 
         final RecyclerView chatView = findViewById(R.id.chat);
-        Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator()).setSupportsChangeAnimations(false);
+        SimpleItemAnimator animator = Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator());
+        animator.setSupportsChangeAnimations(false);
+        animator.setAddDuration(ADD_ANIMATION_DURATION);
+        animator.setMoveDuration(MOVE_ANIMATION_DURATION);
 
         sendButton.setOnClickListener(v -> sendMessage());
         final View media = findViewById(R.id.media);
