@@ -5,12 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.SpannableString;
+import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,8 +40,8 @@ import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.CropImageActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.GridSpacingItemDecoration;
 import com.halloapp.widget.SnackbarHelper;
@@ -82,7 +82,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private MediaItemsAdapter adapter;
     private GalleryThumbnailLoader thumbnailLoader;
     private MediaPickerPreview preview;
-    private List<Long> selected = new ArrayList<>();
+    final private List<Long> selected = new ArrayList<>();
 
     private ActionMode actionMode;
     private int pickerPurpose = PICKER_PURPOSE_SEND;
@@ -406,7 +406,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                         if (item.getItemId() == R.id.select) {
-                            handleSelection(viewModel.getSelectedUris());
+                            viewModel.getUrisOrderedByDate((uris -> handleSelection(uris)));
                         }
                         return true;
                     }
@@ -492,11 +492,11 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private int gridLayout = LAYOUT_DAY_SMALL;
-        private ArrayList<String> headers = new ArrayList<>();
-        private ArrayList<Pointer> pointers = new ArrayList<>();
+        private final ArrayList<String> headers = new ArrayList<>();
+        private final ArrayList<Pointer> pointers = new ArrayList<>();
         private PagedList<GalleryItem> items;
 
-        private PagedList.Callback pagedListCallback = new PagedList.Callback() {
+        private final PagedList.Callback pagedListCallback = new PagedList.Callback() {
             @Override
             public void onChanged(int position, int count) {
             }
@@ -635,8 +635,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final ImageView thumbnailView;
         final View thumbnailFrame;
         final ImageView selectionIndicator;
-        final TextView selectionCounter;
-        final ImageView typeIndicator;
+        final TextView duration;
 
         GalleryItem galleryItem;
 
@@ -646,9 +645,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             thumbnailView = v.findViewById(R.id.thumbnail);
             thumbnailFrame = v.findViewById(R.id.thumbnail_frame);
             selectionIndicator = v.findViewById(R.id.selection_indicator);
-            selectionCounter = v.findViewById(R.id.selection_counter);
-            typeIndicator = v.findViewById(R.id.type_indicator);
             titleView = v.findViewById(R.id.title);
+            duration = v.findViewById(R.id.duration);
 
             if (thumbnailView != null) {
                 thumbnailView.setOnClickListener(v12 -> onItemClicked());
@@ -676,22 +674,21 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         void bindTo(final @NonNull GalleryItem galleryItem) {
             this.galleryItem = galleryItem;
             if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
-                typeIndicator.setImageResource(R.drawable.ic_video);
-                typeIndicator.setVisibility(View.VISIBLE);
+                duration.setVisibility(View.VISIBLE);
+                duration.setText(DateUtils.formatElapsedTime(galleryItem.duration / 1000));
                 thumbnailView.setContentDescription(getString(R.string.video));
             } else {
-                typeIndicator.setVisibility(View.GONE);
+                duration.setVisibility(View.GONE);
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
 
             if (isAvatarPicker()) {
-                selectionCounter.setVisibility(View.GONE);
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
                 thumbnailView.setSelected(false);
             } else {
                 if (viewModel.isSelected(galleryItem.id)) {
-                    setupSelected(viewModel.indexOfSelected(galleryItem.id));
+                    setupSelected();
                 } else {
                     setupDefault();
                 }
@@ -700,10 +697,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             thumbnailLoader.load(thumbnailView, galleryItem);
         }
 
-        private void setupSelected(int index) {
-            selectionCounter.setVisibility(View.VISIBLE);
-            selectionCounter.setText(String.format(Locale.getDefault(), "%d", index + 1));
-            selectionIndicator.setVisibility(View.GONE);
+        private void setupSelected() {
+            selectionIndicator.setImageResource(R.drawable.ic_item_selected_no_border);
 
             int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
             thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
@@ -714,8 +709,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void setupDefault() {
-            selectionCounter.setVisibility(View.GONE);
-            selectionIndicator.setVisibility(View.VISIBLE);
             selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
             thumbnailFrame.setPadding(0, 0, 0, 0);
             thumbnailView.setSelected(false);

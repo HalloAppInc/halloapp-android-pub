@@ -11,6 +11,7 @@ public class GalleryItem {
     final int year;
     final int month;
     final int day;
+    final long duration;
 
     @Override
     public boolean equals(Object o) {
@@ -26,10 +27,11 @@ public class GalleryItem {
         return Objects.hash(id, type);
     }
 
-    public GalleryItem(long id, int type, long date) {
+    public GalleryItem(long id, int type, long date, long duration) {
         this.id = id;
         this.type = type;
         this.date = date * 1000;
+        this.duration = duration;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(this.date);

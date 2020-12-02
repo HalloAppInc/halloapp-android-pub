@@ -2,7 +2,11 @@ package com.halloapp.ui.mediapicker;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -11,7 +15,9 @@ import androidx.paging.ItemKeyedDataSource;
 
 import com.halloapp.util.logs.Log;
 
+import java.io.FileDescriptor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
@@ -31,7 +37,6 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
             MediaStore.Files.FileColumns.DATE_ADDED,
-            //MediaStore.Files.FileColumns.DURATION
     };
 
     private GalleryDataSource(ContentResolver contentResolver, boolean includeVideos) {
@@ -55,23 +60,57 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
     }
 
     private List<GalleryItem> load(Long start, boolean after, int size) {
+        String[] projection;
+        if (Build.VERSION.SDK_INT >= 29) {
+            projection = Arrays.copyOf(MEDIA_PROJECTION, MEDIA_PROJECTION.length + 1);
+            projection[projection.length - 1] = MediaStore.Files.FileColumns.DURATION;
+        } else {
+            projection = MEDIA_PROJECTION;
+        }
+
         final List<GalleryItem> galleryItems = new ArrayList<>();
         try (final Cursor cursor = contentResolver.query(
                 MediaStore.Files.getContentUri(MEDIA_VOLUME),
-                MEDIA_PROJECTION,
+                projection,
                 (includeVideos ? MEDIA_TYPE_SELECTION : MEDIA_TYPE_IMAGES_ONLY) + (start == null ? "" : ((after ? " AND _id<" : " AND _id>") + start)),
                 null,
                 "_id DESC LIMIT " + size,
                 null)) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    galleryItems.add(new GalleryItem(cursor.getLong(0), cursor.getInt(1), cursor.getLong(2)));
+                    long id = cursor.getLong(0);
+                    int type = cursor.getInt(1);
+                    long duration = 0;
+
+                    if (type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+                        if (Build.VERSION.SDK_INT >= 29) {
+                            duration = cursor.getLong(3);
+                        } else {
+                            duration = getDuration(id);
+                        }
+                    }
+
+                    galleryItems.add(new GalleryItem(id, type, cursor.getLong(2), duration));
                 }
             }
         } catch (SecurityException ex) {
             Log.w("GalleryDataSource.load", ex);
         }
         return galleryItems;
+    }
+
+    private long getDuration(long id) {
+        Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(MEDIA_VOLUME), id);
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+
+        try {
+            FileDescriptor fd = contentResolver.openFileDescriptor(uri, "r").getFileDescriptor();
+            retriever.setDataSource(fd);
+            return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+        } catch (Exception e) {
+            Log.w("GalleryDataSource.getDuration", e);
+            return 0;
+        }
     }
 
     @Override

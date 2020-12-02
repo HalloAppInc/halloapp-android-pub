@@ -2,24 +2,30 @@ package com.halloapp.ui.mediapicker;
 
 import android.app.Application;
 import android.content.ContentUris;
+import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
-import com.halloapp.util.logs.Log;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MediaPickerViewModel extends AndroidViewModel {
@@ -149,19 +155,50 @@ public class MediaPickerViewModel extends AndroidViewModel {
         return null;
     }
 
-    public void clean(List<Uri> uris) {
-        new CleanupTask(uris).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    public void getUrisOrderedByDate(Observer<ArrayList<Uri>> observer) {
+        BgWorkers.getInstance().execute(() -> {
+            HashMap<Long, Long> dates = new HashMap<>();
+            List<Long> list = selected.getValue();
+
+            String selection = MediaStore.Files.FileColumns._ID + " in (" + TextUtils.join(",", list) + ")";
+            final String[] projection = new String[] {
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DATE_ADDED,
+            };
+
+            try(final Cursor cursor = getApplication().getContentResolver().query(
+                    MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME),
+                    projection,
+                    selection,
+                    null,
+                    null)) {
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        dates.put(cursor.getLong(0), cursor.getLong(1));
+                    }
+                }
+            } catch (SecurityException ex) {
+                Log.w("MediaPickerViewModel.getOrderedByDateUris", ex);
+            }
+
+            Collections.sort(list, (a, b) -> {
+                long dateA = dates.containsKey(a) ? dates.get(a) : 0;
+                long dateB = dates.containsKey(b) ? dates.get(b) : 0;
+
+                return -Long.compare(dateA, dateB);
+            });
+
+            ArrayList<Uri> uris = new ArrayList<>(list.size());
+            for (Long id : list) {
+                uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), id));
+            }
+
+            new Handler(getApplication().getMainLooper()).post(() -> observer.onChanged(uris));
+        });
     }
 
-    private class CleanupTask extends AsyncTask<Void, Void, Void> {
-        private final List<Uri> uris;
-
-        CleanupTask(List<Uri> uris) {
-            this.uris = uris;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
+    public void clean(List<Uri> uris) {
+        BgWorkers.getInstance().execute(() -> {
             final FileStore store = FileStore.getInstance();
 
             for (Uri uri : uris) {
@@ -176,9 +213,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
                     edit.delete();
                 }
             }
-
-            return null;
-        }
+        });
     }
 }
 

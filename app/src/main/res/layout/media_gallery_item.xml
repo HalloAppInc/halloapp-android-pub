@@ -18,14 +18,17 @@
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"/>
 
-        <ImageView
-            android:id="@+id/type_indicator"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_margin="2dp"
-            android:layout_gravity="start|bottom"
-            tools:src="@drawable/ic_video"
-            tools:ignore="ContentDescription"/> <!-- content description is dynamic and set from the code -->
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="1dp"
+            android:layout_marginEnd="3dp"
+            />
     </FrameLayout>
 
     <ImageView
@@ -33,18 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|top"
-        tools:src="@drawable/ic_item_selected"
+        tools:src="@drawable/ic_item_selected_no_border"
         tools:ignore="ContentDescription"/> <!-- content description is dynamic and set from the code -->
-
-    <TextView
-        android:id="@+id/selection_counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|top"
-        android:background="@drawable/ic_item_selected_background"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        />
 
 </FrameLayout>
