@@ -14,12 +14,14 @@ import androidx.core.content.ContextCompat;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.widget.SeenDetectorLayout;
 
 public class SubtleRetractedPostViewHolder extends ViewHolderWithLifecycle {
 
@@ -59,5 +61,13 @@ public class SubtleRetractedPostViewHolder extends ViewHolderWithLifecycle {
         }
         TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
+
+        final SeenDetectorLayout postContentLayout = itemView.findViewById(R.id.post_container);
+        postContentLayout.setOnSeenListener(() -> {
+            if (post.seen == Post.SEEN_NO && post.isIncoming()) {
+                post.seen = Post.SEEN_YES_PENDING;
+                ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id);
+            }
+        });
     }
 }
