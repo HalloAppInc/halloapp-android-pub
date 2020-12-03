@@ -43,6 +43,7 @@
         android:text="@string/admin"
         android:singleLine="true"
         android:textSize="12sp"
+        android:layout_gravity="center_vertical"
         android:textAppearance="?textAppearanceListItem"
         android:fontFamily="sans-serif-medium"
         android:textDirection="locale"
