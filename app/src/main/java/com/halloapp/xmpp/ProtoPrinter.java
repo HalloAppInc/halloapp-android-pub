@@ -5,6 +5,7 @@ import android.util.Base64;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.protobuf.GeneratedMessageLite;
 import com.halloapp.BuildConfig;
@@ -39,8 +40,8 @@ public class ProtoPrinter {
     private static final String START_TAG = "<![CLBDATA[";
     private static final String END_TAG = "]]>";
 
-    public static String toString(@NonNull GeneratedMessageLite<?, ?> message) {
-        return BuildConfig.DEBUG ? debug(message) : production(message);
+    public static String toString(@Nullable GeneratedMessageLite<?, ?> message) {
+        return message == null ? "null" : BuildConfig.DEBUG ? debug(message) : production(message);
     }
 
     public static String simplified(@NonNull GeneratedMessageLite<?, ?> message) {
