@@ -92,12 +92,6 @@ public class GroupInfoActivity extends HalloActivity {
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= 28) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
         setContentView(R.layout.activity_group_info);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
