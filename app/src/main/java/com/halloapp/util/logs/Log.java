@@ -9,6 +9,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.halloapp.BuildConfig;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 
 import java.lang.reflect.Method;
@@ -127,6 +128,7 @@ public class Log {
         protected Void doInBackground(Void... voids) {
             String user = me.getUser();
             FirebaseCrashlytics.getInstance().setCustomKey("user", user);
+            FirebaseCrashlytics.getInstance().setCustomKey("internal", ServerProps.getInstance().getIsInternalUser());
             FirebaseCrashlytics.getInstance().setUserId(user);
             return null;
         }
