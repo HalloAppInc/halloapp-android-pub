@@ -56,6 +56,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class InviteFriendsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
+    public static final String EXTRA_SEARCH_TEXT = "search_text";
+
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -107,6 +109,11 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
             }
         });
         searchBox.requestFocus();
+        String searchText = getIntent().getStringExtra(EXTRA_SEARCH_TEXT);
+        if (searchText != null) {
+            searchBox.setText(searchText);
+            searchBox.setSelection(searchText.length());
+        }
 
         listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);

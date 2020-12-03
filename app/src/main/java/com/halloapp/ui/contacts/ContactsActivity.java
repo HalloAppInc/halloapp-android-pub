@@ -194,6 +194,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     private void onInviteFriends() {
         if (Constants.INVITES_ENABLED) {
             final Intent intent = new Intent(this, InviteFriendsActivity.class);
+            intent.putExtra(InviteFriendsActivity.EXTRA_SEARCH_TEXT, adapter.filterText);
             startActivity(intent);
         } else {
             final Intent intent = new Intent();
@@ -362,13 +363,17 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
             return serverProps.getGroupsEnabled() && TextUtils.isEmpty(filterText) && getIntent().getBooleanExtra(EXTRA_SHOW_CREATE_GROUP, true);
         }
 
+        private boolean shouldShowInviteItem() {
+            return showInviteOption;
+        }
+
         protected void setInviteVisible(boolean visible) {
             showInviteOption = visible;
         }
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + ((showInviteOption && TextUtils.isEmpty(filterText)) ? 1 : 0) + (shouldShowCreateGroupItem() ? 1 : 0);
+            return getFilteredContactsCount() + (shouldShowInviteItem() ? 1 : 0) + (shouldShowCreateGroupItem() ? 1 : 0);
         }
 
         @NonNull
