@@ -89,7 +89,6 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
-    public static final String EXTRA_NAVIGATE_TO_CHAT = "navigate_to_chat";
 
     private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap = new HashMap<>();
 
@@ -360,8 +359,11 @@ public class ContentComposerActivity extends HalloActivity {
                 contentItem.addToStorage(ContentDb.getInstance());
                 setResult(RESULT_OK);
                 finish();
-                if (chatId != null && getIntent() != null && getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_CHAT, false)) {
-                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chatId));
+                if (chatId != null) {
+                    final Intent intent = new Intent(this, ChatActivity.class);
+                    intent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 } else if (groupId != null) {
                     final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

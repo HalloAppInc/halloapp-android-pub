@@ -40,6 +40,7 @@ import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.CropImageActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -74,7 +75,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
     private static final int REQUEST_CODE_PICK_MEDIA = 3;
     private static final int REQUEST_CODE_SET_AVATAR = 4;
-    private static final int REQUEST_CODE_TAKE_PHOTO = 5;
 
     public static final int RESULT_SELECT_MORE = RESULT_FIRST_USER + 1;
 
@@ -203,14 +203,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
         switch (request) {
-            case REQUEST_CODE_TAKE_PHOTO: {
-                if (result == RESULT_OK) {
-                    final ArrayList<Uri> uris = new ArrayList<>();
-                    uris.add(MediaUtils.getImageCaptureUri(this));
-                    handleSelection(uris);
-                }
-                break;
-            }
             case REQUEST_CODE_PICK_MEDIA: {
                 if (result == RESULT_OK) {
                     if (data == null) {
@@ -317,9 +309,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
             return true;
         } else if (item.getItemId() == R.id.camera) {
-            final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, MediaUtils.getImageCaptureUri(this));
-            startActivityForResult(intent, REQUEST_CODE_TAKE_PHOTO);
+            final Intent intent = new Intent(this, CameraActivity.class);
+            ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+            GroupId groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+            intent.putExtra(CameraActivity.EXTRA_CHAT_ID, chatId);
+            intent.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
+            intent.putExtra(CameraActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
+            intent.putExtra(CameraActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

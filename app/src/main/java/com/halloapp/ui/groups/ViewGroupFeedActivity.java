@@ -134,7 +134,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
             startActivity(intent);
         } else if (id == R.id.add_post_camera) {
             final Intent intent = new Intent(this, CameraActivity.class);
-            intent.putExtra(CameraActivity.EXTRA_GROUP_FEED_ID, groupId);
+            intent.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
             startActivity(intent);
         }
         fabView.close(false);

@@ -30,6 +30,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -62,7 +63,10 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class CameraActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
-    public static final String EXTRA_GROUP_FEED_ID = "group_feed_id";
+    public static final String EXTRA_CHAT_ID = "chat_id";
+    public static final String EXTRA_GROUP_ID = "group_id";
+    public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
+    public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
 
@@ -521,9 +525,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         final Intent intent = new Intent(getBaseContext(), ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
         intent.putExtra(ContentComposerActivity.EXTRA_CALLED_FROM_CAMERA, true);
-        if (getIntent().hasExtra(EXTRA_GROUP_FEED_ID)) {
-            intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, (GroupId) getIntent().getParcelableExtra(EXTRA_GROUP_FEED_ID));
-        }
+        ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+        GroupId groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+        intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
+        intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
+        intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
+        intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
         startActivity(intent);
     }
 }
