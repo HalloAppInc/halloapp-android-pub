@@ -124,6 +124,7 @@ public class ChatActivity extends HalloActivity {
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
     private View replyContainer;
+    private RecyclerView chatView;
 
     private TextView titleView;
     private TextView subtitleView;
@@ -252,7 +253,7 @@ public class ChatActivity extends HalloActivity {
             }
         });
 
-        final RecyclerView chatView = findViewById(R.id.chat);
+        chatView = findViewById(R.id.chat);
         SimpleItemAnimator animator = Preconditions.checkNotNull((SimpleItemAnimator) chatView.getItemAnimator());
         animator.setSupportsChangeAnimations(false);
         animator.setAddDuration(ADD_ANIMATION_DURATION);
@@ -740,11 +741,11 @@ public class ChatActivity extends HalloActivity {
             }
             blockDialog.cancel();
             if (success) {
-                SnackbarHelper.showInfo(this, getString(R.string.blocking_user_successful, chatName));
+                SnackbarHelper.showInfo(chatView, getString(R.string.blocking_user_successful, chatName));
                 item.setTitle(getString(R.string.unblock));
                 viewModel.sendSystemMessage(Message.USAGE_BLOCK, chatId);
             } else {
-                SnackbarHelper.showWarning(this, getString(R.string.blocking_user_failed_check_internet, chatName));
+                SnackbarHelper.showWarning(chatView, getString(R.string.blocking_user_failed_check_internet, chatName));
             }
         });
     }
@@ -758,11 +759,11 @@ public class ChatActivity extends HalloActivity {
             }
             unblockDialog.cancel();
             if (success) {
-                SnackbarHelper.showInfo(this, getString(R.string.unblocking_user_successful, chatName));
+                SnackbarHelper.showInfo(chatView, getString(R.string.unblocking_user_successful, chatName));
                 item.setTitle(getString(R.string.block));
                 viewModel.sendSystemMessage(Message.USAGE_UNBLOCK, chatId);
             } else {
-                SnackbarHelper.showWarning(this, getString(R.string.unblocking_user_failed_check_internet, chatName));
+                SnackbarHelper.showWarning(chatView, getString(R.string.unblocking_user_failed_check_internet, chatName));
             }
         });
     }

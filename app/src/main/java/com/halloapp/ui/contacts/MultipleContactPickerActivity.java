@@ -81,6 +81,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private ContactsViewModel viewModel;
     private TextView emptyView;
     private EditText searchBox;
+    private RecyclerView listView;
     private RecyclerView avatarsView;
 
     private HashSet<UserId> initialSelectedContacts;
@@ -146,7 +147,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         });
         searchBox.requestFocus();
 
-        final RecyclerView listView = findViewById(android.R.id.list);
+        listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
@@ -426,7 +427,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
                 } else if (maxSelection >= 1 && selectedContacts.size() >= maxSelection) {
-                    SnackbarHelper.showWarning(MultipleContactPickerActivity.this, getResources().getQuantityString(R.plurals.contact_maximum_selection, maxSelection, maxSelection));
+                    SnackbarHelper.showWarning(listView, getResources().getQuantityString(R.plurals.contact_maximum_selection, maxSelection, maxSelection));
                 } else {
                     selectedContacts.add(contact.userId);
                 }
