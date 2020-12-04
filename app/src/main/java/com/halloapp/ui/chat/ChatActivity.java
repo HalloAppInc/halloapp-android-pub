@@ -154,6 +154,7 @@ public class ChatActivity extends HalloActivity {
     private int replyPostMediaIndex;
     private int replyMessageMediaIndex = 0;
     private long selectedMessageRowId = -1;
+    private long highlightedMessageRowId = -1;
     private String copyText;
     private boolean blocked;
     private String chatName;
@@ -1158,6 +1159,16 @@ public class ChatActivity extends HalloActivity {
         }
 
         @Override
+        public long getHighlightedMessageRowId() {
+            return highlightedMessageRowId;
+        }
+
+        @Override
+        public void clearHighlight() {
+            highlightedMessageRowId = -1;
+        }
+
+        @Override
         public long getSelectedMessageRowId() {
             return selectedMessageRowId;
         }
@@ -1181,7 +1192,9 @@ public class ChatActivity extends HalloActivity {
                 int c = adapter.getItemCount();
                 for (int i=0; i<c; i++) {
                     if (adapter.getItemId(i) == rowId) {
+                        highlightedMessageRowId = rowId;
                         layoutManager.scrollToPosition(i);
+                        adapter.notifyDataSetChanged();
                         break;
                     }
                 }

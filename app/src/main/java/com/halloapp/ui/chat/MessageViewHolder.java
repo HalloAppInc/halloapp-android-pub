@@ -1,5 +1,8 @@
 package com.halloapp.ui.chat;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -75,10 +78,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         abstract void onItemLongClicked(String text, long messageRowId);
         abstract long getSelectedMessageRowId();
+        abstract long getHighlightedMessageRowId();
         abstract ReplyLoader getReplyLoader();
         abstract void unblockContactFromTap();
         abstract void setReplyMessageMediaIndex(long rowId, int pos);
         abstract void scrollToOriginal(Message replyingMessage);
+        abstract void clearHighlight();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -223,6 +228,31 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         if (parent.getSelectedMessageRowId() == message.rowId) {
             itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
+        } else if (parent.getHighlightedMessageRowId() == message.rowId) {
+            AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.message_highlight);
+            set.setTarget(itemView);
+            set.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    parent.clearHighlight();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    parent.clearHighlight();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            set.start();
         } else {
             itemView.setBackgroundColor(0);
         }

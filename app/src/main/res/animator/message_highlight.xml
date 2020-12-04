@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="3000"
+        android:propertyName="backgroundColor"
+        android:valueFrom="@color/message_highlight"
+        android:valueTo="@color/message_highlight_00_alpha"/>
+</set>
