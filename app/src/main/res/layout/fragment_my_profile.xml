@@ -101,6 +101,26 @@
                 android:background="?selectableItemBackground"
                 android:paddingBottom="16dp"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/window_background"/>
+
+            <TextView
+                android:id="@+id/help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_help_outline"
+                android:textSize="18sp"
+                android:drawablePadding="19dp"
+                android:textColor="@color/primary_text"
+                android:text="@string/help"
+                android:paddingStart="24dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="15dp"
+                android:background="?selectableItemBackground"
+                android:paddingBottom="16dp"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -109,6 +129,7 @@
             app:layout_constraintTop_toBottomOf="@id/name"
             android:background="@color/card_background"
             android:elevation="2dp"
+            android:layout_marginBottom="25dp"
             android:orientation="vertical">
 
             <TextView
@@ -132,14 +153,15 @@
                 android:background="@color/window_background"/>
 
             <TextView
-                android:id="@+id/help"
+                android:id="@+id/about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_help_outline"
+                android:drawableStart="@drawable/ic_hallo_outline"
+                app:drawableTint="@color/color_primary"
                 android:textSize="18sp"
                 android:drawablePadding="19dp"
                 android:textColor="@color/primary_text"
-                android:text="@string/help"
+                android:text="@string/about_halloapp"
                 android:paddingStart="24dp"
                 android:paddingEnd="5dp"
                 android:paddingTop="15dp"
@@ -147,25 +169,6 @@
                 android:paddingBottom="16dp"/>
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/about"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:background="?selectableItemBackground"
-            android:textColor="@color/hint_text"
-            android:layout_gravity="center_vertical"
-            android:drawableStart="@drawable/ic_hallo_outline"
-            app:drawableTint="@color/hint_text"
-            android:drawablePadding="13dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/about_halloapp"/>
 
     </LinearLayout>
 
