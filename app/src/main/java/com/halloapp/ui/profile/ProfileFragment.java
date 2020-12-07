@@ -209,7 +209,7 @@ public class ProfileFragment extends PostsFragment {
         if (!profileUserId.isMe()) {
             inflater.inflate(R.menu.other_profile_menu, menu);
             blockMenuItem = menu.findItem(R.id.block);
-            updateMenu(viewModel.getIsBlocked().getValue());
+            viewModel.getIsBlocked().observe(this, this::updateMenu);
         }
         super.onCreateOptionsMenu(menu,inflater);
     }

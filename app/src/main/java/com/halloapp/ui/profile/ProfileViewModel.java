@@ -115,7 +115,6 @@ public class ProfileViewModel extends ViewModel {
         }
     };
 
-
     public ProfileViewModel(@NonNull UserId userId) {
         this.userId = userId;
 
@@ -145,6 +144,8 @@ public class ProfileViewModel extends ViewModel {
         contactLiveData.invalidate();
         isBlocked = new MutableLiveData<>();
         updateIsBlocked();
+
+        blockListManager.addObserver(this::updateIsBlocked);
     }
 
     private void updateIsBlocked() {
