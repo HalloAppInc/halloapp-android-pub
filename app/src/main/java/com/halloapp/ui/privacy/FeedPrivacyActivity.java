@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -107,12 +108,10 @@ public class FeedPrivacyActivity extends HalloActivity {
                     viewModel.savePrivacy(selectedType, currentList).observe(this, done -> {
                         if (done != null) {
                             if (done) {
-                                SnackbarHelper.showInfo(this, R.string.feed_privacy_update_success);
+                                Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
+                                finish();
                             } else {
                                 SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
-                            }
-                            if (done) {
-                                finish();
                             }
                         }
                     });
