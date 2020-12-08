@@ -26,7 +26,7 @@ public class MutableObservable<T> extends Observable<T> {
     @Override
     public synchronized Observable<T> onError(@NonNull ExceptionHandler handler) {
         this.exceptionHandler = handler;
-        maybeNotifyResponse();
+        maybeNotifyError();
         return this;
     }
 
@@ -41,14 +41,14 @@ public class MutableObservable<T> extends Observable<T> {
         Preconditions.checkState(!resolved, "Trying to resolve to exception but already resolved");
         resolved = true;
         this.error = e;
-        maybeNotifyResponse();
+        maybeNotifyError();
     }
 
     public synchronized void cancel() {
         this.cancelled = true;
     }
 
-    private synchronized void maybeNotifyResponse() {
+    private synchronized void maybeNotifyError() {
         if (cancelled || !resolved) {
             return;
         }
@@ -56,7 +56,14 @@ public class MutableObservable<T> extends Observable<T> {
             if (exceptionHandler != null) {
                 handleError(error);
             }
-        } else if (responseHandler != null) {
+        }
+    }
+
+    private synchronized void maybeNotifyResponse() {
+        if (cancelled || !resolved || error != null) {
+            return;
+        }
+        if (responseHandler != null) {
             handleResponse(response);
         }
     }
