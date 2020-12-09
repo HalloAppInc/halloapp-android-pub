@@ -55,12 +55,12 @@ public class TimeFormatter {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
         } else if (TimeUtils.isSameDay(currentTime - DateUtils.DAY_IN_MILLIS, timestamp)) {
             return context.getString(R.string.yesterday);
-        } else if (TimeUtils.isSameWeek(currentTime, timestamp)) {
+        } else if (timeDiff < 5 * DateUtils.DAY_IN_MILLIS) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY);
         } else if (TimeUtils.isSameYear(currentTime, timestamp)) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH);
         } else {
-            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NUMERIC_DATE);
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NUMERIC_DATE|DateUtils.FORMAT_SHOW_YEAR);
         }
     }
 
@@ -77,10 +77,12 @@ public class TimeFormatter {
         }
         if (TimeUtils.isSameDay(currentTime, timestamp)) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
-        } else if (TimeUtils.isSameWeek(currentTime, timestamp)) {
+        } else if (timeDiff < 5 * DateUtils.DAY_IN_MILLIS) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);
+        } else if (TimeUtils.isSameYear(currentTime, timestamp)) {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH);
         } else {
-            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_ABBREV_MONTH);
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NUMERIC_DATE|DateUtils.FORMAT_SHOW_YEAR);
         }
     }
 
