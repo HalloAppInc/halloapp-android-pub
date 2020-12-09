@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Stats {
 
-    private static final Long BUFFER_DELAY_MS = DateUtils.MINUTE_IN_MILLIS;
+    private static final long BUFFER_DELAY_MS = DateUtils.MINUTE_IN_MILLIS;
 
     private static Stats instance;
 
@@ -32,7 +32,7 @@ public class Stats {
     private final List<Counter> counters = new ArrayList<>();
 
     private final SuccessCounter encryption = new SuccessCounter("crypto", "encryption");
-    private final SuccessCounter decryption = new SuccessCounter("crypto", "decryption");
+    private final DecryptCounter decryption = new DecryptCounter();
 
     private boolean scheduled = false;
     private final Timer timer = new Timer();
@@ -64,12 +64,12 @@ public class Stats {
         encryption.reportError(error);
     }
 
-    public void reportDecryptSuccess() {
-        decryption.reportSuccess();
+    public void reportDecryptSuccess(boolean senderProbablyIos) {
+        decryption.reportSuccess(senderProbablyIos);
     }
 
-    public void reportDecryptError(String error) {
-        decryption.reportError(error);
+    public void reportDecryptError(String error, boolean senderProbablyIos) {
+        decryption.reportError(error, senderProbablyIos);
     }
 
     public class Counter {
@@ -125,6 +125,29 @@ public class Stats {
         public void reportError(String error) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, error);
+            reportEvent(builder.build());
+        }
+    }
+
+    public class DecryptCounter extends Counter {
+        private static final String DIM_RESULT = "result";
+        private static final String DIM_SENDER_PLATFORM = "senderPlatform";
+
+        public DecryptCounter() {
+            super("crypto", "decryption");
+        }
+
+        public void reportSuccess(boolean senderProbablyIos) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "success")
+                    .put(DIM_SENDER_PLATFORM, senderProbablyIos ? "ios" : "android");
+            reportEvent(builder.build());
+        }
+
+        public void reportError(String error, boolean senderProbablyIos) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, error)
+                    .put(DIM_SENDER_PLATFORM, senderProbablyIos ? "ios" : "android");
             reportEvent(builder.build());
         }
     }

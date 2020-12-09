@@ -70,21 +70,22 @@ public class ChatMessageElement {
     }
 
     Message getMessage(UserId fromUserId, String id, boolean isSilentMessage) {
+        boolean senderProbablyIos = id.matches(".*[A-F].*"); // For stats only; Android only uses lowercase and iOS only uses uppercase
         if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
             try {
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, fromUserId, sessionSetupInfo);
                 chatMessage = MessageElementHelper.readEncodedEntry(dec);
                 if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
-                    stats.reportDecryptError("plaintext_mismatch");
+                    stats.reportDecryptError("plaintext_mismatch", senderProbablyIos);
                 } else {
-                    stats.reportDecryptSuccess();
+                    stats.reportDecryptSuccess(senderProbablyIos);
                 }
             } catch (CryptoException | ArrayIndexOutOfBoundsException | NullPointerException e) {
                 String message = e instanceof CryptoException ? e.getMessage() : e instanceof ArrayIndexOutOfBoundsException ? "aioobe" : "null_key";
                 Log.e("Failed to decrypt message: " + message + ", falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure: " + message);
-                stats.reportDecryptError(message);
+                stats.reportDecryptError(message, senderProbablyIos);
                 chatMessage = plaintextChatMessage;
 
                 if (!isSilentMessage && Constants.REREQUEST_SEND_ENABLED) {
