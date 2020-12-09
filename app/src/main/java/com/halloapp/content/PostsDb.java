@@ -578,6 +578,26 @@ class PostsDb {
     }
 
     @WorkerThread
+    boolean setCommentSeen(@NonNull String postId, @NonNull String commentId, boolean seen) {
+        Log.i("ContentDb.setCommentSeen: commentId=" + commentId);
+        final ContentValues values = new ContentValues();
+        values.put(CommentsTable.COLUMN_SEEN, seen);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                    CommentsTable.COLUMN_POST_ID + "=? AND " +
+                            CommentsTable.COLUMN_COMMENT_ID + "=? AND " +
+                            CommentsTable.COLUMN_SEEN + "=" + (seen ? 0 : 1),
+                    new String [] {postId, commentId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            return updatedCount > 0;
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setCommentSeen: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -933,7 +953,8 @@ class PostsDb {
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON p." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-                        "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? LIMIT " + limit;
+                        "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? " +
+                        (limit < 0 ? "" : "LIMIT " + limit);
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{mentionedUserId.rawId(), PostsTable.TABLE_NAME})) {
             Post post = null;
@@ -990,7 +1011,8 @@ class PostsDb {
                         "FROM " + MentionsTable.TABLE_NAME + " " +
                         "INNER JOIN " + CommentsTable.TABLE_NAME + " " +
                         "AS c ON " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "=c." + CommentsTable._ID + " " +
-                        "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? LIMIT " + limit;
+                        "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? " +
+                        (limit < 0 ? "" : "LIMIT " + limit);
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final HashMap<String, Post> postCache = new HashMap<>();
         final HashSet<String> checkedIds = new HashSet<>();
@@ -1093,7 +1115,7 @@ class PostsDb {
                         "EXISTS(SELECT post_id FROM comments AS c WHERE comments.post_id==c.post_id AND c.comment_sender_user_id='') " +
                     ")" +
                 "ORDER BY " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TIMESTAMP + " DESC " +
-                "LIMIT " + limit;
+                (limit < 0 ? "" : "LIMIT " + limit);
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
 

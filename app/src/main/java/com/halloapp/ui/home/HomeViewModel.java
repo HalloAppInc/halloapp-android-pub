@@ -229,9 +229,9 @@ public class HomeViewModel extends AndroidViewModel {
 
     @WorkerThread
     private SocialHistory loadSocialHistory() {
-        final HashSet<Comment> comments = new HashSet<>(ContentDb.getInstance().getIncomingCommentsHistory(250));
-        final List<Post> mentionedPosts = ContentDb.getInstance().getMentionedPosts(UserId.ME, 50);
-        final List<Comment> mentionedComments = ContentDb.getInstance().getMentionedComments(UserId.ME, 50);
+        final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(250));
+        final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, 50);
+        final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, 50);
 
         for (Comment mentionedComment : mentionedComments) {
             comments.remove(mentionedComment);

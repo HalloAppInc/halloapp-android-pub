@@ -26,12 +26,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.home.HomeViewModel;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.logs.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -52,6 +57,9 @@ public class SocialHistoryPopup {
     private final RecyclerView listView;
     private final View emptyView;
     private final View titleView;
+    private final View markAllReadView;
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final ContentDb contentDb = ContentDb.getInstance();
 
     private OnItemClickListener clickListener;
     private int maxHeight;
@@ -95,10 +103,30 @@ public class SocialHistoryPopup {
         listView = contentView.findViewById(android.R.id.list);
         emptyView = contentView.findViewById(android.R.id.empty);
         titleView = contentView.findViewById(android.R.id.title);
+        markAllReadView = contentView.findViewById(R.id.mark_all_read);
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
+
+        markAllReadView.setOnClickListener(v -> {
+            bgWorkers.execute(() -> {
+                final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(-1));
+                final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, -1);
+                final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, -1);
+
+                comments.addAll(mentionedComments);
+
+                for (Comment comment : comments) {
+                    contentDb.setCommentSeen(comment.postId, comment.commentId, true);
+                }
+
+                for (Post post : mentionedPosts) {
+                    contentDb.setIncomingPostSeen(post.senderUserId, post.id);
+                }
+            });
+            dismiss();
+        });
 
         popupWindow.setContentView(contentView);
 
@@ -118,11 +146,13 @@ public class SocialHistoryPopup {
             emptyView.setVisibility(View.VISIBLE);
             titleView.setVisibility(View.GONE);
             listView.setVisibility(View.GONE);
+            markAllReadView.setVisibility(View.GONE);
             adapter.reset();
         } else {
             emptyView.setVisibility(View.GONE);
             titleView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.VISIBLE);
+            markAllReadView.setVisibility(View.VISIBLE);
             adapter.setEvents(socialHistory.socialActionEvent);
             adapter.setContacts(socialHistory.contacts);
         }
