@@ -99,11 +99,12 @@ public class TimeFormatter {
 
     public static CharSequence formatMessageSeparatorDate(@NonNull Context context, long timestamp) {
         final long currentTime = System.currentTimeMillis();
+        final long timeDiff = currentTime - timestamp;
         if (TimeUtils.isSameDay(currentTime, timestamp)) {
             return context.getString(R.string.today);
         } else if (TimeUtils.isSameDay(currentTime - DateUtils.DAY_IN_MILLIS, timestamp)) {
             return context.getString(R.string.yesterday);
-        } else if (TimeUtils.isSameYear(currentTime, timestamp)) {
+        } else if (timeDiff < 180L * DateUtils.DAY_IN_MILLIS && TimeUtils.isSameYear(currentTime, timestamp)) {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
         } else {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR);
