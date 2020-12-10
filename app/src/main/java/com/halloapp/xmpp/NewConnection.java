@@ -950,6 +950,11 @@ public class NewConnection extends Connection {
         private void handleAuth(AuthResult authResult) {
             connectionPropHash = Hex.bytesToStringLowercase(authResult.getPropsHash().toByteArray());
             NewConnection.this.authResult = authResult; // TODO(jack): use wait() and notify() instead
+            if ("spub_mismatch".equalsIgnoreCase(authResult.getReason())) {
+                Log.e("connection: failed to login");
+                disconnectInBackground();
+                connectionObservers.notifyLoginFailed();
+            }
         }
 
         private void handleMsg(Msg msg) {
