@@ -6,6 +6,7 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
@@ -32,6 +33,7 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -95,6 +97,13 @@ public class EncryptedSessionManager {
                     throw new CryptoException("no_identity_key");
                 }
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
+            } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
+                PublicXECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
+                if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), sessionSetupInfo.identityKey.getKeyMaterial())) {
+                    Log.i("Session already set up but received session setup info with new identity key;"
+                            + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
+                            + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
+                }
             }
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
             encryptedKeyStore.setPeerResponded(peerUserId, true);
