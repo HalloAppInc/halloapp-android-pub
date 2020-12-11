@@ -1250,7 +1250,8 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -1306,19 +1307,23 @@ class PostsDb {
                     getPostAudienceInfo(post.id, audienceList, excludeList);
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
+                    GroupId groupId = GroupId.fromNullable(cursor.getString(8));
+                    if (groupId != null) {
+                        post.setParentGroup(groupId);
+                    }
                 }
-                if (!cursor.isNull(8)) {
+                if (!cursor.isNull(9)) {
                     Media media = new Media(
-                            cursor.getLong(8),
-                            cursor.getInt(9),
-                            cursor.getString(10),
-                            fileStore.getMediaFile(cursor.getString(11)),
-                            cursor.getBlob(13),
+                            cursor.getLong(9),
+                            cursor.getInt(10),
+                            cursor.getString(11),
+                            fileStore.getMediaFile(cursor.getString(12)),
                             cursor.getBlob(14),
-                            cursor.getInt(15),
+                            cursor.getBlob(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(12));
+                            cursor.getInt(17),
+                            cursor.getInt(18));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(13));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }
