@@ -1,5 +1,7 @@
 package com.halloapp.xmpp.util;
 
+import androidx.annotation.Nullable;
+
 public interface ResponseHandler<T> {
-    void handleResponse(T response);
+    void handleResponse(@Nullable T response);
 }
