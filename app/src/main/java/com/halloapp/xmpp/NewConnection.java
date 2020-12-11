@@ -25,6 +25,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
@@ -176,11 +177,12 @@ public class NewConnection extends Connection {
         Log.i("connection: connecting...");
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
+        final boolean useNoise = ServerProps.getInstance().getNoiseEnabled();
         try {
             final InetAddress address = InetAddress.getByName(host);
             HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
 
-            if (Constants.NOISE_PROTOCOL) {
+            if (useNoise) {
                 // TODO (clarkc) remove when we no longer need migration code to noise
                 if (me.getMyEd25519NoiseKey() == null) {
                     Log.i("connection: migrating registration to noise");
@@ -218,7 +220,7 @@ public class NewConnection extends Connection {
             }
 
 
-            if (!Constants.NOISE_PROTOCOL) {
+            if (!useNoise) {
                 AuthResult authResult = sendAndRecvAuth(createAuthRequest());
                 // TODO(jack): check client expiration
                 Log.i("connection: auth result: " + ProtoPrinter.toString(authResult));
@@ -233,10 +235,8 @@ public class NewConnection extends Connection {
                     connectionObservers.notifyLoginFailed();
                     return;
                 }
-            } else {
-                // TODO: (clarkc) Add authentication failure logic once we spec if out
-                //  Currently you're just disconnected so noise handshake would never be completed.
             }
+
             connectionObservers.notifyConnected();
             isAuthenticated = true;
             Log.i("connection: established");
@@ -258,8 +258,9 @@ public class NewConnection extends Connection {
                 .setClientVersion(clientVersion)
                 .setClientMode(clientMode)
                 .setResource("android");
-        if (!Constants.NOISE_PROTOCOL) {
-            authRequestBuilder.setPwd(me.getPassword());
+        String pwd = me.getPassword();
+        if (pwd != null) {
+            authRequestBuilder.setPwd(pwd);
         }
         return authRequestBuilder.build();
     }
@@ -865,7 +866,7 @@ public class NewConnection extends Connection {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             while (!done) {
                 try {
-                    if (Constants.NOISE_PROTOCOL) {
+                    if (socket instanceof HANoiseSocket) {
                         byte[] packet = ((HANoiseSocket) socket).readPacket();
                         if (packet == null) {
                             throw new IOException("No more packets");
@@ -1400,7 +1401,7 @@ public class NewConnection extends Connection {
                         Packet packet = queue.take();
                         Log.i("connection: send: " + ProtoPrinter.toString(packet));
 
-                        if (Constants.NOISE_PROTOCOL) {
+                        if (socket instanceof HANoiseSocket) {
                             ((HANoiseSocket) socket).writePacket(packet);
                         } else {
                             byte[] bytes = encodePacket(packet);

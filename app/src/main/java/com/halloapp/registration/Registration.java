@@ -13,6 +13,7 @@ import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.PrivateEdECKey;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -41,7 +42,7 @@ public class Registration {
         if (instance == null) {
             synchronized(Registration.class) {
                 if (instance == null) {
-                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance());
+                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance(), ServerProps.getInstance());
                 }
             }
         }
@@ -51,11 +52,13 @@ public class Registration {
     private Me me;
     private ContentDb contentDb;
     private Connection connection;
+    private ServerProps serverProps;
 
-    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection) {
+    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull ServerProps serverProps) {
         this.me = me;
         this.contentDb = contentDb;
         this.connection = connection;
+        this.serverProps = serverProps;
     }
 
     @WorkerThread
@@ -120,7 +123,8 @@ public class Registration {
     @WorkerThread
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
         RegistrationVerificationResult verificationResult;
-        if (Constants.NOISE_PROTOCOL) {
+        final boolean useNoise = serverProps.getNoiseEnabled() && Constants.NOISE_REGISTRATION;
+        if (useNoise) {
             verificationResult = verifyRegistrationNoise(phone, code, me.getName());
         } else {
             verificationResult = verifyRegistration(phone, code, me.getName());
@@ -129,9 +133,9 @@ public class Registration {
             String uid = me.getUser();
             if (!Preconditions.checkNotNull(verificationResult.user).equals(uid)) {
                 // New user, we should clear data
-                ContentDb.getInstance().deleteDb();
+                contentDb.deleteDb();
             }
-            if (Constants.NOISE_PROTOCOL) {
+            if (useNoise) {
                 me.saveRegistrationNoise(
                         Preconditions.checkNotNull(verificationResult.user),
                         Preconditions.checkNotNull(verificationResult.phone));

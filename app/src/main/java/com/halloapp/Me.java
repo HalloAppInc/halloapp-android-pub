@@ -15,6 +15,7 @@ import androidx.security.crypto.MasterKeys;
 
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
@@ -92,7 +93,7 @@ public class Me {
                 }
             }
         }
-        if (Constants.NOISE_PROTOCOL) {
+        if (ServerProps.getInstance().getNoiseEnabled()) {
             // TODO (clarkc) Remove getPassword() when migration is finished.
             return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
         } else {

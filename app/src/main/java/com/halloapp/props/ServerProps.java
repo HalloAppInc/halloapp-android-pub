@@ -10,6 +10,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Constants;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -173,6 +174,10 @@ public class ServerProps {
 
     public synchronized boolean getIsInternalUser() {
         return propInternalUser.getValue();
+    }
+
+    public synchronized boolean getNoiseEnabled() {
+        return getIsInternalUser();
     }
 
     public synchronized int getMaxGroupSize() {
