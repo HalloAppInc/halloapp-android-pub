@@ -23,6 +23,7 @@ import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -60,6 +61,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private ForegroundChat foregroundChat;
     private PresenceLoader presenceLoader;
     private BlockListManager blockListManager;
+    private FeedPrivacyManager feedPrivacyManager;
     private ForegroundObserver foregroundObserver;
     private EncryptedSessionManager encryptedSessionManager;
 
@@ -81,6 +83,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ForegroundChat.getInstance(),
                             PresenceLoader.getInstance(),
                             BlockListManager.getInstance(),
+                            FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
                             EncryptedSessionManager.getInstance());
                 }
@@ -104,6 +107,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ForegroundChat foregroundChat,
             @NonNull PresenceLoader presenceLoader,
             @NonNull BlockListManager blockListManager,
+            @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull EncryptedSessionManager encryptedSessionManager) {
         this.context = context.getApplicationContext();
@@ -120,6 +124,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.foregroundChat = foregroundChat;
         this.presenceLoader = presenceLoader;
         this.blockListManager = blockListManager;
+        this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
         this.encryptedSessionManager = encryptedSessionManager;
     }
@@ -133,7 +138,8 @@ public class MainConnectionObserver extends Connection.Observer {
                 Log.e("Failed to ensure keys uploaded", e);
             }
         });
-        bgWorkers.execute(blockListManager::ensureInitialBlockListFetch);
+        bgWorkers.execute(blockListManager::fetchBlockList);
+        bgWorkers.execute(feedPrivacyManager::fetchFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
 
         connection.updatePresence(foregroundObserver.isInForeground());
