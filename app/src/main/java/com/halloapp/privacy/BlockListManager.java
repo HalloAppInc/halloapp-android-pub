@@ -43,10 +43,9 @@ public class BlockListManager {
         void onBlockListChanged();
     }
 
-    private ContactsDb contactsDb;
-    private Preferences preferences;
-
-    private PrivacyListApi privacyListApi;
+    private final ContactsDb contactsDb;
+    private final Preferences preferences;
+    private final PrivacyListApi privacyListApi;
 
     private BlockListManager(
             @NonNull Connection connection,

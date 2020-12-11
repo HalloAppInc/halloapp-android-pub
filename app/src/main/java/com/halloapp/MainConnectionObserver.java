@@ -49,21 +49,21 @@ public class MainConnectionObserver extends Connection.Observer {
 
     private final Context context;
 
-    private Me me;
-    private BgWorkers bgWorkers;
-    private ContentDb contentDb;
-    private Connection connection;
-    private ContactsDb contactsDb;
-    private GroupsSync groupsSync;
-    private AvatarLoader avatarLoader;
-    private PostsManager postsManager;
-    private Notifications notifications;
-    private ForegroundChat foregroundChat;
-    private PresenceLoader presenceLoader;
-    private BlockListManager blockListManager;
-    private FeedPrivacyManager feedPrivacyManager;
-    private ForegroundObserver foregroundObserver;
-    private EncryptedSessionManager encryptedSessionManager;
+    private final Me me;
+    private final BgWorkers bgWorkers;
+    private final ContentDb contentDb;
+    private final Connection connection;
+    private final ContactsDb contactsDb;
+    private final GroupsSync groupsSync;
+    private final AvatarLoader avatarLoader;
+    private final PostsManager postsManager;
+    private final Notifications notifications;
+    private final ForegroundChat foregroundChat;
+    private final PresenceLoader presenceLoader;
+    private final BlockListManager blockListManager;
+    private final FeedPrivacyManager feedPrivacyManager;
+    private final ForegroundObserver foregroundObserver;
+    private final EncryptedSessionManager encryptedSessionManager;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
         if (instance == null) {
