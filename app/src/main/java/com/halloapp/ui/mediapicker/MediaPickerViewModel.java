@@ -185,7 +185,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
                 long dateA = dates.containsKey(a) ? dates.get(a) : 0;
                 long dateB = dates.containsKey(b) ? dates.get(b) : 0;
 
-                return -Long.compare(dateA, dateB);
+                return Long.compare(dateA, dateB);
             });
 
             ArrayList<Uri> uris = new ArrayList<>(list.size());

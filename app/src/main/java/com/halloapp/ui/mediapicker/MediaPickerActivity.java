@@ -654,11 +654,17 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 });
 
                 thumbnailView.setOnTouchListener((view, motionEvent) -> {
-                    if (preview.isShowing() && motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        preview.hide();
+                    if (preview.isShowing()) {
+                        thumbnailView.getParent().requestDisallowInterceptTouchEvent(true);
+
+                        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                            preview.hide();
+                        }
+
                         return true;
                     }
 
+                    thumbnailView.getParent().requestDisallowInterceptTouchEvent(false);
                     return false;
                 });
             }
