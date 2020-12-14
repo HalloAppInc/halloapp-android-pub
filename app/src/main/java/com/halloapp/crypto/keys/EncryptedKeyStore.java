@@ -608,6 +608,6 @@ public class EncryptedKeyStore {
 
     @SuppressLint("ApplySharedPref")
     public void clearAll() {
-        getPreferences().edit().clear().commit();
+        appContext.get().getSharedPreferences(EncryptedKeyStore.ENC_PREF_FILE_NAME, Context.MODE_PRIVATE).edit().clear().commit();
     }
 }
