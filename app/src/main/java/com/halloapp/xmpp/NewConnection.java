@@ -80,7 +80,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -198,9 +200,11 @@ public class NewConnection extends Connection {
                 this.socket = noiseSocket;
                 isAuthenticated = true;
             } else {
+                final SocketAddress socketAddress = new InetSocketAddress(address, PORT);
                 SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(address, PORT);
+                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket();
                 sslSocket.setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
+                sslSocket.connect(socketAddress, CONNECTION_TIMEOUT);
                 SSLSession session = sslSocket.getSession();
                 this.socket = sslSocket;
                 if (!hostnameVerifier.verify(host, session)) {
