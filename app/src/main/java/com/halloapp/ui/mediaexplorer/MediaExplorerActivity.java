@@ -65,6 +65,7 @@ public class MediaExplorerActivity extends HalloActivity {
     private float swipeExitTransDistance;
 
     private ViewPager2 pager;
+    private CircleIndicator3 indicator;
     private ArrayList<Model> data = new ArrayList<>();
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
@@ -137,7 +138,7 @@ public class MediaExplorerActivity extends HalloActivity {
         pager.setAdapter(new MediaExplorerAdapter(data));
         pager.setPageTransformer(new MarginPageTransformer(getResources().getDimensionPixelSize(R.dimen.explorer_pager_margin)));
 
-        CircleIndicator3 indicator = findViewById(R.id.media_pager_indicator);
+        indicator = findViewById(R.id.media_pager_indicator);
         indicator.setViewPager(pager);
         indicator.setVisibility(data.size() > 1 ? View.VISIBLE : View.GONE);
 
@@ -464,6 +465,10 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private void toggleSystemUI() {
+        if (data.size() > 1) {
+            indicator.animate().alpha(isSystemUIShown() ? 0.0f : 1.0f).start();
+        }
+
         int options = getWindow().getDecorView().getSystemUiVisibility();
 
         options ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;

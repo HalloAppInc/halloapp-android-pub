@@ -31,6 +31,7 @@
         app:ci_drawable="@drawable/pager_item_indicator_selected_stroke"
         app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected_white"
         app:ci_animator="@animator/explorer_pager_indicator"
+        android:alpha="0"
         android:layoutDirection="ltr"/>
 
     <com.halloapp.widget.ContentPhotoView
