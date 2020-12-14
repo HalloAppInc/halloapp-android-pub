@@ -3,7 +3,10 @@ package com.halloapp;
 import androidx.annotation.NonNull;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.halloapp.proto.log_events.EventData;
+import com.halloapp.proto.log_events.PushReceived;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.Connection;
 
 public class PushMessagingService extends FirebaseMessagingService {
@@ -25,5 +28,8 @@ public class PushMessagingService extends FirebaseMessagingService {
         }
 
         Connection.getInstance().connect();
+
+        PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(remoteMessage.getMessageId()).build();
+        Events.getInstance().sendEvent(pushReceived);
     }
 }

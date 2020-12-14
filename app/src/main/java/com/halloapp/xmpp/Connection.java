@@ -13,6 +13,7 @@ import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.log_events.EventData;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.groups.MemberElement;
@@ -110,6 +111,8 @@ public abstract class Connection {
     public abstract Observable<Integer> getOneTimeKeyCount();
 
     public abstract void sendStats(List<Stats.Counter> counters);
+
+    public abstract void sendEvents(Collection<EventData> events);
 
     public abstract Observable<String> setAvatar(String base64, long numBytes, int width, int height);
 

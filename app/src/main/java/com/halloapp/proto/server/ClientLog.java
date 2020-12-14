@@ -110,44 +110,44 @@ public  final class ClientLog extends
   }
 
   public static final int EVENTS_FIELD_NUMBER = 2;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Event> events_;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.log_events.EventData> events_;
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   @java.lang.Override
-  public java.util.List<com.halloapp.proto.server.Event> getEventsList() {
+  public java.util.List<com.halloapp.proto.log_events.EventData> getEventsList() {
     return events_;
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
-  public java.util.List<? extends com.halloapp.proto.server.EventOrBuilder> 
+  public java.util.List<? extends com.halloapp.proto.log_events.EventDataOrBuilder> 
       getEventsOrBuilderList() {
     return events_;
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   @java.lang.Override
   public int getEventsCount() {
     return events_.size();
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.Event getEvents(int index) {
+  public com.halloapp.proto.log_events.EventData getEvents(int index) {
     return events_.get(index);
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
-  public com.halloapp.proto.server.EventOrBuilder getEventsOrBuilder(
+  public com.halloapp.proto.log_events.EventDataOrBuilder getEventsOrBuilder(
       int index) {
     return events_.get(index);
   }
   private void ensureEventsIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Event> tmp = events_;
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.log_events.EventData> tmp = events_;
     if (!tmp.isModifiable()) {
       events_ =
           com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
@@ -155,48 +155,48 @@ public  final class ClientLog extends
   }
 
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   private void setEvents(
-      int index, com.halloapp.proto.server.Event value) {
+      int index, com.halloapp.proto.log_events.EventData value) {
     value.getClass();
   ensureEventsIsMutable();
     events_.set(index, value);
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
-  private void addEvents(com.halloapp.proto.server.Event value) {
+  private void addEvents(com.halloapp.proto.log_events.EventData value) {
     value.getClass();
   ensureEventsIsMutable();
     events_.add(value);
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   private void addEvents(
-      int index, com.halloapp.proto.server.Event value) {
+      int index, com.halloapp.proto.log_events.EventData value) {
     value.getClass();
   ensureEventsIsMutable();
     events_.add(index, value);
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   private void addAllEvents(
-      java.lang.Iterable<? extends com.halloapp.proto.server.Event> values) {
+      java.lang.Iterable<? extends com.halloapp.proto.log_events.EventData> values) {
     ensureEventsIsMutable();
     com.google.protobuf.AbstractMessageLite.addAll(
         values, events_);
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   private void clearEvents() {
     events_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   private void removeEvents(int index) {
     ensureEventsIsMutable();
@@ -401,92 +401,92 @@ public  final class ClientLog extends
     }
 
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     @java.lang.Override
-    public java.util.List<com.halloapp.proto.server.Event> getEventsList() {
+    public java.util.List<com.halloapp.proto.log_events.EventData> getEventsList() {
       return java.util.Collections.unmodifiableList(
           instance.getEventsList());
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     @java.lang.Override
     public int getEventsCount() {
       return instance.getEventsCount();
     }/**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.Event getEvents(int index) {
+    public com.halloapp.proto.log_events.EventData getEvents(int index) {
       return instance.getEvents(index);
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder setEvents(
-        int index, com.halloapp.proto.server.Event value) {
+        int index, com.halloapp.proto.log_events.EventData value) {
       copyOnWrite();
       instance.setEvents(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder setEvents(
-        int index, com.halloapp.proto.server.Event.Builder builderForValue) {
+        int index, com.halloapp.proto.log_events.EventData.Builder builderForValue) {
       copyOnWrite();
       instance.setEvents(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
-    public Builder addEvents(com.halloapp.proto.server.Event value) {
+    public Builder addEvents(com.halloapp.proto.log_events.EventData value) {
       copyOnWrite();
       instance.addEvents(value);
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder addEvents(
-        int index, com.halloapp.proto.server.Event value) {
+        int index, com.halloapp.proto.log_events.EventData value) {
       copyOnWrite();
       instance.addEvents(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder addEvents(
-        com.halloapp.proto.server.Event.Builder builderForValue) {
+        com.halloapp.proto.log_events.EventData.Builder builderForValue) {
       copyOnWrite();
       instance.addEvents(builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder addEvents(
-        int index, com.halloapp.proto.server.Event.Builder builderForValue) {
+        int index, com.halloapp.proto.log_events.EventData.Builder builderForValue) {
       copyOnWrite();
       instance.addEvents(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder addAllEvents(
-        java.lang.Iterable<? extends com.halloapp.proto.server.Event> values) {
+        java.lang.Iterable<? extends com.halloapp.proto.log_events.EventData> values) {
       copyOnWrite();
       instance.addAllEvents(values);
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder clearEvents() {
       copyOnWrite();
@@ -494,7 +494,7 @@ public  final class ClientLog extends
       return this;
     }
     /**
-     * <code>repeated .server.Event events = 2;</code>
+     * <code>repeated .server.EventData events = 2;</code>
      */
     public Builder removeEvents(int index) {
       copyOnWrite();
@@ -521,7 +521,7 @@ public  final class ClientLog extends
             "counts_",
             com.halloapp.proto.server.Count.class,
             "events_",
-            com.halloapp.proto.server.Event.class,
+            com.halloapp.proto.log_events.EventData.class,
           };
           java.lang.String info =
               "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0002\u0000\u0001\u001b\u0002\u001b" +

@@ -13,9 +13,15 @@ import com.halloapp.FileStore;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
+import com.halloapp.content.Message;
+import com.halloapp.content.Post;
+import com.halloapp.proto.log_events.MediaDownload;
+import com.halloapp.proto.log_events.MediaUpload;
+import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -65,10 +71,38 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
         UploadMediaTask.contentItemIds.put(contentItem.id, true);
 
+        MediaUpload.Builder uploadEvent = MediaUpload.newBuilder();
+        if (contentItem instanceof Post) {
+            uploadEvent.setType(MediaUpload.Type.POST);
+        } else if (contentItem instanceof Message) {
+            uploadEvent.setType(MediaUpload.Type.MESSAGE);
+        }
+        uploadEvent.setId(contentItem.id);
+
+        long startTimeMs = System.currentTimeMillis();
+
+        int numPhotos = 0;
+        int numVideos = 0;
+        long totalSize = 0;
+        int totalRetries = 0;
+
+        boolean success = true;
+
         for (Media media : contentItem.media) {
             Log.i("Resumable Uploader media transferred: " + media.transferred);
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
                 continue;
+            }
+            success = false;
+            switch (media.type) {
+                case Media.MEDIA_TYPE_IMAGE:
+                    numPhotos++;
+                    break;
+                case Media.MEDIA_TYPE_VIDEO:
+                    numVideos++;
+                    break;
+                case Media.MEDIA_TYPE_UNKNOWN:
+                    break;
             }
             try {
                 prepareMedia(media);
@@ -84,12 +118,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 Log.e("resumable uploader Fail to encrypt file");
                 break;
             }
-
+            long fileSize = encryptedFile.length();
+            totalSize += fileSize;
             MediaUploadIq.Urls urls = null;
             long offset = 0;
             if (media.transferred == Media.TRANSFERRED_NO) {
                 try {
-                    long fileSize = encryptedFile.length();
                     urls = connection.requestMediaUpload(fileSize).await();
                     if (urls == null) {
                         Log.e("Resumable Uploader: failed to get urls");
@@ -129,6 +163,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                         } else {
                             retryCount = contentItem.getRetryCount(media.rowId, contentDb);
                             if (retryCount >= RETRY_LIMIT) {
+                                totalRetries += retryCount;
                                 media.transferred = Media.TRANSFERRED_FAILURE;
                                 Log.i("Resumable Upload media reaches its retry limit");
                                 break;
@@ -137,6 +172,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                         }
                     }
                     contentItem.setRetryCount(media.rowId, retryCount, contentDb);
+                    totalRetries += retryCount;
                 } catch (IOException e) {
                     Log.e("Resumable Uploader: failed to get offset from HEAD request" + e);
                 }
@@ -152,6 +188,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     if (encryptedFile.exists()) {
                         encryptedFile.delete();
                     }
+                    success = true;
                 } catch (ResumableUploader.ResumableUploadException e) {
                     if (e.code / 100 == 4) {
                         Log.e("Resumable Uploader client exception: " + e.code);
@@ -180,6 +217,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     media.sha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
                     media.url = urls.getUrl;
                     media.transferred = Media.TRANSFERRED_YES;
+                    success = true;
                 } catch (Uploader.UploadException e) {
                     Log.e("UploadMediaTask: " + media.url, e);
                     if (e.code / 100 == 4) {
@@ -201,6 +239,16 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             contentItem.send(connection);
         }
         UploadMediaTask.contentItemIds.remove(contentItem.id);
+
+        long endTimeMs = System.currentTimeMillis();
+
+        uploadEvent.setStatus(success ? MediaUpload.Status.OK : MediaUpload.Status.FAIL);
+        uploadEvent.setDurationMs((int)(endTimeMs - startTimeMs));
+        uploadEvent.setNumPhotos(numPhotos);
+        uploadEvent.setNumVideos(numVideos);
+        uploadEvent.setTotalSize((int)totalSize);
+        uploadEvent.setRetryCount(totalRetries);
+        Events.getInstance().sendEvent(uploadEvent.build());
         return null;
     }
 

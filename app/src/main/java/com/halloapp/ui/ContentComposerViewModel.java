@@ -36,11 +36,13 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
@@ -249,6 +251,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final MutableLiveData<List<EditMediaPair>> media;
         private final MutableLiveData<EditMediaPair> loadingItem;
 
+        private long createTime;
+
         LoadContentUrisTask(@NonNull Application application,
                             @NonNull Collection<Uri> uris,
                             @Nullable Bundle editStates,
@@ -259,6 +263,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             this.editStates = editStates;
             this.media = media;
             this.loadingItem = loadingItem;
+            this.createTime = System.currentTimeMillis();
         }
 
         @Override
@@ -270,11 +275,24 @@ public class ContentComposerViewModel extends AndroidViewModel {
             int uriIndex = 0;
             final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
+            int numVideos = 0;
+            int numPhotos = 0;
+            long totalSize = 0;
+
             for (Uri uri : uris) {
                 final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
                 @Media.MediaType int mediaType = Media.getMediaType(isLocalFile ?
                         mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(uri.toString())) :
                         contentResolver.getType(uri));
+
+                switch (mediaType) {
+                    case Media.MEDIA_TYPE_IMAGE:
+                        numPhotos++;
+                        break;
+                    case Media.MEDIA_TYPE_VIDEO:
+                        numVideos++;
+                        break;
+                }
 
                 final File originalFile = fileStore.getTmpFileForUri(uri, null);
                 boolean fileCreated = false;
@@ -300,6 +318,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     final Media originalItem = Media.createFromFile(mediaType, originalFile);
                     originalItem.width = originalSize.getWidth();
                     originalItem.height = originalSize.getHeight();
+
+                    totalSize += originalFile.length();
 
                     final Media editItem;
                     if (editSize != null) {
@@ -327,6 +347,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
                 uriIndex++;
             }
+            Events.getInstance().sendEvent(MediaComposeLoad.newBuilder()
+                    .setDurationMs((int)(System.currentTimeMillis() - createTime))
+                    .setNumPhotos(numPhotos)
+                    .setNumVideos(numVideos)
+                    .setTotalSize((int) totalSize).build());
+
             return mediaPairList;
         }
 

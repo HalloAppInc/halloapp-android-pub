@@ -159,6 +159,7 @@ public  final class Msg extends
     GROUP_FEED_ITEM(20),
     REREQUEST(22),
     SILENT_CHAT_STANZA(23),
+    GROUP_FEED_ITEMS(24),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -192,6 +193,7 @@ public  final class Msg extends
         case 20: return GROUP_FEED_ITEM;
         case 22: return REREQUEST;
         case 23: return SILENT_CHAT_STANZA;
+        case 24: return GROUP_FEED_ITEMS;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1254,6 +1256,56 @@ public  final class Msg extends
     }
   }
 
+  public static final int GROUP_FEED_ITEMS_FIELD_NUMBER = 24;
+  /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupFeedItems() {
+    return payloadCase_ == 24;
+  }
+  /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupFeedItems getGroupFeedItems() {
+    if (payloadCase_ == 24) {
+       return (com.halloapp.proto.server.GroupFeedItems) payload_;
+    }
+    return com.halloapp.proto.server.GroupFeedItems.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   */
+  private void setGroupFeedItems(com.halloapp.proto.server.GroupFeedItems value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 24;
+  }
+  /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   */
+  private void mergeGroupFeedItems(com.halloapp.proto.server.GroupFeedItems value) {
+    value.getClass();
+  if (payloadCase_ == 24 &&
+        payload_ != com.halloapp.proto.server.GroupFeedItems.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GroupFeedItems.newBuilder((com.halloapp.proto.server.GroupFeedItems) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 24;
+  }
+  /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   */
+  private void clearGroupFeedItems() {
+    if (payloadCase_ == 24) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static final int RETRY_COUNT_FIELD_NUMBER = 21;
   private int retryCount_;
   /**
@@ -1278,6 +1330,32 @@ public  final class Msg extends
   private void clearRetryCount() {
     
     retryCount_ = 0;
+  }
+
+  public static final int REREQUEST_COUNT_FIELD_NUMBER = 25;
+  private int rerequestCount_;
+  /**
+   * <code>int32 rerequest_count = 25;</code>
+   * @return The rerequestCount.
+   */
+  @java.lang.Override
+  public int getRerequestCount() {
+    return rerequestCount_;
+  }
+  /**
+   * <code>int32 rerequest_count = 25;</code>
+   * @param value The rerequestCount to set.
+   */
+  private void setRerequestCount(int value) {
+    
+    rerequestCount_ = value;
+  }
+  /**
+   * <code>int32 rerequest_count = 25;</code>
+   */
+  private void clearRerequestCount() {
+    
+    rerequestCount_ = 0;
   }
 
   public static com.halloapp.proto.server.Msg parseFrom(
@@ -2403,6 +2481,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupFeedItems() {
+      return instance.hasGroupFeedItems();
+    }
+    /**
+     * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupFeedItems getGroupFeedItems() {
+      return instance.getGroupFeedItems();
+    }
+    /**
+     * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+     */
+    public Builder setGroupFeedItems(com.halloapp.proto.server.GroupFeedItems value) {
+      copyOnWrite();
+      instance.setGroupFeedItems(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+     */
+    public Builder setGroupFeedItems(
+        com.halloapp.proto.server.GroupFeedItems.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupFeedItems(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+     */
+    public Builder mergeGroupFeedItems(com.halloapp.proto.server.GroupFeedItems value) {
+      copyOnWrite();
+      instance.mergeGroupFeedItems(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+     */
+    public Builder clearGroupFeedItems() {
+      copyOnWrite();
+      instance.clearGroupFeedItems();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -2427,6 +2553,34 @@ public  final class Msg extends
     public Builder clearRetryCount() {
       copyOnWrite();
       instance.clearRetryCount();
+      return this;
+    }
+
+    /**
+     * <code>int32 rerequest_count = 25;</code>
+     * @return The rerequestCount.
+     */
+    @java.lang.Override
+    public int getRerequestCount() {
+      return instance.getRerequestCount();
+    }
+    /**
+     * <code>int32 rerequest_count = 25;</code>
+     * @param value The rerequestCount to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRerequestCount(int value) {
+      copyOnWrite();
+      instance.setRerequestCount(value);
+      return this;
+    }
+    /**
+     * <code>int32 rerequest_count = 25;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearRerequestCount() {
+      copyOnWrite();
+      instance.clearRerequestCount();
       return this;
     }
 
@@ -2471,13 +2625,15 @@ public  final class Msg extends
             "retryCount_",
             com.halloapp.proto.server.Rerequest.class,
             com.halloapp.proto.server.SilentChatStanza.class,
+            com.halloapp.proto.server.GroupFeedItems.class,
+            "rerequestCount_",
           };
           java.lang.String info =
-              "\u0000\u0017\u0001\u0000\u0001\u0017\u0017\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u0019\u0001\u0000\u0001\u0019\u0019\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
-              "";
+              "\u0018<\u0000\u0019\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

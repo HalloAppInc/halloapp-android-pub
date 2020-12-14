@@ -22,16 +22,16 @@ public interface ClientLogOrBuilder extends
   int getCountsCount();
 
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
-  java.util.List<com.halloapp.proto.server.Event> 
+  java.util.List<com.halloapp.proto.log_events.EventData> 
       getEventsList();
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
-  com.halloapp.proto.server.Event getEvents(int index);
+  com.halloapp.proto.log_events.EventData getEvents(int index);
   /**
-   * <code>repeated .server.Event events = 2;</code>
+   * <code>repeated .server.EventData events = 2;</code>
    */
   int getEventsCount();
 }

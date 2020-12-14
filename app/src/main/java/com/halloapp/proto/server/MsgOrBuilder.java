@@ -241,10 +241,27 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.SilentChatStanza getSilentChatStanza();
 
   /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   * @return Whether the groupFeedItems field is set.
+   */
+  boolean hasGroupFeedItems();
+  /**
+   * <code>.server.GroupFeedItems group_feed_items = 24;</code>
+   * @return The groupFeedItems.
+   */
+  com.halloapp.proto.server.GroupFeedItems getGroupFeedItems();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
   int getRetryCount();
+
+  /**
+   * <code>int32 rerequest_count = 25;</code>
+   * @return The rerequestCount.
+   */
+  int getRerequestCount();
 
   public com.halloapp.proto.server.Msg.PayloadCase getPayloadCase();
 }

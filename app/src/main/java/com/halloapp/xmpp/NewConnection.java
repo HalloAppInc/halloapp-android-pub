@@ -26,6 +26,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
@@ -480,6 +481,16 @@ public class NewConnection extends Connection {
             Log.d("connection: response for get key count  " + ProtoPrinter.toString(response));
             return WhisperKeysResponseIq.fromProto(response.getWhisperKeys()).count;
         });
+    }
+
+    @Override
+    public void sendEvents(Collection<EventData> events) {
+        final EventsIq eventsIq = new EventsIq(events);
+        sendIqRequestAsync(eventsIq)
+                .onResponse(response -> {
+                    Log.d("connection: response for send events  " + ProtoPrinter.toString(response));
+                })
+                .onError(e -> Log.e("connection: cannot send events", e));
     }
 
     @Override

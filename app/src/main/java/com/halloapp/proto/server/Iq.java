@@ -149,6 +149,7 @@ public  final class Iq extends
     NOTIFICATION_PREFS(25),
     GROUP_FEED_ITEM(26),
     GROUP_AVATAR(27),
+    DELETE_ACCOUNT(28),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -189,6 +190,7 @@ public  final class Iq extends
         case 25: return NOTIFICATION_PREFS;
         case 26: return GROUP_FEED_ITEM;
         case 27: return GROUP_AVATAR;
+        case 28: return DELETE_ACCOUNT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1544,6 +1546,56 @@ public  final class Iq extends
    */
   private void clearGroupAvatar() {
     if (payloadCase_ == 27) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int DELETE_ACCOUNT_FIELD_NUMBER = 28;
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   */
+  @java.lang.Override
+  public boolean hasDeleteAccount() {
+    return payloadCase_ == 28;
+  }
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.DeleteAccount getDeleteAccount() {
+    if (payloadCase_ == 28) {
+       return (com.halloapp.proto.server.DeleteAccount) payload_;
+    }
+    return com.halloapp.proto.server.DeleteAccount.getDefaultInstance();
+  }
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   */
+  private void setDeleteAccount(com.halloapp.proto.server.DeleteAccount value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 28;
+  }
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   */
+  private void mergeDeleteAccount(com.halloapp.proto.server.DeleteAccount value) {
+    value.getClass();
+  if (payloadCase_ == 28 &&
+        payload_ != com.halloapp.proto.server.DeleteAccount.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.DeleteAccount.newBuilder((com.halloapp.proto.server.DeleteAccount) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 28;
+  }
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   */
+  private void clearDeleteAccount() {
+    if (payloadCase_ == 28) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2951,6 +3003,54 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.DeleteAccount delete_account = 28;</code>
+     */
+    @java.lang.Override
+    public boolean hasDeleteAccount() {
+      return instance.hasDeleteAccount();
+    }
+    /**
+     * <code>.server.DeleteAccount delete_account = 28;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.DeleteAccount getDeleteAccount() {
+      return instance.getDeleteAccount();
+    }
+    /**
+     * <code>.server.DeleteAccount delete_account = 28;</code>
+     */
+    public Builder setDeleteAccount(com.halloapp.proto.server.DeleteAccount value) {
+      copyOnWrite();
+      instance.setDeleteAccount(value);
+      return this;
+    }
+    /**
+     * <code>.server.DeleteAccount delete_account = 28;</code>
+     */
+    public Builder setDeleteAccount(
+        com.halloapp.proto.server.DeleteAccount.Builder builderForValue) {
+      copyOnWrite();
+      instance.setDeleteAccount(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.DeleteAccount delete_account = 28;</code>
+     */
+    public Builder mergeDeleteAccount(com.halloapp.proto.server.DeleteAccount value) {
+      copyOnWrite();
+      instance.mergeDeleteAccount(value);
+      return this;
+    }
+    /**
+     * <code>.server.DeleteAccount delete_account = 28;</code>
+     */
+    public Builder clearDeleteAccount() {
+      copyOnWrite();
+      instance.clearDeleteAccount();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -2996,13 +3096,14 @@ public  final class Iq extends
             com.halloapp.proto.server.NotificationPrefs.class,
             com.halloapp.proto.server.GroupFeedItem.class,
             com.halloapp.proto.server.UploadGroupAvatar.class,
+            com.halloapp.proto.server.DeleteAccount.class,
           };
           java.lang.String info =
-              "\u0000\u001b\u0001\u0000\u0001\u001b\u001b\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001c\u0001\u0000\u0001\u001c\u001c\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019<\u0000\u001a<\u0000\u001b<\u0000";
+              "\u0018<\u0000\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -305,5 +305,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.UploadGroupAvatar getGroupAvatar();
 
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   * @return Whether the deleteAccount field is set.
+   */
+  boolean hasDeleteAccount();
+  /**
+   * <code>.server.DeleteAccount delete_account = 28;</code>
+   * @return The deleteAccount.
+   */
+  com.halloapp.proto.server.DeleteAccount getDeleteAccount();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }
