@@ -44,7 +44,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -89,6 +88,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
@@ -159,7 +159,7 @@ public class ChatActivity extends HalloActivity {
     private boolean blocked;
     private String chatName;
 
-    private ItemTouchHelper itemTouchHelper;
+    private ItemSwipeHelper itemSwipeHelper;
     private LinearLayoutManager layoutManager;
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -493,8 +493,8 @@ public class ChatActivity extends HalloActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 // workaround to reset swiped out view
                 adapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                itemTouchHelper.attachToRecyclerView(null);
-                itemTouchHelper.attachToRecyclerView(chatView);
+                itemSwipeHelper.attachToRecyclerView(null);
+                itemSwipeHelper.attachToRecyclerView(chatView);
 
                 final Message message = ((MessageViewHolder)viewHolder).getMessage();
                 if (message == null || message.isRetracted()) {
@@ -509,8 +509,8 @@ public class ChatActivity extends HalloActivity {
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
             }
         };
-        itemTouchHelper = new ItemTouchHelper(swipeListItemHelper);
-        itemTouchHelper.attachToRecyclerView(chatView);
+        itemSwipeHelper = new ItemSwipeHelper(swipeListItemHelper);
+        itemSwipeHelper.attachToRecyclerView(chatView);
 
         // Modified from ItemTouchHelper
         chatView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -556,7 +556,7 @@ public class ChatActivity extends HalloActivity {
                             swipeListItemHelper.setIconTint(GroupParticipants.getParticipantNameColor(ChatActivity.this, message.senderUserId));
                         }
                         if (vh != null) {
-                            itemTouchHelper.startSwipe(vh);
+                            itemSwipeHelper.startSwipe(vh);
                         }
                     }
                 }

@@ -35,7 +35,6 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,6 +62,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MentionableEntry;
@@ -99,7 +99,7 @@ public class CommentsActivity extends HalloActivity {
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
 
-    private ItemTouchHelper itemTouchHelper;
+    private ItemSwipeHelper itemSwipeHelper;
     private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
 
     private static final long POST_TEXT_LIMITS_ID = -1;
@@ -270,7 +270,7 @@ public class CommentsActivity extends HalloActivity {
             updateReplyIndicator(new UserId(replyUser), replyCommentId);
         }
 
-        itemTouchHelper = new ItemTouchHelper(new SwipeListItemHelper(
+        itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
                 Preconditions.checkNotNull(getDrawable(R.drawable.ic_delete_white)),
                 ContextCompat.getColor(this, R.color.swipe_delete_background),
                 getResources().getDimensionPixelSize(R.dimen.swipe_delete_icon_margin)) {
@@ -278,7 +278,7 @@ public class CommentsActivity extends HalloActivity {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder.getItemViewType() == ITEM_TYPE_POST) {
-                    return makeMovementFlags(0, 0);
+                    return makeMovementFlags(0);
                 }
                 return super.getMovementFlags(recyclerView, viewHolder);
             }
@@ -293,8 +293,8 @@ public class CommentsActivity extends HalloActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 // workaround to reset swiped out view
                 adapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                itemTouchHelper.attachToRecyclerView(null);
-                itemTouchHelper.attachToRecyclerView(commentsView);
+                itemSwipeHelper.attachToRecyclerView(null);
+                itemSwipeHelper.attachToRecyclerView(commentsView);
 
                 final Comment comment = ((ViewHolder)viewHolder).comment;
                 if (comment == null || !comment.commentSenderUserId.isMe() || comment.isRetracted()) {
@@ -308,7 +308,7 @@ public class CommentsActivity extends HalloActivity {
                 builder.show();
             }
         });
-        itemTouchHelper.attachToRecyclerView(commentsView);
+        itemSwipeHelper.attachToRecyclerView(commentsView);
     }
 
     @Override
