@@ -20,6 +20,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -51,6 +52,7 @@ import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.Presence;
+import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SilentChatStanza;
 import com.halloapp.proto.server.WhisperKeys;
@@ -1131,7 +1133,17 @@ public class NewConnection extends Connection {
                     }
                 } else if (msg.hasRerequest()) {
                     Log.i("connection: got rerequest message " + ProtoPrinter.toString(msg));
-                    connectionObservers.notifyMessageRerequest(getUserId(Long.toString(msg.getFromUid())), msg.getRerequest().getId(), msg.getId());
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    Rerequest rerequest = msg.getRerequest();
+
+                    byte[] receivedIdentityKey = rerequest.getIdentityKey().toByteArray();
+                    byte[] storedIdentityKey = EncryptedKeyStore.getInstance().getPeerPublicIdentityKey(userId).getKeyMaterial();
+                    if (!Arrays.equals(receivedIdentityKey, storedIdentityKey)) {
+                        Log.w("Received identity key does not match stored key. Received: " + Hex.bytesToStringLowercase(receivedIdentityKey) + " stored: " + Hex.bytesToStringLowercase(storedIdentityKey));
+                        Log.sendErrorReport("Rerequest identity key mismatch");
+                    }
+
+                    connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), msg.getId());
                     handled = true;
                 }
             }
