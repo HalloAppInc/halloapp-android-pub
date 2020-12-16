@@ -97,7 +97,7 @@ public class SettingsProfile extends HalloActivity {
             }
         });
 
-        avatarLoader.load(avatarView, UserId.ME);
+        avatarLoader.load(avatarView, UserId.ME, false);
 
         nameView.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_NAME_LENGTH)});
         nameView.addTextChangedListener(new TextWatcher() {
@@ -188,6 +188,6 @@ public class SettingsProfile extends HalloActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        avatarLoader.load(avatarView, UserId.ME);
+        avatarLoader.load(avatarView, UserId.ME, false);
     }
 }
