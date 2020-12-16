@@ -296,6 +296,7 @@ public class KeyManager {
 
     private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws CryptoException {
         byte[] chainKey = isOutbound ? encryptedKeyStore.getOutboundChainKey(peerUserId) : encryptedKeyStore.getInboundChainKey(peerUserId);
+        Log.d("Getting message key for " + peerUserId + "; " + (isOutbound ? "outbound" : "inbound") + " chain key: " + CryptoUtils.obfuscate(chainKey));
 
         try {
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
@@ -330,6 +331,7 @@ public class KeyManager {
             byte[] output = CryptoUtils.hkdf(ephemeralSecret, encryptedKeyStore.getRootKey(peerUserId), HKDF_ROOT_KEY_INFO, 64);
             byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
             byte[] chainKey = Arrays.copyOfRange(output, 32, 64);
+            Log.d("root key with " + peerUserId + " updated to: " + CryptoUtils.obfuscate(rootKey));
 
             encryptedKeyStore.setRootKey(peerUserId, rootKey);
             if (isOutbound) {

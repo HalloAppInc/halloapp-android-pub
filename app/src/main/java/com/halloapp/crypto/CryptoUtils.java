@@ -3,6 +3,7 @@ package com.halloapp.crypto;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.common.util.Hex;
 import com.google.crypto.tink.subtle.Hkdf;
 import com.google.crypto.tink.subtle.X25519;
 import com.goterl.lazycode.lazysodium.LazySodiumAndroid;
@@ -120,5 +121,30 @@ public class CryptoUtils {
 
     public static boolean verifyOpen(byte[] msgBytes, byte[] cert, int certLen, byte[] publicKey) {
         return sign.cryptoSignOpen(msgBytes, cert, certLen, publicKey);
+    }
+
+    public static String obfuscate(byte[] bytes) {
+        if (bytes == null) {
+            return "null";
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        if (bytes.length < 32) {
+            for (int i=0; i<bytes.length; i++) {
+                sb.append("*");
+            }
+            return sb.toString();
+        }
+
+        for (int i=0; i<bytes.length; i++) {
+            if (i >= 2 && i < bytes.length - 2) {
+                sb.append("*");
+            } else {
+                sb.append(Hex.bytesToStringLowercase(new byte[] {bytes[i]}));
+            }
+        }
+
+        return sb.toString();
     }
 }

@@ -1,5 +1,7 @@
 package com.halloapp.crypto.keys;
 
+import androidx.annotation.NonNull;
+
 import com.halloapp.crypto.CryptoUtils;
 
 public abstract class Key {
@@ -11,6 +13,12 @@ public abstract class Key {
 
     public byte[] getKeyMaterial() {
         return key;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return CryptoUtils.obfuscate(key);
     }
 
     /**
