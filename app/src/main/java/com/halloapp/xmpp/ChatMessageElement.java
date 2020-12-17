@@ -38,6 +38,7 @@ public class ChatMessageElement {
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
 
     private final Stats stats = Stats.getInstance();
+    private final ContentDb contentDb = ContentDb.getInstance();
     private final EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
@@ -94,11 +95,18 @@ public class ChatMessageElement {
                 stats.reportDecryptError(message, senderPlatform);
                 chatMessage = plaintextChatMessage;
 
-                if (!isSilentMessage && Constants.REREQUEST_SEND_ENABLED) {
+                if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
-                    int count = ContentDb.getInstance().getMessageRerequestCount(fromUserId, fromUserId, id);
-                    count += 1;
-                    ContentDb.getInstance().setMessageRerequestCount(fromUserId, fromUserId, id, count);
+                    int count;
+                    if (isSilentMessage) {
+                        count = contentDb.getSilentMessageRerequestCount(fromUserId, id);
+                        count += 1;
+                        contentDb.setSilentMessageRerequestCount(fromUserId, id, count);
+                    } else {
+                        count = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
+                        count += 1;
+                        contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
+                    }
                     EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id, count);
                 }
             }

@@ -667,6 +667,12 @@ public class ContentDb {
         });
     }
 
+    public void setSilentMessageRerequestCount(@NonNull UserId senderUserId, @NonNull String messageId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.setSilentMessageRerequestCount(senderUserId, messageId, count);
+        });
+    }
+
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
@@ -718,6 +724,11 @@ public class ContentDb {
     @WorkerThread
     public int getMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         return messagesDb.getMessageRerequestCount(chatId, senderUserId, messageId);
+    }
+
+    @WorkerThread
+    public int getSilentMessageRerequestCount(@NonNull UserId senderUserId, @NonNull String messageId) {
+        return messagesDb.getSilentMessageRerequestCount(senderUserId, messageId);
     }
 
     @WorkerThread

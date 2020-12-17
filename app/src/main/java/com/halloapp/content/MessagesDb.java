@@ -1705,7 +1705,7 @@ class MessagesDb {
         values.put(SilentMessagesTable.COLUMN_REREQUEST_COUNT, count);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
-            db.updateWithOnConflict(MediaTable.TABLE_NAME,
+            db.updateWithOnConflict(SilentMessagesTable.TABLE_NAME,
                     values,
                     SilentMessagesTable.COLUMN_MESSAGE_ID + "=? AND " + SilentMessagesTable.COLUMN_SENDER_USER_ID + "=?",
                     new String[]{messageId, senderUserId.rawId()},
