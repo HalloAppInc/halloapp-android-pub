@@ -6,25 +6,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MainActivity;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -32,10 +41,12 @@ import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ViewGroupFeedActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
+    private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
 
     private static final String EXTRA_GROUP_ID = "group_id";
 
@@ -44,6 +55,8 @@ public class ViewGroupFeedActivity extends HalloActivity {
         intent.putExtra(EXTRA_GROUP_ID, groupId);
         return intent;
     }
+
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private GroupFeedViewModel viewModel;
 
@@ -73,7 +86,40 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 .replace(R.id.profile_fragment_placeholder, GroupFeedFragment.newInstance(groupId))
                 .commit();
 
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        TextView titleView = findViewById(R.id.title);
+        TextView subtitleView = findViewById(R.id.subtitle);
+        ImageView avatarView = findViewById(R.id.avatar);
+
+        View toolbarTitleContainer = findViewById(R.id.toolbar_text_container);
+        toolbarTitleContainer.setOnClickListener(v -> {
+            startActivityForResult(GroupInfoActivity.viewGroup(this, groupId), REQUEST_CODE_VIEW_GROUP_INFO);
+        });
+
+        viewModel.chat.getLiveData().observe(this, chat -> {
+            if (chat != null) {
+                titleView.setText(chat.name);
+            } else {
+                titleView.setText(null);
+            }
+        });
+        viewModel.members.getLiveData().observe(this, memberList -> {
+            if (memberList == null) {
+                subtitleView.setVisibility(View.GONE);
+            } else {
+                subtitleView.setVisibility(View.VISIBLE);
+                List<String> members = new ArrayList<>();
+                for (Contact member : memberList) {
+                    members.add(member.getDisplayName());
+                }
+                subtitleView.setText(StringUtils.formatCommaSeparatedList(members));
+            }
+        });
+
+        avatarLoader.load(avatarView, groupId, false);
 
         fabView = findViewById(R.id.speed_dial);
         fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
@@ -86,7 +132,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
         addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
 
         BottomNavigationView bottomNav = findViewById(R.id.nav_view);
-        bottomNav.setSelectedItemId(R.id.navigation_messages);
+        bottomNav.setSelectedItemId(R.id.navigation_groups);
         bottomNav.setOnNavigationItemSelectedListener(item -> {
             Intent homeIntent = new Intent(this, MainActivity.class);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -97,6 +143,8 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 navTarget = MainActivity.NAV_TARGET_MESSAGES;
             } else if (item.getItemId() == R.id.navigation_profile) {
                 navTarget = MainActivity.NAV_TARGET_PROFILE;
+            } else if (item.getItemId() == R.id.navigation_groups) {
+                navTarget = MainActivity.NAV_TARGET_GROUPS;
             }
             homeIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, navTarget);
             startActivity(homeIntent);
@@ -151,6 +199,12 @@ public class ViewGroupFeedActivity extends HalloActivity {
                     intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
                             new ArrayList<>(Collections.singleton(MediaUtils.getImageCaptureUri(this))));
                     startActivity(intent);
+                }
+                break;
+            }
+            case REQUEST_CODE_VIEW_GROUP_INFO: {
+                if (result == GroupInfoActivity.RESULT_CODE_EXIT_CHAT) {
+                    finish();
                 }
                 break;
             }

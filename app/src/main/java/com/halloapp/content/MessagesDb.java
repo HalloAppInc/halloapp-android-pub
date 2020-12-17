@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.GroupMembersTable;
@@ -29,6 +30,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -1387,8 +1389,7 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
                         ChatsTable.COLUMN_IS_ACTIVE},
-                null,
-                null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
+                null, null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),
@@ -1402,6 +1403,9 @@ class MessagesDb {
                         cursor.getString(8),
                         cursor.getString(9),
                         cursor.getInt(10) == 1);
+                if (Constants.REMOVE_GROUP_CHATS && chat.isGroup) {
+                    continue;
+                }
                 chats.add(chat);
             }
         }
@@ -1508,7 +1512,11 @@ class MessagesDb {
 
     @WorkerThread
     int getUnseenChatsCount() {
-        return (int)DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), "SELECT count(*) FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ">0", null);
+        String query = "SELECT count(*) FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ">0";
+        if (Constants.REMOVE_GROUP_CHATS) {
+            query += " AND " + ChatsTable.COLUMN_IS_GROUP + "!=1";
+        }
+        return (int)DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), query, null);
     }
 
     @WorkerThread

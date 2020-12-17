@@ -3,11 +3,13 @@
     <string name="title_home">Home</string>
     <string name="title_messages">Messages</string>
     <string name="title_profile">Profile</string>
+    <string name="title_groups">Groups</string>
     <string name="comment">Comment</string>
     <string name="next">Next</string>
     <string name="message">Message</string>
     <string name="add_post">Add post</string>
     <string name="new_chat">New chat</string>
+    <string name="new_group">New group</string>
     <string name="notifications">Notifications</string>
     <string name="feed_notifications_channel_name">Feed notifications</string>
     <string name="message_notifications_channel_name">Message notifications</string>
@@ -43,11 +45,14 @@
     <string name="new_message">New message</string>
     <string name="chat_message_attribution">%s: %s</string>
     <string name="empty_chat_placeholder">Hey there! I\'m using HalloApp</string>
+    <string name="empty_chat_with_name_placeholder">%s is on HalloApp.</string>
     <string name="new_chat_name_placeholder">%s is using HalloApp! 🎉</string>
     <string name="posts_empty">Your posts will appear here</string>
     <string name="home_page_empty">Posts from your contacts will appear here</string>
     <string name="chats_page_empty">Your contacts &amp; messages will appear here</string>
     <string name="chats_search_empty">No chats found for \'%s\'</string>
+    <string name="groups_page_empty">Your groups will appear here</string>
+    <string name="groups_search_empty">No groups found for \'%s\'</string>
     <string name="your_post_title">Your post</string>
     <string name="contact_profile_empty">%s\'s posts will appear here</string>
     <string name="contact_profile_not_friends">You are not friends with %s on HalloApp</string>
@@ -289,6 +294,28 @@
     <string name="system_message_group_avatar_changed_by_you">You changed the group avatar</string>
     <string name="system_message_group_deleted">%s deleted the group</string>
     <string name="system_message_group_deleted_by_you">You deleted the group</string>
+
+    <string name="system_post_group_created">This group was created by &lt;b>%s&lt;/b></string>
+    <string name="system_post_group_created_by_you">This group was created by &lt;b>you&lt;/b></string>
+    <string name="system_post_members_added">&lt;b>%s&lt;/b> added &lt;b>%s&lt;/b></string>
+    <string name="system_post_members_added_by_you">&lt;b>You&lt;/b> added &lt;b>%s&lt;b></string>
+    <string name="system_post_members_removed">&lt;b>%s&lt;/b> removed &lt;b>%s&lt;/b></string>
+    <string name="system_post_members_removed_by_you">&lt;b>You&lt;/b> removed &lt;b>%s&lt;/b></string>
+    <string name="system_post_member_left">&lt;b>%s&lt;/b> left</string>
+    <string name="system_post_member_you_left">&lt;b>You&lt;/b> left</string>
+    <string name="system_post_members_promoted">&lt;b>%s&lt;/b> promoted &lt;b>%s&lt;/b> to admin</string>
+    <string name="system_post_members_promoted_by_you">&lt;b>You&lt;/b> promoted &lt;b>%s&lt;/b> to admin</string>
+    <string name="system_post_members_demoted">&lt;b>%s&lt;/b> demoted &lt;b>%s&lt;/b> from admin</string>
+    <string name="system_post_members_demoted_by_you">&lt;b>You&lt;/b> demoted &lt;b>%s&lt;/b> from admin</string>
+    <string name="system_post_member_auto_promoted">&lt;b>%s&lt;/b> was auto-promoted to admin</string>
+    <string name="system_post_member_auto_promoted_you">&lt;b>You&lt;/b> were auto-promoted to admin</string>
+    <string name="system_post_group_name_changed">&lt;b>%s&lt;/b> changed the group name to &lt;b>%s&lt;/b></string>
+    <string name="system_post_group_name_changed_by_you">&lt;b>You&lt;/b> changed the group name to &lt;b>%s&lt;/b></string>
+    <string name="system_post_group_avatar_changed">&lt;b>%s&lt;/b> changed the group avatar</string>
+    <string name="system_post_group_avatar_changed_by_you">&lt;b>You&lt;/b> changed the group avatar</string>
+    <string name="system_post_group_deleted">&lt;b>%s&lt;/b> deleted the group</string>
+    <string name="system_post_group_deleted_by_you">&lt;b>You&lt;/b> deleted the group</string>
+
     <string name="group_info_title">Group info</string>
     <string name="admin">Admin</string>
     <string name="save">Save</string>
@@ -316,6 +343,7 @@
     <string name="no_invites_remaining">More invites coming this Monday!</string>
     <string name="invite_friends_title">Invite friends &amp; family</string>
     <string name="invite_action">Invite</string>
+    <string name="settings_invite_option">Invite to HalloApp</string>
     <string name="invite_already_a_user_subtitle">Already a HalloApp user</string>
     <string name="invite_invalid_phone_number">Invalid phone number</string>
     <string name="edit">Edit</string>
@@ -408,5 +436,7 @@
     <plurals name="composer_sharing_only_summary">
         <item quantity="other">Sharing with %d of my contacts</item>
     </plurals>
+    <string name="post_preview_no_caption">%s shared a post</string>
+    <string name="post_preview_with_caption">%s: %s</string>
     <string name="composer_sharing_message">Sending to %s</string>
 </resources>

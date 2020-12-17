@@ -30,15 +30,15 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
+import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
-import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
-import com.halloapp.ui.posts.SubtleRetractedPostViewHolder;
+import com.halloapp.ui.posts.SubtlePostViewHolder;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
@@ -48,6 +48,7 @@ public class PostsFragment extends HalloFragment {
     protected ViewGroup parentViewGroup;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private ChatLoader chatLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private SeenByLoader seenByLoader;
@@ -77,6 +78,7 @@ public class PostsFragment extends HalloFragment {
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader(requireContext());
         avatarLoader = AvatarLoader.getInstance();
@@ -92,6 +94,7 @@ public class PostsFragment extends HalloFragment {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
+        chatLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
     }
@@ -126,11 +129,14 @@ public class PostsFragment extends HalloFragment {
         static final int POST_TYPE_TEXT = 0x00;
         static final int POST_TYPE_MEDIA = 0x01;
         static final int POST_TYPE_RETRACTED = 0x02;
+        static final int POST_TYPE_SYSTEM = 0x03;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
         static final int POST_DIRECTION_INCOMING = 0x0100;
         static final int POST_DIRECTION_MASK = 0xFF00;
+
+        private boolean showGroup = true;
 
         private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
@@ -142,6 +148,11 @@ public class PostsFragment extends HalloFragment {
             @Override
             public ContactLoader getContactLoader() {
                 return contactLoader;
+            }
+
+            @Override
+            public ChatLoader getChatLoader() {
+                return chatLoader;
             }
 
             @Override
@@ -245,8 +256,15 @@ public class PostsFragment extends HalloFragment {
             setDiffer(new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build()));
         }
 
+        public void setShowGroup(boolean showGroup) {
+            this.showGroup = showGroup;
+        }
+
         @Override
         public int getViewTypeForItem(Post post) {
+            if (post.type == Post.TYPE_SYSTEM) {
+                return POST_TYPE_SYSTEM;
+            }
             return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
                     (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
         }
@@ -260,8 +278,8 @@ public class PostsFragment extends HalloFragment {
         @Override
         public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
             int postType = viewType & POST_TYPE_MASK;
-            if (postType == POST_TYPE_RETRACTED) {
-                return new SubtleRetractedPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.retracted_post_item, parent, false), postViewHolderParent);
+            if (postType == POST_TYPE_RETRACTED || postType == POST_TYPE_SYSTEM) {
+                return new SubtlePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.retracted_post_item, parent, false), postViewHolderParent);
             }
             View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
             @LayoutRes int contentLayoutRes;
@@ -299,9 +317,10 @@ public class PostsFragment extends HalloFragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof PostViewHolder) {
+                ((PostViewHolder)holder).setShowGroupName(showGroup);
                 ((PostViewHolder)holder).bindTo(Preconditions.checkNotNull(getItem(position)));
-            } else if (holder instanceof SubtleRetractedPostViewHolder) {
-                ((SubtleRetractedPostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)));
+            } else if (holder instanceof SubtlePostViewHolder) {
+                ((SubtlePostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)));
             }
         }
     }

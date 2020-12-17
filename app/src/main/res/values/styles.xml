@@ -13,6 +13,7 @@
         <item name="useLightSystemBars">@bool/light_system_bars</item>
         <item name="toolbarStyle">@style/Toolbar</item>
         <item name="bottomSheetDialogTheme">@style/RoundedBottomSheetDialog</item>
+        <item name="badgeStyle">@style/Widget.Badge</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
@@ -229,7 +230,8 @@
     </style>
 
     <style name="TextAppearance.BottomNavigationView" parent="@style/TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="TextAppearance.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title"/>
@@ -270,6 +272,10 @@
 
     <style name="Widget.Button" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.Badge" parent="@style/Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/color_primary</item>
     </style>
 
 </resources>

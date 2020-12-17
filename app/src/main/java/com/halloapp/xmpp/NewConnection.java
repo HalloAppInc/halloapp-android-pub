@@ -834,6 +834,7 @@ public class NewConnection extends Connection {
             while (!done) {
                 try {
                     if (socket instanceof HANoiseSocket) {
+                        Log.d("connection: waiting for next packet");
                         byte[] packet = ((HANoiseSocket) socket).readPacket();
                         if (packet == null) {
                             throw new IOException("No more packets");
@@ -877,9 +878,9 @@ public class NewConnection extends Connection {
                     }
                 } catch (Exception e) {
                     if (!done) {
-                        Log.e("Packet Reader error", e);
                         disconnect();
                     }
+                    Log.e("Packet Reader error", e);
                 }
             }
         }

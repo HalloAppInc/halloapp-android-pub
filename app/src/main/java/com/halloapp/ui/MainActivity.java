@@ -27,19 +27,26 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
+import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.ui.groups.CreateGroupActivity;
+import com.halloapp.ui.groups.GroupCreationPickerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.logs.Log;
@@ -65,12 +72,15 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String NAV_TARGET_FEED = "feed";
+    public static final String NAV_TARGET_GROUPS = "groups";
     public static final String NAV_TARGET_MESSAGES = "messages";
     public static final String NAV_TARGET_PROFILE = "profile";
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
     private static final int REQUEST_CODE_SELECT_CONTACT = 3;
+
+    private final ServerProps serverProps = ServerProps.getInstance();
 
     private SpeedDialView fabView;
     private View toolbarContainer;
@@ -109,26 +119,20 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         navView = findViewById(R.id.nav_view);
         final AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
+                R.id.navigation_groups,
                 R.id.navigation_messages,
                 R.id.navigation_profile).build();
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+        if (!serverProps.getGroupFeedEnabled()) {
+            navView.getMenu().removeItem(R.id.navigation_groups);
+        }
 
         navView.setOnNavigationItemReselectedListener(item -> scrollToTop());
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
         networkIndicatorView.bind(this);
-
-        final MenuItem messagesMenuItem = navView.getMenu().findItem(R.id.navigation_messages);
-        final BadgedDrawable messageNotificationDrawable = new BadgedDrawable(
-                this,
-                messagesMenuItem.getIcon(),
-                getResources().getColor(R.color.badge_text),
-                getResources().getColor(R.color.badge_background),
-                getResources().getColor(R.color.window_background),
-                getResources().getDimension(R.dimen.badge));
-        messagesMenuItem.setIcon(messageNotificationDrawable);
 
         final ViewGroup messagesTab = navView.findViewById(R.id.navigation_messages);
         messagesTab.setClipChildren(false);
@@ -137,8 +141,15 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         profileNuxViewModel = new ViewModelProvider(this).get(ProfileNuxViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.unseenChatsCount.getLiveData().observe(this,
-                unseenChatsCount -> messageNotificationDrawable.setBadge(
-                        unseenChatsCount == null || unseenChatsCount == 0 ? "" : String.format(Locale.getDefault(), "%d", unseenChatsCount)));
+                unseenChatsCount -> {
+                    if (unseenChatsCount == null || unseenChatsCount == 0) {
+                        navView.removeBadge(R.id.navigation_messages);
+                    } else {
+                        BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_messages);
+                        badge.setVerticalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset));
+                        badge.setNumber(unseenChatsCount);
+                    }
+                });
         fabView = findViewById(R.id.speed_dial);
         fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
@@ -205,6 +216,22 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 @Override
                 public boolean onMainActionSelected() {
                     startActivityForResult(new Intent(getBaseContext(), ContactsActivity.class), REQUEST_CODE_SELECT_CONTACT);
+                    return true;
+                }
+
+                @Override
+                public void onToggleChanged(boolean b) {
+                }
+            });
+            fabView.setOnActionSelectedListener(null);
+        } else if (id == R.id.navigation_groups) {
+            fabView.show();
+            fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.new_group));
+            fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_group_add));
+            fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+                @Override
+                public boolean onMainActionSelected() {
+                    startActivity(GroupCreationPickerActivity.newIntent(MainActivity.this, null));
                     return true;
                 }
 
@@ -418,6 +445,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (NAV_TARGET_PROFILE.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_profile);
+        } else if (NAV_TARGET_GROUPS.equals(extraNotificationNavTarget)) {
+            final BottomNavigationView navView = findViewById(R.id.nav_view);
+            navView.setSelectedItemId(R.id.navigation_groups);
         }
         String extraPostId = intent.getStringExtra(EXTRA_POST_ID);
         boolean showCommentsActivity = intent.getBooleanExtra(EXTRA_POST_SHOW_COMMENTS, false);

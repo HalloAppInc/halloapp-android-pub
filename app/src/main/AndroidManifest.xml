@@ -74,6 +74,11 @@
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
+            android:name=".ui.groups.GroupCreationPickerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
             android:name=".ui.privacy.BlockListActivity"
             android:label="@string/settings_block_list"/>
 
@@ -90,7 +95,7 @@
 
         <activity
             android:name=".ui.groups.ViewGroupFeedActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.groups.GroupInfoActivity"
@@ -155,9 +160,14 @@
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".ui.settings.SettingsPrivacy"
             android:theme="@style/AppTheme"
-            android:label="@string/settings"/>
+            android:label="@string/settings_privacy"/>
+
+        <activity
+            android:name=".ui.settings.SettingsNotifications"
+            android:theme="@style/AppTheme"
+            android:label="@string/notifications"/>
 
         <activity
             android:name=".ui.settings.SettingsProfile"

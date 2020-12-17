@@ -27,7 +27,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.PostsFragment;
-import com.halloapp.ui.settings.SettingsActivity;
+import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.logs.Log;
@@ -217,7 +217,7 @@ public class ProfileFragment extends PostsFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.settings) {
-            startActivity(new Intent(getContext(), SettingsActivity.class));
+            startActivity(new Intent(getContext(), SettingsPrivacy.class));
             return true;
         } else if (item.getItemId() == R.id.block) {
             Boolean isBlocked = viewModel.getIsBlocked().getValue();

@@ -7,6 +7,11 @@
         android:title="@string/title_home" />
 
     <item
+        android:id="@+id/navigation_groups"
+        android:icon="@drawable/ic_nav_groups"
+        android:title="@string/title_groups" />
+
+    <item
         android:id="@+id/navigation_messages"
         android:icon="@drawable/ic_nav_message"
         android:title="@string/title_messages" />
@@ -14,6 +19,6 @@
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_nav_profile"
-        android:title="@string/title_profile" />
+        android:title="@string/settings" />
 
 </menu>

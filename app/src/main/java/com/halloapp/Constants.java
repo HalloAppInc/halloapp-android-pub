@@ -44,4 +44,5 @@ public class Constants {
     public static final boolean INVITES_ENABLED = true;
     public static final int MAX_REREQUESTS_PER_MESSAGE = 1;
     public static final boolean NOISE_REGISTRATION = false;
+    public static final boolean REMOVE_GROUP_CHATS = false;
 }

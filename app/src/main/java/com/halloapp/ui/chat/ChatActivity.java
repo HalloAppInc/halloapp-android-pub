@@ -63,6 +63,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.groups.ChatLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -140,8 +141,9 @@ public class ChatActivity extends HalloActivity {
     private PresenceLoader presenceLoader;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ContactLoader contactLoader;
+    private ChatLoader chatLoader;
     private ReplyLoader replyLoader;
+    private ContactLoader contactLoader;
     private UnseenGroupPostLoader unseenGroupPostLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
@@ -197,6 +199,7 @@ public class ChatActivity extends HalloActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader();
+        chatLoader = new ChatLoader();
         replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         me = Me.getInstance();
         avatarLoader = AvatarLoader.getInstance();
@@ -622,6 +625,7 @@ public class ChatActivity extends HalloActivity {
     public void onDestroy() {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
+        chatLoader.destroy();
         contactLoader.destroy();
         replyLoader.destroy();
     }
@@ -1209,6 +1213,11 @@ public class ChatActivity extends HalloActivity {
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public ChatLoader getChatLoader() {
+            return chatLoader;
         }
 
         @Override

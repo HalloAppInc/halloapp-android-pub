@@ -446,7 +446,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     viewModel.messageLoader.cancel(itemView);
                     if (!chat.isGroup) {
                         if (chat.timestamp == 0) {
-                            infoView.setText(getString(R.string.empty_chat_placeholder));
+                            infoView.setText(getString(R.string.empty_chat_with_name_placeholder, chat.name));
                             infoView.setTextColor(getResources().getColor(R.color.empty_chat_placeholder));
                         } else {
                             infoView.setText(getString(R.string.new_chat_name_placeholder, chat.name));

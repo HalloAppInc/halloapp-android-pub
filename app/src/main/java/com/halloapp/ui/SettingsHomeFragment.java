@@ -22,12 +22,13 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.ui.settings.SettingsActivity;
+import com.halloapp.ui.settings.SettingsNotifications;
+import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
-public class MyProfileFragment extends HalloFragment implements MainNavFragment {
+public class SettingsHomeFragment extends HalloFragment implements MainNavFragment {
 
     private MyProfileViewModel viewModel;
 
@@ -44,7 +45,7 @@ public class MyProfileFragment extends HalloFragment implements MainNavFragment 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(requireActivity()).get(MyProfileViewModel.class);
 
-        View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
+        View root = inflater.inflate(R.layout.fragment_settings_home, container, false);
 
         NestedScrollView scrollView = root.findViewById(R.id.container);
         ActionBarShadowOnScrollListener scrollListener = new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity());
@@ -67,11 +68,6 @@ public class MyProfileFragment extends HalloFragment implements MainNavFragment 
             startActivity(ViewProfileActivity.viewProfile(v.getContext(), UserId.ME));
         });
 
-        View settings = root.findViewById(R.id.settings);
-        settings.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), SettingsActivity.class));
-        });
-
         View help = root.findViewById(R.id.help);
         help.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), HelpActivity.class));
@@ -80,6 +76,16 @@ public class MyProfileFragment extends HalloFragment implements MainNavFragment 
         View invite = root.findViewById(R.id.invite);
         invite.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), InviteFriendsActivity.class));
+        });
+
+        View privacy = root.findViewById(R.id.privacy);
+        privacy.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), SettingsPrivacy.class));
+        });
+
+        View notifications = root.findViewById(R.id.notifications);
+        notifications.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), SettingsNotifications.class));
         });
 
         TextView number = root.findViewById(R.id.number);

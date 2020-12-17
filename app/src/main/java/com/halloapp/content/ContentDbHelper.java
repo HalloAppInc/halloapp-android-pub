@@ -2,13 +2,11 @@ package com.halloapp.content;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
@@ -28,7 +26,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 35;
+    private static final int DATABASE_VERSION = 36;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -52,7 +50,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_SEEN + " INTEGER,"
                 + PostsTable.COLUMN_TEXT + " TEXT,"
                 + PostsTable.COLUMN_AUDIENCE_TYPE + " TEXT,"
-                + PostsTable.COLUMN_GROUP_ID + " TEXT"
+                + PostsTable.COLUMN_GROUP_ID + " TEXT,"
+                + PostsTable.COLUMN_TYPE + " INTEGER DEFAULT 0,"
+                + PostsTable.COLUMN_USAGE + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
@@ -354,6 +354,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 34: {
                 upgradeFromVersion34(db);
             }
+            case 35: {
+                upgradeFromVersion35(db);
+            }
             break;
             default: {
                 onCreate(db);
@@ -648,6 +651,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + ", "
                 + CommentsTable.COLUMN_COMMENT_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion35(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_TYPE + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_USAGE + " INTEGER DEFAULT 0");
     }
 
     /**

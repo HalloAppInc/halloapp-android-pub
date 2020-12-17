@@ -317,23 +317,13 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemViewType(int position) {
-            if (shouldShowCreateGroupItem()) {
-                if (position == 0) {
-                    return ITEM_TYPE_GROUP;
-                }
-                return position < getFilteredContactsCount() + 1 ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
-            } else {
-                return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
-            }
+            return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
         }
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             Log.i("ContactsAdapter.onCreateViewHolder " + viewType);
             switch (viewType) {
-                case ITEM_TYPE_GROUP: {
-                    return new CreateGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.create_group_item, parent, false));
-                }
                 case ITEM_TYPE_INVITE: {
                     return new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item, parent, false));
                 }
@@ -348,19 +338,9 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (shouldShowCreateGroupItem()) {
-                if (position > 0 && position < getFilteredContactsCount() + 1) {
-                    holder.bindTo(filteredContacts.get(position - 1), filterTokens);
-                }
-            } else {
-                if (position < getFilteredContactsCount()) {
-                    holder.bindTo(filteredContacts.get(position), filterTokens);
-                }
+            if (position < getFilteredContactsCount()) {
+                holder.bindTo(filteredContacts.get(position), filterTokens);
             }
-        }
-
-        private boolean shouldShowCreateGroupItem() {
-            return serverProps.getGroupsEnabled() && TextUtils.isEmpty(filterText) && getIntent().getBooleanExtra(EXTRA_SHOW_CREATE_GROUP, true);
         }
 
         private boolean shouldShowInviteItem() {
@@ -373,17 +353,16 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + (shouldShowInviteItem() ? 1 : 0) + (shouldShowCreateGroupItem() ? 1 : 0);
+            return getFilteredContactsCount() + (shouldShowInviteItem() ? 1 : 0);
         }
 
         @NonNull
         @Override
         public String getSectionName(int position) {
-            int contactsPosition = position - (shouldShowCreateGroupItem() ? 1 : 0);
-            if (contactsPosition < 0 || filteredContacts == null || contactsPosition >= filteredContacts.size()) {
+            if (position < 0 || filteredContacts == null || position >= filteredContacts.size()) {
                 return "";
             }
-            final String name = filteredContacts.get(contactsPosition).getDisplayName();
+            final String name = filteredContacts.get(position).getDisplayName();
             if (TextUtils.isEmpty(name)) {
                 return "";
             }

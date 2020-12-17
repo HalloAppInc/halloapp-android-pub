@@ -36,21 +36,13 @@
                     android:layout_height="30dp"
                     tools:src="@color/color_primary_dark"/>
 
-                <TextView
-                    android:id="@+id/name"
+                <com.halloapp.ui.posts.PostAttributionLayout
+                    android:id="@+id/post_header"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:textAppearance="?textAppearanceListItem"
-                    android:textSize="17sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textDirection="locale"
-                    android:textAlignment="gravity"
-                    tools:text="Ded Pihtov"/>
+                    android:paddingEnd="8dp" />
 
                 <ProgressBar
                     android:id="@+id/progress"

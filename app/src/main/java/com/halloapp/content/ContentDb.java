@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
@@ -24,6 +25,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
@@ -51,6 +53,8 @@ public class ContentDb {
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
     private final PostsDb postsDb;
+
+    private final ServerProps serverProps;
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -108,20 +112,26 @@ public class ContentDb {
         if (instance == null) {
             synchronized (ContentDb.class) {
                 if (instance == null) {
-                    instance = new ContentDb(Me.getInstance(), FileStore.getInstance(), AppContext.getInstance());
+                    instance = new ContentDb(Me.getInstance(), FileStore.getInstance(), AppContext.getInstance(), ServerProps.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private ContentDb(@NonNull Me me, @NonNull final FileStore fileStore, final @NonNull AppContext appContext) {
+    private ContentDb(
+            @NonNull Me me,
+            @NonNull final FileStore fileStore,
+            final @NonNull AppContext appContext,
+            @NonNull final ServerProps serverProps) {
         Context context = appContext.get();
         databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
         this.me = me;
+        this.serverProps = serverProps;
+
         mentionsDb = new MentionsDb(databaseHelper);
         messagesDb = new MessagesDb(mentionsDb, databaseHelper, fileStore);
-        postsDb = new PostsDb(mentionsDb, databaseHelper, fileStore);
+        postsDb = new PostsDb(mentionsDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {
@@ -133,7 +143,11 @@ public class ContentDb {
     }
 
     public void addPost(@NonNull Post post) {
-        addFeedItems(Collections.singletonList(post), new ArrayList<>(), null);
+        addPost(post, null);
+    }
+
+    public void addPost(@NonNull Post post, @Nullable Runnable completionRunnable) {
+        addFeedItems(Collections.singletonList(post), new ArrayList<>(), completionRunnable);
     }
 
     public void addFeedItems(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
@@ -361,8 +375,22 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Post> getUnseenGroupPosts(@NonNull GroupId groupId) {
+        return getPosts(null, 256, true, null, groupId, true);
+    }
+
+    @WorkerThread
     public @Nullable Post getLastUnseenGroupPost(@NonNull GroupId groupId) {
         List<Post> posts = getPosts(null, 10, true, null, groupId, true);
+        if (posts.isEmpty()) {
+            return null;
+        }
+        return posts.get(0);
+    }
+
+    @WorkerThread
+    public @Nullable Post getLastGroupPost(@NonNull GroupId groupId) {
+        List<Post> posts = getPosts(null, 10, true, null, groupId, false);
         if (posts.isEmpty()) {
             return null;
         }

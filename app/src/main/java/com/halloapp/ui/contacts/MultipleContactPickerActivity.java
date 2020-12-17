@@ -38,7 +38,9 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.FilterUtils;
@@ -67,11 +69,11 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
-    private static final String EXTRA_TITLE_RES = "title_res";
-    private static final String EXTRA_ACTION_RES = "action_res";
-    private static final String EXTRA_SELECTED_IDS = "selected_ids";
-    private static final String EXTRA_MAX_SELECTION = "max_selection";
-    private static final String EXTRA_ONLY_FRIENDS = "only_friends";
+    protected static final String EXTRA_TITLE_RES = "title_res";
+    protected static final String EXTRA_ACTION_RES = "action_res";
+    protected static final String EXTRA_SELECTED_IDS = "selected_ids";
+    protected static final String EXTRA_MAX_SELECTION = "max_selection";
+    protected static final String EXTRA_ONLY_FRIENDS = "only_friends";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -85,7 +87,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private RecyclerView avatarsView;
 
     private HashSet<UserId> initialSelectedContacts;
-    private HashSet<UserId> selectedContacts;
+    protected HashSet<UserId> selectedContacts;
     private Map<UserId, Contact> contactMap = new HashMap<>();
 
     private @DrawableRes int selectionIcon;
@@ -194,6 +196,10 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
         selectionIcon = R.drawable.ic_check;
         loadContacts();
+    }
+
+    protected int getMaxSelection() {
+        return maxSelection;
     }
 
     private boolean didSelectionChange() {
@@ -426,8 +432,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 }
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
-                } else if (maxSelection >= 1 && selectedContacts.size() >= maxSelection) {
-                    SnackbarHelper.showWarning(listView, getResources().getQuantityString(R.plurals.contact_maximum_selection, maxSelection, maxSelection));
+                } else if (getMaxSelection() >= 1 && selectedContacts.size() >= getMaxSelection()) {
+                    SnackbarHelper.showWarning(listView, getResources().getQuantityString(R.plurals.contact_maximum_selection, getMaxSelection(), getMaxSelection()));
                 } else {
                     selectedContacts.add(contact.userId);
                 }

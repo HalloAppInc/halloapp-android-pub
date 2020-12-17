@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -17,6 +18,7 @@ import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.media.DownloadMediaTask;
@@ -26,6 +28,8 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.SeenDetectorLayout;
 import com.halloapp.xmpp.Connection;
@@ -36,12 +40,14 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
     private final ImageView avatarView;
     private final TextView nameView;
+    private final TextView groupView;
     private final TextView timeView;
     private final ImageView statusView;
     private final View progressView;
     private final ViewPager2 mediaPagerView;
     private final CircleIndicator3 mediaPagerIndicator;
     private final LimitingTextView textView;
+    private final PostAttributionLayout postHeader;
     protected final MediaPagerAdapter mediaPagerAdapter;
     private final View footer;
     final View footerSpacing;
@@ -52,10 +58,16 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final ContentDb contentDb;
     Post post;
 
+    private boolean showGroupName;
+
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         public boolean shouldOpenProfileOnNamePress() {
             return true;
         }
+    }
+
+    public void setShowGroupName(boolean visible) {
+        this.showGroupName = visible;
     }
 
     PostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
@@ -67,8 +79,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
 
+        postHeader = itemView.findViewById(R.id.post_header);
         avatarView = itemView.findViewById(R.id.avatar);
         nameView = itemView.findViewById(R.id.name);
+        groupView = itemView.findViewById(R.id.group_name);
         timeView = itemView.findViewById(R.id.time);
         statusView = itemView.findViewById(R.id.status);
         progressView = itemView.findViewById(R.id.progress);
@@ -140,6 +154,31 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {
             parent.getContactLoader().load(nameView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
+        }
+        if (showGroupName) {
+            if (post.getParentGroup() != null) {
+                postHeader.setGroupAttributionVisible(true);
+                parent.getChatLoader().load(groupView, new ViewDataLoader.Displayer<View, Chat>() {
+                    @Override
+                    public void showResult(@NonNull View view, @Nullable Chat result) {
+                        if (result != null) {
+                            groupView.setText(result.name);
+                        } else {
+                            Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
+                        }
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull View view) {
+                        groupView.setText("");
+                    }
+                }, post.getParentGroup());
+            } else {
+                parent.getChatLoader().cancel(groupView);
+                postHeader.setGroupAttributionVisible(false);
+            }
+        } else {
+            postHeader.setGroupAttributionVisible(false);
         }
         if (post.transferred == Post.TRANSFERRED_NO) {
             if (post.isTransferFailed()) {

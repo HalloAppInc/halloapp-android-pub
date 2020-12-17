@@ -26,7 +26,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
-public class SettingsActivity extends HalloActivity {
+public class SettingsPrivacy extends HalloActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class SettingsActivity extends HalloActivity {
 
             final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
             try {
-                setPreferencesFromResource(R.xml.root_preferences, rootKey);
+                setPreferencesFromResource(R.xml.settings_privacy, rootKey);
             } finally {
                 StrictMode.setThreadPolicy(threadPolicy);
             }

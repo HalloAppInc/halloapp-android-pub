@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Me;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -22,6 +25,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupFeedViewModel extends ViewModel {
@@ -29,7 +33,9 @@ public class GroupFeedViewModel extends ViewModel {
     private static final int ADAPTER_PAGE_SIZE = 50;
 
     final LiveData<PagedList<Post>> postList;
+    private final Me me = Me.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
+    private final ContactsDb contactsDb = ContactsDb.getInstance();
 
     private final PostsDataSource.Factory dataSourceFactory;
 
@@ -41,7 +47,7 @@ public class GroupFeedViewModel extends ViewModel {
 
     public final ComputableLiveData<Chat> chat;
 
-    public final ComputableLiveData<List<MemberInfo>> members;
+    public final ComputableLiveData<List<Contact>> members;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -108,10 +114,18 @@ public class GroupFeedViewModel extends ViewModel {
             }
         };
 
-        members = new ComputableLiveData<List<MemberInfo>>() {
+        members = new ComputableLiveData<List<Contact>>() {
             @Override
-            protected List<MemberInfo> compute() {
-                return contentDb.getGroupMembers(groupId);
+            protected List<Contact> compute() {
+                List<MemberInfo> memberInfos = contentDb.getGroupMembers(groupId);
+                List<Contact> contacts = new ArrayList<>();
+                for (MemberInfo memberInfo : memberInfos) {
+                    if (memberInfo.userId.isMe()) {
+                        continue;
+                    }
+                    contacts.add(contactsDb.getContact(memberInfo.userId));
+                }
+                return contacts;
             }
         };
     }

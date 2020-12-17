@@ -32,6 +32,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
+import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -51,6 +52,7 @@ public class PostContentActivity extends HalloActivity {
     public static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private ChatLoader chatLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private SeenByLoader seenByLoader;
@@ -95,6 +97,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public ChatLoader getChatLoader() {
+            return chatLoader;
         }
 
         @Override
@@ -195,6 +202,7 @@ public class PostContentActivity extends HalloActivity {
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader(this);
         avatarLoader = AvatarLoader.getInstance();
@@ -211,6 +219,7 @@ public class PostContentActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        chatLoader.destroy();
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();

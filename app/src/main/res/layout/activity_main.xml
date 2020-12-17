@@ -52,6 +52,7 @@
             app:itemIconTint="@drawable/nav_item_foreground"
             app:itemTextColor="@drawable/nav_item_foreground"
             app:layout_constraintStart_toStartOf="parent"
+            app:labelVisibilityMode="labeled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:itemTextAppearanceActive="@style/TextAppearance.BottomNavigationView"

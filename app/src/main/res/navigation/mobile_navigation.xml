@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_groups"
+        android:name="com.halloapp.ui.groups.GroupsFragment"
+        android:label="@string/title_groups"
+        tools:layout="@layout/fragment_chats" />
+
+    <fragment
         android:id="@+id/navigation_messages"
         android:name="com.halloapp.ui.chats.ChatsFragment"
         android:label="@string/title_messages"
@@ -19,7 +25,7 @@
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.halloapp.ui.MyProfileFragment"
-        android:label="@string/title_profile"
+        android:name="com.halloapp.ui.SettingsHomeFragment"
+        android:label="@string/settings"
         tools:layout="@layout/fragment_profile" />
 </navigation>

@@ -35,7 +35,7 @@
     <color name="badge_text">#ffffff</color>
     <color name="badge_background">#ff4500</color>
     <color name="tab_active">@color/color_secondary</color>
-    <color name="tab_inactive">@color/black_50</color>
+    <color name="tab_inactive">@color/black_40</color>
     <color name="media_placeholder">#f6f6f6</color>
     <color name="media_content_outline">#dddddd</color>
     <color name="gallery_placeholder">#eeeeee</color>

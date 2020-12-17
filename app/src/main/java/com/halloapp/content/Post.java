@@ -38,6 +38,12 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_NO = 0;
     public static final int TRANSFERRED_YES = 1;
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TYPE_USER, TYPE_SYSTEM})
+    public @interface Type {}
+    public static final int TYPE_USER = 0;
+    public static final int TYPE_SYSTEM = 1;
+
     public int commentCount;
     public int unseenCommentCount;
     public int seenByCount;
@@ -46,6 +52,25 @@ public class Post extends ContentItem {
     private @PrivacyList.Type String audienceType;
     private List<UserId> audienceList;
     private List<UserId> excludeList;
+
+    public @Type int type;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({USAGE_POST, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED})
+    public @interface Usage {}
+    public static final int USAGE_POST = 0;
+    public static final int USAGE_CREATE_GROUP = 1;
+    public static final int USAGE_ADD_MEMBERS = 2;
+    public static final int USAGE_REMOVE_MEMBER = 3;
+    public static final int USAGE_MEMBER_LEFT = 4;
+    public static final int USAGE_PROMOTE = 5;
+    public static final int USAGE_DEMOTE = 6;
+    public static final int USAGE_AUTO_PROMOTE = 7;
+    public static final int USAGE_NAME_CHANGE = 8;
+    public static final int USAGE_AVATAR_CHANGE = 9;
+    public static final int USAGE_GROUP_DELETED = 10;
+
+    public @Usage int usage;
 
     public GroupId parentGroup;
 
@@ -58,6 +83,21 @@ public class Post extends ContentItem {
             @SeenState int seen,
             String text) {
         super(rowId, senderUserId, postId, timestamp, text);
+        this.transferred = transferred;
+        this.seen = seen;
+    }
+
+    public Post(
+            long rowId,
+            UserId senderUserId,
+            String postId,
+            long timestamp,
+            @TransferredState int transferred,
+            @SeenState int seen,
+            @Type int type,
+            String text) {
+        super(rowId, senderUserId, postId, timestamp, text);
+        this.type = type;
         this.transferred = transferred;
         this.seen = seen;
     }
@@ -141,6 +181,11 @@ public class Post extends ContentItem {
     }
 
     @Override
+    public boolean isRetracted() {
+        return type != TYPE_SYSTEM && super.isRetracted();
+    }
+
+    @Override
     public @NonNull String toString() {
         return "Post {timestamp:" + timestamp + " sender:" + senderUserId + ", id:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
@@ -176,6 +221,7 @@ public class Post extends ContentItem {
                 unseenCommentCount == post.unseenCommentCount &&
                 seenByCount == post.seenByCount &&
                 seen == post.seen &&
-                media.equals(post.media);
+                media.equals(post.media) &&
+                type == post.type;
     }
 }
