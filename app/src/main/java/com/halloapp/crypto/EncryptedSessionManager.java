@@ -232,10 +232,10 @@ public class EncryptedSessionManager {
                 Log.i("EncryptedSessionManager last download attempt too recent for " + peerUserId);
                 throw new CryptoException("last_key_dl_too_recent");
             }
-            encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
 
             try {
                 WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
+                encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
                 if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
                     Log.i("EncryptedSessionManager no whisper keys returned");
                     throw new CryptoException("no_whisper_keys_returned");
