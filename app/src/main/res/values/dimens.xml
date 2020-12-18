@@ -23,7 +23,7 @@
     <dimen name="media_gallery_preview_radius">16dp</dimen>
     <dimen name="media_gallery_preview_padding">20dp</dimen>
     <dimen name="media_crop_preview_list_spacing">8dp</dimen>
-    <dimen name="media_crop_region_border">6dp</dimen>
+    <dimen name="media_crop_region_border">4dp</dimen>
     <dimen name="media_crop_region_radius">15dp</dimen>
     <dimen name="media_crop_region_threshold">44dp</dimen>
     <dimen name="media_crop_region_init_offset">20dp</dimen>

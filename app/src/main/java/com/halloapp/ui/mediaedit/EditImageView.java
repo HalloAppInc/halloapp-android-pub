@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
@@ -51,7 +50,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
 
     private final RectF imageRect = new RectF();
-    private RectF cropRect = new RectF();
+    private final RectF cropRect = new RectF();
+    private final RectF borderRect = new RectF();
     private final Path path = new Path();
     private final Paint shadowPaint = new Paint();
     private final Paint borderPaint = new Paint();
@@ -129,7 +129,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                     setState(state);
                 }
 
-                computeClipBounds();
+                computeImageRect();
                 if (state == null) {
                     computeInitialCropRegion();
                 }
@@ -158,8 +158,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         final float cropCenterX = (cropRect.left + cropRect.right) / 2;
         final float cropCenterY = (cropRect.top + cropRect.bottom) / 2;
-        final float imageCenterX = ((float)getWidth() / 2) + offsetX;
-        final float imageCenterY = ((float)getHeight() / 2) + offsetY;
+        final float imageCenterX = imageRect.centerX() + offsetX;
+        final float imageCenterY = imageRect.centerY() + offsetY;
 
         state.cropWidth = Math.round(cropRect.width() / baseScale);
         state.cropHeight = Math.round(cropRect.height() / baseScale);
@@ -192,7 +192,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         vFlipped = false;
     }
 
-    private void computeClipBounds() {
+    private void computeImageRect() {
         final Drawable drawable = getDrawable();
         if (drawable == null) {
             return;
@@ -200,18 +200,16 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         final float w = getWidth();
         final float h = getHeight();
+        final float cx = w / 2;
+        final float cy = h / 2;
         final float dw = (numberOfRotations % 2) == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
         final float dh = (numberOfRotations % 2) == 0 ? getDrawable().getIntrinsicHeight() : getDrawable().getIntrinsicWidth();
 
-        final float baseScale = Math.min(w / dw, h / dh);
+        final float baseScale = Math.min((w - borderThickness * 2)  / dw, (h - borderThickness * 2) / dh);
+        final float iw = dw * baseScale;
+        final float ih = dh * baseScale;
 
-        final int l = (int) Math.floor((w - dw * baseScale) / 2);
-        final int t = (int) Math.floor((h - dh * baseScale) / 2);
-        final int r = Math.round((w + dw * baseScale) / 2);
-        final int b = Math.round((h + dh * baseScale) / 2);
-
-        imageRect.set(l, t, r, b);
-        setClipBounds(new Rect(l, t, r, b));
+        imageRect.set(cx - iw / 2, cy - ih / 2, cx + iw / 2, cy + ih / 2);
     }
 
     public void computeInitialCropRegion() {
@@ -230,20 +228,20 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             return;
         }
 
-        final float w = getWidth();
-        final float h = getHeight();
+        final float w = imageRect.width();
+        final float h = imageRect.height();
         final float dw = drawable.getIntrinsicWidth();
         final float dh = getDrawable().getIntrinsicHeight();
         final float baseScale = (numberOfRotations % 2) == 0 ? Math.min(w / dw, h / dh) : Math.min(w / dh, h / dw);
-        final float x = (w - dw * baseScale * scale) / 2;
-        final float y = (h - dh * baseScale * scale) / 2;
+        final float x = imageRect.centerX() - (dw * baseScale * scale) / 2;
+        final float y = imageRect.centerY() - (dh * baseScale * scale) / 2;
 
         Matrix m = new Matrix();
         m.postScale(baseScale * scale, baseScale * scale);
         m.postTranslate(x, y);
 
-        m.postRotate(-90 * numberOfRotations, w / 2, h / 2);
-        m.postScale(vFlipped ? -1 : 1, hFlipped ? -1 : 1, w / 2, h / 2);
+        m.postRotate(-90 * numberOfRotations, imageRect.centerX(), imageRect.centerY());
+        m.postScale(vFlipped ? -1 : 1, hFlipped ? -1 : 1, imageRect.centerX(), imageRect.centerY());
         m.postTranslate(offsetX, offsetY);
 
         setImageMatrix(m);
@@ -251,19 +249,25 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     public void reset() {
         clearValues();
-        computeClipBounds();
+        computeImageRect();
         computeInitialCropRegion();
         updateImage();
         requestLayout();
     }
 
-    public void zoom(float scale) {
+    public void zoom(float scale, float zoomCenterX, float zoomCenterY) {
         if (scale < MIN_SCALE || scale > MAX_SCALE) {
             return;
         }
 
-        final float centerX = (float)getWidth() / 2.0f;
-        final float centerY = (float)getHeight() / 2.0f;
+        float scaleBy = scale / this.scale;
+        float translationX = (zoomCenterX - imageRect.centerX()) * (1 - scaleBy);
+        float translationY = (zoomCenterY - imageRect.centerY()) * (1 - scaleBy);
+        offsetX += translationX;
+        offsetY += translationY;
+
+        final float centerX = imageRect.centerX();
+        final float centerY = imageRect.centerY();
         final float hsw = imageRect.width() * scale / 2;
         final float hsh = imageRect.height() * scale / 2;
 
@@ -288,13 +292,13 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         updateImage();
     }
 
-    public void zoomBy(float scaleBy) {
-        zoom(scale * scaleBy);
+    public void zoomBy(float scaleBy, float zoomCenterX, float zoomCenterY) {
+        zoom(scale * scaleBy, zoomCenterX, zoomCenterY);
     }
 
     public void move(float offsetX, float offsetY) {
-        final float centerX = (float)getWidth() / 2.0f;
-        final float centerY = (float)getHeight() / 2.0f;
+        final float centerX = imageRect.centerX();
+        final float centerY = imageRect.centerY();
         final float hsw = imageRect.width() * scale / 2;
         final float hsh = imageRect.height() * scale / 2;
 
@@ -343,7 +347,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         hFlipped = tmp;
 
         RectF before = new RectF(imageRect);
-        computeClipBounds();
+        computeImageRect();
 
         final float scale = imageRect.width() / before.height();
 
@@ -467,14 +471,14 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         keepWithinMaxRatio(computedX, section);
 
         if (isCropRegionValid(computedX)) {
-            cropRect = computedX;
+            cropRect.set(computedX);
         }
 
         RectF computedY = computeCropRegion(section, 0, deltaY);
         keepWithinMaxRatio(computedY, section);
 
         if (isCropRegionValid(computedY)) {
-            cropRect = computedY;
+            cropRect.set(computedY);
         }
 
         invalidate();
@@ -482,29 +486,29 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.clipRect(imageRect);
         super.onDraw(canvas);
+        canvas.restore();
 
         drawShadow(canvas);
         drawBorder(canvas);
     }
 
     private void drawShadow(Canvas canvas) {
-        RectF rect = new RectF(cropRect);
-        rect.inset(borderThickness / 2, borderThickness / 2);
-
         path.reset();
         path.addRect(imageRect, Path.Direction.CW);
-        path.addRoundRect(rect, borderRadius, borderRadius, Path.Direction.CW);
+        path.addRoundRect(cropRect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
         canvas.drawPath(path, shadowPaint);
     }
 
     private void drawBorder(Canvas canvas) {
-        RectF rect = new RectF(cropRect);
-        rect.inset(borderThickness / 2, borderThickness / 2);
+        borderRect.set(cropRect);
+        borderRect.inset(-borderThickness / 2 + 1, -borderThickness / 2 + 1);
 
         path.reset();
-        path.addRoundRect(rect, borderRadius, borderRadius, Path.Direction.CW);
+        path.addRoundRect(borderRect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
         canvas.drawPath(path, borderPaint);
     }
@@ -563,7 +567,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            zoomBy(scaleGestureDetector.getScaleFactor());
+            zoomBy(scaleGestureDetector.getScaleFactor(), scaleGestureDetector.getFocusX(), scaleGestureDetector.getFocusY());
             return true;
         }
 

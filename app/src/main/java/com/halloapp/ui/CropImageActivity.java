@@ -2,7 +2,6 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -50,8 +49,6 @@ public class CropImageActivity extends HalloActivity {
     public static final String EXTRA_STATE = "state";
 
     public static final String TRANSITION_VIEW_NAME = "crop_image";
-
-    private static final int REQUEST_CODE_MORE_MEDIA = 1;
 
     private EditImageView editImageView;
     private ImageView transitionView;
@@ -207,7 +204,10 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private void setupButtons() {
-        findViewById(R.id.reset).setOnClickListener(v -> editImageView.reset());
+        findViewById(R.id.reset).setOnClickListener(v -> {
+            editImageView.reset();
+            viewModel.sort();
+        });
         findViewById(R.id.done).setOnClickListener(v -> saveAndExitWithTransition());
     }
 
@@ -316,23 +316,6 @@ public class CropImageActivity extends HalloActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_MORE_MEDIA) {
-            ArrayList<Uri> uris = new ArrayList<>();
-            Bundle state = null;
-
-            if (data != null) {
-                uris = data.getParcelableArrayListExtra(EXTRA_MEDIA);
-                state = data.getBundleExtra(EXTRA_STATE);
-            }
-
-            viewModel.loadMediaData(uris, state);
-        }
-    }
-
     private void finishWhenNoImages(List<CropImageViewModel.MediaModel> models) {
         boolean hasImages = false;
         for (CropImageViewModel.MediaModel m : models) {
@@ -370,7 +353,6 @@ public class CropImageActivity extends HalloActivity {
     }
 
     private class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.ViewHolder> {
-        private final int backgroundColorDefault = ContextCompat.getColor(getBaseContext(), R.color.white_20);
         private final List<CropImageViewModel.MediaModel> dataset = new ArrayList<>();
 
         MediaListAdapter() {
@@ -408,11 +390,11 @@ public class CropImageActivity extends HalloActivity {
             }
 
             if (viewModel.getSelectedPosition() == position) {
-                holder.itemView.setBackgroundColor(Color.WHITE);
                 holder.thumbnailView.setAlpha(1.0f);
+                holder.itemView.setBackgroundResource(R.drawable.media_preview_item_selected);
             } else {
-                holder.itemView.setBackgroundColor(backgroundColorDefault);
                 holder.thumbnailView.setAlpha(.6f);
+                holder.itemView.setBackgroundResource(R.drawable.media_preview_item_default);
             }
 
             holder.thumbnailView.setOnClickListener(v -> onMediaSelect(media, position));
@@ -429,14 +411,6 @@ public class CropImageActivity extends HalloActivity {
 
             ViewHolder(@NonNull View v) {
                 super(v);
-
-                v.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.details_media_list_corner_radius));
-                    }
-                });
-                v.setClipToOutline(true);
 
                 typeIndicator = v.findViewById(R.id.type_indicator);
                 thumbnailView = v.findViewById(R.id.thumbnail);

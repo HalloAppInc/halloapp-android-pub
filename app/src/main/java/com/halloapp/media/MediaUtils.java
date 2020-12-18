@@ -376,15 +376,16 @@ public class MediaUtils {
         return output;
     }
 
-    public static Map<Uri, Integer> getMediaTypes(Context context, Collection<Uri> uris) {
+    public static @NonNull Map<Uri, Integer> getMediaTypes(@NonNull Context context, @NonNull Collection<Uri> uris) {
         List<Long> list = new ArrayList<>();
+        HashMap<Uri, Integer> types = new HashMap<>();
+
         for (Uri uri : uris) {
             list.add(ContentUris.parseId(uri));
+            types.put(uri, Media.MEDIA_TYPE_UNKNOWN);
         }
 
-        HashMap<Uri, Integer> types = new HashMap<>();
         ContentResolver resolver = context.getContentResolver();
-
         try (final Cursor cursor = resolver.query(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME),
                 new String[] {MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.MEDIA_TYPE,},
                 MediaStore.Files.FileColumns._ID + " in (" + TextUtils.join(",", list) + ")",
@@ -393,11 +394,22 @@ public class MediaUtils {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), cursor.getLong(0));
-                    types.put(uri, cursor.getInt(1));
+
+                    switch (cursor.getInt(1)) {
+                        case MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE:
+                            types.put(uri, Media.MEDIA_TYPE_IMAGE);
+                            break;
+                        case MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO:
+                            types.put(uri, Media.MEDIA_TYPE_VIDEO);
+                            break;
+                        default:
+                            types.put(uri, Media.MEDIA_TYPE_UNKNOWN);
+                            break;
+                    }
                 }
             }
         } catch (SecurityException ex) {
-            Log.w("LoadContentUrisTask.getMediaTypes", ex);
+            Log.w("MediaUtils.getMediaTypes", ex);
         }
 
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -413,5 +425,40 @@ public class MediaUtils {
         }
 
         return types;
+    }
+
+    public static @NonNull Map<Uri, Long> getDates(@NonNull Context context, @NonNull Collection<Uri> uris) {
+        List<Long> list = new ArrayList<>();
+        HashMap<Uri, Long> dates = new HashMap<>();
+
+        for (Uri uri : uris) {
+            dates.put(uri, 0L);
+            list.add(ContentUris.parseId(uri));
+        }
+
+        String selection = MediaStore.Files.FileColumns._ID + " in (" + TextUtils.join(",", list) + ")";
+        final String[] projection = new String[] {
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DATE_ADDED,
+        };
+
+        try(final Cursor cursor = context.getContentResolver().query(
+                MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME),
+                projection,
+                selection,
+                null,
+                null)) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    long id = cursor.getLong(0);
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), id);
+                    dates.put(uri, cursor.getLong(1));
+                }
+            }
+        } catch (SecurityException ex) {
+            Log.w("MediaUtils.getDates", ex);
+        }
+
+        return dates;
     }
 }

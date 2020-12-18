@@ -1,13 +1,10 @@
 package com.halloapp.ui;
 
 import android.app.Application;
-import android.content.ContentResolver;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Size;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,7 +21,7 @@ import com.halloapp.util.logs.Log;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,25 +29,25 @@ import java.util.Objects;
 public class CropImageViewModel extends AndroidViewModel {
     private final MutableLiveData<List<MediaModel>> mediaData = new MutableLiveData<>();
     private final MutableLiveData<MediaModel> selected = new MutableLiveData<>();
+    private final FileStore store = FileStore.getInstance();
 
     public CropImageViewModel(Application application) {
         super(application);
     }
 
-    public void loadMediaData(Collection<Uri> uris, Bundle state) {
+    public void loadMediaData(List<Uri> uris, Bundle state, int position) {
         if (uris == null) {
             return;
         }
 
-        new LoadMediaTask(getApplication(), mediaData, selected, -1, uris, state).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
+        BgWorkers.getInstance().execute(() -> {
+            List<MediaModel> models = load(uris, state);
+            mediaData.postValue(models);
 
-    public void loadMediaData(Collection<Uri> uris, Bundle state, int position) {
-        if (uris == null) {
-            return;
-        }
-
-        new LoadMediaTask(getApplication(), mediaData, selected, position, uris, state).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if (0 <= position && position < models.size()) {
+                selected.postValue(models.get(position));
+            }
+        });
     }
 
     public LiveData<List<MediaModel>> getMediaData() {
@@ -127,6 +124,15 @@ public class CropImageViewModel extends AndroidViewModel {
         }
     }
 
+    public void sort() {
+        List<MediaModel> models = mediaData.getValue();
+
+        if (models != null) {
+            Collections.sort(models, (a, b) -> Long.compare(a.date, b.date));
+            mediaData.postValue(models);
+        }
+    }
+
     public void update(MediaModel model) {
         BgWorkers.getInstance().execute(() -> {
             final Size size = MediaUtils.getDimensions(model.tmp.file, model.tmp.type);
@@ -140,7 +146,7 @@ public class CropImageViewModel extends AndroidViewModel {
 
 
             List<MediaModel> models = mediaData.getValue();
-            if (tmp == null || models == null || !models.contains(model)) {
+            if (models == null || !models.contains(model)) {
                 return;
             }
 
@@ -160,131 +166,73 @@ public class CropImageViewModel extends AndroidViewModel {
         }
     }
 
-    private static class LoadMediaTask extends AsyncTask<Void, Void, List<MediaModel>> {
-        private final Application application;
-        private final MutableLiveData<List<MediaModel>> mediaData;
-        private final MutableLiveData<MediaModel> selected;
-        private final Collection<Uri> uris;
-        private final Bundle state;
-        private final int position;
+    private Media mediaFromFile(@Media.MediaType int type, File f) {
+        final Size size = MediaUtils.getDimensions(f, type);
 
-        LoadMediaTask(
-                @NonNull Application application,
-                @NonNull MutableLiveData<List<MediaModel>> mediaData,
-                @NonNull MutableLiveData<MediaModel> selected,
-                int position,
-                @NonNull Collection<Uri> uris,
-                Bundle state
-        ) {
-            this.application = application;
-            this.mediaData = mediaData;
-            this.selected = selected;
-            this.uris = uris;
-            this.state = state;
-            this.position = position;
+        if (size != null) {
+            final Media m = Media.createFromFile(type, f);
+            m.width = size.getWidth();
+            m.height = size.getHeight();
+
+            return m;
         }
 
-        protected Media mediaFromFile(@Media.MediaType int type, File f) {
-            final Size size = MediaUtils.getDimensions(f, type);
+        return null;
+    }
 
-            if (size != null) {
-                final Media m = Media.createFromFile(type, f);
-                m.width = size.getWidth();
-                m.height = size.getHeight();
+    private List<MediaModel> load(List<Uri> uris, Bundle state) {
+        List<MediaModel> result = new ArrayList<>(uris.size());
+        Map<Uri, Integer> types = MediaUtils.getMediaTypes(getApplication(), uris);
+        Map<Uri, Long> dates = MediaUtils.getDates(getApplication(), uris);
 
-                return m;
-            }
+        for (Uri uri : uris) {
+            final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
+            final File original = store.getTmpFileForUri(uri, null);
+            final File edit = store.getTmpFileForUri(uri, "edit");
+            final File tmp = store.getTmpFileForUri(uri, "tmp");
 
-            return null;
-        }
+            @Media.MediaType int type = types.get(uri);
 
-        @Override
-        protected List<MediaModel> doInBackground(Void... voids) {
-            final List<MediaModel> result = new ArrayList<>(uris.size());
-            final FileStore store = FileStore.getInstance();
-            final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, uris);
-
-            for (Uri uri : uris) {
-                final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
-                final File original = store.getTmpFileForUri(uri, null);
-                final File edit = store.getTmpFileForUri(uri, "edit");
-                final File tmp = store.getTmpFileForUri(uri, "tmp");
-
-                @Media.MediaType int type = types.get(uri);
-
-                if (!original.exists()) {
-                    if (isLocalFile) {
-                        try {
-                            FileUtils.copyFile(new File(uri.getPath()), original);
-                        } catch (IOException e) {
-                            // Swallow the exception, the logic below will handle the case of empty file.
-                            Log.e("LoadMediaTask: doInBackground copyFile " + uri, e);
-                        }
-                    } else {
-                        FileUtils.uriToFile(application, uri, original);
+            if (!original.exists()) {
+                if (isLocalFile) {
+                    try {
+                        FileUtils.copyFile(new File(uri.getPath()), original);
+                    } catch (IOException e) {
+                        // Swallow the exception, the logic below will handle the case of empty file.
+                        Log.e("LoadMediaTask: doInBackground copyFile " + uri, e);
                     }
-                }
-
-                Media originalMedia = mediaFromFile(type, original);
-                if (originalMedia == null) {
-                    continue;
-                }
-
-                Media editMedia;
-                if (edit.exists()) {
-                    editMedia = mediaFromFile(type, edit);
                 } else {
-                    editMedia = new Media(0, type, null, edit, null, null, 0, 0, Media.TRANSFERRED_NO);
+                    FileUtils.uriToFile(getApplication(), uri, original);
                 }
-
-                Parcelable editState = null;
-                if (state != null) {
-                    editState = state.getParcelable(uri.toString());
-                }
-
-                if (tmp.exists()) {
-                    tmp.delete();
-                }
-
-                Media tmpMedia = new Media(0, type, null, tmp, null, null, 0, 0, Media.TRANSFERRED_NO);
-
-                result.add(new MediaModel(uri, originalMedia, editMedia, tmpMedia, editState));
             }
 
-            return result;
-        }
+            Media originalMedia = mediaFromFile(type, original);
+            if (originalMedia == null) {
+                continue;
+            }
 
-        @Override
-        protected void onPostExecute(List<MediaModel> result) {
-            super.onPostExecute(result);
-
-            mediaData.postValue(result);
-            syncWithSelected(result);
-        }
-
-        private void syncWithSelected(List<MediaModel> result) {
-            if (selected.getValue() == null) {
-                if (0 <= position && position < result.size()) {
-                    selected.postValue(result.get(position));
-                }
+            Media editMedia;
+            if (edit.exists()) {
+                editMedia = mediaFromFile(type, edit);
             } else {
-                Uri uri = selected.getValue().uri;
-
-                for (MediaModel model : result) {
-                    if (model.uri.equals(uri)) {
-                        selected.postValue(model);
-                        return;
-                    }
-                }
-
-                for (MediaModel model : result) {
-                    if (model.original.type == Media.MEDIA_TYPE_IMAGE) {
-                        selected.postValue(model);
-                        return;
-                    }
-                }
+                editMedia = new Media(0, type, null, edit, null, null, 0, 0, Media.TRANSFERRED_NO);
             }
+
+            Parcelable editState = null;
+            if (state != null) {
+                editState = state.getParcelable(uri.toString());
+            }
+
+            if (tmp.exists()) {
+                tmp.delete();
+            }
+
+            Media tmpMedia = new Media(0, type, null, tmp, null, null, 0, 0, Media.TRANSFERRED_NO);
+
+            result.add(new MediaModel(uri, originalMedia, editMedia, tmpMedia, editState, dates.get(uri)));
         }
+
+        return result;
     }
 
     static class MediaModel {
@@ -294,13 +242,15 @@ public class CropImageViewModel extends AndroidViewModel {
         Media tmp;
         Parcelable state;
         Parcelable tmpState;
+        long date;
 
-        MediaModel(Uri uri, Media original, Media edit, Media tmp, Parcelable state) {
+        MediaModel(Uri uri, Media original, Media edit, Media tmp, Parcelable state, long date) {
             this.uri = uri;
             this.original = original;
             this.edit = edit;
             this.tmp = tmp;
             this.state = state;
+            this.date = date;
         }
 
         Media getMedia() {
