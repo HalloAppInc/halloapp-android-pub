@@ -63,7 +63,7 @@
                         app:cameraPictureSizeAspectRatio="4:3"
                         app:cameraVideoSizeAspectRatio="4:3"
                         app:cameraPictureFormat="jpeg"
-                        app:cameraPlaySounds="true"
+                        app:cameraPlaySounds="false"
                         app:cameraPreview="texture"/>
 
                 </FrameLayout>

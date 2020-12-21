@@ -51,6 +51,8 @@ import com.otaliastudios.cameraview.VideoResult;
 import com.otaliastudios.cameraview.controls.Facing;
 import com.otaliastudios.cameraview.controls.Flash;
 import com.otaliastudios.cameraview.controls.Mode;
+import com.otaliastudios.cameraview.gesture.Gesture;
+import com.otaliastudios.cameraview.gesture.GestureAction;
 import com.otaliastudios.cameraview.size.Size;
 
 import java.io.File;
@@ -277,16 +279,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             }
         });
 
-        cameraView.setOnTouchListener((view, motionEvent) -> {
-            if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                float x = motionEvent.getX() - view.getLeft();
-                float y = motionEvent.getY() - view.getTop();
-                if (0 <= x && x <= view.getWidth() && 0 <= y && y <= view.getHeight()) {
-                    cameraView.startAutoFocus(x, y);
-                }
-            }
-            return false;
-        });
+        cameraView.mapGesture(Gesture.PINCH, GestureAction.ZOOM);
+        cameraView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS);
 
         cameraView.setLifecycleOwner(this);
     }
