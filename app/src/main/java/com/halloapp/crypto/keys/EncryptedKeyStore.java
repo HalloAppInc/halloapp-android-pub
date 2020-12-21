@@ -3,23 +3,18 @@ package com.halloapp.crypto.keys;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.util.Base64;
 
 import androidx.annotation.Nullable;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.AppContext;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
-import com.halloapp.util.logs.Log;
+import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,6 +31,7 @@ import java.util.Set;
 public class EncryptedKeyStore {
 
     private static final String ENC_PREF_FILE_NAME = "halloapp_keys";
+    private static final String PT_PREF_FILE_NAME = "pt_halloapp_keys";
 
     private static final String PREF_KEY_MY_ED25519_IDENTITY_KEY = "my_ed25519_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
@@ -573,24 +569,8 @@ public class EncryptedKeyStore {
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            try {
-                String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-                return EncryptedSharedPreferences.create(
-                        EncryptedKeyStore.ENC_PREF_FILE_NAME,
-                        masterKeyAlias,
-                        context,
-                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                );
-            } catch (GeneralSecurityException | IOException e) {
-                Log.e("EncryptedKeyStore failed to get shared preferences", e);
-                return null;
-            }
-        } else {
-            // TODO(jack): remove once androidx.security supports back to API 21
-            return context.getSharedPreferences(EncryptedKeyStore.ENC_PREF_FILE_NAME, Context.MODE_PRIVATE);
-        }
+        // TODO(jack): bring back EncryptedSharedPreferences once Google fixes the androidx security-crypto library
+        return context.getSharedPreferences(EncryptedKeyStore.PT_PREF_FILE_NAME, Context.MODE_PRIVATE);
     }
 
     private static String bytesToString(byte[] bytes) {
@@ -609,5 +589,6 @@ public class EncryptedKeyStore {
     @SuppressLint("ApplySharedPref")
     public void clearAll() {
         appContext.get().getSharedPreferences(EncryptedKeyStore.ENC_PREF_FILE_NAME, Context.MODE_PRIVATE).edit().clear().commit();
+        appContext.get().getSharedPreferences(EncryptedKeyStore.PT_PREF_FILE_NAME, Context.MODE_PRIVATE).edit().clear().commit();
     }
 }
