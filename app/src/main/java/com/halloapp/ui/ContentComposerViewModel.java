@@ -1,14 +1,12 @@
 package com.halloapp.ui;
 
 import android.app.Application;
-import android.content.ContentResolver;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Size;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,9 +37,9 @@ import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -52,6 +50,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ContentComposerViewModel extends AndroidViewModel {
@@ -251,7 +250,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final MutableLiveData<List<EditMediaPair>> media;
         private final MutableLiveData<EditMediaPair> loadingItem;
 
-        private long createTime;
+        final private long createTime;
 
         LoadContentUrisTask(@NonNull Application application,
                             @NonNull Collection<Uri> uris,
@@ -270,10 +269,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         protected List<EditMediaPair> doInBackground(Void... voids) {
             final List<EditMediaPair> mediaPairList = new ArrayList<>();
 
-            final ContentResolver contentResolver = application.getContentResolver();
             final FileStore fileStore = FileStore.getInstance();
             int uriIndex = 0;
-            final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, uris);
 
             int numVideos = 0;
             int numPhotos = 0;
@@ -281,9 +279,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
             for (Uri uri : uris) {
                 final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
-                @Media.MediaType int mediaType = Media.getMediaType(isLocalFile ?
-                        mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(uri.toString())) :
-                        contentResolver.getType(uri));
+                @Media.MediaType int mediaType = types.get(uri);
 
                 switch (mediaType) {
                     case Media.MEDIA_TYPE_IMAGE:

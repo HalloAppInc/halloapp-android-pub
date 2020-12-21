@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class CropImageViewModel extends AndroidViewModel {
@@ -200,9 +201,8 @@ public class CropImageViewModel extends AndroidViewModel {
         @Override
         protected List<MediaModel> doInBackground(Void... voids) {
             final List<MediaModel> result = new ArrayList<>(uris.size());
-            final ContentResolver resolver = application.getContentResolver();
             final FileStore store = FileStore.getInstance();
-            final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, uris);
 
             for (Uri uri : uris) {
                 final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
@@ -210,9 +210,7 @@ public class CropImageViewModel extends AndroidViewModel {
                 final File edit = store.getTmpFileForUri(uri, "edit");
                 final File tmp = store.getTmpFileForUri(uri, "tmp");
 
-                @Media.MediaType int type = Media.getMediaType(isLocalFile ?
-                        mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(uri.toString())) :
-                        resolver.getType(uri));
+                @Media.MediaType int type = types.get(uri);
 
                 if (!original.exists()) {
                     if (isLocalFile) {

@@ -1,6 +1,9 @@
 package com.halloapp.media;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,7 +18,10 @@ import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Size;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +32,18 @@ import androidx.exifinterface.media.ExifInterface;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.Media;
+import com.halloapp.ui.mediapicker.GalleryDataSource;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public class MediaUtils {
@@ -361,5 +374,44 @@ public class MediaUtils {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
+    }
+
+    public static Map<Uri, Integer> getMediaTypes(Context context, Collection<Uri> uris) {
+        List<Long> list = new ArrayList<>();
+        for (Uri uri : uris) {
+            list.add(ContentUris.parseId(uri));
+        }
+
+        HashMap<Uri, Integer> types = new HashMap<>();
+        ContentResolver resolver = context.getContentResolver();
+
+        try (final Cursor cursor = resolver.query(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME),
+                new String[] {MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.MEDIA_TYPE,},
+                MediaStore.Files.FileColumns._ID + " in (" + TextUtils.join(",", list) + ")",
+                null,
+                null)) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), cursor.getLong(0));
+                    types.put(uri, cursor.getInt(1));
+                }
+            }
+        } catch (SecurityException ex) {
+            Log.w("LoadContentUrisTask.getMediaTypes", ex);
+        }
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        for (Uri uri: uris) {
+            if (!types.containsKey(uri)) {
+                if (Objects.equals(uri.getScheme(), "file")) {
+                    String mime = mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+                    types.put(uri, Media.getMediaType(mime));
+                } else {
+                    types.put(uri, Media.getMediaType(resolver.getType(uri)));
+                }
+            }
+        }
+
+        return types;
     }
 }

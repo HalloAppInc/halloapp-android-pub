@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -55,7 +56,13 @@ public class ImageCropper {
             m.postScale(state.vFlipped ? -state.scale : state.scale, state.hFlipped ? -state.scale : state.scale, centerX, centerY);
             m.postTranslate(-state.cropOffsetX, -state.cropOffsetY);
 
-            Bitmap cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, Bitmap.Config.ARGB_8888);
+            Bitmap cropped;
+            if (Build.VERSION.SDK_INT >= 26) {
+                cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, Bitmap.Config.RGBA_F16);
+            } else {
+                cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, Bitmap.Config.ARGB_8888);
+            }
+
             Canvas canvas = new Canvas(cropped);
             canvas.drawBitmap(bitmap, m, null);
 

@@ -2,7 +2,10 @@ package com.halloapp.ui;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Display;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +40,13 @@ public class HalloActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         logTrace("onCreate");
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (getResources().getConfiguration().isScreenWideColorGamut() && getWindowManager().getDefaultDisplay().isWideColorGamut()) {
+                getWindow().setColorMode(ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT);
+            }
+        }
+
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
             super.onCreate(savedInstanceState);
         });

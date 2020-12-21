@@ -2,6 +2,7 @@ package com.halloapp.ui.mediapicker;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -10,6 +11,7 @@ import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Size;
@@ -154,6 +156,13 @@ public class MediaPickerPreview implements Runnable {
         final WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) rootView.getLayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.7f;
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (rootView.getResources().getConfiguration().isScreenWideColorGamut() && wm.getDefaultDisplay().isWideColorGamut()) {
+                layoutParams.setColorMode(ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT);
+            }
+        }
+
         wm.updateViewLayout(rootView, layoutParams);
     }
 
