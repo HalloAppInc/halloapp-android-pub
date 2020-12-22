@@ -1,5 +1,7 @@
 package com.halloapp.noise;
 
+import android.text.format.DateUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -45,8 +48,9 @@ public class HANoiseSocket extends Socket {
     private static final int PACKET_SIZE_MASK = 0xFFFFFF;
 
     private static final int PUBLIC_KEY_SIZE = 32;
-
     private static final int BUFFER_SIZE = 4096;
+    private static final int CONNECT_TIMEOUT = 20_000;
+    private static final int READ_TIMEOUT = 3 * (int)DateUtils.MINUTE_IN_MILLIS;
 
     private final Me me;
 
@@ -58,8 +62,9 @@ public class HANoiseSocket extends Socket {
     private CipherState recvCrypto;
 
     public HANoiseSocket(@NonNull Me me, @NonNull InetAddress address, final int port) throws IOException {
-        super(address, port);
         this.me = me;
+        connect(new InetSocketAddress(address, port), CONNECT_TIMEOUT);
+        setSoTimeout(READ_TIMEOUT);
     }
 
     @WorkerThread
