@@ -6,26 +6,25 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.NewConnection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
@@ -39,7 +38,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 
 /**
  * The public-facing interface for Signal protocol. All production calls to code related to
@@ -103,6 +101,21 @@ public class EncryptedSessionManager {
                     Log.i("Session already set up but received session setup info with new identity key;"
                             + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
                             + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
+                }
+
+                byte[] receivedEphemeralKey = Arrays.copyOfRange(message, 0, 32);
+                try {
+                    byte[] storedEphemeralKey = encryptedKeyStore.getInboundEphemeralKey(peerUserId).getKeyMaterial();
+
+                    if (!Arrays.equals(receivedEphemeralKey, storedEphemeralKey)) {
+                        Log.w("Session already set up but received ephemeral key does not match stored;"
+                                + " stored: " + Base64.encodeToString(storedEphemeralKey, Base64.NO_WRAP)
+                                + " received: " + Base64.encodeToString(receivedEphemeralKey, Base64.NO_WRAP));
+                        keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
+                    }
+                } catch (IllegalArgumentException e) {
+                    Log.w("Failed to retrieve inbound ephemeral key; setting up new session", e);
+                    keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                 }
             }
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
