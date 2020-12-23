@@ -41,7 +41,6 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         TOP_LEFT, TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, INSIDE, NONE
     }
 
-    public static final float MAX_ASPECT_RATIO = 1.25f;
     public static final float MAX_SCALE = 10.0f;
     public static final float MIN_SCALE = 1.0f;
 
@@ -52,6 +51,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final RectF imageRect = new RectF();
     private final RectF cropRect = new RectF();
     private final RectF borderRect = new RectF();
+    private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
     private final Path path = new Path();
     private final Paint shadowPaint = new Paint();
     private final Paint borderPaint = new Paint();
@@ -104,6 +104,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void setMaxAspectRatio(float maxAspectRatio) {
+        this.maxAspectRatio = maxAspectRatio;
     }
 
     public void setAsyncImageFile(@Nullable File originalFile, @Nullable File croppedFile, @Nullable State state, @Nullable ImageLoadedListener listener) {
@@ -217,9 +221,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         final float w = cropRect.width();
         final float h = cropRect.height();
-        final float nh = w * Math.min(MAX_ASPECT_RATIO, h / w);
-
-        cropRect.bottom += nh - h;
+        if (maxAspectRatio > 0 && h / w > maxAspectRatio) {
+            final float newTop = cropRect.top + (h - maxAspectRatio * w) / 2;
+            final float newHeight = w * maxAspectRatio;
+            cropRect.top = newTop;
+            cropRect.bottom = newTop + newHeight;
+        }
     }
 
     private void updateImage() {
@@ -439,17 +446,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     private void keepWithinMaxRatio(RectF crop, CropRegionSection section) {
-        if ((crop.height() / crop.width()) > MAX_ASPECT_RATIO) {
+        if (maxAspectRatio > 0 && (crop.height() / crop.width()) > maxAspectRatio) {
             switch (section) {
                 case LEFT:
                 case RIGHT: {
-                    final float d = (crop.height() - MAX_ASPECT_RATIO * crop.width()) / 2;
+                    final float d = (crop.height() - maxAspectRatio * crop.width()) / 2;
                     crop.top += d;
                     crop.bottom -= d;
                     break;
                 }
                 default: {
-                    final float d = ((crop.height() / MAX_ASPECT_RATIO) - crop.width()) / 2;
+                    final float d = ((crop.height() / maxAspectRatio) - crop.width()) / 2;
                     crop.left -= d;
                     crop.right += d;
                     break;

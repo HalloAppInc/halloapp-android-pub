@@ -90,6 +90,9 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
 
+    private static final int REQUEST_CODE_CROP = 1;
+    private static final int REQUEST_CODE_MORE_MEDIA = 2;
+
     private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap = new HashMap<>();
 
     private ContentComposerViewModel viewModel;
@@ -125,9 +128,6 @@ public class ContentComposerActivity extends HalloActivity {
 
     private boolean prevEditEmpty;
     private boolean updatedMediaProcessed = false;
-
-    private static final int REQUEST_CODE_CROP = 1;
-    private static final int REQUEST_CODE_MORE_MEDIA = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -633,6 +633,10 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
+
+            if (chatId != null) {
+                intent.putExtra(CropImageActivity.EXTRA_MAX_ASPECT_RATIO, 0f);
+            }
 
             updatedMediaProcessed = false;
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {

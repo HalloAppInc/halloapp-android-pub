@@ -47,6 +47,7 @@ public class CropImageActivity extends HalloActivity {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_STATE = "state";
+    public static final String EXTRA_MAX_ASPECT_RATIO = "max_aspect_ratio";
 
     public static final String TRANSITION_VIEW_NAME = "crop_image";
 
@@ -57,6 +58,7 @@ public class CropImageActivity extends HalloActivity {
     private MediaListAdapter adapter;
     private MediaThumbnailLoader mediaLoader;
     private CropImageViewModel.MediaModel selected;
+    private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
     private boolean transitionStarted = false;
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -104,6 +106,8 @@ public class CropImageActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this).get(CropImageViewModel.class);
         mediaLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
 
+        maxAspectRatio = getIntent().getFloatExtra(EXTRA_MAX_ASPECT_RATIO, Constants.MAX_IMAGE_ASPECT_RATIO);
+
         setupEditView();
         setupMediaListView();
         setupButtons();
@@ -121,6 +125,7 @@ public class CropImageActivity extends HalloActivity {
         transitionView.setTransitionName(TRANSITION_VIEW_NAME);
 
         editImageView = findViewById(R.id.image);
+        editImageView.setMaxAspectRatio(maxAspectRatio);
 
         viewModel.getSelected().observe(this, model -> {
             if (model == null) {
@@ -436,8 +441,8 @@ public class CropImageActivity extends HalloActivity {
             @Override
             public void showResult(@NonNull ImageView view, @Nullable Bitmap bitmap) {
                 if (bitmap != null) {
-                    if (bitmap.getHeight() > Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) {
-                        final int padding = (int) ((bitmap.getHeight() - Constants.MAX_IMAGE_ASPECT_RATIO * bitmap.getWidth()) / 2);
+                    if (maxAspectRatio > 0 && bitmap.getHeight() > maxAspectRatio * bitmap.getWidth()) {
+                        final int padding = (int) ((bitmap.getHeight() - maxAspectRatio * bitmap.getWidth()) / 2);
                         final Rect bitmapRect = new Rect(0, padding, bitmap.getWidth(), bitmap.getHeight() - padding);
                         view.setImageDrawable(new ClippedBitmapDrawable(bitmap, bitmapRect));
                     } else {
