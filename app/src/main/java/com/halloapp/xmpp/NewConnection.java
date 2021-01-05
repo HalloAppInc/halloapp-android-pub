@@ -26,7 +26,6 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -99,19 +98,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
 public class NewConnection extends Connection {
 
     private static final String HOST = "s.halloapp.net";
     private static final String DEBUG_HOST = "s-test.halloapp.net";
-    private static final int PORT = 5210;
     private static final int NOISE_PORT = 5208;
-    private static final int CONNECTION_TIMEOUT = 20_000;
 
     public static final String FEED_THREAD_ID = "feed";
 
@@ -180,64 +171,27 @@ public class NewConnection extends Connection {
         Log.i("connection: connecting...");
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
-        final boolean useNoise = ServerProps.getInstance().getNoiseEnabled();
         try {
             final InetAddress address = InetAddress.getByName(host);
-            HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-
-            if (useNoise) {
-                // TODO (clarkc) remove when we no longer need migration code to noise
-                if (me.getMyEd25519NoiseKey() == null) {
-                    Log.i("connection: migrating registration to noise");
-                    Registration.RegistrationVerificationResult migrationResult = Registration.getInstance().migrateRegistrationToNoise();
-                    if (migrationResult.result != Registration.RegistrationVerificationResult.RESULT_OK) {
-                        disconnectInBackground();
-                        throw new IOException("Failed to migrate registration");
-                    }
-                    Log.i("connection: noise migration successful");
+            // TODO (clarkc) remove when we no longer need migration code to noise
+            if (me.getMyEd25519NoiseKey() == null) {
+                Log.i("connection: migrating registration to noise");
+                Registration.RegistrationVerificationResult migrationResult = Registration.getInstance().migrateRegistrationToNoise();
+                if (migrationResult.result != Registration.RegistrationVerificationResult.RESULT_OK) {
+                    disconnectInBackground();
+                    throw new IOException("Failed to migrate registration");
                 }
-                HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
-                noiseSocket.authenticate(createAuthRequest());
-                this.socket = noiseSocket;
-                isAuthenticated = true;
-            } else {
-                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(address, PORT);
-                sslSocket.setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
-                SSLSession session = sslSocket.getSession();
-                this.socket = sslSocket;
-                if (!hostnameVerifier.verify(host, session)) {
-                    // TODO(jack)
-//                throw new SSLPeerUnverifiedException("Could not verify hostname " + host);
-                }
-
-                Log.i("connection: Established " + session.getProtocol() + " connection with " + session.getPeerHost() + " using " + session.getCipherSuite());
-                outputStream = socket.getOutputStream();
-                inputStream = socket.getInputStream();
+                Log.i("connection: noise migration successful");
             }
+            HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            noiseSocket.authenticate(createAuthRequest());
+            this.socket = noiseSocket;
+            isAuthenticated = true;
 
             synchronized (startupShutdownLock) {
                 packetWriter.init();
                 packetReader.init();
                 iqRouter.init();
-            }
-
-
-            if (!useNoise) {
-                AuthResult authResult = sendAndRecvAuth(createAuthRequest());
-                // TODO(jack): check client expiration
-                Log.i("connection: auth result: " + ProtoPrinter.toString(authResult));
-                final String result = authResult.getResult();
-                if ("invalid client version".equals(result)) {
-                    clientExpired();
-                    connectionObservers.notifyClientVersionExpired();
-                    return;
-                } else if (!"success".equals(result)) {
-                    Log.e("connection: failed to login");
-                    disconnectInBackground();
-                    connectionObservers.notifyLoginFailed();
-                    return;
-                }
             }
 
             connectionObservers.notifyConnected();

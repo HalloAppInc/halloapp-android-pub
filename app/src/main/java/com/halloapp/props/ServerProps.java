@@ -175,11 +175,7 @@ public class ServerProps {
     public synchronized boolean getIsInternalUser() {
         return propInternalUser.getValue();
     }
-
-    public synchronized boolean getNoiseEnabled() {
-        return getIsInternalUser();
-    }
-
+    
     public synchronized int getMaxGroupSize() {
         return propMaxGroupSize.getValue();
     }

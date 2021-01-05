@@ -123,8 +123,7 @@ public class Registration {
     @WorkerThread
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
         RegistrationVerificationResult verificationResult;
-        final boolean useNoise = serverProps.getNoiseEnabled() && Constants.NOISE_REGISTRATION;
-        if (useNoise) {
+        if (Constants.NOISE_REGISTRATION) {
             verificationResult = verifyRegistrationNoise(phone, code, me.getName());
         } else {
             verificationResult = verifyRegistration(phone, code, me.getName());
@@ -135,7 +134,7 @@ public class Registration {
                 // New user, we should clear data
                 contentDb.deleteDb();
             }
-            if (useNoise) {
+            if (Constants.NOISE_REGISTRATION) {
                 me.saveRegistrationNoise(
                         Preconditions.checkNotNull(verificationResult.user),
                         Preconditions.checkNotNull(verificationResult.phone));

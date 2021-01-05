@@ -93,12 +93,8 @@ public class Me {
                 }
             }
         }
-        if (ServerProps.getInstance().getNoiseEnabled()) {
-            // TODO (clarkc) Remove getPassword() when migration is finished.
-            return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
-        } else {
-            return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getPassword()) && !TextUtils.isEmpty(getName());
-        }
+        // TODO (clarkc) Remove getPassword() when migration is finished.
+        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
     }
 
     @WorkerThread
