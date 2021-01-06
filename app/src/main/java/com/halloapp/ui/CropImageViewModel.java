@@ -229,7 +229,8 @@ public class CropImageViewModel extends AndroidViewModel {
 
             Media tmpMedia = new Media(0, type, null, tmp, null, null, 0, 0, Media.TRANSFERRED_NO);
 
-            result.add(new MediaModel(uri, originalMedia, editMedia, tmpMedia, editState, dates.get(uri)));
+            final Long date = dates.get(uri);
+            result.add(new MediaModel(uri, originalMedia, editMedia, tmpMedia, editState, date != null ? date : 0L));
         }
 
         return result;

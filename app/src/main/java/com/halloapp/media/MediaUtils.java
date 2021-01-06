@@ -381,8 +381,13 @@ public class MediaUtils {
         HashMap<Uri, Integer> types = new HashMap<>();
 
         for (Uri uri : uris) {
-            list.add(ContentUris.parseId(uri));
-            types.put(uri, Media.MEDIA_TYPE_UNKNOWN);
+            try {
+                list.add(ContentUris.parseId(uri));
+                types.put(uri, Media.MEDIA_TYPE_UNKNOWN);
+            } catch (NumberFormatException | UnsupportedOperationException ex) {
+                // Not a url we can handle here, will use mimeTypeMap below instead.
+                Log.w("MediaUtils.getMediaTypes", ex);
+            }
         }
 
         ContentResolver resolver = context.getContentResolver();
@@ -432,8 +437,13 @@ public class MediaUtils {
         HashMap<Uri, Long> dates = new HashMap<>();
 
         for (Uri uri : uris) {
-            dates.put(uri, 0L);
-            list.add(ContentUris.parseId(uri));
+            try {
+                dates.put(uri, 0L);
+                list.add(ContentUris.parseId(uri));
+            } catch (NumberFormatException | UnsupportedOperationException ex) {
+                // Not a url we can handle here, will use 0 as date.
+                Log.w("MediaUtils.getDates", ex);
+            }
         }
 
         String selection = MediaStore.Files.FileColumns._ID + " in (" + TextUtils.join(",", list) + ")";
