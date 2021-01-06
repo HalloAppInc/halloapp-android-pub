@@ -242,6 +242,10 @@ public class ContentComposerActivity extends HalloActivity {
                 return false;
             });
         }
+        
+        viewModel = new ViewModelProvider(this,
+                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+
         editText.setVisibility(View.VISIBLE);
         editText.setMentionPickerView(mentionPickerView);
         editText.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
@@ -328,8 +332,7 @@ public class ContentComposerActivity extends HalloActivity {
         drawDelegateView = findViewById(R.id.draw_delegate);
 
         expectedMediaCount = (uris != null) ? uris.size() : 0;
-        viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+
         viewModel.loadingItem.observe(this, editItem -> setProgressPreview(editItem, true));
         viewModel.editMedia.observe(this, media -> {
             loadingView.setVisibility(View.GONE);
