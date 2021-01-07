@@ -1090,11 +1090,15 @@ public class NewConnection extends Connection {
                     UserId userId = getUserId(Long.toString(msg.getFromUid()));
                     Rerequest rerequest = msg.getRerequest();
 
-                    byte[] receivedIdentityKey = rerequest.getIdentityKey().toByteArray();
-                    byte[] storedIdentityKey = EncryptedKeyStore.getInstance().getPeerPublicIdentityKey(userId).getKeyMaterial();
-                    if (!Arrays.equals(receivedIdentityKey, storedIdentityKey)) {
-                        Log.w("Received identity key does not match stored key. Received: " + Hex.bytesToStringLowercase(receivedIdentityKey) + " stored: " + Hex.bytesToStringLowercase(storedIdentityKey));
-                        Log.sendErrorReport("Rerequest identity key mismatch");
+                    try {
+                        byte[] receivedIdentityKey = rerequest.getIdentityKey().toByteArray();
+                        byte[] storedIdentityKey = EncryptedKeyStore.getInstance().getPeerPublicIdentityKey(userId).getKeyMaterial();
+                        if (!Arrays.equals(receivedIdentityKey, storedIdentityKey)) {
+                            Log.w("Received identity key does not match stored key. Received: " + Hex.bytesToStringLowercase(receivedIdentityKey) + " stored: " + Hex.bytesToStringLowercase(storedIdentityKey));
+                            Log.sendErrorReport("Rerequest identity key mismatch");
+                        }
+                    } catch (NullPointerException e) {
+                        Log.w("Failed to compare received and stored identity keys", e);
                     }
 
                     connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), msg.getId());
