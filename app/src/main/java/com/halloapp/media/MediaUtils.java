@@ -383,7 +383,6 @@ public class MediaUtils {
         for (Uri uri : uris) {
             try {
                 list.add(ContentUris.parseId(uri));
-                types.put(uri, Media.MEDIA_TYPE_UNKNOWN);
             } catch (NumberFormatException | UnsupportedOperationException ex) {
                 // Not a url we can handle here, will use mimeTypeMap below instead.
                 Log.w("MediaUtils.getMediaTypes", ex);
@@ -399,6 +398,7 @@ public class MediaUtils {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), cursor.getLong(0));
+                    types.put(uri, Media.MEDIA_TYPE_UNKNOWN);
 
                     switch (cursor.getInt(1)) {
                         case MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE:
