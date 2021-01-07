@@ -20,6 +20,7 @@ import java.util.List;
 public class FileStore {
 
     private static final int MAX_LOG_FILES = 3;
+    private static final int MAX_FILE_NAME_LENGTH = 255;
 
     private static FileStore instance;
 
@@ -41,7 +42,9 @@ public class FileStore {
     }
 
     public static String fileNameFromUri(@NonNull Uri uri, @Nullable String suffix) {
+        int maxBaseLen = MAX_FILE_NAME_LENGTH - (suffix == null ? 0 : suffix.length()) - 1;
         String baseName = Base64.encodeToString(uri.toString().getBytes(), Base64.URL_SAFE);
+        baseName = baseName.length() > maxBaseLen ? baseName.substring(0, maxBaseLen) : baseName;
         return TextUtils.isEmpty(suffix) ? baseName : String.format("%s-%s", baseName, suffix);
     }
 
