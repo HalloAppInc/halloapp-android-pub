@@ -45,6 +45,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     public static final float MIN_SCALE = 1.0f;
 
     private final float threshold = getResources().getDimension(R.dimen.media_crop_region_threshold);
+    private final float outThreshold = getResources().getDimension(R.dimen.media_crop_region_out_threshold);
     private final float borderThickness = getResources().getDimension(R.dimen.media_crop_region_border);
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
 
@@ -376,10 +377,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         float vThreshold = Math.min(threshold, cropRect.height() / 3);
         float hThreshold = Math.min(threshold, cropRect.width() / 3);
 
-        boolean isTop = (cropRect.top < y) && (y < (cropRect.top + vThreshold));
-        boolean isBottom = ((cropRect.bottom - vThreshold) < y) && (y < cropRect.bottom);
-        boolean isLeft = (cropRect.left < x) && (x < (cropRect.left + hThreshold));
-        boolean isRight = ((cropRect.right - hThreshold) < x) && (x < cropRect.right);
+        boolean isTop = (cropRect.top - outThreshold < y) && (y < (cropRect.top + vThreshold));
+        boolean isBottom = ((cropRect.bottom - vThreshold) < y) && (y < cropRect.bottom + outThreshold);
+        boolean isLeft = (cropRect.left - outThreshold < x) && (x < (cropRect.left + hThreshold));
+        boolean isRight = ((cropRect.right - hThreshold) < x) && (x < cropRect.right + outThreshold);
         boolean isInsideVertical = (cropRect.top + vThreshold) < y && y < (cropRect.bottom - vThreshold);
         boolean isInsideHorizontal = (cropRect.left + hThreshold) < x && x < (cropRect.right - hThreshold);
 
@@ -595,7 +596,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             if (isMultiTouch) {
                 moveBy(-distanceX, -distanceY);
             } else {
-                updateCropRegionBy(section, -distanceX, -distanceY);
+                RectF valid = new RectF(borderRect);
+                valid.inset(-2 * outThreshold, -2 * outThreshold);
+
+                if (valid.contains(e2.getX(), e2.getY())) {
+                    updateCropRegionBy(section, -distanceX, -distanceY);
+                }
             }
 
             return true;

@@ -213,9 +213,9 @@ public class CropImageActivity extends HalloActivity {
                 super.onSelectedChanged(viewHolder, actionState);
 
                 if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-                    ImageView thumbnail = ((MediaListAdapter.ViewHolder)viewHolder).thumbnailView;
-                    alpha = thumbnail.getAlpha();
-                    thumbnail.setAlpha(previewSelectedAlpha);
+                    ImageView draggedThumbnail = ((MediaListAdapter.ViewHolder)viewHolder).thumbnailView;
+                    alpha = draggedThumbnail .getAlpha();
+                    draggedThumbnail .setAlpha(previewSelectedAlpha);
                 }
             }
         });

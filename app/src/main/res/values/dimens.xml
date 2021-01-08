@@ -26,6 +26,7 @@
     <dimen name="media_crop_region_border">4dp</dimen>
     <dimen name="media_crop_region_radius">15dp</dimen>
     <dimen name="media_crop_region_threshold">44dp</dimen>
+    <dimen name="media_crop_region_out_threshold">22dp</dimen>
     <dimen name="post_media_radius">15dp</dimen>
     <dimen name="message_media_radius">12dp</dimen>
     <dimen name="contacts_list_item_height">72dp</dimen>
