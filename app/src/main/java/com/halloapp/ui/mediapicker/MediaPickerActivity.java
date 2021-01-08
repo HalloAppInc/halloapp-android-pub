@@ -403,7 +403,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                         if (item.getItemId() == R.id.select) {
-                            viewModel.getUrisOrderedByDate((uris -> handleSelection(uris)));
+                            handleSelection(viewModel.getSelectedUris());
                         }
                         return true;
                     }
@@ -632,6 +632,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final ImageView thumbnailView;
         final View thumbnailFrame;
         final ImageView selectionIndicator;
+        final TextView selectionCounter;
         final TextView duration;
 
         GalleryItem galleryItem;
@@ -642,6 +643,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             thumbnailView = v.findViewById(R.id.thumbnail);
             thumbnailFrame = v.findViewById(R.id.thumbnail_frame);
             selectionIndicator = v.findViewById(R.id.selection_indicator);
+            selectionCounter = v.findViewById(R.id.selection_counter);
             titleView = v.findViewById(R.id.title);
             duration = v.findViewById(R.id.duration);
 
@@ -691,7 +693,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 thumbnailView.setSelected(false);
             } else {
                 if (viewModel.isSelected(galleryItem.id)) {
-                    setupSelected();
+                    setupSelected(viewModel.indexOfSelected(galleryItem.id));
                 } else {
                     setupDefault();
                 }
@@ -700,8 +702,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             thumbnailLoader.load(thumbnailView, galleryItem);
         }
 
-        private void setupSelected() {
-            selectionIndicator.setImageResource(R.drawable.ic_item_selected_no_border);
+        private void setupSelected(int index) {
+            selectionCounter.setVisibility(View.VISIBLE);
+            selectionCounter.setText(String.format(Locale.getDefault(), "%d", index + 1));
+            selectionIndicator.setVisibility(View.GONE);
 
             int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
             thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
@@ -712,7 +716,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void setupDefault() {
-            selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
+            selectionCounter.setVisibility(View.GONE);
+            selectionIndicator.setVisibility(View.VISIBLE);
             thumbnailFrame.setPadding(0, 0, 0, 0);
             thumbnailView.setSelected(false);
 

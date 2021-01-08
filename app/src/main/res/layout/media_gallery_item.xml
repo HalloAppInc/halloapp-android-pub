@@ -36,7 +36,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|top"
-        tools:src="@drawable/ic_item_selected_no_border"
+        tools:src="@drawable/ic_item_unselected"
         tools:ignore="ContentDescription"/> <!-- content description is dynamic and set from the code -->
+
+    <TextView
+        android:id="@+id/selection_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:background="@drawable/ic_item_selected_background"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        />
 
 </FrameLayout>
