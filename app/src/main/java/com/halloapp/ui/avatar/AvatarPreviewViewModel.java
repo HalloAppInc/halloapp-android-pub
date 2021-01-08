@@ -158,7 +158,7 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
                 if (cropRect != null) {
                     final Rect bitmapRect = new Rect((int)(rotatedBitmap.getWidth() * cropRect.left), (int)(rotatedBitmap.getHeight() * cropRect.top),
                             (int)(rotatedBitmap.getWidth() * cropRect.right), (int)(rotatedBitmap.getHeight() * cropRect.bottom));
-                    croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), Bitmap.Config.ARGB_8888);
+                    croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), MediaUtils.getBitmapConfig(rotatedBitmap.getConfig()));
                     final Canvas canvas = new Canvas(croppedBitmap);
                     canvas.drawBitmap(rotatedBitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
                     rotatedBitmap.recycle();

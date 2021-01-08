@@ -56,13 +56,7 @@ public class ImageCropper {
             m.postScale(state.vFlipped ? -state.scale : state.scale, state.hFlipped ? -state.scale : state.scale, centerX, centerY);
             m.postTranslate(-state.cropOffsetX, -state.cropOffsetY);
 
-            Bitmap cropped;
-            if (Build.VERSION.SDK_INT >= 26) {
-                cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, Bitmap.Config.RGBA_F16);
-            } else {
-                cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, Bitmap.Config.ARGB_8888);
-            }
-
+            Bitmap cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, MediaUtils.getBitmapConfig(bitmap.getConfig()));
             Canvas canvas = new Canvas(cropped);
             canvas.drawBitmap(bitmap, m, null);
 

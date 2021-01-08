@@ -293,7 +293,7 @@ public class MediaUtils {
             if (cropRect != null && !(cropRect.left == 0 && cropRect.top == 0 && cropRect.right == 1 && cropRect.bottom == 1)) {
                 final Rect bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
                         (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
-                croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), Bitmap.Config.ARGB_8888);
+                croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), getBitmapConfig(bitmap.getConfig()));
                 final Canvas canvas = new Canvas(croppedBitmap);
                 canvas.drawColor(0xffffffff); // white background in case image has transparency
                 canvas.drawBitmap(bitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
@@ -301,7 +301,7 @@ public class MediaUtils {
             } else {
                 if (bitmap.getPixel(0,0) == 0) {
                     // white background in case image has transparency
-                    croppedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                    croppedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), getBitmapConfig(bitmap.getConfig()));
                     final Canvas canvas = new Canvas(croppedBitmap);
                     canvas.drawColor(0xffffffff);
                     canvas.drawBitmap(bitmap, 0, 0, null);
@@ -365,7 +365,7 @@ public class MediaUtils {
     }
 
     public static @NonNull Bitmap getCircledBitmap(@NonNull Bitmap bitmap) {
-        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), getBitmapConfig(bitmap.getConfig()));
         final Canvas canvas = new Canvas(output);
         final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -470,5 +470,13 @@ public class MediaUtils {
         }
 
         return dates;
+    }
+
+    public static @NonNull Bitmap.Config getBitmapConfig(@Nullable Bitmap.Config config) {
+        if (config != Bitmap.Config.ARGB_8888 && Build.VERSION.SDK_INT >= 26) {
+            return Bitmap.Config.RGBA_F16; // Wide color gamut
+        } else {
+            return Bitmap.Config.ARGB_8888; // sRGB
+        }
     }
 }

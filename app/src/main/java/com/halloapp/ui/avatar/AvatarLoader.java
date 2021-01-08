@@ -26,6 +26,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.Downloader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -250,7 +251,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             return ((BitmapDrawable)drawable).getBitmap();
         }
 
-        final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), MediaUtils.getBitmapConfig(null));
         final Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
