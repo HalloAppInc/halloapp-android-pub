@@ -1047,11 +1047,12 @@ public class NewConnection extends Connection {
                     Log.i("connection: got group change message " + ProtoPrinter.toString(msg));
                     GroupStanza groupStanza = msg.getGroupStanza();
 
+                    Map<UserId, String> nameMap = new HashMap<>();
                     long rawUserId = groupStanza.getSenderUid();
                     UserId senderUserId = rawUserId != 0 ? getUserId(Long.toString(rawUserId)) : null;
                     String senderName = groupStanza.getSenderName();
                     if (!TextUtils.isEmpty(senderName) && rawUserId != 0) {
-                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(senderUserId, senderName));
+                        nameMap.put(senderUserId, senderName);
                     }
 
                     String ackId = msg.getId();
@@ -1061,7 +1062,17 @@ public class NewConnection extends Connection {
                     if (members != null) {
                         for (GroupMember member : members) {
                             elements.add(new MemberElement(member));
+                            long rawMemberId = member.getUid();
+                            UserId memberUserId = rawMemberId != 0 ? getUserId(Long.toString(rawMemberId)) : null;
+                            String memberName = member.getName();
+                            if (!TextUtils.isEmpty(memberName) && rawMemberId != 0) {
+                                nameMap.put(memberUserId, member.getName());
+                            }
                         }
+                    }
+
+                    if (!nameMap.isEmpty()) {
+                        connectionObservers.notifyUserNamesReceived(nameMap);
                     }
 
                     handled = true;
