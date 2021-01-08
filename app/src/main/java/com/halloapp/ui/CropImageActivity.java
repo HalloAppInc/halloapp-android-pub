@@ -59,6 +59,8 @@ public class CropImageActivity extends HalloActivity {
     private MediaThumbnailLoader mediaLoader;
     private CropImageViewModel.MediaModel selected;
     private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
+    private final float previewSelectedAlpha = 1.0f;
+    private final float previewDefaultAlpha = .6f;
     private boolean transitionStarted = false;
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -171,6 +173,7 @@ public class CropImageActivity extends HalloActivity {
         // Drag & drop all views except the last one which contains an add button
         final ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             private int start = -1, end = -1;
+            private float alpha;
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -193,6 +196,7 @@ public class CropImageActivity extends HalloActivity {
                 }
 
                 start = end = -1;
+                ((MediaListAdapter.ViewHolder)viewHolder).thumbnailView.setAlpha(alpha);
             }
 
             @Override
@@ -202,6 +206,17 @@ public class CropImageActivity extends HalloActivity {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.START | ItemTouchHelper.END);
+            }
+
+            @Override
+            public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+                super.onSelectedChanged(viewHolder, actionState);
+
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    ImageView thumbnail = ((MediaListAdapter.ViewHolder)viewHolder).thumbnailView;
+                    alpha = thumbnail.getAlpha();
+                    thumbnail.setAlpha(previewSelectedAlpha);
+                }
             }
         });
 
@@ -395,11 +410,12 @@ public class CropImageActivity extends HalloActivity {
             }
 
             if (viewModel.getSelectedPosition() == position) {
-                holder.thumbnailView.setAlpha(1.0f);
+                holder.thumbnailView.setAlpha(previewSelectedAlpha);
                 holder.itemView.setBackgroundResource(R.drawable.media_preview_item_selected);
             } else {
-                holder.thumbnailView.setAlpha(.6f);
+                holder.thumbnailView.setAlpha(previewDefaultAlpha);
                 holder.itemView.setBackgroundResource(R.drawable.media_preview_item_default);
+                holder.itemView.setBackgroundResource(0);
             }
 
             holder.thumbnailView.setOnClickListener(v -> onMediaSelect(media, position));
