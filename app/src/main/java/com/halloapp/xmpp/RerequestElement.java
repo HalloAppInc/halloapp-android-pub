@@ -12,13 +12,11 @@ public class RerequestElement {
 
     public final String id;
     public final String messageId;
-    public final String identityKey;
     public final UserId originalSender;
 
-    public RerequestElement(String messageId, UserId originalSender, String identityKey) {
+    public RerequestElement(String messageId, UserId originalSender) {
         this.id = RandomId.create();
         this.messageId = messageId;
-        this.identityKey = identityKey;
         this.originalSender = originalSender;
     }
 

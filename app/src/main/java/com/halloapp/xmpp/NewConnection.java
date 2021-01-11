@@ -725,7 +725,7 @@ public class NewConnection extends Connection {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
-            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, encodedIdentityKey);
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });
