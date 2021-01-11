@@ -246,6 +246,31 @@ public class ContentComposerActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
 
+        mediaPager = findViewById(R.id.media_pager);
+        mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
+        mediaPager.setVisibility(View.GONE);
+        mediaPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                clearEditFocus();
+                updateMediaButtons();
+                final int currentPosition = Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - position : position;
+                refreshVideoPlayers(currentPosition);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
+        mediaPagerAdapter = new MediaPagerAdapter();
+        mediaPager.setAdapter(mediaPagerAdapter);
+
         editText.setVisibility(View.VISIBLE);
         editText.setMentionPickerView(mentionPickerView);
         editText.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
@@ -302,32 +327,6 @@ public class ContentComposerActivity extends HalloActivity {
             public void afterTextChanged(Editable editable) {
             }
         });
-
-
-        mediaPager = findViewById(R.id.media_pager);
-        mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
-        mediaPager.setVisibility(View.GONE);
-        mediaPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                clearEditFocus();
-                updateMediaButtons();
-                final int currentPosition = Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - position : position;
-                refreshVideoPlayers(currentPosition);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-
-        mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
-        mediaPagerAdapter = new MediaPagerAdapter();
-        mediaPager.setAdapter(mediaPagerAdapter);
 
         drawDelegateView = findViewById(R.id.draw_delegate);
 
