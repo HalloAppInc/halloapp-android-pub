@@ -130,7 +130,7 @@ public class ContentDb {
         this.serverProps = serverProps;
 
         mentionsDb = new MentionsDb(databaseHelper);
-        messagesDb = new MessagesDb(mentionsDb, databaseHelper, fileStore);
+        messagesDb = new MessagesDb(fileStore, mentionsDb, serverProps, databaseHelper);
         postsDb = new PostsDb(mentionsDb, databaseHelper, fileStore, serverProps);
     }
 

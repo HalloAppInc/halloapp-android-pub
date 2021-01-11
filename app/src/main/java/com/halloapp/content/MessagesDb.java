@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
-import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.GroupMembersTable;
@@ -44,14 +43,20 @@ import java.util.List;
 
 class MessagesDb {
 
-    private final MentionsDb mentionsDb;
-    private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
+    private final MentionsDb mentionsDb;
+    private final ServerProps serverProps;
+    private final ContentDbHelper databaseHelper;
 
-    MessagesDb(MentionsDb mentionsDb, ContentDbHelper databaseHelper, FileStore fileStore) {
-        this.mentionsDb = mentionsDb;
-        this.databaseHelper = databaseHelper;
+    MessagesDb(
+            FileStore fileStore,
+            MentionsDb mentionsDb,
+            ServerProps serverProps,
+            ContentDbHelper databaseHelper) {
         this.fileStore = fileStore;
+        this.mentionsDb = mentionsDb;
+        this.serverProps = serverProps;
+        this.databaseHelper = databaseHelper;
     }
 
     @WorkerThread
@@ -1403,7 +1408,7 @@ class MessagesDb {
                         cursor.getString(8),
                         cursor.getString(9),
                         cursor.getInt(10) == 1);
-                if (Constants.REMOVE_GROUP_CHATS && chat.isGroup) {
+                if (!serverProps.getGroupChatsEnabled() && chat.isGroup) {
                     continue;
                 }
                 chats.add(chat);
@@ -1513,7 +1518,7 @@ class MessagesDb {
     @WorkerThread
     int getUnseenChatsCount() {
         String query = "SELECT count(*) FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ">0";
-        if (Constants.REMOVE_GROUP_CHATS) {
+        if (!serverProps.getGroupChatsEnabled()) {
             query += " AND " + ChatsTable.COLUMN_IS_GROUP + "!=1";
         }
         return (int)DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), query, null);
