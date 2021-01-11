@@ -1,6 +1,7 @@
 package com.halloapp.content;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.lang.annotation.Retention;
@@ -132,5 +133,11 @@ public class Media {
                 type == media.type &&
                 Objects.equals(file, media.file) &&
                 transferred == media.transferred;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Media {rowId:" + rowId + ", type:" + type + ", initialState:" + initialState + ", transferred:" + transferred + '}';
     }
 }
