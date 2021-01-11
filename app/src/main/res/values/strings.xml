@@ -270,6 +270,7 @@
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <string name="menu_item_block_user">Block user</string>
+    <string name="picker_title_block_user">Block user</string>
     <string name="cancel">Cancel</string>
     <string name="empty_block_list">No blocked contacts</string>
     <string name="block_notification">You blocked this contact. Tap to unblock</string>

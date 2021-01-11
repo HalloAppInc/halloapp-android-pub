@@ -6,11 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +23,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +45,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -69,6 +64,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     private static final String EXTRA_SHOW_INVITE = "show_invite_option";
     private static final String EXTRA_SHOW_CREATE_GROUP = "show_create_group";
     private static final String EXTRA_EXCLUDE_UIDS = "excluded_uids";
+    private static final String EXTRA_TITLE_RES = "title_res";
     public static final String RESULT_SELECTED_ID = "selected_id";
     public static final String RESULT_SELECTED_CONTACT = "selected_contact";
 
@@ -83,6 +79,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         Intent intent = new Intent(context, ContactsActivity.class);
         intent.putExtra(EXTRA_SHOW_INVITE, false);
         intent.putExtra(EXTRA_SHOW_CREATE_GROUP, false);
+        intent.putExtra(EXTRA_TITLE_RES, R.string.picker_title_block_user);
         if (disabledUserIds != null) {
             intent.putParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS, new ArrayList<>(disabledUserIds));
         }
@@ -111,6 +108,11 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        int titleRes = getIntent().getIntExtra(EXTRA_TITLE_RES, 0);
+        if (titleRes != 0) {
+            setTitle(titleRes);
+        }
 
         EditText searchBox = findViewById(R.id.search_text);
         searchBox.addTextChangedListener(new TextWatcher() {
