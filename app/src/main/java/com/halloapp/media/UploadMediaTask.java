@@ -15,12 +15,10 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.proto.log_events.MediaDownload;
 import com.halloapp.proto.log_events.MediaUpload;
-import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
@@ -36,7 +34,6 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
 public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 

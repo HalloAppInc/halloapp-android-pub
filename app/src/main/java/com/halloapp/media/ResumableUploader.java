@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -32,6 +33,7 @@ public class ResumableUploader {
 
     @WorkerThread
     public static int sendHeadRequest(@NonNull String url) throws IOException {
+        ThreadUtils.setSocketTag();
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
@@ -54,6 +56,8 @@ public class ResumableUploader {
 
     @WorkerThread
     public static String sendPatchRequest(File file, long offset, @NonNull String url, @Nullable ResumableUploadListener listener) throws IOException {
+        ThreadUtils.setSocketTag();
+
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
         connection.setChunkedStreamingMode(BUFFER_SIZE);
