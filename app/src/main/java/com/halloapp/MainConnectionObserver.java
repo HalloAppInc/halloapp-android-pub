@@ -243,12 +243,14 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
-        Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
-        if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-            contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-            encryptedSessionManager.sendMessage(message, false);
-        }
-        connection.sendAck(stanzaId);
+        bgWorkers.execute(() -> {
+            Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
+            if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
+                encryptedSessionManager.sendMessage(message, false);
+            }
+            connection.sendAck(stanzaId);
+        });
     }
 
     @Override

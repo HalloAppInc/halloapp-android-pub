@@ -19,6 +19,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.id.ChatId;
@@ -1108,6 +1109,7 @@ public class NewConnection extends Connection {
                         if (!Arrays.equals(receivedIdentityKey, storedIdentityKey)) {
                             Log.w("Received identity key does not match stored key. Received: " + Hex.bytesToStringLowercase(receivedIdentityKey) + " stored: " + Hex.bytesToStringLowercase(storedIdentityKey));
                             Log.sendErrorReport("Rerequest identity key mismatch");
+                            EncryptedSessionManager.getInstance().tearDownSession(userId);
                         }
                     } catch (NullPointerException e) {
                         Log.w("Failed to compare received and stored identity keys", e);
