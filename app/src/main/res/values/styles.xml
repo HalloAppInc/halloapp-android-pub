@@ -231,6 +231,7 @@
 
     <style name="TextAppearance.BottomNavigationView" parent="@style/TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">11sp</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
