@@ -1,8 +1,11 @@
 package com.halloapp;
 
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -29,11 +32,29 @@ public class DebugActivity extends HalloActivity {
         EditText audioBitrateView = findViewById(R.id.audio_bitrate);
         EditText h264ResView = findViewById(R.id.h264_res);
         EditText h265ResView = findViewById(R.id.h265_res);
+        TextView supportsWideColor = findViewById(R.id.supports_wide_color);
 
         videoBitrateView.setText(Integer.toString(Constants.VIDEO_BITRATE));
         audioBitrateView.setText(Integer.toString(Constants.AUDIO_BITRATE));
         h264ResView.setText(Integer.toString(Constants.VIDEO_RESOLUTION_H264));
         h265ResView.setText(Integer.toString(Constants.VIDEO_RESOLUTION_H265));
+
+        if (Build.VERSION.SDK_INT < 26) {
+            supportsWideColor.setText("Wide color not supported: SDK < 26");
+        } else if (!getResources().getConfiguration().isScreenWideColorGamut()) {
+            supportsWideColor.setText("Wide color not supported: screen not wide color");
+        } else if (!getWindowManager().getDefaultDisplay().isWideColorGamut()) {
+            supportsWideColor.setText("Wide color not supported: default display not wide color");
+        } else {
+            getWindow().setColorMode(ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT);
+            if (getWindow().getColorMode() != ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT) {
+                supportsWideColor.setText("Failed to set window color mode to wide color");
+            } else if (Build.VERSION.SDK_INT >= 27 && !getWindow().isWideColorGamut()) {
+                supportsWideColor.setText("Wide color mode set but device does not support wide color");
+            } else {
+                supportsWideColor.setText("Supports wide color");
+            }
+        }
 
         View saveBtn = findViewById(R.id.save);
         saveBtn.setOnClickListener(v -> {

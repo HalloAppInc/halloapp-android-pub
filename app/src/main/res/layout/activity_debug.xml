@@ -5,97 +5,109 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/save"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:orientation="vertical">
-
-        <com.google.android.material.textfield.TextInputLayout
+        >
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            app:errorEnabled="true"
-            app:boxBackgroundColor="@color/settings_text_entry_background"
-            app:boxStrokeColor="@color/color_secondary"
-            app:hintTextColor="@color/color_secondary"
-            android:hint="Audio Bitrate">
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/audio_bitrate"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:inputType="number"
-                android:maxLines="1"/>
+                android:layout_marginTop="28dp"
+                app:errorEnabled="true"
+                app:boxBackgroundColor="@color/settings_text_entry_background"
+                app:boxStrokeColor="@color/color_secondary"
+                app:hintTextColor="@color/color_secondary"
+                android:hint="Audio Bitrate">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/audio_bitrate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:inputType="number"
+                    android:maxLines="1"/>
 
 
-        </com.google.android.material.textfield.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            app:errorEnabled="true"
-            app:boxBackgroundColor="@color/settings_text_entry_background"
-            app:boxStrokeColor="@color/color_secondary"
-            app:hintTextColor="@color/color_secondary"
-            android:hint="Video Bitrate">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/video_bitrate"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:inputType="number"
-                android:maxLines="1"/>
+                android:layout_marginTop="28dp"
+                app:errorEnabled="true"
+                app:boxBackgroundColor="@color/settings_text_entry_background"
+                app:boxStrokeColor="@color/color_secondary"
+                app:hintTextColor="@color/color_secondary"
+                android:hint="Video Bitrate">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/video_bitrate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:inputType="number"
+                    android:maxLines="1"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            app:errorEnabled="true"
-            app:boxBackgroundColor="@color/settings_text_entry_background"
-            app:boxStrokeColor="@color/color_secondary"
-            app:hintTextColor="@color/color_secondary"
-            android:hint="H265 Resolution">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/h265_res"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:inputType="number"
-                android:maxLines="1"/>
+                android:layout_marginTop="28dp"
+                app:errorEnabled="true"
+                app:boxBackgroundColor="@color/settings_text_entry_background"
+                app:boxStrokeColor="@color/color_secondary"
+                app:hintTextColor="@color/color_secondary"
+                android:hint="H265 Resolution">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/h265_res"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:inputType="number"
+                    android:maxLines="1"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            app:errorEnabled="true"
-            app:boxBackgroundColor="@color/settings_text_entry_background"
-            app:boxStrokeColor="@color/color_secondary"
-            app:hintTextColor="@color/color_secondary"
-            android:hint="H264 Resolution">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/h264_res"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:inputType="number"
-                android:maxLines="1"/>
+                android:layout_marginTop="28dp"
+                app:errorEnabled="true"
+                app:boxBackgroundColor="@color/settings_text_entry_background"
+                app:boxStrokeColor="@color/color_secondary"
+                app:hintTextColor="@color/color_secondary"
+                android:hint="H264 Resolution">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/h264_res"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:inputType="number"
+                    android:maxLines="1"/>
 
-    </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/supports_wide_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Button"
