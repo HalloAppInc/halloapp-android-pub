@@ -21,11 +21,14 @@ import com.halloapp.R;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -163,6 +166,14 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     public void showResult(@NonNull View view, @Nullable Chat result) {
                         if (result != null) {
                             groupView.setText(result.name);
+                            groupView.setOnClickListener(v -> {
+                                ChatId chatId = result.chatId;
+                                if (!(chatId instanceof GroupId)) {
+                                    Log.w("Cannot open group feed for non-group " + chatId);
+                                    return;
+                                }
+                                parent.startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
+                            });
                         } else {
                             Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
                         }
@@ -174,6 +185,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     }
                 }, post.getParentGroup());
             } else {
+                groupView.setClickable(false);
                 parent.getChatLoader().cancel(groupView);
                 postHeader.setGroupAttributionVisible(false);
             }
