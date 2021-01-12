@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">HalloApp</string>
     <string name="title_home">Home</string>
-    <string name="title_messages">Messages</string>
+    <string name="title_messages">Chats</string>
     <string name="title_profile">Profile</string>
     <string name="title_groups">Groups</string>
     <string name="comment">Comment</string>
