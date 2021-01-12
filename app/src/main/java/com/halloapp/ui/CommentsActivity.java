@@ -54,6 +54,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
+import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.Preconditions;
@@ -544,9 +545,9 @@ public class CommentsActivity extends HalloActivity {
                 imageView.setAdjustViewBounds(true);
                 mediaThumbnailLoader.load(imageView, media.get(position));
                 imageView.setOnClickListener(v -> {
-                    ArrayList<MediaExplorerActivity.Model> data = new ArrayList<>(media.size());
+                    ArrayList<MediaExplorerViewModel.MediaModel> data = new ArrayList<>(media.size());
                     for (final Media item : media) {
-                        data.add(new MediaExplorerActivity.Model(Uri.fromFile(item.file), item.type));
+                        data.add(new MediaExplorerViewModel.MediaModel(Uri.fromFile(item.file), item.type));
                     }
 
                     Intent intent = new Intent(imageView.getContext(), MediaExplorerActivity.class);

@@ -268,6 +268,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (!message.media.isEmpty() && mediaPagerAdapter != null) {
+            mediaPagerAdapter.setChat(message.chatId);
             mediaPagerAdapter.setMedia(message.media);
             mediaPagerAdapter.setContentId(message.id);
             if (message.media.size() > 1) {

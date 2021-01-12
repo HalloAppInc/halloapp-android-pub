@@ -700,8 +700,28 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable Message getMessageForMedia(long mediaRowId) {
+        return messagesDb.getMessageForMedia(mediaRowId);
+    }
+
+    @WorkerThread
     @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
         return messagesDb.getMessages(chatId, startRowId, count, after);
+    }
+
+    @WorkerThread
+    public @NonNull List<Media> getChatMedia(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
+        return messagesDb.getChatMedia(chatId, startRowId, count, after);
+    }
+
+    @WorkerThread
+    public long getChatMediaPosition(ChatId chatId, long rowId) {
+        return messagesDb.getChatMediaPosition(chatId, rowId);
+    }
+
+    @WorkerThread
+    public long getChatMediaCount(ChatId chatId) {
+        return messagesDb.getChatMediaCount(chatId);
     }
 
     @WorkerThread

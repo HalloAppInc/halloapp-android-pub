@@ -28,8 +28,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
+import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
@@ -48,6 +50,8 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     private List<Media> media;
     private String contentId;
     private RecyclerView recyclerView;
+    private boolean isChatMedia = false;
+    private ChatId chatId;
 
     private boolean overrideMediaPadding = false;
     private int mediaInsetLeft;
@@ -106,6 +110,11 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
     public void setContentId(@NonNull String contentId) {
         this.contentId = contentId;
+    }
+
+    public void setChat(ChatId chatId) {
+        isChatMedia = true;
+        this.chatId = chatId;
     }
 
     @NonNull
@@ -204,15 +213,18 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
     private void exploreMedia(View view, int position) {
         Context ctx = recyclerView.getContext();
-        ArrayList<MediaExplorerActivity.Model> data = new ArrayList<>(media.size());
+        ArrayList<MediaExplorerViewModel.MediaModel> data = new ArrayList<>(media.size());
         for (final Media item : media) {
-            data.add(new MediaExplorerActivity.Model(Uri.fromFile(item.file), item.type));
+            data.add(new MediaExplorerViewModel.MediaModel(Uri.fromFile(item.file), item.type, item.rowId));
         }
 
         Intent intent = new Intent(ctx, MediaExplorerActivity.class);
         intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
         intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
         intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
+        if (isChatMedia) {
+            intent.putExtra(MediaExplorerActivity.EXTRA_CHAT_ID, chatId);
+        }
 
         if (ctx instanceof HalloActivity) {
             HalloActivity activity = (HalloActivity)ctx;

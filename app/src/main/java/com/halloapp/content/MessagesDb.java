@@ -6,6 +6,7 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
 import android.util.Size;
@@ -1018,6 +1019,24 @@ class MessagesDb {
     }
 
     @WorkerThread
+    @Nullable Message getMessageForMedia(long mediaRowId) {
+        String sql =
+            "SELECT " + MediaTable.COLUMN_PARENT_ROW_ID + " " +
+            "FROM " + MediaTable.TABLE_NAME + " " +
+            "WHERE " + MediaTable._ID + "=" + mediaRowId + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'";
+
+        long messageRowId;
+        try {
+            messageRowId = DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), sql, null);
+        } catch (SQLiteDoneException e) {
+            Log.w("ContentDb.getMessageForMedia: Unable to get message media with id " + mediaRowId + " due to " + e.getMessage());
+            return null;
+        }
+
+        return getMessage(messageRowId);
+    }
+
+    @WorkerThread
     @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -1133,6 +1152,82 @@ class MessagesDb {
         Log.i("ContentDb.getMessages: start=" + startRowId + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
 
         return messages;
+    }
+
+    @WorkerThread
+    @NonNull List<Media> getChatMedia(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
+        final ArrayList<Media> items = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "'";
+        if (startRowId != null) {
+            where += " AND m." + MediaTable._ID + (after ? ">" : "<") + startRowId;
+        }
+
+        final String sql =
+            "SELECT " +
+                "m." + MediaTable._ID + "," +
+                "m." + MediaTable.COLUMN_TYPE + "," +
+                "m." + MediaTable.COLUMN_URL + "," +
+                "m." + MediaTable.COLUMN_FILE + "," +
+                "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                "m." + MediaTable.COLUMN_WIDTH + "," +
+                "m." + MediaTable.COLUMN_HEIGHT + "," +
+                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
+            "INNER JOIN " + MediaTable.TABLE_NAME + " " +
+                "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + where + " " +
+            "ORDER BY m." + MediaTable._ID + (after ? " ASC " : " DESC ") +
+            "LIMIT " + count;
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                Media media = new Media(
+                    cursor.getLong(0),
+                    cursor.getInt(1),
+                    cursor.getString(2),
+                    fileStore.getMediaFile(cursor.getString(3)),
+                    null,
+                    null,
+                    cursor.getInt(5),
+                    cursor.getInt(6),
+                    cursor.getInt(7));
+                media.encFile = fileStore.getTmpFile(cursor.getString(4));
+
+                items.add(media);
+            }
+        }
+
+        if (!after) {
+            Collections.reverse(items);
+        }
+
+        Log.i("ContentDb.getChatMedia: start=" + startRowId + " count=" + count + " after=" + after + " media.size=" + items.size());
+
+        return items;
+    }
+
+    @WorkerThread
+    long getChatMediaPosition(ChatId chatId, long rowId) {
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "' AND m." + MediaTable._ID + "<" + rowId;
+        String sql =
+            "SELECT COUNT(*) FROM " + MessagesTable.TABLE_NAME + " " +
+            "INNER JOIN " + MediaTable.TABLE_NAME + " " +
+            "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+            "WHERE " + where + " ";
+        return DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), sql, null);
+    }
+
+    @WorkerThread
+    long getChatMediaCount(ChatId chatId) {
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "'";
+        String sql =
+                "SELECT COUNT(*) FROM " + MessagesTable.TABLE_NAME + " " +
+                        "INNER JOIN " + MediaTable.TABLE_NAME + " " +
+                        "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "WHERE " + where + " ";
+        return DatabaseUtils.longForQuery(databaseHelper.getReadableDatabase(), sql, null);
     }
 
     @WorkerThread

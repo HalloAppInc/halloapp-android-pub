@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.Handler;
 import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,10 +19,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.SharedElementCallback;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -40,6 +42,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -50,6 +53,7 @@ import com.halloapp.util.logs.Log;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -59,18 +63,22 @@ public class MediaExplorerActivity extends HalloActivity {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_CONTENT_ID = "content-id";
+    public static final String EXTRA_CHAT_ID = "chat-id";
 
     private int swipeExitStartThreshold;
     private int swipeExitFinishThreshold;
     private float swipeExitTransDistance;
 
+    private MediaExplorerViewModel viewModel;
     private ViewPager2 pager;
+    private final MediaExplorerAdapter adapter = new MediaExplorerAdapter();
     private CircleIndicator3 indicator;
-    private ArrayList<Model> data = new ArrayList<>();
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
-    private String contentId;
     private ImageView transitionImage;
+    private boolean isExiting = false;
+    private final HashSet<PlayerView> playerViews = new HashSet<>();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     final private Transition.TransitionListener transitionListener = new Transition.TransitionListener() {
         @Override
@@ -106,11 +114,69 @@ public class MediaExplorerActivity extends HalloActivity {
         public void onTransitionResume(Transition transition) { }
     };
 
+    final private SharedElementCallback sharedElementCallback = new SharedElementCallback() {
+        @Override
+        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+            sharedElements.put(transitionImage.getTransitionName(), transitionImage);
+        }
+
+        @Override
+        public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+            if (sharedElementSnapshots.size() < 1 || sharedElementSnapshots.get(0) == null) {
+                return;
+            }
+
+            Rect snapshotFrame = getFrame(sharedElementSnapshots.get(0));
+            Rect containerFrame = getFrame(findViewById(R.id.main));
+
+            float scale = Math.min((float)containerFrame.width() / (float)snapshotFrame.width(), (float)containerFrame.height() / (float)snapshotFrame.height());
+            int width = (int)((float)snapshotFrame.width() * scale);
+            int height = (int)((float)snapshotFrame.height() * scale);
+            int centerX = containerFrame.centerX();
+            int centerY = containerFrame.centerY();
+
+            MediaExplorerViewModel.MediaModel model = getCurrentItem();
+            View mediaView = pager.findViewWithTag(model);
+            if (mediaView != null) {
+                centerX += mediaView.getTranslationX();
+                centerY += mediaView.getTranslationY();
+                width *= mediaView.getScaleX();
+                height *= mediaView.getScaleY();
+            }
+
+            // Layout is executed only after the transition, where as setLeft, ..., have immediate
+            // effect but are not kept after transition
+            View transitionView = sharedElements.get(0);
+            transitionView.setLeft(centerX - width / 2);
+            transitionView.setTop(centerY - height / 2);
+            transitionView.setBottom(centerY + height / 2);
+            transitionView.setRight(centerX + width / 2);
+
+            // Layout is executed only after the transition, but the state is kept
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)transitionView.getLayoutParams();
+            params.width = width;
+            params.height = height;
+            params.topMargin = centerY - height / 2;
+            params.leftMargin = centerX - width / 2;
+            transitionView.setLayoutParams(params);
+        }
+
+        @NonNull
+        private Rect getFrame(@NonNull View view) {
+            int[] location = new int[2];
+            view.getLocationInWindow(location);
+
+            return new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setEnterSharedElementCallback(sharedElementCallback);
         postponeEnterTransition();
 
         swipeExitStartThreshold = getResources().getDimensionPixelSize(R.dimen.swipe_exit_start_threshold);
@@ -120,55 +186,94 @@ public class MediaExplorerActivity extends HalloActivity {
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
-        toggleSystemUI();
 
         setContentView(R.layout.activity_media_explorer);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Preconditions.checkNotNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_arrow_left_stroke);
 
-        data = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
-        if (data == null || data.size() == 0) {
-            finish();
-            return;
-        }
-
-        contentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
-
         pager = findViewById(R.id.media_pager);
-        pager.setAdapter(new MediaExplorerAdapter(data));
+        pager.setAdapter(adapter);
         pager.setPageTransformer(new MarginPageTransformer(getResources().getDimensionPixelSize(R.dimen.explorer_pager_margin)));
-
-        indicator = findViewById(R.id.media_pager_indicator);
-        indicator.setViewPager(pager);
-        indicator.setVisibility(data.size() > 1 ? View.VISIBLE : View.GONE);
-
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
 
-                if (0 <= position && position < data.size()) {
-                    handlePlaybackOnPageChange(position);
-                    updatePlaybackControlsVisibility();
-                }
+                viewModel.setPosition(position);
+
+                handlePlaybackOnPageChange();
+                updatePlaybackControlsVisibility();
             }
         });
 
-        pager.setCurrentItem(getIntent().getIntExtra(EXTRA_SELECTED, 0), false);
+        int selected = getIntent().getIntExtra(EXTRA_SELECTED, 0);
+
+        indicator = findViewById(R.id.media_pager_indicator);
+        transitionImage = findViewById(R.id.transition_image);
+        transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(getIntent().getStringExtra(EXTRA_CONTENT_ID), selected));
+        getWindow().getSharedElementEnterTransition().addListener(transitionListener);
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
 
-        transitionImage = findViewById(R.id.transition_image);
-        transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, pager.getCurrentItem()));
-        getWindow().getSharedElementEnterTransition().addListener(transitionListener);
+        ArrayList<MediaExplorerViewModel.MediaModel> media = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
+        if (media == null || media.size() == 0) {
+            finish();
+            return;
+        }
 
+        setupViewModel(getIntent().getParcelableExtra(EXTRA_CHAT_ID), media, selected);
+    }
+
+    private void setupViewModel(@Nullable ChatId chatId, @NonNull List<MediaExplorerViewModel.MediaModel> media, int selected) {
+        MediaExplorerViewModel.Factory factory = new MediaExplorerViewModel.Factory(getApplication(), chatId, media, selected);
+        viewModel = new ViewModelProvider(this, factory).get(MediaExplorerViewModel.class);
+
+        viewModel.getMedia().observe(this, list -> {
+            adapter.submitList(list);
+
+            if (viewModel.isInitializationInProgress()) {
+                viewModel.setInitializationInProgress(false);
+                finishInitialization(chatId, media, selected);
+            }
+        });
+    }
+
+    private void finishInitialization(@Nullable ChatId chatId, @NonNull List<MediaExplorerViewModel.MediaModel> media, int selected) {
+        if (media.size() > 1 && chatId == null) {
+            indicator.setVisibility(View.VISIBLE);
+            indicator.setViewPager(pager);
+        } else {
+            indicator.setVisibility(View.GONE);
+        }
+
+        toggleSystemUI();
+
+        if (chatId == null) {
+            viewModel.setPosition(selected);
+            pager.setCurrentItem(viewModel.getPosition(), false);
+            finishEnterTransitionWhenReady();
+        } else {
+            bgWorkers.execute(() -> {
+                viewModel.setPosition(viewModel.getPositionInChat(media.get(selected).rowId));
+                pager.setCurrentItem(viewModel.getPosition(), false);
+                new Handler(getMainLooper()).post(this::finishEnterTransitionWhenReady);
+            });
+        }
+    }
+
+    @MainThread
+    private void finishEnterTransitionWhenReady() {
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                final Model model = data.get(pager.getCurrentItem());
-                BgWorkers.getInstance().execute(() -> {
+                MediaExplorerViewModel.MediaModel model = getCurrentItem();
+                if (model == null) {
+                    return;
+                }
+
+                bgWorkers.execute(() -> {
                     Bitmap bitmap;
                     try {
                         bitmap = MediaUtils.decode(new File(model.uri.getPath()), model.type, Constants.MAX_IMAGE_DIMENSION);
@@ -186,62 +291,10 @@ public class MediaExplorerActivity extends HalloActivity {
                 });
             }
         });
+    }
 
-        setEnterSharedElementCallback(new SharedElementCallback() {
-            @Override
-            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                sharedElements.put(transitionImage.getTransitionName(), transitionImage);
-            }
-
-            @Override
-            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                if (sharedElementSnapshots.size() < 1 || sharedElementSnapshots.get(0) == null) {
-                    return;
-                }
-
-                Rect snapshotFrame = getFrame(sharedElementSnapshots.get(0));
-                Rect containerFrame = getFrame(findViewById(R.id.main));
-
-                float scale = Math.min((float)containerFrame.width() / (float)snapshotFrame.width(), (float)containerFrame.height() / (float)snapshotFrame.height());
-                int width = (int)((float)snapshotFrame.width() * scale);
-                int height = (int)((float)snapshotFrame.height() * scale);
-                int centerX = containerFrame.centerX();
-                int centerY = containerFrame.centerY();
-
-                Model model = data.get(pager.getCurrentItem());
-                View mediaView = pager.findViewWithTag(model);
-                if (mediaView != null) {
-                    centerX += mediaView.getTranslationX();
-                    centerY += mediaView.getTranslationY();
-                    width *= mediaView.getScaleX();
-                    height *= mediaView.getScaleY();
-                }
-
-                // Layout is executed only after the transition, where as setLeft, ..., have immediate
-                // effect but are not kept after transition
-                View view = sharedElements.get(0);
-                view.setLeft(centerX - width / 2);
-                view.setTop(centerY - height / 2);
-                view.setBottom(centerY + height / 2);
-                view.setRight(centerX + width / 2);
-
-                // Layout is executed only after the transition, but the state is kept
-                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)view.getLayoutParams();
-                params.width = width;
-                params.height = height;
-                params.topMargin = centerY - height / 2;
-                params.leftMargin = centerX - width / 2;
-                view.setLayoutParams(params);
-            }
-
-            @NonNull
-            private Rect getFrame(@NonNull View view) {
-                int[] location = new int[2];
-                view.getLocationInWindow(location);
-
-                return new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
-            }
-        });
+    private MediaExplorerViewModel.MediaModel getCurrentItem() {
+        return adapter.getCurrentList() == null ? null : adapter.getCurrentList().get(viewModel.getPosition());
     }
 
     @Override
@@ -294,9 +347,9 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private boolean shouldAllowSwipeExit() {
-        Model model = data.get(pager.getCurrentItem());
+        MediaExplorerViewModel.MediaModel model = getCurrentItem();
 
-        if (model.type == Media.MEDIA_TYPE_IMAGE) {
+        if (model != null && model.type == Media.MEDIA_TYPE_IMAGE) {
             PhotoView view = pager.findViewWithTag(model);
             return Math.abs(view.getScale() - 1.0) < 0.2;
         }
@@ -306,7 +359,7 @@ public class MediaExplorerActivity extends HalloActivity {
 
     private void cancelSwipeExit() {
         if (swipeExitStart != null && isSwipeExitInProgress) {
-            Model model = data.get(pager.getCurrentItem());
+            MediaExplorerViewModel.MediaModel model = getCurrentItem();
             View view = pager.findViewWithTag(model);
 
             View main = findViewById(R.id.main);
@@ -341,7 +394,7 @@ public class MediaExplorerActivity extends HalloActivity {
             float scale = 1 - progress + swipeExitScale * progress;
             int alpha = (int)(255 * (1 - progress + swipeExitAlpha * progress));
 
-            Model model = data.get(pager.getCurrentItem());
+            MediaExplorerViewModel.MediaModel model = getCurrentItem();
             View view = pager.findViewWithTag(model);
             view.setTranslationX(distanceX);
             view.setTranslationY(distanceY);
@@ -368,13 +421,7 @@ public class MediaExplorerActivity extends HalloActivity {
     private void updatePlaybackControlsVisibility() {
         boolean isShown = isSystemUIShown();
 
-        for (Model model : data) {
-            if (model.type != Media.MEDIA_TYPE_VIDEO) {
-                continue;
-            }
-
-            PlayerView playerView = pager.findViewWithTag(model);
-
+        for (PlayerView playerView : playerViews) {
             if (playerView != null) {
                 if (isShown) {
                     playerView.showController();
@@ -385,11 +432,12 @@ public class MediaExplorerActivity extends HalloActivity {
         }
     }
 
-    private void handlePlaybackOnPageChange(int position) {
+    private void handlePlaybackOnPageChange() {
         stopPlayback();
 
-        if (data.get(position).type == Media.MEDIA_TYPE_VIDEO) {
-            PlayerView playerView = pager.findViewWithTag(data.get(position));
+        MediaExplorerViewModel.MediaModel model = getCurrentItem();
+        if (model != null && model.type == Media.MEDIA_TYPE_VIDEO) {
+            PlayerView playerView = pager.findViewWithTag(model);
 
             if (playerView != null) {
                 SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
@@ -402,12 +450,7 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private void stopPlayback() {
-        for (Model model : data) {
-            if (model.type != Media.MEDIA_TYPE_VIDEO) {
-                continue;
-            }
-
-            PlayerView playerView = pager.findViewWithTag(model);
+        for (PlayerView playerView : playerViews) {
             if (playerView != null) {
                 Player player = playerView.getPlayer();
 
@@ -419,12 +462,7 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private void releasePlayers() {
-        for (Model model : data) {
-            if (model.type != Media.MEDIA_TYPE_VIDEO) {
-                continue;
-            }
-
-            PlayerView playerView = pager.findViewWithTag(model);
+        for (PlayerView playerView : playerViews) {
             if (playerView != null) {
                 Player player = playerView.getPlayer();
 
@@ -438,16 +476,24 @@ public class MediaExplorerActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_CONTENT_ID, contentId);
-        intent.putExtra(EXTRA_SELECTED, pager.getCurrentItem());
+        if (isExiting) {
+            return;
+        }
+        isExiting = true;
 
-        setResult(RESULT_OK, intent);
+        MediaExplorerViewModel.MediaModel model = getCurrentItem();
 
-        Model model = data.get(pager.getCurrentItem());
-        transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, pager.getCurrentItem()));
+        bgWorkers.execute(() -> {
+            String contentId;
+            int selected;
+            if (viewModel.isChat()) {
+                contentId = viewModel.getContentIdInChat(model.rowId);
+                selected = viewModel.getPositionInMessage(model.rowId);
+            } else {
+                contentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
+                selected = viewModel.getPosition();
+            }
 
-        BgWorkers.getInstance().execute(() -> {
             Bitmap bitmap;
             try {
                 bitmap = MediaUtils.decode(new File(model.uri.getPath()), model.type, Constants.MAX_IMAGE_DIMENSION);
@@ -457,15 +503,22 @@ public class MediaExplorerActivity extends HalloActivity {
             }
 
             transitionImage.post(() -> {
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_CONTENT_ID, contentId);
+                intent.putExtra(EXTRA_SELECTED, selected);
+                setResult(RESULT_OK, intent);
+
+                transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
                 transitionImage.setImageBitmap(bitmap);
                 transitionImage.setAlpha(1f);
+
                 finishAfterTransition();
             });
         });
     }
 
     private void toggleSystemUI() {
-        if (data.size() > 1) {
+        if (indicator.getVisibility() == View.VISIBLE) {
             indicator.animate().alpha(isSystemUIShown() ? 0.0f : 1.0f).start();
         }
 
@@ -486,49 +539,13 @@ public class MediaExplorerActivity extends HalloActivity {
         return (getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
     }
 
-    public static class Model implements Parcelable {
-        public Uri uri;
-        public int type;
-
-        public Model(@NonNull Uri uri, int type) {
-            this.uri = uri;
-            this.type = type;
-        }
-
-        private Model(Parcel in) {
-            uri = in.readParcelable(Uri.class.getClassLoader());
-            type = in.readInt();
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int flags) {
-            parcel.writeParcelable(uri, flags);
-            parcel.writeInt(type);
-        }
-
-        public static final Parcelable.Creator<Model> CREATOR = new Parcelable.Creator<Model>() {
-            public Model createFromParcel(Parcel in) {
-                return new Model(in);
-            }
-
-            public Model[] newArray(int size) {
-                return new Model[size];
-            }
-        };
-    }
-
     private abstract static class DefaultHolder extends RecyclerView.ViewHolder {
 
         public DefaultHolder(@NonNull View itemView) {
             super(itemView);
         }
 
-        public abstract void bindTo(@NonNull Model model, int position);
+        public abstract void bindTo(@NonNull MediaExplorerViewModel.MediaModel model, int position);
     }
 
     private class ImageHolder extends DefaultHolder {
@@ -542,10 +559,10 @@ public class MediaExplorerActivity extends HalloActivity {
         }
 
         @Override
-        public void bindTo(@NonNull Model model, int position) {
+        public void bindTo(@NonNull MediaExplorerViewModel.MediaModel model, int position) {
             imageView.setTag(model);
 
-            BgWorkers.getInstance().execute(() -> {
+            bgWorkers.execute(() -> {
                 Bitmap bitmap;
                 try {
                     bitmap = MediaUtils.decodeImage(new File(model.uri.getPath()), Constants.MAX_IMAGE_DIMENSION);
@@ -577,14 +594,24 @@ public class MediaExplorerActivity extends HalloActivity {
             } else {
                 playerView.hideController();
             }
+
+            playerViews.add(playerView);
         }
 
         @Override
-        public void bindTo(@NonNull Model model, int position) {
+        public void bindTo(@NonNull MediaExplorerViewModel.MediaModel model, int position) {
             playerView.setTag(model);
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(model.uri);
+
+            if (playerView.getPlayer() != null) {
+                Player player = playerView.getPlayer();
+                playerView.setPlayer(null);
+
+                player.stop();
+                player.release();
+            }
 
             SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
             playerView.setPlayer(player);
@@ -594,36 +621,61 @@ public class MediaExplorerActivity extends HalloActivity {
         }
     }
 
-    private class MediaExplorerAdapter extends RecyclerView.Adapter<DefaultHolder> {
-        private final ArrayList<Model> models = new ArrayList<>();
+    private static class UnknownHolder extends DefaultHolder {
 
-        MediaExplorerAdapter(@NonNull List<Model> data) {
-            models.addAll(data);
+        public UnknownHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void bindTo(@NonNull MediaExplorerViewModel.MediaModel model, int position) {
+        }
+    }
+
+    private class MediaExplorerAdapter extends PagedListAdapter<MediaExplorerViewModel.MediaModel, DefaultHolder> {
+
+        MediaExplorerAdapter() {
+            super(new DiffUtil.ItemCallback<MediaExplorerViewModel.MediaModel>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull MediaExplorerViewModel.MediaModel oldItem, @NonNull MediaExplorerViewModel.MediaModel newItem) {
+                    return oldItem.rowId == newItem.rowId && oldItem.uri.equals(newItem.uri);
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull MediaExplorerViewModel.MediaModel oldItem, @NonNull MediaExplorerViewModel.MediaModel newItem) {
+                    return oldItem.uri.equals(newItem.uri);
+                }
+            });
         }
 
         @Override
         public int getItemViewType(int position) {
-            return models.get(position).type;
+            MediaExplorerViewModel.MediaModel model = getItem(position);
+            return model != null ? model.type : Media.MEDIA_TYPE_UNKNOWN;
         }
 
         @NonNull
         @Override
         public DefaultHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == Media.MEDIA_TYPE_IMAGE) {
-                return new ImageHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_explorer_image, parent, false));
-            } else {
-                return new VideoHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_explorer_video, parent, false));
+            switch (viewType) {
+                case Media.MEDIA_TYPE_IMAGE:
+                    return new ImageHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_explorer_image, parent, false));
+                case Media.MEDIA_TYPE_VIDEO:
+                    return new VideoHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_explorer_video, parent, false));
+                default:
+                    View view = new View(parent.getContext());
+                    view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    return new UnknownHolder(view);
             }
         }
 
         @Override
         public void onBindViewHolder(@NonNull DefaultHolder holder, int position) {
-            holder.bindTo(models.get(position), position);
-        }
+            MediaExplorerViewModel.MediaModel model = getItem(position);
 
-        @Override
-        public int getItemCount() {
-            return models.size();
+            if (model != null) {
+                holder.bindTo(model, position);
+            }
         }
     }
 }
