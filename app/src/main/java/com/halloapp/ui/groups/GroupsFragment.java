@@ -274,6 +274,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     @Override
                     public void showResult(@NonNull View view, @Nullable Post result) {
                         if (result != null) {
+                            infoView.setVisibility(View.VISIBLE);
                             if (result.type == Post.TYPE_USER) {
                                 bindGroupPostPreview(result);
                             } else if (result.type == Post.TYPE_SYSTEM) {
@@ -281,6 +282,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                             }
                         } else {
                             infoView.setText("");
+                            infoView.setVisibility(View.GONE);
                             timeView.setVisibility(View.GONE);
                             mediaIcon.setVisibility(View.GONE);
                         }
@@ -288,6 +290,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
                     @Override
                     public void showLoading(@NonNull View view) {
+                        infoView.setVisibility(View.VISIBLE);
                         infoView.setText("");
                         mediaIcon.setVisibility(View.GONE);
                     }
