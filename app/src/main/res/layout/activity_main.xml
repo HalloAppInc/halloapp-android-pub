@@ -57,6 +57,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:itemTextAppearanceActive="@style/TextAppearance.BottomNavigationView"
             app:itemTextAppearanceInactive="@style/TextAppearance.BottomNavigationView"
+            app:itemRippleColor="@color/bottom_nav_ripple"
             app:menu="@menu/bottom_nav_menu" />
 
         <com.leinardi.android.speeddial.SpeedDialOverlayLayout

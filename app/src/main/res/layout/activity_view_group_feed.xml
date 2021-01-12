@@ -162,6 +162,7 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         app:elevation="0dp"
+        app:itemRippleColor="@color/bottom_nav_ripple"
         android:background="?android:attr/windowBackground"
         app:itemIconTint="@drawable/nav_item_foreground"
         app:itemTextColor="@drawable/nav_item_foreground"
