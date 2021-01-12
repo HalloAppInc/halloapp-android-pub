@@ -295,7 +295,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 if (!originalFile.exists()) {
                     if (isLocalFile) {
                         try {
-                            FileUtils.copyFile(new File(uri.getPath()), originalFile);
+                            File src = new File(uri.getPath());
+                            if (FileUtils.isInternalFile(src)) {
+                                Log.w("Skipping uri for internal file " + uri);
+                                continue;
+                            }
+                            FileUtils.copyFile(src, originalFile);
                         } catch (IOException e) {
                             // Swallow the exception, the logic below will handle the case of empty file.
                             Log.e("LoadContentUrisTask: doInBackground copyFile " + uri, e);
