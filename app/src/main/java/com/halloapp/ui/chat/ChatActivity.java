@@ -144,7 +144,6 @@ public class ChatActivity extends HalloActivity {
     private ChatLoader chatLoader;
     private ReplyLoader replyLoader;
     private ContactLoader contactLoader;
-    private UnseenGroupPostLoader unseenGroupPostLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
     private ActionMode actionMode;
@@ -205,7 +204,6 @@ public class ChatActivity extends HalloActivity {
         avatarLoader = AvatarLoader.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
-        unseenGroupPostLoader = new UnseenGroupPostLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 

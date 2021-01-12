@@ -69,7 +69,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
-    private UnseenGroupPostLoader groupPostLoader;
 
     private ChatsViewModel viewModel;
 
@@ -86,7 +85,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         contactLoader = new ContactLoader();
         textContentLoader = new TextContentLoader(requireContext());
-        groupPostLoader = new UnseenGroupPostLoader(appContext.get());
     }
 
     @Override
@@ -404,7 +402,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 this.chat = chat;
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
                 avatarLoader.load(avatarView, chat.chatId);
-                groupPostLoader.load(feedRing, chat.chatId);
                 CharSequence name = chat.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
                     CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), chat.name, filterTokens);
