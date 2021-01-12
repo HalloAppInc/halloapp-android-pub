@@ -57,9 +57,6 @@ public class HomeViewModel extends AndroidViewModel {
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostAdded(@NonNull Post post) {
-            if (post.getParentGroup() != null) {
-                return;
-            }
             if (post.isOutgoing()) {
                 pendingOutgoing.set(true);
                 mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
