@@ -61,14 +61,6 @@ public class ServerProps {
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
-        public void onConnected() {
-            String propHash = connection.getConnectionPropHash();
-            if (propHash != null) {
-                onReceiveServerPropsHash(propHash);
-            }
-        }
-
-        @Override
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {
             onReceiveServerProps(props, hash);
         }

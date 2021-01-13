@@ -77,9 +77,6 @@ public abstract class Connection {
 
     public abstract void connect();
 
-    @Nullable
-    public abstract String getConnectionPropHash();
-
     public abstract void clientExpired();
 
     public abstract void disconnect();

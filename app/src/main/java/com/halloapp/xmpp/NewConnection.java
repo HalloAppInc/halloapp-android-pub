@@ -27,6 +27,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -115,13 +116,11 @@ public class NewConnection extends Connection {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
-    private String connectionPropHash;
-    private Socket socket = null;
+    private HANoiseSocket socket = null;
 
     private OutputStream outputStream;
     public InputStream inputStream;
     private boolean isAuthenticated;
-    private AuthResult authResult;
 
     private final Object startupShutdownLock = new Object();
     private final PacketWriter packetWriter = new PacketWriter();
@@ -238,25 +237,6 @@ public class NewConnection extends Connection {
         return socket != null && isConnected() && isAuthenticated();
     }
 
-    public AuthResult sendAndRecvAuth(AuthRequest authRequest) throws IOException {
-        byte[] size = ByteBuffer.allocate(4).putInt(authRequest.getSerializedSize()).array();
-        byte[] packet = authRequest.toByteArray();
-
-        byte[] rawBytes = new byte[size.length + packet.length];
-        System.arraycopy(size, 0, rawBytes, 0, size.length);
-        System.arraycopy(packet, 0, rawBytes, size.length, packet.length);
-        packetWriter.sendRawBytes(rawBytes);
-        long startTime = System.currentTimeMillis();
-        while (authResult == null) { // TODO(jack): await/notify
-            if (System.currentTimeMillis() - startTime > 5000) {
-                throw new IOException();
-            }
-        }
-        AuthResult tmp = authResult;
-        authResult = null;
-        return tmp;
-    }
-
     public void sendPacket(Packet packet) {
         packetWriter.sendPacket(packet);
     }
@@ -267,12 +247,6 @@ public class NewConnection extends Connection {
 
     public boolean isAuthenticated() {
         return isAuthenticated;
-    }
-
-    @Nullable
-    @Override
-    public String getConnectionPropHash() {
-        return connectionPropHash;
     }
 
     @Override
@@ -831,52 +805,17 @@ public class NewConnection extends Connection {
 
         private void parsePackets() {
             ThreadUtils.setSocketTag();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             while (!done) {
                 try {
-                    if (socket instanceof HANoiseSocket) {
-                        Log.d("connection: waiting for next packet");
-                        byte[] packet = ((HANoiseSocket) socket).readPacket();
-                        if (packet == null) {
-                            throw new IOException("No more packets");
-                        }
-                        parsePacket(packet);
-                    } else {
-                        InputStream is = inputStream;
-                        if (is == null) {
-                            throw new IOException("Input stream is null");
-                        }
-
-                        boolean needMoreBytes = true;
-                        byte[] buf = new byte[BUF_SIZE];
-                        int packetSize = 0;
-                        while (needMoreBytes) {
-                            int c = inputStream.read(buf);
-                            if (c < 0) {
-                                throw new IOException("No bytes read from input stream");
-                            }
-
-                            baos.write(buf, 0, c);
-
-                            if (baos.size() >= 4) {
-                                byte[] header = Arrays.copyOfRange(baos.toByteArray(), 0, 4);
-                                ByteBuffer wrapped = ByteBuffer.wrap(header); // big-endian by default
-                                packetSize = wrapped.getInt();
-
-                                if (baos.size() >= packetSize + 4) {
-                                    needMoreBytes = false;
-                                }
-                            }
-                        }
-
-                        byte[] bytes = baos.toByteArray();
-                        byte[] nextPacket = Arrays.copyOfRange(bytes, 4, packetSize + 4);
-                        byte[] leftovers = Arrays.copyOfRange(bytes, packetSize + 4, bytes.length);
-
-                        baos.reset();
-                        baos.write(leftovers);
-                        parsePacket(nextPacket);
+                    if (socket == null) {
+                        throw new IOException("Socket is null");
                     }
+                    Log.d("connection: waiting for next packet");
+                    byte[] packet = socket.readPacket();
+                    if (packet == null) {
+                        throw new IOException("No more packets");
+                    }
+                    parsePacket(packet);
                 } catch (Exception e) {
                     if (!done) {
                         disconnect();
@@ -906,7 +845,7 @@ public class NewConnection extends Connection {
                 } else {
                     Log.w("Unrecognized top-level subpacket");
                 }
-            } catch (InvalidProtocolBufferException e) { // TODO(jack): be explicit about when auth expected
+            } catch (InvalidProtocolBufferException e) {
                 try {
                     AuthResult authResult = AuthResult.parseFrom(bytes);
                     handleAuth(authResult);
@@ -918,12 +857,13 @@ public class NewConnection extends Connection {
         }
 
         private void handleAuth(AuthResult authResult) {
-            connectionPropHash = Hex.bytesToStringLowercase(authResult.getPropsHash().toByteArray());
-            NewConnection.this.authResult = authResult; // TODO(jack): use wait() and notify() instead
+            String connectionPropHash = Hex.bytesToStringLowercase(authResult.getPropsHash().toByteArray());
             if ("spub_mismatch".equalsIgnoreCase(authResult.getReason())) {
                 Log.e("connection: failed to login");
                 disconnectInBackground();
                 connectionObservers.notifyLoginFailed();
+            } else {
+                ServerProps.getInstance().onReceiveServerPropsHash(connectionPropHash);
             }
         }
 
@@ -1376,14 +1316,6 @@ public class NewConnection extends Connection {
             }
         }
 
-        void sendRawBytes(byte[] bytes) {
-            try {
-                outputStream.write(bytes);
-            } catch (Exception e) {
-                Log.w("Failed to write raw bytes", e);
-            }
-        }
-
         private void enqueue(Packet packet) throws InterruptedException {
             queue.put(packet);
         }
@@ -1392,21 +1324,14 @@ public class NewConnection extends Connection {
             ThreadUtils.setSocketTag();
             try {
                 while (!done) {
-                    try { // TODO(jack): Await login success
+                    try {
+                        if (socket == null) {
+                            throw new IOException("Socket is null");
+                        }
                         Packet packet = queue.take();
                         Log.i("connection: send: " + ProtoPrinter.toString(packet));
 
-                        if (socket instanceof HANoiseSocket) {
-                            ((HANoiseSocket) socket).writePacket(packet);
-                        } else {
-                            byte[] bytes = encodePacket(packet);
-                            OutputStream os = outputStream;
-                            if (os == null) {
-                                throw new IOException("Output stream is null");
-                            }
-
-                            outputStream.write(bytes);
-                        }
+                        socket.writePacket(packet);
                     } catch (InterruptedException e) {
                         Log.w("Packet writing interrupted", e);
                     }
@@ -1417,15 +1342,6 @@ public class NewConnection extends Connection {
                     disconnect();
                 }
             }
-        }
-
-        private byte[] encodePacket(@NonNull Packet packet) {
-            byte[] size = ByteBuffer.allocate(4).putInt(packet.getSerializedSize()).array();
-            byte[] finalPacket = packet.toByteArray();
-            byte[] bytes = new byte[size.length + finalPacket.length];
-            System.arraycopy(size, 0, bytes, 0, size.length);
-            System.arraycopy(finalPacket, 0, bytes, size.length, finalPacket.length);
-            return bytes;
         }
     }
 
