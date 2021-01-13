@@ -678,7 +678,7 @@ export namespace server {
         counts?: (server.ICount[]|null);
 
         /** ClientLog events */
-        events?: (server.IEvent[]|null);
+        events?: (server.IEventData[]|null);
     }
 
     /** Represents a ClientLog. */
@@ -694,7 +694,7 @@ export namespace server {
         public counts: server.ICount[];
 
         /** ClientLog events. */
-        public events: server.IEvent[];
+        public events: server.IEventData[];
 
         /**
          * Creates a new ClientLog instance using the specified properties.
@@ -870,102 +870,6 @@ export namespace server {
 
         /**
          * Converts this Count to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-    }
-
-    /** Properties of an Event. */
-    interface IEvent {
-
-        /** Event namespace */
-        namespace?: (string|null);
-
-        /** Event event */
-        event?: (Uint8Array|null);
-    }
-
-    /** Represents an Event. */
-    class Event implements IEvent {
-
-        /**
-         * Constructs a new Event.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: server.IEvent);
-
-        /** Event namespace. */
-        public namespace: string;
-
-        /** Event event. */
-        public event: Uint8Array;
-
-        /**
-         * Creates a new Event instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns Event instance
-         */
-        public static create(properties?: server.IEvent): server.Event;
-
-        /**
-         * Encodes the specified Event message. Does not implicitly {@link server.Event.verify|verify} messages.
-         * @param message Event message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: server.IEvent, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified Event message, length delimited. Does not implicitly {@link server.Event.verify|verify} messages.
-         * @param message Event message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: server.IEvent, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an Event message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns Event
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.Event;
-
-        /**
-         * Decodes an Event message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns Event
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.Event;
-
-        /**
-         * Verifies an Event message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an Event message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Event
-         */
-        public static fromObject(object: { [k: string]: any }): server.Event;
-
-        /**
-         * Creates a plain object from an Event message. Also converts values to other types if specified.
-         * @param message Event
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: server.Event, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Event to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -2231,6 +2135,114 @@ export namespace server {
         }
     }
 
+    /** Properties of a GroupFeedItems. */
+    interface IGroupFeedItems {
+
+        /** GroupFeedItems gid */
+        gid?: (string|null);
+
+        /** GroupFeedItems name */
+        name?: (string|null);
+
+        /** GroupFeedItems avatarId */
+        avatarId?: (string|null);
+
+        /** GroupFeedItems items */
+        items?: (server.IGroupFeedItem[]|null);
+    }
+
+    /** Represents a GroupFeedItems. */
+    class GroupFeedItems implements IGroupFeedItems {
+
+        /**
+         * Constructs a new GroupFeedItems.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGroupFeedItems);
+
+        /** GroupFeedItems gid. */
+        public gid: string;
+
+        /** GroupFeedItems name. */
+        public name: string;
+
+        /** GroupFeedItems avatarId. */
+        public avatarId: string;
+
+        /** GroupFeedItems items. */
+        public items: server.IGroupFeedItem[];
+
+        /**
+         * Creates a new GroupFeedItems instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GroupFeedItems instance
+         */
+        public static create(properties?: server.IGroupFeedItems): server.GroupFeedItems;
+
+        /**
+         * Encodes the specified GroupFeedItems message. Does not implicitly {@link server.GroupFeedItems.verify|verify} messages.
+         * @param message GroupFeedItems message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGroupFeedItems, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GroupFeedItems message, length delimited. Does not implicitly {@link server.GroupFeedItems.verify|verify} messages.
+         * @param message GroupFeedItems message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGroupFeedItems, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GroupFeedItems message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GroupFeedItems
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GroupFeedItems;
+
+        /**
+         * Decodes a GroupFeedItems message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GroupFeedItems
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GroupFeedItems;
+
+        /**
+         * Verifies a GroupFeedItems message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GroupFeedItems message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GroupFeedItems
+         */
+        public static fromObject(object: { [k: string]: any }): server.GroupFeedItems;
+
+        /**
+         * Creates a plain object from a GroupFeedItems message. Also converts values to other types if specified.
+         * @param message GroupFeedItems
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GroupFeedItems, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GroupFeedItems to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a GroupMember. */
     interface IGroupMember {
 
@@ -3477,6 +3489,9 @@ export namespace server {
 
         /** ChatStanza senderName */
         senderName?: (string|null);
+
+        /** ChatStanza senderLogInfo */
+        senderLogInfo?: (string|null);
     }
 
     /** Represents a ChatStanza. */
@@ -3505,6 +3520,9 @@ export namespace server {
 
         /** ChatStanza senderName. */
         public senderName: string;
+
+        /** ChatStanza senderLogInfo. */
+        public senderLogInfo: string;
 
         /**
          * Creates a new ChatStanza instance using the specified properties.
@@ -3937,6 +3955,90 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an EndOfQueue. */
+    interface IEndOfQueue {
+    }
+
+    /** Represents an EndOfQueue. */
+    class EndOfQueue implements IEndOfQueue {
+
+        /**
+         * Constructs a new EndOfQueue.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IEndOfQueue);
+
+        /**
+         * Creates a new EndOfQueue instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EndOfQueue instance
+         */
+        public static create(properties?: server.IEndOfQueue): server.EndOfQueue;
+
+        /**
+         * Encodes the specified EndOfQueue message. Does not implicitly {@link server.EndOfQueue.verify|verify} messages.
+         * @param message EndOfQueue message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IEndOfQueue, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EndOfQueue message, length delimited. Does not implicitly {@link server.EndOfQueue.verify|verify} messages.
+         * @param message EndOfQueue message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IEndOfQueue, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EndOfQueue message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EndOfQueue
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.EndOfQueue;
+
+        /**
+         * Decodes an EndOfQueue message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EndOfQueue
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.EndOfQueue;
+
+        /**
+         * Verifies an EndOfQueue message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EndOfQueue message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EndOfQueue
+         */
+        public static fromObject(object: { [k: string]: any }): server.EndOfQueue;
+
+        /**
+         * Creates a plain object from an EndOfQueue message. Also converts values to other types if specified.
+         * @param message EndOfQueue
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.EndOfQueue, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EndOfQueue to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -4020,6 +4122,9 @@ export namespace server {
 
         /** Iq groupAvatar */
         groupAvatar?: (server.IUploadGroupAvatar|null);
+
+        /** Iq deleteAccount */
+        deleteAccount?: (server.IDeleteAccount|null);
     }
 
     /** Represents an Iq. */
@@ -4112,8 +4217,11 @@ export namespace server {
         /** Iq groupAvatar. */
         public groupAvatar?: (server.IUploadGroupAvatar|null);
 
+        /** Iq deleteAccount. */
+        public deleteAccount?: (server.IDeleteAccount|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -4266,8 +4374,17 @@ export namespace server {
         /** Msg silentChatStanza */
         silentChatStanza?: (server.ISilentChatStanza|null);
 
+        /** Msg groupFeedItems */
+        groupFeedItems?: (server.IGroupFeedItems|null);
+
+        /** Msg endOfQueue */
+        endOfQueue?: (server.IEndOfQueue|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
+
+        /** Msg rerequestCount */
+        rerequestCount?: (number|null);
     }
 
     /** Represents a Msg. */
@@ -4345,11 +4462,20 @@ export namespace server {
         /** Msg silentChatStanza. */
         public silentChatStanza?: (server.ISilentChatStanza|null);
 
+        /** Msg groupFeedItems. */
+        public groupFeedItems?: (server.IGroupFeedItems|null);
+
+        /** Msg endOfQueue. */
+        public endOfQueue?: (server.IEndOfQueue|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
+        /** Msg rerequestCount. */
+        public rerequestCount: number;
+
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -6613,5 +6739,838 @@ export namespace server {
             SET = 4,
             UPDATE = 5
         }
+    }
+
+    /** Properties of a NoiseMessage. */
+    interface INoiseMessage {
+
+        /** NoiseMessage messageType */
+        messageType?: (server.NoiseMessage.MessageType|null);
+
+        /** NoiseMessage content */
+        content?: (Uint8Array|null);
+    }
+
+    /** Represents a NoiseMessage. */
+    class NoiseMessage implements INoiseMessage {
+
+        /**
+         * Constructs a new NoiseMessage.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.INoiseMessage);
+
+        /** NoiseMessage messageType. */
+        public messageType: server.NoiseMessage.MessageType;
+
+        /** NoiseMessage content. */
+        public content: Uint8Array;
+
+        /**
+         * Creates a new NoiseMessage instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns NoiseMessage instance
+         */
+        public static create(properties?: server.INoiseMessage): server.NoiseMessage;
+
+        /**
+         * Encodes the specified NoiseMessage message. Does not implicitly {@link server.NoiseMessage.verify|verify} messages.
+         * @param message NoiseMessage message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.INoiseMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified NoiseMessage message, length delimited. Does not implicitly {@link server.NoiseMessage.verify|verify} messages.
+         * @param message NoiseMessage message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.INoiseMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a NoiseMessage message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns NoiseMessage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.NoiseMessage;
+
+        /**
+         * Decodes a NoiseMessage message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns NoiseMessage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.NoiseMessage;
+
+        /**
+         * Verifies a NoiseMessage message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a NoiseMessage message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns NoiseMessage
+         */
+        public static fromObject(object: { [k: string]: any }): server.NoiseMessage;
+
+        /**
+         * Creates a plain object from a NoiseMessage message. Also converts values to other types if specified.
+         * @param message NoiseMessage
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.NoiseMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this NoiseMessage to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace NoiseMessage {
+
+        /** MessageType enum. */
+        enum MessageType {
+            XX_A = 0,
+            XX_B = 1,
+            XX_C = 2,
+            IK_A = 3,
+            IK_B = 4,
+            XX_FALLBACK_A = 5,
+            XX_FALLBACK_B = 6
+        }
+    }
+
+    /** Properties of a DeleteAccount. */
+    interface IDeleteAccount {
+
+        /** DeleteAccount phone */
+        phone?: (string|null);
+    }
+
+    /** Represents a DeleteAccount. */
+    class DeleteAccount implements IDeleteAccount {
+
+        /**
+         * Constructs a new DeleteAccount.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IDeleteAccount);
+
+        /** DeleteAccount phone. */
+        public phone: string;
+
+        /**
+         * Creates a new DeleteAccount instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DeleteAccount instance
+         */
+        public static create(properties?: server.IDeleteAccount): server.DeleteAccount;
+
+        /**
+         * Encodes the specified DeleteAccount message. Does not implicitly {@link server.DeleteAccount.verify|verify} messages.
+         * @param message DeleteAccount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IDeleteAccount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DeleteAccount message, length delimited. Does not implicitly {@link server.DeleteAccount.verify|verify} messages.
+         * @param message DeleteAccount message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IDeleteAccount, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DeleteAccount message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DeleteAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.DeleteAccount;
+
+        /**
+         * Decodes a DeleteAccount message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DeleteAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.DeleteAccount;
+
+        /**
+         * Verifies a DeleteAccount message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DeleteAccount message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DeleteAccount
+         */
+        public static fromObject(object: { [k: string]: any }): server.DeleteAccount;
+
+        /**
+         * Creates a plain object from a DeleteAccount message. Also converts values to other types if specified.
+         * @param message DeleteAccount
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.DeleteAccount, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DeleteAccount to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an EventData. */
+    interface IEventData {
+
+        /** EventData uid */
+        uid?: (number|Long|null);
+
+        /** EventData platform */
+        platform?: (server.Platform|null);
+
+        /** EventData version */
+        version?: (string|null);
+
+        /** EventData mediaUpload */
+        mediaUpload?: (server.IMediaUpload|null);
+
+        /** EventData mediaDownload */
+        mediaDownload?: (server.IMediaDownload|null);
+
+        /** EventData mediaComposeLoad */
+        mediaComposeLoad?: (server.IMediaComposeLoad|null);
+
+        /** EventData pushReceived */
+        pushReceived?: (server.IPushReceived|null);
+    }
+
+    /** Represents an EventData. */
+    class EventData implements IEventData {
+
+        /**
+         * Constructs a new EventData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IEventData);
+
+        /** EventData uid. */
+        public uid: (number|Long);
+
+        /** EventData platform. */
+        public platform: server.Platform;
+
+        /** EventData version. */
+        public version: string;
+
+        /** EventData mediaUpload. */
+        public mediaUpload?: (server.IMediaUpload|null);
+
+        /** EventData mediaDownload. */
+        public mediaDownload?: (server.IMediaDownload|null);
+
+        /** EventData mediaComposeLoad. */
+        public mediaComposeLoad?: (server.IMediaComposeLoad|null);
+
+        /** EventData pushReceived. */
+        public pushReceived?: (server.IPushReceived|null);
+
+        /** EventData edata. */
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived");
+
+        /**
+         * Creates a new EventData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns EventData instance
+         */
+        public static create(properties?: server.IEventData): server.EventData;
+
+        /**
+         * Encodes the specified EventData message. Does not implicitly {@link server.EventData.verify|verify} messages.
+         * @param message EventData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IEventData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified EventData message, length delimited. Does not implicitly {@link server.EventData.verify|verify} messages.
+         * @param message EventData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IEventData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an EventData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns EventData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.EventData;
+
+        /**
+         * Decodes an EventData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns EventData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.EventData;
+
+        /**
+         * Verifies an EventData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an EventData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns EventData
+         */
+        public static fromObject(object: { [k: string]: any }): server.EventData;
+
+        /**
+         * Creates a plain object from an EventData message. Also converts values to other types if specified.
+         * @param message EventData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.EventData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this EventData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Platform enum. */
+    enum Platform {
+        ANDROID = 0,
+        IOS = 1
+    }
+
+    /** Properties of a MediaUpload. */
+    interface IMediaUpload {
+
+        /** MediaUpload id */
+        id?: (string|null);
+
+        /** MediaUpload type */
+        type?: (server.MediaUpload.Type|null);
+
+        /** MediaUpload durationMs */
+        durationMs?: (number|null);
+
+        /** MediaUpload numPhotos */
+        numPhotos?: (number|null);
+
+        /** MediaUpload numVideos */
+        numVideos?: (number|null);
+
+        /** MediaUpload totalSize */
+        totalSize?: (number|null);
+
+        /** MediaUpload status */
+        status?: (server.MediaUpload.Status|null);
+
+        /** MediaUpload retryCount */
+        retryCount?: (number|null);
+    }
+
+    /** Represents a MediaUpload. */
+    class MediaUpload implements IMediaUpload {
+
+        /**
+         * Constructs a new MediaUpload.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMediaUpload);
+
+        /** MediaUpload id. */
+        public id: string;
+
+        /** MediaUpload type. */
+        public type: server.MediaUpload.Type;
+
+        /** MediaUpload durationMs. */
+        public durationMs: number;
+
+        /** MediaUpload numPhotos. */
+        public numPhotos: number;
+
+        /** MediaUpload numVideos. */
+        public numVideos: number;
+
+        /** MediaUpload totalSize. */
+        public totalSize: number;
+
+        /** MediaUpload status. */
+        public status: server.MediaUpload.Status;
+
+        /** MediaUpload retryCount. */
+        public retryCount: number;
+
+        /**
+         * Creates a new MediaUpload instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MediaUpload instance
+         */
+        public static create(properties?: server.IMediaUpload): server.MediaUpload;
+
+        /**
+         * Encodes the specified MediaUpload message. Does not implicitly {@link server.MediaUpload.verify|verify} messages.
+         * @param message MediaUpload message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMediaUpload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MediaUpload message, length delimited. Does not implicitly {@link server.MediaUpload.verify|verify} messages.
+         * @param message MediaUpload message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMediaUpload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MediaUpload message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MediaUpload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MediaUpload;
+
+        /**
+         * Decodes a MediaUpload message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MediaUpload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MediaUpload;
+
+        /**
+         * Verifies a MediaUpload message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MediaUpload message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MediaUpload
+         */
+        public static fromObject(object: { [k: string]: any }): server.MediaUpload;
+
+        /**
+         * Creates a plain object from a MediaUpload message. Also converts values to other types if specified.
+         * @param message MediaUpload
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MediaUpload, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MediaUpload to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace MediaUpload {
+
+        /** Type enum. */
+        enum Type {
+            POST = 0,
+            MESSAGE = 1
+        }
+
+        /** Status enum. */
+        enum Status {
+            OK = 0,
+            FAIL = 1
+        }
+    }
+
+    /** Properties of a MediaDownload. */
+    interface IMediaDownload {
+
+        /** MediaDownload id */
+        id?: (string|null);
+
+        /** MediaDownload type */
+        type?: (server.MediaDownload.Type|null);
+
+        /** MediaDownload durationMs */
+        durationMs?: (number|null);
+
+        /** MediaDownload numPhotos */
+        numPhotos?: (number|null);
+
+        /** MediaDownload numVideos */
+        numVideos?: (number|null);
+
+        /** MediaDownload totalSize */
+        totalSize?: (number|null);
+
+        /** MediaDownload status */
+        status?: (server.MediaDownload.Status|null);
+
+        /** MediaDownload retryCount */
+        retryCount?: (number|null);
+    }
+
+    /** Represents a MediaDownload. */
+    class MediaDownload implements IMediaDownload {
+
+        /**
+         * Constructs a new MediaDownload.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMediaDownload);
+
+        /** MediaDownload id. */
+        public id: string;
+
+        /** MediaDownload type. */
+        public type: server.MediaDownload.Type;
+
+        /** MediaDownload durationMs. */
+        public durationMs: number;
+
+        /** MediaDownload numPhotos. */
+        public numPhotos: number;
+
+        /** MediaDownload numVideos. */
+        public numVideos: number;
+
+        /** MediaDownload totalSize. */
+        public totalSize: number;
+
+        /** MediaDownload status. */
+        public status: server.MediaDownload.Status;
+
+        /** MediaDownload retryCount. */
+        public retryCount: number;
+
+        /**
+         * Creates a new MediaDownload instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MediaDownload instance
+         */
+        public static create(properties?: server.IMediaDownload): server.MediaDownload;
+
+        /**
+         * Encodes the specified MediaDownload message. Does not implicitly {@link server.MediaDownload.verify|verify} messages.
+         * @param message MediaDownload message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMediaDownload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MediaDownload message, length delimited. Does not implicitly {@link server.MediaDownload.verify|verify} messages.
+         * @param message MediaDownload message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMediaDownload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MediaDownload message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MediaDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MediaDownload;
+
+        /**
+         * Decodes a MediaDownload message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MediaDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MediaDownload;
+
+        /**
+         * Verifies a MediaDownload message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MediaDownload message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MediaDownload
+         */
+        public static fromObject(object: { [k: string]: any }): server.MediaDownload;
+
+        /**
+         * Creates a plain object from a MediaDownload message. Also converts values to other types if specified.
+         * @param message MediaDownload
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MediaDownload, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MediaDownload to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace MediaDownload {
+
+        /** Type enum. */
+        enum Type {
+            POST = 0,
+            MESSAGE = 1
+        }
+
+        /** Status enum. */
+        enum Status {
+            OK = 0,
+            FAIL = 1
+        }
+    }
+
+    /** Properties of a MediaComposeLoad. */
+    interface IMediaComposeLoad {
+
+        /** MediaComposeLoad durationMs */
+        durationMs?: (number|null);
+
+        /** MediaComposeLoad numPhotos */
+        numPhotos?: (number|null);
+
+        /** MediaComposeLoad numVideos */
+        numVideos?: (number|null);
+
+        /** MediaComposeLoad totalSize */
+        totalSize?: (number|null);
+    }
+
+    /** Represents a MediaComposeLoad. */
+    class MediaComposeLoad implements IMediaComposeLoad {
+
+        /**
+         * Constructs a new MediaComposeLoad.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMediaComposeLoad);
+
+        /** MediaComposeLoad durationMs. */
+        public durationMs: number;
+
+        /** MediaComposeLoad numPhotos. */
+        public numPhotos: number;
+
+        /** MediaComposeLoad numVideos. */
+        public numVideos: number;
+
+        /** MediaComposeLoad totalSize. */
+        public totalSize: number;
+
+        /**
+         * Creates a new MediaComposeLoad instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MediaComposeLoad instance
+         */
+        public static create(properties?: server.IMediaComposeLoad): server.MediaComposeLoad;
+
+        /**
+         * Encodes the specified MediaComposeLoad message. Does not implicitly {@link server.MediaComposeLoad.verify|verify} messages.
+         * @param message MediaComposeLoad message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMediaComposeLoad, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MediaComposeLoad message, length delimited. Does not implicitly {@link server.MediaComposeLoad.verify|verify} messages.
+         * @param message MediaComposeLoad message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMediaComposeLoad, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MediaComposeLoad message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MediaComposeLoad
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MediaComposeLoad;
+
+        /**
+         * Decodes a MediaComposeLoad message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MediaComposeLoad
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MediaComposeLoad;
+
+        /**
+         * Verifies a MediaComposeLoad message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MediaComposeLoad message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MediaComposeLoad
+         */
+        public static fromObject(object: { [k: string]: any }): server.MediaComposeLoad;
+
+        /**
+         * Creates a plain object from a MediaComposeLoad message. Also converts values to other types if specified.
+         * @param message MediaComposeLoad
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MediaComposeLoad, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MediaComposeLoad to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PushReceived. */
+    interface IPushReceived {
+
+        /** PushReceived id */
+        id?: (string|null);
+
+        /** PushReceived clientTimestamp */
+        clientTimestamp?: (number|Long|null);
+    }
+
+    /** Represents a PushReceived. */
+    class PushReceived implements IPushReceived {
+
+        /**
+         * Constructs a new PushReceived.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPushReceived);
+
+        /** PushReceived id. */
+        public id: string;
+
+        /** PushReceived clientTimestamp. */
+        public clientTimestamp: (number|Long);
+
+        /**
+         * Creates a new PushReceived instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PushReceived instance
+         */
+        public static create(properties?: server.IPushReceived): server.PushReceived;
+
+        /**
+         * Encodes the specified PushReceived message. Does not implicitly {@link server.PushReceived.verify|verify} messages.
+         * @param message PushReceived message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPushReceived, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PushReceived message, length delimited. Does not implicitly {@link server.PushReceived.verify|verify} messages.
+         * @param message PushReceived message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPushReceived, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PushReceived message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PushReceived
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PushReceived;
+
+        /**
+         * Decodes a PushReceived message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PushReceived
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PushReceived;
+
+        /**
+         * Verifies a PushReceived message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PushReceived message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PushReceived
+         */
+        public static fromObject(object: { [k: string]: any }): server.PushReceived;
+
+        /**
+         * Creates a plain object from a PushReceived message. Also converts values to other types if specified.
+         * @param message PushReceived
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PushReceived, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PushReceived to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 }

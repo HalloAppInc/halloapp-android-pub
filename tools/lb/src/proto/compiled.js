@@ -1568,7 +1568,7 @@ $root.server = (function() {
          * @memberof server
          * @interface IClientLog
          * @property {Array.<server.ICount>|null} [counts] ClientLog counts
-         * @property {Array.<server.IEvent>|null} [events] ClientLog events
+         * @property {Array.<server.IEventData>|null} [events] ClientLog events
          */
 
         /**
@@ -1598,7 +1598,7 @@ $root.server = (function() {
 
         /**
          * ClientLog events.
-         * @member {Array.<server.IEvent>} events
+         * @member {Array.<server.IEventData>} events
          * @memberof server.ClientLog
          * @instance
          */
@@ -1633,7 +1633,7 @@ $root.server = (function() {
                     $root.server.Count.encode(message.counts[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.events != null && message.events.length)
                 for (var i = 0; i < message.events.length; ++i)
-                    $root.server.Event.encode(message.events[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.server.EventData.encode(message.events[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -1676,7 +1676,7 @@ $root.server = (function() {
                 case 2:
                     if (!(message.events && message.events.length))
                         message.events = [];
-                    message.events.push($root.server.Event.decode(reader, reader.uint32()));
+                    message.events.push($root.server.EventData.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1726,7 +1726,7 @@ $root.server = (function() {
                 if (!Array.isArray(message.events))
                     return "events: array expected";
                 for (var i = 0; i < message.events.length; ++i) {
-                    var error = $root.server.Event.verify(message.events[i]);
+                    var error = $root.server.EventData.verify(message.events[i]);
                     if (error)
                         return "events." + error;
                 }
@@ -1763,7 +1763,7 @@ $root.server = (function() {
                 for (var i = 0; i < object.events.length; ++i) {
                     if (typeof object.events[i] !== "object")
                         throw TypeError(".server.ClientLog.events: object expected");
-                    message.events[i] = $root.server.Event.fromObject(object.events[i]);
+                    message.events[i] = $root.server.EventData.fromObject(object.events[i]);
                 }
             }
             return message;
@@ -1794,7 +1794,7 @@ $root.server = (function() {
             if (message.events && message.events.length) {
                 object.events = [];
                 for (var j = 0; j < message.events.length; ++j)
-                    object.events[j] = $root.server.Event.toObject(message.events[j], options);
+                    object.events[j] = $root.server.EventData.toObject(message.events[j], options);
             }
             return object;
         };
@@ -2101,225 +2101,6 @@ $root.server = (function() {
         };
 
         return Count;
-    })();
-
-    server.Event = (function() {
-
-        /**
-         * Properties of an Event.
-         * @memberof server
-         * @interface IEvent
-         * @property {string|null} [namespace] Event namespace
-         * @property {Uint8Array|null} [event] Event event
-         */
-
-        /**
-         * Constructs a new Event.
-         * @memberof server
-         * @classdesc Represents an Event.
-         * @implements IEvent
-         * @constructor
-         * @param {server.IEvent=} [properties] Properties to set
-         */
-        function Event(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * Event namespace.
-         * @member {string} namespace
-         * @memberof server.Event
-         * @instance
-         */
-        Event.prototype.namespace = "";
-
-        /**
-         * Event event.
-         * @member {Uint8Array} event
-         * @memberof server.Event
-         * @instance
-         */
-        Event.prototype.event = $util.newBuffer([]);
-
-        /**
-         * Creates a new Event instance using the specified properties.
-         * @function create
-         * @memberof server.Event
-         * @static
-         * @param {server.IEvent=} [properties] Properties to set
-         * @returns {server.Event} Event instance
-         */
-        Event.create = function create(properties) {
-            return new Event(properties);
-        };
-
-        /**
-         * Encodes the specified Event message. Does not implicitly {@link server.Event.verify|verify} messages.
-         * @function encode
-         * @memberof server.Event
-         * @static
-         * @param {server.IEvent} message Event message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        Event.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.namespace != null && Object.hasOwnProperty.call(message, "namespace"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.namespace);
-            if (message.event != null && Object.hasOwnProperty.call(message, "event"))
-                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.event);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified Event message, length delimited. Does not implicitly {@link server.Event.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof server.Event
-         * @static
-         * @param {server.IEvent} message Event message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        Event.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes an Event message from the specified reader or buffer.
-         * @function decode
-         * @memberof server.Event
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {server.Event} Event
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        Event.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.Event();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.namespace = reader.string();
-                    break;
-                case 2:
-                    message.event = reader.bytes();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes an Event message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof server.Event
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {server.Event} Event
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        Event.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies an Event message.
-         * @function verify
-         * @memberof server.Event
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        Event.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.namespace != null && message.hasOwnProperty("namespace"))
-                if (!$util.isString(message.namespace))
-                    return "namespace: string expected";
-            if (message.event != null && message.hasOwnProperty("event"))
-                if (!(message.event && typeof message.event.length === "number" || $util.isString(message.event)))
-                    return "event: buffer expected";
-            return null;
-        };
-
-        /**
-         * Creates an Event message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof server.Event
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {server.Event} Event
-         */
-        Event.fromObject = function fromObject(object) {
-            if (object instanceof $root.server.Event)
-                return object;
-            var message = new $root.server.Event();
-            if (object.namespace != null)
-                message.namespace = String(object.namespace);
-            if (object.event != null)
-                if (typeof object.event === "string")
-                    $util.base64.decode(object.event, message.event = $util.newBuffer($util.base64.length(object.event)), 0);
-                else if (object.event.length)
-                    message.event = object.event;
-            return message;
-        };
-
-        /**
-         * Creates a plain object from an Event message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof server.Event
-         * @static
-         * @param {server.Event} message Event
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        Event.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.namespace = "";
-                if (options.bytes === String)
-                    object.event = "";
-                else {
-                    object.event = [];
-                    if (options.bytes !== Array)
-                        object.event = $util.newBuffer(object.event);
-                }
-            }
-            if (message.namespace != null && message.hasOwnProperty("namespace"))
-                object.namespace = message.namespace;
-            if (message.event != null && message.hasOwnProperty("event"))
-                object.event = options.bytes === String ? $util.base64.encode(message.event, 0, message.event.length) : options.bytes === Array ? Array.prototype.slice.call(message.event) : message.event;
-            return object;
-        };
-
-        /**
-         * Converts this Event to JSON.
-         * @function toJSON
-         * @memberof server.Event
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        Event.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return Event;
     })();
 
     server.Dim = (function() {
@@ -5661,6 +5442,282 @@ $root.server = (function() {
         return GroupFeedItem;
     })();
 
+    server.GroupFeedItems = (function() {
+
+        /**
+         * Properties of a GroupFeedItems.
+         * @memberof server
+         * @interface IGroupFeedItems
+         * @property {string|null} [gid] GroupFeedItems gid
+         * @property {string|null} [name] GroupFeedItems name
+         * @property {string|null} [avatarId] GroupFeedItems avatarId
+         * @property {Array.<server.IGroupFeedItem>|null} [items] GroupFeedItems items
+         */
+
+        /**
+         * Constructs a new GroupFeedItems.
+         * @memberof server
+         * @classdesc Represents a GroupFeedItems.
+         * @implements IGroupFeedItems
+         * @constructor
+         * @param {server.IGroupFeedItems=} [properties] Properties to set
+         */
+        function GroupFeedItems(properties) {
+            this.items = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GroupFeedItems gid.
+         * @member {string} gid
+         * @memberof server.GroupFeedItems
+         * @instance
+         */
+        GroupFeedItems.prototype.gid = "";
+
+        /**
+         * GroupFeedItems name.
+         * @member {string} name
+         * @memberof server.GroupFeedItems
+         * @instance
+         */
+        GroupFeedItems.prototype.name = "";
+
+        /**
+         * GroupFeedItems avatarId.
+         * @member {string} avatarId
+         * @memberof server.GroupFeedItems
+         * @instance
+         */
+        GroupFeedItems.prototype.avatarId = "";
+
+        /**
+         * GroupFeedItems items.
+         * @member {Array.<server.IGroupFeedItem>} items
+         * @memberof server.GroupFeedItems
+         * @instance
+         */
+        GroupFeedItems.prototype.items = $util.emptyArray;
+
+        /**
+         * Creates a new GroupFeedItems instance using the specified properties.
+         * @function create
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {server.IGroupFeedItems=} [properties] Properties to set
+         * @returns {server.GroupFeedItems} GroupFeedItems instance
+         */
+        GroupFeedItems.create = function create(properties) {
+            return new GroupFeedItems(properties);
+        };
+
+        /**
+         * Encodes the specified GroupFeedItems message. Does not implicitly {@link server.GroupFeedItems.verify|verify} messages.
+         * @function encode
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {server.IGroupFeedItems} message GroupFeedItems message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupFeedItems.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gid != null && Object.hasOwnProperty.call(message, "gid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
+            if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.avatarId);
+            if (message.items != null && message.items.length)
+                for (var i = 0; i < message.items.length; ++i)
+                    $root.server.GroupFeedItem.encode(message.items[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GroupFeedItems message, length delimited. Does not implicitly {@link server.GroupFeedItems.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {server.IGroupFeedItems} message GroupFeedItems message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupFeedItems.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GroupFeedItems message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GroupFeedItems} GroupFeedItems
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupFeedItems.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GroupFeedItems();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.gid = reader.string();
+                    break;
+                case 2:
+                    message.name = reader.string();
+                    break;
+                case 3:
+                    message.avatarId = reader.string();
+                    break;
+                case 4:
+                    if (!(message.items && message.items.length))
+                        message.items = [];
+                    message.items.push($root.server.GroupFeedItem.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GroupFeedItems message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GroupFeedItems} GroupFeedItems
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupFeedItems.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GroupFeedItems message.
+         * @function verify
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GroupFeedItems.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                if (!$util.isString(message.gid))
+                    return "gid: string expected";
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                if (!$util.isString(message.avatarId))
+                    return "avatarId: string expected";
+            if (message.items != null && message.hasOwnProperty("items")) {
+                if (!Array.isArray(message.items))
+                    return "items: array expected";
+                for (var i = 0; i < message.items.length; ++i) {
+                    var error = $root.server.GroupFeedItem.verify(message.items[i]);
+                    if (error)
+                        return "items." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a GroupFeedItems message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GroupFeedItems} GroupFeedItems
+         */
+        GroupFeedItems.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GroupFeedItems)
+                return object;
+            var message = new $root.server.GroupFeedItems();
+            if (object.gid != null)
+                message.gid = String(object.gid);
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.avatarId != null)
+                message.avatarId = String(object.avatarId);
+            if (object.items) {
+                if (!Array.isArray(object.items))
+                    throw TypeError(".server.GroupFeedItems.items: array expected");
+                message.items = [];
+                for (var i = 0; i < object.items.length; ++i) {
+                    if (typeof object.items[i] !== "object")
+                        throw TypeError(".server.GroupFeedItems.items: object expected");
+                    message.items[i] = $root.server.GroupFeedItem.fromObject(object.items[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GroupFeedItems message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GroupFeedItems
+         * @static
+         * @param {server.GroupFeedItems} message GroupFeedItems
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GroupFeedItems.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.items = [];
+            if (options.defaults) {
+                object.gid = "";
+                object.name = "";
+                object.avatarId = "";
+            }
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                object.gid = message.gid;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                object.avatarId = message.avatarId;
+            if (message.items && message.items.length) {
+                object.items = [];
+                for (var j = 0; j < message.items.length; ++j)
+                    object.items[j] = $root.server.GroupFeedItem.toObject(message.items[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this GroupFeedItems to JSON.
+         * @function toJSON
+         * @memberof server.GroupFeedItems
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GroupFeedItems.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return GroupFeedItems;
+    })();
+
     server.GroupMember = (function() {
 
         /**
@@ -8846,6 +8903,7 @@ $root.server = (function() {
          * @property {Uint8Array|null} [publicKey] ChatStanza publicKey
          * @property {number|Long|null} [oneTimePreKeyId] ChatStanza oneTimePreKeyId
          * @property {string|null} [senderName] ChatStanza senderName
+         * @property {string|null} [senderLogInfo] ChatStanza senderLogInfo
          */
 
         /**
@@ -8912,6 +8970,14 @@ $root.server = (function() {
         ChatStanza.prototype.senderName = "";
 
         /**
+         * ChatStanza senderLogInfo.
+         * @member {string} senderLogInfo
+         * @memberof server.ChatStanza
+         * @instance
+         */
+        ChatStanza.prototype.senderLogInfo = "";
+
+        /**
          * Creates a new ChatStanza instance using the specified properties.
          * @function create
          * @memberof server.ChatStanza
@@ -8947,6 +9013,8 @@ $root.server = (function() {
                 writer.uint32(/* id 5, wireType 0 =*/40).int64(message.oneTimePreKeyId);
             if (message.senderName != null && Object.hasOwnProperty.call(message, "senderName"))
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.senderName);
+            if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
+                writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
             return writer;
         };
 
@@ -8998,6 +9066,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.senderName = reader.string();
+                    break;
+                case 16:
+                    message.senderLogInfo = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -9052,6 +9123,9 @@ $root.server = (function() {
             if (message.senderName != null && message.hasOwnProperty("senderName"))
                 if (!$util.isString(message.senderName))
                     return "senderName: string expected";
+            if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
+                if (!$util.isString(message.senderLogInfo))
+                    return "senderLogInfo: string expected";
             return null;
         };
 
@@ -9102,6 +9176,8 @@ $root.server = (function() {
                     message.oneTimePreKeyId = new $util.LongBits(object.oneTimePreKeyId.low >>> 0, object.oneTimePreKeyId.high >>> 0).toNumber();
             if (object.senderName != null)
                 message.senderName = String(object.senderName);
+            if (object.senderLogInfo != null)
+                message.senderLogInfo = String(object.senderLogInfo);
             return message;
         };
 
@@ -9151,6 +9227,7 @@ $root.server = (function() {
                 } else
                     object.oneTimePreKeyId = options.longs === String ? "0" : 0;
                 object.senderName = "";
+                object.senderLogInfo = "";
             }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
@@ -9170,6 +9247,8 @@ $root.server = (function() {
                     object.oneTimePreKeyId = options.longs === String ? $util.Long.prototype.toString.call(message.oneTimePreKeyId) : options.longs === Number ? new $util.LongBits(message.oneTimePreKeyId.low >>> 0, message.oneTimePreKeyId.high >>> 0).toNumber() : message.oneTimePreKeyId;
             if (message.senderName != null && message.hasOwnProperty("senderName"))
                 object.senderName = message.senderName;
+            if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
+                object.senderLogInfo = message.senderLogInfo;
             return object;
         };
 
@@ -9950,6 +10029,166 @@ $root.server = (function() {
         return Name;
     })();
 
+    server.EndOfQueue = (function() {
+
+        /**
+         * Properties of an EndOfQueue.
+         * @memberof server
+         * @interface IEndOfQueue
+         */
+
+        /**
+         * Constructs a new EndOfQueue.
+         * @memberof server
+         * @classdesc Represents an EndOfQueue.
+         * @implements IEndOfQueue
+         * @constructor
+         * @param {server.IEndOfQueue=} [properties] Properties to set
+         */
+        function EndOfQueue(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Creates a new EndOfQueue instance using the specified properties.
+         * @function create
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {server.IEndOfQueue=} [properties] Properties to set
+         * @returns {server.EndOfQueue} EndOfQueue instance
+         */
+        EndOfQueue.create = function create(properties) {
+            return new EndOfQueue(properties);
+        };
+
+        /**
+         * Encodes the specified EndOfQueue message. Does not implicitly {@link server.EndOfQueue.verify|verify} messages.
+         * @function encode
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {server.IEndOfQueue} message EndOfQueue message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        EndOfQueue.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified EndOfQueue message, length delimited. Does not implicitly {@link server.EndOfQueue.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {server.IEndOfQueue} message EndOfQueue message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        EndOfQueue.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an EndOfQueue message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.EndOfQueue} EndOfQueue
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        EndOfQueue.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.EndOfQueue();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an EndOfQueue message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.EndOfQueue} EndOfQueue
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        EndOfQueue.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an EndOfQueue message.
+         * @function verify
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        EndOfQueue.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            return null;
+        };
+
+        /**
+         * Creates an EndOfQueue message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.EndOfQueue} EndOfQueue
+         */
+        EndOfQueue.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.EndOfQueue)
+                return object;
+            return new $root.server.EndOfQueue();
+        };
+
+        /**
+         * Creates a plain object from an EndOfQueue message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.EndOfQueue
+         * @static
+         * @param {server.EndOfQueue} message EndOfQueue
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        EndOfQueue.toObject = function toObject() {
+            return {};
+        };
+
+        /**
+         * Converts this EndOfQueue to JSON.
+         * @function toJSON
+         * @memberof server.EndOfQueue
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        EndOfQueue.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return EndOfQueue;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -9983,6 +10222,7 @@ $root.server = (function() {
          * @property {server.INotificationPrefs|null} [notificationPrefs] Iq notificationPrefs
          * @property {server.IGroupFeedItem|null} [groupFeedItem] Iq groupFeedItem
          * @property {server.IUploadGroupAvatar|null} [groupAvatar] Iq groupAvatar
+         * @property {server.IDeleteAccount|null} [deleteAccount] Iq deleteAccount
          */
 
         /**
@@ -10216,17 +10456,25 @@ $root.server = (function() {
          */
         Iq.prototype.groupAvatar = null;
 
+        /**
+         * Iq deleteAccount.
+         * @member {server.IDeleteAccount|null|undefined} deleteAccount
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.deleteAccount = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyListResult", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyListResult", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -10308,6 +10556,8 @@ $root.server = (function() {
                 $root.server.GroupFeedItem.encode(message.groupFeedItem, writer.uint32(/* id 26, wireType 2 =*/210).fork()).ldelim();
             if (message.groupAvatar != null && Object.hasOwnProperty.call(message, "groupAvatar"))
                 $root.server.UploadGroupAvatar.encode(message.groupAvatar, writer.uint32(/* id 27, wireType 2 =*/218).fork()).ldelim();
+            if (message.deleteAccount != null && Object.hasOwnProperty.call(message, "deleteAccount"))
+                $root.server.DeleteAccount.encode(message.deleteAccount, writer.uint32(/* id 28, wireType 2 =*/226).fork()).ldelim();
             return writer;
         };
 
@@ -10422,6 +10672,9 @@ $root.server = (function() {
                     break;
                 case 27:
                     message.groupAvatar = $root.server.UploadGroupAvatar.decode(reader, reader.uint32());
+                    break;
+                case 28:
+                    message.deleteAccount = $root.server.DeleteAccount.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -10720,6 +10973,16 @@ $root.server = (function() {
                         return "groupAvatar." + error;
                 }
             }
+            if (message.deleteAccount != null && message.hasOwnProperty("deleteAccount")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.DeleteAccount.verify(message.deleteAccount);
+                    if (error)
+                        return "deleteAccount." + error;
+                }
+            }
             return null;
         };
 
@@ -10880,6 +11143,11 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.groupAvatar: object expected");
                 message.groupAvatar = $root.server.UploadGroupAvatar.fromObject(object.groupAvatar);
             }
+            if (object.deleteAccount != null) {
+                if (typeof object.deleteAccount !== "object")
+                    throw TypeError(".server.Iq.deleteAccount: object expected");
+                message.deleteAccount = $root.server.DeleteAccount.fromObject(object.deleteAccount);
+            }
             return message;
         };
 
@@ -11029,6 +11297,11 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "groupAvatar";
             }
+            if (message.deleteAccount != null && message.hasOwnProperty("deleteAccount")) {
+                object.deleteAccount = $root.server.DeleteAccount.toObject(message.deleteAccount, options);
+                if (options.oneofs)
+                    object.payload = "deleteAccount";
+            }
             return object;
         };
 
@@ -11092,7 +11365,10 @@ $root.server = (function() {
          * @property {server.IGroupFeedItem|null} [groupFeedItem] Msg groupFeedItem
          * @property {server.IRerequest|null} [rerequest] Msg rerequest
          * @property {server.ISilentChatStanza|null} [silentChatStanza] Msg silentChatStanza
+         * @property {server.IGroupFeedItems|null} [groupFeedItems] Msg groupFeedItems
+         * @property {server.IEndOfQueue|null} [endOfQueue] Msg endOfQueue
          * @property {number|null} [retryCount] Msg retryCount
+         * @property {number|null} [rerequestCount] Msg rerequestCount
          */
 
         /**
@@ -11287,6 +11563,22 @@ $root.server = (function() {
         Msg.prototype.silentChatStanza = null;
 
         /**
+         * Msg groupFeedItems.
+         * @member {server.IGroupFeedItems|null|undefined} groupFeedItems
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.groupFeedItems = null;
+
+        /**
+         * Msg endOfQueue.
+         * @member {server.IEndOfQueue|null|undefined} endOfQueue
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.endOfQueue = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -11294,17 +11586,25 @@ $root.server = (function() {
          */
         Msg.prototype.retryCount = 0;
 
+        /**
+         * Msg rerequestCount.
+         * @member {number} rerequestCount
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.rerequestCount = 0;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -11378,6 +11678,12 @@ $root.server = (function() {
                 $root.server.Rerequest.encode(message.rerequest, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
             if (message.silentChatStanza != null && Object.hasOwnProperty.call(message, "silentChatStanza"))
                 $root.server.SilentChatStanza.encode(message.silentChatStanza, writer.uint32(/* id 23, wireType 2 =*/186).fork()).ldelim();
+            if (message.groupFeedItems != null && Object.hasOwnProperty.call(message, "groupFeedItems"))
+                $root.server.GroupFeedItems.encode(message.groupFeedItems, writer.uint32(/* id 24, wireType 2 =*/194).fork()).ldelim();
+            if (message.rerequestCount != null && Object.hasOwnProperty.call(message, "rerequestCount"))
+                writer.uint32(/* id 25, wireType 0 =*/200).int32(message.rerequestCount);
+            if (message.endOfQueue != null && Object.hasOwnProperty.call(message, "endOfQueue"))
+                $root.server.EndOfQueue.encode(message.endOfQueue, writer.uint32(/* id 26, wireType 2 =*/210).fork()).ldelim();
             return writer;
         };
 
@@ -11478,8 +11784,17 @@ $root.server = (function() {
                 case 23:
                     message.silentChatStanza = $root.server.SilentChatStanza.decode(reader, reader.uint32());
                     break;
+                case 24:
+                    message.groupFeedItems = $root.server.GroupFeedItems.decode(reader, reader.uint32());
+                    break;
+                case 26:
+                    message.endOfQueue = $root.server.EndOfQueue.decode(reader, reader.uint32());
+                    break;
                 case 21:
                     message.retryCount = reader.int32();
+                    break;
+                case 25:
+                    message.rerequestCount = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -11715,9 +12030,32 @@ $root.server = (function() {
                         return "silentChatStanza." + error;
                 }
             }
+            if (message.groupFeedItems != null && message.hasOwnProperty("groupFeedItems")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GroupFeedItems.verify(message.groupFeedItems);
+                    if (error)
+                        return "groupFeedItems." + error;
+                }
+            }
+            if (message.endOfQueue != null && message.hasOwnProperty("endOfQueue")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.EndOfQueue.verify(message.endOfQueue);
+                    if (error)
+                        return "endOfQueue." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                if (!$util.isInteger(message.rerequestCount))
+                    return "rerequestCount: integer expected";
             return null;
         };
 
@@ -11865,8 +12203,20 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.silentChatStanza: object expected");
                 message.silentChatStanza = $root.server.SilentChatStanza.fromObject(object.silentChatStanza);
             }
+            if (object.groupFeedItems != null) {
+                if (typeof object.groupFeedItems !== "object")
+                    throw TypeError(".server.Msg.groupFeedItems: object expected");
+                message.groupFeedItems = $root.server.GroupFeedItems.fromObject(object.groupFeedItems);
+            }
+            if (object.endOfQueue != null) {
+                if (typeof object.endOfQueue !== "object")
+                    throw TypeError(".server.Msg.endOfQueue: object expected");
+                message.endOfQueue = $root.server.EndOfQueue.fromObject(object.endOfQueue);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
+            if (object.rerequestCount != null)
+                message.rerequestCount = object.rerequestCount | 0;
             return message;
         };
 
@@ -11897,6 +12247,7 @@ $root.server = (function() {
                 } else
                     object.fromUid = options.longs === String ? "0" : 0;
                 object.retryCount = 0;
+                object.rerequestCount = 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -12003,6 +12354,18 @@ $root.server = (function() {
                 object.silentChatStanza = $root.server.SilentChatStanza.toObject(message.silentChatStanza, options);
                 if (options.oneofs)
                     object.payload = "silentChatStanza";
+            }
+            if (message.groupFeedItems != null && message.hasOwnProperty("groupFeedItems")) {
+                object.groupFeedItems = $root.server.GroupFeedItems.toObject(message.groupFeedItems, options);
+                if (options.oneofs)
+                    object.payload = "groupFeedItems";
+            }
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                object.rerequestCount = message.rerequestCount;
+            if (message.endOfQueue != null && message.hasOwnProperty("endOfQueue")) {
+                object.endOfQueue = $root.server.EndOfQueue.toObject(message.endOfQueue, options);
+                if (options.oneofs)
+                    object.payload = "endOfQueue";
             }
             return object;
         };
@@ -17395,6 +17758,2166 @@ $root.server = (function() {
         })();
 
         return WhisperKeys;
+    })();
+
+    server.NoiseMessage = (function() {
+
+        /**
+         * Properties of a NoiseMessage.
+         * @memberof server
+         * @interface INoiseMessage
+         * @property {server.NoiseMessage.MessageType|null} [messageType] NoiseMessage messageType
+         * @property {Uint8Array|null} [content] NoiseMessage content
+         */
+
+        /**
+         * Constructs a new NoiseMessage.
+         * @memberof server
+         * @classdesc Represents a NoiseMessage.
+         * @implements INoiseMessage
+         * @constructor
+         * @param {server.INoiseMessage=} [properties] Properties to set
+         */
+        function NoiseMessage(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * NoiseMessage messageType.
+         * @member {server.NoiseMessage.MessageType} messageType
+         * @memberof server.NoiseMessage
+         * @instance
+         */
+        NoiseMessage.prototype.messageType = 0;
+
+        /**
+         * NoiseMessage content.
+         * @member {Uint8Array} content
+         * @memberof server.NoiseMessage
+         * @instance
+         */
+        NoiseMessage.prototype.content = $util.newBuffer([]);
+
+        /**
+         * Creates a new NoiseMessage instance using the specified properties.
+         * @function create
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {server.INoiseMessage=} [properties] Properties to set
+         * @returns {server.NoiseMessage} NoiseMessage instance
+         */
+        NoiseMessage.create = function create(properties) {
+            return new NoiseMessage(properties);
+        };
+
+        /**
+         * Encodes the specified NoiseMessage message. Does not implicitly {@link server.NoiseMessage.verify|verify} messages.
+         * @function encode
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {server.INoiseMessage} message NoiseMessage message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        NoiseMessage.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.messageType != null && Object.hasOwnProperty.call(message, "messageType"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.messageType);
+            if (message.content != null && Object.hasOwnProperty.call(message, "content"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.content);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified NoiseMessage message, length delimited. Does not implicitly {@link server.NoiseMessage.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {server.INoiseMessage} message NoiseMessage message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        NoiseMessage.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a NoiseMessage message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.NoiseMessage} NoiseMessage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        NoiseMessage.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.NoiseMessage();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.messageType = reader.int32();
+                    break;
+                case 2:
+                    message.content = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a NoiseMessage message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.NoiseMessage} NoiseMessage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        NoiseMessage.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a NoiseMessage message.
+         * @function verify
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        NoiseMessage.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.messageType != null && message.hasOwnProperty("messageType"))
+                switch (message.messageType) {
+                default:
+                    return "messageType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    break;
+                }
+            if (message.content != null && message.hasOwnProperty("content"))
+                if (!(message.content && typeof message.content.length === "number" || $util.isString(message.content)))
+                    return "content: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a NoiseMessage message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.NoiseMessage} NoiseMessage
+         */
+        NoiseMessage.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.NoiseMessage)
+                return object;
+            var message = new $root.server.NoiseMessage();
+            switch (object.messageType) {
+            case "XX_A":
+            case 0:
+                message.messageType = 0;
+                break;
+            case "XX_B":
+            case 1:
+                message.messageType = 1;
+                break;
+            case "XX_C":
+            case 2:
+                message.messageType = 2;
+                break;
+            case "IK_A":
+            case 3:
+                message.messageType = 3;
+                break;
+            case "IK_B":
+            case 4:
+                message.messageType = 4;
+                break;
+            case "XX_FALLBACK_A":
+            case 5:
+                message.messageType = 5;
+                break;
+            case "XX_FALLBACK_B":
+            case 6:
+                message.messageType = 6;
+                break;
+            }
+            if (object.content != null)
+                if (typeof object.content === "string")
+                    $util.base64.decode(object.content, message.content = $util.newBuffer($util.base64.length(object.content)), 0);
+                else if (object.content.length)
+                    message.content = object.content;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a NoiseMessage message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.NoiseMessage
+         * @static
+         * @param {server.NoiseMessage} message NoiseMessage
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        NoiseMessage.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.messageType = options.enums === String ? "XX_A" : 0;
+                if (options.bytes === String)
+                    object.content = "";
+                else {
+                    object.content = [];
+                    if (options.bytes !== Array)
+                        object.content = $util.newBuffer(object.content);
+                }
+            }
+            if (message.messageType != null && message.hasOwnProperty("messageType"))
+                object.messageType = options.enums === String ? $root.server.NoiseMessage.MessageType[message.messageType] : message.messageType;
+            if (message.content != null && message.hasOwnProperty("content"))
+                object.content = options.bytes === String ? $util.base64.encode(message.content, 0, message.content.length) : options.bytes === Array ? Array.prototype.slice.call(message.content) : message.content;
+            return object;
+        };
+
+        /**
+         * Converts this NoiseMessage to JSON.
+         * @function toJSON
+         * @memberof server.NoiseMessage
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        NoiseMessage.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * MessageType enum.
+         * @name server.NoiseMessage.MessageType
+         * @enum {number}
+         * @property {number} XX_A=0 XX_A value
+         * @property {number} XX_B=1 XX_B value
+         * @property {number} XX_C=2 XX_C value
+         * @property {number} IK_A=3 IK_A value
+         * @property {number} IK_B=4 IK_B value
+         * @property {number} XX_FALLBACK_A=5 XX_FALLBACK_A value
+         * @property {number} XX_FALLBACK_B=6 XX_FALLBACK_B value
+         */
+        NoiseMessage.MessageType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "XX_A"] = 0;
+            values[valuesById[1] = "XX_B"] = 1;
+            values[valuesById[2] = "XX_C"] = 2;
+            values[valuesById[3] = "IK_A"] = 3;
+            values[valuesById[4] = "IK_B"] = 4;
+            values[valuesById[5] = "XX_FALLBACK_A"] = 5;
+            values[valuesById[6] = "XX_FALLBACK_B"] = 6;
+            return values;
+        })();
+
+        return NoiseMessage;
+    })();
+
+    server.DeleteAccount = (function() {
+
+        /**
+         * Properties of a DeleteAccount.
+         * @memberof server
+         * @interface IDeleteAccount
+         * @property {string|null} [phone] DeleteAccount phone
+         */
+
+        /**
+         * Constructs a new DeleteAccount.
+         * @memberof server
+         * @classdesc Represents a DeleteAccount.
+         * @implements IDeleteAccount
+         * @constructor
+         * @param {server.IDeleteAccount=} [properties] Properties to set
+         */
+        function DeleteAccount(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DeleteAccount phone.
+         * @member {string} phone
+         * @memberof server.DeleteAccount
+         * @instance
+         */
+        DeleteAccount.prototype.phone = "";
+
+        /**
+         * Creates a new DeleteAccount instance using the specified properties.
+         * @function create
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {server.IDeleteAccount=} [properties] Properties to set
+         * @returns {server.DeleteAccount} DeleteAccount instance
+         */
+        DeleteAccount.create = function create(properties) {
+            return new DeleteAccount(properties);
+        };
+
+        /**
+         * Encodes the specified DeleteAccount message. Does not implicitly {@link server.DeleteAccount.verify|verify} messages.
+         * @function encode
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {server.IDeleteAccount} message DeleteAccount message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeleteAccount.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.phone != null && Object.hasOwnProperty.call(message, "phone"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.phone);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified DeleteAccount message, length delimited. Does not implicitly {@link server.DeleteAccount.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {server.IDeleteAccount} message DeleteAccount message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DeleteAccount.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a DeleteAccount message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.DeleteAccount} DeleteAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeleteAccount.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.DeleteAccount();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.phone = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a DeleteAccount message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.DeleteAccount} DeleteAccount
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DeleteAccount.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a DeleteAccount message.
+         * @function verify
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        DeleteAccount.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.phone != null && message.hasOwnProperty("phone"))
+                if (!$util.isString(message.phone))
+                    return "phone: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a DeleteAccount message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.DeleteAccount} DeleteAccount
+         */
+        DeleteAccount.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.DeleteAccount)
+                return object;
+            var message = new $root.server.DeleteAccount();
+            if (object.phone != null)
+                message.phone = String(object.phone);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DeleteAccount message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.DeleteAccount
+         * @static
+         * @param {server.DeleteAccount} message DeleteAccount
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DeleteAccount.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.phone = "";
+            if (message.phone != null && message.hasOwnProperty("phone"))
+                object.phone = message.phone;
+            return object;
+        };
+
+        /**
+         * Converts this DeleteAccount to JSON.
+         * @function toJSON
+         * @memberof server.DeleteAccount
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DeleteAccount.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return DeleteAccount;
+    })();
+
+    server.EventData = (function() {
+
+        /**
+         * Properties of an EventData.
+         * @memberof server
+         * @interface IEventData
+         * @property {number|Long|null} [uid] EventData uid
+         * @property {server.Platform|null} [platform] EventData platform
+         * @property {string|null} [version] EventData version
+         * @property {server.IMediaUpload|null} [mediaUpload] EventData mediaUpload
+         * @property {server.IMediaDownload|null} [mediaDownload] EventData mediaDownload
+         * @property {server.IMediaComposeLoad|null} [mediaComposeLoad] EventData mediaComposeLoad
+         * @property {server.IPushReceived|null} [pushReceived] EventData pushReceived
+         */
+
+        /**
+         * Constructs a new EventData.
+         * @memberof server
+         * @classdesc Represents an EventData.
+         * @implements IEventData
+         * @constructor
+         * @param {server.IEventData=} [properties] Properties to set
+         */
+        function EventData(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * EventData uid.
+         * @member {number|Long} uid
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * EventData platform.
+         * @member {server.Platform} platform
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.platform = 0;
+
+        /**
+         * EventData version.
+         * @member {string} version
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.version = "";
+
+        /**
+         * EventData mediaUpload.
+         * @member {server.IMediaUpload|null|undefined} mediaUpload
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.mediaUpload = null;
+
+        /**
+         * EventData mediaDownload.
+         * @member {server.IMediaDownload|null|undefined} mediaDownload
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.mediaDownload = null;
+
+        /**
+         * EventData mediaComposeLoad.
+         * @member {server.IMediaComposeLoad|null|undefined} mediaComposeLoad
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.mediaComposeLoad = null;
+
+        /**
+         * EventData pushReceived.
+         * @member {server.IPushReceived|null|undefined} pushReceived
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.pushReceived = null;
+
+        // OneOf field names bound to virtual getters and setters
+        var $oneOfFields;
+
+        /**
+         * EventData edata.
+         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|undefined} edata
+         * @memberof server.EventData
+         * @instance
+         */
+        Object.defineProperty(EventData.prototype, "edata", {
+            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
+         * Creates a new EventData instance using the specified properties.
+         * @function create
+         * @memberof server.EventData
+         * @static
+         * @param {server.IEventData=} [properties] Properties to set
+         * @returns {server.EventData} EventData instance
+         */
+        EventData.create = function create(properties) {
+            return new EventData(properties);
+        };
+
+        /**
+         * Encodes the specified EventData message. Does not implicitly {@link server.EventData.verify|verify} messages.
+         * @function encode
+         * @memberof server.EventData
+         * @static
+         * @param {server.IEventData} message EventData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        EventData.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.uid);
+            if (message.platform != null && Object.hasOwnProperty.call(message, "platform"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.platform);
+            if (message.version != null && Object.hasOwnProperty.call(message, "version"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.version);
+            if (message.mediaUpload != null && Object.hasOwnProperty.call(message, "mediaUpload"))
+                $root.server.MediaUpload.encode(message.mediaUpload, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+            if (message.mediaDownload != null && Object.hasOwnProperty.call(message, "mediaDownload"))
+                $root.server.MediaDownload.encode(message.mediaDownload, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
+            if (message.mediaComposeLoad != null && Object.hasOwnProperty.call(message, "mediaComposeLoad"))
+                $root.server.MediaComposeLoad.encode(message.mediaComposeLoad, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
+            if (message.pushReceived != null && Object.hasOwnProperty.call(message, "pushReceived"))
+                $root.server.PushReceived.encode(message.pushReceived, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified EventData message, length delimited. Does not implicitly {@link server.EventData.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.EventData
+         * @static
+         * @param {server.IEventData} message EventData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        EventData.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an EventData message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.EventData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.EventData} EventData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        EventData.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.EventData();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.uint64();
+                    break;
+                case 2:
+                    message.platform = reader.int32();
+                    break;
+                case 3:
+                    message.version = reader.string();
+                    break;
+                case 10:
+                    message.mediaUpload = $root.server.MediaUpload.decode(reader, reader.uint32());
+                    break;
+                case 11:
+                    message.mediaDownload = $root.server.MediaDownload.decode(reader, reader.uint32());
+                    break;
+                case 12:
+                    message.mediaComposeLoad = $root.server.MediaComposeLoad.decode(reader, reader.uint32());
+                    break;
+                case 13:
+                    message.pushReceived = $root.server.PushReceived.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an EventData message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.EventData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.EventData} EventData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        EventData.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an EventData message.
+         * @function verify
+         * @memberof server.EventData
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        EventData.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            var properties = {};
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.platform != null && message.hasOwnProperty("platform"))
+                switch (message.platform) {
+                default:
+                    return "platform: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.version != null && message.hasOwnProperty("version"))
+                if (!$util.isString(message.version))
+                    return "version: string expected";
+            if (message.mediaUpload != null && message.hasOwnProperty("mediaUpload")) {
+                properties.edata = 1;
+                {
+                    var error = $root.server.MediaUpload.verify(message.mediaUpload);
+                    if (error)
+                        return "mediaUpload." + error;
+                }
+            }
+            if (message.mediaDownload != null && message.hasOwnProperty("mediaDownload")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.MediaDownload.verify(message.mediaDownload);
+                    if (error)
+                        return "mediaDownload." + error;
+                }
+            }
+            if (message.mediaComposeLoad != null && message.hasOwnProperty("mediaComposeLoad")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.MediaComposeLoad.verify(message.mediaComposeLoad);
+                    if (error)
+                        return "mediaComposeLoad." + error;
+                }
+            }
+            if (message.pushReceived != null && message.hasOwnProperty("pushReceived")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.PushReceived.verify(message.pushReceived);
+                    if (error)
+                        return "pushReceived." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates an EventData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.EventData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.EventData} EventData
+         */
+        EventData.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.EventData)
+                return object;
+            var message = new $root.server.EventData();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = true;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber(true);
+            switch (object.platform) {
+            case "ANDROID":
+            case 0:
+                message.platform = 0;
+                break;
+            case "IOS":
+            case 1:
+                message.platform = 1;
+                break;
+            }
+            if (object.version != null)
+                message.version = String(object.version);
+            if (object.mediaUpload != null) {
+                if (typeof object.mediaUpload !== "object")
+                    throw TypeError(".server.EventData.mediaUpload: object expected");
+                message.mediaUpload = $root.server.MediaUpload.fromObject(object.mediaUpload);
+            }
+            if (object.mediaDownload != null) {
+                if (typeof object.mediaDownload !== "object")
+                    throw TypeError(".server.EventData.mediaDownload: object expected");
+                message.mediaDownload = $root.server.MediaDownload.fromObject(object.mediaDownload);
+            }
+            if (object.mediaComposeLoad != null) {
+                if (typeof object.mediaComposeLoad !== "object")
+                    throw TypeError(".server.EventData.mediaComposeLoad: object expected");
+                message.mediaComposeLoad = $root.server.MediaComposeLoad.fromObject(object.mediaComposeLoad);
+            }
+            if (object.pushReceived != null) {
+                if (typeof object.pushReceived !== "object")
+                    throw TypeError(".server.EventData.pushReceived: object expected");
+                message.pushReceived = $root.server.PushReceived.fromObject(object.pushReceived);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an EventData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.EventData
+         * @static
+         * @param {server.EventData} message EventData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        EventData.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+                object.platform = options.enums === String ? "ANDROID" : 0;
+                object.version = "";
+            }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber(true) : message.uid;
+            if (message.platform != null && message.hasOwnProperty("platform"))
+                object.platform = options.enums === String ? $root.server.Platform[message.platform] : message.platform;
+            if (message.version != null && message.hasOwnProperty("version"))
+                object.version = message.version;
+            if (message.mediaUpload != null && message.hasOwnProperty("mediaUpload")) {
+                object.mediaUpload = $root.server.MediaUpload.toObject(message.mediaUpload, options);
+                if (options.oneofs)
+                    object.edata = "mediaUpload";
+            }
+            if (message.mediaDownload != null && message.hasOwnProperty("mediaDownload")) {
+                object.mediaDownload = $root.server.MediaDownload.toObject(message.mediaDownload, options);
+                if (options.oneofs)
+                    object.edata = "mediaDownload";
+            }
+            if (message.mediaComposeLoad != null && message.hasOwnProperty("mediaComposeLoad")) {
+                object.mediaComposeLoad = $root.server.MediaComposeLoad.toObject(message.mediaComposeLoad, options);
+                if (options.oneofs)
+                    object.edata = "mediaComposeLoad";
+            }
+            if (message.pushReceived != null && message.hasOwnProperty("pushReceived")) {
+                object.pushReceived = $root.server.PushReceived.toObject(message.pushReceived, options);
+                if (options.oneofs)
+                    object.edata = "pushReceived";
+            }
+            return object;
+        };
+
+        /**
+         * Converts this EventData to JSON.
+         * @function toJSON
+         * @memberof server.EventData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        EventData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return EventData;
+    })();
+
+    /**
+     * Platform enum.
+     * @name server.Platform
+     * @enum {number}
+     * @property {number} ANDROID=0 ANDROID value
+     * @property {number} IOS=1 IOS value
+     */
+    server.Platform = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "ANDROID"] = 0;
+        values[valuesById[1] = "IOS"] = 1;
+        return values;
+    })();
+
+    server.MediaUpload = (function() {
+
+        /**
+         * Properties of a MediaUpload.
+         * @memberof server
+         * @interface IMediaUpload
+         * @property {string|null} [id] MediaUpload id
+         * @property {server.MediaUpload.Type|null} [type] MediaUpload type
+         * @property {number|null} [durationMs] MediaUpload durationMs
+         * @property {number|null} [numPhotos] MediaUpload numPhotos
+         * @property {number|null} [numVideos] MediaUpload numVideos
+         * @property {number|null} [totalSize] MediaUpload totalSize
+         * @property {server.MediaUpload.Status|null} [status] MediaUpload status
+         * @property {number|null} [retryCount] MediaUpload retryCount
+         */
+
+        /**
+         * Constructs a new MediaUpload.
+         * @memberof server
+         * @classdesc Represents a MediaUpload.
+         * @implements IMediaUpload
+         * @constructor
+         * @param {server.IMediaUpload=} [properties] Properties to set
+         */
+        function MediaUpload(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MediaUpload id.
+         * @member {string} id
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.id = "";
+
+        /**
+         * MediaUpload type.
+         * @member {server.MediaUpload.Type} type
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.type = 0;
+
+        /**
+         * MediaUpload durationMs.
+         * @member {number} durationMs
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.durationMs = 0;
+
+        /**
+         * MediaUpload numPhotos.
+         * @member {number} numPhotos
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.numPhotos = 0;
+
+        /**
+         * MediaUpload numVideos.
+         * @member {number} numVideos
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.numVideos = 0;
+
+        /**
+         * MediaUpload totalSize.
+         * @member {number} totalSize
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.totalSize = 0;
+
+        /**
+         * MediaUpload status.
+         * @member {server.MediaUpload.Status} status
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.status = 0;
+
+        /**
+         * MediaUpload retryCount.
+         * @member {number} retryCount
+         * @memberof server.MediaUpload
+         * @instance
+         */
+        MediaUpload.prototype.retryCount = 0;
+
+        /**
+         * Creates a new MediaUpload instance using the specified properties.
+         * @function create
+         * @memberof server.MediaUpload
+         * @static
+         * @param {server.IMediaUpload=} [properties] Properties to set
+         * @returns {server.MediaUpload} MediaUpload instance
+         */
+        MediaUpload.create = function create(properties) {
+            return new MediaUpload(properties);
+        };
+
+        /**
+         * Encodes the specified MediaUpload message. Does not implicitly {@link server.MediaUpload.verify|verify} messages.
+         * @function encode
+         * @memberof server.MediaUpload
+         * @static
+         * @param {server.IMediaUpload} message MediaUpload message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaUpload.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.type);
+            if (message.durationMs != null && Object.hasOwnProperty.call(message, "durationMs"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.durationMs);
+            if (message.numPhotos != null && Object.hasOwnProperty.call(message, "numPhotos"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.numPhotos);
+            if (message.numVideos != null && Object.hasOwnProperty.call(message, "numVideos"))
+                writer.uint32(/* id 5, wireType 0 =*/40).uint32(message.numVideos);
+            if (message.totalSize != null && Object.hasOwnProperty.call(message, "totalSize"))
+                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.totalSize);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.status);
+            if (message.retryCount != null && Object.hasOwnProperty.call(message, "retryCount"))
+                writer.uint32(/* id 8, wireType 0 =*/64).uint32(message.retryCount);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MediaUpload message, length delimited. Does not implicitly {@link server.MediaUpload.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MediaUpload
+         * @static
+         * @param {server.IMediaUpload} message MediaUpload message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaUpload.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MediaUpload message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MediaUpload
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MediaUpload} MediaUpload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaUpload.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MediaUpload();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.type = reader.int32();
+                    break;
+                case 3:
+                    message.durationMs = reader.uint32();
+                    break;
+                case 4:
+                    message.numPhotos = reader.uint32();
+                    break;
+                case 5:
+                    message.numVideos = reader.uint32();
+                    break;
+                case 6:
+                    message.totalSize = reader.uint32();
+                    break;
+                case 7:
+                    message.status = reader.int32();
+                    break;
+                case 8:
+                    message.retryCount = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MediaUpload message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MediaUpload
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MediaUpload} MediaUpload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaUpload.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MediaUpload message.
+         * @function verify
+         * @memberof server.MediaUpload
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MediaUpload.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (!$util.isInteger(message.durationMs))
+                    return "durationMs: integer expected";
+            if (message.numPhotos != null && message.hasOwnProperty("numPhotos"))
+                if (!$util.isInteger(message.numPhotos))
+                    return "numPhotos: integer expected";
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                if (!$util.isInteger(message.numVideos))
+                    return "numVideos: integer expected";
+            if (message.totalSize != null && message.hasOwnProperty("totalSize"))
+                if (!$util.isInteger(message.totalSize))
+                    return "totalSize: integer expected";
+            if (message.status != null && message.hasOwnProperty("status"))
+                switch (message.status) {
+                default:
+                    return "status: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.retryCount != null && message.hasOwnProperty("retryCount"))
+                if (!$util.isInteger(message.retryCount))
+                    return "retryCount: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a MediaUpload message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MediaUpload
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MediaUpload} MediaUpload
+         */
+        MediaUpload.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MediaUpload)
+                return object;
+            var message = new $root.server.MediaUpload();
+            if (object.id != null)
+                message.id = String(object.id);
+            switch (object.type) {
+            case "POST":
+            case 0:
+                message.type = 0;
+                break;
+            case "MESSAGE":
+            case 1:
+                message.type = 1;
+                break;
+            }
+            if (object.durationMs != null)
+                message.durationMs = object.durationMs >>> 0;
+            if (object.numPhotos != null)
+                message.numPhotos = object.numPhotos >>> 0;
+            if (object.numVideos != null)
+                message.numVideos = object.numVideos >>> 0;
+            if (object.totalSize != null)
+                message.totalSize = object.totalSize >>> 0;
+            switch (object.status) {
+            case "OK":
+            case 0:
+                message.status = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.status = 1;
+                break;
+            }
+            if (object.retryCount != null)
+                message.retryCount = object.retryCount >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MediaUpload message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MediaUpload
+         * @static
+         * @param {server.MediaUpload} message MediaUpload
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MediaUpload.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                object.type = options.enums === String ? "POST" : 0;
+                object.durationMs = 0;
+                object.numPhotos = 0;
+                object.numVideos = 0;
+                object.totalSize = 0;
+                object.status = options.enums === String ? "OK" : 0;
+                object.retryCount = 0;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.MediaUpload.Type[message.type] : message.type;
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                object.durationMs = message.durationMs;
+            if (message.numPhotos != null && message.hasOwnProperty("numPhotos"))
+                object.numPhotos = message.numPhotos;
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                object.numVideos = message.numVideos;
+            if (message.totalSize != null && message.hasOwnProperty("totalSize"))
+                object.totalSize = message.totalSize;
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = options.enums === String ? $root.server.MediaUpload.Status[message.status] : message.status;
+            if (message.retryCount != null && message.hasOwnProperty("retryCount"))
+                object.retryCount = message.retryCount;
+            return object;
+        };
+
+        /**
+         * Converts this MediaUpload to JSON.
+         * @function toJSON
+         * @memberof server.MediaUpload
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MediaUpload.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.MediaUpload.Type
+         * @enum {number}
+         * @property {number} POST=0 POST value
+         * @property {number} MESSAGE=1 MESSAGE value
+         */
+        MediaUpload.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "POST"] = 0;
+            values[valuesById[1] = "MESSAGE"] = 1;
+            return values;
+        })();
+
+        /**
+         * Status enum.
+         * @name server.MediaUpload.Status
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        MediaUpload.Status = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return MediaUpload;
+    })();
+
+    server.MediaDownload = (function() {
+
+        /**
+         * Properties of a MediaDownload.
+         * @memberof server
+         * @interface IMediaDownload
+         * @property {string|null} [id] MediaDownload id
+         * @property {server.MediaDownload.Type|null} [type] MediaDownload type
+         * @property {number|null} [durationMs] MediaDownload durationMs
+         * @property {number|null} [numPhotos] MediaDownload numPhotos
+         * @property {number|null} [numVideos] MediaDownload numVideos
+         * @property {number|null} [totalSize] MediaDownload totalSize
+         * @property {server.MediaDownload.Status|null} [status] MediaDownload status
+         * @property {number|null} [retryCount] MediaDownload retryCount
+         */
+
+        /**
+         * Constructs a new MediaDownload.
+         * @memberof server
+         * @classdesc Represents a MediaDownload.
+         * @implements IMediaDownload
+         * @constructor
+         * @param {server.IMediaDownload=} [properties] Properties to set
+         */
+        function MediaDownload(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MediaDownload id.
+         * @member {string} id
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.id = "";
+
+        /**
+         * MediaDownload type.
+         * @member {server.MediaDownload.Type} type
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.type = 0;
+
+        /**
+         * MediaDownload durationMs.
+         * @member {number} durationMs
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.durationMs = 0;
+
+        /**
+         * MediaDownload numPhotos.
+         * @member {number} numPhotos
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.numPhotos = 0;
+
+        /**
+         * MediaDownload numVideos.
+         * @member {number} numVideos
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.numVideos = 0;
+
+        /**
+         * MediaDownload totalSize.
+         * @member {number} totalSize
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.totalSize = 0;
+
+        /**
+         * MediaDownload status.
+         * @member {server.MediaDownload.Status} status
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.status = 0;
+
+        /**
+         * MediaDownload retryCount.
+         * @member {number} retryCount
+         * @memberof server.MediaDownload
+         * @instance
+         */
+        MediaDownload.prototype.retryCount = 0;
+
+        /**
+         * Creates a new MediaDownload instance using the specified properties.
+         * @function create
+         * @memberof server.MediaDownload
+         * @static
+         * @param {server.IMediaDownload=} [properties] Properties to set
+         * @returns {server.MediaDownload} MediaDownload instance
+         */
+        MediaDownload.create = function create(properties) {
+            return new MediaDownload(properties);
+        };
+
+        /**
+         * Encodes the specified MediaDownload message. Does not implicitly {@link server.MediaDownload.verify|verify} messages.
+         * @function encode
+         * @memberof server.MediaDownload
+         * @static
+         * @param {server.IMediaDownload} message MediaDownload message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaDownload.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.type);
+            if (message.durationMs != null && Object.hasOwnProperty.call(message, "durationMs"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.durationMs);
+            if (message.numPhotos != null && Object.hasOwnProperty.call(message, "numPhotos"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.numPhotos);
+            if (message.numVideos != null && Object.hasOwnProperty.call(message, "numVideos"))
+                writer.uint32(/* id 5, wireType 0 =*/40).uint32(message.numVideos);
+            if (message.totalSize != null && Object.hasOwnProperty.call(message, "totalSize"))
+                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.totalSize);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.status);
+            if (message.retryCount != null && Object.hasOwnProperty.call(message, "retryCount"))
+                writer.uint32(/* id 8, wireType 0 =*/64).uint32(message.retryCount);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MediaDownload message, length delimited. Does not implicitly {@link server.MediaDownload.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MediaDownload
+         * @static
+         * @param {server.IMediaDownload} message MediaDownload message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaDownload.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MediaDownload message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MediaDownload
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MediaDownload} MediaDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaDownload.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MediaDownload();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.type = reader.int32();
+                    break;
+                case 3:
+                    message.durationMs = reader.uint32();
+                    break;
+                case 4:
+                    message.numPhotos = reader.uint32();
+                    break;
+                case 5:
+                    message.numVideos = reader.uint32();
+                    break;
+                case 6:
+                    message.totalSize = reader.uint32();
+                    break;
+                case 7:
+                    message.status = reader.int32();
+                    break;
+                case 8:
+                    message.retryCount = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MediaDownload message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MediaDownload
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MediaDownload} MediaDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaDownload.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MediaDownload message.
+         * @function verify
+         * @memberof server.MediaDownload
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MediaDownload.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (!$util.isInteger(message.durationMs))
+                    return "durationMs: integer expected";
+            if (message.numPhotos != null && message.hasOwnProperty("numPhotos"))
+                if (!$util.isInteger(message.numPhotos))
+                    return "numPhotos: integer expected";
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                if (!$util.isInteger(message.numVideos))
+                    return "numVideos: integer expected";
+            if (message.totalSize != null && message.hasOwnProperty("totalSize"))
+                if (!$util.isInteger(message.totalSize))
+                    return "totalSize: integer expected";
+            if (message.status != null && message.hasOwnProperty("status"))
+                switch (message.status) {
+                default:
+                    return "status: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.retryCount != null && message.hasOwnProperty("retryCount"))
+                if (!$util.isInteger(message.retryCount))
+                    return "retryCount: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a MediaDownload message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MediaDownload
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MediaDownload} MediaDownload
+         */
+        MediaDownload.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MediaDownload)
+                return object;
+            var message = new $root.server.MediaDownload();
+            if (object.id != null)
+                message.id = String(object.id);
+            switch (object.type) {
+            case "POST":
+            case 0:
+                message.type = 0;
+                break;
+            case "MESSAGE":
+            case 1:
+                message.type = 1;
+                break;
+            }
+            if (object.durationMs != null)
+                message.durationMs = object.durationMs >>> 0;
+            if (object.numPhotos != null)
+                message.numPhotos = object.numPhotos >>> 0;
+            if (object.numVideos != null)
+                message.numVideos = object.numVideos >>> 0;
+            if (object.totalSize != null)
+                message.totalSize = object.totalSize >>> 0;
+            switch (object.status) {
+            case "OK":
+            case 0:
+                message.status = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.status = 1;
+                break;
+            }
+            if (object.retryCount != null)
+                message.retryCount = object.retryCount >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MediaDownload message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MediaDownload
+         * @static
+         * @param {server.MediaDownload} message MediaDownload
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MediaDownload.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                object.type = options.enums === String ? "POST" : 0;
+                object.durationMs = 0;
+                object.numPhotos = 0;
+                object.numVideos = 0;
+                object.totalSize = 0;
+                object.status = options.enums === String ? "OK" : 0;
+                object.retryCount = 0;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.MediaDownload.Type[message.type] : message.type;
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                object.durationMs = message.durationMs;
+            if (message.numPhotos != null && message.hasOwnProperty("numPhotos"))
+                object.numPhotos = message.numPhotos;
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                object.numVideos = message.numVideos;
+            if (message.totalSize != null && message.hasOwnProperty("totalSize"))
+                object.totalSize = message.totalSize;
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = options.enums === String ? $root.server.MediaDownload.Status[message.status] : message.status;
+            if (message.retryCount != null && message.hasOwnProperty("retryCount"))
+                object.retryCount = message.retryCount;
+            return object;
+        };
+
+        /**
+         * Converts this MediaDownload to JSON.
+         * @function toJSON
+         * @memberof server.MediaDownload
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MediaDownload.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.MediaDownload.Type
+         * @enum {number}
+         * @property {number} POST=0 POST value
+         * @property {number} MESSAGE=1 MESSAGE value
+         */
+        MediaDownload.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "POST"] = 0;
+            values[valuesById[1] = "MESSAGE"] = 1;
+            return values;
+        })();
+
+        /**
+         * Status enum.
+         * @name server.MediaDownload.Status
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        MediaDownload.Status = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return MediaDownload;
+    })();
+
+    server.MediaComposeLoad = (function() {
+
+        /**
+         * Properties of a MediaComposeLoad.
+         * @memberof server
+         * @interface IMediaComposeLoad
+         * @property {number|null} [durationMs] MediaComposeLoad durationMs
+         * @property {number|null} [numPhotos] MediaComposeLoad numPhotos
+         * @property {number|null} [numVideos] MediaComposeLoad numVideos
+         * @property {number|null} [totalSize] MediaComposeLoad totalSize
+         */
+
+        /**
+         * Constructs a new MediaComposeLoad.
+         * @memberof server
+         * @classdesc Represents a MediaComposeLoad.
+         * @implements IMediaComposeLoad
+         * @constructor
+         * @param {server.IMediaComposeLoad=} [properties] Properties to set
+         */
+        function MediaComposeLoad(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MediaComposeLoad durationMs.
+         * @member {number} durationMs
+         * @memberof server.MediaComposeLoad
+         * @instance
+         */
+        MediaComposeLoad.prototype.durationMs = 0;
+
+        /**
+         * MediaComposeLoad numPhotos.
+         * @member {number} numPhotos
+         * @memberof server.MediaComposeLoad
+         * @instance
+         */
+        MediaComposeLoad.prototype.numPhotos = 0;
+
+        /**
+         * MediaComposeLoad numVideos.
+         * @member {number} numVideos
+         * @memberof server.MediaComposeLoad
+         * @instance
+         */
+        MediaComposeLoad.prototype.numVideos = 0;
+
+        /**
+         * MediaComposeLoad totalSize.
+         * @member {number} totalSize
+         * @memberof server.MediaComposeLoad
+         * @instance
+         */
+        MediaComposeLoad.prototype.totalSize = 0;
+
+        /**
+         * Creates a new MediaComposeLoad instance using the specified properties.
+         * @function create
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {server.IMediaComposeLoad=} [properties] Properties to set
+         * @returns {server.MediaComposeLoad} MediaComposeLoad instance
+         */
+        MediaComposeLoad.create = function create(properties) {
+            return new MediaComposeLoad(properties);
+        };
+
+        /**
+         * Encodes the specified MediaComposeLoad message. Does not implicitly {@link server.MediaComposeLoad.verify|verify} messages.
+         * @function encode
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {server.IMediaComposeLoad} message MediaComposeLoad message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaComposeLoad.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.durationMs != null && Object.hasOwnProperty.call(message, "durationMs"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.durationMs);
+            if (message.numPhotos != null && Object.hasOwnProperty.call(message, "numPhotos"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.numPhotos);
+            if (message.numVideos != null && Object.hasOwnProperty.call(message, "numVideos"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.numVideos);
+            if (message.totalSize != null && Object.hasOwnProperty.call(message, "totalSize"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint32(message.totalSize);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MediaComposeLoad message, length delimited. Does not implicitly {@link server.MediaComposeLoad.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {server.IMediaComposeLoad} message MediaComposeLoad message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaComposeLoad.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MediaComposeLoad message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MediaComposeLoad} MediaComposeLoad
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaComposeLoad.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MediaComposeLoad();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.durationMs = reader.uint32();
+                    break;
+                case 2:
+                    message.numPhotos = reader.uint32();
+                    break;
+                case 3:
+                    message.numVideos = reader.uint32();
+                    break;
+                case 4:
+                    message.totalSize = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MediaComposeLoad message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MediaComposeLoad} MediaComposeLoad
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaComposeLoad.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MediaComposeLoad message.
+         * @function verify
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MediaComposeLoad.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (!$util.isInteger(message.durationMs))
+                    return "durationMs: integer expected";
+            if (message.numPhotos != null && message.hasOwnProperty("numPhotos"))
+                if (!$util.isInteger(message.numPhotos))
+                    return "numPhotos: integer expected";
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                if (!$util.isInteger(message.numVideos))
+                    return "numVideos: integer expected";
+            if (message.totalSize != null && message.hasOwnProperty("totalSize"))
+                if (!$util.isInteger(message.totalSize))
+                    return "totalSize: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a MediaComposeLoad message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MediaComposeLoad} MediaComposeLoad
+         */
+        MediaComposeLoad.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MediaComposeLoad)
+                return object;
+            var message = new $root.server.MediaComposeLoad();
+            if (object.durationMs != null)
+                message.durationMs = object.durationMs >>> 0;
+            if (object.numPhotos != null)
+                message.numPhotos = object.numPhotos >>> 0;
+            if (object.numVideos != null)
+                message.numVideos = object.numVideos >>> 0;
+            if (object.totalSize != null)
+                message.totalSize = object.totalSize >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MediaComposeLoad message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MediaComposeLoad
+         * @static
+         * @param {server.MediaComposeLoad} message MediaComposeLoad
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MediaComposeLoad.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.durationMs = 0;
+                object.numPhotos = 0;
+                object.numVideos = 0;
+                object.totalSize = 0;
+            }
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                object.durationMs = message.durationMs;
+            if (message.numPhotos != null && message.hasOwnProperty("numPhotos"))
+                object.numPhotos = message.numPhotos;
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                object.numVideos = message.numVideos;
+            if (message.totalSize != null && message.hasOwnProperty("totalSize"))
+                object.totalSize = message.totalSize;
+            return object;
+        };
+
+        /**
+         * Converts this MediaComposeLoad to JSON.
+         * @function toJSON
+         * @memberof server.MediaComposeLoad
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MediaComposeLoad.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return MediaComposeLoad;
+    })();
+
+    server.PushReceived = (function() {
+
+        /**
+         * Properties of a PushReceived.
+         * @memberof server
+         * @interface IPushReceived
+         * @property {string|null} [id] PushReceived id
+         * @property {number|Long|null} [clientTimestamp] PushReceived clientTimestamp
+         */
+
+        /**
+         * Constructs a new PushReceived.
+         * @memberof server
+         * @classdesc Represents a PushReceived.
+         * @implements IPushReceived
+         * @constructor
+         * @param {server.IPushReceived=} [properties] Properties to set
+         */
+        function PushReceived(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PushReceived id.
+         * @member {string} id
+         * @memberof server.PushReceived
+         * @instance
+         */
+        PushReceived.prototype.id = "";
+
+        /**
+         * PushReceived clientTimestamp.
+         * @member {number|Long} clientTimestamp
+         * @memberof server.PushReceived
+         * @instance
+         */
+        PushReceived.prototype.clientTimestamp = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Creates a new PushReceived instance using the specified properties.
+         * @function create
+         * @memberof server.PushReceived
+         * @static
+         * @param {server.IPushReceived=} [properties] Properties to set
+         * @returns {server.PushReceived} PushReceived instance
+         */
+        PushReceived.create = function create(properties) {
+            return new PushReceived(properties);
+        };
+
+        /**
+         * Encodes the specified PushReceived message. Does not implicitly {@link server.PushReceived.verify|verify} messages.
+         * @function encode
+         * @memberof server.PushReceived
+         * @static
+         * @param {server.IPushReceived} message PushReceived message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PushReceived.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.clientTimestamp != null && Object.hasOwnProperty.call(message, "clientTimestamp"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.clientTimestamp);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PushReceived message, length delimited. Does not implicitly {@link server.PushReceived.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PushReceived
+         * @static
+         * @param {server.IPushReceived} message PushReceived message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PushReceived.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PushReceived message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PushReceived
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PushReceived} PushReceived
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PushReceived.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PushReceived();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.clientTimestamp = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PushReceived message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PushReceived
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PushReceived} PushReceived
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PushReceived.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PushReceived message.
+         * @function verify
+         * @memberof server.PushReceived
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PushReceived.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.clientTimestamp != null && message.hasOwnProperty("clientTimestamp"))
+                if (!$util.isInteger(message.clientTimestamp) && !(message.clientTimestamp && $util.isInteger(message.clientTimestamp.low) && $util.isInteger(message.clientTimestamp.high)))
+                    return "clientTimestamp: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a PushReceived message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PushReceived
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PushReceived} PushReceived
+         */
+        PushReceived.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PushReceived)
+                return object;
+            var message = new $root.server.PushReceived();
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.clientTimestamp != null)
+                if ($util.Long)
+                    (message.clientTimestamp = $util.Long.fromValue(object.clientTimestamp)).unsigned = true;
+                else if (typeof object.clientTimestamp === "string")
+                    message.clientTimestamp = parseInt(object.clientTimestamp, 10);
+                else if (typeof object.clientTimestamp === "number")
+                    message.clientTimestamp = object.clientTimestamp;
+                else if (typeof object.clientTimestamp === "object")
+                    message.clientTimestamp = new $util.LongBits(object.clientTimestamp.low >>> 0, object.clientTimestamp.high >>> 0).toNumber(true);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PushReceived message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PushReceived
+         * @static
+         * @param {server.PushReceived} message PushReceived
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PushReceived.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.clientTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.clientTimestamp = options.longs === String ? "0" : 0;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.clientTimestamp != null && message.hasOwnProperty("clientTimestamp"))
+                if (typeof message.clientTimestamp === "number")
+                    object.clientTimestamp = options.longs === String ? String(message.clientTimestamp) : message.clientTimestamp;
+                else
+                    object.clientTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.clientTimestamp) : options.longs === Number ? new $util.LongBits(message.clientTimestamp.low >>> 0, message.clientTimestamp.high >>> 0).toNumber(true) : message.clientTimestamp;
+            return object;
+        };
+
+        /**
+         * Converts this PushReceived to JSON.
+         * @function toJSON
+         * @memberof server.PushReceived
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PushReceived.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PushReceived;
     })();
 
     return server;
