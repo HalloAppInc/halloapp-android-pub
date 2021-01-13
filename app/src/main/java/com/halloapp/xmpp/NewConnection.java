@@ -890,6 +890,8 @@ public class NewConnection extends Connection {
                     String senderName = chatStanza.getSenderName();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
 
+                    Log.i("message " + msg.getId() + " from version " + chatStanza.getSenderClientVersion() + ": " + chatStanza.getSenderLogInfo());
+
                     if (!TextUtils.isEmpty(senderName)) {
                         connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
                     }
@@ -911,6 +913,8 @@ public class NewConnection extends Connection {
                     Log.i("connection: got silent chat stanza " + ProtoPrinter.toString(msg));
                     ChatStanza chatStanza = msg.getSilentChatStanza().getChatStanza();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+
+                    Log.i("silent message " + msg.getId() + " from version " + chatStanza.getSenderClientVersion() + ": " + chatStanza.getSenderLogInfo());
 
                     // NOTE: push names are not collected because eventually these messages will be removed
 

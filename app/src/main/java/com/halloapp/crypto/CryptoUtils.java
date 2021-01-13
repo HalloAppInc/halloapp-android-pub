@@ -123,7 +123,7 @@ public class CryptoUtils {
         return sign.cryptoSignOpen(msgBytes, cert, certLen, publicKey);
     }
 
-    public static String obfuscate(byte[] bytes) {
+    public static String obfuscate(@Nullable byte[] bytes) {
         if (bytes == null) {
             return "null";
         }

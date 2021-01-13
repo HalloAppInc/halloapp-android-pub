@@ -1,19 +1,23 @@
 package com.halloapp.xmpp;
 
 import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
@@ -33,6 +37,7 @@ public class ChatMessageElement {
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
 
     private final Stats stats = Stats.getInstance();
+    private final EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
         this.chatMessage = MessageElementHelper.messageToChatMessage(message);
@@ -156,6 +161,14 @@ public class ChatMessageElement {
     public ChatStanza toProto() {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
+
+//        builder.setSenderClientVersion(BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : ""));
+        builder.setSenderLogInfo(
+                "SIK:" + Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP)
+                + "; RIK:" + Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(recipientUserId).getKeyMaterial(), Base64.NO_WRAP)
+                + "; SICK:" + CryptoUtils.obfuscate(encryptedKeyStore.getInboundChainKey(recipientUserId))
+                + "; SOCK:" + CryptoUtils.obfuscate(encryptedKeyStore.getOutboundChainKey(recipientUserId))
+        );
 
         if (sessionSetupInfo != null) {
             builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
