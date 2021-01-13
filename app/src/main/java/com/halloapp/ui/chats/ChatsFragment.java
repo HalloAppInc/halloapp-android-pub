@@ -44,7 +44,6 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
-import com.halloapp.ui.groups.UnseenGroupPostLoader;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.FilterUtils;
