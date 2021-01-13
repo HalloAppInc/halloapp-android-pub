@@ -155,11 +155,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void notifyAdapterOnSelection(List<Long> selected) {
-        HashSet<Long> set = new HashSet<>();
-
-        if (this.selected != null) {
-            set.addAll(this.selected);
-        }
+        HashSet<Long> set = new HashSet<>(this.selected);
 
         if (selected != null) {
             set.addAll(selected);
@@ -583,11 +579,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private boolean shouldAddHeader(int position) {
-            GalleryItem current = items.get(position);
-            GalleryItem prev = position == 0 ? null : items.get(position - 1);
+            if (position == 0) {
+                return true;
+            }
 
-            return position == 0 ||
-                    (gridLayout == LAYOUT_MONTH && notSameMonth(current, prev)) ||
+            GalleryItem current = Preconditions.checkNotNull(items.get(position));
+            GalleryItem prev = Preconditions.checkNotNull(items.get(position - 1));
+
+            return (gridLayout == LAYOUT_MONTH && notSameMonth(current, prev)) ||
                     (gridLayout == LAYOUT_DAY_SMALL && notSameDay(current, prev)) ||
                     (gridLayout == LAYOUT_DAY_LARGE && notSameDay(current, prev));
         }
@@ -602,7 +601,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
             for (int i = 0; i < items.getLoadedCount(); ++i) {
                 if (shouldAddHeader(i)) {
-                    GalleryItem item = items.get(i);
+                    GalleryItem item = Preconditions.checkNotNull(items.get(i));
                     pointers.add(new Pointer(TYPE_HEADER, headers.size()));
 
                     if (gridLayout == LAYOUT_DAY_LARGE || gridLayout == LAYOUT_DAY_SMALL) {
