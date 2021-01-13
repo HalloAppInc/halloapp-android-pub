@@ -160,6 +160,7 @@ public  final class Msg extends
     REREQUEST(22),
     SILENT_CHAT_STANZA(23),
     GROUP_FEED_ITEMS(24),
+    END_OF_QUEUE(26),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -194,6 +195,7 @@ public  final class Msg extends
         case 22: return REREQUEST;
         case 23: return SILENT_CHAT_STANZA;
         case 24: return GROUP_FEED_ITEMS;
+        case 26: return END_OF_QUEUE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1301,6 +1303,56 @@ public  final class Msg extends
    */
   private void clearGroupFeedItems() {
     if (payloadCase_ == 24) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int END_OF_QUEUE_FIELD_NUMBER = 26;
+  /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   */
+  @java.lang.Override
+  public boolean hasEndOfQueue() {
+    return payloadCase_ == 26;
+  }
+  /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.EndOfQueue getEndOfQueue() {
+    if (payloadCase_ == 26) {
+       return (com.halloapp.proto.server.EndOfQueue) payload_;
+    }
+    return com.halloapp.proto.server.EndOfQueue.getDefaultInstance();
+  }
+  /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   */
+  private void setEndOfQueue(com.halloapp.proto.server.EndOfQueue value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 26;
+  }
+  /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   */
+  private void mergeEndOfQueue(com.halloapp.proto.server.EndOfQueue value) {
+    value.getClass();
+  if (payloadCase_ == 26 &&
+        payload_ != com.halloapp.proto.server.EndOfQueue.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.EndOfQueue.newBuilder((com.halloapp.proto.server.EndOfQueue) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 26;
+  }
+  /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   */
+  private void clearEndOfQueue() {
+    if (payloadCase_ == 26) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2529,6 +2581,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.EndOfQueue end_of_queue = 26;</code>
+     */
+    @java.lang.Override
+    public boolean hasEndOfQueue() {
+      return instance.hasEndOfQueue();
+    }
+    /**
+     * <code>.server.EndOfQueue end_of_queue = 26;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.EndOfQueue getEndOfQueue() {
+      return instance.getEndOfQueue();
+    }
+    /**
+     * <code>.server.EndOfQueue end_of_queue = 26;</code>
+     */
+    public Builder setEndOfQueue(com.halloapp.proto.server.EndOfQueue value) {
+      copyOnWrite();
+      instance.setEndOfQueue(value);
+      return this;
+    }
+    /**
+     * <code>.server.EndOfQueue end_of_queue = 26;</code>
+     */
+    public Builder setEndOfQueue(
+        com.halloapp.proto.server.EndOfQueue.Builder builderForValue) {
+      copyOnWrite();
+      instance.setEndOfQueue(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.EndOfQueue end_of_queue = 26;</code>
+     */
+    public Builder mergeEndOfQueue(com.halloapp.proto.server.EndOfQueue value) {
+      copyOnWrite();
+      instance.mergeEndOfQueue(value);
+      return this;
+    }
+    /**
+     * <code>.server.EndOfQueue end_of_queue = 26;</code>
+     */
+    public Builder clearEndOfQueue() {
+      copyOnWrite();
+      instance.clearEndOfQueue();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -2627,13 +2727,14 @@ public  final class Msg extends
             com.halloapp.proto.server.SilentChatStanza.class,
             com.halloapp.proto.server.GroupFeedItems.class,
             "rerequestCount_",
+            com.halloapp.proto.server.EndOfQueue.class,
           };
           java.lang.String info =
-              "\u0000\u0019\u0001\u0000\u0001\u0019\u0019\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001a\u0001\u0000\u0001\u001a\u001a\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019\u0004";
+              "\u0018<\u0000\u0019\u0004\u001a<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

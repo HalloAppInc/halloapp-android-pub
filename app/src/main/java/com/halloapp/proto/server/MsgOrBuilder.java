@@ -252,6 +252,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupFeedItems getGroupFeedItems();
 
   /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   * @return Whether the endOfQueue field is set.
+   */
+  boolean hasEndOfQueue();
+  /**
+   * <code>.server.EndOfQueue end_of_queue = 26;</code>
+   * @return The endOfQueue.
+   */
+  com.halloapp.proto.server.EndOfQueue getEndOfQueue();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
