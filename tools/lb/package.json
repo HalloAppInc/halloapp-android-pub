@@ -39,7 +39,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "protos": "node_modules/protobufjs/bin/pbjs -t static-module -w commonjs -o src/proto/compiled.js ../../../schemas/server.proto && node_modules/protobufjs/bin/pbts -o src/proto/compiled.d.ts src/proto/compiled.js && echo \"/* eslint-disable */\n// @ts-nocheck\n$(cat src/proto/compiled.js)\" > src/proto/compiled.js"
+    "protos": "node_modules/protobufjs/bin/pbjs -t static-module -w commonjs -o src/proto/compiled.js ../../../schemas/build/server.proto && node_modules/protobufjs/bin/pbts -o src/proto/compiled.d.ts src/proto/compiled.js && echo \"/* eslint-disable */\n// @ts-nocheck\n$(cat src/proto/compiled.js)\" > src/proto/compiled.js"
   },
   "eslintConfig": {
     "extends": []
