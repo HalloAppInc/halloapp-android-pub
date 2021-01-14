@@ -215,10 +215,6 @@ public class NewConnection extends Connection {
                 .setClientVersion(clientVersion)
                 .setClientMode(clientMode)
                 .setResource("android");
-        String pwd = me.getPassword();
-        if (pwd != null) {
-            authRequestBuilder.setPwd(pwd);
-        }
         return authRequestBuilder.build();
     }
 

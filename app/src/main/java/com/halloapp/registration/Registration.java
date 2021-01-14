@@ -122,28 +122,17 @@ public class Registration {
 
     @WorkerThread
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
-        RegistrationVerificationResult verificationResult;
-        if (Constants.NOISE_REGISTRATION) {
-            verificationResult = verifyRegistrationNoise(phone, code, me.getName());
-        } else {
-            verificationResult = verifyRegistration(phone, code, me.getName());
-        }
+        RegistrationVerificationResult verificationResult = verifyRegistrationNoise(phone, code, me.getName());
+
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             String uid = me.getUser();
             if (!Preconditions.checkNotNull(verificationResult.user).equals(uid)) {
                 // New user, we should clear data
                 contentDb.deleteDb();
             }
-            if (Constants.NOISE_REGISTRATION) {
-                me.saveRegistrationNoise(
-                        Preconditions.checkNotNull(verificationResult.user),
-                        Preconditions.checkNotNull(verificationResult.phone));
-            } else {
-                me.saveRegistration(
-                        Preconditions.checkNotNull(verificationResult.user),
-                        Preconditions.checkNotNull(verificationResult.password),
-                        Preconditions.checkNotNull(verificationResult.phone));
-            }
+            me.saveRegistrationNoise(
+                    Preconditions.checkNotNull(verificationResult.user),
+                    Preconditions.checkNotNull(verificationResult.phone));
             connection.connect();
         }
         return verificationResult;
@@ -253,62 +242,6 @@ public class Registration {
             }
             me.saveNoiseKey(keypair);
             return new RegistrationVerificationResult(uid, null, phone);
-        } catch (IOException e) {
-            Log.e("Registration.verifyRegistration", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
-        } catch (JSONException e) {
-            Log.e("Registration.verifyRegistration", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-        } finally {
-            FileUtils.closeSilently(inStream);
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-    }
-
-    @WorkerThread
-    private @NonNull RegistrationVerificationResult verifyRegistration(@NonNull String phone, @NonNull String code, @NonNull String name) {
-        Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
-        InputStream inStream = null;
-        HttpsURLConnection connection = null;
-        try {
-            final URL url = new URL("https://" + HOST + "/api/registration/register");
-            connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
-            connection.setUseCaches(false);
-            connection.setAllowUserInteraction(false);
-            connection.setConnectTimeout(30_000);
-            connection.setReadTimeout(30_000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/json");
-            JSONObject requestJson = new JSONObject();
-            requestJson.put("phone", phone);
-            requestJson.put("code", code);
-            requestJson.put("name", name);
-            connection.getOutputStream().write(requestJson.toString().getBytes());
-
-            final int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                Log.e("Registration.verifyRegistration responseCode:" + responseCode);
-            }
-            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
-            final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-            final String result = responseJson.optString("result");
-            final String normalizedPhone = responseJson.optString("phone");
-            final String password = responseJson.optString("password");
-            final String uid = responseJson.optString("uid");
-            final String error = responseJson.optString("error");
-            Log.i("Registration.verifyRegistration result=" + result + " phone=" + normalizedPhone + " uid=" + uid + " password=" + password + " error=" + error); // TODO (ds): don't log password
-            if (!"ok".equals(result)) {
-                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-            }
-            if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid) || TextUtils.isEmpty(password)) {
-                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-            }
-            return new RegistrationVerificationResult(uid, password, phone);
         } catch (IOException e) {
             Log.e("Registration.verifyRegistration", e);
             return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
