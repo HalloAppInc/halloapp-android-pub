@@ -213,15 +213,23 @@ public  final class Presence extends
   public static final int UID_FIELD_NUMBER = 3;
   private long uid_;
   /**
-   * <code>int64 uid = 3;</code>
+   * <pre>
+   * Clients must stop using this field.
+   * </pre>
+   *
+   * <code>int64 uid = 3 [deprecated = true];</code>
    * @return The uid.
    */
   @java.lang.Override
-  public long getUid() {
+  @java.lang.Deprecated public long getUid() {
     return uid_;
   }
   /**
-   * <code>int64 uid = 3;</code>
+   * <pre>
+   * Clients must stop using this field.
+   * </pre>
+   *
+   * <code>int64 uid = 3 [deprecated = true];</code>
    * @param value The uid to set.
    */
   private void setUid(long value) {
@@ -229,7 +237,11 @@ public  final class Presence extends
     uid_ = value;
   }
   /**
-   * <code>int64 uid = 3;</code>
+   * <pre>
+   * Clients must stop using this field.
+   * </pre>
+   *
+   * <code>int64 uid = 3 [deprecated = true];</code>
    */
   private void clearUid() {
     
@@ -260,6 +272,58 @@ public  final class Presence extends
   private void clearLastSeen() {
     
     lastSeen_ = 0L;
+  }
+
+  public static final int TO_UID_FIELD_NUMBER = 5;
+  private long toUid_;
+  /**
+   * <code>int64 to_uid = 5;</code>
+   * @return The toUid.
+   */
+  @java.lang.Override
+  public long getToUid() {
+    return toUid_;
+  }
+  /**
+   * <code>int64 to_uid = 5;</code>
+   * @param value The toUid to set.
+   */
+  private void setToUid(long value) {
+    
+    toUid_ = value;
+  }
+  /**
+   * <code>int64 to_uid = 5;</code>
+   */
+  private void clearToUid() {
+    
+    toUid_ = 0L;
+  }
+
+  public static final int FROM_UID_FIELD_NUMBER = 6;
+  private long fromUid_;
+  /**
+   * <code>int64 from_uid = 6;</code>
+   * @return The fromUid.
+   */
+  @java.lang.Override
+  public long getFromUid() {
+    return fromUid_;
+  }
+  /**
+   * <code>int64 from_uid = 6;</code>
+   * @param value The fromUid to set.
+   */
+  private void setFromUid(long value) {
+    
+    fromUid_ = value;
+  }
+  /**
+   * <code>int64 from_uid = 6;</code>
+   */
+  private void clearFromUid() {
+    
+    fromUid_ = 0L;
   }
 
   public static com.halloapp.proto.server.Presence parseFrom(
@@ -453,28 +517,40 @@ public  final class Presence extends
     }
 
     /**
-     * <code>int64 uid = 3;</code>
+     * <pre>
+     * Clients must stop using this field.
+     * </pre>
+     *
+     * <code>int64 uid = 3 [deprecated = true];</code>
      * @return The uid.
      */
     @java.lang.Override
-    public long getUid() {
+    @java.lang.Deprecated public long getUid() {
       return instance.getUid();
     }
     /**
-     * <code>int64 uid = 3;</code>
+     * <pre>
+     * Clients must stop using this field.
+     * </pre>
+     *
+     * <code>int64 uid = 3 [deprecated = true];</code>
      * @param value The uid to set.
      * @return This builder for chaining.
      */
-    public Builder setUid(long value) {
+    @java.lang.Deprecated public Builder setUid(long value) {
       copyOnWrite();
       instance.setUid(value);
       return this;
     }
     /**
-     * <code>int64 uid = 3;</code>
+     * <pre>
+     * Clients must stop using this field.
+     * </pre>
+     *
+     * <code>int64 uid = 3 [deprecated = true];</code>
      * @return This builder for chaining.
      */
-    public Builder clearUid() {
+    @java.lang.Deprecated public Builder clearUid() {
       copyOnWrite();
       instance.clearUid();
       return this;
@@ -508,6 +584,62 @@ public  final class Presence extends
       return this;
     }
 
+    /**
+     * <code>int64 to_uid = 5;</code>
+     * @return The toUid.
+     */
+    @java.lang.Override
+    public long getToUid() {
+      return instance.getToUid();
+    }
+    /**
+     * <code>int64 to_uid = 5;</code>
+     * @param value The toUid to set.
+     * @return This builder for chaining.
+     */
+    public Builder setToUid(long value) {
+      copyOnWrite();
+      instance.setToUid(value);
+      return this;
+    }
+    /**
+     * <code>int64 to_uid = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearToUid() {
+      copyOnWrite();
+      instance.clearToUid();
+      return this;
+    }
+
+    /**
+     * <code>int64 from_uid = 6;</code>
+     * @return The fromUid.
+     */
+    @java.lang.Override
+    public long getFromUid() {
+      return instance.getFromUid();
+    }
+    /**
+     * <code>int64 from_uid = 6;</code>
+     * @param value The fromUid to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFromUid(long value) {
+      copyOnWrite();
+      instance.setFromUid(value);
+      return this;
+    }
+    /**
+     * <code>int64 from_uid = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFromUid() {
+      copyOnWrite();
+      instance.clearFromUid();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Presence)
   }
   @java.lang.Override
@@ -528,10 +660,12 @@ public  final class Presence extends
             "type_",
             "uid_",
             "lastSeen_",
+            "toUid_",
+            "fromUid_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\f" +
-              "\u0003\u0002\u0004\u0002";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0003\u0002\u0004\u0002\u0005\u0002\u0006\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

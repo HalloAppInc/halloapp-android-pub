@@ -3492,6 +3492,9 @@ export namespace server {
 
         /** ChatStanza senderLogInfo */
         senderLogInfo?: (string|null);
+
+        /** ChatStanza senderClientVersion */
+        senderClientVersion?: (string|null);
     }
 
     /** Represents a ChatStanza. */
@@ -3523,6 +3526,9 @@ export namespace server {
 
         /** ChatStanza senderLogInfo. */
         public senderLogInfo: string;
+
+        /** ChatStanza senderClientVersion. */
+        public senderClientVersion: string;
 
         /**
          * Creates a new ChatStanza instance using the specified properties.
@@ -4574,6 +4580,12 @@ export namespace server {
 
         /** Presence lastSeen */
         lastSeen?: (number|Long|null);
+
+        /** Presence toUid */
+        toUid?: (number|Long|null);
+
+        /** Presence fromUid */
+        fromUid?: (number|Long|null);
     }
 
     /** Represents a Presence. */
@@ -4596,6 +4608,12 @@ export namespace server {
 
         /** Presence lastSeen. */
         public lastSeen: (number|Long);
+
+        /** Presence toUid. */
+        public toUid: (number|Long);
+
+        /** Presence fromUid. */
+        public fromUid: (number|Long);
 
         /**
          * Creates a new Presence instance using the specified properties.

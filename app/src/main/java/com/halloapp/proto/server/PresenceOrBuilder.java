@@ -31,14 +31,30 @@ public interface PresenceOrBuilder extends
   com.halloapp.proto.server.Presence.Type getType();
 
   /**
-   * <code>int64 uid = 3;</code>
+   * <pre>
+   * Clients must stop using this field.
+   * </pre>
+   *
+   * <code>int64 uid = 3 [deprecated = true];</code>
    * @return The uid.
    */
-  long getUid();
+  @java.lang.Deprecated long getUid();
 
   /**
    * <code>int64 last_seen = 4;</code>
    * @return The lastSeen.
    */
   long getLastSeen();
+
+  /**
+   * <code>int64 to_uid = 5;</code>
+   * @return The toUid.
+   */
+  long getToUid();
+
+  /**
+   * <code>int64 from_uid = 6;</code>
+   * @return The fromUid.
+   */
+  long getFromUid();
 }

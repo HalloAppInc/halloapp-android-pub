@@ -8904,6 +8904,7 @@ $root.server = (function() {
          * @property {number|Long|null} [oneTimePreKeyId] ChatStanza oneTimePreKeyId
          * @property {string|null} [senderName] ChatStanza senderName
          * @property {string|null} [senderLogInfo] ChatStanza senderLogInfo
+         * @property {string|null} [senderClientVersion] ChatStanza senderClientVersion
          */
 
         /**
@@ -8978,6 +8979,14 @@ $root.server = (function() {
         ChatStanza.prototype.senderLogInfo = "";
 
         /**
+         * ChatStanza senderClientVersion.
+         * @member {string} senderClientVersion
+         * @memberof server.ChatStanza
+         * @instance
+         */
+        ChatStanza.prototype.senderClientVersion = "";
+
+        /**
          * Creates a new ChatStanza instance using the specified properties.
          * @function create
          * @memberof server.ChatStanza
@@ -9015,6 +9024,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.senderName);
             if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
                 writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
+            if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
+                writer.uint32(/* id 17, wireType 2 =*/138).string(message.senderClientVersion);
             return writer;
         };
 
@@ -9069,6 +9080,9 @@ $root.server = (function() {
                     break;
                 case 16:
                     message.senderLogInfo = reader.string();
+                    break;
+                case 17:
+                    message.senderClientVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -9126,6 +9140,9 @@ $root.server = (function() {
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 if (!$util.isString(message.senderLogInfo))
                     return "senderLogInfo: string expected";
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                if (!$util.isString(message.senderClientVersion))
+                    return "senderClientVersion: string expected";
             return null;
         };
 
@@ -9178,6 +9195,8 @@ $root.server = (function() {
                 message.senderName = String(object.senderName);
             if (object.senderLogInfo != null)
                 message.senderLogInfo = String(object.senderLogInfo);
+            if (object.senderClientVersion != null)
+                message.senderClientVersion = String(object.senderClientVersion);
             return message;
         };
 
@@ -9228,6 +9247,7 @@ $root.server = (function() {
                     object.oneTimePreKeyId = options.longs === String ? "0" : 0;
                 object.senderName = "";
                 object.senderLogInfo = "";
+                object.senderClientVersion = "";
             }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
@@ -9249,6 +9269,8 @@ $root.server = (function() {
                 object.senderName = message.senderName;
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 object.senderLogInfo = message.senderLogInfo;
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                object.senderClientVersion = message.senderClientVersion;
             return object;
         };
 
@@ -12414,6 +12436,8 @@ $root.server = (function() {
          * @property {server.Presence.Type|null} [type] Presence type
          * @property {number|Long|null} [uid] Presence uid
          * @property {number|Long|null} [lastSeen] Presence lastSeen
+         * @property {number|Long|null} [toUid] Presence toUid
+         * @property {number|Long|null} [fromUid] Presence fromUid
          */
 
         /**
@@ -12464,6 +12488,22 @@ $root.server = (function() {
         Presence.prototype.lastSeen = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * Presence toUid.
+         * @member {number|Long} toUid
+         * @memberof server.Presence
+         * @instance
+         */
+        Presence.prototype.toUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Presence fromUid.
+         * @member {number|Long} fromUid
+         * @memberof server.Presence
+         * @instance
+         */
+        Presence.prototype.fromUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new Presence instance using the specified properties.
          * @function create
          * @memberof server.Presence
@@ -12495,6 +12535,10 @@ $root.server = (function() {
                 writer.uint32(/* id 3, wireType 0 =*/24).int64(message.uid);
             if (message.lastSeen != null && Object.hasOwnProperty.call(message, "lastSeen"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.lastSeen);
+            if (message.toUid != null && Object.hasOwnProperty.call(message, "toUid"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.toUid);
+            if (message.fromUid != null && Object.hasOwnProperty.call(message, "fromUid"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int64(message.fromUid);
             return writer;
         };
 
@@ -12540,6 +12584,12 @@ $root.server = (function() {
                     break;
                 case 4:
                     message.lastSeen = reader.int64();
+                    break;
+                case 5:
+                    message.toUid = reader.int64();
+                    break;
+                case 6:
+                    message.fromUid = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -12595,6 +12645,12 @@ $root.server = (function() {
             if (message.lastSeen != null && message.hasOwnProperty("lastSeen"))
                 if (!$util.isInteger(message.lastSeen) && !(message.lastSeen && $util.isInteger(message.lastSeen.low) && $util.isInteger(message.lastSeen.high)))
                     return "lastSeen: integer|Long expected";
+            if (message.toUid != null && message.hasOwnProperty("toUid"))
+                if (!$util.isInteger(message.toUid) && !(message.toUid && $util.isInteger(message.toUid.low) && $util.isInteger(message.toUid.high)))
+                    return "toUid: integer|Long expected";
+            if (message.fromUid != null && message.hasOwnProperty("fromUid"))
+                if (!$util.isInteger(message.fromUid) && !(message.fromUid && $util.isInteger(message.fromUid.low) && $util.isInteger(message.fromUid.high)))
+                    return "fromUid: integer|Long expected";
             return null;
         };
 
@@ -12648,6 +12704,24 @@ $root.server = (function() {
                     message.lastSeen = object.lastSeen;
                 else if (typeof object.lastSeen === "object")
                     message.lastSeen = new $util.LongBits(object.lastSeen.low >>> 0, object.lastSeen.high >>> 0).toNumber();
+            if (object.toUid != null)
+                if ($util.Long)
+                    (message.toUid = $util.Long.fromValue(object.toUid)).unsigned = false;
+                else if (typeof object.toUid === "string")
+                    message.toUid = parseInt(object.toUid, 10);
+                else if (typeof object.toUid === "number")
+                    message.toUid = object.toUid;
+                else if (typeof object.toUid === "object")
+                    message.toUid = new $util.LongBits(object.toUid.low >>> 0, object.toUid.high >>> 0).toNumber();
+            if (object.fromUid != null)
+                if ($util.Long)
+                    (message.fromUid = $util.Long.fromValue(object.fromUid)).unsigned = false;
+                else if (typeof object.fromUid === "string")
+                    message.fromUid = parseInt(object.fromUid, 10);
+                else if (typeof object.fromUid === "number")
+                    message.fromUid = object.fromUid;
+                else if (typeof object.fromUid === "object")
+                    message.fromUid = new $util.LongBits(object.fromUid.low >>> 0, object.fromUid.high >>> 0).toNumber();
             return message;
         };
 
@@ -12677,6 +12751,16 @@ $root.server = (function() {
                     object.lastSeen = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.lastSeen = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.toUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.toUid = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.fromUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.fromUid = options.longs === String ? "0" : 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -12692,6 +12776,16 @@ $root.server = (function() {
                     object.lastSeen = options.longs === String ? String(message.lastSeen) : message.lastSeen;
                 else
                     object.lastSeen = options.longs === String ? $util.Long.prototype.toString.call(message.lastSeen) : options.longs === Number ? new $util.LongBits(message.lastSeen.low >>> 0, message.lastSeen.high >>> 0).toNumber() : message.lastSeen;
+            if (message.toUid != null && message.hasOwnProperty("toUid"))
+                if (typeof message.toUid === "number")
+                    object.toUid = options.longs === String ? String(message.toUid) : message.toUid;
+                else
+                    object.toUid = options.longs === String ? $util.Long.prototype.toString.call(message.toUid) : options.longs === Number ? new $util.LongBits(message.toUid.low >>> 0, message.toUid.high >>> 0).toNumber() : message.toUid;
+            if (message.fromUid != null && message.hasOwnProperty("fromUid"))
+                if (typeof message.fromUid === "number")
+                    object.fromUid = options.longs === String ? String(message.fromUid) : message.fromUid;
+                else
+                    object.fromUid = options.longs === String ? $util.Long.prototype.toString.call(message.fromUid) : options.longs === Number ? new $util.LongBits(message.fromUid.low >>> 0, message.fromUid.high >>> 0).toNumber() : message.fromUid;
             return object;
         };
 
