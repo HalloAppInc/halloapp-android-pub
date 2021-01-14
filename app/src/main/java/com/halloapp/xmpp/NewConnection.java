@@ -1054,6 +1054,10 @@ public class NewConnection extends Connection {
                             Log.w("Received identity key does not match stored key. Received: " + Hex.bytesToStringLowercase(receivedIdentityKey) + " stored: " + Hex.bytesToStringLowercase(storedIdentityKey));
                             Log.sendErrorReport("Rerequest identity key mismatch");
                             EncryptedSessionManager.getInstance().tearDownSession(userId);
+                        } else {
+                            // TODO(jack): Remove this branch once errors stabilize
+                            Log.i("Identity keys matched on rerequest; still resetting session");
+                            EncryptedSessionManager.getInstance().tearDownSession(userId);
                         }
                     } catch (NullPointerException e) {
                         Log.w("Failed to compare received and stored identity keys", e);

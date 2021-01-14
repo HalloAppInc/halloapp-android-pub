@@ -111,10 +111,12 @@ public class EncryptedSessionManager {
                         Log.w("Session already set up but received ephemeral key does not match stored;"
                                 + " stored: " + Base64.encodeToString(storedEphemeralKey, Base64.NO_WRAP)
                                 + " received: " + Base64.encodeToString(receivedEphemeralKey, Base64.NO_WRAP));
+                        keyManager.tearDownSession(peerUserId);
                         keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                     }
                 } catch (IllegalArgumentException e) {
                     Log.w("Failed to retrieve inbound ephemeral key; setting up new session", e);
+                    keyManager.tearDownSession(peerUserId);
                     keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                 }
             }

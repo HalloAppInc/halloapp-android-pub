@@ -162,7 +162,6 @@ public class ChatMessageElement {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
 
-//        builder.setSenderClientVersion(BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : ""));
         builder.setSenderLogInfo(
                 "SIK:" + Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP)
                 + "; RIK:" + Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(recipientUserId).getKeyMaterial(), Base64.NO_WRAP)
