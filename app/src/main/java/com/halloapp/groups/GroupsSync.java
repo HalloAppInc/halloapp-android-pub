@@ -12,13 +12,13 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
@@ -36,7 +36,7 @@ public class GroupsSync {
     private final Context context;
     private final GroupsApi groupsApi;
     private final ContentDb contentDb;
-    private final ServerProps serverProps;
+    private final ContactsDb contactsDb;
 
     public static GroupsSync getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -53,7 +53,7 @@ public class GroupsSync {
         this.context = context.getApplicationContext();
         this.groupsApi = GroupsApi.getInstance();
         this.contentDb = ContentDb.getInstance();
-        this.serverProps = ServerProps.getInstance();
+        this.contactsDb = ContactsDb.getInstance();
     }
 
     public void startGroupsSync() {
@@ -99,6 +99,7 @@ public class GroupsSync {
             Log.d("GroupsSync.perfromGroupSync ignoring " + deletedGroups.size() + " deleted groups");
             // TODO(jack): mark deleted chats so users cannot send messages to them
 
+            Map<UserId, String> nameMap = new HashMap<>();
             for (GroupInfo groupInfo : groups) {
                 List<MemberInfo> serverMembers = groupsApi.getGroupInfo(groupInfo.groupId).await().members;
                 List<MemberInfo> localMembers = contentDb.getGroupMembers(groupInfo.groupId);
@@ -106,6 +107,7 @@ public class GroupsSync {
                 Map<UserId, MemberInfo> memberMap = new HashMap<>();
                 for (MemberInfo member : localMembers) {
                     memberMap.put(member.userId, member);
+                    nameMap.put(member.userId, member.name);
                 }
 
                 List<MemberInfo> addedMembers = new ArrayList<>();
@@ -126,6 +128,8 @@ public class GroupsSync {
                 Log.d("GroupsSync.performGroupSync adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupInfo.groupId);
                 contentDb.addRemoveGroupMembers(groupInfo.groupId, null, null, addedMembers, deletedMembers, null);
             }
+
+            contactsDb.updateUserNames(nameMap);
 
             return ListenableWorker.Result.success();
         } catch (ObservableErrorException e) {
