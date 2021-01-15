@@ -163,6 +163,8 @@
     <string name="other_media">Other media</string>
     <string name="rotate">Rotate</string>
     <string name="seen_by">Viewed by</string>
+    <string name="empty_viewed_by">No one has viewed your post</string>
+    <string name="empty_sent_to">No one has received your post</string>
     <string name="options">Options</string>
     <string name="block">Block</string>
     <string name="play">Play</string>

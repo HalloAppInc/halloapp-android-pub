@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:padding="16dp"
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
     android:paddingStart="@dimen/toolbar_title_offset"
-    android:paddingEnd="@dimen/toolbar_title_offset">
+    android:paddingEnd="@dimen/toolbar_title_offset"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:paddingBottom="52dp"
+        android:textSize="16sp"
+        android:textColorLink="@color/secondary_text" />
 
     <TextView
         android:id="@+id/invite_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:ellipsize="end"
         android:textColor="@color/color_secondary"
         android:singleLine="true"
+        android:fontFamily="sans-serif-medium"
         android:textAlignment="gravity"
         android:textDirection="locale"
-        android:gravity="start"
+        android:gravity="start|bottom"
         android:text="@string/invite_friends_title" />
 
-</FrameLayout>
+</LinearLayout>
 
 
 

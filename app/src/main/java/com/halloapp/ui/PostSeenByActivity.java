@@ -173,10 +173,10 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     static class EmptyListItem implements ListItem {
-        final boolean showInvite;
+        final boolean sentTo;
 
-        EmptyListItem(boolean showInvite) {
-            this.showInvite = showInvite;
+        EmptyListItem(boolean sentTo) {
+            this.sentTo = sentTo;
         }
 
         @Override
@@ -388,17 +388,20 @@ public class PostSeenByActivity extends HalloActivity {
         private class EmptyViewHolder extends ViewHolder<EmptyListItem> {
 
             private final View inviteText;
+            private final TextView emptyText;
 
             EmptyViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 inviteText = itemView.findViewById(R.id.invite_text);
+                emptyText = itemView.findViewById(R.id.empty_text);
             }
 
             @Override
             void bindTo(@NonNull EmptyListItem item) {
-                inviteText.setVisibility(item.showInvite ? View.VISIBLE : View.GONE);
-                if (item.showInvite) {
+                inviteText.setVisibility(item.sentTo ? View.VISIBLE : View.INVISIBLE);
+                emptyText.setText(item.sentTo ? R.string.empty_sent_to : R.string.empty_viewed_by);
+                if (item.sentTo) {
                     inviteText.setOnClickListener(v -> startActivity(new Intent(PostSeenByActivity.this, InviteFriendsActivity.class)));
                 } else {
                     inviteText.setOnClickListener(null);
