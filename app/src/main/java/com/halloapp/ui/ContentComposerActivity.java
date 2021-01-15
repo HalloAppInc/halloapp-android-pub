@@ -242,7 +242,19 @@ public class ContentComposerActivity extends HalloActivity {
                 return false;
             });
         }
-        
+
+        if (savedInstanceState == null) {
+            chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+            groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+            replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        } else {
+            chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
+            groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
+            replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        }
+
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
 
@@ -288,17 +300,6 @@ public class ContentComposerActivity extends HalloActivity {
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
 
-        if (savedInstanceState == null) {
-            chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
-            groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
-            replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
-            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-        } else {
-            chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
-            groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
-            replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
-            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-        }
         if (replyPostId != null) {
             editText.requestFocus();
         }
