@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.AppContext;
+import com.halloapp.FileStore;
 import com.halloapp.util.logs.Log;
 
 import java.io.BufferedReader;
@@ -87,9 +88,13 @@ public class FileUtils {
 
     public static boolean isInternalFile(@NonNull File file) {
         File privateDir = new File(AppContext.getInstance().get().getApplicationInfo().dataDir);
+        File cameraDir = FileStore.getInstance().getCameraDir();
         while (file != null) {
             if (file.equals(privateDir)) {
                 return true;
+            }
+            if (file.equals(cameraDir)) {
+                return false;
             }
             file = file.getParentFile();
         }
