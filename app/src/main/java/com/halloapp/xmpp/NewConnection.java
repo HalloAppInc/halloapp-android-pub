@@ -45,6 +45,7 @@ import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.FeedItems;
 import com.halloapp.proto.server.GroupChat;
 import com.halloapp.proto.server.GroupFeedItem;
+import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
@@ -880,6 +881,20 @@ public class NewConnection extends Connection {
                     Log.i("connection: got group feed item " + ProtoPrinter.toString(msg));
                     GroupFeedItem groupFeedItem = msg.getGroupFeedItem();
                     handled = processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId());
+                } else if (msg.hasGroupFeedItems()) {
+                    Log.i("connection: got group feed items " + ProtoPrinter.toString(msg));
+                    GroupFeedItems groupFeedItems = msg.getGroupFeedItems();
+                    List<GroupFeedItem> inList = groupFeedItems.getItemsList();
+                    List<GroupFeedItem> outList = new ArrayList<>();
+                    for (GroupFeedItem item : inList) {
+                        GroupFeedItem newItem = GroupFeedItem.newBuilder(item)
+                                .setGid(groupFeedItems.getGid())
+                                .setName(groupFeedItems.getName())
+                                .setAvatarId(groupFeedItems.getAvatarId())
+                                .build();
+                        outList.add(newItem);
+                    }
+                    handled = processGroupFeedItems(outList, msg.getId());
                 } else if (msg.hasChatStanza()) {
                     Log.i("connection: got chat stanza " + ProtoPrinter.toString(msg));
                     ChatStanza chatStanza = msg.getChatStanza();
