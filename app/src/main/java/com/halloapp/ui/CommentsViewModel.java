@@ -177,7 +177,6 @@ class CommentsViewModel extends ViewModel {
                     }
                     contactList.add(contact);
                 }
-                Contact.sort(contactList);
                 return contactList;
             }
         };
