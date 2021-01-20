@@ -401,7 +401,7 @@ public class ContactsDb {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(NamesTable.TABLE_NAME,
                 new String[] { NamesTable.COLUMN_NAME },
-                ContactsTable.COLUMN_USER_ID + "=?",
+                NamesTable.COLUMN_USER_ID + "=?",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return cursor.getString(0);

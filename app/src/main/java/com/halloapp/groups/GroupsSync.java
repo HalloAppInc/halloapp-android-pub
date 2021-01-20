@@ -107,6 +107,8 @@ public class GroupsSync {
                 Map<UserId, MemberInfo> memberMap = new HashMap<>();
                 for (MemberInfo member : localMembers) {
                     memberMap.put(member.userId, member);
+                }
+                for (MemberInfo member : serverMembers) {
                     nameMap.put(member.userId, member.name);
                 }
 
