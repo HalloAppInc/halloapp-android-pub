@@ -914,11 +914,18 @@ public class NewConnection extends Connection {
 
                     // NOTE: push names are not collected because eventually these messages will be removed
 
-                    ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                    Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true);
-                    processMentions(message.mentions);
-                    // Do not call connectionObservers; this message is not user-visible
-                    bgWorkers.execute(() -> sendAck(msg.getId()));
+                    bgWorkers.execute(() -> {
+                        if (!ContentDb.getInstance().hasSilentMessage(fromUserId, msg.getId())) {
+                            ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
+                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true);
+                            processMentions(message.mentions);
+                            connectionObservers.notifyIncomingSilentMessageReceived(message);
+                        } else {
+                            Log.i("silent message id " + msg.getId() + " already present in DB; ignoring silent chat stanza and acking");
+                            sendAck(msg.getId());
+                        }
+                    });
+
                     handled = true;
                 } else if (msg.hasGroupChat()) {
                     Log.i("connection: got group chat " + ProtoPrinter.toString(msg));

@@ -19,6 +19,7 @@ import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.SeenTable;
+import com.halloapp.content.tables.SilentMessagesTable;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -26,7 +27,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 36;
+    private static final int DATABASE_VERSION = 37;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -83,6 +84,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
         db.execSQL("CREATE UNIQUE INDEX " + MessagesTable.INDEX_MESSAGE_KEY + " ON " + MessagesTable.TABLE_NAME + "("
                 + MessagesTable.COLUMN_CHAT_ID + ", "
+                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
+                + MessagesTable.COLUMN_MESSAGE_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + SilentMessagesTable.TABLE_NAME + " ("
+                + SilentMessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + SilentMessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + SilentMessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
+                + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY + " ON " + SilentMessagesTable.TABLE_NAME + "("
                 + MessagesTable.COLUMN_SENDER_USER_ID + ", "
                 + MessagesTable.COLUMN_MESSAGE_ID
                 + ");");
@@ -356,6 +371,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 35: {
                 upgradeFromVersion35(db);
+            }
+            case 36: {
+                upgradeFromVersion36(db);
             }
             break;
             default: {
@@ -656,6 +674,22 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion35(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_TYPE + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_USAGE + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion36(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + SilentMessagesTable.TABLE_NAME + " ("
+                + SilentMessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + SilentMessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + SilentMessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
+                + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY + " ON " + SilentMessagesTable.TABLE_NAME + "("
+                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
+                + MessagesTable.COLUMN_MESSAGE_ID
+                + ");");
     }
 
     /**

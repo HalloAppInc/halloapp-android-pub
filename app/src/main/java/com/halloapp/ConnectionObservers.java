@@ -163,6 +163,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyIncomingSilentMessageReceived(@NonNull Message message) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingSilentMessageReceived(message);
+            }
+        }
+    }
+
     public void notifyIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

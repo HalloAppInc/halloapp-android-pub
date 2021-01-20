@@ -553,6 +553,17 @@ public class ContentDb {
         });
     }
 
+    public void addSilentMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.addSilentMessage(message.senderUserId, message.id)) {
+                observers.notifyMessageAdded(message);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void addGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.addGroupChat(groupInfo)) {
@@ -687,6 +698,11 @@ public class ContentDb {
     @WorkerThread
     public boolean hasMessage(UserId senderUserId, String id) {
         return messagesDb.hasMessage(senderUserId, id);
+    }
+
+    @WorkerThread
+    public boolean hasSilentMessage(UserId senderUserId, String id) {
+        return messagesDb.hasSilentMessage(senderUserId, id);
     }
 
     @WorkerThread

@@ -23,6 +23,7 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.RepliesTable;
+import com.halloapp.content.tables.SilentMessagesTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.groups.MemberInfo;
@@ -1639,5 +1640,78 @@ class MessagesDb {
         }
         Log.i("ContentDb.getPendingMessageSeenReceipts: receipts.size=" + receipts.size());
         return receipts;
+    }
+
+
+    // TODO(jack): Remove silent messages once no longer needed
+    @WorkerThread
+    boolean addSilentMessage(@NonNull UserId senderUserId, @NonNull String messageId) {
+        Log.i("MessagesDb.addSilentMessage " + senderUserId + " " + messageId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            final ContentValues values = new ContentValues();
+            values.put(SilentMessagesTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
+            values.put(SilentMessagesTable.COLUMN_MESSAGE_ID, messageId);
+            values.put(SilentMessagesTable.COLUMN_REREQUEST_COUNT, 0);
+
+            db.insertWithOnConflict(SilentMessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
+            Log.i("MessagesDb.addSilentMessage: added " + messageId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.addSilentMessage: duplicate " + ex.getMessage() + " " + messageId);
+            return false;
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean hasSilentMessage(UserId senderUserId, String messageId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        String sql = "SELECT COUNT(*) FROM " + SilentMessagesTable.TABLE_NAME
+                + " WHERE " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_MESSAGE_ID + "=?"
+                + " AND " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_SENDER_USER_ID + "=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{messageId, senderUserId.rawId()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0) > 0;
+            }
+        }
+        return false;
+    }
+
+    @WorkerThread
+    public void setSilentMessageRerequestCount(@NonNull UserId senderUserId, @NonNull String messageId, int count) {
+        final ContentValues values = new ContentValues();
+        values.put(SilentMessagesTable.COLUMN_REREQUEST_COUNT, count);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MediaTable.TABLE_NAME,
+                    values,
+                    SilentMessagesTable.COLUMN_MESSAGE_ID + "=? AND " + SilentMessagesTable.COLUMN_SENDER_USER_ID + "=?",
+                    new String[]{messageId, senderUserId.rawId()},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            Log.d("MessagesDb.setSilentMessageRerequestCount = " + count);
+        } catch (SQLiteConstraintException ex) {
+            Log.i("MessagesDb.setSilentMessageRerequestCount: seen duplicate", ex);
+        } catch (SQLException ex) {
+            Log.e("MessagesDb.setSilentMessageRerequestCount: failed " + ex);
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    public int getSilentMessageRerequestCount(@NonNull UserId senderUserId, @NonNull String messageId) {
+        final String sql =
+                "SELECT " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " "
+                        + "FROM " + SilentMessagesTable.TABLE_NAME + " "
+                        + "WHERE " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_MESSAGE_ID + "=? "
+                        + "AND " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_SENDER_USER_ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{messageId, senderUserId.rawId()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
     }
 }
