@@ -974,7 +974,11 @@ public class NewConnection extends Connection {
                     for (Contact contact : contacts) {
                         infos.add(new ContactInfo(contact));
                     }
-                    connectionObservers.notifyContactsChanged(infos, new ArrayList<>(), msg.getId());
+                    if (msg.getType() == Msg.Type.HEADLINE) {
+                        connectionObservers.notifyInvitesAccepted(infos, msg.getId());
+                    } else {
+                        connectionObservers.notifyContactsChanged(infos, new ArrayList<>(), msg.getId());
+                    }
                 } else if (msg.hasWhisperKeys()) {
                     Log.i("connection: got whisper keys " + ProtoPrinter.toString(msg));
                     WhisperKeys whisperKeys = msg.getWhisperKeys();
