@@ -46,6 +46,7 @@
         android:layout_gravity="start|top"
         android:background="@drawable/ic_item_selected_background"
         android:gravity="center"
+        android:visibility="gone"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         />
