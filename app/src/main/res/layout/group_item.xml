@@ -9,11 +9,12 @@
     android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/avatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:padding="10dp"
+        android:padding="15dp"
+        app:riv_corner_radius="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -84,7 +85,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:ellipsize="end"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textAppearance="?textAppearanceListItemSecondary"
             android:textDirection="locale"
             android:textAlignment="gravity"

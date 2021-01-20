@@ -81,6 +81,7 @@ dependencies {
     implementation 'com.otaliastudios:cameraview:2.6.4'
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'me.relex:circleindicator:2.1.4'
     implementation 'pub.devrel:easypermissions:3.0.0'
     testImplementation 'junit:junit:4.12'

@@ -120,7 +120,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageResource(chatId instanceof GroupId ? R.drawable.avatar_group : R.drawable.avatar_person);
+                view.setImageBitmap(getDefaultAvatar(chatId));
             }
         };
         load(view, loader, displayer, chatId.rawId(), cache);
@@ -239,7 +239,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @NonNull private Bitmap getDefaultGroupAvatar() {
         if (defaultGroupAvatar == null) {
-            Drawable drawable = context.getDrawable(R.drawable.avatar_group);
+            Drawable drawable = context.getDrawable(R.drawable.avatar_groups_placeholder);
             defaultGroupAvatar = drawableToBitmap(drawable);
         }
         return defaultGroupAvatar;
