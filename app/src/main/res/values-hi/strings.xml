@@ -2,7 +2,6 @@
 <resources>
   <string name="app_name">HalloApp</string>
   <string name="title_home">घर</string>
-  <string name="title_messages">संदेश</string>
   <string name="title_profile">प्रोफ़ाइल</string>
   <string name="comment">टिप्पणी</string>
   <string name="next">आगामी</string>
