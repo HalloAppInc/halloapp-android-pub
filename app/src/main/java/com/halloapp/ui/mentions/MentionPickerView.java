@@ -127,8 +127,8 @@ public class MentionPickerView extends FrameLayout {
             mentionableContacts = null;
         } else {
             mentionableContacts = new ArrayList<>(contacts);
+            Contact.sort(mentionableContacts);
         }
-        Contact.sort(mentionableContacts);
         filterContacts();
     }
 
