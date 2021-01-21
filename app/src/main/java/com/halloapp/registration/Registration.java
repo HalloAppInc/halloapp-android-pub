@@ -15,6 +15,7 @@ import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
@@ -64,6 +65,8 @@ public class Registration {
     @WorkerThread
     public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone) {
         Log.i("Registration.requestRegistration phone=" + phone);
+        ThreadUtils.setSocketTag();
+
         InputStream inStream = null;
         HttpsURLConnection connection = null;
         try {
@@ -140,6 +143,8 @@ public class Registration {
 
     @WorkerThread
     public RegistrationVerificationResult migrateRegistrationToNoise() {
+        ThreadUtils.setSocketTag();
+
         InputStream inStream = null;
         HttpsURLConnection connection = null;
 
@@ -198,6 +203,8 @@ public class Registration {
 
     @WorkerThread
     private @NonNull RegistrationVerificationResult verifyRegistrationNoise(@NonNull String phone, @NonNull String code, @NonNull String name) {
+        ThreadUtils.setSocketTag();
+
         Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
         InputStream inStream = null;
         HttpsURLConnection connection = null;
