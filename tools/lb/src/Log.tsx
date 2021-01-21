@@ -158,7 +158,7 @@ class Log extends React.Component<Props, State>  {
     document.addEventListener("keydown", this.onKeyDown, false);
     const id = this.props.match.params.id
     const file = this.props.match.params.file
-    
+
     if (id === "local") {
       this.setupForLocalLog()
     } else {
@@ -199,8 +199,45 @@ class Log extends React.Component<Props, State>  {
     })
   }
 
+  stripSecondLinePrefix(s: string): string {
+    let parts = s.split(': ')
+    if (parts.length >= 1) {
+      s = parts[1]
+    }
+    return s
+  }
+
+  collapseMultiLineProtos(s: string[]): string[] {
+    let MAX_LINES = 5
+    let ret = []
+    for (let i=0; i<s.length; i++) {
+      let sb = ""
+      if (/\<\!\[CLBDATA\[/.test(s[i])) {
+        if (/\]\]\>/.test(s[i])) {
+          sb = s[i]
+        } else {
+          let start = i
+          while (!/\]\]\>/.test(s[i]) && i - start < MAX_LINES) {
+            let t = s[i]
+            if (i !== start) {
+              t = this.stripSecondLinePrefix(t)
+            }
+            sb += t
+            i++
+          }
+          sb += this.stripSecondLinePrefix(s[i])
+          // console.log("put together " + (i - start + 1) + " lines to create " + sb)
+        }
+      } else {
+        sb = s[i]
+      }
+      ret.push(sb)
+    }
+    return ret
+  }
+
   processRawString(s: string) {
-    let logLines = s.split('\n')
+    let logLines = this.collapseMultiLineProtos(s.split('\n'))
     let logLevels = logLines.map(l => getLetterFromLine(l))
     for (let i = 1; i < logLevels.length; i++) {
       if (logLevels[i] === undefined) {
