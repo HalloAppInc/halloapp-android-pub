@@ -3,12 +3,14 @@ package com.halloapp.ui.profile;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
@@ -121,7 +123,7 @@ public class ProfileViewModel extends ViewModel {
         contentDb.addObserver(contentObserver);
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
-        postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
+
         subtitleLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
@@ -141,6 +143,12 @@ public class ProfileViewModel extends ViewModel {
                 }
             }
         };
+        postList = Transformations.switchMap(contactLiveData.getLiveData(), contact -> {
+            if (contact == null || contact.addressBookName != null) {
+                return new LivePagedListBuilder<>(dataSourceFactory, 50).build();
+            }
+            return new MutableLiveData<>();
+        });
         contactLiveData.invalidate();
         isBlocked = new MutableLiveData<>();
         updateIsBlocked();

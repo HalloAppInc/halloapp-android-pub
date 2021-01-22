@@ -48,6 +48,7 @@
     <string name="empty_chat_with_name_placeholder">%s is on HalloApp.</string>
     <string name="new_chat_name_placeholder">%s is using HalloApp! 🎉</string>
     <string name="posts_empty">Your posts will appear here</string>
+    <string name="posts_exchange_numbers">To connect you must exchange phone numbers</string>
     <string name="home_page_empty">Posts from your contacts will appear here</string>
     <string name="chats_page_empty">Your contacts &amp; messages will appear here</string>
     <string name="chats_search_empty">No chats found for \'%s\'</string>

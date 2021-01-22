@@ -107,6 +107,7 @@ public class ProfileFragment extends PostsFragment {
         final RecyclerView postsView = root.findViewById(R.id.posts);
         final TextView emptyView = root.findViewById(R.id.empty_profile_text);
         final View emptyContainer = root.findViewById(android.R.id.empty);
+        final ImageView emptyIcon = root.findViewById(R.id.empty_icon);
 
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
@@ -149,8 +150,10 @@ public class ProfileFragment extends PostsFragment {
                 String name = contact.getDisplayName();
                 nameView.setText(name);
                 if (contact.addressBookName == null) {
-                    emptyView.setText(getString(R.string.contact_profile_not_friends, name));
+                    emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
+                    emptyView.setText(getString(R.string.posts_exchange_numbers));
                 } else {
+                    emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
                 }
             });
