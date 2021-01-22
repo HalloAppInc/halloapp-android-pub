@@ -51,6 +51,10 @@ public abstract class ContentItem implements TextContent {
         return senderUserId.isMe();
     }
 
+    public boolean shouldSend() {
+        return isOutgoing();
+    }
+
     public boolean isIncoming() {
         return !isOutgoing();
     }

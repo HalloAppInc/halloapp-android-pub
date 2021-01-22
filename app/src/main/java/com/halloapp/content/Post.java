@@ -131,6 +131,11 @@ public class Post extends ContentItem {
         this.excludeList = excludeList;
     }
 
+    @Override
+    public boolean shouldSend() {
+        return isOutgoing() && type == TYPE_USER;
+    }
+
     @Nullable
     public List<UserId> getExcludeList() {
         return excludeList;

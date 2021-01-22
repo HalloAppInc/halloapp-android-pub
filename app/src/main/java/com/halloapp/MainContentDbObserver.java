@@ -56,7 +56,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onPostAdded(@NonNull Post post) {
-        if (post.isOutgoing()) {
+        if (post.shouldSend()) {
             if (post.media.isEmpty()) {
                 connection.sendPost(post);
             } else {
@@ -129,7 +129,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onMessageAdded(@NonNull Message message) {
-        if (message.isOutgoing()) {
+        if (message.shouldSend()) {
             if (message.media.isEmpty()) {
                 bgWorkers.execute(() -> encryptedSessionManager.sendMessage(message, true));
             } else {
