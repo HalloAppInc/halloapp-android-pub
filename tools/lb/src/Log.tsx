@@ -22,6 +22,11 @@ import { IconButton } from '@material-ui/core';
 
 import Proto from './proto/compiled'
 
+// https://github.com/protobufjs/protobuf.js/issues/730
+import Pbjs from 'protobufjs/minimal'
+Pbjs.util.Long = require("long")
+Pbjs.configure();
+
 interface ParamTypes {
   id: string,
   file: string,
