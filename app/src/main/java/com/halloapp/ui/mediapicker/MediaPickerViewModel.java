@@ -155,48 +155,6 @@ public class MediaPickerViewModel extends AndroidViewModel {
         return null;
     }
 
-    public void getUrisOrderedByDate(Observer<ArrayList<Uri>> observer) {
-        BgWorkers.getInstance().execute(() -> {
-            HashMap<Long, Long> dates = new HashMap<>();
-            List<Long> list = selected.getValue();
-
-            String selection = MediaStore.Files.FileColumns._ID + " in (" + TextUtils.join(",", list) + ")";
-            final String[] projection = new String[] {
-                MediaStore.Files.FileColumns._ID,
-                MediaStore.Files.FileColumns.DATE_ADDED,
-            };
-
-            try(final Cursor cursor = getApplication().getContentResolver().query(
-                    MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME),
-                    projection,
-                    selection,
-                    null,
-                    null)) {
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        dates.put(cursor.getLong(0), cursor.getLong(1));
-                    }
-                }
-            } catch (SecurityException ex) {
-                Log.w("MediaPickerViewModel.getOrderedByDateUris", ex);
-            }
-
-            Collections.sort(list, (a, b) -> {
-                long dateA = dates.containsKey(a) ? dates.get(a) : 0;
-                long dateB = dates.containsKey(b) ? dates.get(b) : 0;
-
-                return Long.compare(dateA, dateB);
-            });
-
-            ArrayList<Uri> uris = new ArrayList<>(list.size());
-            for (Long id : list) {
-                uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), id));
-            }
-
-            new Handler(getApplication().getMainLooper()).post(() -> observer.onChanged(uris));
-        });
-    }
-
     public void clean(List<Uri> uris) {
         BgWorkers.getInstance().execute(() -> {
             final FileStore store = FileStore.getInstance();

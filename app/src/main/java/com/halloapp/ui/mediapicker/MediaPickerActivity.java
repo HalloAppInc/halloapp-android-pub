@@ -715,8 +715,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void setupDefault() {
+            selectionIndicator.setImageResource(R.drawable.ic_item_unselected);
             selectionCounter.setVisibility(View.GONE);
             selectionIndicator.setVisibility(View.VISIBLE);
+
             thumbnailFrame.setPadding(0, 0, 0, 0);
             thumbnailView.setSelected(false);
 
