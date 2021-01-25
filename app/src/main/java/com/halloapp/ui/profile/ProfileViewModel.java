@@ -129,8 +129,9 @@ public class ProfileViewModel extends ViewModel {
             protected String compute() {
                 if (userId.isMe()) {
                     return StringUtils.formatPhoneNumber(me.getPhone());
+                } else {
+                    return contactsDb.getContact(userId).getDisplayPhone();
                 }
-                return null;
             }
         };
         contactLiveData = new ComputableLiveData<Contact>() {

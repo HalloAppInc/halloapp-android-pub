@@ -27,6 +27,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.settings.SettingsProfile;
@@ -47,6 +48,7 @@ public class ProfileFragment extends PostsFragment {
     private ImageView avatarView;
     private TextView nameView;
     private TextView subtitleView;
+    private View messageView;
 
     private MenuItem blockMenuItem;
 
@@ -135,6 +137,7 @@ public class ProfileFragment extends PostsFragment {
         final View headerView = adapter.addHeader(R.layout.profile_header);
         subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
+        messageView = headerView.findViewById(R.id.message);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
             subtitleView.setText(s);
             if (s == null) {
@@ -142,6 +145,12 @@ public class ProfileFragment extends PostsFragment {
             } else {
                 subtitleView.setVisibility(View.VISIBLE);
             }
+        });
+        messageView.setOnClickListener(v -> {
+            final Intent intent = new Intent(getContext(), ChatActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, profileUserId);
+            startActivity(intent);
         });
         if (profileUserId.isMe()) {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
@@ -152,9 +161,11 @@ public class ProfileFragment extends PostsFragment {
                 if (contact.addressBookName == null) {
                     emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
                     emptyView.setText(getString(R.string.posts_exchange_numbers));
+                    messageView.setVisibility(View.GONE);
                 } else {
                     emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
+                    messageView.setVisibility(View.VISIBLE);
                 }
             });
         }
