@@ -133,7 +133,7 @@ public class Post extends ContentItem {
 
     @Override
     public boolean shouldSend() {
-        return isOutgoing() && type == TYPE_USER;
+        return isOutgoing() && type == TYPE_USER && transferred == TRANSFERRED_NO;
     }
 
     @Nullable

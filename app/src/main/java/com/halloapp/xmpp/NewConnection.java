@@ -1128,7 +1128,9 @@ public class NewConnection extends Connection {
                         PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
 
                         // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
-                        Post np = new Post(-1, getUserId(Long.toString(protoPost.getPublisherUid())), protoPost.getId(), publishedEntry.timestamp, publishedEntry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, publishedEntry.text);
+                        UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
+                        @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
+                        Post np = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                                     entryMedia.encKey, entryMedia.sha256hash,
@@ -1220,7 +1222,9 @@ public class NewConnection extends Connection {
                         PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
 
                         // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
-                        Post post = new Post(-1, getUserId(Long.toString(protoPost.getPublisherUid())), protoPost.getId(), publishedEntry.timestamp, publishedEntry.media.isEmpty() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, publishedEntry.text);
+                        UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
+                        @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
+                        Post post = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                                     entryMedia.encKey, entryMedia.sha256hash,
