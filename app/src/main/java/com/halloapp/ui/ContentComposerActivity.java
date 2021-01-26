@@ -382,15 +382,20 @@ public class ContentComposerActivity extends HalloActivity {
             }
         });
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
-        if (viewModel.chatName != null) {
-            titleView.setText(R.string.new_message);
-            viewModel.chatName.getLiveData().observe(this, name -> {
-                updateMessageSubtitle(name);
-                if (replyPostId != null) {
-                    final TextView replyNameView = findViewById(R.id.reply_name);
-                    replyNameView.setText(name);
-                }
-            });
+        if (viewModel.shareTargetName != null) {
+            if (groupId != null) {
+                titleView.setText(R.string.new_post);
+                viewModel.shareTargetName.getLiveData().observe(this, this::updatePostSubtitle);
+            } else {
+                titleView.setText(R.string.new_message);
+                viewModel.shareTargetName.getLiveData().observe(this, name -> {
+                    updateMessageSubtitle(name);
+                    if (replyPostId != null) {
+                        final TextView replyNameView = findViewById(R.id.reply_name);
+                        replyNameView.setText(name);
+                    }
+                });
+            }
         } else {
             titleView.setText(R.string.new_post);
             viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
@@ -419,6 +424,16 @@ public class ContentComposerActivity extends HalloActivity {
         } else {
             Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
             subtitleView.setText("");
+        }
+    }
+
+    private void updatePostSubtitle(final String name) {
+        final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
+        if (name == null) {
+            Log.e("ContentComposerActivity: updateMessageSubtitle received null name");
+            subtitleView.setText("");
+        } else {
+            subtitleView.setText(getString(R.string.composer_sharing_post, name));
         }
     }
 

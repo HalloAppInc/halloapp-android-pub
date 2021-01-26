@@ -61,7 +61,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
     final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
-    final ComputableLiveData<String> chatName;
+    final ComputableLiveData<String> shareTargetName;
     final ComputableLiveData<Post> replyPost;
     final ComputableLiveData<List<Contact>> mentionableContacts;
 
@@ -98,7 +98,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             loadUris(uris, editStates);
         }
         if (chatId != null) {
-            chatName = new ComputableLiveData<String>() {
+            shareTargetName = new ComputableLiveData<String>() {
                 @Override
                 protected String compute() {
                     if (chatId instanceof UserId) {
@@ -109,8 +109,16 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     return null;
                 }
             };
+        } else if (groupFeedId != null) {
+            shareTargetName = new ComputableLiveData<String>() {
+                @Override
+                protected String compute() {
+                    return Preconditions.checkNotNull(contentDb.getChat(groupFeedId)).name;
+
+                }
+            };
         } else {
-            chatName = null;
+            shareTargetName = null;
         }
         if (replyPostId != null) {
             replyPost = new ComputableLiveData<Post>() {
