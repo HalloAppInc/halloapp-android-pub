@@ -120,9 +120,6 @@ public class GroupFeedViewModel extends ViewModel {
                 List<MemberInfo> memberInfos = contentDb.getGroupMembers(groupId);
                 List<Contact> contacts = new ArrayList<>();
                 for (MemberInfo memberInfo : memberInfos) {
-                    if (memberInfo.userId.isMe()) {
-                        continue;
-                    }
                     contacts.add(contactsDb.getContact(memberInfo.userId));
                 }
                 return contacts;
