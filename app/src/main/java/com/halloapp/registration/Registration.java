@@ -8,18 +8,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PrivateEdECKey;
-import com.halloapp.props.ServerProps;
+import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.proto.clients.IdentityKey;
+import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +35,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -43,23 +51,23 @@ public class Registration {
         if (instance == null) {
             synchronized(Registration.class) {
                 if (instance == null) {
-                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance(), ServerProps.getInstance());
+                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance(), EncryptedKeyStore.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private Me me;
-    private ContentDb contentDb;
-    private Connection connection;
-    private ServerProps serverProps;
+    private final Me me;
+    private final ContentDb contentDb;
+    private final Connection connection;
+    private final EncryptedKeyStore encryptedKeyStore;
 
-    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull ServerProps serverProps) {
+    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull EncryptedKeyStore encryptedKeyStore) {
         this.me = me;
         this.contentDb = contentDb;
         this.connection = connection;
-        this.serverProps = serverProps;
+        this.encryptedKeyStore = encryptedKeyStore;
     }
 
     @WorkerThread
@@ -205,6 +213,33 @@ public class Registration {
     private @NonNull RegistrationVerificationResult verifyRegistrationNoise(@NonNull String phone, @NonNull String code, @NonNull String name) {
         ThreadUtils.setSocketTag();
 
+        encryptedKeyStore.generateClientPrivateKeys();
+        IdentityKey identityKeyProto = IdentityKey.newBuilder()
+                .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))
+                .build();
+        PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
+        byte[] signature = CryptoUtils.verifyDetached(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
+        SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
+                .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
+                .setSignature(ByteString.copyFrom(signature))
+                // TODO(jack): ID
+                .build();
+        List<byte[]> oneTimePreKeys = new ArrayList<>();
+        for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
+            com.halloapp.proto.clients.OneTimePreKey toAdd = com.halloapp.proto.clients.OneTimePreKey.newBuilder()
+                    .setId(otpk.id)
+                    .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
+                    .build();
+            oneTimePreKeys.add(toAdd.toByteArray());
+        }
+
+        String identityKeyB64 = Base64.encodeToString(identityKeyProto.toByteArray(), Base64.NO_WRAP);
+        String signedPreKeyB64 = Base64.encodeToString(signedPreKeyProto.toByteArray(), Base64.NO_WRAP);
+        JSONArray jsonArray = new JSONArray();
+        for (byte[] otpk : oneTimePreKeys) {
+            jsonArray.put(Base64.encodeToString(otpk, Base64.NO_WRAP));
+        }
+
         Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
         InputStream inStream = null;
         HttpsURLConnection connection = null;
@@ -224,6 +259,10 @@ public class Registration {
             requestJson.put("phone", phone);
             requestJson.put("code", code);
             requestJson.put("name", name);
+
+            requestJson.put("identity_key", identityKeyB64);
+            requestJson.put("signed_key", signedPreKeyB64);
+            requestJson.put("one_time_keys", jsonArray);
 
             byte[] keypair = CryptoUtils.generateEd25519KeyPair();
             byte[] pub = Arrays.copyOfRange(keypair, 0, 32);

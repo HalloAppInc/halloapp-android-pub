@@ -2,30 +2,17 @@ package com.halloapp.crypto.keys;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 
-import com.google.protobuf.ByteString;
-import com.halloapp.Constants;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.id.UserId;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.SessionSetupInfo;
-import com.halloapp.proto.clients.IdentityKey;
-import com.halloapp.proto.clients.SignedPreKey;
+import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
-import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.util.Observable;
-import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class KeyManager {
 
@@ -35,9 +22,7 @@ public class KeyManager {
     private static final byte[] HKDF_INPUT_MESSAGE_KEY = new byte[]{1};
     private static final byte[] HKDF_INPUT_CHAIN_KEY = new byte[]{2};
 
-    private static final int KEYS_VERSION = 1;
-
-    private EncryptedKeyStore encryptedKeyStore;
+    private final EncryptedKeyStore encryptedKeyStore;
 
     public static KeyManager getInstance() {
         if (instance == null) {
@@ -52,54 +37,6 @@ public class KeyManager {
 
     private KeyManager(EncryptedKeyStore encryptedKeyStore) {
         this.encryptedKeyStore = encryptedKeyStore;
-    }
-
-    @WorkerThread
-    public void ensureKeysUploaded(Connection connection) {
-        if (!Constants.ENCRYPTION_TURNED_ON) {
-            return;
-        }
-
-        if (encryptedKeyStore.getKeysVersion() < KEYS_VERSION) {
-            Log.i("KeyManager keys version outdated; clearing key store");
-            encryptedKeyStore.clearAll();
-        }
-
-        if (!encryptedKeyStore.getKeysUploaded()) {
-            encryptedKeyStore.generateClientPrivateKeys();
-
-            IdentityKey identityKeyProto = IdentityKey.newBuilder()
-                    .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))
-                    .build();
-
-            PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
-            byte[] signature = CryptoUtils.verifyDetached(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
-
-            SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
-                    .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
-                    .setSignature(ByteString.copyFrom(signature))
-                    // TODO(jack): ID
-                    .build();
-
-            List<byte[]> oneTimePreKeys = new ArrayList<>();
-            for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
-                com.halloapp.proto.clients.OneTimePreKey toAdd = com.halloapp.proto.clients.OneTimePreKey.newBuilder()
-                        .setId(otpk.id)
-                        .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
-                        .build();
-                oneTimePreKeys.add(toAdd.toByteArray());
-            }
-
-            try {
-                connection.uploadKeys(identityKeyProto.toByteArray(), signedPreKeyProto.toByteArray(), oneTimePreKeys).await();
-                encryptedKeyStore.setKeysUploaded(true);
-                encryptedKeyStore.setKeysVersion(KEYS_VERSION);
-            } catch (InterruptedException | ObservableErrorException e) {
-                Log.e("Exception awaiting key upload result", e);
-            }
-        } else {
-            Log.i("Keys were already uploaded");
-        }
     }
 
     public void tearDownSession(UserId peerUserId) {

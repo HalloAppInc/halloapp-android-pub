@@ -214,10 +214,6 @@ public class EncryptedSessionManager {
         }
     }
 
-    public void ensureKeysUploaded() {
-        keyManager.ensureKeysUploaded(connection);
-    }
-
     public List<byte[]> getFreshOneTimePreKeyProtos() {
         Set<OneTimePreKey> keys = encryptedKeyStore.getNewBatchOfOneTimePreKeys();
         List<byte[]> protoKeys = new ArrayList<>();

@@ -136,13 +136,6 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onConnected() {
-        bgWorkers.execute(() -> {
-            try {
-                encryptedSessionManager.ensureKeysUploaded();
-            } catch (Exception e) {
-                Log.e("Failed to ensure keys uploaded", e);
-            }
-        });
         bgWorkers.execute(blockListManager::fetchBlockList);
         bgWorkers.execute(feedPrivacyManager::fetchFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
