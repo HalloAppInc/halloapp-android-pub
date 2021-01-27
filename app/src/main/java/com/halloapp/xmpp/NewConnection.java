@@ -377,17 +377,12 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public Observable<Void> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
-        final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(identityKey, signedPreKey, oneTimePreKeys);
-        return sendIqRequestAsync(uploadIq).map(response -> {
+    public void uploadMoreOneTimePreKeys(@NonNull List<byte[]> oneTimePreKeys) {
+        final WhisperKeysUploadIq uploadIq = new WhisperKeysUploadIq(oneTimePreKeys);
+        sendIqRequestAsync(uploadIq).map(response -> {
             Log.d("connection: response after uploading keys " + ProtoPrinter.toString(response));
             return null;
         });
-    }
-
-    @Override
-    public void uploadMoreOneTimePreKeys(@NonNull List<byte[]> oneTimePreKeys) {
-        uploadKeys(null, null, oneTimePreKeys);
     }
 
     @Override
@@ -396,15 +391,6 @@ public class NewConnection extends Connection {
         return sendIqRequestAsync(downloadIq).map(response -> {
             Log.d("connection: response after downloading keys " + ProtoPrinter.toString(response));
             return WhisperKeysResponseIq.fromProto(response.getWhisperKeys());
-        });
-    }
-
-    @Override
-    public Observable<Integer> getOneTimeKeyCount() {
-        final WhisperKeysCountIq countIq = new WhisperKeysCountIq();
-        return sendIqRequestAsync(countIq).map(response -> {
-            Log.d("connection: response for get key count  " + ProtoPrinter.toString(response));
-            return WhisperKeysResponseIq.fromProto(response.getWhisperKeys()).count;
         });
     }
 

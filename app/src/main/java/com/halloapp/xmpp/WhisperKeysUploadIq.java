@@ -11,28 +11,16 @@ import java.util.List;
 
 public class WhisperKeysUploadIq extends HalloIq {
 
-    public byte[] identityKey;
-    public byte[] signedPreKey;
     public List<byte[]> oneTimePreKeys;
 
-    WhisperKeysUploadIq(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys) {
-        this.identityKey = identityKey;
-        this.signedPreKey = signedPreKey;
+    WhisperKeysUploadIq(@NonNull List<byte[]> oneTimePreKeys) {
         this.oneTimePreKeys = oneTimePreKeys;
-    }
-
-    private boolean isFullUpload() {
-        return identityKey != null && signedPreKey != null;
     }
 
     @Override
     public Iq toProtoIq() {
         WhisperKeys.Builder builder = WhisperKeys.newBuilder();
-        builder.setAction(isFullUpload() ? WhisperKeys.Action.SET : WhisperKeys.Action.ADD);
-        if (isFullUpload()) {
-            builder.setIdentityKey(ByteString.copyFrom(identityKey));
-            builder.setSignedKey(ByteString.copyFrom(signedPreKey));
-        }
+        builder.setAction(WhisperKeys.Action.ADD);
         for (byte[] oneTimePreKey : oneTimePreKeys) {
             builder.addOneTimeKeys(ByteString.copyFrom(oneTimePreKey));
         }

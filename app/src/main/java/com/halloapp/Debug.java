@@ -50,7 +50,6 @@ public class Debug {
     private static final String DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY = "Visit expiration activity";
     private static final String DEBUG_MENU_CLEAR_AVATAR_CACHE = "Clear avatar disk cache";
     private static final String DEBUG_MENU_REMOVE_AVATAR = "Remove avatar";
-    private static final String DEBUG_MENU_TEST_KEYS = "Test keys";
     private static final String DEBUG_MENU_CLEAR_KEY_STORE = "Clear key store";
     private static final String DEBUG_MENU_SET_COMMENTS_UNSEEN = "Set comments unseen";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY = "Skip outbound message key";
@@ -75,7 +74,6 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_VISIT_EXPIRATION_ACTIVITY);
         menu.getMenu().add(DEBUG_MENU_CLEAR_AVATAR_CACHE);
         menu.getMenu().add(DEBUG_MENU_REMOVE_AVATAR);
-        menu.getMenu().add(DEBUG_MENU_TEST_KEYS);
         menu.getMenu().add(DEBUG_MENU_CLEAR_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_FETCH_SERVER_PROPS);
         menu.getMenu().add(DEBUG_MENU_CRASH_PRECONDITION);
@@ -146,20 +144,6 @@ public class Debug {
                         }
                     }.execute();
 
-                    break;
-                }
-                case DEBUG_MENU_TEST_KEYS: {
-                    try {
-                        Connection.getInstance().uploadKeys(new byte[]{1, 2, 3, 4}, new byte[]{5, 6, 7, 8}, Collections.singletonList(new byte[]{10, 11, 12, 13}));
-                        WhisperKeysResponseIq response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).await();
-                        Log.d("DEBUG response " + response + " identity key: " + StringUtils.bytesToHexString(response.identityKey));
-                        Connection.getInstance().uploadMoreOneTimePreKeys(Collections.singletonList(new byte[]{3, 3, 3, 3}));
-                        response = Connection.getInstance().downloadKeys(new UserId("14075553501@s.halloapp.net")).await();
-                        Log.d("DEBUG response " + response + " identity key: " + StringUtils.bytesToHexString(response.identityKey));
-                        Log.d("DEBUG COUNT: " + Connection.getInstance().getOneTimeKeyCount().await());
-                    } catch (Exception e) {
-                        Log.w("DEBUG key failure", e);
-                    }
                     break;
                 }
                 case DEBUG_MENU_CLEAR_KEY_STORE: {

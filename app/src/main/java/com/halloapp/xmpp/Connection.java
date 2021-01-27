@@ -100,13 +100,9 @@ public abstract class Connection {
 
     public abstract void updateChatState(@NonNull ChatId chat, @ChatState.Type int state);
 
-    public abstract Observable<Void> uploadKeys(@Nullable byte[] identityKey, @Nullable byte[] signedPreKey, @NonNull List<byte[]> oneTimePreKeys);
-
     public abstract void uploadMoreOneTimePreKeys(@NonNull List<byte[]> oneTimePreKeys);
 
     public abstract Observable<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId);
-
-    public abstract Observable<Integer> getOneTimeKeyCount();
 
     public abstract void sendStats(List<Stats.Counter> counters);
 
