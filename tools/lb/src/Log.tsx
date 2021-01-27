@@ -217,12 +217,12 @@ class Log extends React.Component<Props, State>  {
     let ret = []
     for (let i=0; i<s.length; i++) {
       let sb = ""
-      if (/\<\!\[CLBDATA\[/.test(s[i])) {
-        if (/\]\]\>/.test(s[i])) {
+      if (/<!\[CLBDATA\[/.test(s[i])) {
+        if (/\]\]>/.test(s[i])) {
           sb = s[i]
         } else {
           let start = i
-          while (!/\]\]\>/.test(s[i]) && i - start < MAX_LINES) {
+          while (!/\]\]>/.test(s[i]) && i - start < MAX_LINES) {
             let t = s[i]
             if (i !== start) {
               t = this.stripSecondLinePrefix(t)
