@@ -77,7 +77,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int PENDING_OPERATION_VIDEO = 2;
 
     private static final double PREFERRED_PREVIEW_RATIO = 3.0 / 4.0;
-    private static final int MAX_VIDEO_DURATION_MILLISECONDS = 5 * 1000;
+    private static final int MAX_VIDEO_DURATION_MILLISECONDS = 60 * 1000;
 
     private static final int[] EXIF_ORIENTATION_FLIP_MAP = new int[] {
             ExifInterface.ORIENTATION_UNDEFINED,
