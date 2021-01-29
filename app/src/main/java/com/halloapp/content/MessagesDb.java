@@ -463,7 +463,7 @@ class MessagesDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "<" + Message.STATE_OUTGOING_DELIVERED,
                     new String [] {chatId.rawId(), senderUserId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
