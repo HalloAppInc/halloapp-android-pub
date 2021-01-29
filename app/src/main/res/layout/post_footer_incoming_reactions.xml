@@ -22,43 +22,38 @@
             android:background="?selectableItemBackground"
             android:orientation="horizontal">
 
-            <ImageView
-                style="@style/PostButtonIcon"
-                android:src="@drawable/ic_feed_comment"/>
-
-
             <TextView
                 style="@style/PostButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/comment" />
+                android:text="@string/comments" />
 
             <View
                 style="@style/CommentsIndicator"
                 android:id="@+id/comments_indicator" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/message"
+        <FrameLayout
             style="?actionButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?selectableItemBackground">
-
-            <ImageView
-                style="@style/PostButtonIcon"
-                android:src="@drawable/ic_feed_message"/>
+            android:layout_weight="1">
 
             <TextView
+                android:id="@+id/message"
                 style="@style/PostButton"
+                android:paddingStart="11dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="2dp"
+                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/message" />
+                android:layout_gravity="center_vertical|end"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="🙂" />
 
-        </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
 </merge>

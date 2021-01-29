@@ -109,6 +109,7 @@ public class ChatActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_SELECTED_MESSAGE_ROW_ID = "selected_message_row_id";
     public static final String EXTRA_COPY_TEXT = "copy_text";
+    public static final String EXTRA_OPEN_KEYBOARD = "open_keyboard";
 
     private static final int REQUEST_CODE_COMPOSE = 1;
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
@@ -170,6 +171,8 @@ public class ChatActivity extends HalloActivity {
 
     private MenuItem menuItem;
     private Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
+
+    private boolean showKeyboardOnResume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -504,9 +507,7 @@ public class ChatActivity extends HalloActivity {
                 replyMessageRowId = message.rowId;
                 viewModel.updateMessageRowId(message.rowId);
 
-                editText.requestFocus();
-                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+                showKeyboard();
             }
         };
         itemSwipeHelper = new ItemSwipeHelper(swipeListItemHelper);
@@ -599,12 +600,25 @@ public class ChatActivity extends HalloActivity {
 
             }
         });
+
+        showKeyboardOnResume = getIntent().getBooleanExtra(EXTRA_OPEN_KEYBOARD, false);
+    }
+
+    private void showKeyboard() {
+        editText.requestFocus();
+        final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         avatarLoader.load(avatarView, chatId);
+
+        if (showKeyboardOnResume) {
+            showKeyboard();
+            showKeyboardOnResume = false;
+        }
     }
 
     @Override

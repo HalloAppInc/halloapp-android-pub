@@ -35,6 +35,7 @@
         android:singleLine="true"
         android:ellipsize="end"
         android:textSize="17sp"
+        android:paddingBottom="1dp"
         android:textAppearance="?textAppearanceListItem"
         android:fontFamily="sans-serif-medium"
         android:textDirection="locale"
@@ -74,10 +75,10 @@
             android:singleLine="true"
             android:ellipsize="end"
             android:textSize="16sp"
+            android:textColor="@color/secondary_text"
             android:textAppearance="?textAppearanceListItemSecondary"
             android:textDirection="locale"
             android:textAlignment="gravity"
-            android:visibility="gone"
             tools:text="+1 (650) 555-3000"/>
 
     </LinearLayout>

@@ -32,6 +32,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
@@ -47,6 +48,7 @@ public class PostsFragment extends HalloFragment {
     protected final PostsAdapter adapter = new PostsAdapter();
     protected ViewGroup parentViewGroup;
 
+    private ServerProps serverProps = ServerProps.getInstance();
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ChatLoader chatLoader;
     private ContactLoader contactLoader;
@@ -301,7 +303,7 @@ public class PostsFragment extends HalloFragment {
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
             switch (viewType & POST_DIRECTION_MASK) {
                 case POST_DIRECTION_INCOMING: {
-                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                    LayoutInflater.from(footer.getContext()).inflate(serverProps.getPrivateReactionsEnabled() ? R.layout.post_footer_incoming_reactions : R.layout.post_footer_incoming, footer, true);
                     return new IncomingPostViewHolder(layout, postViewHolderParent);
                 }
                 case POST_DIRECTION_OUTGOING: {

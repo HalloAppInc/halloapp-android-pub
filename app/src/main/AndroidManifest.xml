@@ -56,7 +56,7 @@
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.Chat"
             android:label=""
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity android:name=".ui.groups.CreateGroupActivity"
             android:theme="@style/AppTheme.NoActionBar"

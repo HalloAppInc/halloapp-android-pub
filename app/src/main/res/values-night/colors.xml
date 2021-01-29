@@ -29,6 +29,8 @@
 
     <color name="chat_background">@android:color/black</color>
 
+    <color name="reaction_bar_bg">#FF525252</color>
+
     <color name="seen_by_divider">@color/white_20</color>
 
     <color name="message_state_sent">#66C3DDFF</color>

@@ -34,6 +34,7 @@ public class ServerProps {
     private static final String PROP_SILENT_CHAT_MESSAGES = "silent_chat_messages";
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
+    private static final String PROP_PRIVATE_REACTS = "private_reactions";
 
     private static ServerProps instance;
 
@@ -62,6 +63,7 @@ public class ServerProps {
     private final IntegerProp propSilentChatMessages = createProp(PROP_SILENT_CHAT_MESSAGES, 5);
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
+    private final BooleanProp propPrivateReactionsEnabled = createProp(PROP_PRIVATE_REACTS, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -193,5 +195,9 @@ public class ServerProps {
 
     public synchronized int getMaxChatVideoDuration() {
         return propMaxChatVideoDuration.getValue();
+    }
+
+    public synchronized boolean getPrivateReactionsEnabled() {
+        return propPrivateReactionsEnabled.getValue();
     }
 }
