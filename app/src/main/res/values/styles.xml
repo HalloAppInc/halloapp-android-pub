@@ -131,6 +131,11 @@
         <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Title.Home</item>
     </style>
 
+    <style name="Toolbar.GroupFeed" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="titleTextColor">@color/color_secondary</item>
+        <item name="colorControlNormal">@color/color_secondary</item>
+    </style>
+
     <style name="Toolbar.Settings" parent="Toolbar">
         <item name="titleTextColor">@color/white_87</item>
         <item name="colorControlNormal">@color/white_87</item>
@@ -261,6 +266,11 @@
 
     <style name="TextAppearance.Toolbar.Settings.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/white_87</item>
+    </style>
+
+    <style name="TextAppearance.Toolbar.GroupFeed.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/color_secondary</item>
+        <item name="android:textSize">17dp</item>
     </style>
 
     <style name="Widget.Button.FAB" parent="Widget.MaterialComponents.FloatingActionButton">

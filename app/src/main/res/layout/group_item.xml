@@ -4,17 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="72dp"
     android:paddingStart="5dp"
     android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/avatar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:padding="15dp"
-        app:riv_corner_radius="20dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:padding="10dp"
+        app:riv_corner_radius="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,21 +63,6 @@
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/media_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginEnd="6dp"
-            android:layout_gravity="center_vertical"
-            tools:src="@drawable/ic_camera"/>
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/info_barrier"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:barrierDirection="end"
-            app:constraint_referenced_ids="media_icon,status"/>
-
         <TextView
             android:id="@+id/info"
             android:layout_width="0dp"
@@ -89,6 +74,7 @@
             android:textAppearance="?textAppearanceListItemSecondary"
             android:textDirection="locale"
             android:textAlignment="gravity"
+            android:visibility="gone"
             tools:text="+1 (650) 555-3000"/>
 
     </LinearLayout>

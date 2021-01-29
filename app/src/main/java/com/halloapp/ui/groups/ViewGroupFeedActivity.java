@@ -106,24 +106,6 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 titleView.setText(null);
             }
         });
-        viewModel.members.getLiveData().observe(this, memberList -> {
-            if (memberList == null) {
-                subtitleView.setVisibility(View.GONE);
-            } else {
-                subtitleView.setVisibility(View.VISIBLE);
-                List<String> members = new ArrayList<>();
-                boolean inGroup = false;
-                for (Contact member : memberList) {
-                    if (member.userId != null && member.userId.isMe()) {
-                        inGroup = true;
-                        continue;
-                    }
-                    members.add(member.getDisplayName());
-                }
-                subtitleView.setText(StringUtils.formatCommaSeparatedList(members));
-                fabView.setVisibility(inGroup ? View.VISIBLE : View.GONE);
-            }
-        });
 
         avatarLoader.load(avatarView, groupId, false);
 

@@ -241,7 +241,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             final TextView infoView;
             final TextView newMessagesView;
             final TextView timeView;
-            final ImageView mediaIcon;
             final View infoContainer;
 
             private Chat chat;
@@ -253,7 +252,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 infoView = itemView.findViewById(R.id.info);
                 timeView = itemView.findViewById(R.id.time);
                 newMessagesView = itemView.findViewById(R.id.new_posts);
-                mediaIcon = itemView.findViewById(R.id.media_icon);
                 infoContainer = itemView.findViewById(R.id.info_container);
                 itemView.setOnClickListener(v -> startActivity(ViewGroupFeedActivity.viewFeed(requireContext(), (GroupId) chat.chatId)));
             }
@@ -284,7 +282,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                             infoView.setText("");
                             infoView.setVisibility(View.GONE);
                             timeView.setVisibility(View.GONE);
-                            mediaIcon.setVisibility(View.GONE);
                         }
                     }
 
@@ -292,7 +289,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     public void showLoading(@NonNull View view) {
                         infoView.setVisibility(View.VISIBLE);
                         infoView.setText("");
-                        mediaIcon.setVisibility(View.GONE);
                     }
                 });
                 unseenGroupPostsLoader.load(newMessagesView, new ViewDataLoader.Displayer<View, List<Post>>() {
@@ -444,12 +440,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             private void bindGroupPostPreview(@NonNull Post post) {
                 timeView.setVisibility(View.VISIBLE);
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), post.timestamp));
-                mediaIcon.setVisibility(View.VISIBLE);
-                if (post.media.isEmpty()) {
-                    mediaIcon.setImageResource(R.drawable.ic_post_text);
-                } else {
-                    mediaIcon.setImageResource(R.drawable.ic_post_photo);
-                }
                 if (post.isIncoming()) {
                     contactLoader.load(infoView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                         @Override

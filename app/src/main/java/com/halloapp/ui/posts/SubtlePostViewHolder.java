@@ -108,7 +108,7 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
             }
             case Post.USAGE_NAME_CHANGE: {
                 if (post.senderUserId.isMe()) {
-                    textView.setText(itemView.getContext().getString(R.string.system_post_group_name_changed_by_you, post.text));
+                    textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(R.string.system_post_group_name_changed_by_you, post.text)));
                 } else {
                     parent.getContactLoader().load(textView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                         @Override
