@@ -444,4 +444,5 @@
     <string name="post_preview_with_caption">%s: %s</string>
     <string name="composer_sharing_message">Sending to %s</string>
     <string name="composer_sharing_post">Sharing with %s</string>
+    <string name="max_video_length">This video is over %d seconds long. Please select another video.</string>
 </resources>

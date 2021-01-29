@@ -35,7 +35,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
-import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.CropImageActivity;
 import com.halloapp.ui.HalloActivity;
@@ -83,6 +83,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private GalleryThumbnailLoader thumbnailLoader;
     private MediaPickerPreview preview;
     final private List<Long> selected = new ArrayList<>();
+    private int maxVideoLength = 300; // in seconds
 
     private ActionMode actionMode;
     private int pickerPurpose = PICKER_PURPOSE_SEND;
@@ -97,6 +98,12 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
+
+        if (getIntent().hasExtra(EXTRA_CHAT_ID)) {
+            maxVideoLength = ServerProps.getInstance().getMaxChatVideoDuration();
+        } else {
+            maxVideoLength = ServerProps.getInstance().getMaxFeedVideoDuration();
+        }
 
         if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
             setTitle(R.string.avatar_picker_title);
@@ -731,7 +738,19 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             SnackbarHelper.showInfo(itemView, message);
         }
 
+        private void notifyVideoTooLong() {
+            final String message = getResources().getString(R.string.max_video_length, maxVideoLength);
+            SnackbarHelper.showWarning(itemView, message);
+        }
+
         private void onItemClicked() {
+            if (galleryItem.type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+                if (galleryItem.duration > maxVideoLength * 1000) {
+                    notifyVideoTooLong();
+                    return;
+                }
+            }
+
             if (isAvatarPicker()) {
                 final ArrayList<Uri> uris = new ArrayList<>(1);
                 uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
