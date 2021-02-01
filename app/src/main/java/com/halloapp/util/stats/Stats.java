@@ -64,12 +64,12 @@ public class Stats {
         encryption.reportError(error);
     }
 
-    public void reportDecryptSuccess(boolean senderProbablyIos) {
-        decryption.reportSuccess(senderProbablyIos);
+    public void reportDecryptSuccess(String senderPlatform) {
+        decryption.reportSuccess(senderPlatform);
     }
 
-    public void reportDecryptError(String error, boolean senderProbablyIos) {
-        decryption.reportError(error, senderProbablyIos);
+    public void reportDecryptError(String error, String senderPlatform) {
+        decryption.reportError(error, senderPlatform);
     }
 
     public class Counter {
@@ -137,17 +137,17 @@ public class Stats {
             super("crypto", "decryption");
         }
 
-        public void reportSuccess(boolean senderProbablyIos) {
+        public void reportSuccess(String senderPlatform) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "success")
-                    .put(DIM_SENDER_PLATFORM, senderProbablyIos ? "ios" : "android");
+                    .put(DIM_SENDER_PLATFORM, senderPlatform);
             reportEvent(builder.build());
         }
 
-        public void reportError(String error, boolean senderProbablyIos) {
+        public void reportError(String error, String senderPlatform) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, error)
-                    .put(DIM_SENDER_PLATFORM, senderProbablyIos ? "ios" : "android");
+                    .put(DIM_SENDER_PLATFORM, senderPlatform);
             reportEvent(builder.build());
         }
     }

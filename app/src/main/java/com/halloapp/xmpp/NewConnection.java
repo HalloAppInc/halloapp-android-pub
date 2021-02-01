@@ -893,7 +893,7 @@ public class NewConnection extends Connection {
                     bgWorkers.execute(() -> {
                         if (!ContentDb.getInstance().hasMessage(fromUserId, msg.getId())) {
                             ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false);
+                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false, chatStanza.getSenderClientVersion());
                             processMentions(message.mentions);
                             connectionObservers.notifyIncomingMessageReceived(message);
                         } else {
@@ -915,7 +915,7 @@ public class NewConnection extends Connection {
                     bgWorkers.execute(() -> {
                         if (!ContentDb.getInstance().hasSilentMessage(fromUserId, msg.getId())) {
                             ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true);
+                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true, chatStanza.getSenderClientVersion());
                             processMentions(message.mentions);
                             connectionObservers.notifyIncomingSilentMessageReceived(message);
                         } else {
