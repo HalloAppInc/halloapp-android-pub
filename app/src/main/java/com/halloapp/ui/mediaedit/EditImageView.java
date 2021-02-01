@@ -219,15 +219,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     public void computeInitialCropRegion() {
         cropRect.set(imageRect);
-
-        final float w = cropRect.width();
-        final float h = cropRect.height();
-        if (maxAspectRatio > 0 && h / w > maxAspectRatio) {
-            final float newTop = cropRect.top + (h - maxAspectRatio * w) / 2;
-            final float newHeight = w * maxAspectRatio;
-            cropRect.top = newTop;
-            cropRect.bottom = newTop + newHeight;
-        }
+        keepCropWithinMaxRatio();
     }
 
     private void updateImage() {
@@ -369,6 +361,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         final float b = imageRect.bottom - x * scale;
 
         cropRect.set(l, b - cropRect.width() * scale, l + cropRect.height() * scale, b);
+        keepCropWithinMaxRatio();
 
         updateImage();
     }
@@ -444,6 +437,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         return computed;
+    }
+
+    private void keepCropWithinMaxRatio() {
+        final float w = cropRect.width();
+        final float h = cropRect.height();
+        if (maxAspectRatio > 0 && h / w > maxAspectRatio) {
+            final float newTop = cropRect.top + (h - maxAspectRatio * w) / 2;
+            final float newHeight = w * maxAspectRatio;
+            cropRect.top = newTop;
+            cropRect.bottom = newTop + newHeight;
+        }
     }
 
     private void keepWithinMaxRatio(RectF crop, CropRegionSection section) {
