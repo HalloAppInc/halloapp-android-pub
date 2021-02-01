@@ -212,9 +212,9 @@ public class EncryptedKeyStore {
         for (int i=0; i<ONE_TIME_PRE_KEY_BATCH_COUNT; i++) {
             int id = startId + i;
             PrivateXECKey privateKey = XECKey.generatePrivateKey();
-            storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial());
             try {
                 OneTimePreKey otpk = new OneTimePreKey(XECKey.publicFromPrivate(privateKey), id);
+                storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial());
                 ret.add(otpk);
             } catch (InvalidKeyException e) {
                 Log.w("Invalid X25519 private key for conversion", e);
