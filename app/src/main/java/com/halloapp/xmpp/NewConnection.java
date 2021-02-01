@@ -1221,15 +1221,6 @@ public class NewConnection extends Connection {
                         post.setParentGroup(new GroupId(item.getGid()));
                         posts.add(post);
                     }
-
-                    if (!names.isEmpty()) {
-                        connectionObservers.notifyUserNamesReceived(names);
-                    }
-
-                    if (!posts.isEmpty() || !comments.isEmpty()) {
-                        connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
-                    }
-                    return !posts.isEmpty() || !comments.isEmpty();
                 } else if (item.getAction() == GroupFeedItem.Action.RETRACT) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment comment = item.getComment();
@@ -1240,7 +1231,15 @@ public class NewConnection extends Connection {
                     }
                 }
             }
-            return false;
+
+            if (!names.isEmpty()) {
+                connectionObservers.notifyUserNamesReceived(names);
+            }
+
+            if (!posts.isEmpty() || !comments.isEmpty()) {
+                connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
+            }
+            return !posts.isEmpty() || !comments.isEmpty();
         }
 
         private void handleIq(Iq iq) {
