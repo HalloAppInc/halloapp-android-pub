@@ -310,7 +310,7 @@ public class SocialHistoryPopup {
                         names.add(contact.getDisplayName());
                     }
                 }
-                TimeFormatter.setTimeDiffText(timeView, System.currentTimeMillis() - timestamp);
+                TimeFormatter.setTimePostsFormat(timeView, timestamp);
 
                 if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
                     if (socialEvent.postSenderUserId.isMe()) {
