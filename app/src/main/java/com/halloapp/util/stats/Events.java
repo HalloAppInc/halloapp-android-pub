@@ -68,9 +68,6 @@ public class Events {
     }
 
     private void sendEvent(@NonNull EventData.Builder builder) {
-        if (!BuildConfig.DEBUG) {
-            return;
-        }
         bgWorkers.execute(() -> {
             if (!me.isRegistered()) {
                 return;
