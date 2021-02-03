@@ -63,7 +63,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="1dp"
-                    android:tint="@color/white_87"
+                    android:tint="@android:color/white"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_camera" />
 
