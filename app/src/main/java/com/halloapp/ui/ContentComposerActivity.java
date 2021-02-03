@@ -709,6 +709,7 @@ public class ContentComposerActivity extends HalloActivity {
                 Log.w("ContentComposerActivity: cannot send empty content");
             } else {
                 viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second);
+                item.setEnabled(false);
             }
             return true;
         }
