@@ -109,7 +109,7 @@ public class EditGroupActivity extends HalloActivity {
             }
         });
 
-        avatarLoader.load(avatarView, groupId);
+        avatarLoader.load(avatarView, groupId, false);
 
         nameView.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_GROUP_NAME_LENGTH)});
         nameView.addTextChangedListener(new TextWatcher() {
@@ -200,6 +200,6 @@ public class EditGroupActivity extends HalloActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        avatarLoader.load(avatarView, groupId);
+        avatarLoader.load(avatarView, groupId, false);
     }
 }
