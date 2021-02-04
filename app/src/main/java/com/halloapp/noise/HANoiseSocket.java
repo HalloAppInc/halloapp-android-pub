@@ -86,6 +86,7 @@ public class HANoiseSocket extends Socket {
             Log.i("NoiseSocket/authenticate trying IK handshake");
             try {
                 performIKHandshake(authRequest, noiseKey, serverStaticKey.getKeyMaterial());
+                me.setServerStaticKey(getServerStaticKey());
             } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException e) {
                 throw new NoiseException(e);
             }
