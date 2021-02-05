@@ -290,32 +290,6 @@
 
                     </FrameLayout>
 
-                    <LinearLayout
-                        android:id="@+id/post_audience_help"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center_horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/color_secondary"
-                            android:fontFamily="sans-serif-medium"
-                            android:textSize="13sp"
-                            android:text="@string/post_audience_nux_title"/>
-
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_marginLeft="6dp"
-                            android:layout_marginRight="6dp"
-                            android:layout_gravity="center_vertical"
-                            android:tint="@color/color_secondary"
-                            android:src="@drawable/ic_help"/>
-
-                    </LinearLayout>
-
                 </LinearLayout>
 
             </com.halloapp.widget.ContentComposerScrollView>

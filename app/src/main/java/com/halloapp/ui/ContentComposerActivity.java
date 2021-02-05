@@ -13,7 +13,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.transition.Fade;
-import android.transition.TransitionManager;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -107,8 +106,6 @@ public class ContentComposerActivity extends HalloActivity {
     private DrawDelegateView drawDelegateView;
     private Toolbar toolbar;
     private View replyContainer;
-    private View audienceHelp;
-    private View audienceNux;
 
     private boolean calledFromCamera;
     private boolean calledFromPicker;
@@ -176,19 +173,6 @@ public class ContentComposerActivity extends HalloActivity {
         textContentLoader = new TextContentLoader(this);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
-        audienceNux = findViewById(R.id.audience_nux);
-        audienceHelp = findViewById(R.id.post_audience_help);
-        View nuxOk = audienceNux.findViewById(R.id.ok_btn);
-        nuxOk.setOnClickListener(v -> {
-            TransitionManager.beginDelayedTransition(mediaVerticalScrollView);
-            audienceNux.setVisibility(View.INVISIBLE);
-        });
-        audienceHelp.setOnClickListener(v -> {
-            if (audienceNux.getVisibility() != View.VISIBLE) {
-                TransitionManager.beginDelayedTransition(mediaVerticalScrollView);
-                audienceNux.setVisibility(View.VISIBLE);
-            }
-        });
 
         final View loadingView = findViewById(R.id.loading);
 
@@ -302,9 +286,6 @@ public class ContentComposerActivity extends HalloActivity {
 
         if (replyPostId != null) {
             editText.requestFocus();
-        }
-        if (chatId != null || groupId != null) {
-            audienceHelp.setVisibility(View.GONE);
         }
 
         editText.addTextChangedListener(new TextWatcher() {
