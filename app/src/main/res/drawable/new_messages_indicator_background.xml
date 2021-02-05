@@ -3,8 +3,8 @@
     android:shape="rectangle">
 
     <size
-        android:width="16sp"
-        android:height="16sp" />
+        android:width="18sp"
+        android:height="18sp" />
 
     <padding
         android:left="4dp"
@@ -14,6 +14,6 @@
         android:color="@color/unread_indicator" />
 
     <corners
-        android:radius="8sp"/>
+        android:radius="9sp"/>
 
 </shape>

@@ -137,7 +137,7 @@
     <TextView
         android:id="@+id/new_messages"
         android:layout_width="wrap_content"
-        android:layout_height="16sp"
+        android:layout_height="18sp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="3dp"
         app:layout_constraintStart_toEndOf="@+id/info_container"

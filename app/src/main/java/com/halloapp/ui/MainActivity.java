@@ -146,7 +146,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                         navView.removeBadge(R.id.navigation_messages);
                     } else {
                         BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_messages);
-                        badge.setVerticalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset));
+                        badge.setVerticalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_vertical));
+                        badge.setHorizontalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_horizontal));
                         badge.setNumber(unseenChatsCount);
                     }
                 });

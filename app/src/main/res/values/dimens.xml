@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="badge">13dp</dimen>
-    <dimen name="badge_offset">3dp</dimen>
+    <dimen name="badge_offset_horizontal">3dp</dimen>
+    <dimen name="badge_offset_vertical">4dp</dimen>
     <dimen name="action_bar_elevation">4dp</dimen>
     <dimen name="media_pager_margin">8dp</dimen>
     <dimen name="media_pager_left_padding">36dp</dimen>
