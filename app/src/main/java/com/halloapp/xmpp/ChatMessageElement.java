@@ -10,6 +10,7 @@ import com.google.protobuf.ByteString;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -95,7 +96,10 @@ public class ChatMessageElement {
 
                 if (!isSilentMessage && Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
-                    EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id);
+                    int count = ContentDb.getInstance().getMessageRerequestCount(fromUserId, fromUserId, id);
+                    count += 1;
+                    ContentDb.getInstance().setMessageRerequestCount(fromUserId, fromUserId, id, count);
+                    EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id, count);
                 }
             }
         }

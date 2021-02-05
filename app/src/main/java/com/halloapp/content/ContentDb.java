@@ -716,6 +716,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public int getMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        return messagesDb.getMessageRerequestCount(chatId, senderUserId, messageId);
+    }
+
+    @WorkerThread
     public @Nullable Message getMessageForMedia(long mediaRowId) {
         return messagesDb.getMessageForMedia(mediaRowId);
     }

@@ -13,11 +13,13 @@ public class RerequestElement {
     public final String id;
     public final String messageId;
     public final UserId originalSender;
+    public final int rerequestCount;
 
-    public RerequestElement(String messageId, UserId originalSender) {
+    public RerequestElement(String messageId, UserId originalSender, int rerequestCount) {
         this.id = RandomId.create();
         this.messageId = messageId;
         this.originalSender = originalSender;
+        this.rerequestCount = rerequestCount;
     }
 
     public Msg toProto() {
@@ -38,6 +40,7 @@ public class RerequestElement {
                 .setId(id)
                 .setToUid(Long.parseLong(originalSender.rawId()))
                 .setRerequest(builder)
+                .setRerequestCount(rerequestCount)
                 .build();
     }
 }

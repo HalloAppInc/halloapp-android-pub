@@ -129,9 +129,9 @@ public class EncryptedSessionManager {
         }
     }
 
-    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId) {
+    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount) {
         String encodedIdentityKey = Base64.encodeToString(getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
-        connection.sendRerequest(encodedIdentityKey, senderUserId, messageId);
+        connection.sendRerequest(encodedIdentityKey, senderUserId, messageId, rerequestCount);
     }
 
     // Temporary for generating silent chat stanzas

@@ -81,8 +81,6 @@ import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ResponseHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,8 +114,6 @@ public class NewConnection extends Connection {
     public boolean clientExpired = false;
     private HANoiseSocket socket = null;
 
-    private OutputStream outputStream;
-    public InputStream inputStream;
     private boolean isAuthenticated;
 
     private final Object startupShutdownLock = new Object();
@@ -673,13 +669,13 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public void sendRerequest(String encodedIdentityKey, final @NonNull UserId senderUserId, @NonNull String messageId) {
+    public void sendRerequest(String encodedIdentityKey, final @NonNull UserId senderUserId, @NonNull String messageId, int rerequestCount) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
-            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId);
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });

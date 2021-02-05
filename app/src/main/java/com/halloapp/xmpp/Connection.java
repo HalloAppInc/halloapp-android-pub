@@ -136,7 +136,7 @@ public abstract class Connection {
 
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 
-    public abstract void sendRerequest(final String encodedIdentityKey, final @NonNull UserId senderUserId, final @NonNull String messageId);
+    public abstract void sendRerequest(final String encodedIdentityKey, final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount);
 
     public abstract void sendAck(final @NonNull String id);
 

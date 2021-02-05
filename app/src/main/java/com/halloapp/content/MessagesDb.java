@@ -1020,6 +1020,27 @@ class MessagesDb {
     }
 
     @WorkerThread
+    int getMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        Log.i("MessagesDb.getMessageRerequestCount: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId);
+
+        String sql = "SELECT " + MessagesTable.COLUMN_REREQUEST_COUNT + " "
+                + "FROM " + MessagesTable.TABLE_NAME + " "
+                + "WHERE " + MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?";
+
+        int count = 0;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (Cursor cursor = db.rawQuery(sql, new String[]{chatId.rawId(), senderUserId.rawId(), messageId})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        } catch (SQLException ex) {
+            Log.e("MessagesDb.getMessageRerequestCount: failed");
+            throw ex;
+        }
+        return count;
+    }
+
+    @WorkerThread
     @Nullable Message getMessageForMedia(long mediaRowId) {
         String sql =
             "SELECT " + MediaTable.COLUMN_PARENT_ROW_ID + " " +
