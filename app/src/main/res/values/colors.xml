@@ -106,6 +106,9 @@
 
     <color name="button_disabled_background">@color/black_20</color>
 
+    <color name="scroll_down_background_pressed">#EEEEEE</color>
+    <color name="scroll_down_background">#FFFFFF</color>
+
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>
     <color name="secondary_text">@color/black_54</color>

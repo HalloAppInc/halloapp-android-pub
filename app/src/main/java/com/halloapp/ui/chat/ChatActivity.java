@@ -263,6 +263,22 @@ public class ChatActivity extends HalloActivity {
         animator.setAddDuration(ADD_ANIMATION_DURATION);
         animator.setMoveDuration(MOVE_ANIMATION_DURATION);
 
+        View scrollToBottom = findViewById(R.id.scroll_to_bottom);
+        chatView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    scrollToBottom.setVisibility(View.GONE);
+                } else {
+                    scrollToBottom.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        scrollToBottom.setOnClickListener(v -> {
+            scrollUpOnDataLoaded = true;
+            viewModel.reloadMessagesAt(Long.MAX_VALUE);
+        });
+
         sendButton.setOnClickListener(v -> sendMessage());
         final View media = findViewById(R.id.media);
         media.setOnClickListener(v -> pickMedia());
