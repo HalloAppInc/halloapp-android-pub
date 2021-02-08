@@ -479,4 +479,14 @@ public class MediaUtils {
             return Bitmap.Config.ARGB_8888; // sRGB
         }
     }
+
+    public static long getVideoDuration(@NonNull File file) {
+        try(MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {
+            retriever.setDataSource(file.getAbsolutePath());
+            return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+        } catch (IllegalArgumentException e) {
+            Log.e("MediaUtils.getVideoDuration", e);
+            return 0;
+        }
+    }
 }

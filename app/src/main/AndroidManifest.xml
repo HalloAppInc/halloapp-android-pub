@@ -205,6 +205,10 @@
             android:theme="@style/AppTheme.Black"
             android:label="@string/edit"/>
 
+        <activity android:name=".ui.mediaedit.VideoEditActivity"
+            android:theme="@style/AppTheme.Black"
+            android:label="@string/edit"/>
+
         <activity android:name=".ui.mediaexplorer.MediaExplorerActivity"
             android:theme="@style/AppTheme.Black.Translucent"
             android:label="" />

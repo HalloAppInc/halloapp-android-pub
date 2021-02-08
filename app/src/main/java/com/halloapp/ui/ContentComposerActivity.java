@@ -54,12 +54,16 @@ import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.ui.mediaedit.VideoEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
@@ -628,7 +632,13 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             }
 
-            final Intent intent = new Intent(this, CropImageActivity.class);
+            final Intent intent;
+            if (mediaPairList.get(currentItem).getRelevantMedia().type == Media.MEDIA_TYPE_IMAGE) {
+                intent = new Intent(this, CropImageActivity.class);
+            } else {
+                intent = new Intent(this, VideoEditActivity.class);
+            }
+
             intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
@@ -681,6 +691,43 @@ public class ContentComposerActivity extends HalloActivity {
         refreshVideoPlayers(getCurrentItem());
     }
 
+    private void verifyVideosDurationWithinLimit(Runnable fail, Runnable success) {
+        long maxVideoLength;
+        if (chatId != null) {
+            maxVideoLength = ServerProps.getInstance().getMaxChatVideoDuration();
+        } else {
+            maxVideoLength = ServerProps.getInstance().getMaxFeedVideoDuration();
+        }
+
+        List<ContentComposerViewModel.EditMediaPair> media = viewModel.getEditMedia();
+
+        BgWorkers.getInstance().execute(() -> {
+            boolean videoTooLong = false;
+
+            if (media != null) {
+                for (ContentComposerViewModel.EditMediaPair pair : media) {
+                    long x = MediaUtils.getVideoDuration(pair.getRelevantMedia().file);
+                    if (MediaUtils.getVideoDuration(pair.getRelevantMedia().file) > maxVideoLength * 1000) {
+                        videoTooLong = true;
+                        break;
+                    }
+                }
+            }
+
+            if (videoTooLong) {
+                runOnUiThread(() -> {
+                    String message = getResources().getString(R.string.max_video_length, maxVideoLength);
+                    SnackbarHelper.showWarning(this, message);
+
+                    fail.run();
+                });
+            } else {
+                runOnUiThread(success);
+            }
+        });
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.share) {
@@ -689,8 +736,12 @@ public class ContentComposerActivity extends HalloActivity {
             if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
                 Log.w("ContentComposerActivity: cannot send empty content");
             } else {
-                viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second);
                 item.setEnabled(false);
+
+                verifyVideosDurationWithinLimit(
+                    () -> item.setEnabled(true),
+                    () -> viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second)
+                );
             }
             return true;
         }
@@ -790,11 +841,7 @@ public class ContentComposerActivity extends HalloActivity {
             addMediaButton.setVisibility(calledFromCamera ? View.GONE : View.VISIBLE);
             final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
             deletePictureButton.setVisibility(View.VISIBLE);
-            if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                cropPictureButton.setVisibility(View.VISIBLE);
-            } else {
-                cropPictureButton.setVisibility(View.GONE);
-            }
+            cropPictureButton.setVisibility(View.VISIBLE);
         } else {
             addMediaButton.setVisibility(View.GONE);
             cropPictureButton.setVisibility(View.GONE);
@@ -847,7 +894,7 @@ public class ContentComposerActivity extends HalloActivity {
             final DataSource.Factory dataSourceFactory =
                     new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
             final MediaSource mediaSource =
-                    new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.original.file));
+                    new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.getRelevantMedia().file));
 
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setUsage(C.USAGE_MEDIA)
@@ -861,7 +908,12 @@ public class ContentComposerActivity extends HalloActivity {
             contentPlayerView.setPlayer(player);
             player.prepare(mediaSource, false, false);
             Log.d(String.format("ContentComposerActivity: initializeVideoPlayer %s", mediaPair.uri));
+        } else {
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.getRelevantMedia().file));
+            player.prepare(mediaSource, false, false);
         }
+
         if (shouldAutoPlay != player.getPlayWhenReady()) {
             player.setPlayWhenReady(shouldAutoPlay);
         }
