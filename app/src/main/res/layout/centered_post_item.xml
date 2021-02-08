@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.halloapp.widget.SeenDetectorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/post_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="0dp"
+    android:gravity="center_horizontal"
+    android:paddingBottom="15dp">
+
+    <TextView
+        android:id="@+id/deleted_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/hint_text"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="7dp"
+        android:layout_gravity="center_horizontal"
+        android:textSize="13sp"
+        android:gravity="start"
+        android:background="@drawable/post_bg_centered"
+        android:backgroundTint="@color/system_post_bg"
+        tools:text="Duygu deleted a post" />
+
+</com.halloapp.widget.SeenDetectorLayout>

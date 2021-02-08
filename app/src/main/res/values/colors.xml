@@ -106,6 +106,10 @@
 
     <color name="button_disabled_background">@color/black_20</color>
 
+    <color name="system_post_text">@color/black_87</color>
+    <color name="system_post_bg">#CDE3FF</color>
+    <color name="deleted_post_bg">@color/black_5</color>
+
     <color name="scroll_down_background_pressed">#EEEEEE</color>
     <color name="scroll_down_background">#FFFFFF</color>
 

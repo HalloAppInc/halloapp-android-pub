@@ -1,12 +1,14 @@
 package com.halloapp.ui.posts;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -40,12 +42,22 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
         this.timeView = itemView.findViewById(R.id.time);
     }
 
-    public void bindTo(Post post) {
+    public void bindTo(Post post, boolean firstPost) {
         this.post = post;
-        TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
+        if (timeView != null) {
+            TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
+        }
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
 
+        if (firstPost) {
+            itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingBottom(), itemView.getPaddingRight(), itemView.getPaddingBottom());
+        } else {
+            itemView.setPadding(itemView.getPaddingLeft(), 0, itemView.getPaddingRight(), itemView.getPaddingBottom());
+        }
+
         if (post.type == Post.TYPE_USER) {
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.secondary_text));
+            textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), R.color.deleted_post_bg)));
             if (post.isOutgoing()) {
                 // I deleted a post
                 textView.setText(R.string.post_retracted_by_me);
@@ -72,6 +84,8 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
                 }
             });
         } else {
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.system_post_text));
+            textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), R.color.system_post_bg)));
             bindGroupSystemPostPreview(post);
         }
     }
@@ -108,13 +122,13 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
             }
             case Post.USAGE_NAME_CHANGE: {
                 if (post.senderUserId.isMe()) {
-                    textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(R.string.system_post_group_name_changed_by_you, post.text)));
+                    textView.setText(itemView.getContext().getString(R.string.system_post_group_name_changed_by_you, post.text));
                 } else {
                     parent.getContactLoader().load(textView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                         @Override
                         public void showResult(@NonNull TextView view, @Nullable Contact result) {
                             if (result != null) {
-                                textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(R.string.system_post_group_name_changed, result.getDisplayName(), post.text)));
+                                textView.setText(itemView.getContext().getString(R.string.system_post_group_name_changed, result.getDisplayName(), post.text));
                             }
                         }
 
@@ -143,13 +157,13 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
 
     private void systemMessageSingleUser(@NonNull Post message, @StringRes int meString, @StringRes int otherString) {
         if (message.senderUserId.isMe()) {
-            textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(meString)));
+            textView.setText(itemView.getContext().getString(meString));
         } else {
             parent.getContactLoader().load(textView, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(otherString, result.getDisplayName())));
+                        textView.setText(itemView.getContext().getString(otherString, result.getDisplayName()));
                     }
                 }
 
@@ -186,10 +200,10 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
                     }
                     String formatted = ListFormatter.format(itemView.getContext(), names);
                     if (senderIsMe) {
-                        textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(meString, formatted)));
+                        textView.setText(itemView.getContext().getString(meString, formatted));
                     } else {
                         String senderName = sender.getDisplayName();
-                        textView.setText(StringUtils.parseBoldMedium(itemView.getContext().getString(otherString, senderName, formatted)));
+                        textView.setText(itemView.getContext().getString(otherString, senderName, formatted));
                     }
                 }
             }

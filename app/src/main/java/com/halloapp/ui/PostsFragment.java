@@ -281,7 +281,7 @@ public class PostsFragment extends HalloFragment {
         public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
             int postType = viewType & POST_TYPE_MASK;
             if (postType == POST_TYPE_RETRACTED || postType == POST_TYPE_SYSTEM) {
-                return new SubtlePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.retracted_post_item, parent, false), postViewHolderParent);
+                return new SubtlePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.centered_post_item, parent, false), postViewHolderParent);
             }
             View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
             @LayoutRes int contentLayoutRes;
@@ -322,7 +322,7 @@ public class PostsFragment extends HalloFragment {
                 ((PostViewHolder)holder).setShowGroupName(showGroup);
                 ((PostViewHolder)holder).bindTo(Preconditions.checkNotNull(getItem(position)));
             } else if (holder instanceof SubtlePostViewHolder) {
-                ((SubtlePostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)));
+                ((SubtlePostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
             }
         }
     }
