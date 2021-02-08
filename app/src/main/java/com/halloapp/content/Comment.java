@@ -58,6 +58,10 @@ public class Comment implements TextContent {
         return "{timestamp:" + timestamp + ", post:" + postId + ", commentSender:" + commentSenderUserId + ", parentCommentId:" + parentCommentId + ", commentId:" + commentId + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
 
+    public boolean shouldSend() {
+        return !transferred;
+    }
+
     public boolean isOutgoing() {
         return commentSenderUserId.isMe();
     }

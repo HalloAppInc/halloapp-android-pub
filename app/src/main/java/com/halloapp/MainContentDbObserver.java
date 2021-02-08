@@ -97,7 +97,9 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onCommentAdded(@NonNull Comment comment) {
         if (comment.isOutgoing()) {
-            connection.sendComment(comment);
+            if (comment.shouldSend()) {
+                connection.sendComment(comment);
+            }
         } else { // if (comment.isIncoming())
             Post parentPost = comment.getParentPost();
             if (parentPost != null) {
