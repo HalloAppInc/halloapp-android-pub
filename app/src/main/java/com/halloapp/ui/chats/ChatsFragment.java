@@ -417,7 +417,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     presenceLiveData = presenceLoader.getLastSeenLiveData((UserId) chat.chatId);
                     presenceLiveData.observe(getViewLifecycleOwner(), presenceObserver);
                 }
-
+                // TODO: (clarkc) maybe consolidate loading into a single pass
+                contactLoader.cancel(infoView);
                 if (chat.lastMessageRowId >= 0) {
                     viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {
                         @Override
