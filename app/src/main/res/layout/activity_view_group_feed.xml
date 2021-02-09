@@ -143,6 +143,7 @@
         app:sdMainFabClosedBackgroundColor="@color/fab_background"
         app:sdUseReverseAnimationOnClose="true"
         app:sdMainFabClosedSrc="@drawable/ic_add"
+        android:visibility="gone"
         app:sdOverlayLayout="@+id/overlay"/>
 
     <View

@@ -22,9 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -32,8 +30,6 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
-import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -41,7 +37,6 @@ import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class ViewGroupFeedActivity extends HalloActivity {
 
@@ -118,6 +113,20 @@ public class ViewGroupFeedActivity extends HalloActivity {
         addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
         addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
         addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+
+        viewModel.members.getLiveData().observe(this, members -> {
+            if (members == null) {
+                fabView.hide();
+                return;
+            }
+            for (Contact contact : members) {
+                if (contact.userId != null && contact.userId.isMe()) {
+                    fabView.show();
+                    return;
+                }
+            }
+            fabView.hide();
+        });
 
         BottomNavigationView bottomNav = findViewById(R.id.nav_view);
         bottomNav.setSelectedItemId(R.id.navigation_groups);
