@@ -9,24 +9,32 @@ package com.halloapp.proto.log_events;
 public enum Platform
     implements com.google.protobuf.Internal.EnumLite {
   /**
-   * <code>ANDROID = 0;</code>
+   * <code>UNKNOWN = 0;</code>
    */
-  ANDROID(0),
+  UNKNOWN(0),
   /**
    * <code>IOS = 1;</code>
    */
   IOS(1),
+  /**
+   * <code>ANDROID = 2;</code>
+   */
+  ANDROID(2),
   UNRECOGNIZED(-1),
   ;
 
   /**
-   * <code>ANDROID = 0;</code>
+   * <code>UNKNOWN = 0;</code>
    */
-  public static final int ANDROID_VALUE = 0;
+  public static final int UNKNOWN_VALUE = 0;
   /**
    * <code>IOS = 1;</code>
    */
   public static final int IOS_VALUE = 1;
+  /**
+   * <code>ANDROID = 2;</code>
+   */
+  public static final int ANDROID_VALUE = 2;
 
 
   @java.lang.Override
@@ -50,8 +58,9 @@ public enum Platform
 
   public static Platform forNumber(int value) {
     switch (value) {
-      case 0: return ANDROID;
+      case 0: return UNKNOWN;
       case 1: return IOS;
+      case 2: return ANDROID;
       default: return null;
     }
   }

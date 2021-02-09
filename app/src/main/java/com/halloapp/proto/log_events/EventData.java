@@ -216,6 +216,44 @@ public  final class EventData extends
     
   }
 
+  public static final int TIMESTAMP_MS_FIELD_NUMBER = 4;
+  private long timestampMs_;
+  /**
+   * <pre>
+   * set by server to indicate when event was received
+   * </pre>
+   *
+   * <code>uint64 timestamp_ms = 4;</code>
+   * @return The timestampMs.
+   */
+  @java.lang.Override
+  public long getTimestampMs() {
+    return timestampMs_;
+  }
+  /**
+   * <pre>
+   * set by server to indicate when event was received
+   * </pre>
+   *
+   * <code>uint64 timestamp_ms = 4;</code>
+   * @param value The timestampMs to set.
+   */
+  private void setTimestampMs(long value) {
+    
+    timestampMs_ = value;
+  }
+  /**
+   * <pre>
+   * set by server to indicate when event was received
+   * </pre>
+   *
+   * <code>uint64 timestamp_ms = 4;</code>
+   */
+  private void clearTimestampMs() {
+    
+    timestampMs_ = 0L;
+  }
+
   public static final int MEDIA_UPLOAD_FIELD_NUMBER = 10;
   /**
    * <code>.server.MediaUpload media_upload = 10;</code>
@@ -687,6 +725,46 @@ public  final class EventData extends
     }
 
     /**
+     * <pre>
+     * set by server to indicate when event was received
+     * </pre>
+     *
+     * <code>uint64 timestamp_ms = 4;</code>
+     * @return The timestampMs.
+     */
+    @java.lang.Override
+    public long getTimestampMs() {
+      return instance.getTimestampMs();
+    }
+    /**
+     * <pre>
+     * set by server to indicate when event was received
+     * </pre>
+     *
+     * <code>uint64 timestamp_ms = 4;</code>
+     * @param value The timestampMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimestampMs(long value) {
+      copyOnWrite();
+      instance.setTimestampMs(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * set by server to indicate when event was received
+     * </pre>
+     *
+     * <code>uint64 timestamp_ms = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTimestampMs() {
+      copyOnWrite();
+      instance.clearTimestampMs();
+      return this;
+    }
+
+    /**
      * <code>.server.MediaUpload media_upload = 10;</code>
      */
     @java.lang.Override
@@ -899,14 +977,15 @@ public  final class EventData extends
             "uid_",
             "platform_",
             "version_",
+            "timestampMs_",
             com.halloapp.proto.log_events.MediaUpload.class,
             com.halloapp.proto.log_events.MediaDownload.class,
             com.halloapp.proto.log_events.MediaComposeLoad.class,
             com.halloapp.proto.log_events.PushReceived.class,
           };
           java.lang.String info =
-              "\u0000\u0007\u0001\u0000\u0001\r\u0007\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003" +
-              "\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000";
+              "\u0000\b\u0001\u0000\u0001\r\b\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
+              "\u0004\u0003\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

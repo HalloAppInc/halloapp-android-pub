@@ -82,4 +82,10 @@ public interface ContactOrBuilder extends
    */
   com.google.protobuf.ByteString
       getNameBytes();
+
+  /**
+   * <code>int64 num_potential_friends = 8;</code>
+   * @return The numPotentialFriends.
+   */
+  long getNumPotentialFriends();
 }

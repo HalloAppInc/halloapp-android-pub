@@ -493,6 +493,32 @@ public  final class Contact extends
     
   }
 
+  public static final int NUM_POTENTIAL_FRIENDS_FIELD_NUMBER = 8;
+  private long numPotentialFriends_;
+  /**
+   * <code>int64 num_potential_friends = 8;</code>
+   * @return The numPotentialFriends.
+   */
+  @java.lang.Override
+  public long getNumPotentialFriends() {
+    return numPotentialFriends_;
+  }
+  /**
+   * <code>int64 num_potential_friends = 8;</code>
+   * @param value The numPotentialFriends to set.
+   */
+  private void setNumPotentialFriends(long value) {
+    
+    numPotentialFriends_ = value;
+  }
+  /**
+   * <code>int64 num_potential_friends = 8;</code>
+   */
+  private void clearNumPotentialFriends() {
+    
+    numPotentialFriends_ = 0L;
+  }
+
   public static com.halloapp.proto.server.Contact parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -904,6 +930,34 @@ public  final class Contact extends
       return this;
     }
 
+    /**
+     * <code>int64 num_potential_friends = 8;</code>
+     * @return The numPotentialFriends.
+     */
+    @java.lang.Override
+    public long getNumPotentialFriends() {
+      return instance.getNumPotentialFriends();
+    }
+    /**
+     * <code>int64 num_potential_friends = 8;</code>
+     * @param value The numPotentialFriends to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNumPotentialFriends(long value) {
+      copyOnWrite();
+      instance.setNumPotentialFriends(value);
+      return this;
+    }
+    /**
+     * <code>int64 num_potential_friends = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNumPotentialFriends() {
+      copyOnWrite();
+      instance.clearNumPotentialFriends();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Contact)
   }
   @java.lang.Override
@@ -927,10 +981,11 @@ public  final class Contact extends
             "avatarId_",
             "role_",
             "name_",
+            "numPotentialFriends_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\f\u0002\u0208" +
-              "\u0003\u0208\u0004\u0002\u0005\u0208\u0006\f\u0007\u0208";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0002\u0005\u0208\u0006\f\u0007\u0208\b\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

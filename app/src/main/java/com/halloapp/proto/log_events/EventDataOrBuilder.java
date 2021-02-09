@@ -53,6 +53,16 @@ public interface EventDataOrBuilder extends
       getVersionBytes();
 
   /**
+   * <pre>
+   * set by server to indicate when event was received
+   * </pre>
+   *
+   * <code>uint64 timestamp_ms = 4;</code>
+   * @return The timestampMs.
+   */
+  long getTimestampMs();
+
+  /**
    * <code>.server.MediaUpload media_upload = 10;</code>
    * @return Whether the mediaUpload field is set.
    */
