@@ -24,7 +24,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
     private final View commentsIndicator;
     private final View message;
 
-    public IncomingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
+    public IncomingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent, boolean privateReactions) {
         super(itemView, parent);
 
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
@@ -38,7 +38,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
             parent.startActivity(intent);
         });
         message.setOnClickListener(view -> {
-            if (ServerProps.getInstance().getPrivateReactionsEnabled()) {
+            if (privateReactions) {
                 ReactionsPopupWindow p = new ReactionsPopupWindow(view.getContext());
                 p.show(view, post, parent.getMediaPagerPositionMap().get(post.rowId));
                 ColorMatrix matrix = new ColorMatrix();

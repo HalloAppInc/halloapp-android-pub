@@ -303,8 +303,9 @@ public class PostsFragment extends HalloFragment {
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
             switch (viewType & POST_DIRECTION_MASK) {
                 case POST_DIRECTION_INCOMING: {
-                    LayoutInflater.from(footer.getContext()).inflate(serverProps.getPrivateReactionsEnabled() ? R.layout.post_footer_incoming_reactions : R.layout.post_footer_incoming, footer, true);
-                    return new IncomingPostViewHolder(layout, postViewHolderParent);
+                    boolean privateReactions = serverProps.getPrivateReactionsEnabled();
+                    LayoutInflater.from(footer.getContext()).inflate(privateReactions ? R.layout.post_footer_incoming_reactions : R.layout.post_footer_incoming, footer, true);
+                    return new IncomingPostViewHolder(layout, postViewHolderParent, privateReactions);
                 }
                 case POST_DIRECTION_OUTGOING: {
                     LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
