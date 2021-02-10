@@ -122,6 +122,7 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_AVATAR_ID, updateContact.avatarId);
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
+                    values.put(ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS, updateContact.numPotentialFriends);
                     db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.rowId)},
@@ -188,6 +189,7 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_FRIEND, updateContact.friend);
                     values.put(ContactsTable.COLUMN_NEW_CONNECTION, updateContact.newConnection);
                     values.put(ContactsTable.COLUMN_CONNECTION_TIME, updateContact.connectionTime);
+                    values.put(ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS, updateContact.numPotentialFriends);
                     final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.rowId)},
@@ -377,12 +379,13 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS
                 },
                 ContactsTable.COLUMN_USER_ID + "=?",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
-                return new Contact(
+                Contact c = new Contact(
                         cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
@@ -391,6 +394,8 @@ public class ContactsDb {
                         cursor.getString(5),
                         userId,
                         cursor.getInt(7) == 1);
+                c.numPotentialFriends = cursor.getLong(8);
+                return c;
             }
         }
         return null;
@@ -422,7 +427,8 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS
                 },
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null, null, null, null, null)) {
             while (cursor.moveToNext()) {
@@ -436,6 +442,7 @@ public class ContactsDb {
                         cursor.getString(5),
                         userIdStr == null ? null : new UserId(userIdStr),
                         cursor.getInt(7) == 1);
+                contact.numPotentialFriends = cursor.getLong(8);
                 contacts.add(contact);
             }
         }
@@ -496,7 +503,8 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS
                 },
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
@@ -516,6 +524,7 @@ public class ContactsDb {
                             cursor.getString(5),
                             userIdStr == null ? null : new UserId(userIdStr),
                             cursor.getInt(7) == 1);
+                    contact.numPotentialFriends = cursor.getLong(8);
                     contacts.add(contact);
                 }
             }
@@ -768,6 +777,7 @@ public class ContactsDb {
         static final String COLUMN_FRIEND = "friend";
         static final String COLUMN_NEW_CONNECTION = "new_connection";
         static final String COLUMN_CONNECTION_TIME = "connection_time";
+        static final String COLUMN_NUM_POTENTIAL_FRIENDS = "num_potential_friends";
     }
 
     private static final class AvatarsTable implements BaseColumns {
@@ -829,7 +839,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 9;
+        private static final int DATABASE_VERSION = 10;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -849,7 +859,8 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
                     + ContactsTable.COLUMN_FRIEND + " INTEGER,"
                     + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER,"
-                    + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER"
+                    + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER,"
+                    + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
@@ -917,6 +928,9 @@ public class ContactsDb {
                 }
                 case 8: {
                     upgradeFromVersion8(db);
+                }
+                case 9: {
+                    upgradeFromVersion9(db);
                 }
                 break;
                 default: {
@@ -1051,6 +1065,10 @@ public class ContactsDb {
         private void upgradeFromVersion8(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER");
             db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER");
+        }
+
+        private void upgradeFromVersion9(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER");
         }
 
         private void deleteDb() {

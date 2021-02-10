@@ -14,6 +14,7 @@ public class ContactInfo {
     public String normalizedPhone;
     public String avatarId;
     public String halloName;
+    public long numPotentialFriends;
 
     ContactInfo(@NonNull Contact contact) {
         if (contact.getRaw() != null) {
@@ -34,5 +35,6 @@ public class ContactInfo {
         if (contact.getName() != null) {
             halloName = contact.getName();
         }
+        numPotentialFriends = contact.getNumPotentialFriends();
     }
 }

@@ -315,6 +315,11 @@ public class ContactsSync {
                     Log.i("ContactSync.performContactSync: update push name for " + contact.addressBookName + " to " + contact.halloName);
                     contactUpdated = true;
                 }
+                if (contact.numPotentialFriends != contactsSyncResult.numPotentialFriends) {
+                    contact.numPotentialFriends = contactsSyncResult.numPotentialFriends;
+                    Log.i("ContactSync.performContactSync: update num potential friends " + contact.addressBookName + " to " + contact.numPotentialFriends);
+                    contactUpdated = true;
+                }
                 if (contactUpdated) {
                     updatedContacts.add(contact);
                 }
