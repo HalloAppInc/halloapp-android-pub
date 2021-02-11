@@ -631,7 +631,7 @@ class PostsDb {
         } else {
             if (serverProps.getGroupFeedEnabled()) {
                 where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER;
-                where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "!='' OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL)";
+                where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "!='' OR m." + MediaTable._ID + " IS NOT NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL)";
             } else {
                 where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL";
             }
