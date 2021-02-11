@@ -35,7 +35,7 @@
 
     <com.halloapp.widget.CodeEditText
         android:id="@+id/code"
-        android:layout_width="354dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:inputType="numberPassword"
         android:importantForAutofill="no"
@@ -45,6 +45,7 @@
         app:cetBorderColor="@android:color/white"
         app:cetCellRadius="5dp"
         app:cetCellSpacing="9dp"
+        app:cetCellSize="@dimen/code_edit_box_size"
         android:layout_marginTop="24dp"
         android:background="@null"
         android:textColor="@color/color_primary"

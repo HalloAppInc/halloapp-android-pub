@@ -21,6 +21,7 @@ public class CodeEditText extends AppCompatEditText {
 
     private float requestedCellSpacing;
     private float cellCornerRadius;
+    private float requestedCellSize;
 
     private final Paint cellPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -62,6 +63,8 @@ public class CodeEditText extends AppCompatEditText {
 
         codeLength = a.getInteger(R.styleable.CodeEditText_cetCodeLength, 6);
 
+        requestedCellSize = a.getDimension(R.styleable.CodeEditText_cetCellSize, getResources().getDimension(R.dimen.code_edit_box_size));
+
         a.recycle();
     }
 
@@ -69,6 +72,11 @@ public class CodeEditText extends AppCompatEditText {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         setSelection(getText() == null ? 0 : getText().length());
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -92,29 +100,36 @@ public class CodeEditText extends AppCompatEditText {
 
         final int left = getPaddingLeft();
         final int right = getWidth() - getPaddingRight();
-        final int top = 0; //getPaddingTop();
-        final int bottom = getHeight(); // - getPaddingBottom();
         final int width = right - left;
-        final int height = bottom - top;
-        float cellWidth = Math.min(1f * width / codeLength, height);
-        float cellSpacing = cellWidth / 12f;
+        float cellSize = requestedCellSize;
+        float cellSpacing = cellSize / 12f;
 
         if (requestedCellSpacing >= 0) {
             cellSpacing = requestedCellSpacing;
         }
 
-        cellRect.top = top;
-        cellRect.bottom = bottom;
+        float expectedWidth = cellSpacing + ((requestedCellSize + cellSpacing) * codeLength);
+        float scaleFactor = Math.min(width / expectedWidth, 1.0f);
+        cellSize = requestedCellSize * scaleFactor;
+        cellSpacing *= scaleFactor;
+        cellRect.top = 0;
+        cellRect.bottom = cellSize;
+
+        float textSize = getTextSize();
+
+        if (textSize > cellSize) {
+            textSize = cellSize * 0.75f;
+        }
 
         textPaint.setColor(getCurrentTextColor());
-        textPaint.setTextSize(getTextSize());
+        textPaint.setTextSize(textSize);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-        final float xOffset = left + width / 2f - ((cellWidth + cellSpacing) * codeLength) / 2 + cellSpacing/2;
+        final float xOffset = left + width / 2f - ((cellSize + cellSpacing) * codeLength) / 2 + cellSpacing/2;
         for (int i = 0; i < codeLength; i++) {
-            cellRect.left = xOffset + i * (cellWidth + cellSpacing);
-            cellRect.right = cellRect.left + cellWidth;
+            cellRect.left = xOffset + i * (cellSize + cellSpacing);
+            cellRect.right = cellRect.left + cellSize;
             canvas.drawRoundRect(cellRect, cellCornerRadius, cellCornerRadius, cellPaint);
             if (i < text.length()) {
                 String digit = text.substring(i, i+1);

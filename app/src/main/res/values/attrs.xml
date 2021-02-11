@@ -4,6 +4,7 @@
     <declare-styleable name="CodeEditText">
         <attr name="cetCellRadius" format="dimension" />
         <attr name="cetBorderColor" format="color" />
+        <attr name="cetCellSize" format="dimension" />
         <attr name="cetCodeLength" format="integer" />
         <attr name="cetCellSpacing" format="dimension"/>
     </declare-styleable>
