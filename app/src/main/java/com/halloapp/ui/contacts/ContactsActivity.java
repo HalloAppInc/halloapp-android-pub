@@ -441,7 +441,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
             this.contact = contact;
-            avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
+            avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId), false);
             if (filterTokens != null && !filterTokens.isEmpty()) {
                 String name = contact.getDisplayName();
                 CharSequence formattedName = FilterUtils.formatMatchingText(ContactsActivity.this, name, filterTokens);

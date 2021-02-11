@@ -473,7 +473,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
             this.contact = contact;
             updateSelectionIcon();
-            avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
+            avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId), false);
             if (filterTokens != null && !filterTokens.isEmpty()) {
                 String name = contact.getDisplayName();
                 CharSequence formattedName = FilterUtils.formatMatchingText(MultipleContactPickerActivity.this, name, filterTokens);
@@ -514,7 +514,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
 
         void bindTo(@NonNull UserId userId) {
-            avatarLoader.load(avatar, userId);
+            avatarLoader.load(avatar, userId, false);
             contactLoader.load(name, userId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
