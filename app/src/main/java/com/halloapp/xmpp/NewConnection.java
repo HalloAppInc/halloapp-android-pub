@@ -923,18 +923,8 @@ public class NewConnection extends Connection {
                     handled = true;
                 } else if (msg.hasGroupChat()) {
                     Log.i("connection: got group chat " + ProtoPrinter.toString(msg));
-                    GroupChat groupChat = msg.getGroupChat();
-                    String senderName = groupChat.getSenderName();
-                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
-
-                    if (!TextUtils.isEmpty(senderName)) {
-                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
-                    }
-
-                    GroupChatMessage groupChatMessage = GroupChatMessage.fromProto(groupChat);
-                    Message message = groupChatMessage.getMessage(fromUserId, msg.getId());
-                    processMentions(message.mentions);
-                    connectionObservers.notifyIncomingMessageReceived(message);
+                    Log.i("connection: silently dropping group chat message " + msg.getId());
+                    sendAck(msg.getId());
                     handled = true;
                 } else if (msg.hasDeliveryReceipt()) {
                     Log.i("connection: got delivery receipt " + ProtoPrinter.toString(msg));
