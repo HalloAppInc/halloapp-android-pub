@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -38,9 +37,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.FilterUtils;
@@ -50,7 +47,6 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,6 +68,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     protected static final String EXTRA_TITLE_RES = "title_res";
     protected static final String EXTRA_ACTION_RES = "action_res";
     protected static final String EXTRA_SELECTED_IDS = "selected_ids";
+    protected static final String EXTRA_EXCLUDED_IDS = "excluded_ids";
     protected static final String EXTRA_MAX_SELECTION = "max_selection";
     protected static final String EXTRA_ONLY_FRIENDS = "only_friends";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
@@ -97,6 +94,13 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, boolean onlyFriends) {
         return newPickerIntent(context, selectedIds, title, R.string.action_save, null, onlyFriends);
+    }
+    public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @StringRes int title, boolean onlyFriends) {
+        Intent intent = newPickerIntent(context, null, title, R.string.action_save, null, onlyFriends);
+        if (excludeIds != null) {
+            intent.putParcelableArrayListExtra(EXTRA_EXCLUDED_IDS, new ArrayList<>(excludeIds));
+        }
+        return intent;
     }
 
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action, @Nullable Integer maxSelection, boolean onlyFriends) {
@@ -169,7 +173,19 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
         boolean onlyFriends = getIntent().getBooleanExtra(EXTRA_ONLY_FRIENDS, false);
         viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), onlyFriends)).get(ContactsViewModel.class);
-        viewModel.contactList.getLiveData().observe(this, contacts -> {
+
+        ArrayList<UserId> excluded = new ArrayList<>();
+        ArrayList<UserId> excludedInput = getIntent().getParcelableArrayListExtra(EXTRA_EXCLUDED_IDS);
+        if (excludedInput != null) {
+            excluded.addAll(excludedInput);
+        }
+        viewModel.contactList.getLiveData().observe(this, allContacts -> {
+            List<Contact> contacts = new ArrayList<>();
+            for (Contact contact : allContacts) {
+                if (!excluded.contains(contact.userId)) {
+                    contacts.add(contact);
+                }
+            }
             Map<UserId, Contact> map = new HashMap<>();
             for (Contact contact : contacts) {
                 map.put(contact.userId, contact);

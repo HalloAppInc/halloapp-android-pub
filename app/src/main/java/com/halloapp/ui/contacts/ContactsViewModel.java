@@ -3,16 +3,12 @@ package com.halloapp.ui.contacts;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
-import com.halloapp.ui.chat.ChatViewModel;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.List;
@@ -22,10 +18,6 @@ public class ContactsViewModel extends AndroidViewModel {
     private final ContactsDb contactsDb = ContactsDb.getInstance();
 
     final ComputableLiveData<List<Contact>> contactList;
-
-    public ContactsViewModel(@NonNull Application application) {
-        this(application, false);
-    }
 
     public ContactsViewModel(@NonNull Application application, boolean onlyFriends) {
         super(application);
