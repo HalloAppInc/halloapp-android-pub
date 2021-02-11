@@ -20,6 +20,7 @@ import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
@@ -170,16 +171,33 @@ public class ChatMessageElement {
         return new ChatMessageElement(encryptedBytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp, senderName);
     }
 
+    private String getSenderLogInfo() {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SIK:");
+            sb.append(Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
+        } catch (NullPointerException e) {
+            sb.append("null");
+        }
+
+        try {
+            sb.append("; RIK:");
+            sb.append(Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(recipientUserId).getKeyMaterial(), Base64.NO_WRAP));
+        } catch (NullPointerException e) {
+            sb.append("null");
+        }
+
+        sb.append("; SICK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getInboundChainKey(recipientUserId)));
+        sb.append("; SOCK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getOutboundChainKey(recipientUserId)));
+
+        return sb.toString();
+    }
+
     public ChatStanza toProto() {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
-
-        builder.setSenderLogInfo(
-                "SIK:" + Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP)
-                + "; RIK:" + Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(recipientUserId).getKeyMaterial(), Base64.NO_WRAP)
-                + "; SICK:" + CryptoUtils.obfuscate(encryptedKeyStore.getInboundChainKey(recipientUserId))
-                + "; SOCK:" + CryptoUtils.obfuscate(encryptedKeyStore.getOutboundChainKey(recipientUserId))
-        );
+        builder.setSenderLogInfo(getSenderLogInfo());
 
         if (sessionSetupInfo != null) {
             builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
