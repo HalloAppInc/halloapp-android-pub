@@ -95,10 +95,11 @@ public class EncryptedSessionManager {
                     throw new CryptoException("no_identity_key");
                 }
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
+                encryptedKeyStore.setPeerResponded(peerUserId, true);
             } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
                 PublicXECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
                 if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), sessionSetupInfo.identityKey.getKeyMaterial())) {
-                    Log.i("Session already set up but received session setup info with new identity key;"
+                    Log.w("Session already set up but received session setup info with new identity key;"
                             + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
                             + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
                 }
@@ -119,9 +120,9 @@ public class EncryptedSessionManager {
                     keyManager.tearDownSession(peerUserId);
                     keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                 }
+                encryptedKeyStore.setPeerResponded(peerUserId, true);
             }
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
-            encryptedKeyStore.setPeerResponded(peerUserId, true);
 
             return messageCipher.convertFromWire(message, peerUserId);
         } catch (InterruptedException e) {
