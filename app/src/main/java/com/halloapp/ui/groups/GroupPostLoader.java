@@ -4,14 +4,18 @@ import android.view.View;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.collection.LruCache;
 
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class GroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
@@ -19,9 +23,13 @@ public class GroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
     private final ContentDb contentDb;
     private final ServerProps serverProps;
 
+    private final LruCache<ChatId, Post> cache;
+
     public GroupPostLoader() {
         contentDb = ContentDb.getInstance();
         serverProps = ServerProps.getInstance();
+
+        cache = new LruCache<>(128);
     }
 
     @MainThread
@@ -32,6 +40,10 @@ public class GroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
             }
             return null;
         };
-        load(view, loader, displayer, chatId, null);
+        load(view, loader, displayer, chatId, cache);
+    }
+
+    public void removeFromCache(@NonNull ChatId chatId) {
+        cache.remove(chatId);
     }
 }

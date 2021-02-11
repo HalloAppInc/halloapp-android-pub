@@ -139,7 +139,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             adapter.setGroups(chats);
             emptyView.setVisibility(chats.size() == 0 ? View.VISIBLE : View.GONE);
         });
-        viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
 
         groupsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 

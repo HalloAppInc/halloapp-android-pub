@@ -31,7 +31,7 @@ import java.util.Locale;
 public class GroupListViewModel extends AndroidViewModel {
 
     final ComputableLiveData<List<Chat>> groupsList;
-    final MutableLiveData<Boolean> messageUpdated;
+    final MutableLiveData<Boolean> groupPostUpdated;
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
@@ -53,58 +53,31 @@ public class GroupListViewModel extends AndroidViewModel {
         @Override
         public void onPostAdded(@NonNull Post post) {
             if (post.getParentGroup() != null) {
-                invalidateChats();
+                groupPostLoader.removeFromCache(post.getParentGroup());
+                invalidateGroups();
             }
         }
 
         @Override
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-            invalidateChats();
+            invalidateGroups();
         }
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            invalidateChats();
-        }
-
-        public void onMessageAdded(@NonNull Message message) {
-            invalidateChats();
-        }
-
-        public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-            invalidateMessage(chatId, senderUserId, messageId);
-        }
-
-        public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-            invalidateMessage(chatId, senderUserId, messageId);
+            invalidateGroups();
         }
 
         public void onGroupChatAdded(@NonNull GroupId groupId) {
-            invalidateChats();
-        }
-
-        public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
-            invalidateMessage(chatId, UserId.ME, messageId);
-        }
-
-        public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
-            invalidateMessage(chatId, UserId.ME, messageId);
-        }
-
-        public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
-            invalidateChats();
+            invalidateGroups();
         }
 
         public void onChatDeleted(@NonNull ChatId chatId) {
-            invalidateChats();
+            invalidateGroups();
         }
 
-        private void invalidateChats() {
+        private void invalidateGroups() {
             groupsList.invalidate();
-        }
-
-        private void invalidateMessage(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-            messageUpdated.postValue(true);
         }
     };
 
@@ -154,7 +127,7 @@ public class GroupListViewModel extends AndroidViewModel {
             }
         };
 
-        messageUpdated = new MutableLiveData<>(false);
+        groupPostUpdated = new MutableLiveData<>(false);
     }
 
     public void saveScrollState(@Nullable Parcelable savedScrollState) {
