@@ -762,8 +762,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<Chat> getChats() {
-        return messagesDb.getChats();
+    public @NonNull List<Chat> getChats(boolean includeGroups) {
+        return messagesDb.getChats(includeGroups);
     }
 
     @WorkerThread

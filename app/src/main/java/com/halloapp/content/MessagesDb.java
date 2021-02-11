@@ -1495,9 +1495,10 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<Chat> getChats() {
+    @NonNull List<Chat> getChats(boolean includeGroups) {
         final List<Chat> chats = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        String selection = includeGroups ? "" : ChatsTable.COLUMN_IS_GROUP + "=0";
         try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
                 new String [] {
                         ChatsTable._ID,
@@ -1511,7 +1512,7 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
                         ChatsTable.COLUMN_IS_ACTIVE},
-                null, null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
+                selection, null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
                         cursor.getLong(0),

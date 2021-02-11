@@ -139,7 +139,7 @@ public class ChatsViewModel extends AndroidViewModel {
             @Override
             protected List<Chat> compute() {
 
-                final List<Chat> chats = ContentDb.getInstance().getChats();
+                final List<Chat> chats = ContentDb.getInstance().getChats(false);
                 Map<ChatId, Chat> chatsMap = new HashMap<>();
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);
