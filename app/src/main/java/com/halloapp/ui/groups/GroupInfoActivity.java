@@ -29,6 +29,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.SystemUiVisibility;
@@ -119,7 +120,8 @@ public class GroupInfoActivity extends HalloActivity {
                     excludeIds.add(memberInfo.userId);
                 }
             }
-            startActivityForResult(MultipleContactPickerActivity.newPickerIntentExclude(this, excludeIds, R.string.add_members, false), REQUEST_CODE_ADD_MEMBERS);
+            int maxGroupSize = ServerProps.getInstance().getMaxGroupSize() - excludeIds.size();
+            startActivityForResult(MultipleContactPickerActivity.newPickerIntentExclude(this, excludeIds, maxGroupSize, R.string.add_members, false), REQUEST_CODE_ADD_MEMBERS);
         });
 
         View.OnClickListener openEditGroupListener = v -> {
