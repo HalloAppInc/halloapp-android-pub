@@ -19,6 +19,10 @@ public class ContactsViewModel extends AndroidViewModel {
 
     final ComputableLiveData<List<Contact>> contactList;
 
+    public ContactsViewModel(@NonNull Application application) {
+        this(application, false);
+    }
+
     public ContactsViewModel(@NonNull Application application, boolean onlyFriends) {
         super(application);
 
