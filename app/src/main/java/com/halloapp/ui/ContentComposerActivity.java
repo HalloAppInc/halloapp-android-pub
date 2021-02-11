@@ -706,8 +706,8 @@ public class ContentComposerActivity extends HalloActivity {
 
             if (media != null) {
                 for (ContentComposerViewModel.EditMediaPair pair : media) {
-                    long x = MediaUtils.getVideoDuration(pair.getRelevantMedia().file);
-                    if (MediaUtils.getVideoDuration(pair.getRelevantMedia().file) > maxVideoLength * 1000) {
+                    Media m = pair.getRelevantMedia();
+                    if (m.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.getVideoDuration(m.file) > maxVideoLength * 1000) {
                         videoTooLong = true;
                         break;
                     }
