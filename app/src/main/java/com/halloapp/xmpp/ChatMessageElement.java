@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
@@ -20,13 +19,17 @@ import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Stats;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ChatMessageElement {
 
@@ -174,8 +177,12 @@ public class ChatMessageElement {
     private String getSenderLogInfo() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("TS: ");
+        DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, Locale.US);
+        sb.append(df.format(new Date()));
+
         try {
-            sb.append("SIK:");
+            sb.append("; SIK:");
             sb.append(Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
         } catch (NullPointerException e) {
             sb.append("null");
