@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
@@ -35,6 +34,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
+import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.GlobalUI;
 import com.halloapp.util.logs.Log;
@@ -69,8 +69,13 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
+    public static final String EXTRA_PURPOSE = "purpose";
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
+    private static final int REQUEST_CODE_SET_AVATAR = 2;
+
+    public static final int PURPOSE_COMPOSE = 1;
+    public static final int PURPOSE_AVATAR = 2;
 
     private static final int PENDING_OPERATION_NONE = 0;
     private static final int PENDING_OPERATION_PHOTO = 1;
@@ -108,6 +113,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private AnimatedVectorDrawableCompat recordStartDrawable;
     private AnimatedVectorDrawableCompat recordStopDrawable;
 
+    private int purpose = PURPOSE_COMPOSE;
     private int orientation = 0;
     private boolean isFlashOn = false;
     private int pendingOperation = 0;
@@ -117,6 +123,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        purpose = getIntent().getIntExtra(EXTRA_PURPOSE, PURPOSE_COMPOSE);
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -142,7 +150,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         captureButton = findViewById(R.id.capture);
         captureButton.setOnLongClickListener(v -> {
             Log.d("CameraActivity: capture button onLongClick");
-            if (cameraIsAvailable()) {
+            if (cameraIsAvailable() && isRecordingVideoAllowed()) {
                 startRecordingVideo();
             }
             return false;
@@ -214,11 +222,11 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 result.toFile(mediaFile, file -> {
                     if (result.getFacing() == Facing.FRONT) {
                         flipImageHorizontally(file, () -> {
-                            startComposerForUri(Uri.fromFile(file));
+                            handleMediaUri(Uri.fromFile(file));
                             isTakingPhoto = false;
                         });
                     } else {
-                        startComposerForUri(Uri.fromFile(file));
+                        handleMediaUri(Uri.fromFile(file));
                         isTakingPhoto = false;
                     }
                 });
@@ -227,7 +235,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             @Override
             public void onVideoTaken(@NonNull VideoResult result) {
                 super.onVideoTaken(result);
-                startComposerForUri(Uri.fromFile(result.getFile()));
+                handleMediaUri(Uri.fromFile(result.getFile()));
                 clearRecordingVideoState();
                 isRecordingVideo = false;
             }
@@ -443,6 +451,10 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    private boolean isRecordingVideoAllowed() {
+        return purpose == PURPOSE_COMPOSE;
+    }
+
     private boolean cameraIsAvailable() {
         return cameraView != null && !isTakingPhoto && !cameraView.isTakingPicture() && !isRecordingVideo && !cameraView.isTakingVideo();
     }
@@ -515,6 +527,18 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    private void handleMediaUri(@NonNull Uri uri) {
+        switch (purpose) {
+            case PURPOSE_COMPOSE:
+                startComposerForUri(uri);
+                break;
+
+            case PURPOSE_AVATAR:
+                startAvatarPreviewForUri(uri);
+                break;
+        }
+    }
+
     private void startComposerForUri(@NonNull Uri uri) {
         final Intent intent = new Intent(getBaseContext(), ContentComposerActivity.class);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)));
@@ -526,5 +550,20 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
         startActivity(intent);
+    }
+
+    private void startAvatarPreviewForUri(@NonNull Uri uri) {
+        final Intent intent = new Intent(this, AvatarPreviewActivity.class);
+        intent.setData(uri);
+        startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SET_AVATAR && resultCode == RESULT_OK) {
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 }

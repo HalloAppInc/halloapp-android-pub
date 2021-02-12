@@ -36,6 +36,8 @@ import java.io.OutputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Map;
 
 public class AvatarPreviewViewModel extends AndroidViewModel {
 
@@ -205,7 +207,8 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
         @Override
         protected Media doInBackground(Void... voids) {
             final ContentResolver contentResolver = application.getContentResolver();
-            @Media.MediaType int mediaType = Media.getMediaType(contentResolver.getType(uri));
+            final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, Collections.singletonList(uri));
+            @Media.MediaType int mediaType = types.get(uri);
             final File file = FileStore.getInstance().getTmpFile(RandomId.create());
             FileUtils.uriToFile(application, uri, file);
             final Size size = MediaUtils.getDimensions(file, mediaType);

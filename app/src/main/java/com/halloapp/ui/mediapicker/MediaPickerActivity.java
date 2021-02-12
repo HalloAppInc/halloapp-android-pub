@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.graphics.Camera;
 import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
@@ -311,7 +312,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             intent.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
             intent.putExtra(CameraActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
             intent.putExtra(CameraActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
-            startActivity(intent);
+            if (isAvatarPicker()) {
+                intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+                startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
+            } else {
+                intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_COMPOSE);
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
