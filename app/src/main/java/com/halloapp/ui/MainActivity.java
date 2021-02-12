@@ -129,6 +129,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             navView.getMenu().removeItem(R.id.navigation_groups);
         }
 
+        navView.setSaveEnabled(false);
         navView.setOnNavigationItemReselectedListener(item -> scrollToTop());
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
