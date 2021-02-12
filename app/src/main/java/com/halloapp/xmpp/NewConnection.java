@@ -1052,6 +1052,7 @@ public class NewConnection extends Connection {
                         }
                     } catch (NullPointerException e) {
                         Log.w("Failed to compare received and stored identity keys", e);
+                        EncryptedSessionManager.getInstance().tearDownSession(userId);
                     }
 
                     connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), msg.getId());

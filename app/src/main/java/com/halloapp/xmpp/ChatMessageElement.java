@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -81,6 +83,8 @@ public class ChatMessageElement {
     }
 
     Message getMessage(UserId fromUserId, String id, boolean isSilentMessage, String senderAgent) {
+        boolean isFriend = ContactsDb.getInstance().getContact(fromUserId).friend;
+        Log.i("Local state relevant to message " + id + " from " + (isFriend ? "friend" : "non-friend") + ": " + getLogInfo(fromUserId));
         String senderPlatform = senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
         if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
             try {
@@ -174,7 +178,7 @@ public class ChatMessageElement {
         return new ChatMessageElement(encryptedBytes, new SessionSetupInfo(identityKey, oneTimePreKeyId), timestamp, senderName);
     }
 
-    private String getSenderLogInfo() {
+    private String getLogInfo(UserId userId) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("TS: ");
@@ -182,21 +186,21 @@ public class ChatMessageElement {
         sb.append(df.format(new Date()));
 
         try {
-            sb.append("; SIK:");
+            sb.append("; MIK:");
             sb.append(Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
         } catch (NullPointerException e) {
             sb.append("null");
         }
 
         try {
-            sb.append("; RIK:");
-            sb.append(Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(recipientUserId).getKeyMaterial(), Base64.NO_WRAP));
+            sb.append("; PIK:");
+            sb.append(Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(userId).getKeyMaterial(), Base64.NO_WRAP));
         } catch (NullPointerException e) {
             sb.append("null");
         }
 
-        sb.append("; SICK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getInboundChainKey(recipientUserId)));
-        sb.append("; SOCK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getOutboundChainKey(recipientUserId)));
+        sb.append("; MICK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getInboundChainKey(userId)));
+        sb.append("; MOCK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getOutboundChainKey(userId)));
 
         return sb.toString();
     }
@@ -204,7 +208,7 @@ public class ChatMessageElement {
     public ChatStanza toProto() {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
-        builder.setSenderLogInfo(getSenderLogInfo());
+        builder.setSenderLogInfo(getLogInfo(recipientUserId));
 
         if (sessionSetupInfo != null) {
             builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));

@@ -115,7 +115,7 @@ public class EncryptedSessionManager {
                         keyManager.tearDownSession(peerUserId);
                         keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                     }
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException | NullPointerException e) {
                     Log.w("Failed to retrieve inbound ephemeral key; setting up new session", e);
                     keyManager.tearDownSession(peerUserId);
                     keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
