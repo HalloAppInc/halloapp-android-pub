@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -59,7 +60,12 @@ public class Me {
     }
 
     @WorkerThread
-    private synchronized SharedPreferences getPreferences() {
+    private SharedPreferences getPreferences() {
+        return getPreferences(true);
+    }
+
+    @WorkerThread
+    private synchronized SharedPreferences getPreferences(boolean allowRecurse) {
         final Context context = appContext.get();
         if (preferences == null) {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -72,13 +78,30 @@ public class Me {
                             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                     );
                 } catch (GeneralSecurityException | IOException e) {
-                    Log.e("Me.getPreferences", e);
+                    Log.e("Me.getPreferences failed to create", e);
+
+                    // Handle case where keys are lost (i.e. restore happened using backup from before backup rules were in place)
+                    if (allowRecurse) {
+                        reset(context);
+                        preferences = getPreferences(false);
+                    } else {
+                        Log.sendErrorReport("Me prefs reset failure");
+                    }
                 }
+
             } else {
                 preferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
             }
         }
         return preferences;
+    }
+
+    @SuppressLint("ApplySharedPref")
+    @WorkerThread
+    private void reset(Context context) {
+        Log.i("Me.getPreferences resetting preferences");
+        SharedPreferences tmp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        tmp.edit().clear().commit();
     }
 
     @WorkerThread
