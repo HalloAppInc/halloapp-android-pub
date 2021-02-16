@@ -11,15 +11,4 @@
         android:contentDescription="@string/play"
         style="@style/ExoMediaButton.Play"/>
 
-    <ImageView
-        android:id="@+id/exo_pause"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_gravity="center"
-        android:tint="@android:color/white"
-        android:alpha="0.5"
-        android:src="@drawable/exo_controls_pause"
-        android:contentDescription="@string/pause"
-        style="@style/ExoMediaButton.Pause"/>
-
 </FrameLayout>

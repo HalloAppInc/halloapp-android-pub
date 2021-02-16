@@ -15,9 +15,11 @@ import android.text.TextWatcher;
 import android.transition.Fade;
 import android.util.Pair;
 import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -1012,6 +1014,19 @@ public class ContentComposerActivity extends HalloActivity {
                     initializeVideoPlayer(mediaPair, contentPlayerView, activePosition == currentPosition);
                 }
                 contentPlayerView.setOnClickListener(v -> clearEditFocus());
+                GestureDetector doubleTapDetector = new GestureDetector(contentPlayerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onSingleTapConfirmed(MotionEvent e) {
+                        if (contentPlayerView.isPlaying()) {
+                            contentPlayerView.pause();
+                        } else {
+                            contentPlayerView.play();
+                        }
+                        return true;
+                    }
+                });
+                contentPlayerView.setOnTouchListener((v, event) -> doubleTapDetector.onTouchEvent(event));
             } else {
                 if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
                     if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {

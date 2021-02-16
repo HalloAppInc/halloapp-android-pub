@@ -11,6 +11,7 @@ import android.view.ViewOutlineProvider;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -61,6 +62,24 @@ public class ContentPlayerView extends PlayerView {
 
     private int computeConstrainedHeight(int width, int height) {
         return maxAspectRatio > 0 ? Math.min(height, (int) (width * maxAspectRatio)) : height;
+    }
+
+    public boolean isPlaying() {
+        return getPlayer() != null && getPlayer().isPlaying();
+    }
+
+    public void play() {
+        Player player = getPlayer();
+        if (player != null) {
+            player.setPlayWhenReady(true);
+        }
+    }
+
+    public void pause() {
+        Player player = getPlayer();
+        if (player != null) {
+            player.setPlayWhenReady(false);
+        }
     }
 
     public void setPauseHiddenPlayerOnScroll(boolean pause) {
