@@ -26,7 +26,7 @@ import com.halloapp.xmpp.Connection;
 
 public class HalloApp extends Application {
 
-    private AppContext appContext = AppContext.getInstance();
+    private final AppContext appContext = AppContext.getInstance();
 
     @Override
     public void onCreate() {

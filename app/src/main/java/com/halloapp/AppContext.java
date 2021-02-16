@@ -22,7 +22,7 @@ public class AppContext {
         return instance;
     }
 
-    private Context applicationContext;
+    private volatile Context applicationContext;
 
     @NonNull
     public Context get() {
