@@ -766,17 +766,20 @@ public class NewConnection extends Connection {
     }
 
     private class PacketReader {
-        private static final int BUF_SIZE = 4096;
-
         private volatile boolean done;
+        private Thread readerThread;
 
         void init() {
             done = false;
-            ThreadUtils.go(this::parsePackets, "Packet Reader"); // TODO(jack): Connection counter
+            readerThread = ThreadUtils.go(this::parsePackets, "Packet Reader"); // TODO(jack): Connection counter
         }
 
         void shutdown() {
             done = true;
+            if (readerThread != null) {
+                readerThread.interrupt();
+                readerThread = null;
+            }
         }
 
         private void parsePackets() {
@@ -793,10 +796,10 @@ public class NewConnection extends Connection {
                     }
                     parsePacket(packet);
                 } catch (Exception e) {
+                    Log.e("Packet Reader error; maybe disconnecting", e);
                     if (!done) {
                         disconnect();
                     }
-                    Log.e("Packet Reader error", e);
                 }
             }
         }
