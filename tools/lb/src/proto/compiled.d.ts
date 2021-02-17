@@ -994,6 +994,9 @@ export namespace server {
 
         /** Contact name */
         name?: (string|null);
+
+        /** Contact numPotentialFriends */
+        numPotentialFriends?: (number|Long|null);
     }
 
     /** Represents a Contact. */
@@ -1025,6 +1028,9 @@ export namespace server {
 
         /** Contact name. */
         public name: string;
+
+        /** Contact numPotentialFriends. */
+        public numPotentialFriends: (number|Long);
 
         /**
          * Creates a new Contact instance using the specified properties.
@@ -1232,7 +1238,9 @@ export namespace server {
         enum Type {
             FULL = 0,
             DELTA = 1,
-            NORMAL = 2
+            NORMAL = 2,
+            FRIEND_NOTICE = 3,
+            INVITER_NOTICE = 4
         }
     }
 
@@ -5956,6 +5964,18 @@ export namespace server {
 
         /** Rerequest identityKey */
         identityKey?: (Uint8Array|null);
+
+        /** Rerequest signedPreKeyId */
+        signedPreKeyId?: (number|Long|null);
+
+        /** Rerequest oneTimePreKeyId */
+        oneTimePreKeyId?: (number|Long|null);
+
+        /** Rerequest sessionSetupEphemeralKey */
+        sessionSetupEphemeralKey?: (Uint8Array|null);
+
+        /** Rerequest messageEphemeralKey */
+        messageEphemeralKey?: (Uint8Array|null);
     }
 
     /** Represents a Rerequest. */
@@ -5972,6 +5992,18 @@ export namespace server {
 
         /** Rerequest identityKey. */
         public identityKey: Uint8Array;
+
+        /** Rerequest signedPreKeyId. */
+        public signedPreKeyId: (number|Long);
+
+        /** Rerequest oneTimePreKeyId. */
+        public oneTimePreKeyId: (number|Long);
+
+        /** Rerequest sessionSetupEphemeralKey. */
+        public sessionSetupEphemeralKey: Uint8Array;
+
+        /** Rerequest messageEphemeralKey. */
+        public messageEphemeralKey: Uint8Array;
 
         /**
          * Creates a new Rerequest instance using the specified properties.
@@ -6971,6 +7003,9 @@ export namespace server {
         /** EventData version */
         version?: (string|null);
 
+        /** EventData timestampMs */
+        timestampMs?: (number|Long|null);
+
         /** EventData mediaUpload */
         mediaUpload?: (server.IMediaUpload|null);
 
@@ -7001,6 +7036,9 @@ export namespace server {
 
         /** EventData version. */
         public version: string;
+
+        /** EventData timestampMs. */
+        public timestampMs: (number|Long);
 
         /** EventData mediaUpload. */
         public mediaUpload?: (server.IMediaUpload|null);
@@ -7090,8 +7128,9 @@ export namespace server {
 
     /** Platform enum. */
     enum Platform {
-        ANDROID = 0,
-        IOS = 1
+        UNKNOWN = 0,
+        IOS = 1,
+        ANDROID = 2
     }
 
     /** Properties of a MediaUpload. */

@@ -14,6 +14,8 @@ public  final class Rerequest extends
   private Rerequest() {
     id_ = "";
     identityKey_ = com.google.protobuf.ByteString.EMPTY;
+    sessionSetupEphemeralKey_ = com.google.protobuf.ByteString.EMPTY;
+    messageEphemeralKey_ = com.google.protobuf.ByteString.EMPTY;
   }
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
@@ -87,6 +89,112 @@ public  final class Rerequest extends
   private void clearIdentityKey() {
     
     identityKey_ = getDefaultInstance().getIdentityKey();
+  }
+
+  public static final int SIGNED_PRE_KEY_ID_FIELD_NUMBER = 3;
+  private long signedPreKeyId_;
+  /**
+   * <code>int64 signed_pre_key_id = 3;</code>
+   * @return The signedPreKeyId.
+   */
+  @java.lang.Override
+  public long getSignedPreKeyId() {
+    return signedPreKeyId_;
+  }
+  /**
+   * <code>int64 signed_pre_key_id = 3;</code>
+   * @param value The signedPreKeyId to set.
+   */
+  private void setSignedPreKeyId(long value) {
+    
+    signedPreKeyId_ = value;
+  }
+  /**
+   * <code>int64 signed_pre_key_id = 3;</code>
+   */
+  private void clearSignedPreKeyId() {
+    
+    signedPreKeyId_ = 0L;
+  }
+
+  public static final int ONE_TIME_PRE_KEY_ID_FIELD_NUMBER = 4;
+  private long oneTimePreKeyId_;
+  /**
+   * <code>int64 one_time_pre_key_id = 4;</code>
+   * @return The oneTimePreKeyId.
+   */
+  @java.lang.Override
+  public long getOneTimePreKeyId() {
+    return oneTimePreKeyId_;
+  }
+  /**
+   * <code>int64 one_time_pre_key_id = 4;</code>
+   * @param value The oneTimePreKeyId to set.
+   */
+  private void setOneTimePreKeyId(long value) {
+    
+    oneTimePreKeyId_ = value;
+  }
+  /**
+   * <code>int64 one_time_pre_key_id = 4;</code>
+   */
+  private void clearOneTimePreKeyId() {
+    
+    oneTimePreKeyId_ = 0L;
+  }
+
+  public static final int SESSION_SETUP_EPHEMERAL_KEY_FIELD_NUMBER = 5;
+  private com.google.protobuf.ByteString sessionSetupEphemeralKey_;
+  /**
+   * <code>bytes session_setup_ephemeral_key = 5;</code>
+   * @return The sessionSetupEphemeralKey.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getSessionSetupEphemeralKey() {
+    return sessionSetupEphemeralKey_;
+  }
+  /**
+   * <code>bytes session_setup_ephemeral_key = 5;</code>
+   * @param value The sessionSetupEphemeralKey to set.
+   */
+  private void setSessionSetupEphemeralKey(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    sessionSetupEphemeralKey_ = value;
+  }
+  /**
+   * <code>bytes session_setup_ephemeral_key = 5;</code>
+   */
+  private void clearSessionSetupEphemeralKey() {
+    
+    sessionSetupEphemeralKey_ = getDefaultInstance().getSessionSetupEphemeralKey();
+  }
+
+  public static final int MESSAGE_EPHEMERAL_KEY_FIELD_NUMBER = 6;
+  private com.google.protobuf.ByteString messageEphemeralKey_;
+  /**
+   * <code>bytes message_ephemeral_key = 6;</code>
+   * @return The messageEphemeralKey.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getMessageEphemeralKey() {
+    return messageEphemeralKey_;
+  }
+  /**
+   * <code>bytes message_ephemeral_key = 6;</code>
+   * @param value The messageEphemeralKey to set.
+   */
+  private void setMessageEphemeralKey(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    messageEphemeralKey_ = value;
+  }
+  /**
+   * <code>bytes message_ephemeral_key = 6;</code>
+   */
+  private void clearMessageEphemeralKey() {
+    
+    messageEphemeralKey_ = getDefaultInstance().getMessageEphemeralKey();
   }
 
   public static com.halloapp.proto.server.Rerequest parseFrom(
@@ -261,6 +369,118 @@ public  final class Rerequest extends
       return this;
     }
 
+    /**
+     * <code>int64 signed_pre_key_id = 3;</code>
+     * @return The signedPreKeyId.
+     */
+    @java.lang.Override
+    public long getSignedPreKeyId() {
+      return instance.getSignedPreKeyId();
+    }
+    /**
+     * <code>int64 signed_pre_key_id = 3;</code>
+     * @param value The signedPreKeyId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSignedPreKeyId(long value) {
+      copyOnWrite();
+      instance.setSignedPreKeyId(value);
+      return this;
+    }
+    /**
+     * <code>int64 signed_pre_key_id = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSignedPreKeyId() {
+      copyOnWrite();
+      instance.clearSignedPreKeyId();
+      return this;
+    }
+
+    /**
+     * <code>int64 one_time_pre_key_id = 4;</code>
+     * @return The oneTimePreKeyId.
+     */
+    @java.lang.Override
+    public long getOneTimePreKeyId() {
+      return instance.getOneTimePreKeyId();
+    }
+    /**
+     * <code>int64 one_time_pre_key_id = 4;</code>
+     * @param value The oneTimePreKeyId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setOneTimePreKeyId(long value) {
+      copyOnWrite();
+      instance.setOneTimePreKeyId(value);
+      return this;
+    }
+    /**
+     * <code>int64 one_time_pre_key_id = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearOneTimePreKeyId() {
+      copyOnWrite();
+      instance.clearOneTimePreKeyId();
+      return this;
+    }
+
+    /**
+     * <code>bytes session_setup_ephemeral_key = 5;</code>
+     * @return The sessionSetupEphemeralKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getSessionSetupEphemeralKey() {
+      return instance.getSessionSetupEphemeralKey();
+    }
+    /**
+     * <code>bytes session_setup_ephemeral_key = 5;</code>
+     * @param value The sessionSetupEphemeralKey to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSessionSetupEphemeralKey(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSessionSetupEphemeralKey(value);
+      return this;
+    }
+    /**
+     * <code>bytes session_setup_ephemeral_key = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSessionSetupEphemeralKey() {
+      copyOnWrite();
+      instance.clearSessionSetupEphemeralKey();
+      return this;
+    }
+
+    /**
+     * <code>bytes message_ephemeral_key = 6;</code>
+     * @return The messageEphemeralKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getMessageEphemeralKey() {
+      return instance.getMessageEphemeralKey();
+    }
+    /**
+     * <code>bytes message_ephemeral_key = 6;</code>
+     * @param value The messageEphemeralKey to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMessageEphemeralKey(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setMessageEphemeralKey(value);
+      return this;
+    }
+    /**
+     * <code>bytes message_ephemeral_key = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMessageEphemeralKey() {
+      copyOnWrite();
+      instance.clearMessageEphemeralKey();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Rerequest)
   }
   @java.lang.Override
@@ -279,10 +499,14 @@ public  final class Rerequest extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "id_",
             "identityKey_",
+            "signedPreKeyId_",
+            "oneTimePreKeyId_",
+            "sessionSetupEphemeralKey_",
+            "messageEphemeralKey_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\n" +
-              "";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\n" +
+              "\u0003\u0002\u0004\u0002\u0005\n\u0006\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

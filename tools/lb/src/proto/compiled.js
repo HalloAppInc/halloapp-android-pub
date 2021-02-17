@@ -2326,6 +2326,7 @@ $root.server = (function() {
          * @property {string|null} [avatarId] Contact avatarId
          * @property {server.Contact.Role|null} [role] Contact role
          * @property {string|null} [name] Contact name
+         * @property {number|Long|null} [numPotentialFriends] Contact numPotentialFriends
          */
 
         /**
@@ -2400,6 +2401,14 @@ $root.server = (function() {
         Contact.prototype.name = "";
 
         /**
+         * Contact numPotentialFriends.
+         * @member {number|Long} numPotentialFriends
+         * @memberof server.Contact
+         * @instance
+         */
+        Contact.prototype.numPotentialFriends = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new Contact instance using the specified properties.
          * @function create
          * @memberof server.Contact
@@ -2437,6 +2446,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 0 =*/48).int32(message.role);
             if (message.name != null && Object.hasOwnProperty.call(message, "name"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.name);
+            if (message.numPotentialFriends != null && Object.hasOwnProperty.call(message, "numPotentialFriends"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int64(message.numPotentialFriends);
             return writer;
         };
 
@@ -2491,6 +2502,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.name = reader.string();
+                    break;
+                case 8:
+                    message.numPotentialFriends = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2558,6 +2572,9 @@ $root.server = (function() {
             if (message.name != null && message.hasOwnProperty("name"))
                 if (!$util.isString(message.name))
                     return "name: string expected";
+            if (message.numPotentialFriends != null && message.hasOwnProperty("numPotentialFriends"))
+                if (!$util.isInteger(message.numPotentialFriends) && !(message.numPotentialFriends && $util.isInteger(message.numPotentialFriends.low) && $util.isInteger(message.numPotentialFriends.high)))
+                    return "numPotentialFriends: integer|Long expected";
             return null;
         };
 
@@ -2610,6 +2627,15 @@ $root.server = (function() {
             }
             if (object.name != null)
                 message.name = String(object.name);
+            if (object.numPotentialFriends != null)
+                if ($util.Long)
+                    (message.numPotentialFriends = $util.Long.fromValue(object.numPotentialFriends)).unsigned = false;
+                else if (typeof object.numPotentialFriends === "string")
+                    message.numPotentialFriends = parseInt(object.numPotentialFriends, 10);
+                else if (typeof object.numPotentialFriends === "number")
+                    message.numPotentialFriends = object.numPotentialFriends;
+                else if (typeof object.numPotentialFriends === "object")
+                    message.numPotentialFriends = new $util.LongBits(object.numPotentialFriends.low >>> 0, object.numPotentialFriends.high >>> 0).toNumber();
             return message;
         };
 
@@ -2638,6 +2664,11 @@ $root.server = (function() {
                 object.avatarId = "";
                 object.role = options.enums === String ? "FRIENDS" : 0;
                 object.name = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.numPotentialFriends = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.numPotentialFriends = options.longs === String ? "0" : 0;
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.Contact.Action[message.action] : message.action;
@@ -2656,6 +2687,11 @@ $root.server = (function() {
                 object.role = options.enums === String ? $root.server.Contact.Role[message.role] : message.role;
             if (message.name != null && message.hasOwnProperty("name"))
                 object.name = message.name;
+            if (message.numPotentialFriends != null && message.hasOwnProperty("numPotentialFriends"))
+                if (typeof message.numPotentialFriends === "number")
+                    object.numPotentialFriends = options.longs === String ? String(message.numPotentialFriends) : message.numPotentialFriends;
+                else
+                    object.numPotentialFriends = options.longs === String ? $util.Long.prototype.toString.call(message.numPotentialFriends) : options.longs === Number ? new $util.LongBits(message.numPotentialFriends.low >>> 0, message.numPotentialFriends.high >>> 0).toNumber() : message.numPotentialFriends;
             return object;
         };
 
@@ -2898,6 +2934,8 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
+                case 4:
                     break;
                 }
             if (message.syncId != null && message.hasOwnProperty("syncId"))
@@ -2945,6 +2983,14 @@ $root.server = (function() {
             case "NORMAL":
             case 2:
                 message.type = 2;
+                break;
+            case "FRIEND_NOTICE":
+            case 3:
+                message.type = 3;
+                break;
+            case "INVITER_NOTICE":
+            case 4:
+                message.type = 4;
                 break;
             }
             if (object.syncId != null)
@@ -3021,12 +3067,16 @@ $root.server = (function() {
          * @property {number} FULL=0 FULL value
          * @property {number} DELTA=1 DELTA value
          * @property {number} NORMAL=2 NORMAL value
+         * @property {number} FRIEND_NOTICE=3 FRIEND_NOTICE value
+         * @property {number} INVITER_NOTICE=4 INVITER_NOTICE value
          */
         ContactList.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "FULL"] = 0;
             values[valuesById[1] = "DELTA"] = 1;
             values[valuesById[2] = "NORMAL"] = 2;
+            values[valuesById[3] = "FRIEND_NOTICE"] = 3;
+            values[valuesById[4] = "INVITER_NOTICE"] = 4;
             return values;
         })();
 
@@ -15899,6 +15949,10 @@ $root.server = (function() {
          * @interface IRerequest
          * @property {string|null} [id] Rerequest id
          * @property {Uint8Array|null} [identityKey] Rerequest identityKey
+         * @property {number|Long|null} [signedPreKeyId] Rerequest signedPreKeyId
+         * @property {number|Long|null} [oneTimePreKeyId] Rerequest oneTimePreKeyId
+         * @property {Uint8Array|null} [sessionSetupEphemeralKey] Rerequest sessionSetupEphemeralKey
+         * @property {Uint8Array|null} [messageEphemeralKey] Rerequest messageEphemeralKey
          */
 
         /**
@@ -15933,6 +15987,38 @@ $root.server = (function() {
         Rerequest.prototype.identityKey = $util.newBuffer([]);
 
         /**
+         * Rerequest signedPreKeyId.
+         * @member {number|Long} signedPreKeyId
+         * @memberof server.Rerequest
+         * @instance
+         */
+        Rerequest.prototype.signedPreKeyId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Rerequest oneTimePreKeyId.
+         * @member {number|Long} oneTimePreKeyId
+         * @memberof server.Rerequest
+         * @instance
+         */
+        Rerequest.prototype.oneTimePreKeyId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Rerequest sessionSetupEphemeralKey.
+         * @member {Uint8Array} sessionSetupEphemeralKey
+         * @memberof server.Rerequest
+         * @instance
+         */
+        Rerequest.prototype.sessionSetupEphemeralKey = $util.newBuffer([]);
+
+        /**
+         * Rerequest messageEphemeralKey.
+         * @member {Uint8Array} messageEphemeralKey
+         * @memberof server.Rerequest
+         * @instance
+         */
+        Rerequest.prototype.messageEphemeralKey = $util.newBuffer([]);
+
+        /**
          * Creates a new Rerequest instance using the specified properties.
          * @function create
          * @memberof server.Rerequest
@@ -15960,6 +16046,14 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
             if (message.identityKey != null && Object.hasOwnProperty.call(message, "identityKey"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.identityKey);
+            if (message.signedPreKeyId != null && Object.hasOwnProperty.call(message, "signedPreKeyId"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.signedPreKeyId);
+            if (message.oneTimePreKeyId != null && Object.hasOwnProperty.call(message, "oneTimePreKeyId"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.oneTimePreKeyId);
+            if (message.sessionSetupEphemeralKey != null && Object.hasOwnProperty.call(message, "sessionSetupEphemeralKey"))
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.sessionSetupEphemeralKey);
+            if (message.messageEphemeralKey != null && Object.hasOwnProperty.call(message, "messageEphemeralKey"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.messageEphemeralKey);
             return writer;
         };
 
@@ -15999,6 +16093,18 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.identityKey = reader.bytes();
+                    break;
+                case 3:
+                    message.signedPreKeyId = reader.int64();
+                    break;
+                case 4:
+                    message.oneTimePreKeyId = reader.int64();
+                    break;
+                case 5:
+                    message.sessionSetupEphemeralKey = reader.bytes();
+                    break;
+                case 6:
+                    message.messageEphemeralKey = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -16041,6 +16147,18 @@ $root.server = (function() {
             if (message.identityKey != null && message.hasOwnProperty("identityKey"))
                 if (!(message.identityKey && typeof message.identityKey.length === "number" || $util.isString(message.identityKey)))
                     return "identityKey: buffer expected";
+            if (message.signedPreKeyId != null && message.hasOwnProperty("signedPreKeyId"))
+                if (!$util.isInteger(message.signedPreKeyId) && !(message.signedPreKeyId && $util.isInteger(message.signedPreKeyId.low) && $util.isInteger(message.signedPreKeyId.high)))
+                    return "signedPreKeyId: integer|Long expected";
+            if (message.oneTimePreKeyId != null && message.hasOwnProperty("oneTimePreKeyId"))
+                if (!$util.isInteger(message.oneTimePreKeyId) && !(message.oneTimePreKeyId && $util.isInteger(message.oneTimePreKeyId.low) && $util.isInteger(message.oneTimePreKeyId.high)))
+                    return "oneTimePreKeyId: integer|Long expected";
+            if (message.sessionSetupEphemeralKey != null && message.hasOwnProperty("sessionSetupEphemeralKey"))
+                if (!(message.sessionSetupEphemeralKey && typeof message.sessionSetupEphemeralKey.length === "number" || $util.isString(message.sessionSetupEphemeralKey)))
+                    return "sessionSetupEphemeralKey: buffer expected";
+            if (message.messageEphemeralKey != null && message.hasOwnProperty("messageEphemeralKey"))
+                if (!(message.messageEphemeralKey && typeof message.messageEphemeralKey.length === "number" || $util.isString(message.messageEphemeralKey)))
+                    return "messageEphemeralKey: buffer expected";
             return null;
         };
 
@@ -16063,6 +16181,34 @@ $root.server = (function() {
                     $util.base64.decode(object.identityKey, message.identityKey = $util.newBuffer($util.base64.length(object.identityKey)), 0);
                 else if (object.identityKey.length)
                     message.identityKey = object.identityKey;
+            if (object.signedPreKeyId != null)
+                if ($util.Long)
+                    (message.signedPreKeyId = $util.Long.fromValue(object.signedPreKeyId)).unsigned = false;
+                else if (typeof object.signedPreKeyId === "string")
+                    message.signedPreKeyId = parseInt(object.signedPreKeyId, 10);
+                else if (typeof object.signedPreKeyId === "number")
+                    message.signedPreKeyId = object.signedPreKeyId;
+                else if (typeof object.signedPreKeyId === "object")
+                    message.signedPreKeyId = new $util.LongBits(object.signedPreKeyId.low >>> 0, object.signedPreKeyId.high >>> 0).toNumber();
+            if (object.oneTimePreKeyId != null)
+                if ($util.Long)
+                    (message.oneTimePreKeyId = $util.Long.fromValue(object.oneTimePreKeyId)).unsigned = false;
+                else if (typeof object.oneTimePreKeyId === "string")
+                    message.oneTimePreKeyId = parseInt(object.oneTimePreKeyId, 10);
+                else if (typeof object.oneTimePreKeyId === "number")
+                    message.oneTimePreKeyId = object.oneTimePreKeyId;
+                else if (typeof object.oneTimePreKeyId === "object")
+                    message.oneTimePreKeyId = new $util.LongBits(object.oneTimePreKeyId.low >>> 0, object.oneTimePreKeyId.high >>> 0).toNumber();
+            if (object.sessionSetupEphemeralKey != null)
+                if (typeof object.sessionSetupEphemeralKey === "string")
+                    $util.base64.decode(object.sessionSetupEphemeralKey, message.sessionSetupEphemeralKey = $util.newBuffer($util.base64.length(object.sessionSetupEphemeralKey)), 0);
+                else if (object.sessionSetupEphemeralKey.length)
+                    message.sessionSetupEphemeralKey = object.sessionSetupEphemeralKey;
+            if (object.messageEphemeralKey != null)
+                if (typeof object.messageEphemeralKey === "string")
+                    $util.base64.decode(object.messageEphemeralKey, message.messageEphemeralKey = $util.newBuffer($util.base64.length(object.messageEphemeralKey)), 0);
+                else if (object.messageEphemeralKey.length)
+                    message.messageEphemeralKey = object.messageEphemeralKey;
             return message;
         };
 
@@ -16088,11 +16234,49 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.identityKey = $util.newBuffer(object.identityKey);
                 }
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.signedPreKeyId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.signedPreKeyId = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.oneTimePreKeyId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.oneTimePreKeyId = options.longs === String ? "0" : 0;
+                if (options.bytes === String)
+                    object.sessionSetupEphemeralKey = "";
+                else {
+                    object.sessionSetupEphemeralKey = [];
+                    if (options.bytes !== Array)
+                        object.sessionSetupEphemeralKey = $util.newBuffer(object.sessionSetupEphemeralKey);
+                }
+                if (options.bytes === String)
+                    object.messageEphemeralKey = "";
+                else {
+                    object.messageEphemeralKey = [];
+                    if (options.bytes !== Array)
+                        object.messageEphemeralKey = $util.newBuffer(object.messageEphemeralKey);
+                }
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
             if (message.identityKey != null && message.hasOwnProperty("identityKey"))
                 object.identityKey = options.bytes === String ? $util.base64.encode(message.identityKey, 0, message.identityKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.identityKey) : message.identityKey;
+            if (message.signedPreKeyId != null && message.hasOwnProperty("signedPreKeyId"))
+                if (typeof message.signedPreKeyId === "number")
+                    object.signedPreKeyId = options.longs === String ? String(message.signedPreKeyId) : message.signedPreKeyId;
+                else
+                    object.signedPreKeyId = options.longs === String ? $util.Long.prototype.toString.call(message.signedPreKeyId) : options.longs === Number ? new $util.LongBits(message.signedPreKeyId.low >>> 0, message.signedPreKeyId.high >>> 0).toNumber() : message.signedPreKeyId;
+            if (message.oneTimePreKeyId != null && message.hasOwnProperty("oneTimePreKeyId"))
+                if (typeof message.oneTimePreKeyId === "number")
+                    object.oneTimePreKeyId = options.longs === String ? String(message.oneTimePreKeyId) : message.oneTimePreKeyId;
+                else
+                    object.oneTimePreKeyId = options.longs === String ? $util.Long.prototype.toString.call(message.oneTimePreKeyId) : options.longs === Number ? new $util.LongBits(message.oneTimePreKeyId.low >>> 0, message.oneTimePreKeyId.high >>> 0).toNumber() : message.oneTimePreKeyId;
+            if (message.sessionSetupEphemeralKey != null && message.hasOwnProperty("sessionSetupEphemeralKey"))
+                object.sessionSetupEphemeralKey = options.bytes === String ? $util.base64.encode(message.sessionSetupEphemeralKey, 0, message.sessionSetupEphemeralKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sessionSetupEphemeralKey) : message.sessionSetupEphemeralKey;
+            if (message.messageEphemeralKey != null && message.hasOwnProperty("messageEphemeralKey"))
+                object.messageEphemeralKey = options.bytes === String ? $util.base64.encode(message.messageEphemeralKey, 0, message.messageEphemeralKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.messageEphemeralKey) : message.messageEphemeralKey;
             return object;
         };
 
@@ -18331,6 +18515,7 @@ $root.server = (function() {
          * @property {number|Long|null} [uid] EventData uid
          * @property {server.Platform|null} [platform] EventData platform
          * @property {string|null} [version] EventData version
+         * @property {number|Long|null} [timestampMs] EventData timestampMs
          * @property {server.IMediaUpload|null} [mediaUpload] EventData mediaUpload
          * @property {server.IMediaDownload|null} [mediaDownload] EventData mediaDownload
          * @property {server.IMediaComposeLoad|null} [mediaComposeLoad] EventData mediaComposeLoad
@@ -18375,6 +18560,14 @@ $root.server = (function() {
          * @instance
          */
         EventData.prototype.version = "";
+
+        /**
+         * EventData timestampMs.
+         * @member {number|Long} timestampMs
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
          * EventData mediaUpload.
@@ -18452,6 +18645,8 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.platform);
             if (message.version != null && Object.hasOwnProperty.call(message, "version"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.version);
+            if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.timestampMs);
             if (message.mediaUpload != null && Object.hasOwnProperty.call(message, "mediaUpload"))
                 $root.server.MediaUpload.encode(message.mediaUpload, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             if (message.mediaDownload != null && Object.hasOwnProperty.call(message, "mediaDownload"))
@@ -18502,6 +18697,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.version = reader.string();
+                    break;
+                case 4:
+                    message.timestampMs = reader.uint64();
                     break;
                 case 10:
                     message.mediaUpload = $root.server.MediaUpload.decode(reader, reader.uint32());
@@ -18560,11 +18758,15 @@ $root.server = (function() {
                     return "platform: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.version != null && message.hasOwnProperty("version"))
                 if (!$util.isString(message.version))
                     return "version: string expected";
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
+                    return "timestampMs: integer|Long expected";
             if (message.mediaUpload != null && message.hasOwnProperty("mediaUpload")) {
                 properties.edata = 1;
                 {
@@ -18628,7 +18830,7 @@ $root.server = (function() {
                 else if (typeof object.uid === "object")
                     message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber(true);
             switch (object.platform) {
-            case "ANDROID":
+            case "UNKNOWN":
             case 0:
                 message.platform = 0;
                 break;
@@ -18636,9 +18838,22 @@ $root.server = (function() {
             case 1:
                 message.platform = 1;
                 break;
+            case "ANDROID":
+            case 2:
+                message.platform = 2;
+                break;
             }
             if (object.version != null)
                 message.version = String(object.version);
+            if (object.timestampMs != null)
+                if ($util.Long)
+                    (message.timestampMs = $util.Long.fromValue(object.timestampMs)).unsigned = true;
+                else if (typeof object.timestampMs === "string")
+                    message.timestampMs = parseInt(object.timestampMs, 10);
+                else if (typeof object.timestampMs === "number")
+                    message.timestampMs = object.timestampMs;
+                else if (typeof object.timestampMs === "object")
+                    message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber(true);
             if (object.mediaUpload != null) {
                 if (typeof object.mediaUpload !== "object")
                     throw TypeError(".server.EventData.mediaUpload: object expected");
@@ -18681,8 +18896,13 @@ $root.server = (function() {
                     object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.uid = options.longs === String ? "0" : 0;
-                object.platform = options.enums === String ? "ANDROID" : 0;
+                object.platform = options.enums === String ? "UNKNOWN" : 0;
                 object.version = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestampMs = options.longs === String ? "0" : 0;
             }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
@@ -18693,6 +18913,11 @@ $root.server = (function() {
                 object.platform = options.enums === String ? $root.server.Platform[message.platform] : message.platform;
             if (message.version != null && message.hasOwnProperty("version"))
                 object.version = message.version;
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (typeof message.timestampMs === "number")
+                    object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
+                else
+                    object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber(true) : message.timestampMs;
             if (message.mediaUpload != null && message.hasOwnProperty("mediaUpload")) {
                 object.mediaUpload = $root.server.MediaUpload.toObject(message.mediaUpload, options);
                 if (options.oneofs)
@@ -18734,13 +18959,15 @@ $root.server = (function() {
      * Platform enum.
      * @name server.Platform
      * @enum {number}
-     * @property {number} ANDROID=0 ANDROID value
+     * @property {number} UNKNOWN=0 UNKNOWN value
      * @property {number} IOS=1 IOS value
+     * @property {number} ANDROID=2 ANDROID value
      */
     server.Platform = (function() {
         var valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ANDROID"] = 0;
+        values[valuesById[0] = "UNKNOWN"] = 0;
         values[valuesById[1] = "IOS"] = 1;
+        values[valuesById[2] = "ANDROID"] = 2;
         return values;
     })();
 

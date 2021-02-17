@@ -32,6 +32,14 @@ public  final class ContactList extends
      * <code>NORMAL = 2;</code>
      */
     NORMAL(2),
+    /**
+     * <code>FRIEND_NOTICE = 3;</code>
+     */
+    FRIEND_NOTICE(3),
+    /**
+     * <code>INVITER_NOTICE = 4;</code>
+     */
+    INVITER_NOTICE(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -47,6 +55,14 @@ public  final class ContactList extends
      * <code>NORMAL = 2;</code>
      */
     public static final int NORMAL_VALUE = 2;
+    /**
+     * <code>FRIEND_NOTICE = 3;</code>
+     */
+    public static final int FRIEND_NOTICE_VALUE = 3;
+    /**
+     * <code>INVITER_NOTICE = 4;</code>
+     */
+    public static final int INVITER_NOTICE_VALUE = 4;
 
 
     @java.lang.Override
@@ -73,6 +89,8 @@ public  final class ContactList extends
         case 0: return FULL;
         case 1: return DELTA;
         case 2: return NORMAL;
+        case 3: return FRIEND_NOTICE;
+        case 4: return INVITER_NOTICE;
         default: return null;
       }
     }

@@ -24,4 +24,28 @@ public interface RerequestOrBuilder extends
    * @return The identityKey.
    */
   com.google.protobuf.ByteString getIdentityKey();
+
+  /**
+   * <code>int64 signed_pre_key_id = 3;</code>
+   * @return The signedPreKeyId.
+   */
+  long getSignedPreKeyId();
+
+  /**
+   * <code>int64 one_time_pre_key_id = 4;</code>
+   * @return The oneTimePreKeyId.
+   */
+  long getOneTimePreKeyId();
+
+  /**
+   * <code>bytes session_setup_ephemeral_key = 5;</code>
+   * @return The sessionSetupEphemeralKey.
+   */
+  com.google.protobuf.ByteString getSessionSetupEphemeralKey();
+
+  /**
+   * <code>bytes message_ephemeral_key = 6;</code>
+   * @return The messageEphemeralKey.
+   */
+  com.google.protobuf.ByteString getMessageEphemeralKey();
 }
