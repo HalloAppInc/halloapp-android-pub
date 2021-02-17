@@ -171,8 +171,17 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         avatarsView.setLayoutManager(avatarsLayoutManager);
         avatarsView.setAdapter(avatarsAdapter);
 
+        ArrayList<UserId> preselected = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
+        if (preselected != null) {
+            selectedContacts = new HashSet<>(preselected);
+        } else {
+            selectedContacts = new HashSet<>();
+        }
+        initialSelectedContacts = new HashSet<>(selectedContacts);
+        avatarsAdapter.setUserIds(initialSelectedContacts);
+
         boolean onlyFriends = getIntent().getBooleanExtra(EXTRA_ONLY_FRIENDS, false);
-        viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), onlyFriends)).get(ContactsViewModel.class);
+        viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), onlyFriends, initialSelectedContacts)).get(ContactsViewModel.class);
 
         ArrayList<UserId> excluded = new ArrayList<>();
         ArrayList<UserId> excludedInput = getIntent().getParcelableArrayListExtra(EXTRA_EXCLUDED_IDS);
@@ -194,15 +203,6 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             adapter.setContacts(contacts);
             avatarsAdapter.setUserIds(selectedContacts);
         });
-
-        ArrayList<UserId> preselected = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
-        if (preselected != null) {
-            selectedContacts = new HashSet<>(preselected);
-        } else {
-            selectedContacts = new HashSet<>();
-        }
-        initialSelectedContacts = new HashSet<>(selectedContacts);
-        avatarsAdapter.setUserIds(initialSelectedContacts);
 
         maxSelection = getIntent().getIntExtra(EXTRA_MAX_SELECTION, -1);
 

@@ -3,15 +3,19 @@ package com.halloapp.ui.contacts;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ContactsViewModel extends AndroidViewModel {
 
@@ -20,17 +24,27 @@ public class ContactsViewModel extends AndroidViewModel {
     final ComputableLiveData<List<Contact>> contactList;
 
     public ContactsViewModel(@NonNull Application application) {
-        this(application, false);
+        this(application, false, null);
     }
 
-    public ContactsViewModel(@NonNull Application application, boolean onlyFriends) {
+    public ContactsViewModel(@NonNull Application application, boolean onlyFriends, @Nullable Set<UserId> initialSelection) {
         super(application);
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
             @Override
             protected List<Contact> compute() {
-                return Contact.sort(onlyFriends ? contactsDb.getFriends() : contactsDb.getUsers());
+                List<Contact> contacts = onlyFriends ? contactsDb.getFriends() : contactsDb.getUsers();
+                if (initialSelection != null) {
+                    Set<UserId> initialSelectionCopy = new HashSet<>(initialSelection);
+                    for (Contact contact : contacts) {
+                        initialSelectionCopy.remove(contact.userId);
+                    }
+                    for (UserId userId : initialSelectionCopy) {
+                        contacts.add(contactsDb.getContact(userId));
+                    }
+                }
+                return Contact.sort(contacts);
             }
         };
     }
@@ -39,17 +53,19 @@ public class ContactsViewModel extends AndroidViewModel {
 
         private final Application application;
         private final boolean onlyFriends;
+        private final Set<UserId> initialSelection;
 
-        Factory(@NonNull Application application, boolean onlyFriends) {
+        Factory(@NonNull Application application, boolean onlyFriends, @Nullable Set<UserId> initialSelection) {
             this.application = application;
             this.onlyFriends = onlyFriends;
+            this.initialSelection = initialSelection;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContactsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContactsViewModel(application, onlyFriends);
+                return (T) new ContactsViewModel(application, onlyFriends, initialSelection);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

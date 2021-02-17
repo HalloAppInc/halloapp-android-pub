@@ -45,7 +45,7 @@ public class SettingsPrivacy extends HalloActivity {
 
     public static class SettingsFragment extends HalloPreferenceFragment {
 
-        private ServerProps serverProps = ServerProps.getInstance();
+        private final ServerProps serverProps = ServerProps.getInstance();
 
         private Preference blocklistPreference;
         private Preference feedPrivacyPreference;
