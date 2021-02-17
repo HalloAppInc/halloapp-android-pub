@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -179,10 +180,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
+    public void notifyMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onMessageRerequest(peerUserId, messageId, stanzaId);
+                observer.onMessageRerequest(peerUserId, messageId, peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, stanzaId);
             }
         }
     }

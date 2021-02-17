@@ -125,14 +125,19 @@ public class EncryptedSessionManager {
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
             return messageCipher.convertFromWire(message, peerUserId);
+        } catch (CryptoException e) {
+            if (!e.teardownKeyMatched) {
+                Log.i("Setting session back up because teardown key did not match");
+                setUpSession(peerUserId);
+            }
+            throw e;
         } catch (InterruptedException e) {
             throw new CryptoException("dec_interrupted", e);
         }
     }
 
-    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount) {
-        String encodedIdentityKey = Base64.encodeToString(getPublicIdentityKey().getKeyMaterial(), Base64.NO_WRAP);
-        connection.sendRerequest(encodedIdentityKey, senderUserId, messageId, rerequestCount);
+    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey) {
+        connection.sendRerequest(senderUserId, messageId, rerequestCount, teardownKey);
     }
 
     // Temporary for generating silent chat stanzas
@@ -233,7 +238,7 @@ public class EncryptedSessionManager {
     }
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws CryptoException {
-        if (!Constants.ENCRYPTION_TURNED_ON || encryptedKeyStore.getPeerResponded(peerUserId)) {
+        if (encryptedKeyStore.getPeerResponded(peerUserId)) {
             return null;
         }
 

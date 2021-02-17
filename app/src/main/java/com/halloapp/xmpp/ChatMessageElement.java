@@ -86,7 +86,7 @@ public class ChatMessageElement {
         boolean isFriend = ContactsDb.getInstance().getContact(fromUserId).friend;
         Log.i("Local state relevant to message " + id + " from " + (isFriend ? "friend" : "non-friend") + ": " + getLogInfo(fromUserId));
         String senderPlatform = senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
-        if (Constants.ENCRYPTION_TURNED_ON && encryptedBytes != null) {
+        if (encryptedBytes != null) {
             try {
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, fromUserId, sessionSetupInfo);
                 chatMessage = MessageElementHelper.readEncodedEntry(dec);
@@ -115,7 +115,8 @@ public class ChatMessageElement {
                         count += 1;
                         contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
                     }
-                    EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id, count);
+                    byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
+                    EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id, count, teardownKey);
                 }
             }
         }

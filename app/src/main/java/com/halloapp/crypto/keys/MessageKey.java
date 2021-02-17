@@ -14,7 +14,7 @@ public class MessageKey {
     private final int currentChainIndex;
     private final byte[] messageKey;
 
-    MessageKey(int ephemeralKeyId, int previousChainLength, int currentChainIndex, @NonNull byte[] messageKey) throws CryptoException {
+    public MessageKey(int ephemeralKeyId, int previousChainLength, int currentChainIndex, @NonNull byte[] messageKey) throws CryptoException {
         if (ephemeralKeyId < 0) {
             Log.e("Invalid ephemeral key id " + ephemeralKeyId);
             throw new CryptoException("neg_ephemeral_key_id");

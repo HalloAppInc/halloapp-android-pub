@@ -163,7 +163,6 @@ public class Me {
         if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.saveRegistration: failed");
         } else {
-            EncryptedKeyStore.getInstance().setKeysUploaded(false);
             this.user.postValue(user);
         }
     }

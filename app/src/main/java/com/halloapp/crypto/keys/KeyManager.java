@@ -60,6 +60,7 @@ public class KeyManager {
         encryptedKeyStore.clearOutboundPreviousChainLength(peerUserId);
         encryptedKeyStore.clearInboundCurrentChainIndex(peerUserId);
         encryptedKeyStore.clearOutboundCurrentChainIndex(peerUserId);
+        // teardown keys intentionally omitted
     }
 
     public void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws CryptoException {
@@ -113,6 +114,10 @@ public class KeyManager {
         int ephemeralKeyId = ByteBuffer.wrap(ephemeralKeyIdBytes).getInt();
         PublicXECKey publicEphemeralKey = new PublicXECKey(ephemeralKeyBytes);
 
+        receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, sessionSetupInfo);
+    }
+
+    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SessionSetupInfo sessionSetupInfo) throws CryptoException {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, sessionSetupInfo.identityKey);
 
         try {

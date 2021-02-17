@@ -10,6 +10,12 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 
 import com.halloapp.content.PostsManager;
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.KeyManager;
+import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -40,6 +46,7 @@ import com.halloapp.xmpp.WhisperKeysMessage;
 import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -56,6 +63,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final GroupsSync groupsSync;
+    private final KeyManager keyManager;
     private final ServerProps serverProps;
     private final AvatarLoader avatarLoader;
     private final PostsManager postsManager;
@@ -63,6 +71,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final ForegroundChat foregroundChat;
     private final PresenceLoader presenceLoader;
     private final BlockListManager blockListManager;
+    private final EncryptedKeyStore encryptedKeyStore;
     private final FeedPrivacyManager feedPrivacyManager;
     private final ForegroundObserver foregroundObserver;
     private final EncryptedSessionManager encryptedSessionManager;
@@ -79,6 +88,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
+                            KeyManager.getInstance(),
                             ServerProps.getInstance(),
                             AvatarLoader.getInstance(),
                             PostsManager.getInstance(),
@@ -86,6 +96,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ForegroundChat.getInstance(),
                             PresenceLoader.getInstance(),
                             BlockListManager.getInstance(),
+                            EncryptedKeyStore.getInstance(),
                             FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
                             EncryptedSessionManager.getInstance());
@@ -104,6 +115,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
             @NonNull GroupsSync groupsSync,
+            @NonNull KeyManager keyManager,
             @NonNull ServerProps serverProps,
             @NonNull AvatarLoader avatarLoader,
             @NonNull PostsManager postsManager,
@@ -111,6 +123,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ForegroundChat foregroundChat,
             @NonNull PresenceLoader presenceLoader,
             @NonNull BlockListManager blockListManager,
+            @NonNull EncryptedKeyStore encryptedKeyStore,
             @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull EncryptedSessionManager encryptedSessionManager) {
@@ -122,6 +135,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.connection = connection;
         this.contactsDb = contactsDb;
         this.groupsSync = groupsSync;
+        this.keyManager = keyManager;
         this.serverProps = serverProps;
         this.avatarLoader = avatarLoader;
         this.postsManager = postsManager;
@@ -129,6 +143,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.foregroundChat = foregroundChat;
         this.presenceLoader = presenceLoader;
         this.blockListManager = blockListManager;
+        this.encryptedKeyStore = encryptedKeyStore;
         this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
         this.encryptedSessionManager = encryptedSessionManager;
@@ -243,8 +258,19 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull String stanzaId) {
+    public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
+             byte[] lastMessageEphemeralKey = encryptedKeyStore.getInboundTeardownKey(peerUserId);
+             if (!Arrays.equals(lastMessageEphemeralKey, messageEphemeralKey)) {
+                 encryptedKeyStore.setInboundTeardownKey(peerUserId, messageEphemeralKey);
+                 keyManager.tearDownSession(peerUserId);
+                 try {
+                     keyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SessionSetupInfo(peerIdentityKey, otpkId));
+                     encryptedKeyStore.setPeerResponded(peerUserId, true);
+                 } catch (CryptoException e) {
+                     Log.e("Failed to reset session on message rerequest", e);
+                 }
+             }
             Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
             if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
                 contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);

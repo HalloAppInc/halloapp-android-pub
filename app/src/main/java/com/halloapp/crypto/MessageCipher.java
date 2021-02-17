@@ -49,8 +49,9 @@ class MessageCipher {
 
         byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
-            Log.e("HMAC does not match; rejecting");
-            throw new CryptoException("hmac_mismatch");
+            Log.e("HMAC does not match; rejecting and storing message key");
+            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
+            onDecryptFailure("hmac_mismatch", peerUserId, messageKey);
         }
 
         try {
@@ -64,8 +65,24 @@ class MessageCipher {
 
             return ret;
         } catch (GeneralSecurityException e) {
-            throw new CryptoException("cipher_dec_failure", e);
+            Log.w("Decryption failed, storing message key", e);
+            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
+            onDecryptFailure("cipher_dec_failure", peerUserId, messageKey);
         }
+
+        throw new IllegalStateException("Unreachable");
+    }
+
+    void onDecryptFailure(String reason, UserId peerUserId, MessageKey messageKey) throws CryptoException {
+        encryptedKeyStore.storeSkippedMessageKey(peerUserId, messageKey);
+        byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
+        byte[] newTeardownKey = messageKey.getKeyMaterial();
+        boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
+        if (!match) {
+            encryptedKeyStore.setOutboundTeardownKey(peerUserId, newTeardownKey);
+            keyManager.tearDownSession(peerUserId);
+        }
+        throw new CryptoException(reason, match, newTeardownKey);
     }
 
     byte[] convertForWire(byte[] message, UserId peerUserId) throws CryptoException {

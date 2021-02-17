@@ -19,9 +19,8 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.crypto.SessionSetupInfo;
-import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -43,7 +42,6 @@ import com.halloapp.proto.server.ContactList;
 import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.FeedItems;
-import com.halloapp.proto.server.GroupChat;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupMember;
@@ -83,7 +81,6 @@ import com.halloapp.xmpp.util.ResponseHandler;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -669,13 +666,13 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public void sendRerequest(String encodedIdentityKey, final @NonNull UserId senderUserId, @NonNull String messageId, int rerequestCount) {
+    public void sendRerequest(final @NonNull UserId senderUserId, @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send rerequest, no connection");
                 return;
             }
-            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount);
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount, teardownKey);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });
@@ -1041,24 +1038,13 @@ public class NewConnection extends Connection {
                     UserId userId = getUserId(Long.toString(msg.getFromUid()));
                     Rerequest rerequest = msg.getRerequest();
 
-                    try {
-                        byte[] receivedIdentityKey = rerequest.getIdentityKey().toByteArray();
-                        byte[] storedIdentityKey = EncryptedKeyStore.getInstance().getPeerPublicIdentityKey(userId).getKeyMaterial();
-                        if (!Arrays.equals(receivedIdentityKey, storedIdentityKey)) {
-                            Log.w("Received identity key does not match stored key. Received: " + Hex.bytesToStringLowercase(receivedIdentityKey) + " stored: " + Hex.bytesToStringLowercase(storedIdentityKey));
-                            Log.sendErrorReport("Rerequest identity key mismatch");
-                            EncryptedSessionManager.getInstance().tearDownSession(userId);
-                        } else {
-                            // TODO(jack): Remove this branch once errors stabilize
-                            Log.i("Identity keys matched on rerequest; still resetting session");
-                            EncryptedSessionManager.getInstance().tearDownSession(userId);
-                        }
-                    } catch (NullPointerException e) {
-                        Log.w("Failed to compare received and stored identity keys", e);
-                        EncryptedSessionManager.getInstance().tearDownSession(userId);
-                    }
+                    PublicEdECKey peerIdentityKey = new PublicEdECKey(rerequest.getIdentityKey().toByteArray());
+                    long otpkIdL = rerequest.getOneTimePreKeyId();
+                    Integer otpkId = otpkIdL == 0 ? null : (int) otpkIdL;
+                    byte[] sessionSetupKey = rerequest.getSessionSetupEphemeralKey().toByteArray();
+                    byte[] messageEphemeralKey = rerequest.getMessageEphemeralKey().toByteArray();
 
-                    connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), msg.getId());
+                    connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, msg.getId());
                     handled = true;
                 }
             }

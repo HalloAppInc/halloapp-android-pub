@@ -36,8 +36,6 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_MY_ED25519_IDENTITY_KEY = "my_ed25519_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
-    private static final String PREF_KEY_KEYS_UPLOADED = "keys_uploaded";
-    private static final String PREF_KEY_KEYS_VERSION = "keys_version";
 
     private static final String PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX = "one_time_pre_key";
     private static final String PREF_KEY_MESSAGE_KEY_PREFIX = "message_key";
@@ -61,6 +59,8 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_OUTBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX = "outbound_previous_chain_length";
     private static final String PREF_KEY_INBOUND_CURRENT_CHAIN_INDEX_SUFFIX = "inbound_current_chain_index";
     private static final String PREF_KEY_OUTBOUND_CURRENT_CHAIN_INDEX_SUFFIX = "outbound_current_chain_index";
+    private static final String PREF_KEY_INBOUND_TEARDOWN_KEY = "inbound_teardown_key";
+    private static final String PREF_KEY_OUTBOUND_TEARDOWN_KEY = "outbound_teardown_key";
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
@@ -71,7 +71,7 @@ public class EncryptedKeyStore {
     // TODO(jack): Try moving away from SharedPreferences to avoid Strings in memory with key material
     private SharedPreferences sharedPreferences;
 
-    private AppContext appContext;
+    private final AppContext appContext;
 
     public static EncryptedKeyStore getInstance() {
         if (instance == null) {
@@ -93,22 +93,6 @@ public class EncryptedKeyStore {
             sharedPreferences = getSharedPreferences(appContext.get());
         }
         return sharedPreferences;
-    }
-
-    public boolean getKeysUploaded() {
-        return getPreferences().getBoolean(PREF_KEY_KEYS_UPLOADED, false);
-    }
-
-    public void setKeysUploaded(boolean uploaded) {
-        getPreferences().edit().putBoolean(PREF_KEY_KEYS_UPLOADED, uploaded).apply();
-    }
-
-    public int getKeysVersion() {
-        return getPreferences().getInt(PREF_KEY_KEYS_VERSION, 0);
-    }
-
-    public void setKeysVersion(int version) {
-        getPreferences().edit().putInt(PREF_KEY_KEYS_VERSION, version).apply();
     }
 
     public boolean getSessionAlreadySetUp(UserId peerUserId) {
@@ -541,6 +525,37 @@ public class EncryptedKeyStore {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_CURRENT_CHAIN_INDEX_SUFFIX;
     }
 
+    public void setOutboundTeardownKey(UserId peerUserId, byte[] teardownKey) {
+        storeBytes(getOutboundTeardownKeyPrefKey(peerUserId), teardownKey);
+    }
+
+    public byte[] getOutboundTeardownKey(UserId peerUserId) {
+        return retrieveBytes(getOutboundTeardownKeyPrefKey(peerUserId));
+    }
+
+    public void clearOutboundTeardownKey(UserId peerUserId) {
+        getPreferences().edit().remove(getOutboundTeardownKeyPrefKey(peerUserId)).apply();
+    }
+
+    private String getOutboundTeardownKeyPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_TEARDOWN_KEY;
+    }
+
+    public void setInboundTeardownKey(UserId peerUserId, byte[] teardownKey) {
+        storeBytes(getInboundTeardownKeyPrefKey(peerUserId), teardownKey);
+    }
+
+    public byte[] getInboundTeardownKey(UserId peerUserId) {
+        return retrieveBytes(getInboundTeardownKeyPrefKey(peerUserId));
+    }
+
+    public void clearInboundTeardownKey(UserId peerUserId) {
+        getPreferences().edit().remove(getInboundTeardownKeyPrefKey(peerUserId)).apply();
+    }
+
+    private String getInboundTeardownKeyPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_TEARDOWN_KEY;
+    }
 
 
     // Only private key is stored; public key can be generated from it
