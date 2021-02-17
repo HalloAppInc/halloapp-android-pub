@@ -236,6 +236,7 @@ public class ProfileViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+        blockListManager.removeObserver(this::updateIsBlocked);
     }
 
     public static class Factory implements ViewModelProvider.Factory {
