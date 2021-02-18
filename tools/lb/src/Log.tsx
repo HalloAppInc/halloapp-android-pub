@@ -205,6 +205,9 @@ class Log extends React.Component<Props, State>  {
   }
 
   stripSecondLinePrefix(s: string): string {
+    if (s === undefined) {
+      return s;
+    }
     let parts = s.split(': ')
     if (parts.length >= 1) {
       s = parts[1]
