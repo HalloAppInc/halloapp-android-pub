@@ -3,6 +3,7 @@ package com.halloapp;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.PopupMenu;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.crypto.tink.subtle.Random;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.Comment;
@@ -18,6 +21,9 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
+import com.halloapp.crypto.keys.PrivateXECKey;
+import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.AppExpirationActivity;
@@ -35,7 +41,9 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Debug {
 
@@ -58,6 +66,7 @@ public class Debug {
     private static final String DEBUG_MENU_TRY_DUP_COMMENT = "Try insert duplicate comment";
     private static final String DEBUG_MENU_CLEAR_LOGS = "Clear logs";
     private static final String DEBUG_MENU_RUN_DAILY_WORKER = "Run daily worker";
+    private static final String DEBUG_MENU_CORRUPT_KEY_STORE = "Corrupt key store";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -80,6 +89,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_TRY_DUP_COMMENT);
         menu.getMenu().add(DEBUG_MENU_CLEAR_LOGS);
         menu.getMenu().add(DEBUG_MENU_RUN_DAILY_WORKER);
+        menu.getMenu().add(DEBUG_MENU_CORRUPT_KEY_STORE);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -194,6 +204,7 @@ public class Debug {
                     contentDb.addPost(post);
                     contentDb.addComment(comment);
                     contentDb.addComment(comment);
+                    break;
                 }
                 case DEBUG_MENU_CLEAR_LOGS: {
                     bgWorkers.execute(() -> FileStore.getInstance().purgeAllLogFiles());
@@ -201,6 +212,30 @@ public class Debug {
                 }
                 case DEBUG_MENU_RUN_DAILY_WORKER: {
                     DailyWorker.scheduleDebug(AppContext.getInstance().get());
+                    break;
+                }
+                case DEBUG_MENU_CORRUPT_KEY_STORE: {
+                    bgWorkers.execute(() -> {
+                        List<Contact> addressBookUsers = ContactsDb.getInstance().getUsers(); // TODO: Could show ones from open chats, too
+                        Contact.sort(addressBookUsers);
+                        List<CharSequence> names = new ArrayList<>();
+                        for (Contact contact : addressBookUsers) {
+                            names.add(contact.getDisplayName());
+                        }
+                        CharSequence[] arr = new CharSequence[0];
+                        activity.runOnUiThread(() -> {
+                            AlertDialog.Builder selectUserBuilder = new AlertDialog.Builder(activity);
+                            selectUserBuilder.setTitle("Pick user (from addressbook)")
+                                    .setItems(names.toArray(arr), (dialog, whichUser) -> {
+                                        Contact contact = addressBookUsers.get(whichUser);
+                                        UserId peerUserId = contact.userId;
+                                        Log.d("Debug selected: " + whichUser + " -> " + contact);
+                                        showCorruptKeyStoreDialog(activity, peerUserId);
+                                    });
+                            selectUserBuilder.create().show();
+                        });
+                    });
+                    break;
                 }
             }
             return false;
@@ -231,9 +266,9 @@ public class Debug {
 
         if (chatId instanceof  UserId) {
             menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY);
+            menu.getMenu().add(DEBUG_MENU_CORRUPT_KEY_STORE);
             menu.setOnMenuItemClickListener(item -> {
                 SnackbarHelper.showInfo(activity, item.getTitle());
-                //noinspection SwitchStatementWithTooFewBranches
                 switch (item.getTitle().toString()) {
                     case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
                         try {
@@ -243,11 +278,72 @@ public class Debug {
                         }
                         break;
                     }
+                    case DEBUG_MENU_CORRUPT_KEY_STORE: {
+                        showCorruptKeyStoreDialog(activity, (UserId) chatId);
+                        break;
+                    }
                 }
                 return false;
             });
         }
         menu.show();
+    }
+
+    private static void showCorruptKeyStoreDialog(@NonNull Activity activity, @NonNull UserId peerUserId) {
+        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+        CharSequence[] corruptionOptions = {
+                "Mark session not set up",
+                "Mark peer not responded",
+                "Remove skipped message keys",
+                "Remove peer identity key",
+                "Mutate peer identity key",
+                "Remove peer signed pre key",
+                "Remove peer one-time pre key",
+                "Remove peer one-time pre key ID",
+                "Mutate root key",
+                "Mutate outbound chain key",
+                "Mutate inbound chain key",
+                "Mutate outbound ephemeral key",
+                "Mutate inbound ephemeral key",
+                "Mutate outbound ephemeral key ID",
+                "Mutate inbound ephemeral key ID",
+                "Mutate outbound previous chain length",
+                "Mutate inbound previous chain length",
+                "Mutate outbound current chain index",
+                "Mutate inbound current chain index",
+        };
+
+        final int KEY_SIZE = 32;
+        final int MAX_NUM = 500;
+        Runnable[] corruptionActions = {
+                () -> encryptedKeyStore.setSessionAlreadySetUp(peerUserId, false),
+                () -> encryptedKeyStore.setPeerResponded(peerUserId, false),
+                () -> encryptedKeyStore.clearSkippedMessageKeys(peerUserId),
+                () -> encryptedKeyStore.clearPeerPublicIdentityKey(peerUserId),
+                () -> encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, new PublicEdECKey(Random.randBytes(KEY_SIZE))),
+                () -> encryptedKeyStore.clearPeerSignedPreKey(peerUserId),
+                () -> encryptedKeyStore.clearPeerOneTimePreKey(peerUserId),
+                () -> encryptedKeyStore.clearPeerOneTimePreKeyId(peerUserId),
+                () -> encryptedKeyStore.setRootKey(peerUserId, Random.randBytes(KEY_SIZE)),
+                () -> encryptedKeyStore.setOutboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)),
+                () -> encryptedKeyStore.setInboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)),
+                () -> encryptedKeyStore.setOutboundEphemeralKey(peerUserId, new PrivateXECKey(Random.randBytes(KEY_SIZE))),
+                () -> encryptedKeyStore.setInboundEphemeralKey(peerUserId, new PublicXECKey(Random.randBytes(KEY_SIZE))),
+                () -> encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)),
+                () -> encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)),
+                () -> encryptedKeyStore.setOutboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)),
+                () -> encryptedKeyStore.setInboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)),
+                () -> encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, Random.randInt(MAX_NUM)),
+                () -> encryptedKeyStore.setInboundCurrentChainIndex(peerUserId, Random.randInt(MAX_NUM)),
+        };
+
+        AlertDialog.Builder corruptionPickerBuilder = new AlertDialog.Builder(activity);
+        corruptionPickerBuilder.setTitle("Pick corruption")
+                .setItems(corruptionOptions, (ignored, which) -> {
+                    Log.d("Debug selected corruption of " + which + " -> " + corruptionOptions[which]);
+                    bgWorkers.execute(corruptionActions[which]);
+                });
+        corruptionPickerBuilder.create().show();
     }
 
     public static void askSendLogsWithId(@NonNull Context context, @NonNull String contentId) {
