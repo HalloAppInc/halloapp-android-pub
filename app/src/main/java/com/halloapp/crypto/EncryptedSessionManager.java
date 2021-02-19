@@ -103,23 +103,6 @@ public class EncryptedSessionManager {
                             + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
                             + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
                 }
-
-                byte[] receivedEphemeralKey = Arrays.copyOfRange(message, 0, 32);
-                try {
-                    byte[] storedEphemeralKey = encryptedKeyStore.getInboundEphemeralKey(peerUserId).getKeyMaterial();
-
-                    if (!Arrays.equals(receivedEphemeralKey, storedEphemeralKey)) {
-                        Log.w("Session already set up but received ephemeral key does not match stored;"
-                                + " stored: " + Base64.encodeToString(storedEphemeralKey, Base64.NO_WRAP)
-                                + " received: " + Base64.encodeToString(receivedEphemeralKey, Base64.NO_WRAP));
-                        keyManager.tearDownSession(peerUserId);
-                        keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
-                    }
-                } catch (IllegalArgumentException | NullPointerException e) {
-                    Log.w("Failed to retrieve inbound ephemeral key; setting up new session", e);
-                    keyManager.tearDownSession(peerUserId);
-                    keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
-                }
                 encryptedKeyStore.setPeerResponded(peerUserId, true);
             }
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);

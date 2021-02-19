@@ -2,6 +2,7 @@ package com.halloapp.xmpp;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Rerequest;
@@ -36,7 +37,7 @@ public class RerequestElement {
 
         byte[] outboundEphemeralKey = null;
         try {
-            outboundEphemeralKey = encryptedKeyStore.getOutboundEphemeralKey(originalSender).getKeyMaterial();
+            outboundEphemeralKey = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(originalSender)).getKeyMaterial();
         } catch (Exception e) {
             Log.w("Failed to get ephemeral key bytes for rerequest", e);
         }

@@ -1,11 +1,11 @@
 package com.halloapp.crypto;
 
-import com.halloapp.id.UserId;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.keys.XECKey;
+import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 
 import java.nio.ByteBuffer;
