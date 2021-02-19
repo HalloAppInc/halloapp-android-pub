@@ -46,13 +46,6 @@
                         app:riv_corner_radius="11dp"
                         android:src="@drawable/avatar_groups_placeholder" />
 
-                    <ImageView
-                        android:id="@+id/feed_ring"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/group_feed_ring"
-                        android:visibility="gone"
-                        android:layout_gravity="center"/>
                 </FrameLayout>
 
                 <LinearLayout

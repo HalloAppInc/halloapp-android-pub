@@ -132,7 +132,6 @@ public class ChatActivity extends HalloActivity {
     private TextView replyNameView;
     private ImageView avatarView;
     private View footer;
-    private View feedRing;
 
     private ChatId chatId;
 
@@ -190,7 +189,6 @@ public class ChatActivity extends HalloActivity {
         subtitleView = findViewById(R.id.subtitle);
         avatarView = findViewById(R.id.avatar);
         footer = findViewById(R.id.footer);
-        feedRing = findViewById(R.id.feed_ring);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -460,14 +458,6 @@ public class ChatActivity extends HalloActivity {
         viewModel.deleted.observe(this, deleted -> {
             if (deleted != null && deleted) {
                 finish();
-            }
-        });
-        viewModel.lastUnseenFeedPost.getLiveData().observe(this, post -> {
-            TransitionManager.beginDelayedTransition((ViewGroup) feedRing.getParent());
-            if (post == null) {
-                feedRing.setVisibility(View.GONE);
-            } else {
-                feedRing.setVisibility(View.VISIBLE);
             }
         });
 

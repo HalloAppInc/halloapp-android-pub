@@ -52,7 +52,6 @@ public class ChatViewModel extends AndroidViewModel {
     final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Reply> reply;
-    final ComputableLiveData<Post> lastUnseenFeedPost;
     final ComputableLiveData<List<Contact>> mentionableContacts;
     private ComputableLiveData<List<UserId>> blockListLiveData;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
@@ -76,21 +75,6 @@ public class ChatViewModel extends AndroidViewModel {
     };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
-
-        @Override
-        public void onPostAdded(@NonNull Post post) {
-            lastUnseenFeedPost.invalidate();
-        }
-
-        @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
-            lastUnseenFeedPost.invalidate();
-        }
-
-        @Override
-        public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            lastUnseenFeedPost.invalidate();
-        }
 
         @Override
         public void onMessageAdded(@NonNull Message message) {
@@ -207,16 +191,6 @@ public class ChatViewModel extends AndroidViewModel {
                     contacts.add(contactsDb.getContact(memberInfo.userId));
                 }
                 return Contact.sort(contacts);
-            }
-        };
-
-        lastUnseenFeedPost = new ComputableLiveData<Post>() {
-            @Override
-            protected Post compute() {
-                if (serverProps.getGroupFeedEnabled() && chatId instanceof GroupId) {
-                    return contentDb.getLastUnseenGroupPost((GroupId) chatId);
-                }
-                return null;
             }
         };
 

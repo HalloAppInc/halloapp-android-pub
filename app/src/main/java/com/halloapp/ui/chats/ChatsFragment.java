@@ -327,7 +327,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             final ImageView mediaIcon;
             final TextView typingView;
             final View infoContainer;
-            final View feedRing;
 
             private Chat chat;
 
@@ -348,7 +347,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 mediaIcon = itemView.findViewById(R.id.media_icon);
                 typingView = itemView.findViewById(R.id.typing_indicator);
                 infoContainer = itemView.findViewById(R.id.info_container);
-                feedRing = itemView.findViewById(R.id.feed_ring);
                 itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId)));
 
                 presenceObserver = presenceState -> {

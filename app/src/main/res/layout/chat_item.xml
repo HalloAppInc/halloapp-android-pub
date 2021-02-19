@@ -9,17 +9,6 @@
     android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/feed_ring"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:padding="3dp"
-        android:src="@drawable/group_feed_ring"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
         android:layout_width="74dp"
