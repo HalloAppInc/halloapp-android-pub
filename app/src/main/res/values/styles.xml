@@ -21,6 +21,10 @@
 
     <style name="AppTheme.Home" parent="AppTheme.NoActionBar">
         <item name="toolbarStyle">@style/Toolbar.Home</item>
+        <item name="actionModeBackground">@color/color_secondary</item>
+        <item name="actionBarStyle">@style/ActionBar.Home</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -156,6 +160,14 @@
         <item name="backgroundSplit">@color/settings_header_background</item>
     </style>
 
+    <style name="ActionBar.Home" parent="ActionBar">
+        <item name="background">@color/settings_header_background</item>
+        <item name="backgroundStacked">@color/settings_header_background</item>
+        <item name="backgroundSplit">@color/settings_header_background</item>
+        <item name="titleTextStyle">@style/TextAppearance.ActionBar.Title.Home</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.ActionBar.Subtitle.Home</item>
+    </style>
+
     <style name="Theme.ActionBar.Settings" parent="ActionBar">
         <item name="colorControlNormal">@color/white_87</item>
     </style>
@@ -243,6 +255,13 @@
 
     <style name="TextAppearance.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title"/>
     <style name="TextAppearance.Toolbar.Subtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle"/>
+
+    <style name="TextAppearance.ActionBar.Title.Home" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="TextAppearance.ActionBar.Subtitle.Home" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 
     <style name="TextAppearance.Toolbar.Title.Home" parent="TextAppearance.Toolbar.Title">
         <item name="android:textSize">22dp</item>

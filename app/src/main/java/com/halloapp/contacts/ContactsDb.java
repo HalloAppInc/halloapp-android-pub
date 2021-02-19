@@ -464,7 +464,8 @@ public class ContactsDb {
                         ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_FRIEND,
                         ContactsTable.COLUMN_NEW_CONNECTION,
-                        ContactsTable.COLUMN_CONNECTION_TIME
+                        ContactsTable.COLUMN_CONNECTION_TIME,
+                        ContactsTable.COLUMN_HIDE_CHAT
                 },
                 ContactsTable.COLUMN_FRIEND + "=1" + " AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL" + " AND " + ContactsTable.COLUMN_USER_ID + " IS NOT NULL",
                 null, null, null, null)) {
@@ -483,12 +484,20 @@ public class ContactsDb {
                             cursor.getInt(7) == 1);
                     contact.newConnection = cursor.getInt(8) == 1;
                     contact.connectionTime = cursor.getLong(9);
+                    contact.hideChat = cursor.getInt(10) == 1;
                     contacts.add(contact);
                 }
             }
         }
         Log.i("ContactsDb.getFriends: " + contacts.size());
         return contacts;
+    }
+
+    public void hideEmptyChat(UserId userId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ContactsTable.COLUMN_HIDE_CHAT, true);
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        db.update(ContactsTable.TABLE_NAME, contentValues, ContactsTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
     }
 
     @WorkerThread
@@ -778,6 +787,7 @@ public class ContactsDb {
         static final String COLUMN_NEW_CONNECTION = "new_connection";
         static final String COLUMN_CONNECTION_TIME = "connection_time";
         static final String COLUMN_NUM_POTENTIAL_FRIENDS = "num_potential_friends";
+        static final String COLUMN_HIDE_CHAT = "hide_chat";
     }
 
     private static final class AvatarsTable implements BaseColumns {
@@ -839,7 +849,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 10;
+        private static final int DATABASE_VERSION = 11;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -860,7 +870,8 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_FRIEND + " INTEGER,"
                     + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER,"
                     + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER,"
-                    + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER"
+                    + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER,"
+                    + ContactsTable.COLUMN_HIDE_CHAT + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
@@ -931,6 +942,9 @@ public class ContactsDb {
                 }
                 case 9: {
                     upgradeFromVersion9(db);
+                }
+                case 10: {
+                    upgradeFromVersion10(db);
                 }
                 break;
                 default: {
@@ -1069,6 +1083,10 @@ public class ContactsDb {
 
         private void upgradeFromVersion9(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER");
+        }
+
+        private void upgradeFromVersion10(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_HIDE_CHAT + " INTEGER");
         }
 
         private void deleteDb() {

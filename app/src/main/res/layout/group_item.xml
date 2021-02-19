@@ -5,9 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:paddingStart="5dp"
-    android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
+
+    <FrameLayout
+        android:id="@+id/selection_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/selected_chat_highlight"/>
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/avatar"
@@ -18,10 +23,25 @@
         android:paddingBottom="10dp"
         android:paddingEnd="12dp"
         app:riv_corner_radius="15dp"
+        android:layout_marginStart="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:src="@color/color_primary_dark"/>
+
+    <ImageView
+        android:id="@+id/selection_check"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_check"
+        android:tint="@android:color/white"
+        android:elevation="2dp"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="@id/avatar"
+        app:layout_constraintBottom_toBottomOf="@id/avatar"
+        android:visibility="gone"
+        android:background="@drawable/bg_selected_badge"/>
 
     <TextView
         android:id="@+id/name"
@@ -50,6 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/name"
         app:layout_constraintBottom_toBottomOf="@id/name"
+        android:layout_marginEnd="16dp"
         android:singleLine="true"
         android:ellipsize="end"
         android:textSize="12sp"

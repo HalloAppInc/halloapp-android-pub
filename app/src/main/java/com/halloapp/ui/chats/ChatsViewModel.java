@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class ChatsViewModel extends AndroidViewModel {
                         continue;
                     }
                     Chat chat = chatsMap.get(friend.userId);
-                    if (chat == null) {
+                    if (chat == null && !friend.hideChat) {
                         chat = new Chat(-1, friend.userId, friend.connectionTime, friend.newConnection ? Chat.MARKED_UNSEEN : 0, -1L, -1L, friend.getDisplayName(), false, null, null, true);
                         if (friend.connectionTime > 0) {
                             chats.add(chat);
@@ -179,6 +180,18 @@ public class ChatsViewModel extends AndroidViewModel {
         };
 
         messageUpdated = new MutableLiveData<>(false);
+    }
+
+    public void deleteChats(@NonNull Collection<ChatId> chatIds) {
+        final HashSet<ChatId> deleteIds = new HashSet<>(chatIds);
+        bgWorkers.execute(()-> {
+            for (ChatId chatId : deleteIds) {
+                contentDb.deleteChat(chatId);
+                if (chatId instanceof UserId) {
+                    contactsDb.hideEmptyChat((UserId) chatId);
+                }
+            }
+        });
     }
 
     public void closeNux() {

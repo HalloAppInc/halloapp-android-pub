@@ -25,6 +25,8 @@
     <color name="thick_progress_spinner">#9B9B9B</color>
     <color name="message_highlight">#BBFFF81B</color>
 
+    <color name="selected_chat_highlight">@color/white_5</color>
+
     <color name="color_secondary">#69A1FF</color>
 
     <color name="media_content_outline">#696969</color>

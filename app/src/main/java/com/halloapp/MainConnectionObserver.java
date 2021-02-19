@@ -434,13 +434,13 @@ public class MainConnectionObserver extends Connection.Observer {
             for (MemberInfo member : left) {
                 if (serverProps.getGroupFeedEnabled()) {
                     addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_LEFT, null, () -> {
-                        if (member.userId.rawId().equals(me.getUser())) {
+                        if (member.userId.isMe()) {
                             contentDb.setGroupInactive(groupId, null);
                         }
                     });
                 } else {
                     addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, () -> {
-                        if (member.userId.rawId().equals(me.getUser())) {
+                        if (member.userId.isMe()) {
                             contentDb.setGroupInactive(groupId, null);
                         }
                     });

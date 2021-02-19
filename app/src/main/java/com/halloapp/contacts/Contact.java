@@ -33,6 +33,7 @@ public class Contact implements Parcelable {
     public boolean newConnection;
     public long connectionTime;
     public long numPotentialFriends;
+    public boolean hideChat;
 
     public Contact(long rowId,
                    long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,

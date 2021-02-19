@@ -6,7 +6,10 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
@@ -20,11 +23,15 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.DelayedProgressLiveData;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +42,7 @@ public class GroupListViewModel extends AndroidViewModel {
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
+    private final GroupsApi groupsApi;
     private final ContactsDb contactsDb;
     private final Preferences preferences;
     final GroupPostLoader groupPostLoader;
@@ -72,6 +80,11 @@ public class GroupListViewModel extends AndroidViewModel {
             invalidateGroups();
         }
 
+        @Override
+        public void onGroupMetadataChanged(@NonNull GroupId groupId) {
+            invalidateGroups();
+        }
+
         public void onChatDeleted(@NonNull ChatId chatId) {
             invalidateGroups();
         }
@@ -87,6 +100,7 @@ public class GroupListViewModel extends AndroidViewModel {
         bgWorkers = BgWorkers.getInstance();
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
+        groupsApi = GroupsApi.getInstance();
 
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
@@ -136,6 +150,35 @@ public class GroupListViewModel extends AndroidViewModel {
 
     public @Nullable Parcelable getSavedScrollState() {
         return savedScrollState;
+    }
+
+    public LiveData<Boolean> leaveGroup(Collection<GroupId> groupIds) {
+        MediatorLiveData<Boolean> combine = new MediatorLiveData<>();
+        HashSet<GroupId> waitingIds = new HashSet<>(groupIds);
+        for (GroupId groupId : groupIds) {
+            MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+            combine.addSource(result, requestResult -> {
+                if (combine.getValue() != null && !combine.getValue()) {
+                    return;
+                }
+                waitingIds.remove(groupId);
+                if (requestResult == null) {
+                    return;
+                }
+                if (!requestResult) {
+                    combine.setValue(false);
+                } else if (waitingIds.isEmpty()) {
+                    combine.setValue(true);
+                }
+            });
+            groupsApi.leaveGroup(groupId)
+                    .onResponse(result::postValue)
+                    .onError(error -> {
+                        Log.e("Leave group failed", error);
+                        result.postValue(false);
+                    });
+        }
+        return combine;
     }
 
     @Override

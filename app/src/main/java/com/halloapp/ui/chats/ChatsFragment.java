@@ -1,5 +1,8 @@
 package com.halloapp.ui.chats;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,7 +21,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
@@ -32,12 +37,16 @@ import com.halloapp.AppContext;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.AdapterWithLifecycle;
+import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -46,6 +55,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
 import com.halloapp.ui.invites.InviteFriendsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -55,6 +65,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,7 +73,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
 
-    private final AppContext appContext = AppContext.getInstance();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
 
@@ -77,6 +87,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private View nux;
     private View emptyView;
     private TextView emptyViewMessage;
+
+    private ActionMode actionMode;
+
+    private HashSet<ChatId> selectedChats = new HashSet<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -143,7 +157,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         layoutManager = new LinearLayoutManager(getContext());
         chatsView.setLayoutManager(layoutManager);
         chatsView.setAdapter(adapter);
-
         viewModel = new ViewModelProvider(requireActivity()).get(ChatsViewModel.class);
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
@@ -185,6 +198,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         if (viewModel != null && layoutManager != null) {
             viewModel.saveScrollState(layoutManager.onSaveInstanceState());
         }
+        endActionMode();
         super.onDestroyView();
     }
 
@@ -219,6 +233,92 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private static final int TYPE_CHAT = 0;
     private static final int TYPE_INVITE = 1;
+
+    private void endActionMode() {
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+    }
+
+    private void updateChatSelection(ChatId chatId) {
+        if (selectedChats.contains(chatId)) {
+            selectedChats.remove(chatId);
+        } else {
+            selectedChats.add(chatId);
+        }
+        adapter.notifyDataSetChanged();
+        if (selectedChats.isEmpty()) {
+            endActionMode();
+            return;
+        }
+        if (actionMode == null) {
+            actionMode = ((HalloActivity) getActivity()).startSupportActionMode(new ActionMode.Callback() {
+
+                private int statusBarColor;
+                private int previousVisibility;
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    mode.getMenuInflater().inflate(R.menu.chats_menu, menu);
+                    statusBarColor = getActivity().getWindow().getStatusBarColor();
+
+                    getActivity().getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.color_secondary));
+                    previousVisibility = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+                    getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return true;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if (item.getItemId() == R.id.delete) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage(getContext().getResources().getQuantityString(R.plurals.delete_chats_confirmation, selectedChats.size(), selectedChats.size()));
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                            viewModel.deleteChats(selectedChats);
+                            endActionMode();
+                        });
+                        builder.setNegativeButton(R.string.no, null);
+                        builder.show();
+                        return true;
+                    } else if (item.getItemId() == R.id.view_profile) {
+                        for (ChatId chat : selectedChats) {
+                            if (chat instanceof UserId) {
+                                getContext().startActivity(ViewProfileActivity.viewProfile(getContext(), (UserId) chat));
+                                break;
+                            }
+                        }
+                        endActionMode();
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    adapter.notifyDataSetChanged();
+                    selectedChats.clear();
+                    actionMode = null;
+                    getActivity().getWindow().setStatusBarColor(statusBarColor);
+                    getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility);
+                }
+            });
+        }
+        if (actionMode == null) {
+            Log.e("ChatsFragment/updateChatSelection null actionmode");
+            return;
+        }
+        if (selectedChats.size() == 1) {
+            actionMode.getMenu().findItem(R.id.view_profile).setVisible(true);
+        } else {
+            actionMode.getMenu().findItem(R.id.view_profile).setVisible(false);
+        }
+        actionMode.setTitle(Integer.toString(selectedChats.size()));
+    }
 
     private class ChatsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> implements Filterable {
 
@@ -327,6 +427,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             final ImageView mediaIcon;
             final TextView typingView;
             final View infoContainer;
+            final View selectionView;
+            final View selectionCheck;
 
             private Chat chat;
 
@@ -347,7 +449,19 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 mediaIcon = itemView.findViewById(R.id.media_icon);
                 typingView = itemView.findViewById(R.id.typing_indicator);
                 infoContainer = itemView.findViewById(R.id.info_container);
-                itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId)));
+                selectionView = itemView.findViewById(R.id.selection_background);
+                selectionCheck = itemView.findViewById(R.id.selection_check);
+                itemView.setOnLongClickListener(v -> {
+                    updateChatSelection(chat.chatId);
+                    return true;
+                });
+                itemView.setOnClickListener(v -> {
+                    if (actionMode == null) {
+                        startActivity(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId));
+                    } else {
+                        updateChatSelection(chat.chatId);
+                    }
+                });
 
                 presenceObserver = presenceState -> {
                     if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_TYPING) {
@@ -399,6 +513,13 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 this.chat = chat;
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
                 avatarLoader.load(avatarView, chat.chatId);
+                if (selectedChats.contains(chat.chatId)) {
+                    selectionView.setVisibility(View.VISIBLE);
+                    selectionCheck.setVisibility(View.VISIBLE);
+                } else {
+                    selectionView.setVisibility(View.GONE);
+                    selectionCheck.setVisibility(View.GONE);
+                }
                 CharSequence name = chat.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
                     CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), chat.name, filterTokens);

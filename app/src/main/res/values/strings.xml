@@ -213,7 +213,16 @@
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to delete your post?</string>
     <string name="retract_comment_confirmation">Would you like to delete your comment?</string>
-    <string name="delete_chat_confirmation">Would you like to delete this chat?</string>
+    <plurals name="delete_chats_confirmation">
+        <item quantity="one">Would you like to delete this chat?</item>
+        <item quantity="other">Would you like to delete %d selected chats?</item>
+    </plurals>
+    <plurals name="delete_groups_confirmation">
+        <item quantity="one">Would you like to delete this group?</item>
+        <item quantity="other">Would you like to delete %d selected groups?</item>
+    </plurals>
+    <string name="delete_chat_confirmation">Would you like to delete this group?</string>
+    <string name="delete_multiple_chats_confirmation">Would you like to delete the selected chats?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
@@ -374,6 +383,10 @@
     <string name="failed_remove_member">Failed to remove member, try again later</string>
     <string name="leave_group">Leave group</string>
     <string name="leave_group_confirmation">Would you like to leave this group?</string>
+    <plurals name="leave_multiple_groups_confirmation">
+        <item quantity="one">Would you like to leave this group?</item>
+        <item quantity="other">Would you like to leave the %d selected groups?</item>
+    </plurals>
     <string name="leave_group_in_progress">Leaving group…</string>
     <string name="failed_leave_group">Failed to leave group, try again later</string>
     <string name="delete_group">Delete group</string>
