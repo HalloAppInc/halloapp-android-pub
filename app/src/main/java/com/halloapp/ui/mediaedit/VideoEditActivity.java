@@ -3,9 +3,12 @@ package com.halloapp.ui.mediaedit;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaCodec;
+import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaMuxer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
@@ -22,10 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import com.dstukalov.videoconverter.BadMediaException;
-import com.dstukalov.videoconverter.MediaConversionException;
-import com.dstukalov.videoconverter.MediaConverter;
-import com.dstukalov.videoconverter.Muxer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -44,12 +43,14 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VideoEditActivity extends HalloActivity {
+    private static final int TRIMMING_BUFFER_SIZE = 2 * 1024 * 1024;
+
     private final int numberOfThumbnails = 6;
     private float thumbnailSize;
     private VideoRangeView range;
@@ -249,6 +250,8 @@ public class VideoEditActivity extends HalloActivity {
                 if (playbackState == Player.STATE_READY && !isPlayerInitialized) {
                     isPlayerInitialized = true;
 
+                    player.setVolume(videoState.mute ? 0 : 1);
+
                     updateDurationView();
                     resetPlayer();
                     setupVideoRange();
@@ -300,35 +303,74 @@ public class VideoEditActivity extends HalloActivity {
 
     @WorkerThread
     private void trim(Uri uri) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(TRIMMING_BUFFER_SIZE);
         File edit = FileStore.getInstance().getTmpFileForUri(uri, "edit");
+        int rotationDegrees = 0;
 
-        MediaConverter converter = new MediaConverter() {
-            @Override
-            public Muxer createMuxer() throws IOException {
-                Muxer muxer = super.createMuxer();
-                return videoState.mute ? new SilentMuxerWrapper(muxer) : muxer;
+        MediaMuxer muxer = new MediaMuxer(edit.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
+        MediaExtractor extractor = new MediaExtractor();
+        extractor.setDataSource(this, uri, null);
+
+        HashMap<Integer, Integer> indexes = new HashMap<>();
+        for (int i = 0; i < extractor.getTrackCount(); ++i) {
+            MediaFormat format = extractor.getTrackFormat(i);
+            String mime = format.getString(MediaFormat.KEY_MIME);
+
+            if (videoState.mute && mime != null && mime.startsWith("audio/")) {
+                continue;
             }
-        };
-        converter.setInput(this, uri);
-        converter.setOutput(edit);
-        converter.setTimeRange(getStartTime(), getEndTime());
 
-        try {
-            converter.setVideoCodec(MediaConverter.VIDEO_CODEC_H265);
-            converter.setVideoResolution(Constants.VIDEO_RESOLUTION_H265);
-        } catch (FileNotFoundException e) {
-            converter.setVideoCodec(MediaConverter.VIDEO_CODEC_H264);
-            converter.setVideoResolution(Constants.VIDEO_RESOLUTION_H264);
+            if (Build.VERSION.SDK_INT >= 23 && format.containsKey(MediaFormat.KEY_ROTATION)) {
+                rotationDegrees = format.getInteger(MediaFormat.KEY_ROTATION);
+            }
+
+            indexes.put(i, muxer.addTrack(format));
         }
 
-        converter.setVideoBitrate(Constants.VIDEO_BITRATE);
-        converter.setAudioBitrate(Constants.AUDIO_BITRATE);
+        long startTimeUs = getStartTime() * 1000;
+        long endTimeUs = getEndTime() * 1000;
 
-        try {
-            converter.convert();
-        } catch (BadMediaException | MediaConversionException e) {
-            throw new IOException(e);
+        muxer.setOrientationHint(rotationDegrees);
+
+        muxer.start();
+        for (int i = 0; i < extractor.getTrackCount(); ++i) {
+            if (!indexes.containsKey(i)) {
+                continue;
+            }
+
+            int index = indexes.get(i);
+
+            extractor.selectTrack(i);
+            extractor.seekTo(startTimeUs, MediaExtractor.SEEK_TO_PREVIOUS_SYNC);
+
+            while (true) {
+                MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+
+                try {
+                    info.size = extractor.readSampleData(buffer, 0);
+                    info.presentationTimeUs = extractor.getSampleTime();
+                    info.flags = extractor.getSampleFlags();
+                } catch (IllegalArgumentException e) {
+                    Log.e("VideoEditActivity: unable to extract video, probably buffer too small");
+                    edit.delete();
+                    throw new IOException();
+                }
+
+                if (info.size < 0 || (endTimeUs > 0 && info.presentationTimeUs > endTimeUs)) {
+                    break;
+                }
+
+                muxer.writeSampleData(index, buffer, info);
+                extractor.advance();
+            }
+
+            extractor.unselectTrack(i);
         }
+        muxer.stop();
+
+        extractor.release();
+        muxer.release();
     }
 
     private void prepareAndFinish() {
@@ -394,46 +436,5 @@ public class VideoEditActivity extends HalloActivity {
                 return new State[size];
             }
         };
-    }
-
-    private static class SilentMuxerWrapper implements Muxer {
-        private final Muxer muxer;
-
-        public SilentMuxerWrapper(Muxer muxer) {
-            this.muxer = muxer;
-        }
-
-        @Override
-        public void start() throws IOException {
-            muxer.start();
-        }
-
-        @Override
-        public void stop() throws IOException {
-            muxer.stop();
-        }
-
-        @Override
-        public int addTrack(@NonNull MediaFormat format) throws IOException {
-            String mime = format.getString(MediaFormat.KEY_MIME);
-
-            if (mime != null && mime.startsWith("audio/")) {
-                return -1;
-            }
-
-            return muxer.addTrack(format);
-        }
-
-        @Override
-        public void writeSampleData(int trackIndex, @NonNull ByteBuffer byteBuf, @NonNull MediaCodec.BufferInfo bufferInfo) throws IOException {
-            if (trackIndex >= 0) {
-                muxer.writeSampleData(trackIndex, byteBuf, bufferInfo);
-            }
-        }
-
-        @Override
-        public void release() {
-            muxer.release();
-        }
     }
 }
