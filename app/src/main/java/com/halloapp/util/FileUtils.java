@@ -31,15 +31,15 @@ import java.security.NoSuchAlgorithmException;
 public class FileUtils {
 
 
-    public static byte[] createFileMD5(@NonNull File file) throws IOException {
+    public static byte[] getFileSha256(@NonNull File file) throws IOException, NoSuchAlgorithmException {
         final InputStream fileInputStream =  new FileInputStream(file);
         final byte[] buffer = new byte[1024];
         final MessageDigest messageDigest;
         try {
-            messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            Log.e("FileUtils: no MD5");
-            throw new FileNotFoundException("no MD5");
+            Log.e("FileUtils: no SHA-256");
+            throw e;
         }
         int numRead;
         do {
@@ -51,15 +51,6 @@ public class FileUtils {
         while (numRead != -1);
         fileInputStream.close();
         return messageDigest.digest();
-    }
-
-    public static String getFileMD5(@NonNull File file) throws IOException {
-        final byte [] md5 = createFileMD5(file);
-        final StringBuilder result = new StringBuilder();
-        for (byte value : md5) {
-            result.append(Integer.toString((value & 0xff) + 0x100, 16).substring(1));
-        }
-        return result.toString();
     }
 
     public static void uriToFile(@NonNull Context context, @NonNull Uri uri, @NonNull File file) {
@@ -146,18 +137,5 @@ public class FileUtils {
                 }
             }
         }
-    }
-
-    public static byte[] readFileToByteArray(@NonNull File file) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024];
-        int c;
-        while ((c = in.read(buf)) != -1) {
-            out.write(buf, 0, c);
-        }
-        in.close();
-        out.close();
-        return out.toByteArray();
     }
 }

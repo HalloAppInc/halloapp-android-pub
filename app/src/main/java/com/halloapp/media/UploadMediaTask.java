@@ -31,7 +31,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -180,7 +179,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             if (urls != null && urls.patchUrl != null) {
                 try {
                     media.url = ResumableUploader.sendPatchRequest(encryptedFile, offset, urls.patchUrl, resumableUploadListener);
-                    media.sha256hash = calculateDigest(encryptedFile);
+                    media.sha256hash = FileUtils.getFileSha256(encryptedFile);
                     media.transferred = Media.TRANSFERRED_YES;
                     if (encryptedFile.exists()) {
                         encryptedFile.delete();
@@ -282,13 +281,6 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             Log.e("Resumable Uploader Task convert: failed to rename " + encryptedFile.getAbsolutePath() + " to " + newEncryptedFile.getAbsolutePath());
         }
         return newEncryptedFile;
-    }
-
-    private byte[] calculateDigest(@NonNull File file) throws NoSuchAlgorithmException, IOException {
-        MessageDigest newDigest = MessageDigest.getInstance("SHA-256");
-        byte[] fileContent = FileUtils.readFileToByteArray(file);
-        newDigest.update(fileContent);
-        return newDigest.digest();
     }
 
     private void prepareMedia(@NonNull Media media) throws IOException, MediaConversionException {
