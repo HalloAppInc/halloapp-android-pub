@@ -25,6 +25,7 @@ public class Preferences {
     private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
     private static final String PREF_KEY_FEED_PRIVACY_SETTING = "feed_privacy_setting";
     private static final String PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME = "last_block_list_sync_time";
+    private static final String PREF_KEY_LAST_GROUP_SYNC_TIME = "last_group_sync_time";
     private static final String PREF_KEY_SHOWED_FEED_NUX = "showed_feed_nux";
     private static final String PREF_KEY_SHOWED_MESSAGES_NUX = "showed_messages_nux";
     private static final String PREF_KEY_SHOWED_PROFILE_NUX = "showed_profile_nux";
@@ -83,6 +84,18 @@ public class Preferences {
     public void setLastBlockListSyncTime(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last block list sync time");
+        }
+    }
+
+    @WorkerThread
+    public long getLastGroupSyncTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_GROUP_SYNC_TIME, 0);
+    }
+
+    @WorkerThread
+    public void setLastGroupSyncTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_GROUP_SYNC_TIME, time).commit()) {
+            Log.e("preferences: failed to set last group sync time");
         }
     }
 

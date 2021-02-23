@@ -35,6 +35,9 @@ public class ServerProps {
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_PRIVATE_REACTS = "private_reactions";
+    private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
+
+    private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
     private static ServerProps instance;
 
@@ -64,6 +67,7 @@ public class ServerProps {
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final BooleanProp propPrivateReactionsEnabled = createProp(PROP_PRIVATE_REACTS, false);
+    private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -199,5 +203,9 @@ public class ServerProps {
 
     public synchronized boolean getPrivateReactionsEnabled() {
         return propPrivateReactionsEnabled.getValue();
+    }
+
+    public synchronized int getMinGroupSyncIntervalSeconds() {
+        return propMinGroupSyncInterval.getValue();
     }
 }

@@ -2,6 +2,7 @@ package com.halloapp.groups;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
@@ -12,11 +13,13 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -37,6 +40,8 @@ public class GroupsSync {
     private final GroupsApi groupsApi;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
+    private final Preferences preferences;
+    private final ServerProps serverProps;
 
     public static GroupsSync getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -54,6 +59,8 @@ public class GroupsSync {
         this.groupsApi = GroupsApi.getInstance();
         this.contentDb = ContentDb.getInstance();
         this.contactsDb = ContactsDb.getInstance();
+        this.preferences = Preferences.getInstance();
+        this.serverProps = ServerProps.getInstance();
     }
 
     public void startGroupsSync() {
@@ -65,6 +72,15 @@ public class GroupsSync {
     @WorkerThread
     private ListenableWorker.Result performGroupSync() {
         Log.i("GroupsSync.performGroupSync");
+
+        long now = System.currentTimeMillis();
+        long lastSyncTime = preferences.getLastGroupSyncTime();
+        if (now - lastSyncTime < serverProps.getMinGroupSyncIntervalSeconds() * DateUtils.SECOND_IN_MILLIS) {
+            Log.i("GroupsSync.performGroupSync last group sync too recent: " + lastSyncTime);
+            return ListenableWorker.Result.success();
+        }
+        preferences.setLastGroupSyncTime(now);
+
         try {
             List<GroupInfo> groups = groupsApi.getGroupsList().await();
             List<Chat> chats = contentDb.getGroups();
