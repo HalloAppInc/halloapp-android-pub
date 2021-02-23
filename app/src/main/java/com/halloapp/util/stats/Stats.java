@@ -64,12 +64,12 @@ public class Stats {
         encryption.reportError(error);
     }
 
-    public void reportDecryptSuccess(String senderPlatform) {
-        decryption.reportSuccess(senderPlatform);
+    public void reportDecryptSuccess(String senderPlatform, String senderVersion) {
+        decryption.reportSuccess(senderPlatform, senderVersion);
     }
 
-    public void reportDecryptError(String error, String senderPlatform) {
-        decryption.reportError(error, senderPlatform);
+    public void reportDecryptError(String error, String senderPlatform, String senderVersion) {
+        decryption.reportError(error, senderPlatform, senderVersion);
     }
 
     public class Counter {
@@ -132,22 +132,25 @@ public class Stats {
     public class DecryptCounter extends Counter {
         private static final String DIM_RESULT = "result";
         private static final String DIM_SENDER_PLATFORM = "senderPlatform";
+        private static final String DIM_SENDER_VERSION = "senderVersion";
 
         public DecryptCounter() {
             super("crypto", "decryption");
         }
 
-        public void reportSuccess(String senderPlatform) {
+        public void reportSuccess(String senderPlatform, String senderVersion) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "success")
-                    .put(DIM_SENDER_PLATFORM, senderPlatform);
+                    .put(DIM_SENDER_PLATFORM, senderPlatform)
+                    .put(DIM_SENDER_VERSION, senderVersion);
             reportEvent(builder.build());
         }
 
-        public void reportError(String error, String senderPlatform) {
+        public void reportError(String error, String senderPlatform, String senderVersion) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, error)
-                    .put(DIM_SENDER_PLATFORM, senderPlatform);
+                    .put(DIM_SENDER_PLATFORM, senderPlatform)
+                    .put(DIM_SENDER_VERSION, senderVersion);
             reportEvent(builder.build());
         }
     }
