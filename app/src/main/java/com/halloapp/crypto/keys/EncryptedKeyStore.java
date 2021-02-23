@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.AppContext;
+import com.halloapp.Me;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
@@ -157,7 +158,15 @@ public class EncryptedKeyStore {
     }
 
     public PublicEdECKey getMyPublicEd25519IdentityKey() {
-        return new PublicEdECKey(Arrays.copyOfRange(getMyEd25519IdentityKey(), 0, 32));
+        try {
+            return new PublicEdECKey(Arrays.copyOfRange(getMyEd25519IdentityKey(), 0, 32));
+        } catch (NullPointerException e) {
+            Log.e("Failed to retrieve identity key; resetting key store and registration", e);
+            clearAll();
+            Me.getInstance().resetRegistration();
+            Log.sendErrorReport("Missing own identity key");
+            throw e;
+        }
     }
 
     public PrivateEdECKey getMyPrivateEd25519IdentityKey() {

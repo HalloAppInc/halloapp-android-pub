@@ -216,10 +216,6 @@ public class EncryptedSessionManager {
         return protoKeys;
     }
 
-    public PublicEdECKey getPublicIdentityKey() {
-        return encryptedKeyStore.getMyPublicEd25519IdentityKey();
-    }
-
     private SessionSetupInfo setUpSession(UserId peerUserId) throws CryptoException {
         if (encryptedKeyStore.getPeerResponded(peerUserId)) {
             return null;
