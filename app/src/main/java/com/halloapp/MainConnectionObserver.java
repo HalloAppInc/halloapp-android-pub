@@ -264,11 +264,15 @@ public class MainConnectionObserver extends Connection.Observer {
              if (!Arrays.equals(lastMessageEphemeralKey, messageEphemeralKey)) {
                  encryptedKeyStore.setInboundTeardownKey(peerUserId, messageEphemeralKey);
                  keyManager.tearDownSession(peerUserId);
-                 try {
-                     keyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SessionSetupInfo(peerIdentityKey, otpkId));
-                     encryptedKeyStore.setPeerResponded(peerUserId, true);
-                 } catch (CryptoException e) {
-                     Log.e("Failed to reset session on message rerequest", e);
+                 if (sessionSetupKey.length == 0) {
+                    Log.i("Got empty session setup key; cannot process rereq session setup from older client");
+                 } else {
+                     try {
+                         keyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SessionSetupInfo(peerIdentityKey, otpkId));
+                         encryptedKeyStore.setPeerResponded(peerUserId, true);
+                     } catch (CryptoException e) {
+                         Log.e("Failed to reset session on message rerequest", e);
+                     }
                  }
              }
             Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
