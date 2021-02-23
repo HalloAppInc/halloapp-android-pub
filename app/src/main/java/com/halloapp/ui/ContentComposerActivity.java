@@ -214,6 +214,7 @@ public class ContentComposerActivity extends HalloActivity {
         final Bundle editStates = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
 
         if (uris != null) {
+            Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
                 SnackbarHelper.showInfo(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
@@ -221,6 +222,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
             editText = findViewById(R.id.entry_bottom);
         } else {
+            Log.i("ContentComposerActivity no uri list provided");
             loadingView.setVisibility(View.GONE);
             editText = findViewById(R.id.entry_card);
             editText.requestFocus();
@@ -710,6 +712,7 @@ public class ContentComposerActivity extends HalloActivity {
                 for (ContentComposerViewModel.EditMediaPair pair : media) {
                     Media m = pair.getRelevantMedia();
                     if (m.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.getVideoDuration(m.file) > maxVideoLength * 1000) {
+                        Log.w("Media " + m + " too long; canceling");
                         videoTooLong = true;
                         break;
                     }

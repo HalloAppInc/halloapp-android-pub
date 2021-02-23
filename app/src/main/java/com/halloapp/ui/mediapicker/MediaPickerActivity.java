@@ -441,6 +441,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         ArrayList<Uri> original = viewModel.original != null ? (ArrayList<Uri>) viewModel.original.clone() : null;
         Bundle state = viewModel.state != null ? (Bundle)viewModel.state.clone() : null;
 
+        Log.i("MediaPickerActivity preparing results for " + uris.size() + " uris");
         intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
 
         if (original != null) {
@@ -734,6 +735,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         private void notifyTooManyItems() {
             final String message = getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS);
+            Log.i("MediaPickerActivity tried to select too many items");
             SnackbarHelper.showInfo(itemView, message);
         }
 
