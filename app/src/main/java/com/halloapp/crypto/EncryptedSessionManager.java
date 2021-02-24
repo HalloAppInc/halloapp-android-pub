@@ -92,6 +92,7 @@ public class EncryptedSessionManager {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                 if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
+                    keyManager.tearDownSession(peerUserId);
                     throw new CryptoException("no_identity_key");
                 }
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
