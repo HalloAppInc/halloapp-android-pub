@@ -3,6 +3,8 @@ package com.halloapp.ui.invites;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,7 +43,7 @@ import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -54,7 +55,7 @@ import java.util.Locale;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class InviteFriendsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class InviteContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_SEARCH_TEXT = "search_text";
 
@@ -62,15 +63,20 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
 
     private final ContactsAdapter adapter = new ContactsAdapter();
 
-    private AvatarLoader avatarLoader;
-    private DeviceAvatarLoader deviceAvatarLoader;
-    private InviteFriendsViewModel viewModel;
+    private InviteContactsViewModel viewModel;
     private TextView emptyView;
     private RecyclerView listView;
 
+    private TextView bannerView;
     private Snackbar banner;
 
     private boolean sendingEnabled;
+
+
+    private String smsPackageName;
+
+    private Drawable waIcon;
+    private Drawable smsIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +88,8 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-        setContentView(R.layout.activity_invite_friends);
+        setContentView(R.layout.activity_invite_contacts);
 
-        avatarLoader = AvatarLoader.getInstance();
-        deviceAvatarLoader = new DeviceAvatarLoader(this);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,52 +118,36 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
             searchBox.setText(searchText);
             searchBox.setSelection(searchText.length());
         }
+        bannerView = findViewById(R.id.banner);
 
         listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
-        listView.addItemDecoration(new ContactsSectionItemDecoration(
-                getResources().getDimension(R.dimen.contacts_list_item_header_width),
-                getResources().getDimension(R.dimen.contacts_list_item_height),
-                getResources().getDimension(R.dimen.contacts_list_item_header_text_size),
-                getResources().getColor(R.color.contacts_list_item_header_text_color),
-                adapter::getSectionName));
 
         emptyView = findViewById(android.R.id.empty);
 
-        viewModel = new ViewModelProvider(this).get(InviteFriendsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(InviteContactsViewModel.class);
         viewModel.getContactList().observe(this, adapter::setContacts);
+        viewModel.inviteOptions.getLiveData().observe(this, adapter::setInviteOptions);
 
         View progress = findViewById(R.id.progress);
 
         viewModel.getInviteCount().observe(this, nullableCount -> {
-            if (banner != null) {
-                banner.dismiss();
-            }
             if (nullableCount == null) {
                 progress.setVisibility(View.VISIBLE);
                 setSendingEnabled(false);
-                banner = null;
-            } else if (nullableCount == InviteFriendsViewModel.RESPONSE_RETRYABLE) {
-                banner = SnackbarHelper.showIndefinitely(listView, R.string.invite_info_fetch_internet);
-                banner.setAction(R.string.try_again, v -> {
-                   banner.dismiss();
-                   viewModel.refreshInvites();
-                });
-                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), banner.getView().getHeight());
+            } else if (nullableCount == InviteContactsViewModel.RESPONSE_RETRYABLE) {
+                bannerView.setText(R.string.invite_info_fetch_internet);
                 progress.setVisibility(View.GONE);
-                addBannerCallback();
                 setSendingEnabled(false);
             } else if (nullableCount > 0) {
                 progress.setVisibility(View.GONE);
-                banner = SnackbarHelper.showIndefinitely(listView, getResources().getQuantityString(R.plurals.invites_remaining, nullableCount, nullableCount));
-                addBannerCallback();
+                bannerView.setText(getResources().getQuantityString(R.plurals.invites_remaining, nullableCount, nullableCount));
                 setSendingEnabled(true);
             } else {
                 progress.setVisibility(View.GONE);
-                banner = SnackbarHelper.showIndefinitely(listView, R.string.no_invites_remaining);
-                addBannerCallback();
+                bannerView.setText(R.string.no_invites_remaining);
                 setSendingEnabled(false);
             }
         });
@@ -195,11 +183,6 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (deviceAvatarLoader != null) {
-            deviceAvatarLoader.destroy();
-            deviceAvatarLoader = null;
-        }
     }
 
     @Override
@@ -259,21 +242,62 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         }
     }
 
-    private void sendInvite(String phone) {
+    private void sendInvite(@NonNull Contact contact) {
+        if (contact.normalizedPhone == null) {
+            Log.e("InvitecontactsActivity/sendInvite null contact phone");
+            return;
+        }
         ProgressDialog dialog = ProgressDialog.show(this, null, getString(R.string.invite_creation_in_progress));
-        viewModel.sendInvite(phone).observe(this, nullableResult -> {
+        viewModel.sendInvite(contact).observe(this, nullableResult -> {
             dialog.cancel();
             if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
                 showErrorDialog(nullableResult);
             } else {
-                onSuccessfulInvite(phone);
+                onSuccessfulInvite(contact);
             }
         });
     }
 
-    private void onSuccessfulInvite(String phone) {
-        String inviteText = getString(R.string.invite_text);
-        Intent chooser = IntentUtils.createSmsChooserIntent(this, getString(R.string.invite_a_friend), phone, inviteText);
+    private String getInviteText(@NonNull Contact contact) {
+        return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone());
+    }
+
+    private void sendInviteSms(@NonNull Contact contact) {
+        if (contact.normalizedPhone == null) {
+            Log.e("InvitecontactsActivity/sendInviteSms null contact phone");
+            return;
+        }
+        ProgressDialog dialog = ProgressDialog.show(this, null, getString(R.string.invite_creation_in_progress));
+        viewModel.sendInvite(contact).observe(this, nullableResult -> {
+            dialog.cancel();
+            if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
+                showErrorDialog(nullableResult);
+            } else {
+                Intent smsIntent = IntentUtils.createSmsIntent(contact.normalizedPhone, getInviteText(contact));
+                startActivity(smsIntent);
+            }
+        });
+    }
+
+    private void sendInviteWA(@NonNull Contact contact) {
+        if (contact.normalizedPhone == null) {
+            Log.e("InvitecontactsActivity/sendInviteWA null contact phone");
+            return;
+        }
+        ProgressDialog dialog = ProgressDialog.show(this, null, getString(R.string.invite_creation_in_progress));
+        viewModel.sendInvite(contact).observe(this, nullableResult -> {
+            dialog.cancel();
+            if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
+                showErrorDialog(nullableResult);
+            } else {
+                Intent smsIntent = IntentUtils.createWhatsAppIntent(contact.normalizedPhone, getInviteText(contact), false);
+                startActivity(smsIntent);
+            }
+        });
+    }
+
+    private void onSuccessfulInvite(@NonNull Contact contact) {
+        Intent chooser = IntentUtils.createSmsChooserIntent(this, getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
         startActivity(chooser);
     }
 
@@ -310,9 +334,16 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
         private CharSequence filterText;
         private List<String> filterTokens;
 
+        private InviteContactsViewModel.InviteOptions inviteOptions;
+
         void setContacts(@NonNull List<Contact> contacts) {
             this.contacts = contacts;
             getFilter().filter(filterText);
+        }
+
+        void setInviteOptions(@Nullable InviteContactsViewModel.InviteOptions inviteOptions) {
+            this.inviteOptions = inviteOptions;
+            notifyDataSetChanged();
         }
 
         void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
@@ -324,13 +355,13 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
 
         @Override
         public @NonNull ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false));
+            return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_invite_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
             if (position < getFilteredContactsCount()) {
-                holder.bindTo(filteredContacts.get(position), filterTokens);
+                holder.bindTo(filteredContacts.get(position), filterTokens, inviteOptions);
             }
         }
 
@@ -390,31 +421,32 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
 
     class ContactViewHolder extends RecyclerView.ViewHolder {
 
-        final private ImageView avatarView;
         final private TextView nameView;
         final private TextView phoneView;
+        final private TextView captionView;
+        final private ImageView waView;
+        final private ImageView smsView;
+        final private View pendingView;
 
         private Contact contact;
 
         ContactViewHolder(@NonNull View itemView) {
             super(itemView);
-            avatarView = itemView.findViewById(R.id.avatar);
+            captionView = itemView.findViewById(R.id.potential_friends);
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
+            waView = itemView.findViewById(R.id.wa_btn);
+            smsView = itemView.findViewById(R.id.sms_btn);
+            pendingView = itemView.findViewById(R.id.pending_btn);
             itemView.setOnClickListener(v -> {
                 if (contact != null) {
-                    AlertDialog dialog =
-                            new AlertDialog.Builder(itemView.getContext())
-                                    .setMessage(getString(R.string.invite_confirmation_message, contact.getDisplayName()))
-                                    .setPositiveButton(R.string.invite_action, (dialog1, which) -> sendInvite(contact.normalizedPhone))
-                                    .setNegativeButton(R.string.cancel, null).create();
-                    dialog.show();
+                    sendInvite(contact);
                 }
             });
         }
 
-        void bindTo(@NonNull Contact contact, List<String> filterTokens) {
-            if (!sendingEnabled || contact.userId != null || contact.normalizedPhone == null) {
+        void bindTo(@NonNull Contact contact, List<String> filterTokens, @Nullable InviteContactsViewModel.InviteOptions inviteOptions) {
+            if (!sendingEnabled || contact.userId != null) {
                 itemView.setAlpha(0.54f);
                 itemView.setClickable(false);
             } else {
@@ -422,13 +454,6 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
                 itemView.setClickable(true);
             }
             this.contact = contact;
-            if (contact.userId == null) {
-                if (contact.normalizedPhone != null) {
-                    deviceAvatarLoader.load(avatarView, contact.normalizedPhone);
-                }
-            } else {
-                avatarLoader.load(avatarView, contact.userId);
-            }
             if (filterTokens != null && !filterTokens.isEmpty()) {
                 final String name = contact.getDisplayName();
                 CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), name, filterTokens);
@@ -441,12 +466,62 @@ public class InviteFriendsActivity extends HalloActivity implements EasyPermissi
             } else {
                 nameView.setText(contact.getDisplayName());
             }
-            if (contact.userId != null) {
-                phoneView.setText(R.string.invite_already_a_user_subtitle);
-            } else if (contact.normalizedPhone == null) {
+            if (contact.normalizedPhone == null) {
                 phoneView.setText(R.string.invite_invalid_phone_number);
             } else {
                 phoneView.setText(contact.getDisplayPhone());
+            }
+            if (contact.userId != null) {
+                captionView.setVisibility(View.VISIBLE);
+                captionView.setText(getString(R.string.invite_already_on_halloapp));
+            } else if (contact.numPotentialFriends > 1) {
+                captionView.setText(getResources().getQuantityString(R.plurals.friends_on_halloapp, (int) contact.numPotentialFriends, (int) contact.numPotentialFriends));
+                captionView.setVisibility(View.VISIBLE);
+            } else {
+                captionView.setVisibility(View.GONE);
+            }
+
+            if (inviteOptions == null || contact.invited || contact.userId != null) {
+                waView.setVisibility(View.GONE);
+                smsView.setVisibility(View.GONE);
+                pendingView.setVisibility((contact.invited && contact.userId == null) ? View.VISIBLE : View.GONE);
+            } else {
+                pendingView.setVisibility(View.GONE);
+                if (inviteOptions.hasWA) {
+                    waView.setVisibility(View.VISIBLE);
+                    if (waIcon == null) {
+                        try {
+                            waIcon = waView.getContext().getPackageManager().getApplicationIcon("com.whatsapp");
+                        }
+                        catch (PackageManager.NameNotFoundException e) {
+                            Log.e("InviteContactsActivity/onBindViewHolder wa package not found");
+                        }
+                    }
+                    waView.setImageDrawable(waIcon);
+                    waView.setOnClickListener(v -> {
+                        sendInviteWA(contact);
+                    });
+                } else {
+                    waView.setVisibility(View.GONE);
+                }
+                if (inviteOptions.defaultSms == null) {
+                    smsView.setVisibility(View.GONE);
+                } else {
+                    smsView.setVisibility(View.VISIBLE);
+                    if (smsPackageName == null || !smsPackageName.equalsIgnoreCase(inviteOptions.defaultSms)) {
+                        try {
+                            smsIcon = smsView.getContext().getPackageManager().getApplicationIcon(inviteOptions.defaultSms);
+                            smsPackageName = inviteOptions.defaultSms;
+                        }
+                        catch (PackageManager.NameNotFoundException e) {
+                            Log.e("InviteContactsActivity/onBindViewHolder failed to load icon for package " + inviteOptions.defaultSms);
+                        }
+                    }
+                    smsView.setImageDrawable(smsIcon);
+                    smsView.setOnClickListener(v -> {
+                        sendInviteSms(contact);
+                    });
+                }
             }
         }
     }

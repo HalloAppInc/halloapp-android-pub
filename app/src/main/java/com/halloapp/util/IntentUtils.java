@@ -75,7 +75,6 @@ public class IntentUtils {
         boolean fbIsDefaultSms = FB_MESSENGER_PACKAGE.equals(defaultSmsPackage);
 
         Intent smsIntent = createSmsIntent(phoneNumber, text);
-        Intent fbIntent = createFbMessengerIntent(text);
         Intent waIntent = createWhatsAppIntent(phoneNumber, text, false);
         Intent w4bIntent = createWhatsAppIntent(phoneNumber, text, true);
 
@@ -88,9 +87,6 @@ public class IntentUtils {
                     new ComponentName(WHATSAPP_PACKAGE, "com.whatsapp.Conversation"),
                     new ComponentName(WHATSAPP_BUSINESS_PACKAGE, "com.whatsapp.Conversation"),
                     new ComponentName(fbIsDefaultSms ? "" : FB_MESSENGER_PACKAGE, "com.facebook.messaging.sms.defaultapp.ComposeSmsActivity")});
-            if (!fbIsDefaultSms) {
-                extraIntents.add(fbIntent);
-            }
             extraIntents.add(waIntent);
             extraIntents.add(w4bIntent);
         } else {
@@ -103,9 +99,6 @@ public class IntentUtils {
                     intent.setPackage(packageName);
                     extraIntents.add(intent);
                 }
-            }
-            if (!fbIsDefaultSms) {
-                extraIntents.add(fbIntent);
             }
             Intent initialIntent;
             if (extraIntents.isEmpty()) {

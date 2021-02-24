@@ -39,7 +39,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
-import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -195,8 +195,8 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private void onInviteFriends() {
         if (Constants.INVITES_ENABLED) {
-            final Intent intent = new Intent(this, InviteFriendsActivity.class);
-            intent.putExtra(InviteFriendsActivity.EXTRA_SEARCH_TEXT, adapter.filterText);
+            final Intent intent = new Intent(this, InviteContactsActivity.class);
+            intent.putExtra(InviteContactsActivity.EXTRA_SEARCH_TEXT, adapter.filterText);
             startActivity(intent);
         } else {
             final Intent intent = new Intent();

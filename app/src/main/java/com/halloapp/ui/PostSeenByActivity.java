@@ -24,7 +24,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -402,7 +402,7 @@ public class PostSeenByActivity extends HalloActivity {
                 inviteText.setVisibility(item.sentTo ? View.VISIBLE : View.INVISIBLE);
                 emptyText.setText(item.sentTo ? R.string.empty_sent_to : R.string.empty_viewed_by);
                 if (item.sentTo) {
-                    inviteText.setOnClickListener(v -> startActivity(new Intent(PostSeenByActivity.this, InviteFriendsActivity.class)));
+                    inviteText.setOnClickListener(v -> startActivity(new Intent(PostSeenByActivity.this, InviteContactsActivity.class)));
                 } else {
                     inviteText.setOnClickListener(null);
                     inviteText.setClickable(false);

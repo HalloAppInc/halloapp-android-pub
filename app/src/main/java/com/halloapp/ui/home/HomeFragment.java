@@ -27,7 +27,7 @@ import com.halloapp.ui.FeedNuxBottomSheetDialogFragment;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
-import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -96,7 +96,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         inviteView = root.findViewById(R.id.home_invite);
-        inviteView.setOnClickListener(v -> startActivity(new Intent(requireContext(), InviteFriendsActivity.class)));
+        inviteView.setOnClickListener(v -> startActivity(new Intent(requireContext(), InviteContactsActivity.class)));
         postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

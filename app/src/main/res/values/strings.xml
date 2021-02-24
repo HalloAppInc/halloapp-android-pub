@@ -263,12 +263,15 @@
     <string name="action_save">Save</string>
     <string name="invite_friends">Invite friends &amp; family</string>
     <string name="invite_a_friend">Invite a friend</string>
+    <string name="invite_friend_chooser_title">Invite %s</string>
     <string name="invite_text">Join me on HalloApp — a simple and private way to stay in touch with friends and family. Get it at https://halloapp.com/dl</string>
+    <string name="invite_text_with_name_and_number">Hey %s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %s to register. Get it at halloapp.com/dl</string>
     <string name="share_via">Share via…</string>
     <string name="name_hint">Your name</string>
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="update">Update</string>
     <string name="counter">%d/%d</string>
+    <string name="invite_pending">Pending</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <string name="profile_updated">Profile updated</string>
     <string name="try_again">Try again</string>
@@ -351,14 +354,16 @@
     <string name="invite_info_fetch_internet">Failed to retrieve invite info, check your internet and try again</string>
     <string name="invite_confirmation_message">Use one of your invites to invite %s?</string>
     <plurals name="invites_remaining">
-        <item quantity="one">You have %s invite remaining this week</item>
-        <item quantity="other">You have %s invites remaining this week</item>
+        <item quantity="one">You have %s invite remaining</item>
+        <item quantity="other">You have %s invites remaining</item>
     </plurals>
     <string name="no_invites_remaining">More invites coming this Monday!</string>
     <string name="invite_friends_title">Invite friends &amp; family</string>
     <string name="invite_action">Invite</string>
+    <string name="invite_title">Invite</string>
     <string name="settings_invite_option">Invite to HalloApp</string>
     <string name="invite_already_a_user_subtitle">Already a HalloApp user</string>
+    <string name="invite_already_on_halloapp">Already on HalloApp</string>
     <string name="invite_invalid_phone_number">Invalid phone number</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
@@ -398,6 +403,10 @@
     <string name="delete_group_confirmation">Would you like to delete this group?</string>
     <string name="delete_group_in_progress">Deleting group…</string>
     <string name="failed_delete_group">Failed to delete group, try again later</string>
+    <plurals name="friends_on_halloapp">
+        <item quantity="one">%d friend on HalloApp</item>
+        <item quantity="other">%d friends on HalloApp</item>
+    </plurals>
     <plurals name="settings_invite_summary">
         <item quantity="one">%d invite available</item>
         <item quantity="other">%d invites available</item>

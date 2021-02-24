@@ -109,9 +109,9 @@
         <activity
             android:name=".DebugActivity" />
 
-        <activity android:name=".ui.invites.InviteFriendsActivity"
+        <activity android:name=".ui.invites.InviteContactsActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/invite_friends_title"
+            android:label="@string/invite_title"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
 
         <activity

@@ -34,6 +34,7 @@ public class Contact implements Parcelable {
     public long connectionTime;
     public long numPotentialFriends;
     public boolean hideChat;
+    public boolean invited;
 
     public Contact(long rowId,
                    long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,

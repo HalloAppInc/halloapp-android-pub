@@ -33,13 +33,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.halloapp.AppContext;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
-import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
@@ -53,7 +50,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
-import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.FilterUtils;
@@ -412,7 +409,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 infoContainer.setVisibility(View.GONE);
                 nameView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_secondary));
 
-                itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), InviteFriendsActivity.class)));
+                itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), InviteContactsActivity.class)));
             }
         }
 

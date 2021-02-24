@@ -20,7 +20,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.invites.InviteFriendsActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.ui.settings.SettingsNotifications;
 import com.halloapp.ui.settings.SettingsPrivacy;
@@ -75,7 +75,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
         View invite = root.findViewById(R.id.invite);
         invite.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), InviteFriendsActivity.class));
+            startActivity(new Intent(v.getContext(), InviteContactsActivity.class));
         });
 
         View privacy = root.findViewById(R.id.privacy);
