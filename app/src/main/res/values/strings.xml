@@ -388,6 +388,10 @@
         <item quantity="other">Would you like to leave the %d selected groups?</item>
     </plurals>
     <string name="leave_group_in_progress">Leaving group…</string>
+    <plurals name="leave_groups_progress">
+        <item quantity="one">Leaving group…</item>
+        <item quantity="other">Leaving groups…</item>
+    </plurals>
     <string name="failed_leave_group">Failed to leave group, try again later</string>
     <string name="delete_group">Delete group</string>
     <string name="delete_group_confirmation">Would you like to delete this group?</string>

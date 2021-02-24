@@ -291,7 +291,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     }
 
     private void leaveGroups(@NonNull Collection<GroupId> groupIds) {
-        ProgressDialog dialog = ProgressDialog.show(getContext(), "yo", "yo");
+        ProgressDialog dialog = ProgressDialog.show(getContext(), "", requireContext().getResources().getQuantityString(R.plurals.leave_groups_progress, groupIds.size()));
         long startTime = System.currentTimeMillis();
         viewModel.leaveGroup(groupIds).observe(getViewLifecycleOwner(),
                 success -> {
