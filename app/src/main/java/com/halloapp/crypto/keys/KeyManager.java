@@ -127,7 +127,13 @@ public class KeyManager {
 
             byte[] masterSecret;
             if (sessionSetupInfo.oneTimePreKeyId != null) {
-                byte[] d = CryptoUtils.ecdh(encryptedKeyStore.removeOneTimePreKeyById(sessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
+                byte[] d;
+                try {
+                    d = CryptoUtils.ecdh(encryptedKeyStore.removeOneTimePreKeyById(sessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
+                } catch (CryptoException e) {
+                    tearDownSession(peerUserId);
+                    throw e;
+                }
                 masterSecret = CryptoUtils.concat(a, b, c, d);
                 CryptoUtils.nullify(d);
             } else {
