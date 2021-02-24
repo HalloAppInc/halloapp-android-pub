@@ -271,11 +271,13 @@ public class Debug {
                 SnackbarHelper.showInfo(activity, item.getTitle());
                 switch (item.getTitle().toString()) {
                     case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
-                        try {
-                            KeyManager.getInstance().getNextOutboundMessageKey((UserId)chatId);
-                        } catch (Exception e) {
-                            Log.w("DEBUG error skipping outbound message key", e);
-                        }
+                        bgWorkers.execute(() -> {
+                            try {
+                                KeyManager.getInstance().getNextOutboundMessageKey((UserId)chatId);
+                            } catch (Exception e) {
+                                Log.w("DEBUG error skipping outbound message key", e);
+                            }
+                        });
                         break;
                     }
                     case DEBUG_MENU_CORRUPT_KEY_STORE: {
