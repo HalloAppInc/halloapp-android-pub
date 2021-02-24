@@ -879,7 +879,7 @@ public class ContentComposerActivity extends HalloActivity {
                     if (mediaView != null) {
                         final ContentPlayerView contentPlayerView = mediaView.findViewById(R.id.video);
                         if (shouldPlayerBeActive(index, currentPosition)) {
-                            initializeVideoPlayer(mediaPair, contentPlayerView, index == currentPosition);
+                            initializeVideoPlayer(mediaPair, contentPlayerView, false);
                         } else {
                             releaseVideoPlayer(mediaPair, contentPlayerView);
                         }
@@ -1021,7 +1021,7 @@ public class ContentComposerActivity extends HalloActivity {
 
                 final int activePosition = Rtl.isRtl(container.getContext()) ? mediaPairList.size() - 1 - getCurrentItem() : getCurrentItem();
                 if (shouldPlayerBeActive(activePosition, currentPosition)) {
-                    initializeVideoPlayer(mediaPair, contentPlayerView, activePosition == currentPosition);
+                    initializeVideoPlayer(mediaPair, contentPlayerView, false);
                 }
                 contentPlayerView.setOnClickListener(v -> clearEditFocus());
                 GestureDetector doubleTapDetector = new GestureDetector(contentPlayerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
