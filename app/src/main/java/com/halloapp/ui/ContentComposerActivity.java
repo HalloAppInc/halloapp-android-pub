@@ -221,6 +221,13 @@ public class ContentComposerActivity extends HalloActivity {
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
             editText = findViewById(R.id.entry_bottom);
+            editText.setPreImeListener((keyCode, event) -> {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                    clearEditFocus();
+                    return true;
+                }
+                return false;
+            });
         } else {
             Log.i("ContentComposerActivity no uri list provided");
             loadingView.setVisibility(View.GONE);
