@@ -90,7 +90,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     totalSize += file.length();
                     success = true;
                 } catch (Downloader.DownloadException e) {
-                    Log.e("DownloadMediaTask: " + media.url, e);
+                    Log.e("DownloadMediaTask: download exception for " + media.url, e);
                     if (media.encFile != null && e.code == 416) {
                         if (!media.encFile.delete()) {
                             Log.e("DownloadMediaTask: failed to delete temp enc file");
@@ -102,10 +102,10 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                         contentItem.setMediaTransferred(media, contentDb);
                     }
                 } catch (IOException e) {
-                    Log.e("DownloadMediaTask: " + media.url, e);
+                    Log.e("DownloadMediaTask: IOE downloading " + media.url, e);
                     retry = true;
                 } catch (GeneralSecurityException e) {
-                    Log.e("DownloadMediaTask: " + media.url, e);
+                    Log.e("DownloadMediaTask: GSE downloading " + media.url, e);
                     if (media.encFile != null) {
                         if (!media.encFile.delete()) {
                             Log.e("DownloadMediaTask: failed to delete temp enc file");
