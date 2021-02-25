@@ -122,8 +122,10 @@ public class HANoiseSocket extends Socket {
         NoiseMessage msgB = readNextNoiseMessage();
         byte[] msgBContent = msgB.getContent().toByteArray();
 
+        boolean fallback = false;
         if (NoiseMessage.MessageType.XX_FALLBACK_A.equals(msgB.getMessageType())) {
             Log.i("NoiseSocket/ikHandshake falling back to XX");
+            fallback = true;
             handshakeState.fallback();
             handshakeState.start();
 
@@ -141,6 +143,11 @@ public class HANoiseSocket extends Socket {
         }
 
         finishHandshake();
+
+        // TODO: clarkc remove after we figure out fallback issue
+        if (fallback && Arrays.equals(remoteStaticKey, getServerStaticKey())) {
+            Log.e("NoiseSocket/xx_fallback triggered but keys match");
+        }
     }
 
     private void performXXHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, NoiseException {
