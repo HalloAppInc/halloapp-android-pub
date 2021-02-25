@@ -9,12 +9,15 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +29,14 @@ import androidx.exifinterface.media.ExifInterface;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
@@ -53,7 +59,10 @@ import com.otaliastudios.cameraview.controls.Flash;
 import com.otaliastudios.cameraview.controls.Mode;
 import com.otaliastudios.cameraview.gesture.Gesture;
 import com.otaliastudios.cameraview.gesture.GestureAction;
+import com.otaliastudios.cameraview.size.AspectRatio;
 import com.otaliastudios.cameraview.size.Size;
+import com.otaliastudios.cameraview.size.SizeSelector;
+import com.otaliastudios.cameraview.size.SizeSelectors;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,8 +90,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int PENDING_OPERATION_PHOTO = 1;
     private static final int PENDING_OPERATION_VIDEO = 2;
 
-    private static final double PREFERRED_PREVIEW_RATIO = 3.0 / 4.0;
-    private static final int MAX_VIDEO_DURATION_MILLISECONDS = 60 * 1000;
+    private static final int PREFERRED_RATIO_X = 3;
+    private static final int PREFERRED_RATIO_Y = 4;
 
     private static final int[] EXIF_ORIENTATION_FLIP_MAP = new int[] {
             ExifInterface.ORIENTATION_UNDEFINED,
@@ -103,6 +112,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     private File mediaFile;
 
+    private Chronometer videoTimer;
     private ImageButton captureButton;
     private ImageButton flipCameraButton;
     private ImageButton toggleFlashButton;
@@ -119,6 +129,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private int pendingOperation = 0;
     private boolean isTakingPhoto = false;
     private boolean isRecordingVideo = false;
+
+    private int maxVideoDurationSeconds;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,11 +159,18 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         recordStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_stop_animation);
 
         cameraCardView = findViewById(R.id.cameraCard);
+        videoTimer = findViewById(R.id.video_timer);
         captureButton = findViewById(R.id.capture);
         captureButton.setOnLongClickListener(v -> {
             Log.d("CameraActivity: capture button onLongClick");
-            if (cameraIsAvailable() && isRecordingVideoAllowed()) {
-                startRecordingVideo();
+            if (cameraIsAvailable() && isRecordingVideoAllowed() && pendingOperation == PENDING_OPERATION_NONE) {
+                if (cameraView.getMode() != Mode.VIDEO) {
+                    Log.d("CameraActivity: PENDING_OPERATION_VIDEO");
+                    pendingOperation = PENDING_OPERATION_VIDEO;
+                    cameraView.setMode(Mode.VIDEO);
+                } else {
+                    takeVideo();
+                }
             }
             return false;
         });
@@ -159,9 +178,15 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             Log.d("CameraActivity: capture button onClick");
             if (cameraView != null) {
                 if (isRecordingVideo) {
-                    stopRecordingVideo();
-                } else {
-                    takePhoto();
+                    cameraView.stopVideo();
+                } else if (cameraIsAvailable() && pendingOperation == PENDING_OPERATION_NONE) {
+                    if (cameraView.getMode() != Mode.PICTURE) {
+                        Log.d("CameraActivity: PENDING_OPERATION_PHOTO");
+                        pendingOperation = PENDING_OPERATION_PHOTO;
+                        cameraView.setMode(Mode.PICTURE);
+                    } else {
+                        takePicture();
+                    }
                 }
             }
         });
@@ -170,6 +195,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         toggleFlashButton = findViewById(R.id.toggle_flash);
         toggleFlashButton.setOnClickListener(v -> toggleFlash());
         toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
+
+        if (getIntent().getParcelableExtra(EXTRA_CHAT_ID) != null) {
+            maxVideoDurationSeconds = ServerProps.getInstance().getMaxChatVideoDuration();
+        } else {
+            maxVideoDurationSeconds = ServerProps.getInstance().getMaxFeedVideoDuration();
+        }
 
         if (!hasCameraAndAudioPermission()) {
             requestCameraAndAudioPermission();
@@ -195,23 +226,47 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             }
         });
         cameraView.setClipToOutline(true);
-        final double eps = 1e-8;
+        cameraView.setFlash(isFlashOn ? Flash.ON : Flash.OFF);
+
+        final float eps = 1e-8f;
+        final float preferredRatio = ((float) PREFERRED_RATIO_X) / PREFERRED_RATIO_Y;
         cameraView.setPreviewStreamSize(availableSizes -> {
-            double diff = Double.MAX_VALUE / 2;
+            float diff = Float.MAX_VALUE / 2;
             for (Size size : availableSizes) {
-                double ratio = (double) size.getWidth() / size.getHeight();
-                diff = Math.min(diff, Math.abs(ratio - PREFERRED_PREVIEW_RATIO));
+                float ratio = (float) size.getWidth() / size.getHeight();
+                diff = Math.min(diff, Math.abs(ratio - preferredRatio));
             }
             List<Size> selectedSizes = new ArrayList<>();
             for (Size size : availableSizes) {
-                double ratio = (double) size.getWidth() / size.getHeight();
-                if (Math.abs(ratio - PREFERRED_PREVIEW_RATIO) < diff + eps) {
+                float ratio = (float) size.getWidth() / size.getHeight();
+                if (Math.abs(ratio - preferredRatio) < diff + eps) {
                     selectedSizes.add(size);
                 }
             }
             return selectedSizes;
         });
-        cameraView.setFlash(isFlashOn ? Flash.ON : Flash.OFF);
+
+        final SizeSelector preferredPictureSize = SizeSelectors.and(
+                SizeSelectors.maxWidth(Constants.MAX_IMAGE_DIMENSION),
+                SizeSelectors.maxHeight(Constants.MAX_IMAGE_DIMENSION),
+                SizeSelectors.aspectRatio(AspectRatio.of(PREFERRED_RATIO_X, PREFERRED_RATIO_Y), eps),
+                SizeSelectors.biggest());
+        final SizeSelector fallbackPictureSize = SizeSelectors.and(
+                SizeSelectors.maxWidth(Constants.MAX_IMAGE_DIMENSION),
+                SizeSelectors.maxHeight(Constants.MAX_IMAGE_DIMENSION),
+                SizeSelectors.biggest());
+        cameraView.setPictureSize(SizeSelectors.or(preferredPictureSize, fallbackPictureSize));
+
+        final SizeSelector preferredVideoSize = SizeSelectors.and(
+                SizeSelectors.minWidth(Constants.VIDEO_RESOLUTION_H264),
+                SizeSelectors.minHeight(Constants.VIDEO_RESOLUTION_H264),
+                SizeSelectors.aspectRatio(AspectRatio.of(PREFERRED_RATIO_X, PREFERRED_RATIO_Y), eps),
+                SizeSelectors.smallest());
+        final SizeSelector fallbackVideoSize = SizeSelectors.and(
+                SizeSelectors.minWidth(Constants.VIDEO_RESOLUTION_H264),
+                SizeSelectors.minHeight(Constants.VIDEO_RESOLUTION_H264),
+                SizeSelectors.smallest());
+        cameraView.setVideoSize(SizeSelectors.or(preferredVideoSize, fallbackVideoSize));
 
         cameraView.addCameraListener(new CameraListener() {
             @Override
@@ -236,8 +291,23 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             public void onVideoTaken(@NonNull VideoResult result) {
                 super.onVideoTaken(result);
                 handleMediaUri(Uri.fromFile(result.getFile()));
-                clearRecordingVideoState();
+                if (cameraView.getMode() == Mode.VIDEO) {
+                    cameraView.setMode(Mode.PICTURE);
+                }
                 isRecordingVideo = false;
+            }
+
+            @Override
+            public void onVideoRecordingStart() {
+                super.onVideoRecordingStart();
+                startRecordingTimer();
+            }
+
+            @Override
+            public void onVideoRecordingEnd() {
+                super.onVideoRecordingEnd();
+                stopRecordingTimer();
+                playRecordStopAnimation();
             }
 
             @Override
@@ -253,7 +323,11 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                         break;
                     case CameraException.REASON_VIDEO_FAILED:
                         messageId = R.string.camera_error_video;
-                        clearRecordingVideoState();
+                        stopRecordingTimer();
+                        playRecordStopAnimation();
+                        if (cameraView.getMode() == Mode.VIDEO) {
+                            cameraView.setMode(Mode.PICTURE);
+                        }
                         isRecordingVideo = false;
                         break;
                 }
@@ -459,58 +533,30 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         return cameraView != null && !isTakingPhoto && !cameraView.isTakingPicture() && !isRecordingVideo && !cameraView.isTakingVideo();
     }
 
-    private void takePhoto() {
-        if (!cameraIsAvailable()) {
-            return;
-        }
-        Log.d("CameraActivity: takePhoto with flash " + cameraView.getFlash());
-        if (cameraView.getMode() != Mode.PICTURE) {
-            pendingOperation = PENDING_OPERATION_PHOTO;
-            cameraView.setMode(Mode.PICTURE);
-        } else {
-            takePicture();
-        }
-    }
-
-    private void startRecordingVideo() {
-        if (!cameraIsAvailable()) {
-            return;
-        }
-        Log.d("CameraActivity: startRecordingVideo");
-        playRecordStartAnimation();
-        if (cameraView.getMode() != Mode.VIDEO) {
-            pendingOperation = PENDING_OPERATION_VIDEO;
-            cameraView.setMode(Mode.VIDEO);
-        } else {
-            takeVideo();
-        }
-    }
-
-    private void stopRecordingVideo() {
-        if (cameraView == null || !cameraView.isTakingVideo()) {
-            return;
-        }
-        cameraView.stopVideo();
-        clearRecordingVideoState();
-    }
-
     private void takePicture() {
+        Log.d("CameraActivity: takePicture");
         isTakingPhoto = true;
         cameraView.takePicture();
     }
 
     private void takeVideo() {
+        Log.d("CameraActivity: takeVideo");
         isRecordingVideo = true;
+        playRecordStartAnimation();
         clearMediaFile();
         mediaFile = generateTempCameraFile(Media.MEDIA_TYPE_VIDEO);
-        cameraView.takeVideo(mediaFile, MAX_VIDEO_DURATION_MILLISECONDS);
+        cameraView.takeVideo(mediaFile, maxVideoDurationSeconds * 1000);
     }
 
-    private void clearRecordingVideoState() {
-        playRecordStopAnimation();
-        if (cameraView.getMode() == Mode.VIDEO) {
-            cameraView.setMode(Mode.PICTURE);
-        }
+    private void startRecordingTimer() {
+        videoTimer.setVisibility(View.VISIBLE);
+        videoTimer.setBase(SystemClock.elapsedRealtime());
+        videoTimer.start();
+    }
+
+    private void stopRecordingTimer() {
+        videoTimer.setVisibility(View.GONE);
+        videoTimer.stop();
     }
 
     private File generateTempCameraFile(@Media.MediaType int mediaType) {
