@@ -260,8 +260,8 @@ public class HANoiseSocket extends Socket {
         byte[] recvBuffer = new byte[BUFFER_SIZE];
         while (readerOutputStream.size() < 4) {
             int read = in.read(recvBuffer);
-            if (read < 0) {
-                Log.e("readNextMessage stream closed");
+            if (read <= 0) {
+                Log.e("readNextMessage stream closed " + read);
                 return null;
             }
             readerOutputStream.write(recvBuffer, 0, read);
@@ -275,8 +275,8 @@ public class HANoiseSocket extends Socket {
         }
         while (readerOutputStream.size() < packetSize) {
             int read = in.read(recvBuffer);
-            if (read < 0) {
-                Log.e("readNextMessage stream closed");
+            if (read <= 0) {
+                Log.e("readNextMessage stream closed " + read);
                 return null;
             }
             readerOutputStream.write(recvBuffer, 0, read);
