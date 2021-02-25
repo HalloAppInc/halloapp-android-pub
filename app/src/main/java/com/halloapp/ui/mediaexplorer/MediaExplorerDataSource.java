@@ -1,7 +1,5 @@
 package com.halloapp.ui.mediaexplorer;
 
-import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
@@ -10,7 +8,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MediaExplorerDataSource extends ItemKeyedDataSource<Long, MediaExplorerViewModel.MediaModel> {
@@ -66,26 +63,18 @@ public class MediaExplorerDataSource extends ItemKeyedDataSource<Long, MediaExpl
     @Override
     public void loadAfter(@NonNull LoadParams<Long> params, @NonNull LoadCallback<MediaExplorerViewModel.MediaModel> callback) {
         List<Media> media = contentDb.getChatMedia(chatId, params.key, params.requestedLoadSize, true);
-        callback.onResult(modelsFromMedia(media));
+        callback.onResult(MediaExplorerViewModel.MediaModel.fromMedia(media));
     }
 
     @Override
     public void loadBefore(@NonNull LoadParams<Long> params, @NonNull LoadCallback<MediaExplorerViewModel.MediaModel> callback) {
         List<Media> media = contentDb.getChatMedia(chatId, params.key, params.requestedLoadSize, false);
-        callback.onResult(modelsFromMedia(media));
+        callback.onResult(MediaExplorerViewModel.MediaModel.fromMedia(media));
     }
 
     @NonNull
     @Override
     public Long getKey(@NonNull MediaExplorerViewModel.MediaModel item) {
         return item.rowId;
-    }
-
-    private @NonNull List<MediaExplorerViewModel.MediaModel> modelsFromMedia(@NonNull List<Media> items) {
-        ArrayList<MediaExplorerViewModel.MediaModel> models = new ArrayList<>(items.size());
-        for (Media item : items) {
-            models.add(new MediaExplorerViewModel.MediaModel(Uri.fromFile(item.file), item.type, item.rowId));
-        }
-        return models;
     }
 }

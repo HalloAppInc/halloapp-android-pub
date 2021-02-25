@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -70,7 +69,6 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -545,13 +543,8 @@ public class CommentsActivity extends HalloActivity {
                 imageView.setAdjustViewBounds(true);
                 mediaThumbnailLoader.load(imageView, media.get(position));
                 imageView.setOnClickListener(v -> {
-                    ArrayList<MediaExplorerViewModel.MediaModel> data = new ArrayList<>(media.size());
-                    for (final Media item : media) {
-                        data.add(new MediaExplorerViewModel.MediaModel(Uri.fromFile(item.file), item.type));
-                    }
-
                     Intent intent = new Intent(imageView.getContext(), MediaExplorerActivity.class);
-                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
                     intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
                     intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, post.id);
 

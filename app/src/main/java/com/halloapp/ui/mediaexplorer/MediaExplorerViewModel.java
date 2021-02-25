@@ -19,8 +19,10 @@ import androidx.paging.PositionalDataSource;
 
 import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
+import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,9 +141,25 @@ public class MediaExplorerViewModel extends AndroidViewModel {
         public int type;
         public long rowId;
 
-        public MediaModel(@NonNull Uri uri, int type) {
-            this.uri = uri;
-            this.type = type;
+        public static ArrayList<MediaModel> fromMedia(@NonNull List<Media> media) {
+            ArrayList<MediaModel> models = new ArrayList<>(media.size());
+
+            for (Media item : media) {
+                Uri uri;
+
+                if (item.file != null) {
+                    uri = Uri.fromFile(item.file);
+                } else if (item.url != null) {
+                    uri = Uri.parse(item.url);
+                } else {
+                    Log.w("MediaExplorerViewModel.MediaModel: missing file and url for media");
+                    continue;
+                }
+
+                models.add(new MediaExplorerViewModel.MediaModel(uri, item.type, item.rowId));
+            }
+
+            return models;
         }
 
         public MediaModel(@NonNull Uri uri, int type, long rowId) {

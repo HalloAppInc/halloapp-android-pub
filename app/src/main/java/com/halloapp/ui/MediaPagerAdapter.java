@@ -39,7 +39,6 @@ import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.MediaViewHolder> implements LifecycleEventObserver {
@@ -213,13 +212,9 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
     private void exploreMedia(View view, int position) {
         Context ctx = recyclerView.getContext();
-        ArrayList<MediaExplorerViewModel.MediaModel> data = new ArrayList<>(media.size());
-        for (final Media item : media) {
-            data.add(new MediaExplorerViewModel.MediaModel(Uri.fromFile(item.file), item.type, item.rowId));
-        }
 
         Intent intent = new Intent(ctx, MediaExplorerActivity.class);
-        intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, data);
+        intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
         intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
         intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
         if (isChatMedia) {
