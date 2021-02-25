@@ -163,12 +163,13 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         holder.playerView.setOnTouchListener(null);
 
         if (mediaItem.file != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-            holder.imageView.setOnClickListener(v -> exploreMedia(holder.imageView, position));
+            holder.imageView.setOnClickListener(v -> exploreMedia(holder.imageView, position, 0));
         } else if (mediaItem.file != null && mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             GestureDetector doubleTapDetector = new GestureDetector(holder.playerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    exploreMedia(holder.playerView, position);
+                    Player player = holder.playerView.getPlayer();
+                    exploreMedia(holder.playerView, position, player != null ? player.getCurrentPosition() : 0);
                     return true;
                 }
 
@@ -201,7 +202,8 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 @Override
                 public void onScaleEnd(ScaleGestureDetector detector) {
                     if (scale >= 1.0f) {
-                        exploreMedia(holder.playerView, position);
+                        Player player = holder.playerView.getPlayer();
+                        exploreMedia(holder.playerView, position, player != null ? player.getCurrentPosition() : 0);
                     }
                 }
             });
@@ -210,13 +212,14 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         }
     }
 
-    private void exploreMedia(View view, int position) {
+    private void exploreMedia(View view, int position, long currentTime) {
         Context ctx = recyclerView.getContext();
 
         Intent intent = new Intent(ctx, MediaExplorerActivity.class);
         intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
         intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
         intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
+        intent.putExtra(MediaExplorerActivity.EXTRA_INITIAL_TIME, currentTime);
         if (isChatMedia) {
             intent.putExtra(MediaExplorerActivity.EXTRA_CHAT_ID, chatId);
         }

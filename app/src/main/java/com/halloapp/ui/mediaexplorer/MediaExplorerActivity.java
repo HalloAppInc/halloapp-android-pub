@@ -64,6 +64,7 @@ public class MediaExplorerActivity extends HalloActivity {
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_CONTENT_ID = "content-id";
     public static final String EXTRA_CHAT_ID = "chat-id";
+    public static final String EXTRA_INITIAL_TIME = "initial-time";
 
     private int swipeExitStartThreshold;
     private int swipeExitFinishThreshold;
@@ -103,6 +104,9 @@ public class MediaExplorerActivity extends HalloActivity {
                 params.topMargin = 0;
                 params.leftMargin = 0;
                 transitionImage.setLayoutParams(params);
+
+                viewModel.setInitializationInProgress(false);
+                handlePlaybackOnPageChange(true);
             });
         }
 
@@ -201,7 +205,7 @@ public class MediaExplorerActivity extends HalloActivity {
 
                 viewModel.setPosition(position);
 
-                handlePlaybackOnPageChange();
+                handlePlaybackOnPageChange(false);
                 updatePlaybackControlsVisibility();
             }
         });
@@ -232,7 +236,6 @@ public class MediaExplorerActivity extends HalloActivity {
             adapter.submitList(list);
 
             if (viewModel.isInitializationInProgress()) {
-                viewModel.setInitializationInProgress(false);
                 finishInitialization(chatId, media, selected);
             }
         });
@@ -432,7 +435,11 @@ public class MediaExplorerActivity extends HalloActivity {
         }
     }
 
-    private void handlePlaybackOnPageChange() {
+    private void handlePlaybackOnPageChange(boolean seekToInitialTime) {
+        if (viewModel.isInitializationInProgress()) {
+            return;
+        }
+
         stopPlayback();
 
         MediaExplorerViewModel.MediaModel model = getCurrentItem();
@@ -443,6 +450,10 @@ public class MediaExplorerActivity extends HalloActivity {
                 SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
 
                 if (player != null && !player.isPlaying()) {
+                    if (seekToInitialTime) {
+                        player.seekTo(getIntent().getLongExtra(EXTRA_INITIAL_TIME, 0));
+                    }
+
                     player.setPlayWhenReady(true);
                 }
             }
