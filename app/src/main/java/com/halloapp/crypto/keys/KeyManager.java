@@ -101,6 +101,8 @@ public class KeyManager {
             encryptedKeyStore.setOutboundEphemeralKey(peerUserId, privateEphemeralKey);
             encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, firstId);
 
+            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+
             CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
         } catch (GeneralSecurityException e) {
             throw new CryptoException("setup_has_bad_keys", e);
@@ -158,6 +160,8 @@ public class KeyManager {
             encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, 0);
 
             updateOutboundChainAndRootKey(peerUserId, myEphemeralKey, publicEphemeralKey);
+
+            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
             CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
         } catch (GeneralSecurityException e) {

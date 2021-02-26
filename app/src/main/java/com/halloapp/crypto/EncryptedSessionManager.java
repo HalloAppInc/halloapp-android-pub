@@ -264,7 +264,6 @@ public class EncryptedSessionManager {
                 }
 
                 keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
-                encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
             } catch (InvalidProtocolBufferException e) {
                 throw new CryptoException("invalid_protobuf", e);
             } catch (InterruptedException | ObservableErrorException e) {
