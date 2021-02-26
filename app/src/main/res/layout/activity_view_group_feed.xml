@@ -72,8 +72,8 @@
                         android:textSize="14dp"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Chat"
-                        android:visibility="gone"/>
+                        android:text="@string/group_subtitle"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Chat"/>
 
                 </LinearLayout>
             </LinearLayout>
