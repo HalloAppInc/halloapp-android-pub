@@ -213,6 +213,11 @@ public class EncryptedKeyStore {
                 Log.w("Invalid X25519 private key for conversion", e);
             }
         }
+
+        if (!getPreferences().edit().putInt(PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID, startId + ONE_TIME_PRE_KEY_BATCH_COUNT).commit()) {
+            Log.e("Failed to update last otpk id");
+        }
+
         return ret;
     }
 
