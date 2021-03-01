@@ -1427,15 +1427,6 @@ class PostsDb {
         return getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false);
     }
 
-    void fixGroupFeedTimestamps() {
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-
-        final String commentsSql = "UPDATE " + CommentsTable.TABLE_NAME + " SET " + CommentsTable.COLUMN_TIMESTAMP + " = " + CommentsTable.COLUMN_TIMESTAMP + " / 1000 WHERE " + CommentsTable.COLUMN_TIMESTAMP + " > " + System.currentTimeMillis() * 100;
-        final String postSql = "UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_TIMESTAMP + " = " + PostsTable.COLUMN_TIMESTAMP + " / 1000 WHERE " + PostsTable.COLUMN_TIMESTAMP + " > " + System.currentTimeMillis() * 100;
-        db.execSQL(commentsSql);
-        db.execSQL(postSql);
-    }
-
     @WorkerThread
     boolean cleanup() {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();

@@ -850,10 +850,10 @@ public class ContentDb {
     }
 
     // TODO(clarkc): remove after version 100
-    public void fixGroupPostTimeStamps() {
-        Log.i("ContentDb.fixGroupPostTimestamps");
-        postsDb.fixGroupFeedTimestamps();
-        Log.i("ContentDb.groupPostTimestamp fix complete");
+    public void fixGroupMembership() {
+        Log.i("ContentDb.fixGroupMembership");
+        messagesDb.fixGroupMembership();
+        Log.i("ContentDb.groupmembership fix complete");
     }
 
     // TODO (ds): remove

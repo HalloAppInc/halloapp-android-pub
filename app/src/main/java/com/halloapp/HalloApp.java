@@ -74,7 +74,7 @@ public class HalloApp extends Application {
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         BgWorkers.getInstance().execute(() -> {
-            ContentDb.getInstance().fixGroupPostTimeStamps();
+            ContentDb.getInstance().fixGroupMembership();
         });
     }
 
