@@ -414,7 +414,7 @@ public class MainConnectionObserver extends Connection.Observer {
             }
 
             for (MemberInfo member : removed) {
-                if (member.userId.rawId().equals(me.getUser())) {
+                if (member.userId.isMe()) {
                     contentDb.setGroupInactive(groupId, null);
                     break;
                 }
