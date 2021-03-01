@@ -19,10 +19,12 @@ import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
@@ -299,11 +301,15 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     public class MediaViewHolder extends RecyclerView.ViewHolder {
+        private final long INITIAL_FRAME_TIME = 1000;
 
         final ContentPhotoView imageView;
         final ContentPlayerView playerView;
         final ProgressBar progressView;
         final AspectRatioFrameLayout container;
+
+        private boolean isVideoAtStart = false;
+        private boolean isPlayerInitialized = false;
 
         public MediaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -334,16 +340,71 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(media.file));
 
+            isPlayerInitialized = false;
             SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
+
+            player.addListener(new Player.EventListener() {
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    if (playbackState == Player.STATE_READY && !isPlayerInitialized) {
+                        isPlayerInitialized = true;
+                        seekToThumbnailFrame(player);
+                    }
+                }
+            });
+
+            PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
+            controlView.setControlDispatcher(new ControlDispatcher() {
+                @Override
+                public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
+                    if (playWhenReady) {
+                        play();
+                    } else {
+                        pause();
+                    }
+
+                    return true;
+                }
+
+                @Override
+                public boolean dispatchSeekTo(@NonNull Player player, int windowIndex, long positionMs) { return false; }
+
+                @Override
+                public boolean dispatchSetRepeatMode(@NonNull Player player, int repeatMode) { return false; }
+
+                @Override
+                public boolean dispatchSetShuffleModeEnabled(@NonNull Player player, boolean shuffleModeEnabled) { return false; }
+
+                @Override
+                public boolean dispatchStop(@NonNull Player player, boolean reset) { return false; }
+            });
+
             playerView.setPlayer(player);
 
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
             player.prepare(mediaSource);
         }
 
+        private void seekToThumbnailFrame(Player player) {
+            if (!player.isPlaying() && (player.getDuration() == player.getCurrentPosition() || player.getCurrentPosition() == 0)) {
+                isVideoAtStart = true;
+
+                if (player.getDuration() > INITIAL_FRAME_TIME) {
+                    player.seekTo(INITIAL_FRAME_TIME);
+                } else {
+                    player.seekTo(player.getDuration() / 2);
+                }
+            }
+        }
+
         public void play() {
             Player player = playerView.getPlayer();
             if (player != null) {
+                if (isVideoAtStart) {
+                    player.seekTo(0);
+                    isVideoAtStart = false;
+                }
+
                 player.setPlayWhenReady(true);
             }
         }
@@ -352,6 +413,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             Player player = playerView.getPlayer();
             if (player != null) {
                 player.setPlayWhenReady(false);
+                seekToThumbnailFrame(player);
             }
         }
 
