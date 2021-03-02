@@ -9,6 +9,9 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 public class Preferences {
 
     private static Preferences instance;
@@ -32,6 +35,7 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_MAKE_POST_NUX = "showed_make_post_nux";
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
+    private static final String PREF_KEY_NEXT_PRESENCE_ID = "next_presence_id";
     private static final String PREF_KEY_VIDEO_BITRATE = "video_bitrate";
     private static final String PREF_KEY_AUDIO_BITRATE = "audio_bitrate";
     private static final String PREF_KEY_H264_RES = "h264_res";
@@ -236,6 +240,18 @@ public class Preferences {
             Log.e("preferences: failed to increment notif id");
         }
         return id;
+    }
+
+    @WorkerThread
+    public String getAndIncrementPresenceId() {
+        final int max = 65536; // 2^16 for 4 hex chars
+        int dow = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        int id = getPreferences().getInt(PREF_KEY_NEXT_PRESENCE_ID, 0);
+        int nextId = (id + 1) % max;
+        if (!getPreferences().edit().putInt(PREF_KEY_NEXT_PRESENCE_ID, nextId).commit()) {
+            Log.e("preferences: failed to increment presence id");
+        }
+        return String.format(Locale.US, "%dD%04x", dow, id);
     }
 
     @WorkerThread
