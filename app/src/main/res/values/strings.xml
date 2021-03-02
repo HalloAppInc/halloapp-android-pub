@@ -374,7 +374,7 @@
     <string name="create_group">Create new group</string>
     <string name="create_group_in_progress">Creating group %s…</string>
     <string name="new_group_title">Name your group</string>
-    <string name="group_picker_title">Select members</string>
+    <string name="group_picker_title">New group</string>
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
     <string name="failed_create_group">Failed to create group, try again later</string>
