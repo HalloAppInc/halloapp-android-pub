@@ -194,19 +194,9 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     }
 
     private void onInviteFriends() {
-        if (Constants.INVITES_ENABLED) {
-            final Intent intent = new Intent(this, InviteContactsActivity.class);
-            intent.putExtra(InviteContactsActivity.EXTRA_SEARCH_TEXT, adapter.filterText);
-            startActivity(intent);
-        } else {
-            final Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_text));
-            intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, getText(R.string.share_via)));
-
-        }
+        final Intent intent = new Intent(this, InviteContactsActivity.class);
+        intent.putExtra(InviteContactsActivity.EXTRA_SEARCH_TEXT, adapter.filterText);
+        startActivity(intent);
     }
 
     private void onCreateGroup(@Nullable Collection<UserId> initialIds) {

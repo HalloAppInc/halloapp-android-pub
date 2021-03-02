@@ -34,7 +34,6 @@
     <string name="registration_failed">Failed to register phone number, try again</string>
     <string name="registration_failed_no_friends">We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number.</string>
     <string name="registration_failed_no_friends_title">Shucks!</string>
-    <string name="type_a_post_hint">Type a post</string>
     <string name="type_a_message_hint">Type a message</string>
     <string name="write_a_description">Write a description</string>
     <string name="write_a_post">Write a post</string>
@@ -266,7 +265,6 @@
     <string name="invite_friend_chooser_title">Invite %s</string>
     <string name="invite_text">Join me on HalloApp — a simple and private way to stay in touch with friends and family. Get it at https://halloapp.com/dl</string>
     <string name="invite_text_with_name_and_number">Hey %s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %s to register. Get it at halloapp.com/dl</string>
-    <string name="share_via">Share via…</string>
     <string name="name_hint">Your name</string>
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="update">Update</string>
@@ -465,6 +463,7 @@
     <string name="composer_sharing_all_summary">Sharing with my contacts</string>
     <string name="composer_sharing_except_summary">Sharing with some of my contacts</string>
     <plurals name="composer_sharing_only_summary">
+        <item quantity="one">Sharing with %d of my contacts</item>
         <item quantity="other">Sharing with %d of my contacts</item>
     </plurals>
     <string name="post_preview_no_caption">%s shared a post</string>
