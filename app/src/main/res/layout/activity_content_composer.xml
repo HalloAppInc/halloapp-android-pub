@@ -55,7 +55,7 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <FrameLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/media_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -300,7 +300,7 @@
 
             </com.halloapp.widget.ContentComposerScrollView>
 
-        </FrameLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.halloapp.ui.mentions.MentionPickerView
             android:id="@+id/mention_picker_view"

@@ -217,7 +217,7 @@ public class ContentComposerActivity extends HalloActivity {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
             if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
-                SnackbarHelper.showInfo(this, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
+                SnackbarHelper.showInfo(mediaVerticalScrollView, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
             editText = findViewById(R.id.entry_bottom);
@@ -346,7 +346,7 @@ public class ContentComposerActivity extends HalloActivity {
                 mediaPagerIndicator.setViewPager(mediaPager);
             }
             if (media.size() != expectedMediaCount) {
-                SnackbarHelper.showWarning(this, R.string.failed_to_load_media);
+                SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
             }
             invalidateOptionsMenu();
             updateMediaButtons();
@@ -729,7 +729,7 @@ public class ContentComposerActivity extends HalloActivity {
             if (videoTooLong) {
                 runOnUiThread(() -> {
                     String message = getResources().getString(R.string.max_video_length, maxVideoLength);
-                    SnackbarHelper.showWarning(this, message);
+                    SnackbarHelper.showWarning(mediaVerticalScrollView, message);
 
                     fail.run();
                 });
