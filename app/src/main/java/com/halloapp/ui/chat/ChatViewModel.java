@@ -283,6 +283,7 @@ public class ChatViewModel extends AndroidViewModel {
                 unblockResult.postValue(false);
             } else {
                 unblockResult.postValue(true);
+                connection.subscribePresence(userId);
             }
         }).onError(e -> {
             unblockResult.postValue(false);
