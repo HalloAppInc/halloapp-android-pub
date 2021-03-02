@@ -1392,6 +1392,7 @@ class PostsDb {
                         posts.put(comment.postId, parentPost);
                     }
                 }
+                mentionsDb.fillMentions(comment);
                 comment.setParentPost(posts.get(comment.postId));
                 comments.add(comment);
             }
