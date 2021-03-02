@@ -32,10 +32,12 @@
   <string name="invalid_phone_number">Geçersiz numara</string>
   <string name="share_option_post">Paylaş</string>
   <string name="share_option_message">Mesaj at</string>
+  <string name="contact_rationale_continue">Tamam</string>
   <string name="type_a_comment_hint">Yorum ekle</string>
   <string name="comments">Yorumlar</string>
   <string name="reply">Yanıtla</string>
   <string name="close">Kapat</string>
+  <string name="reply_original_not_found">Orjinal mesaj bulunamadı</string>
   <string name="settings">Ayarlar</string>
   <string name="settings_privacy">Gizlilik</string>
   <string name="help">Yardım</string>
@@ -87,7 +89,6 @@
   <string name="create_group">Yeni grup oluştur</string>
   <string name="create_group_in_progress">Oluşturuluyor %s…</string>
   <string name="new_group_title">Gruba bir isim ver</string>
-  <string name="group_picker_title">Katılımcı seç</string>
   <string name="button_create_group">Oluştur</string>
   <string name="group_name_hint">Grup ismi</string>
   <string name="failed_create_group">İşlem başarısız oldu, sonra tekrar deneyiniz</string>
