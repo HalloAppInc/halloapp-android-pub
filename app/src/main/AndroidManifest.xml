@@ -112,7 +112,7 @@
         <activity android:name=".ui.invites.InviteContactsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/invite_title"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
+            android:windowSoftInputMode="stateUnchanged|adjustResize"/>
 
         <activity
             android:name=".ui.ContentComposerActivity"
