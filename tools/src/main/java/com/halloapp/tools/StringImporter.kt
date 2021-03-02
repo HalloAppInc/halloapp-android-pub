@@ -1,5 +1,6 @@
 package com.halloapp.tools
 
+import org.apache.http.util.TextUtils
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -64,23 +65,23 @@ class StringImporter() {
             for (pluralResource in localizedStrings.plurals) {
                 val pluralElement = doc.createElement("plurals")
                 pluralElement.setAttribute("name", pluralResource.name)
-                if (pluralResource.few != null) {
-                    pluralElement.appendChild(createItemNode(doc, "few", pluralResource.few))
+                if (!TextUtils.isEmpty(pluralResource.few)) {
+                    pluralElement.appendChild(createItemNode(doc, "few", pluralResource.few!!))
                 }
-                if (pluralResource.zero != null) {
-                    pluralElement.appendChild(createItemNode(doc, "zero", pluralResource.zero))
+                if (!TextUtils.isEmpty(pluralResource.zero)) {
+                    pluralElement.appendChild(createItemNode(doc, "zero", pluralResource.zero!!))
                 }
-                if (pluralResource.one != null) {
-                    pluralElement.appendChild(createItemNode(doc, "one", pluralResource.one))
+                if (!TextUtils.isEmpty(pluralResource.one)) {
+                    pluralElement.appendChild(createItemNode(doc, "one", pluralResource.one!!))
                 }
-                if (pluralResource.two != null) {
-                    pluralElement.appendChild(createItemNode(doc, "two", pluralResource.two))
+                if (!TextUtils.isEmpty(pluralResource.two)) {
+                    pluralElement.appendChild(createItemNode(doc, "two", pluralResource.two!!))
                 }
-                if (pluralResource.many != null) {
-                    pluralElement.appendChild(createItemNode(doc, "many", pluralResource.many))
+                if (!TextUtils.isEmpty(pluralResource.many)) {
+                    pluralElement.appendChild(createItemNode(doc, "many", pluralResource.many!!))
                 }
-                if (pluralResource.other != null) {
-                    pluralElement.appendChild(createItemNode(doc, "other", pluralResource.other))
+                if (!TextUtils.isEmpty(pluralResource.other)) {
+                    pluralElement.appendChild(createItemNode(doc, "other", pluralResource.other!!))
                 }
                 root.appendChild(pluralElement)
             }
@@ -103,7 +104,7 @@ class StringImporter() {
     private fun createItemNode(doc: Document, quantity: String, text: String): Element {
         val element = doc.createElement("item")
         element.setAttribute("quantity", quantity)
-        element.nodeValue = text
+        element.textContent = text
         return element
     }
 
