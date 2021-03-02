@@ -74,7 +74,13 @@ public class InviteContactsViewModel extends AndroidViewModel {
                 List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getUniqueContactsWithPhones());
                 Collator collator = Collator.getInstance(Locale.getDefault());
                 Collections.sort(contacts, (o1, o2) -> {
-                    if (o1.numPotentialFriends > 1 && o2.numPotentialFriends > 1) {
+                    if (o1.userId != null || o2.userId != null) {
+                        if (o1.userId == null) {
+                            return -1;
+                        } else if (o2.userId == null) {
+                            return 1;
+                        }
+                    } else if (o1.numPotentialFriends > 1 && o2.numPotentialFriends > 1) {
                         if (o1.numPotentialFriends != o2.numPotentialFriends) {
                             return (int) o2.numPotentialFriends - (int) o1.numPotentialFriends;
                         }
@@ -82,12 +88,6 @@ public class InviteContactsViewModel extends AndroidViewModel {
                         return -1;
                     } else if (o2.numPotentialFriends > 1) {
                         return 1;
-                    } else if (o1.userId != null || o2.userId != null) {
-                        if (o1.userId == null) {
-                            return -1;
-                        } else if (o2.userId == null) {
-                            return 1;
-                        }
                     }
                     boolean alpha1 = Character.isAlphabetic(o1.getDisplayName().codePointAt(0));
                     boolean alpha2 = Character.isAlphabetic(o2.getDisplayName().codePointAt(0));
