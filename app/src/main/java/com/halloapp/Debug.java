@@ -3,7 +3,6 @@ package com.halloapp;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
@@ -33,16 +32,13 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.WhisperKeysResponseIq;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Debug {

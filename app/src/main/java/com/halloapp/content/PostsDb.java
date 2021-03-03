@@ -1425,7 +1425,14 @@ class PostsDb {
 
     @NonNull
     List<Post> getShareablePosts() {
-        return getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false);
+        List<Post> ret = new ArrayList<>();
+        List<Post> posts = getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false);
+        for (Post post : posts) {
+            if (!post.isRetracted()) {
+                ret.add(post);
+            }
+        }
+        return ret;
     }
 
     @WorkerThread
