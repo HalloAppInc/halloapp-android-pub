@@ -32,7 +32,6 @@
   <string name="registration_failed">फ़ोन नंबर पंजीकृत करने में विफल, पुनः प्रयास करें</string>
   <string name="registration_failed_no_friends">वर्तमान में हम केवल निमंत्रण द्वारा ही हैI यदि आपके पास कोई मित्र या परिवार का सदस्य है जो HalloApp का उपयोग करता है, तो उन्हें अपने फोन नंबर का उपयोग करके आपको आमंत्रित करने के लिए कहें।</string>
   <string name="registration_failed_no_friends_title">ओह!</string>
-  <string name="type_a_post_hint">एक पोस्ट लिखें</string>
   <string name="type_a_message_hint">एक संदेश लिखें</string>
   <string name="write_a_description">एक विवरण लिखें</string>
   <string name="write_a_post">एक पोस्ट लिखें</string>

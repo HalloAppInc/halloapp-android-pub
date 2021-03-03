@@ -35,7 +35,6 @@
   <string name="registration_failed">No se pudo registrar el número de teléfono, inténtalo de nuevo</string>
   <string name="registration_failed_no_friends">Por el momento Hallo App solo se puede usar con invitación. Si tienes un amigo o un familiar que use HalloApp, diles que te inviten usando tu número de teléfono. </string>
   <string name="registration_failed_no_friends_title">¡Caray!</string>
-  <string name="type_a_post_hint">Publica algo</string>
   <string name="type_a_message_hint">Escribe un mensaje</string>
   <string name="write_a_description">Escribe una descripción</string>
   <string name="write_a_post">Publica algo</string>
@@ -188,7 +187,6 @@
   <string name="invite_friends">Invitar a familiares y amigos</string>
   <string name="invite_a_friend">Invita a un amigo</string>
   <string name="invite_text">Te invito a HalloApp, una forma simple y privada de estar en contacto con amigos y familia. Obténla en https://halloapp.com/dl</string>
-  <string name="share_via">Compártela por medio de...</string>
   <string name="name_hint">Tu nombre</string>
   <string name="name_must_be_specified">Debes especificar tu nombre</string>
   <string name="update">Actualizar</string>
