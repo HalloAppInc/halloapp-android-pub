@@ -143,7 +143,10 @@ public class ContentComposerActivity extends HalloActivity {
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                sharedElements.put(CropImageActivity.TRANSITION_VIEW_NAME, mediaPagerAdapter.getCurrentView().findViewById(R.id.image));
+                final View currentView = mediaPagerAdapter.getCurrentView();
+                if (currentView != null) {
+                    sharedElements.put(CropImageActivity.TRANSITION_VIEW_NAME, currentView.findViewById(R.id.image));
+                }
             }
         });
 
@@ -983,6 +986,7 @@ public class ContentComposerActivity extends HalloActivity {
             return POSITION_NONE;
         }
 
+        @Nullable
         public View getCurrentView() {
             return currentView;
         }
