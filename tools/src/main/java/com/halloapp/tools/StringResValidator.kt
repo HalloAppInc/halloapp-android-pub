@@ -33,9 +33,14 @@ class StringResValidator() {
                 val plainTextEnd = if (nextPercent == -1) len else nextPercent
                 plainTextEnd
             } else {
-                val fsp = FormatSpecifierParser(str, i + 1)
-                al.add(fsp.formatSpecifier)
-                fsp.endIdx
+                try {
+                    val fsp = FormatSpecifierParser(str, i + 1)
+                    al.add(fsp.formatSpecifier)
+                    fsp.endIdx
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                    i+1
+                }
             }
         }
         return al

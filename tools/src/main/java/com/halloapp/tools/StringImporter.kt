@@ -59,7 +59,7 @@ class StringImporter() {
             for (strResource in localizedStrings.strings) {
                 val strElement = doc.createElement("string")
                 strElement.setAttribute("name", strResource.name)
-                strElement.textContent = strResource.text
+                strElement.textContent = processString(strResource.text)
                 root.appendChild(strElement)
             }
             for (pluralResource in localizedStrings.plurals) {
@@ -104,7 +104,7 @@ class StringImporter() {
     private fun createItemNode(doc: Document, quantity: String, text: String): Element {
         val element = doc.createElement("item")
         element.setAttribute("quantity", quantity)
-        element.textContent = text
+        element.textContent = processString(text)
         return element
     }
 
@@ -126,5 +126,9 @@ class StringImporter() {
 
     fun parseGoogleSheet(): Boolean {
         return SheetFetcher.fetchStrings(enStrings, enPlurals, localizations)
+    }
+
+    fun processString(str: String): String {
+        return str.replace("...", "…")
     }
 }
