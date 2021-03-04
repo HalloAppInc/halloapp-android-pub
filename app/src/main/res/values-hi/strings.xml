@@ -58,7 +58,7 @@
   <string name="contacts_permission_rationale_denied">अपने मित्रों और परिवार से जुड़ने के लिए हमें आपके डिवाइस पर संपर्कों को एक्सेस करने की अनुमति चाहिए। \n\nएप्लिकेशन अनुमतियों को संशोधित करने के लिए ऐप सेटिंग स्क्रीन पर क्लिक करें।</string>
   <string name="storage_permission_rationale">मीडिया चुनें हमें आपके डिवाइस स्टोरेज तक पहुंचने की अनुमति चाहिए</string>
   <string name="storage_permission_rationale_denied">मीडिया चुनें हमें आपके डिवाइस स्टोरेज तक पहुँचने के लिए एक अनुमति की आवश्यकता है। \ n \ n ऐप अनुमतियों को संशोधित करने के लिए ऐप सेटिंग्स स्क्रीन पर क्लिक करें।</string>
-  <string name="initializing_please_wait">प्रारंभ में, कृपया प्रतीक्षा करें ...</string>
+  <string name="initializing_please_wait">प्रारंभ में, कृपया प्रतीक्षा करें …</string>
   <string name="retry">पुन: प्रयास करें</string>
   <string name="contact_rationale_upload">
 आपको अपने मित्रों और परिवार से जोड़ने के लिए हमें आपके संपर्कों तक पहुँचने के लिए आपकी अनुमति की आवश्यकता होगी। और अधिक जानें</string>
@@ -81,17 +81,17 @@
   <string name="connectivity_info_not_connected">कोई नेटवर्क नहीं</string>
   <string name="blocking_user_failed_check_internet">%s को नहीं अवरोधित किया जा सका। अपना इंटरनेट जांचें और पुन: प्रयास करें।</string>
   <string name="blocking_user_successful">%s को अवरोधित किया गया</string>
-  <string name="blocking_user_in_progress">%s अवरुद्ध कर रहा है ...</string>
+  <string name="blocking_user_in_progress">%s अवरुद्ध कर रहा है …</string>
   <string name="unblocking_user_successful">अनब्लॉक %s</string>
   <string name="unblocking_user_failed_check_internet">%s को नहीं हटाया जा सका। अपना इंटरनेट जांचें और पुन: प्रयास करें।</string>
-  <string name="unblocking_user_in_progress">%s अनब्लॉक करें ...</string>
+  <string name="unblocking_user_in_progress">%s अनब्लॉक करें …</string>
   <string name="are_you_sure_dialog_title">क्या आपको यकीन है?</string>
   <string name="hide_future_posts_confirmation">क्या आप सुनिश्चित हैं कि आप अपने भविष्य के सभी पोस्ट को %s से छुपाना चाहते हैं? आप इसे बाद में बदल सकते हैं।</string>
   <string name="feed_privacy_hide_success">फ़ीड गोपनीयता अपडेट की गई। %s से पोस्ट छिपाएँ</string>
   <string name="feed_privacy_hide_failure">फ़ीड गोपनीयता अपडेट करने में विफल, अपना इंटरनेट जांचें और पुन: प्रयास करें</string>
-  <string name="user_typing">टाइपिंग ...</string>
-  <string name="group_user_typing">%s टाइप कर रहा है ...</string>
-  <string name="group_many_users_typing">टाइप करने वाले कई उपयोगकर्ता ...</string>
+  <string name="user_typing">टाइपिंग …</string>
+  <string name="group_user_typing">%s टाइप कर रहा है …</string>
+  <string name="group_many_users_typing">टाइप करने वाले कई उपयोगकर्ता …</string>
   <string name="feed_nux_bottom_sheet_title">HalloApp के बारे में</string>
   <string name="feed_nux_bottom_sheet_text">होम फीड आपको 30 दिनों के बाद गायब होने वाले पाठ, फोटो और वीडियो अपडेट साझा करने की अनुमति देता है। \ n \ n यदि आप किसी के साथ अपडेट साझा करना चाहते हैं, तो दोनों पक्षों के पास अपने फोन पर सहेजे गए एक-दूसरे के नंबर होने चाहिए। \ n \ n आप अपने संपूर्ण संपर्क सूची के साथ या केवल चयनित लोगों के साथ अपने अपडेट साझा कर सकते हैं। फीड प्राइवेसी बदलने के लिए सेटिंग में जाएं।</string>
   <string name="messages_nux_text">यह वह जगह है जहाँ आप अपने मित्रों और परिवार से संदेश प्राप्त करेंगे। जब कोई नया व्यक्ति HalloApp से जुड़ता है तो आप उन्हें यहाँ देख सकते हैं।</string>

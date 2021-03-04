@@ -5,9 +5,9 @@
   <string name="title_messages">Sohbetler</string>
   <string name="title_profile">Profil</string>
   <string name="title_groups">Gruplar</string>
-  <string name="comment">Yorum</string>
+  <string name="comment">Yorum yaz</string>
   <string name="next">İleri</string>
-  <string name="message">Mesaj</string>
+  <string name="message">Mesaj at</string>
   <string name="new_chat">Yeni sohbet</string>
   <string name="new_group">Yeni grup</string>
   <string name="notifications">İletiler</string>
@@ -65,6 +65,7 @@
   <string name="new_messages">Yeni mesaj</string>
   <string name="delete">Sil</string>
   <string name="view_profile">Profil görüntüle</string>
+  <string name="my_posts">Paylaşımlarım</string>
   <string name="about_halloapp">HalloApp hakkında</string>
   <string name="last_seen">Son görülme %s</string>
   <string name="online">Çevrimiçi</string>
@@ -80,6 +81,7 @@
   <string name="save">Kaydet</string>
   <string name="invite_friends_title">Aileni ve arkadaşlarını davet et</string>
   <string name="invite_action">Davet</string>
+  <string name="settings_invite_option">HalloApp\'e davet et</string>
   <string name="edit">Düzenle</string>
   <string name="done">Tamam</string>
   <string name="members_header">Katılımcılar (%s)</string>
