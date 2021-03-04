@@ -278,7 +278,7 @@ public class MediaUtils {
     }
 
     @WorkerThread
-    public static void transcodeImage(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality) throws IOException {
+    public static void transcodeImage(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension, int quality, boolean forcesRGB) throws IOException {
         final int maxWidth;
         final int maxHeight;
         if (cropRect != null) {
@@ -294,15 +294,15 @@ public class MediaUtils {
             if (cropRect != null && !(cropRect.left == 0 && cropRect.top == 0 && cropRect.right == 1 && cropRect.bottom == 1)) {
                 final Rect bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
                         (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
-                croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), getBitmapConfig(bitmap.getConfig()));
+                croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), getBitmapConfig(bitmap.getConfig(), forcesRGB));
                 final Canvas canvas = new Canvas(croppedBitmap);
                 canvas.drawColor(0xffffffff); // white background in case image has transparency
                 canvas.drawBitmap(bitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
                 bitmap.recycle();
             } else {
-                if (bitmap.getPixel(0,0) == 0) {
+                if (bitmap.getPixel(0,0) == 0 || forcesRGB) {
                     // white background in case image has transparency
-                    croppedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), getBitmapConfig(bitmap.getConfig()));
+                    croppedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), getBitmapConfig(bitmap.getConfig(), forcesRGB));
                     final Canvas canvas = new Canvas(croppedBitmap);
                     canvas.drawColor(0xffffffff);
                     canvas.drawBitmap(bitmap, 0, 0, null);
@@ -474,7 +474,11 @@ public class MediaUtils {
     }
 
     public static @NonNull Bitmap.Config getBitmapConfig(@Nullable Bitmap.Config config) {
-        if (config != Bitmap.Config.ARGB_8888 && Build.VERSION.SDK_INT >= 26) {
+        return getBitmapConfig(config, false);
+    }
+
+    public static @NonNull Bitmap.Config getBitmapConfig(@Nullable Bitmap.Config config, boolean forcesRGB) {
+        if (config != Bitmap.Config.ARGB_8888 && Build.VERSION.SDK_INT >= 26 && !forcesRGB) {
             return Bitmap.Config.RGBA_F16; // Wide color gamut
         } else {
             return Bitmap.Config.ARGB_8888; // sRGB

@@ -183,8 +183,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
         new LoadContentUrisTask(getApplication(), uris, editStates, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    void prepareContent(@Nullable ChatId chatId, @Nullable GroupId groupFeedGroupId, @Nullable String text, @Nullable List<Mention> mentions) {
-        new PrepareContentTask(chatId, groupFeedGroupId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    void prepareContent(@Nullable ChatId chatId, @Nullable GroupId groupFeedGroupId, @Nullable String text, @Nullable List<Mention> mentions, boolean supportsWideColor) {
+        new PrepareContentTask(chatId, groupFeedGroupId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -389,8 +389,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final MutableLiveData<ContentItem> contentItem;
         private final String replyPostId;
         private final int replyPostMediaIndex;
+        private final boolean forcesRGB;
 
-        PrepareContentTask(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex) {
+        PrepareContentTask(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex, boolean forcesRGB) {
             this.chatId = chatId;
             this.groupId = groupId;
             this.text = text;
@@ -399,6 +400,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             this.contentItem = contentItem;
             this.replyPostId = replyPostId;
             this.replyPostMediaIndex = replyPostMediaIndex;
+            this.forcesRGB = forcesRGB;
         }
 
         @Override
@@ -418,7 +420,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                                     final float padding = (mediaItem.height - Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) / 2;
                                     cropRect = new RectF(0, padding / mediaItem.height, 1, 1 - padding / mediaItem.height);
                                 }
-                                MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY);
+                                MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
                             } catch (IOException e) {
                                 Log.e("failed to transcode image", e);
                                 return null;

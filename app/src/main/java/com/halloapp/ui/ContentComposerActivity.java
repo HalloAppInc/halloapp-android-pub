@@ -65,6 +65,7 @@ import com.halloapp.ui.mediaedit.VideoEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -749,10 +750,10 @@ public class ContentComposerActivity extends HalloActivity {
                 Log.w("ContentComposerActivity: cannot send empty content");
             } else {
                 item.setEnabled(false);
-
+                final boolean supportsWideColor = ActivityUtils.supportsWideColor(this);
                 verifyVideosDurationWithinLimit(
                     () -> item.setEnabled(true),
-                    () -> viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second)
+                    () -> viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second, supportsWideColor)
                 );
             }
             return true;
