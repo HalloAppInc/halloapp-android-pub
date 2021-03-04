@@ -129,6 +129,8 @@ class StringImporter() {
     }
 
     fun processString(str: String): String {
-        return str.replace("...", "…")
+        var updatedStr = str.replace("...", "…")
+        updatedStr = updatedStr.replace(Regex("(?<![\\\\])'"), "\\\\'")
+        return updatedStr
     }
 }
