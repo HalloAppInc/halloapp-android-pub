@@ -1,6 +1,7 @@
 package com.halloapp.noise;
 
 import android.text.format.DateUtils;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,7 +87,6 @@ public class HANoiseSocket extends Socket {
             Log.i("NoiseSocket/authenticate trying IK handshake");
             try {
                 performIKHandshake(authRequest, noiseKey, serverStaticKey.getKeyMaterial());
-                me.setServerStaticKey(getServerStaticKey());
             } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException e) {
                 throw new NoiseException(e);
             }
@@ -144,9 +144,10 @@ public class HANoiseSocket extends Socket {
 
         finishHandshake();
 
-        // TODO: clarkc remove after we figure out fallback issue
-        if (fallback && Arrays.equals(remoteStaticKey, getServerStaticKey())) {
-            Log.e("NoiseSocket/xx_fallback triggered but keys match");
+        if (fallback) {
+            me.setServerStaticKey(getServerStaticKey());
+            // TODO: clarkc remove after we figure out fallback issue
+            Log.e("NoiseSocket/xx_fallback triggered. Old: " + Base64.encodeToString(remoteStaticKey, Base64.NO_WRAP) + " New: " + Base64.encodeToString(getServerStaticKey(), Base64.NO_WRAP));
         }
     }
 
