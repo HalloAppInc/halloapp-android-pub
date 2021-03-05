@@ -101,11 +101,15 @@ public class EncryptedKeyStore {
     }
 
     public void setSessionAlreadySetUp(UserId peerUserId, boolean downloaded) {
-        getPreferences().edit().putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded).apply();
+        if (!getPreferences().edit().putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded).commit()) {
+            Log.e("EncryptedKeyStore: failed to set session already set up");
+        }
     }
 
     public void clearSessionAlreadySetUp(UserId peerUserId) {
-        getPreferences().edit().remove(getSessionAlreadySetUpPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getSessionAlreadySetUpPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear session already set up");
+        }
     }
 
     private String getSessionAlreadySetUpPrefKey(UserId peerUserId) {
@@ -117,11 +121,15 @@ public class EncryptedKeyStore {
     }
 
     public void setLastDownloadAttempt(UserId peerUserId, long lastDownloadAttempt) {
-        getPreferences().edit().putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt).apply();
+        if (!getPreferences().edit().putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt).commit()) {
+            Log.e("EncryptedKeyStore: failed to set last download attempt");
+        }
     }
 
     public void clearLastDownloadAttempt(UserId peerUserId) {
-        getPreferences().edit().remove(getLastDownloadAttemptPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getLastDownloadAttemptPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear last download attempt");
+        }
     }
 
     private String getLastDownloadAttemptPrefKey(UserId peerUserId) {
@@ -133,11 +141,15 @@ public class EncryptedKeyStore {
     }
 
     public void setPeerResponded(UserId peerUserId, boolean responded) {
-        getPreferences().edit().putBoolean(getPeerRespondedPrefKey(peerUserId), responded).apply();
+        if (!getPreferences().edit().putBoolean(getPeerRespondedPrefKey(peerUserId), responded).commit()) {
+            Log.e("EncryptedKeyStore: failed to set peer responded");
+        }
     }
 
     public void clearPeerResponded(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerRespondedPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getPeerRespondedPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer responded");
+        }
     }
 
     private String getPeerRespondedPrefKey(UserId peerUserId) {
@@ -229,7 +241,9 @@ public class EncryptedKeyStore {
             throw new CryptoException("otpk_not_found");
         }
         PrivateXECKey ret = new PrivateXECKey(rawKey);
-        getPreferences().edit().remove(prefKey).apply();
+        if (!getPreferences().edit().remove(prefKey).commit()) {
+            Log.e("EncryptedKeyStore: failed to remove one time pre key");
+        }
         return ret;
     }
 
@@ -253,7 +267,9 @@ public class EncryptedKeyStore {
             return null;
         }
 
-        getPreferences().edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
+        if (!getPreferences().edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).commit()) {
+            Log.e("EncryptedKeyStore: failed to rewrite skipped message key set");
+        }
 
         return stringToBytes(messageKeyString);
     }
@@ -267,10 +283,9 @@ public class EncryptedKeyStore {
         String keyPrefKey = getMessageKeyPrefKey(peerUserId, messageKey.getEphemeralKeyId(), messageKey.getCurrentChainIndex());
         messageKeyPrefKeys.add(keyPrefKey);
 
-        getPreferences().edit()
-                .putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial()))
-                .putStringSet(messageKeySetPrefKey, messageKeyPrefKeys)
-                .apply();
+        if (!getPreferences().edit().putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).commit()) {
+            Log.e("EncryptedKeyStore: failed to store skipped message key");
+        }
     }
 
     public void clearSkippedMessageKeys(UserId peerUserId) {
@@ -284,7 +299,9 @@ public class EncryptedKeyStore {
             editor.remove(prefKey);
         }
 
-        editor.apply();
+        if (!editor.commit()) {
+            Log.e("EncryptedKeyStore: failed to clear skipped message keys");
+        }
     }
 
     private String getMessageKeySetPrefKey(UserId peerUserId) {
@@ -304,7 +321,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerPublicIdentityKey(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerPublicIdentityKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getPeerPublicIdentityKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer identity key");
+        }
     }
 
     public String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
@@ -320,7 +339,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerSignedPreKey(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerSignedPreKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getPeerSignedPreKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer signed pre key");
+        }
     }
 
     private String getPeerSignedPreKeyPrefKey(UserId peerUserId) {
@@ -336,7 +357,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerOneTimePreKey(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerOneTimePreKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getPeerOneTimePreKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear one-time pre key");
+        }
     }
 
     private String getPeerOneTimePreKeyPrefKey(UserId peerUserId) {
@@ -344,7 +367,9 @@ public class EncryptedKeyStore {
     }
 
     public void setPeerOneTimePreKeyId(UserId peerUserId, int id) {
-        getPreferences().edit().putInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), id).apply();
+        if (!getPreferences().edit().putInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), id).commit()) {
+            Log.e("EncryptedKeyStore: failed to set one-time pre key id");
+        }
     }
 
     public Integer getPeerOneTimePreKeyId(UserId peerUserId) {
@@ -356,7 +381,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearPeerOneTimePreKeyId(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerOneTimePreKeyIdPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getPeerOneTimePreKeyIdPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear one-time pre key id");
+        }
     }
 
     private String getPeerOneTimePreKeyIdPrefKey(UserId peerUserId) {
@@ -372,7 +399,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearRootKey(UserId peerUserId) {
-        getPreferences().edit().remove(getRootKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getRootKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear root key");
+        }
     }
 
     private String getRootKeyPrefKey(UserId peerUserId) {
@@ -388,7 +417,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundChainKey(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundChainKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getOutboundChainKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear outbound chain key");
+        }
     }
 
     private String getOutboundChainKeyPrefKey(UserId peerUserId) {
@@ -404,7 +435,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundChainKey(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundChainKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getInboundChainKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear inbound chain key");
+        }
     }
 
     private String getInboundChainKeyPrefKey(UserId peerUserId) {
@@ -420,7 +453,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundEphemeralKey(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundEphemeralKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getInboundEphemeralKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear inbound ephemeral key");
+        }
     }
 
     private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
@@ -436,7 +471,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundEphemeralKey(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundEphemeralKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getOutboundEphemeralKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear outbound ephemeral key");
+        }
     }
 
     private String getOutboundEphemeralKeyPrefKey(UserId peerUserId) {
@@ -444,7 +481,9 @@ public class EncryptedKeyStore {
     }
 
     public void setInboundEphemeralKeyId(UserId peerUserId, int id) {
-        getPreferences().edit().putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
+        if (!getPreferences().edit().putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id).commit()) {
+            Log.e("EncryptedKeyStore: failed to set inbound ephemeral key id");
+        }
     }
 
     public int getInboundEphemeralKeyId(UserId peerUserId) {
@@ -452,7 +491,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundEphemeralKeyId(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundEphemeralKeyIdPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getInboundEphemeralKeyIdPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear inbound ephemeral key id");
+        }
     }
 
     private String getInboundEphemeralKeyIdPrefKey(UserId peerUserId) {
@@ -460,7 +501,9 @@ public class EncryptedKeyStore {
     }
 
     public void setOutboundEphemeralKeyId(UserId peerUserId, int id) {
-        getPreferences().edit().putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
+        if (!getPreferences().edit().putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id).commit()) {
+            Log.e("EncryptedKeyStore: failed to set outbound ephemeral key id");
+        }
     }
 
     public int getOutboundEphemeralKeyId(UserId peerUserId) {
@@ -468,7 +511,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundEphemeralKeyId(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundEphemeralKeyIdPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getOutboundEphemeralKeyIdPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear outbound ephemeral key id");
+        }
     }
 
     private String getOutboundEphemeralKeyIdPrefKey(UserId peerUserId) {
@@ -476,7 +521,9 @@ public class EncryptedKeyStore {
     }
 
     public void setInboundPreviousChainLength(UserId peerUserId, int len) {
-        getPreferences().edit().putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len).apply();
+        if (!getPreferences().edit().putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len).commit()) {
+            Log.e("EncryptedKeyStore: failed to set inbound previous chain length");
+        }
     }
 
     public int getInboundPreviousChainLength(UserId peerUserId) {
@@ -484,7 +531,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundPreviousChainLength(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundPreviousChainLengthPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getInboundPreviousChainLengthPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear inbound previous chain length");
+        }
     }
 
     private String getInboundPreviousChainLengthPrefKey(UserId peerUserId) {
@@ -492,7 +541,9 @@ public class EncryptedKeyStore {
     }
 
     public void setOutboundPreviousChainLength(UserId peerUserId, int len) {
-        getPreferences().edit().putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len).apply();
+        if (!getPreferences().edit().putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len).commit()) {
+            Log.e("EncryptedKeyStore: failed to set outbound previous chain length");
+        }
     }
 
     public int getOutboundPreviousChainLength(UserId peerUserId) {
@@ -500,7 +551,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundPreviousChainLength(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundPreviousChainLengthPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getOutboundPreviousChainLengthPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear outbound previous chain length");
+        }
     }
 
     private String getOutboundPreviousChainLengthPrefKey(UserId peerUserId) {
@@ -508,7 +561,9 @@ public class EncryptedKeyStore {
     }
 
     public void setInboundCurrentChainIndex(UserId peerUserId, int index) {
-        getPreferences().edit().putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index).apply();
+        if (!getPreferences().edit().putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index).commit()) {
+            Log.e("EncryptedKeyStore: failed to set inbound current chain index");
+        }
     }
 
     public int getInboundCurrentChainIndex(UserId peerUserId) {
@@ -516,7 +571,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundCurrentChainIndex(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundCurrentChainIndexPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getInboundCurrentChainIndexPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear inbound current chain index");
+        }
     }
 
     private String getInboundCurrentChainIndexPrefKey(UserId peerUserId) {
@@ -524,7 +581,9 @@ public class EncryptedKeyStore {
     }
 
     public void setOutboundCurrentChainIndex(UserId peerUserId, int index) {
-        getPreferences().edit().putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index).apply();
+        if (!getPreferences().edit().putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index).commit()) {
+            Log.e("EncryptedKeyStore: failed to set outbound current chain index");
+        }
     }
 
     public int getOutboundCurrentChainIndex(UserId peerUserId) {
@@ -532,7 +591,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundCurrentChainIndex(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundCurrentChainIndexPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getOutboundCurrentChainIndexPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear outbound current chain index");
+        }
     }
 
     private String getOutboundCurrentChainIndexPrefKey(UserId peerUserId) {
@@ -548,7 +609,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearOutboundTeardownKey(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundTeardownKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getOutboundTeardownKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear outbound teardown key");
+        }
     }
 
     private String getOutboundTeardownKeyPrefKey(UserId peerUserId) {
@@ -564,7 +627,9 @@ public class EncryptedKeyStore {
     }
 
     public void clearInboundTeardownKey(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundTeardownKeyPrefKey(peerUserId)).apply();
+        if (!getPreferences().edit().remove(getInboundTeardownKeyPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear inbound teardown key");
+        }
     }
 
     private String getInboundTeardownKeyPrefKey(UserId peerUserId) {
@@ -588,7 +653,9 @@ public class EncryptedKeyStore {
     }
 
     private void storeBytes(String prefKey, byte[] bytes) {
-        getPreferences().edit().putString(prefKey, bytesToString(bytes)).apply();
+        if (!getPreferences().edit().putString(prefKey, bytesToString(bytes)).commit()) {
+            Log.e("EncryptedKeyStore: failed to store bytes");
+        }
     }
 
     @Nullable
