@@ -18,7 +18,7 @@ public class ActivityUtils {
         } else if (Build.VERSION.SDK_INT >= 27) {
             return activity.getWindow().isWideColorGamut();
         } else {
-            return activity.getWindow().getColorMode() != ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT;
+            return activity.getWindow().getColorMode() == ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT;
         }
 
     }
