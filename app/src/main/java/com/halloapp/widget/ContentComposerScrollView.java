@@ -52,11 +52,8 @@ public class ContentComposerScrollView extends ScrollView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         if (shouldScrollToBottom) {
-            post(() -> {
-                scrollToBottom();
-            });
+            postScrollToBottom();
         }
     }
 
@@ -70,6 +67,12 @@ public class ContentComposerScrollView extends ScrollView {
 
     public void setShouldScrollToBottom(boolean shouldScrollToBottom) {
         this.shouldScrollToBottom = shouldScrollToBottom;
+    }
+
+    public void postScrollToBottom() {
+        post(() -> {
+            scrollToBottom();
+        });
     }
 
     private void scrollToBottom() {

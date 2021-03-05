@@ -355,6 +355,9 @@ public class ContentComposerActivity extends HalloActivity {
             invalidateOptionsMenu();
             updateMediaButtons();
             updateAspectRatioForMedia(media);
+            if (chatId != null) {
+                mediaVerticalScrollView.postScrollToBottom();
+            }
         });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.contentItem.observe(this, contentItem -> {
