@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +18,6 @@ import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +35,6 @@ import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
-import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -87,7 +86,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final int PURPOSE_AVATAR = 2;
 
     private static final int PENDING_OPERATION_NONE = 0;
-    private static final int PENDING_OPERATION_PHOTO = 1;
+    private static final int PENDING_OPERATION_PICTURE = 1;
     private static final int PENDING_OPERATION_VIDEO = 2;
 
     private static final int PREFERRED_RATIO_X = 3;
@@ -163,15 +162,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         captureButton = findViewById(R.id.capture);
         captureButton.setOnLongClickListener(v -> {
             Log.d("CameraActivity: capture button onLongClick");
-            if (cameraIsAvailable() && isRecordingVideoAllowed() && pendingOperation == PENDING_OPERATION_NONE) {
-                if (cameraView.getMode() != Mode.VIDEO) {
-                    Log.d("CameraActivity: PENDING_OPERATION_VIDEO");
-                    pendingOperation = PENDING_OPERATION_VIDEO;
-                    cameraView.setMode(Mode.VIDEO);
-                } else {
-                    takeVideo();
-                }
-            }
+            prepareToTakeVideo();
             return false;
         });
         captureButton.setOnClickListener(v -> {
@@ -179,14 +170,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             if (cameraView != null) {
                 if (isRecordingVideo) {
                     cameraView.stopVideo();
-                } else if (cameraIsAvailable() && pendingOperation == PENDING_OPERATION_NONE) {
-                    if (cameraView.getMode() != Mode.PICTURE) {
-                        Log.d("CameraActivity: PENDING_OPERATION_PHOTO");
-                        pendingOperation = PENDING_OPERATION_PHOTO;
-                        cameraView.setMode(Mode.PICTURE);
-                    } else {
-                        takePicture();
-                    }
+                } else {
+                    prepareToTakePicture();
                 }
             }
         });
@@ -344,7 +329,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 }
                 if (pendingOperation != PENDING_OPERATION_NONE) {
                     if (cameraIsAvailable()) {
-                        if (pendingOperation == PENDING_OPERATION_PHOTO && cameraView.getMode() == Mode.PICTURE) {
+                        if (pendingOperation == PENDING_OPERATION_PICTURE && cameraView.getMode() == Mode.PICTURE) {
                             takePicture();
                         } else if (pendingOperation == PENDING_OPERATION_VIDEO && cameraView.getMode() == Mode.VIDEO) {
                             takeVideo();
@@ -371,6 +356,15 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     protected void onDestroy() {
         super.onDestroy();
         clearMediaFile();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            prepareToTakePicture();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -533,10 +527,34 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         return cameraView != null && !isTakingPhoto && !cameraView.isTakingPicture() && !isRecordingVideo && !cameraView.isTakingVideo();
     }
 
+    private void prepareToTakePicture() {
+        if (cameraIsAvailable() && pendingOperation == PENDING_OPERATION_NONE) {
+            if (cameraView.getMode() != Mode.PICTURE) {
+                Log.d("CameraActivity: prepareToTakePicture PENDING_OPERATION_PICTURE");
+                pendingOperation = PENDING_OPERATION_PICTURE;
+                cameraView.setMode(Mode.PICTURE);
+            } else {
+                takePicture();
+            }
+        }
+    }
+
     private void takePicture() {
         Log.d("CameraActivity: takePicture");
         isTakingPhoto = true;
         cameraView.takePicture();
+    }
+
+    private void prepareToTakeVideo() {
+        if (cameraIsAvailable() && isRecordingVideoAllowed() && pendingOperation == PENDING_OPERATION_NONE) {
+            if (cameraView.getMode() != Mode.VIDEO) {
+                Log.d("CameraActivity: prepareToTakeVideo PENDING_OPERATION_VIDEO");
+                pendingOperation = PENDING_OPERATION_VIDEO;
+                cameraView.setMode(Mode.VIDEO);
+            } else {
+                takeVideo();
+            }
+        }
     }
 
     private void takeVideo() {
