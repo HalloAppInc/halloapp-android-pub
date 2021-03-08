@@ -354,16 +354,19 @@ public class ContactsDb {
     @WorkerThread
     public @NonNull Contact getContact(@NonNull UserId userId) {
         Contact contact = readContact(userId);
+        final String halloName = readName(userId);
         if (contact == null) {
-            final String halloName = readName(userId);
             if (!TextUtils.isEmpty(halloName)) {
                 contact = new Contact(userId, null, halloName);
             } else {
                 contact = new Contact(userId, null, null);
                 contact.fallbackName = appContext.get().getString(R.string.unknown_contact);
             }
-        } else if (TextUtils.isEmpty(contact.addressBookName) && TextUtils.isEmpty(contact.addressBookPhone) && TextUtils.isEmpty(contact.halloName)) {
-            contact.fallbackName = appContext.get().getString(R.string.unknown_contact);
+        } else {
+            contact.halloName = halloName;
+            if (TextUtils.isEmpty(contact.addressBookName) && TextUtils.isEmpty(contact.addressBookPhone) && TextUtils.isEmpty(contact.halloName)) {
+                contact.fallbackName = appContext.get().getString(R.string.unknown_contact);
+            }
         }
         return contact;
     }
