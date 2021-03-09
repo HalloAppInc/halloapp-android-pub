@@ -1,0 +1,87 @@
+package com.halloapp.ui.chat;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.widget.TextView;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.collection.LruCache;
+
+import com.halloapp.content.ContentDb;
+import com.halloapp.props.ServerProps;
+import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogProvider;
+import com.halloapp.util.stats.DecryptStats;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.concurrent.Callable;
+
+public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, String> {
+
+    private static final String successEmoji = "✅";
+    private static final String failureEmoji ="\uD83D\uDCA5";
+
+    private final LruCache<String, DecryptStats> cache = new LruCache<>(512);
+    private final ServerProps serverProps = ServerProps.getInstance();
+    private final ContentDb contentDb;
+
+    public DecryptStatLoader() {
+        contentDb = ContentDb.getInstance();
+    }
+
+    private static String getEmoji(boolean success) {
+        return success ? successEmoji : failureEmoji;
+    }
+
+    @MainThread
+    public void load(@NonNull TextView view, @NonNull String messageId) {
+        final Callable<DecryptStats> loader = () -> contentDb.getMessageDecryptStats(messageId);
+        final ViewDataLoader.Displayer<TextView, DecryptStats> displayer = new ViewDataLoader.Displayer<TextView, DecryptStats>() {
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void showResult(@NonNull TextView view, DecryptStats result) {
+                view.setText(" " + getEmoji(result.failureReason == null));
+
+                view.setOnClickListener(v -> {
+                    String outcome = result.failureReason == null ? "success" : result.failureReason;
+                    String start = DateFormat.getInstance().format(new Date(result.originalTimestamp));
+                    String end = DateFormat.getInstance().format(new Date(result.lastUpdatedTimestamp));
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Message ID: ").append(messageId.substring(0, Math.min(20, messageId.length()))).append("...\n");
+                    sb.append("Outcome: ").append(outcome).append("\n");
+                    sb.append("Rerequest count: ").append(result.rerequestCount).append("\n");
+                    sb.append("Sender: ").append(result.senderPlatform).append(" ").append(result.senderVersion).append("\n");
+                    sb.append("Receiver: ").append("android ").append(result.version).append("\n");
+                    sb.append("First seen: ").append(start).append("\n");
+                    sb.append("Last updated: ").append(end);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setTitle("Send logs?");
+                    builder.setMessage(sb.toString());
+                    builder.setNegativeButton("No", (dialog, which) -> {
+                        // just close
+                    });
+                    builder.setPositiveButton("Yes", (dialog, which) -> {
+                        Log.e("Sending logs related to message " + messageId);
+                        LogProvider.openDebugLogcatIntent(v.getContext(), messageId);
+                    });
+                    builder.show();
+                });
+            }
+
+            @Override
+            public void showLoading(@NonNull TextView view) {
+                view.setText("");
+            }
+        };
+
+        if (serverProps.getIsInternalUser()) {
+            load(view, loader, displayer, messageId, cache);
+        }
+    }
+}

@@ -852,6 +852,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public DecryptStats getMessageDecryptStats(String messageId) {
+        return messagesDb.getMessageDecryptStats(messageId);
+    }
+
+    @WorkerThread
     public void cleanup() {
         Log.i("ContentDb.cleanup");
         if (postsDb.cleanup()) {

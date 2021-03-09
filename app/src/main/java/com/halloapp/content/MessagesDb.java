@@ -1786,14 +1786,14 @@ class MessagesDb {
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_PLATFORM + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RECEIVE_TIME + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME
-                + " FROM " + MessagesTable.TABLE_NAME
-                + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " > ?";
+                        + " FROM " + MessagesTable.TABLE_NAME
+                        + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " > ?";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
             while (cursor.moveToNext()) {
                 ret.add(new DecryptStats(
-                    cursor.getLong(0),
+                        cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getInt(2),
                         cursor.getString(3),
@@ -1806,6 +1806,40 @@ class MessagesDb {
             }
         }
         return ret;
+    }
+
+    @WorkerThread
+    public DecryptStats getMessageDecryptStats(String messageId) {
+        final String sql =
+                "SELECT " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_FAILURE_REASON + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CLIENT_VERSION + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_VERSION + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_PLATFORM + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RECEIVE_TIME + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + MessagesTable.TABLE_NAME
+                        + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=?";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{messageId})) {
+            if (cursor.moveToNext()) {
+                return new DecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getLong(7),
+                        cursor.getLong(8)
+                );
+            }
+        }
+        return null;
     }
 
     @WorkerThread

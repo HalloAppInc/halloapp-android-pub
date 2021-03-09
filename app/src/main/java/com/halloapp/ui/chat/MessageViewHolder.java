@@ -41,6 +41,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.xmpp.Connection;
@@ -56,6 +57,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final ImageView statusView;
     private final TextView dateView;
     private final TextView timestampView;
+    private final TextView decryptStatusView;
     private final TextView newMessagesSeparator;
     private final TextView nameView;
     private final TextView systemMessage;
@@ -72,6 +74,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final ContactLoader contactLoader;
+    private final DecryptStatLoader decryptStatLoader;
 
     private Message message;
 
@@ -110,11 +113,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
         this.contactLoader = new ContactLoader();
+        this.decryptStatLoader = new DecryptStatLoader();
 
         contentView = itemView.findViewById(R.id.content);
         statusView = itemView.findViewById(R.id.status);
         dateView = itemView.findViewById(R.id.date);
         timestampView = itemView.findViewById(R.id.timestamp);
+        decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);
@@ -385,6 +390,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         if (timestampView != null) {
             timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), message.timestamp));
+        }
+
+        if (decryptStatusView != null) {
+            decryptStatLoader.load(decryptStatusView, message.id);
         }
 
         if (dateView != null) {
