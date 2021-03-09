@@ -5991,6 +5991,7 @@ $root.server = (function() {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
                     break;
                 }
             if (message.uid != null && message.hasOwnProperty("uid"))
@@ -6051,6 +6052,10 @@ $root.server = (function() {
             case "LEAVE":
             case 4:
                 message.action = 4;
+                break;
+            case "JOIN":
+            case 5:
+                message.action = 5;
                 break;
             }
             if (object.uid != null)
@@ -6149,6 +6154,7 @@ $root.server = (function() {
          * @property {number} PROMOTE=2 PROMOTE value
          * @property {number} DEMOTE=3 DEMOTE value
          * @property {number} LEAVE=4 LEAVE value
+         * @property {number} JOIN=5 JOIN value
          */
         GroupMember.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -6157,6 +6163,7 @@ $root.server = (function() {
             values[valuesById[2] = "PROMOTE"] = 2;
             values[valuesById[3] = "DEMOTE"] = 3;
             values[valuesById[4] = "LEAVE"] = 4;
+            values[valuesById[5] = "JOIN"] = 5;
             return values;
         })();
 
@@ -6410,6 +6417,7 @@ $root.server = (function() {
                 case 8:
                 case 9:
                 case 10:
+                case 11:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -6495,6 +6503,10 @@ $root.server = (function() {
             case "SET_NAME":
             case 10:
                 message.action = 10;
+                break;
+            case "JOIN":
+            case 11:
+                message.action = 11;
                 break;
             }
             if (object.gid != null)
@@ -6603,6 +6615,7 @@ $root.server = (function() {
          * @property {number} MODIFY_MEMBERS=8 MODIFY_MEMBERS value
          * @property {number} AUTO_PROMOTE_ADMINS=9 AUTO_PROMOTE_ADMINS value
          * @property {number} SET_NAME=10 SET_NAME value
+         * @property {number} JOIN=11 JOIN value
          */
         GroupStanza.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -6617,6 +6630,7 @@ $root.server = (function() {
             values[valuesById[8] = "MODIFY_MEMBERS"] = 8;
             values[valuesById[9] = "AUTO_PROMOTE_ADMINS"] = 9;
             values[valuesById[10] = "SET_NAME"] = 10;
+            values[valuesById[11] = "JOIN"] = 11;
             return values;
         })();
 
@@ -7229,6 +7243,350 @@ $root.server = (function() {
         })();
 
         return GroupsStanza;
+    })();
+
+    server.GroupInviteLink = (function() {
+
+        /**
+         * Properties of a GroupInviteLink.
+         * @memberof server
+         * @interface IGroupInviteLink
+         * @property {server.GroupInviteLink.Action|null} [action] GroupInviteLink action
+         * @property {string|null} [gid] GroupInviteLink gid
+         * @property {string|null} [link] GroupInviteLink link
+         * @property {string|null} [result] GroupInviteLink result
+         * @property {string|null} [reason] GroupInviteLink reason
+         * @property {server.IGroupStanza|null} [group] GroupInviteLink group
+         */
+
+        /**
+         * Constructs a new GroupInviteLink.
+         * @memberof server
+         * @classdesc Represents a GroupInviteLink.
+         * @implements IGroupInviteLink
+         * @constructor
+         * @param {server.IGroupInviteLink=} [properties] Properties to set
+         */
+        function GroupInviteLink(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GroupInviteLink action.
+         * @member {server.GroupInviteLink.Action} action
+         * @memberof server.GroupInviteLink
+         * @instance
+         */
+        GroupInviteLink.prototype.action = 0;
+
+        /**
+         * GroupInviteLink gid.
+         * @member {string} gid
+         * @memberof server.GroupInviteLink
+         * @instance
+         */
+        GroupInviteLink.prototype.gid = "";
+
+        /**
+         * GroupInviteLink link.
+         * @member {string} link
+         * @memberof server.GroupInviteLink
+         * @instance
+         */
+        GroupInviteLink.prototype.link = "";
+
+        /**
+         * GroupInviteLink result.
+         * @member {string} result
+         * @memberof server.GroupInviteLink
+         * @instance
+         */
+        GroupInviteLink.prototype.result = "";
+
+        /**
+         * GroupInviteLink reason.
+         * @member {string} reason
+         * @memberof server.GroupInviteLink
+         * @instance
+         */
+        GroupInviteLink.prototype.reason = "";
+
+        /**
+         * GroupInviteLink group.
+         * @member {server.IGroupStanza|null|undefined} group
+         * @memberof server.GroupInviteLink
+         * @instance
+         */
+        GroupInviteLink.prototype.group = null;
+
+        /**
+         * Creates a new GroupInviteLink instance using the specified properties.
+         * @function create
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {server.IGroupInviteLink=} [properties] Properties to set
+         * @returns {server.GroupInviteLink} GroupInviteLink instance
+         */
+        GroupInviteLink.create = function create(properties) {
+            return new GroupInviteLink(properties);
+        };
+
+        /**
+         * Encodes the specified GroupInviteLink message. Does not implicitly {@link server.GroupInviteLink.verify|verify} messages.
+         * @function encode
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {server.IGroupInviteLink} message GroupInviteLink message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupInviteLink.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.gid != null && Object.hasOwnProperty.call(message, "gid"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.gid);
+            if (message.link != null && Object.hasOwnProperty.call(message, "link"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.link);
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.reason);
+            if (message.group != null && Object.hasOwnProperty.call(message, "group"))
+                $root.server.GroupStanza.encode(message.group, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GroupInviteLink message, length delimited. Does not implicitly {@link server.GroupInviteLink.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {server.IGroupInviteLink} message GroupInviteLink message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupInviteLink.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GroupInviteLink message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GroupInviteLink} GroupInviteLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupInviteLink.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GroupInviteLink();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.gid = reader.string();
+                    break;
+                case 3:
+                    message.link = reader.string();
+                    break;
+                case 4:
+                    message.result = reader.string();
+                    break;
+                case 5:
+                    message.reason = reader.string();
+                    break;
+                case 6:
+                    message.group = $root.server.GroupStanza.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GroupInviteLink message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GroupInviteLink} GroupInviteLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupInviteLink.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GroupInviteLink message.
+         * @function verify
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GroupInviteLink.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                if (!$util.isString(message.gid))
+                    return "gid: string expected";
+            if (message.link != null && message.hasOwnProperty("link"))
+                if (!$util.isString(message.link))
+                    return "link: string expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                if (!$util.isString(message.result))
+                    return "result: string expected";
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                if (!$util.isString(message.reason))
+                    return "reason: string expected";
+            if (message.group != null && message.hasOwnProperty("group")) {
+                var error = $root.server.GroupStanza.verify(message.group);
+                if (error)
+                    return "group." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a GroupInviteLink message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GroupInviteLink} GroupInviteLink
+         */
+        GroupInviteLink.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GroupInviteLink)
+                return object;
+            var message = new $root.server.GroupInviteLink();
+            switch (object.action) {
+            case "UNKNOWN":
+            case 0:
+                message.action = 0;
+                break;
+            case "GET":
+            case 1:
+                message.action = 1;
+                break;
+            case "RESET":
+            case 2:
+                message.action = 2;
+                break;
+            case "JOIN":
+            case 3:
+                message.action = 3;
+                break;
+            }
+            if (object.gid != null)
+                message.gid = String(object.gid);
+            if (object.link != null)
+                message.link = String(object.link);
+            if (object.result != null)
+                message.result = String(object.result);
+            if (object.reason != null)
+                message.reason = String(object.reason);
+            if (object.group != null) {
+                if (typeof object.group !== "object")
+                    throw TypeError(".server.GroupInviteLink.group: object expected");
+                message.group = $root.server.GroupStanza.fromObject(object.group);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GroupInviteLink message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GroupInviteLink
+         * @static
+         * @param {server.GroupInviteLink} message GroupInviteLink
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GroupInviteLink.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "UNKNOWN" : 0;
+                object.gid = "";
+                object.link = "";
+                object.result = "";
+                object.reason = "";
+                object.group = null;
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.GroupInviteLink.Action[message.action] : message.action;
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                object.gid = message.gid;
+            if (message.link != null && message.hasOwnProperty("link"))
+                object.link = message.link;
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = message.reason;
+            if (message.group != null && message.hasOwnProperty("group"))
+                object.group = $root.server.GroupStanza.toObject(message.group, options);
+            return object;
+        };
+
+        /**
+         * Converts this GroupInviteLink to JSON.
+         * @function toJSON
+         * @memberof server.GroupInviteLink
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GroupInviteLink.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.GroupInviteLink.Action
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} GET=1 GET value
+         * @property {number} RESET=2 RESET value
+         * @property {number} JOIN=3 JOIN value
+         */
+        GroupInviteLink.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "GET"] = 1;
+            values[valuesById[2] = "RESET"] = 2;
+            values[valuesById[3] = "JOIN"] = 3;
+            return values;
+        })();
+
+        return GroupInviteLink;
     })();
 
     server.AuthRequest = (function() {
@@ -10295,6 +10653,7 @@ $root.server = (function() {
          * @property {server.IGroupFeedItem|null} [groupFeedItem] Iq groupFeedItem
          * @property {server.IUploadGroupAvatar|null} [groupAvatar] Iq groupAvatar
          * @property {server.IDeleteAccount|null} [deleteAccount] Iq deleteAccount
+         * @property {server.IGroupInviteLink|null} [groupInviteLink] Iq groupInviteLink
          */
 
         /**
@@ -10536,17 +10895,25 @@ $root.server = (function() {
          */
         Iq.prototype.deleteAccount = null;
 
+        /**
+         * Iq groupInviteLink.
+         * @member {server.IGroupInviteLink|null|undefined} groupInviteLink
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.groupInviteLink = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyListResult", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyListResult", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -10630,6 +10997,8 @@ $root.server = (function() {
                 $root.server.UploadGroupAvatar.encode(message.groupAvatar, writer.uint32(/* id 27, wireType 2 =*/218).fork()).ldelim();
             if (message.deleteAccount != null && Object.hasOwnProperty.call(message, "deleteAccount"))
                 $root.server.DeleteAccount.encode(message.deleteAccount, writer.uint32(/* id 28, wireType 2 =*/226).fork()).ldelim();
+            if (message.groupInviteLink != null && Object.hasOwnProperty.call(message, "groupInviteLink"))
+                $root.server.GroupInviteLink.encode(message.groupInviteLink, writer.uint32(/* id 31, wireType 2 =*/250).fork()).ldelim();
             return writer;
         };
 
@@ -10747,6 +11116,9 @@ $root.server = (function() {
                     break;
                 case 28:
                     message.deleteAccount = $root.server.DeleteAccount.decode(reader, reader.uint32());
+                    break;
+                case 31:
+                    message.groupInviteLink = $root.server.GroupInviteLink.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -11055,6 +11427,16 @@ $root.server = (function() {
                         return "deleteAccount." + error;
                 }
             }
+            if (message.groupInviteLink != null && message.hasOwnProperty("groupInviteLink")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GroupInviteLink.verify(message.groupInviteLink);
+                    if (error)
+                        return "groupInviteLink." + error;
+                }
+            }
             return null;
         };
 
@@ -11220,6 +11602,11 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.deleteAccount: object expected");
                 message.deleteAccount = $root.server.DeleteAccount.fromObject(object.deleteAccount);
             }
+            if (object.groupInviteLink != null) {
+                if (typeof object.groupInviteLink !== "object")
+                    throw TypeError(".server.Iq.groupInviteLink: object expected");
+                message.groupInviteLink = $root.server.GroupInviteLink.fromObject(object.groupInviteLink);
+            }
             return message;
         };
 
@@ -11373,6 +11760,11 @@ $root.server = (function() {
                 object.deleteAccount = $root.server.DeleteAccount.toObject(message.deleteAccount, options);
                 if (options.oneofs)
                     object.payload = "deleteAccount";
+            }
+            if (message.groupInviteLink != null && message.hasOwnProperty("groupInviteLink")) {
+                object.groupInviteLink = $root.server.GroupInviteLink.toObject(message.groupInviteLink, options);
+                if (options.oneofs)
+                    object.payload = "groupInviteLink";
             }
             return object;
         };
@@ -15311,6 +15703,7 @@ $root.server = (function() {
          * @memberof server
          * @interface IPushRegister
          * @property {server.IPushToken|null} [pushToken] PushRegister pushToken
+         * @property {string|null} [langId] PushRegister langId
          */
 
         /**
@@ -15335,6 +15728,14 @@ $root.server = (function() {
          * @instance
          */
         PushRegister.prototype.pushToken = null;
+
+        /**
+         * PushRegister langId.
+         * @member {string} langId
+         * @memberof server.PushRegister
+         * @instance
+         */
+        PushRegister.prototype.langId = "";
 
         /**
          * Creates a new PushRegister instance using the specified properties.
@@ -15362,6 +15763,8 @@ $root.server = (function() {
                 writer = $Writer.create();
             if (message.pushToken != null && Object.hasOwnProperty.call(message, "pushToken"))
                 $root.server.PushToken.encode(message.pushToken, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.langId != null && Object.hasOwnProperty.call(message, "langId"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.langId);
             return writer;
         };
 
@@ -15398,6 +15801,9 @@ $root.server = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.pushToken = $root.server.PushToken.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.langId = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -15439,6 +15845,9 @@ $root.server = (function() {
                 if (error)
                     return "pushToken." + error;
             }
+            if (message.langId != null && message.hasOwnProperty("langId"))
+                if (!$util.isString(message.langId))
+                    return "langId: string expected";
             return null;
         };
 
@@ -15459,6 +15868,8 @@ $root.server = (function() {
                     throw TypeError(".server.PushRegister.pushToken: object expected");
                 message.pushToken = $root.server.PushToken.fromObject(object.pushToken);
             }
+            if (object.langId != null)
+                message.langId = String(object.langId);
             return message;
         };
 
@@ -15475,10 +15886,14 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.pushToken = null;
+                object.langId = "";
+            }
             if (message.pushToken != null && message.hasOwnProperty("pushToken"))
                 object.pushToken = $root.server.PushToken.toObject(message.pushToken, options);
+            if (message.langId != null && message.hasOwnProperty("langId"))
+                object.langId = message.langId;
             return object;
         };
 
@@ -18520,6 +18935,7 @@ $root.server = (function() {
          * @property {server.IMediaDownload|null} [mediaDownload] EventData mediaDownload
          * @property {server.IMediaComposeLoad|null} [mediaComposeLoad] EventData mediaComposeLoad
          * @property {server.IPushReceived|null} [pushReceived] EventData pushReceived
+         * @property {server.IDecryptionReport|null} [decryptionReport] EventData decryptionReport
          */
 
         /**
@@ -18601,17 +19017,25 @@ $root.server = (function() {
          */
         EventData.prototype.pushReceived = null;
 
+        /**
+         * EventData decryptionReport.
+         * @member {server.IDecryptionReport|null|undefined} decryptionReport
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.decryptionReport = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * EventData edata.
-         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|undefined} edata
+         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|undefined} edata
          * @memberof server.EventData
          * @instance
          */
         Object.defineProperty(EventData.prototype, "edata", {
-            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived"]),
+            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -18655,6 +19079,8 @@ $root.server = (function() {
                 $root.server.MediaComposeLoad.encode(message.mediaComposeLoad, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
             if (message.pushReceived != null && Object.hasOwnProperty.call(message, "pushReceived"))
                 $root.server.PushReceived.encode(message.pushReceived, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+            if (message.decryptionReport != null && Object.hasOwnProperty.call(message, "decryptionReport"))
+                $root.server.DecryptionReport.encode(message.decryptionReport, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
             return writer;
         };
 
@@ -18712,6 +19138,9 @@ $root.server = (function() {
                     break;
                 case 13:
                     message.pushReceived = $root.server.PushReceived.decode(reader, reader.uint32());
+                    break;
+                case 14:
+                    message.decryptionReport = $root.server.DecryptionReport.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -18805,6 +19234,16 @@ $root.server = (function() {
                         return "pushReceived." + error;
                 }
             }
+            if (message.decryptionReport != null && message.hasOwnProperty("decryptionReport")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.DecryptionReport.verify(message.decryptionReport);
+                    if (error)
+                        return "decryptionReport." + error;
+                }
+            }
             return null;
         };
 
@@ -18874,6 +19313,11 @@ $root.server = (function() {
                     throw TypeError(".server.EventData.pushReceived: object expected");
                 message.pushReceived = $root.server.PushReceived.fromObject(object.pushReceived);
             }
+            if (object.decryptionReport != null) {
+                if (typeof object.decryptionReport !== "object")
+                    throw TypeError(".server.EventData.decryptionReport: object expected");
+                message.decryptionReport = $root.server.DecryptionReport.fromObject(object.decryptionReport);
+            }
             return message;
         };
 
@@ -18937,6 +19381,11 @@ $root.server = (function() {
                 object.pushReceived = $root.server.PushReceived.toObject(message.pushReceived, options);
                 if (options.oneofs)
                     object.edata = "pushReceived";
+            }
+            if (message.decryptionReport != null && message.hasOwnProperty("decryptionReport")) {
+                object.decryptionReport = $root.server.DecryptionReport.toObject(message.decryptionReport, options);
+                if (options.oneofs)
+                    object.edata = "decryptionReport";
             }
             return object;
         };
@@ -20239,6 +20688,344 @@ $root.server = (function() {
         };
 
         return PushReceived;
+    })();
+
+    server.DecryptionReport = (function() {
+
+        /**
+         * Properties of a DecryptionReport.
+         * @memberof server
+         * @interface IDecryptionReport
+         * @property {string|null} [result] DecryptionReport result
+         * @property {string|null} [msgId] DecryptionReport msgId
+         * @property {string|null} [originalVersion] DecryptionReport originalVersion
+         * @property {string|null} [senderVersion] DecryptionReport senderVersion
+         * @property {server.Platform|null} [senderPlatform] DecryptionReport senderPlatform
+         * @property {number|null} [rerequestCount] DecryptionReport rerequestCount
+         * @property {number|null} [timeTakenS] DecryptionReport timeTakenS
+         */
+
+        /**
+         * Constructs a new DecryptionReport.
+         * @memberof server
+         * @classdesc Represents a DecryptionReport.
+         * @implements IDecryptionReport
+         * @constructor
+         * @param {server.IDecryptionReport=} [properties] Properties to set
+         */
+        function DecryptionReport(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * DecryptionReport result.
+         * @member {string} result
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.result = "";
+
+        /**
+         * DecryptionReport msgId.
+         * @member {string} msgId
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.msgId = "";
+
+        /**
+         * DecryptionReport originalVersion.
+         * @member {string} originalVersion
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.originalVersion = "";
+
+        /**
+         * DecryptionReport senderVersion.
+         * @member {string} senderVersion
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.senderVersion = "";
+
+        /**
+         * DecryptionReport senderPlatform.
+         * @member {server.Platform} senderPlatform
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.senderPlatform = 0;
+
+        /**
+         * DecryptionReport rerequestCount.
+         * @member {number} rerequestCount
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.rerequestCount = 0;
+
+        /**
+         * DecryptionReport timeTakenS.
+         * @member {number} timeTakenS
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.timeTakenS = 0;
+
+        /**
+         * Creates a new DecryptionReport instance using the specified properties.
+         * @function create
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {server.IDecryptionReport=} [properties] Properties to set
+         * @returns {server.DecryptionReport} DecryptionReport instance
+         */
+        DecryptionReport.create = function create(properties) {
+            return new DecryptionReport(properties);
+        };
+
+        /**
+         * Encodes the specified DecryptionReport message. Does not implicitly {@link server.DecryptionReport.verify|verify} messages.
+         * @function encode
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {server.IDecryptionReport} message DecryptionReport message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DecryptionReport.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.result);
+            if (message.msgId != null && Object.hasOwnProperty.call(message, "msgId"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.msgId);
+            if (message.originalVersion != null && Object.hasOwnProperty.call(message, "originalVersion"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.originalVersion);
+            if (message.senderVersion != null && Object.hasOwnProperty.call(message, "senderVersion"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.senderVersion);
+            if (message.senderPlatform != null && Object.hasOwnProperty.call(message, "senderPlatform"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.senderPlatform);
+            if (message.rerequestCount != null && Object.hasOwnProperty.call(message, "rerequestCount"))
+                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.rerequestCount);
+            if (message.timeTakenS != null && Object.hasOwnProperty.call(message, "timeTakenS"))
+                writer.uint32(/* id 7, wireType 0 =*/56).uint32(message.timeTakenS);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified DecryptionReport message, length delimited. Does not implicitly {@link server.DecryptionReport.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {server.IDecryptionReport} message DecryptionReport message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        DecryptionReport.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a DecryptionReport message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.DecryptionReport} DecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DecryptionReport.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.DecryptionReport();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.string();
+                    break;
+                case 2:
+                    message.msgId = reader.string();
+                    break;
+                case 3:
+                    message.originalVersion = reader.string();
+                    break;
+                case 4:
+                    message.senderVersion = reader.string();
+                    break;
+                case 5:
+                    message.senderPlatform = reader.int32();
+                    break;
+                case 6:
+                    message.rerequestCount = reader.uint32();
+                    break;
+                case 7:
+                    message.timeTakenS = reader.uint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a DecryptionReport message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.DecryptionReport} DecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        DecryptionReport.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a DecryptionReport message.
+         * @function verify
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        DecryptionReport.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                if (!$util.isString(message.result))
+                    return "result: string expected";
+            if (message.msgId != null && message.hasOwnProperty("msgId"))
+                if (!$util.isString(message.msgId))
+                    return "msgId: string expected";
+            if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
+                if (!$util.isString(message.originalVersion))
+                    return "originalVersion: string expected";
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                if (!$util.isString(message.senderVersion))
+                    return "senderVersion: string expected";
+            if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
+                switch (message.senderPlatform) {
+                default:
+                    return "senderPlatform: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                if (!$util.isInteger(message.rerequestCount))
+                    return "rerequestCount: integer expected";
+            if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
+                if (!$util.isInteger(message.timeTakenS))
+                    return "timeTakenS: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a DecryptionReport message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.DecryptionReport} DecryptionReport
+         */
+        DecryptionReport.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.DecryptionReport)
+                return object;
+            var message = new $root.server.DecryptionReport();
+            if (object.result != null)
+                message.result = String(object.result);
+            if (object.msgId != null)
+                message.msgId = String(object.msgId);
+            if (object.originalVersion != null)
+                message.originalVersion = String(object.originalVersion);
+            if (object.senderVersion != null)
+                message.senderVersion = String(object.senderVersion);
+            switch (object.senderPlatform) {
+            case "UNKNOWN":
+            case 0:
+                message.senderPlatform = 0;
+                break;
+            case "IOS":
+            case 1:
+                message.senderPlatform = 1;
+                break;
+            case "ANDROID":
+            case 2:
+                message.senderPlatform = 2;
+                break;
+            }
+            if (object.rerequestCount != null)
+                message.rerequestCount = object.rerequestCount >>> 0;
+            if (object.timeTakenS != null)
+                message.timeTakenS = object.timeTakenS >>> 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a DecryptionReport message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.DecryptionReport
+         * @static
+         * @param {server.DecryptionReport} message DecryptionReport
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        DecryptionReport.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = "";
+                object.msgId = "";
+                object.originalVersion = "";
+                object.senderVersion = "";
+                object.senderPlatform = options.enums === String ? "UNKNOWN" : 0;
+                object.rerequestCount = 0;
+                object.timeTakenS = 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = message.result;
+            if (message.msgId != null && message.hasOwnProperty("msgId"))
+                object.msgId = message.msgId;
+            if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
+                object.originalVersion = message.originalVersion;
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                object.senderVersion = message.senderVersion;
+            if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
+                object.senderPlatform = options.enums === String ? $root.server.Platform[message.senderPlatform] : message.senderPlatform;
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                object.rerequestCount = message.rerequestCount;
+            if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
+                object.timeTakenS = message.timeTakenS;
+            return object;
+        };
+
+        /**
+         * Converts this DecryptionReport to JSON.
+         * @function toJSON
+         * @memberof server.DecryptionReport
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        DecryptionReport.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return DecryptionReport;
     })();
 
     return server;

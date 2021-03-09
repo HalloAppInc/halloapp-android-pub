@@ -2385,7 +2385,8 @@ export namespace server {
             REMOVE = 1,
             PROMOTE = 2,
             DEMOTE = 3,
-            LEAVE = 4
+            LEAVE = 4,
+            JOIN = 5
         }
 
         /** Type enum. */
@@ -2535,7 +2536,8 @@ export namespace server {
             MODIFY_ADMINS = 7,
             MODIFY_MEMBERS = 8,
             AUTO_PROMOTE_ADMINS = 9,
-            SET_NAME = 10
+            SET_NAME = 10,
+            JOIN = 11
         }
     }
 
@@ -2766,6 +2768,137 @@ export namespace server {
         /** Action enum. */
         enum Action {
             GET = 0
+        }
+    }
+
+    /** Properties of a GroupInviteLink. */
+    interface IGroupInviteLink {
+
+        /** GroupInviteLink action */
+        action?: (server.GroupInviteLink.Action|null);
+
+        /** GroupInviteLink gid */
+        gid?: (string|null);
+
+        /** GroupInviteLink link */
+        link?: (string|null);
+
+        /** GroupInviteLink result */
+        result?: (string|null);
+
+        /** GroupInviteLink reason */
+        reason?: (string|null);
+
+        /** GroupInviteLink group */
+        group?: (server.IGroupStanza|null);
+    }
+
+    /** Represents a GroupInviteLink. */
+    class GroupInviteLink implements IGroupInviteLink {
+
+        /**
+         * Constructs a new GroupInviteLink.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGroupInviteLink);
+
+        /** GroupInviteLink action. */
+        public action: server.GroupInviteLink.Action;
+
+        /** GroupInviteLink gid. */
+        public gid: string;
+
+        /** GroupInviteLink link. */
+        public link: string;
+
+        /** GroupInviteLink result. */
+        public result: string;
+
+        /** GroupInviteLink reason. */
+        public reason: string;
+
+        /** GroupInviteLink group. */
+        public group?: (server.IGroupStanza|null);
+
+        /**
+         * Creates a new GroupInviteLink instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GroupInviteLink instance
+         */
+        public static create(properties?: server.IGroupInviteLink): server.GroupInviteLink;
+
+        /**
+         * Encodes the specified GroupInviteLink message. Does not implicitly {@link server.GroupInviteLink.verify|verify} messages.
+         * @param message GroupInviteLink message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGroupInviteLink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GroupInviteLink message, length delimited. Does not implicitly {@link server.GroupInviteLink.verify|verify} messages.
+         * @param message GroupInviteLink message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGroupInviteLink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GroupInviteLink message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GroupInviteLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GroupInviteLink;
+
+        /**
+         * Decodes a GroupInviteLink message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GroupInviteLink
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GroupInviteLink;
+
+        /**
+         * Verifies a GroupInviteLink message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GroupInviteLink message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GroupInviteLink
+         */
+        public static fromObject(object: { [k: string]: any }): server.GroupInviteLink;
+
+        /**
+         * Creates a plain object from a GroupInviteLink message. Also converts values to other types if specified.
+         * @param message GroupInviteLink
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GroupInviteLink, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GroupInviteLink to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GroupInviteLink {
+
+        /** Action enum. */
+        enum Action {
+            UNKNOWN = 0,
+            GET = 1,
+            RESET = 2,
+            JOIN = 3
         }
     }
 
@@ -4139,6 +4272,9 @@ export namespace server {
 
         /** Iq deleteAccount */
         deleteAccount?: (server.IDeleteAccount|null);
+
+        /** Iq groupInviteLink */
+        groupInviteLink?: (server.IGroupInviteLink|null);
     }
 
     /** Represents an Iq. */
@@ -4234,8 +4370,11 @@ export namespace server {
         /** Iq deleteAccount. */
         public deleteAccount?: (server.IDeleteAccount|null);
 
+        /** Iq groupInviteLink. */
+        public groupInviteLink?: (server.IGroupInviteLink|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -5676,6 +5815,9 @@ export namespace server {
 
         /** PushRegister pushToken */
         pushToken?: (server.IPushToken|null);
+
+        /** PushRegister langId */
+        langId?: (string|null);
     }
 
     /** Represents a PushRegister. */
@@ -5689,6 +5831,9 @@ export namespace server {
 
         /** PushRegister pushToken. */
         public pushToken?: (server.IPushToken|null);
+
+        /** PushRegister langId. */
+        public langId: string;
 
         /**
          * Creates a new PushRegister instance using the specified properties.
@@ -7017,6 +7162,9 @@ export namespace server {
 
         /** EventData pushReceived */
         pushReceived?: (server.IPushReceived|null);
+
+        /** EventData decryptionReport */
+        decryptionReport?: (server.IDecryptionReport|null);
     }
 
     /** Represents an EventData. */
@@ -7052,8 +7200,11 @@ export namespace server {
         /** EventData pushReceived. */
         public pushReceived?: (server.IPushReceived|null);
 
+        /** EventData decryptionReport. */
+        public decryptionReport?: (server.IDecryptionReport|null);
+
         /** EventData edata. */
-        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived");
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport");
 
         /**
          * Creates a new EventData instance using the specified properties.
@@ -7626,6 +7777,132 @@ export namespace server {
 
         /**
          * Converts this PushReceived to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a DecryptionReport. */
+    interface IDecryptionReport {
+
+        /** DecryptionReport result */
+        result?: (string|null);
+
+        /** DecryptionReport msgId */
+        msgId?: (string|null);
+
+        /** DecryptionReport originalVersion */
+        originalVersion?: (string|null);
+
+        /** DecryptionReport senderVersion */
+        senderVersion?: (string|null);
+
+        /** DecryptionReport senderPlatform */
+        senderPlatform?: (server.Platform|null);
+
+        /** DecryptionReport rerequestCount */
+        rerequestCount?: (number|null);
+
+        /** DecryptionReport timeTakenS */
+        timeTakenS?: (number|null);
+    }
+
+    /** Represents a DecryptionReport. */
+    class DecryptionReport implements IDecryptionReport {
+
+        /**
+         * Constructs a new DecryptionReport.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IDecryptionReport);
+
+        /** DecryptionReport result. */
+        public result: string;
+
+        /** DecryptionReport msgId. */
+        public msgId: string;
+
+        /** DecryptionReport originalVersion. */
+        public originalVersion: string;
+
+        /** DecryptionReport senderVersion. */
+        public senderVersion: string;
+
+        /** DecryptionReport senderPlatform. */
+        public senderPlatform: server.Platform;
+
+        /** DecryptionReport rerequestCount. */
+        public rerequestCount: number;
+
+        /** DecryptionReport timeTakenS. */
+        public timeTakenS: number;
+
+        /**
+         * Creates a new DecryptionReport instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns DecryptionReport instance
+         */
+        public static create(properties?: server.IDecryptionReport): server.DecryptionReport;
+
+        /**
+         * Encodes the specified DecryptionReport message. Does not implicitly {@link server.DecryptionReport.verify|verify} messages.
+         * @param message DecryptionReport message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IDecryptionReport, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified DecryptionReport message, length delimited. Does not implicitly {@link server.DecryptionReport.verify|verify} messages.
+         * @param message DecryptionReport message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IDecryptionReport, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a DecryptionReport message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns DecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.DecryptionReport;
+
+        /**
+         * Decodes a DecryptionReport message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.DecryptionReport;
+
+        /**
+         * Verifies a DecryptionReport message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a DecryptionReport message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns DecryptionReport
+         */
+        public static fromObject(object: { [k: string]: any }): server.DecryptionReport;
+
+        /**
+         * Creates a plain object from a DecryptionReport message. Also converts values to other types if specified.
+         * @param message DecryptionReport
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.DecryptionReport, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this DecryptionReport to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
