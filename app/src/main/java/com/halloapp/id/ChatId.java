@@ -14,7 +14,6 @@ public abstract class ChatId implements Parcelable {
 
     public @Nullable static ChatId fromNullable(@Nullable String s) {
         if (s == null) {
-            Log.i("Returning null ChatId for null String");
             return null;
         } else if (s.startsWith("g")) {
             return new GroupId(s);
