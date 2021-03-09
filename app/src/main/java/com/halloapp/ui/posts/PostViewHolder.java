@@ -217,7 +217,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         final boolean noCaption = TextUtils.isEmpty(post.text);
 
-        if (!post.media.isEmpty()) {
+        if (!post.media.isEmpty() && !post.id.equals(mediaPagerAdapter.getContentId())) {
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
             final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);

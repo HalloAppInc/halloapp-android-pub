@@ -113,6 +113,10 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         this.contentId = contentId;
     }
 
+    public String getContentId() {
+        return contentId;
+    }
+
     public void setChat(ChatId chatId) {
         isChatMedia = true;
         this.chatId = chatId;
