@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
+import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.log_events.EventDataOrBuilder;
 import com.halloapp.proto.log_events.MediaComposeLoad;
@@ -65,6 +66,10 @@ public class Events {
 
     public void sendEvent(@NonNull MediaComposeLoad mediaComposeLoad) {
         sendEvent(EventData.newBuilder().setMediaComposeLoad(mediaComposeLoad));
+    }
+
+    public void sendEvent(@NonNull DecryptionReport decryptionReport) {
+        sendEvent(EventData.newBuilder().setDecryptionReport(decryptionReport));
     }
 
     private void sendEvent(@NonNull EventData.Builder builder) {

@@ -27,7 +27,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 37;
+    private static final int DATABASE_VERSION = 38;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -78,7 +78,13 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_USAGE + " INTEGER DEFAULT 0,"
                 + MessagesTable.COLUMN_STATE + " INTEGER,"
                 + MessagesTable.COLUMN_TEXT + " TEXT,"
-                + MessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
+                + MessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER,"
+                + MessagesTable.COLUMN_FAILURE_REASON + " TEXT,"
+                + MessagesTable.COLUMN_CLIENT_VERSION + " TEXT,"
+                + MessagesTable.COLUMN_SENDER_PLATFORM + " TEXT,"
+                + MessagesTable.COLUMN_SENDER_VERSION + " TEXT,"
+                + MessagesTable.COLUMN_RECEIVE_TIME + " INTEGER,"
+                + MessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
@@ -374,6 +380,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 36: {
                 upgradeFromVersion36(db);
+            }
+            case 37: {
+                upgradeFromVersion37(db);
             }
             break;
             default: {
@@ -690,6 +699,15 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MessagesTable.COLUMN_SENDER_USER_ID + ", "
                 + MessagesTable.COLUMN_MESSAGE_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion37(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_FAILURE_REASON + " TEXT");
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_CLIENT_VERSION + " TEXT");
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_SENDER_PLATFORM + " TEXT");
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_SENDER_VERSION + " TEXT");
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_RECEIVE_TIME + " INTEGER");
+        db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
     }
 
     /**

@@ -7,10 +7,8 @@ import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Stats {
 
@@ -72,44 +70,21 @@ public class Stats {
         decryption.reportError(error, senderPlatform, senderVersion);
     }
 
-    public class Counter {
-        private final String namespace;
-        private final String metric;
+    private class TimerUploadCounter extends Counter {
 
-        private Map<Dimensions, Long> map = new ConcurrentHashMap<>();
-
-        public Counter(String namespace, String metric) {
-            this.namespace = namespace;
-            this.metric = metric;
-
+        public TimerUploadCounter(String namespace, String metric) {
+            super(namespace, metric);
             counters.add(this);
         }
 
+        @Override
         protected void reportEvent(Dimensions key) {
-            Long currentValue = map.get(key);
-            if (currentValue == null) {
-                currentValue = 0L;
-            }
-            map.put(key, currentValue + 1);
+            super.reportEvent(key);
             ensureTimer();
-        }
-
-        public Map<Dimensions, Long> fetchAndReset() {
-            Map<Dimensions, Long> ret = map;
-            map = new ConcurrentHashMap<>();
-            return ret;
-        }
-
-        public String getNamespace() {
-            return namespace;
-        }
-
-        public String getMetric() {
-            return metric;
         }
     }
 
-    public class SuccessCounter extends Counter {
+    private class SuccessCounter extends TimerUploadCounter {
         private static final String DIM_RESULT = "result";
 
         public SuccessCounter(String namespace, String metric) {
@@ -129,7 +104,7 @@ public class Stats {
         }
     }
 
-    public class DecryptCounter extends Counter {
+    private class DecryptCounter extends TimerUploadCounter {
         private static final String DIM_RESULT = "result";
         private static final String DIM_SENDER_PLATFORM = "senderPlatform";
         private static final String DIM_SENDER_VERSION = "senderVersion";

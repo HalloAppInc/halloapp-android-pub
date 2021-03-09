@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
@@ -87,21 +88,23 @@ public class ChatMessageElement {
         Log.i("Local state relevant to message " + id + " from " + (isFriend ? "friend" : "non-friend") + ": " + getLogInfo(fromUserId));
         String senderPlatform = senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
         String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
+        String failureReason = null;
         if (encryptedBytes != null) {
             try {
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, fromUserId, sessionSetupInfo);
                 chatMessage = MessageElementHelper.readEncodedEntry(dec);
                 if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
                     Log.sendErrorReport("Decrypted message does not match plaintext");
-                    stats.reportDecryptError("plaintext_mismatch", senderPlatform, senderVersion);
+                    failureReason = "plaintext_mismatch";
+                    stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
                 } else {
                     stats.reportDecryptSuccess(senderPlatform, senderVersion);
                 }
             } catch (CryptoException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-                String message = e instanceof CryptoException ? e.getMessage() : e instanceof ArrayIndexOutOfBoundsException ? "aioobe" : "null_key";
-                Log.e("Failed to decrypt message: " + message + ", falling back to plaintext", e);
-                Log.sendErrorReport("Decryption failure: " + message);
-                stats.reportDecryptError(message, senderPlatform, senderVersion);
+                failureReason = e instanceof CryptoException ? e.getMessage() : e instanceof ArrayIndexOutOfBoundsException ? "aioobe" : "null_key";
+                Log.e("Failed to decrypt message: " + failureReason + ", falling back to plaintext", e);
+                Log.sendErrorReport("Decryption failure: " + failureReason);
+                stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
                 chatMessage = plaintextChatMessage;
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
@@ -150,6 +153,11 @@ public class ChatMessageElement {
         for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
             message.mentions.add(Mention.parseFromProto(item));
         }
+
+        message.senderPlatform = senderPlatform;
+        message.senderVersion = senderVersion;
+        message.clientVersion = BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
+        message.failureReason = failureReason;
 
         return message;
     }

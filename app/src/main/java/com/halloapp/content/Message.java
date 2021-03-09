@@ -32,6 +32,12 @@ public class Message extends ContentItem {
     public final int replyMessageMediaIndex;
     public final UserId replyMessageSenderId;
 
+    // stats not read from DB
+    public String failureReason;
+    public String clientVersion;
+    public String senderVersion;
+    public String senderPlatform;
+
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_CHAT, TYPE_SYSTEM})

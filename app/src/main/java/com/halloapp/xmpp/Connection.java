@@ -16,6 +16,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.stats.Counter;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
@@ -54,6 +55,7 @@ public abstract class Connection {
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onIncomingMessageReceived(@NonNull Message message) {}
+        public void onIncomingMessageRedecrypt(@NonNull Message message) {}
         public void onIncomingSilentMessageReceived(@NonNull Message message) {}
         public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
@@ -105,7 +107,7 @@ public abstract class Connection {
 
     public abstract Observable<WhisperKeysResponseIq> downloadKeys(@NonNull UserId userId);
 
-    public abstract void sendStats(List<Stats.Counter> counters);
+    public abstract void sendStats(List<Counter> counters);
 
     public abstract void sendEvents(Collection<EventData> events);
 

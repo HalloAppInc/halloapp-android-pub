@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.xmpp.groups.MemberElement;
 
 import java.io.File;
@@ -64,6 +66,7 @@ class MessagesDb {
     @WorkerThread
     boolean addMessage(@NonNull Message message, boolean unseen, @Nullable Post replyPost, @Nullable Message replyMessage) {
         Log.i("ContentDb.addMessage " + message + " " + unseen);
+        long now = System.currentTimeMillis();
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -75,6 +78,12 @@ class MessagesDb {
             messageValues.put(MessagesTable.COLUMN_TYPE, message.type);
             messageValues.put(MessagesTable.COLUMN_USAGE, message.usage);
             messageValues.put(MessagesTable.COLUMN_STATE, message.state);
+            messageValues.put(MessagesTable.COLUMN_RECEIVE_TIME, now);
+            messageValues.put(MessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
+            messageValues.put(MessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
+            messageValues.put(MessagesTable.COLUMN_CLIENT_VERSION, message.clientVersion);
+            messageValues.put(MessagesTable.COLUMN_SENDER_VERSION, message.senderVersion);
+            messageValues.put(MessagesTable.COLUMN_SENDER_PLATFORM, message.senderPlatform);
             if (message.text != null) {
                 messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
             }
@@ -187,6 +196,33 @@ class MessagesDb {
             Log.i("ContentDb.addMessage: added " + message);
         } catch (SQLiteConstraintException ex) {
             Log.w("ContentDb.addMessage: duplicate " + ex.getMessage() + " " + message);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean updateMessageDecrypt(@NonNull Message message) {
+        Log.i("ContentDb.updateMessageDecrypt " + message);
+        long now = System.currentTimeMillis();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues messageValues = new ContentValues();
+            messageValues.put(MessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
+            messageValues.put(MessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
+
+            int count = db.update(MessagesTable.TABLE_NAME, messageValues,
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND ? - " + MessagesTable.COLUMN_RECEIVE_TIME + " < ?",
+                    new String [] {message.chatId.rawId(), message.senderUserId.rawId(), message.id, Long.toString(now), Long.toString(DateUtils.DAY_IN_MILLIS)});
+
+            db.setTransactionSuccessful();
+
+            Log.i("ContentDb.updateMessageDecrypt: updated " + count + " rows");
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.updateMessageDecrypt: " + ex.getMessage() + " " + message.id);
             return false;
         } finally {
             db.endTransaction();
@@ -1735,6 +1771,41 @@ class MessagesDb {
             }
         }
         return 0;
+    }
+
+    @WorkerThread
+    public List<DecryptStats> getMessageDecryptStats(long lastRowId) {
+        List<DecryptStats> ret = new ArrayList<>();
+        final String sql =
+                "SELECT " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_FAILURE_REASON + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CLIENT_VERSION + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_VERSION + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_PLATFORM + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RECEIVE_TIME + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME
+                + " FROM " + MessagesTable.TABLE_NAME
+                + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " > ?";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
+            while (cursor.moveToNext()) {
+                ret.add(new DecryptStats(
+                    cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getLong(7),
+                        cursor.getLong(8)
+                ));
+            }
+        }
+        return ret;
     }
 
     @WorkerThread

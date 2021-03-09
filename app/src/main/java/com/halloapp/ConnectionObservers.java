@@ -164,6 +164,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyIncomingMessageRedecrypt(@NonNull Message message) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingMessageRedecrypt(message);
+            }
+        }
+    }
+
     public void notifyIncomingSilentMessageReceived(@NonNull Message message) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

@@ -27,6 +27,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.stats.DecryptStats;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -552,6 +553,17 @@ public class ContentDb {
         });
     }
 
+    public void updateMessageDecrypt(@NonNull Message message, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.updateMessageDecrypt(message)) {
+                observers.notifyMessageUpdated(message.chatId, message.senderUserId, message.id);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void addSilentMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.addSilentMessage(message.senderUserId, message.id)) {
@@ -832,6 +844,11 @@ public class ContentDb {
 
     public void updatePostAudience(@NonNull Map<UserId, Collection<Post>> shareMap) {
         postsDb.updatePostAudience(shareMap);
+    }
+
+    @WorkerThread
+    public List<DecryptStats> getMessageDecryptStats(long lastRowId) {
+        return messagesDb.getMessageDecryptStats(lastRowId);
     }
 
     @WorkerThread

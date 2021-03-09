@@ -36,6 +36,7 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
     private static final String PREF_KEY_NEXT_PRESENCE_ID = "next_presence_id";
+    private static final String PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID = "last_decrypt_message_row_id";
     private static final String PREF_KEY_VIDEO_BITRATE = "video_bitrate";
     private static final String PREF_KEY_AUDIO_BITRATE = "audio_bitrate";
     private static final String PREF_KEY_H264_RES = "h264_res";
@@ -252,6 +253,18 @@ public class Preferences {
             Log.e("preferences: failed to increment presence id");
         }
         return String.format(Locale.US, "%dD%04x", dow, id);
+    }
+
+    @WorkerThread
+    public long getLastDecryptStatMessageRowId() {
+        return getPreferences().getLong(PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1);
+    }
+
+    @WorkerThread
+    public void setLastDecryptStatMessageRowId(long id) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, id).commit()) {
+            Log.e("preferences: failed to set last decrypt stat message row id to " + id);
+        }
     }
 
     @WorkerThread

@@ -7,6 +7,7 @@ import com.halloapp.proto.server.Count;
 import com.halloapp.proto.server.Dim;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.stats.Counter;
 import com.halloapp.util.stats.Dimensions;
 import com.halloapp.util.stats.Stats;
 
@@ -16,9 +17,9 @@ import java.util.Set;
 
 public class StatsIq extends HalloIq {
 
-    private final List<Stats.Counter> counters;
+    private final List<Counter> counters;
 
-    StatsIq(@NonNull List<Stats.Counter> counters) {
+    StatsIq(@NonNull List<Counter> counters) {
         this.counters = counters;
     }
 
@@ -26,7 +27,7 @@ public class StatsIq extends HalloIq {
     public Iq toProtoIq() {
         ClientLog.Builder builder = ClientLog.newBuilder();
 
-        for (Stats.Counter counter : counters) {
+        for (Counter counter : counters) {
             Map<Dimensions, Long> counts = counter.fetchAndReset();
             for (Dimensions dimensions : counts.keySet()) {
                 Count.Builder cb = Count.newBuilder();

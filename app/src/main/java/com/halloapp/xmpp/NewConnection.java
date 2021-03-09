@@ -62,6 +62,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Counter;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
@@ -398,7 +399,7 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public void sendStats(List<Stats.Counter> counters) {
+    public void sendStats(List<Counter> counters) {
         final StatsIq statsIq = new StatsIq(counters);
         sendIqRequestAsync(statsIq)
                 .onResponse(response -> {
@@ -887,14 +888,15 @@ public class NewConnection extends Connection {
                     }
 
                     bgWorkers.execute(() -> {
+                        ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
+                        Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false, chatStanza.getSenderClientVersion());
+                        processMentions(message.mentions);
                         if (!ContentDb.getInstance().hasMessage(fromUserId, msg.getId())) {
-                            ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false, chatStanza.getSenderClientVersion());
-                            processMentions(message.mentions);
                             connectionObservers.notifyIncomingMessageReceived(message);
                         } else {
-                            Log.i("message id " + msg.getId() + " already present in DB; ignoring chat stanza and acking");
-                            sendAck(msg.getId());
+                            // TODO(jack): Update contents when plaintext is removed and failures show tombstones
+                            Log.i("message id " + msg.getId() + " already present in DB; only updating decrypt status");
+                            connectionObservers.notifyIncomingMessageRedecrypt(message);
                         }
                     });
 

@@ -38,6 +38,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.stats.DecryptReportStats;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -74,6 +75,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final EncryptedKeyStore encryptedKeyStore;
     private final FeedPrivacyManager feedPrivacyManager;
     private final ForegroundObserver foregroundObserver;
+    private final DecryptReportStats decryptReportStats;
     private final EncryptedSessionManager encryptedSessionManager;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
@@ -99,6 +101,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             EncryptedKeyStore.getInstance(),
                             FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
+                            DecryptReportStats.getInstance(),
                             EncryptedSessionManager.getInstance());
                 }
             }
@@ -126,6 +129,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull EncryptedKeyStore encryptedKeyStore,
             @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
+            @NonNull DecryptReportStats decryptReportStats,
             @NonNull EncryptedSessionManager encryptedSessionManager) {
         this.context = context.getApplicationContext();
 
@@ -146,6 +150,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.encryptedKeyStore = encryptedKeyStore;
         this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
+        this.decryptReportStats = decryptReportStats;
         this.encryptedSessionManager = encryptedSessionManager;
     }
 
@@ -161,6 +166,7 @@ public class MainConnectionObserver extends Connection.Observer {
         new RequestExpirationInfoTask(connection, context).execute();
         presenceLoader.onReconnect();
         groupsSync.startGroupsSync();
+        decryptReportStats.start();
     }
 
     @Override
@@ -242,6 +248,12 @@ public class MainConnectionObserver extends Connection.Observer {
         } else {
             contentDb.addMessage(message, !isMessageForForegroundChat, completionRunnable);
         }
+    }
+
+    @Override
+    public void onIncomingMessageRedecrypt(@NonNull Message message) {
+        final Runnable completionRunnable = () -> connection.sendAck(message.id);
+        contentDb.updateMessageDecrypt(message, completionRunnable);
     }
 
     @Override
