@@ -8,24 +8,35 @@ public interface DecryptionReportOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>string result = 1;</code>
+   * <code>.server.DecryptionReport.Status result = 1;</code>
+   * @return The enum numeric value on the wire for result.
+   */
+  int getResultValue();
+  /**
+   * <code>.server.DecryptionReport.Status result = 1;</code>
    * @return The result.
    */
-  java.lang.String getResult();
-  /**
-   * <code>string result = 1;</code>
-   * @return The bytes for result.
-   */
-  com.google.protobuf.ByteString
-      getResultBytes();
+  com.halloapp.proto.log_events.DecryptionReport.Status getResult();
 
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string reason = 2;</code>
+   * @return The reason.
+   */
+  java.lang.String getReason();
+  /**
+   * <code>string reason = 2;</code>
+   * @return The bytes for reason.
+   */
+  com.google.protobuf.ByteString
+      getReasonBytes();
+
+  /**
+   * <code>string msg_id = 3;</code>
    * @return The msgId.
    */
   java.lang.String getMsgId();
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string msg_id = 3;</code>
    * @return The bytes for msgId.
    */
   com.google.protobuf.ByteString
@@ -36,7 +47,7 @@ public interface DecryptionReportOrBuilder extends
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    * @return The originalVersion.
    */
   java.lang.String getOriginalVersion();
@@ -45,23 +56,11 @@ public interface DecryptionReportOrBuilder extends
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    * @return The bytes for originalVersion.
    */
   com.google.protobuf.ByteString
       getOriginalVersionBytes();
-
-  /**
-   * <code>string sender_version = 4;</code>
-   * @return The senderVersion.
-   */
-  java.lang.String getSenderVersion();
-  /**
-   * <code>string sender_version = 4;</code>
-   * @return The bytes for senderVersion.
-   */
-  com.google.protobuf.ByteString
-      getSenderVersionBytes();
 
   /**
    * <code>.server.Platform sender_platform = 5;</code>
@@ -75,13 +74,25 @@ public interface DecryptionReportOrBuilder extends
   com.halloapp.proto.log_events.Platform getSenderPlatform();
 
   /**
-   * <code>uint32 rerequest_count = 6;</code>
+   * <code>string sender_version = 6;</code>
+   * @return The senderVersion.
+   */
+  java.lang.String getSenderVersion();
+  /**
+   * <code>string sender_version = 6;</code>
+   * @return The bytes for senderVersion.
+   */
+  com.google.protobuf.ByteString
+      getSenderVersionBytes();
+
+  /**
+   * <code>uint32 rerequest_count = 7;</code>
    * @return The rerequestCount.
    */
   int getRerequestCount();
 
   /**
-   * <code>uint32 time_taken_s = 7;</code>
+   * <code>uint32 time_taken_s = 8;</code>
    * @return The timeTakenS.
    */
   int getTimeTakenS();

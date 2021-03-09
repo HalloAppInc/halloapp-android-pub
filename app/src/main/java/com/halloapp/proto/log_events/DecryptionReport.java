@@ -12,62 +12,193 @@ public  final class DecryptionReport extends
     // @@protoc_insertion_point(message_implements:server.DecryptionReport)
     DecryptionReportOrBuilder {
   private DecryptionReport() {
-    result_ = "";
+    reason_ = "";
     msgId_ = "";
     originalVersion_ = "";
     senderVersion_ = "";
   }
-  public static final int RESULT_FIELD_NUMBER = 1;
-  private java.lang.String result_;
   /**
-   * <code>string result = 1;</code>
-   * @return The result.
+   * Protobuf enum {@code server.DecryptionReport.Status}
+   */
+  public enum Status
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>OK = 0;</code>
+     */
+    OK(0),
+    /**
+     * <code>FAIL = 1;</code>
+     */
+    FAIL(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>OK = 0;</code>
+     */
+    public static final int OK_VALUE = 0;
+    /**
+     * <code>FAIL = 1;</code>
+     */
+    public static final int FAIL_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Status valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Status forNumber(int value) {
+      switch (value) {
+        case 0: return OK;
+        case 1: return FAIL;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Status>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Status> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Status>() {
+            @java.lang.Override
+            public Status findValueByNumber(int number) {
+              return Status.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return StatusVerifier.INSTANCE;
+    }
+
+    private static final class StatusVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new StatusVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Status.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Status(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.DecryptionReport.Status)
+  }
+
+  public static final int RESULT_FIELD_NUMBER = 1;
+  private int result_;
+  /**
+   * <code>.server.DecryptionReport.Status result = 1;</code>
+   * @return The enum numeric value on the wire for result.
    */
   @java.lang.Override
-  public java.lang.String getResult() {
+  public int getResultValue() {
     return result_;
   }
   /**
-   * <code>string result = 1;</code>
-   * @return The bytes for result.
+   * <code>.server.DecryptionReport.Status result = 1;</code>
+   * @return The result.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getResultBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(result_);
+  public com.halloapp.proto.log_events.DecryptionReport.Status getResult() {
+    com.halloapp.proto.log_events.DecryptionReport.Status result = com.halloapp.proto.log_events.DecryptionReport.Status.forNumber(result_);
+    return result == null ? com.halloapp.proto.log_events.DecryptionReport.Status.UNRECOGNIZED : result;
   }
   /**
-   * <code>string result = 1;</code>
+   * <code>.server.DecryptionReport.Status result = 1;</code>
+   * @param value The enum numeric value on the wire for result to set.
+   */
+  private void setResultValue(int value) {
+      result_ = value;
+  }
+  /**
+   * <code>.server.DecryptionReport.Status result = 1;</code>
    * @param value The result to set.
    */
-  private void setResult(
-      java.lang.String value) {
-    value.getClass();
-  
-    result_ = value;
+  private void setResult(com.halloapp.proto.log_events.DecryptionReport.Status value) {
+    result_ = value.getNumber();
+    
   }
   /**
-   * <code>string result = 1;</code>
+   * <code>.server.DecryptionReport.Status result = 1;</code>
    */
   private void clearResult() {
     
-    result_ = getDefaultInstance().getResult();
+    result_ = 0;
+  }
+
+  public static final int REASON_FIELD_NUMBER = 2;
+  private java.lang.String reason_;
+  /**
+   * <code>string reason = 2;</code>
+   * @return The reason.
+   */
+  @java.lang.Override
+  public java.lang.String getReason() {
+    return reason_;
   }
   /**
-   * <code>string result = 1;</code>
-   * @param value The bytes for result to set.
+   * <code>string reason = 2;</code>
+   * @return The bytes for reason.
    */
-  private void setResultBytes(
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getReasonBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(reason_);
+  }
+  /**
+   * <code>string reason = 2;</code>
+   * @param value The reason to set.
+   */
+  private void setReason(
+      java.lang.String value) {
+    value.getClass();
+  
+    reason_ = value;
+  }
+  /**
+   * <code>string reason = 2;</code>
+   */
+  private void clearReason() {
+    
+    reason_ = getDefaultInstance().getReason();
+  }
+  /**
+   * <code>string reason = 2;</code>
+   * @param value The bytes for reason to set.
+   */
+  private void setReasonBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
-    result_ = value.toStringUtf8();
+    reason_ = value.toStringUtf8();
     
   }
 
-  public static final int MSG_ID_FIELD_NUMBER = 2;
+  public static final int MSG_ID_FIELD_NUMBER = 3;
   private java.lang.String msgId_;
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string msg_id = 3;</code>
    * @return The msgId.
    */
   @java.lang.Override
@@ -75,7 +206,7 @@ public  final class DecryptionReport extends
     return msgId_;
   }
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string msg_id = 3;</code>
    * @return The bytes for msgId.
    */
   @java.lang.Override
@@ -84,7 +215,7 @@ public  final class DecryptionReport extends
     return com.google.protobuf.ByteString.copyFromUtf8(msgId_);
   }
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string msg_id = 3;</code>
    * @param value The msgId to set.
    */
   private void setMsgId(
@@ -94,14 +225,14 @@ public  final class DecryptionReport extends
     msgId_ = value;
   }
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string msg_id = 3;</code>
    */
   private void clearMsgId() {
     
     msgId_ = getDefaultInstance().getMsgId();
   }
   /**
-   * <code>string msg_id = 2;</code>
+   * <code>string msg_id = 3;</code>
    * @param value The bytes for msgId to set.
    */
   private void setMsgIdBytes(
@@ -111,14 +242,14 @@ public  final class DecryptionReport extends
     
   }
 
-  public static final int ORIGINAL_VERSION_FIELD_NUMBER = 3;
+  public static final int ORIGINAL_VERSION_FIELD_NUMBER = 4;
   private java.lang.String originalVersion_;
   /**
    * <pre>
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    * @return The originalVersion.
    */
   @java.lang.Override
@@ -130,7 +261,7 @@ public  final class DecryptionReport extends
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    * @return The bytes for originalVersion.
    */
   @java.lang.Override
@@ -143,7 +274,7 @@ public  final class DecryptionReport extends
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    * @param value The originalVersion to set.
    */
   private void setOriginalVersion(
@@ -157,7 +288,7 @@ public  final class DecryptionReport extends
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    */
   private void clearOriginalVersion() {
     
@@ -168,60 +299,13 @@ public  final class DecryptionReport extends
    * at time message id was first encountered
    * </pre>
    *
-   * <code>string original_version = 3;</code>
+   * <code>string original_version = 4;</code>
    * @param value The bytes for originalVersion to set.
    */
   private void setOriginalVersionBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     originalVersion_ = value.toStringUtf8();
-    
-  }
-
-  public static final int SENDER_VERSION_FIELD_NUMBER = 4;
-  private java.lang.String senderVersion_;
-  /**
-   * <code>string sender_version = 4;</code>
-   * @return The senderVersion.
-   */
-  @java.lang.Override
-  public java.lang.String getSenderVersion() {
-    return senderVersion_;
-  }
-  /**
-   * <code>string sender_version = 4;</code>
-   * @return The bytes for senderVersion.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getSenderVersionBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(senderVersion_);
-  }
-  /**
-   * <code>string sender_version = 4;</code>
-   * @param value The senderVersion to set.
-   */
-  private void setSenderVersion(
-      java.lang.String value) {
-    value.getClass();
-  
-    senderVersion_ = value;
-  }
-  /**
-   * <code>string sender_version = 4;</code>
-   */
-  private void clearSenderVersion() {
-    
-    senderVersion_ = getDefaultInstance().getSenderVersion();
-  }
-  /**
-   * <code>string sender_version = 4;</code>
-   * @param value The bytes for senderVersion to set.
-   */
-  private void setSenderVersionBytes(
-      com.google.protobuf.ByteString value) {
-    checkByteStringIsUtf8(value);
-    senderVersion_ = value.toStringUtf8();
     
   }
 
@@ -267,10 +351,57 @@ public  final class DecryptionReport extends
     senderPlatform_ = 0;
   }
 
-  public static final int REREQUEST_COUNT_FIELD_NUMBER = 6;
+  public static final int SENDER_VERSION_FIELD_NUMBER = 6;
+  private java.lang.String senderVersion_;
+  /**
+   * <code>string sender_version = 6;</code>
+   * @return The senderVersion.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderVersion() {
+    return senderVersion_;
+  }
+  /**
+   * <code>string sender_version = 6;</code>
+   * @return The bytes for senderVersion.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderVersionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderVersion_);
+  }
+  /**
+   * <code>string sender_version = 6;</code>
+   * @param value The senderVersion to set.
+   */
+  private void setSenderVersion(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderVersion_ = value;
+  }
+  /**
+   * <code>string sender_version = 6;</code>
+   */
+  private void clearSenderVersion() {
+    
+    senderVersion_ = getDefaultInstance().getSenderVersion();
+  }
+  /**
+   * <code>string sender_version = 6;</code>
+   * @param value The bytes for senderVersion to set.
+   */
+  private void setSenderVersionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderVersion_ = value.toStringUtf8();
+    
+  }
+
+  public static final int REREQUEST_COUNT_FIELD_NUMBER = 7;
   private int rerequestCount_;
   /**
-   * <code>uint32 rerequest_count = 6;</code>
+   * <code>uint32 rerequest_count = 7;</code>
    * @return The rerequestCount.
    */
   @java.lang.Override
@@ -278,7 +409,7 @@ public  final class DecryptionReport extends
     return rerequestCount_;
   }
   /**
-   * <code>uint32 rerequest_count = 6;</code>
+   * <code>uint32 rerequest_count = 7;</code>
    * @param value The rerequestCount to set.
    */
   private void setRerequestCount(int value) {
@@ -286,17 +417,17 @@ public  final class DecryptionReport extends
     rerequestCount_ = value;
   }
   /**
-   * <code>uint32 rerequest_count = 6;</code>
+   * <code>uint32 rerequest_count = 7;</code>
    */
   private void clearRerequestCount() {
     
     rerequestCount_ = 0;
   }
 
-  public static final int TIME_TAKEN_S_FIELD_NUMBER = 7;
+  public static final int TIME_TAKEN_S_FIELD_NUMBER = 8;
   private int timeTakenS_;
   /**
-   * <code>uint32 time_taken_s = 7;</code>
+   * <code>uint32 time_taken_s = 8;</code>
    * @return The timeTakenS.
    */
   @java.lang.Override
@@ -304,7 +435,7 @@ public  final class DecryptionReport extends
     return timeTakenS_;
   }
   /**
-   * <code>uint32 time_taken_s = 7;</code>
+   * <code>uint32 time_taken_s = 8;</code>
    * @param value The timeTakenS to set.
    */
   private void setTimeTakenS(int value) {
@@ -312,7 +443,7 @@ public  final class DecryptionReport extends
     timeTakenS_ = value;
   }
   /**
-   * <code>uint32 time_taken_s = 7;</code>
+   * <code>uint32 time_taken_s = 8;</code>
    */
   private void clearTimeTakenS() {
     
@@ -415,35 +546,43 @@ public  final class DecryptionReport extends
 
 
     /**
-     * <code>string result = 1;</code>
-     * @return The result.
+     * <code>.server.DecryptionReport.Status result = 1;</code>
+     * @return The enum numeric value on the wire for result.
      */
     @java.lang.Override
-    public java.lang.String getResult() {
-      return instance.getResult();
+    public int getResultValue() {
+      return instance.getResultValue();
     }
     /**
-     * <code>string result = 1;</code>
-     * @return The bytes for result.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getResultBytes() {
-      return instance.getResultBytes();
-    }
-    /**
-     * <code>string result = 1;</code>
+     * <code>.server.DecryptionReport.Status result = 1;</code>
      * @param value The result to set.
      * @return This builder for chaining.
      */
-    public Builder setResult(
-        java.lang.String value) {
+    public Builder setResultValue(int value) {
+      copyOnWrite();
+      instance.setResultValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.DecryptionReport.Status result = 1;</code>
+     * @return The result.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.DecryptionReport.Status getResult() {
+      return instance.getResult();
+    }
+    /**
+     * <code>.server.DecryptionReport.Status result = 1;</code>
+     * @param value The enum numeric value on the wire for result to set.
+     * @return This builder for chaining.
+     */
+    public Builder setResult(com.halloapp.proto.log_events.DecryptionReport.Status value) {
       copyOnWrite();
       instance.setResult(value);
       return this;
     }
     /**
-     * <code>string result = 1;</code>
+     * <code>.server.DecryptionReport.Status result = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearResult() {
@@ -451,20 +590,58 @@ public  final class DecryptionReport extends
       instance.clearResult();
       return this;
     }
+
     /**
-     * <code>string result = 1;</code>
-     * @param value The bytes for result to set.
+     * <code>string reason = 2;</code>
+     * @return The reason.
+     */
+    @java.lang.Override
+    public java.lang.String getReason() {
+      return instance.getReason();
+    }
+    /**
+     * <code>string reason = 2;</code>
+     * @return The bytes for reason.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getReasonBytes() {
+      return instance.getReasonBytes();
+    }
+    /**
+     * <code>string reason = 2;</code>
+     * @param value The reason to set.
      * @return This builder for chaining.
      */
-    public Builder setResultBytes(
+    public Builder setReason(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setReason(value);
+      return this;
+    }
+    /**
+     * <code>string reason = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearReason() {
+      copyOnWrite();
+      instance.clearReason();
+      return this;
+    }
+    /**
+     * <code>string reason = 2;</code>
+     * @param value The bytes for reason to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReasonBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setResultBytes(value);
+      instance.setReasonBytes(value);
       return this;
     }
 
     /**
-     * <code>string msg_id = 2;</code>
+     * <code>string msg_id = 3;</code>
      * @return The msgId.
      */
     @java.lang.Override
@@ -472,7 +649,7 @@ public  final class DecryptionReport extends
       return instance.getMsgId();
     }
     /**
-     * <code>string msg_id = 2;</code>
+     * <code>string msg_id = 3;</code>
      * @return The bytes for msgId.
      */
     @java.lang.Override
@@ -481,7 +658,7 @@ public  final class DecryptionReport extends
       return instance.getMsgIdBytes();
     }
     /**
-     * <code>string msg_id = 2;</code>
+     * <code>string msg_id = 3;</code>
      * @param value The msgId to set.
      * @return This builder for chaining.
      */
@@ -492,7 +669,7 @@ public  final class DecryptionReport extends
       return this;
     }
     /**
-     * <code>string msg_id = 2;</code>
+     * <code>string msg_id = 3;</code>
      * @return This builder for chaining.
      */
     public Builder clearMsgId() {
@@ -501,7 +678,7 @@ public  final class DecryptionReport extends
       return this;
     }
     /**
-     * <code>string msg_id = 2;</code>
+     * <code>string msg_id = 3;</code>
      * @param value The bytes for msgId to set.
      * @return This builder for chaining.
      */
@@ -517,7 +694,7 @@ public  final class DecryptionReport extends
      * at time message id was first encountered
      * </pre>
      *
-     * <code>string original_version = 3;</code>
+     * <code>string original_version = 4;</code>
      * @return The originalVersion.
      */
     @java.lang.Override
@@ -529,7 +706,7 @@ public  final class DecryptionReport extends
      * at time message id was first encountered
      * </pre>
      *
-     * <code>string original_version = 3;</code>
+     * <code>string original_version = 4;</code>
      * @return The bytes for originalVersion.
      */
     @java.lang.Override
@@ -542,7 +719,7 @@ public  final class DecryptionReport extends
      * at time message id was first encountered
      * </pre>
      *
-     * <code>string original_version = 3;</code>
+     * <code>string original_version = 4;</code>
      * @param value The originalVersion to set.
      * @return This builder for chaining.
      */
@@ -557,7 +734,7 @@ public  final class DecryptionReport extends
      * at time message id was first encountered
      * </pre>
      *
-     * <code>string original_version = 3;</code>
+     * <code>string original_version = 4;</code>
      * @return This builder for chaining.
      */
     public Builder clearOriginalVersion() {
@@ -570,7 +747,7 @@ public  final class DecryptionReport extends
      * at time message id was first encountered
      * </pre>
      *
-     * <code>string original_version = 3;</code>
+     * <code>string original_version = 4;</code>
      * @param value The bytes for originalVersion to set.
      * @return This builder for chaining.
      */
@@ -578,55 +755,6 @@ public  final class DecryptionReport extends
         com.google.protobuf.ByteString value) {
       copyOnWrite();
       instance.setOriginalVersionBytes(value);
-      return this;
-    }
-
-    /**
-     * <code>string sender_version = 4;</code>
-     * @return The senderVersion.
-     */
-    @java.lang.Override
-    public java.lang.String getSenderVersion() {
-      return instance.getSenderVersion();
-    }
-    /**
-     * <code>string sender_version = 4;</code>
-     * @return The bytes for senderVersion.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getSenderVersionBytes() {
-      return instance.getSenderVersionBytes();
-    }
-    /**
-     * <code>string sender_version = 4;</code>
-     * @param value The senderVersion to set.
-     * @return This builder for chaining.
-     */
-    public Builder setSenderVersion(
-        java.lang.String value) {
-      copyOnWrite();
-      instance.setSenderVersion(value);
-      return this;
-    }
-    /**
-     * <code>string sender_version = 4;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearSenderVersion() {
-      copyOnWrite();
-      instance.clearSenderVersion();
-      return this;
-    }
-    /**
-     * <code>string sender_version = 4;</code>
-     * @param value The bytes for senderVersion to set.
-     * @return This builder for chaining.
-     */
-    public Builder setSenderVersionBytes(
-        com.google.protobuf.ByteString value) {
-      copyOnWrite();
-      instance.setSenderVersionBytes(value);
       return this;
     }
 
@@ -677,7 +805,56 @@ public  final class DecryptionReport extends
     }
 
     /**
-     * <code>uint32 rerequest_count = 6;</code>
+     * <code>string sender_version = 6;</code>
+     * @return The senderVersion.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderVersion() {
+      return instance.getSenderVersion();
+    }
+    /**
+     * <code>string sender_version = 6;</code>
+     * @return The bytes for senderVersion.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderVersionBytes() {
+      return instance.getSenderVersionBytes();
+    }
+    /**
+     * <code>string sender_version = 6;</code>
+     * @param value The senderVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderVersion(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderVersion(value);
+      return this;
+    }
+    /**
+     * <code>string sender_version = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderVersion() {
+      copyOnWrite();
+      instance.clearSenderVersion();
+      return this;
+    }
+    /**
+     * <code>string sender_version = 6;</code>
+     * @param value The bytes for senderVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderVersionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderVersionBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>uint32 rerequest_count = 7;</code>
      * @return The rerequestCount.
      */
     @java.lang.Override
@@ -685,7 +862,7 @@ public  final class DecryptionReport extends
       return instance.getRerequestCount();
     }
     /**
-     * <code>uint32 rerequest_count = 6;</code>
+     * <code>uint32 rerequest_count = 7;</code>
      * @param value The rerequestCount to set.
      * @return This builder for chaining.
      */
@@ -695,7 +872,7 @@ public  final class DecryptionReport extends
       return this;
     }
     /**
-     * <code>uint32 rerequest_count = 6;</code>
+     * <code>uint32 rerequest_count = 7;</code>
      * @return This builder for chaining.
      */
     public Builder clearRerequestCount() {
@@ -705,7 +882,7 @@ public  final class DecryptionReport extends
     }
 
     /**
-     * <code>uint32 time_taken_s = 7;</code>
+     * <code>uint32 time_taken_s = 8;</code>
      * @return The timeTakenS.
      */
     @java.lang.Override
@@ -713,7 +890,7 @@ public  final class DecryptionReport extends
       return instance.getTimeTakenS();
     }
     /**
-     * <code>uint32 time_taken_s = 7;</code>
+     * <code>uint32 time_taken_s = 8;</code>
      * @param value The timeTakenS to set.
      * @return This builder for chaining.
      */
@@ -723,7 +900,7 @@ public  final class DecryptionReport extends
       return this;
     }
     /**
-     * <code>uint32 time_taken_s = 7;</code>
+     * <code>uint32 time_taken_s = 8;</code>
      * @return This builder for chaining.
      */
     public Builder clearTimeTakenS() {
@@ -749,16 +926,17 @@ public  final class DecryptionReport extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "result_",
+            "reason_",
             "msgId_",
             "originalVersion_",
-            "senderVersion_",
             "senderPlatform_",
+            "senderVersion_",
             "rerequestCount_",
             "timeTakenS_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\f\u0006\u000b\u0007\u000b";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
