@@ -11,6 +11,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.goterl.lazycode.lazysodium.interfaces.Sign;
 import com.halloapp.Me;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
@@ -80,14 +81,14 @@ public class HANoiseSocket extends Socket {
             try {
                 performXXHandshake(authRequest, noiseKey);
                 me.setServerStaticKey(getServerStaticKey());
-            } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException e) {
+            } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException | CryptoException e) {
                 throw new NoiseException(e);
             }
         } else {
             Log.i("NoiseSocket/authenticate trying IK handshake");
             try {
                 performIKHandshake(authRequest, noiseKey, serverStaticKey.getKeyMaterial());
-            } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException e) {
+            } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException | CryptoException e) {
                 throw new NoiseException(e);
             }
         }
@@ -101,7 +102,7 @@ public class HANoiseSocket extends Socket {
         out.write('0');
     }
 
-    private void performIKHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair, byte[] remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, NoiseException {
+    private void performIKHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair, byte[] remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
         sendHAHandshakeSignature();
 
         handshakeState = new HandshakeState(IK_PROTOCOL, HandshakeState.INITIATOR);
@@ -151,7 +152,7 @@ public class HANoiseSocket extends Socket {
         }
     }
 
-    private void performXXHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, NoiseException {
+    private void performXXHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
         sendHAHandshakeSignature();
 
         handshakeState = new HandshakeState(XX_PROTOCOL, HandshakeState.INITIATOR);

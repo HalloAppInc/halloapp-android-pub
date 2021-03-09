@@ -18,6 +18,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.PrivateXECKey;
@@ -325,8 +326,20 @@ public class Debug {
                 () -> encryptedKeyStore.setRootKey(peerUserId, Random.randBytes(KEY_SIZE)),
                 () -> encryptedKeyStore.setOutboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)),
                 () -> encryptedKeyStore.setInboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)),
-                () -> encryptedKeyStore.setOutboundEphemeralKey(peerUserId, new PrivateXECKey(Random.randBytes(KEY_SIZE))),
-                () -> encryptedKeyStore.setInboundEphemeralKey(peerUserId, new PublicXECKey(Random.randBytes(KEY_SIZE))),
+                () -> {
+                    try {
+                        encryptedKeyStore.setOutboundEphemeralKey(peerUserId, new PrivateXECKey(Random.randBytes(KEY_SIZE)));
+                    } catch (CryptoException e) {
+                        e.printStackTrace();
+                    }
+                },
+                () -> {
+                    try {
+                        encryptedKeyStore.setInboundEphemeralKey(peerUserId, new PublicXECKey(Random.randBytes(KEY_SIZE)));
+                    } catch (CryptoException e) {
+                        e.printStackTrace();
+                    }
+                },
                 () -> encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)),
                 () -> encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)),
                 () -> encryptedKeyStore.setOutboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)),

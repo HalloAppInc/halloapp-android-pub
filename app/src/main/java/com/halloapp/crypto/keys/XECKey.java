@@ -1,6 +1,7 @@
 package com.halloapp.crypto.keys;
 
 import com.google.crypto.tink.subtle.X25519;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 
@@ -10,10 +11,14 @@ public abstract class XECKey extends Key {
     private static final int KEY_SIZE_BYTES = 32;
 
     public static PrivateXECKey generatePrivateKey() {
-        return new PrivateXECKey(X25519.generatePrivateKey());
+        try {
+            return new PrivateXECKey(X25519.generatePrivateKey());
+        } catch (CryptoException e) {
+            throw new IllegalStateException("Generated key was invalid");
+        }
     }
 
-    public static PublicXECKey publicFromPrivate(PrivateXECKey privateECKey) throws InvalidKeyException {
+    public static PublicXECKey publicFromPrivate(PrivateXECKey privateECKey) throws InvalidKeyException, CryptoException {
         try {
             return new PublicXECKey(X25519.publicFromPrivate(privateECKey.getKeyMaterial()));
         } catch (InvalidKeyException e) {
@@ -22,8 +27,12 @@ public abstract class XECKey extends Key {
         }
     }
 
-    public XECKey(byte[] key) {
+    public XECKey(byte[] key) throws CryptoException {
         super(key);
-        Preconditions.checkArgument(key.length == KEY_SIZE_BYTES);
+        if (key == null) {
+            throw new CryptoException("xec_null_key");
+        } else if (key.length != KEY_SIZE_BYTES) {
+            throw new CryptoException("xec_wrong_key_size");
+        }
     }
 }

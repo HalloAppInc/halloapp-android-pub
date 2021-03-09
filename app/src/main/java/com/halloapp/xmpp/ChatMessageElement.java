@@ -100,8 +100,8 @@ public class ChatMessageElement {
                 } else {
                     stats.reportDecryptSuccess(senderPlatform, senderVersion);
                 }
-            } catch (CryptoException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-                failureReason = e instanceof CryptoException ? e.getMessage() : e instanceof ArrayIndexOutOfBoundsException ? "aioobe" : "null_key";
+            } catch (CryptoException | ArrayIndexOutOfBoundsException e) {
+                failureReason = e instanceof CryptoException ? e.getMessage() : "aioobe";
                 Log.e("Failed to decrypt message: " + failureReason + ", falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure: " + failureReason);
                 stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
@@ -168,8 +168,8 @@ public class ChatMessageElement {
             byte[] encryptedEntry = EncryptedSessionManager.getInstance().encryptMessage(encodedEntry, recipientUserId);
             stats.reportEncryptSuccess();
             return encryptedEntry;
-        } catch (CryptoException | NullPointerException e) {
-            String message = e instanceof NullPointerException ? "null_key" : e.getMessage();
+        } catch (CryptoException e) {
+            String message = e.getMessage();
             Log.e("Failed to encrypt: " + message, e);
             Log.sendErrorReport("Encryption failure: " + message);
             stats.reportEncryptError(message);
@@ -205,8 +205,9 @@ public class ChatMessageElement {
         try {
             sb.append("; PIK:");
             sb.append(Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(userId).getKeyMaterial(), Base64.NO_WRAP));
-        } catch (NullPointerException e) {
-            sb.append("null");
+        } catch (CryptoException e) {
+            Log.w("Failed to get peer public identity key", e);
+            sb.append("CryptoException");
         }
 
         sb.append("; MICK:").append(CryptoUtils.obfuscate(encryptedKeyStore.getInboundChainKey(userId)));

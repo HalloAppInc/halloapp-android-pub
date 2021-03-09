@@ -88,13 +88,13 @@ public class CryptoUtils {
         return CryptoUtils.concat(publicKey, privateKey);
     }
 
-    public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) {
+    public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) throws CryptoException {
         byte[] ret = new byte[Box.PUBLICKEYBYTES];
         sign.convertPublicKeyEd25519ToCurve25519(ret, ed.getKeyMaterial());
         return new PublicXECKey(ret);
     }
 
-    public static PrivateXECKey convertPrivateEdToX(PrivateEdECKey ed) {
+    public static PrivateXECKey convertPrivateEdToX(PrivateEdECKey ed) throws CryptoException {
         byte[] ret = new byte[Box.SECRETKEYBYTES];
         sign.convertSecretKeyEd25519ToCurve25519(ret, ed.getKeyMaterial());
         return new PrivateXECKey(ret);

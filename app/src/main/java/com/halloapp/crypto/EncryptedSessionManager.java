@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentMap;
  * the Signal protocol should be routed through this class.
  */
 public class EncryptedSessionManager {
-    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = DateUtils.HOUR_IN_MILLIS;
+    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = DateUtils.MINUTE_IN_MILLIS;
 
     private final ServerProps serverProps = ServerProps.getInstance();
     private final Connection connection;
@@ -92,7 +92,6 @@ public class EncryptedSessionManager {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                 if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
-                    keyManager.tearDownSession(peerUserId);
                     throw new CryptoException("no_identity_key");
                 }
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
@@ -110,8 +109,11 @@ public class EncryptedSessionManager {
 
             return messageCipher.convertFromWire(message, peerUserId);
         } catch (CryptoException e) {
-            if (!e.teardownKeyMatched) {
-                Log.i("Setting session back up because teardown key did not match");
+            if (e.teardownKeyMatched) {
+                Log.i("Teardown key matched; skipping session reset");
+            } else {
+                Log.i("Resetting session because teardown key did not match");
+                keyManager.tearDownSession(peerUserId);
                 setUpSession(peerUserId);
             }
             throw e;
@@ -219,6 +221,7 @@ public class EncryptedSessionManager {
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws CryptoException {
         if (encryptedKeyStore.getPeerResponded(peerUserId)) {
+            Log.d("EncryptedSessionManager.setUpSession: peer already responded!");
             return null;
         }
 
@@ -226,7 +229,7 @@ public class EncryptedSessionManager {
             // TODO(jack): Reconsider once encryption is fully deployed
             long now = System.currentTimeMillis();
             if (now - encryptedKeyStore.getLastDownloadAttempt(peerUserId) < MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS) {
-                Log.i("EncryptedSessionManager last download attempt too recent for " + peerUserId);
+                Log.i("EncryptedSessionManager.setUpSession: last download attempt too recent for " + peerUserId);
                 throw new CryptoException("last_key_dl_too_recent");
             }
 
@@ -234,7 +237,7 @@ public class EncryptedSessionManager {
                 WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
                 encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
                 if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
-                    Log.i("EncryptedSessionManager no whisper keys returned");
+                    Log.i("EncryptedSessionManager.setUpSession: no whisper keys returned");
                     throw new CryptoException("no_whisper_keys_returned");
                 }
                 IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
@@ -244,7 +247,7 @@ public class EncryptedSessionManager {
                 byte[] signedPreKeyBytes = signedPreKeyProto.getPublicKey().toByteArray();
 
                 if (identityKeyBytes == null || identityKeyBytes.length == 0 || signedPreKeyBytes == null || signedPreKeyBytes.length == 0) {
-                    Log.i("Did not get any keys for peer " + peerUserId);
+                    Log.i("EncryptedSessionManager.setUpSession: Did not get any keys for peer " + peerUserId);
                     throw new CryptoException("empty_whisper_keys");
                 }
 
@@ -271,6 +274,8 @@ public class EncryptedSessionManager {
             } catch (GeneralSecurityException e) {
                 throw new CryptoException("spk_sig_mismatch", e);
             }
+        } else {
+            Log.i("EncryptedSessionManager.setUpSession: Session has already been set up!");
         }
 
         return new SessionSetupInfo(

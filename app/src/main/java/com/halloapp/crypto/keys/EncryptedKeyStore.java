@@ -185,7 +185,7 @@ public class EncryptedKeyStore {
         return new PrivateEdECKey(Arrays.copyOfRange(getMyEd25519IdentityKey(), 32, 96));
     }
 
-    public PrivateXECKey getMyPrivateX25519IdentityKey() {
+    public PrivateXECKey getMyPrivateX25519IdentityKey() throws CryptoException {
         return CryptoUtils.convertPrivateEdToX(getMyPrivateEd25519IdentityKey());
     }
 
@@ -193,7 +193,7 @@ public class EncryptedKeyStore {
         storeCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY, key);
     }
 
-    public PrivateXECKey getMyPrivateSignedPreKey() {
+    public PrivateXECKey getMyPrivateSignedPreKey() throws CryptoException {
         return new PrivateXECKey(getMyPrivateSignedPreKeyInternal());
     }
 
@@ -204,7 +204,7 @@ public class EncryptedKeyStore {
     public PublicXECKey getMyPublicSignedPreKey() {
         try {
             return XECKey.publicFromPrivate(getMyPrivateSignedPreKey());
-        } catch (InvalidKeyException e) {
+        } catch (InvalidKeyException | CryptoException e) {
             Log.w("Failed to get public identity key", e);
         }
         return null;
@@ -221,7 +221,7 @@ public class EncryptedKeyStore {
                 OneTimePreKey otpk = new OneTimePreKey(XECKey.publicFromPrivate(privateKey), id);
                 storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial());
                 ret.add(otpk);
-            } catch (InvalidKeyException e) {
+            } catch (InvalidKeyException | CryptoException e) {
                 Log.w("Invalid X25519 private key for conversion", e);
             }
         }
@@ -316,7 +316,7 @@ public class EncryptedKeyStore {
         storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicXECKey getPeerPublicIdentityKey(UserId peerUserId) {
+    public PublicXECKey getPeerPublicIdentityKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
     }
 
@@ -334,7 +334,7 @@ public class EncryptedKeyStore {
         storeBytes(getPeerSignedPreKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicXECKey getPeerSignedPreKey(UserId peerUserId) {
+    public PublicXECKey getPeerSignedPreKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveBytes(getPeerSignedPreKeyPrefKey(peerUserId)));
     }
 
@@ -352,7 +352,7 @@ public class EncryptedKeyStore {
         storeBytes(getPeerOneTimePreKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicXECKey getPeerOneTimePreKey(UserId peerUserId) {
+    public PublicXECKey getPeerOneTimePreKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveBytes(getPeerOneTimePreKeyPrefKey(peerUserId)));
     }
 
@@ -448,7 +448,7 @@ public class EncryptedKeyStore {
         storeCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicXECKey getInboundEphemeralKey(UserId peerUserId) {
+    public PublicXECKey getInboundEphemeralKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId)));
     }
 
@@ -466,7 +466,7 @@ public class EncryptedKeyStore {
         storeCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PrivateXECKey getOutboundEphemeralKey(UserId peerUserId) {
+    public PrivateXECKey getOutboundEphemeralKey(UserId peerUserId) throws CryptoException {
         return new PrivateXECKey(retrieveCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId)));
     }
 
