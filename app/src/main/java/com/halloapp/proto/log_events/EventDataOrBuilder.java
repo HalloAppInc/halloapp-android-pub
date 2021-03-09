@@ -106,5 +106,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.PushReceived getPushReceived();
 
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   * @return Whether the decryptionReport field is set.
+   */
+  boolean hasDecryptionReport();
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   * @return The decryptionReport.
+   */
+  com.halloapp.proto.log_events.DecryptionReport getDecryptionReport();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

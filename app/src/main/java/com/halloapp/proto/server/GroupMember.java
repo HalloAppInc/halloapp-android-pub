@@ -42,6 +42,10 @@ public  final class GroupMember extends
      * <code>LEAVE = 4;</code>
      */
     LEAVE(4),
+    /**
+     * <code>JOIN = 5;</code>
+     */
+    JOIN(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -65,6 +69,10 @@ public  final class GroupMember extends
      * <code>LEAVE = 4;</code>
      */
     public static final int LEAVE_VALUE = 4;
+    /**
+     * <code>JOIN = 5;</code>
+     */
+    public static final int JOIN_VALUE = 5;
 
 
     @java.lang.Override
@@ -93,6 +101,7 @@ public  final class GroupMember extends
         case 2: return PROMOTE;
         case 3: return DEMOTE;
         case 4: return LEAVE;
+        case 5: return JOIN;
         default: return null;
       }
     }

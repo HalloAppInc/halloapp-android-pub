@@ -316,5 +316,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.DeleteAccount getDeleteAccount();
 
+  /**
+   * <code>.server.GroupInviteLink group_invite_link = 31;</code>
+   * @return Whether the groupInviteLink field is set.
+   */
+  boolean hasGroupInviteLink();
+  /**
+   * <code>.server.GroupInviteLink group_invite_link = 31;</code>
+   * @return The groupInviteLink.
+   */
+  com.halloapp.proto.server.GroupInviteLink getGroupInviteLink();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

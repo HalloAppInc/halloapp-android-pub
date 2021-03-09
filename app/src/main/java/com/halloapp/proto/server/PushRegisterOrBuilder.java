@@ -17,4 +17,16 @@ public interface PushRegisterOrBuilder extends
    * @return The pushToken.
    */
   com.halloapp.proto.server.PushToken getPushToken();
+
+  /**
+   * <code>string lang_id = 2;</code>
+   * @return The langId.
+   */
+  java.lang.String getLangId();
+  /**
+   * <code>string lang_id = 2;</code>
+   * @return The bytes for langId.
+   */
+  com.google.protobuf.ByteString
+      getLangIdBytes();
 }

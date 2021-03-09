@@ -21,6 +21,7 @@ public  final class EventData extends
     MEDIA_DOWNLOAD(11),
     MEDIA_COMPOSE_LOAD(12),
     PUSH_RECEIVED(13),
+    DECRYPTION_REPORT(14),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -40,6 +41,7 @@ public  final class EventData extends
         case 11: return MEDIA_DOWNLOAD;
         case 12: return MEDIA_COMPOSE_LOAD;
         case 13: return PUSH_RECEIVED;
+        case 14: return DECRYPTION_REPORT;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -449,6 +451,56 @@ public  final class EventData extends
    */
   private void clearPushReceived() {
     if (edataCase_ == 13) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int DECRYPTION_REPORT_FIELD_NUMBER = 14;
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   */
+  @java.lang.Override
+  public boolean hasDecryptionReport() {
+    return edataCase_ == 14;
+  }
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.DecryptionReport getDecryptionReport() {
+    if (edataCase_ == 14) {
+       return (com.halloapp.proto.log_events.DecryptionReport) edata_;
+    }
+    return com.halloapp.proto.log_events.DecryptionReport.getDefaultInstance();
+  }
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   */
+  private void setDecryptionReport(com.halloapp.proto.log_events.DecryptionReport value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 14;
+  }
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   */
+  private void mergeDecryptionReport(com.halloapp.proto.log_events.DecryptionReport value) {
+    value.getClass();
+  if (edataCase_ == 14 &&
+        edata_ != com.halloapp.proto.log_events.DecryptionReport.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.DecryptionReport.newBuilder((com.halloapp.proto.log_events.DecryptionReport) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 14;
+  }
+  /**
+   * <code>.server.DecryptionReport decryption_report = 14;</code>
+   */
+  private void clearDecryptionReport() {
+    if (edataCase_ == 14) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -956,6 +1008,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.DecryptionReport decryption_report = 14;</code>
+     */
+    @java.lang.Override
+    public boolean hasDecryptionReport() {
+      return instance.hasDecryptionReport();
+    }
+    /**
+     * <code>.server.DecryptionReport decryption_report = 14;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.DecryptionReport getDecryptionReport() {
+      return instance.getDecryptionReport();
+    }
+    /**
+     * <code>.server.DecryptionReport decryption_report = 14;</code>
+     */
+    public Builder setDecryptionReport(com.halloapp.proto.log_events.DecryptionReport value) {
+      copyOnWrite();
+      instance.setDecryptionReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.DecryptionReport decryption_report = 14;</code>
+     */
+    public Builder setDecryptionReport(
+        com.halloapp.proto.log_events.DecryptionReport.Builder builderForValue) {
+      copyOnWrite();
+      instance.setDecryptionReport(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.DecryptionReport decryption_report = 14;</code>
+     */
+    public Builder mergeDecryptionReport(com.halloapp.proto.log_events.DecryptionReport value) {
+      copyOnWrite();
+      instance.mergeDecryptionReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.DecryptionReport decryption_report = 14;</code>
+     */
+    public Builder clearDecryptionReport() {
+      copyOnWrite();
+      instance.clearDecryptionReport();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -982,10 +1082,11 @@ public  final class EventData extends
             com.halloapp.proto.log_events.MediaDownload.class,
             com.halloapp.proto.log_events.MediaComposeLoad.class,
             com.halloapp.proto.log_events.PushReceived.class,
+            com.halloapp.proto.log_events.DecryptionReport.class,
           };
           java.lang.String info =
-              "\u0000\b\u0001\u0000\u0001\r\b\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
-              "\u0004\u0003\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000";
+              "\u0000\t\u0001\u0000\u0001\u000e\t\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
+              "\u0004\u0003\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

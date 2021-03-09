@@ -12,6 +12,7 @@ public  final class PushRegister extends
     // @@protoc_insertion_point(message_implements:server.PushRegister)
     PushRegisterOrBuilder {
   private PushRegister() {
+    langId_ = "";
   }
   public static final int PUSH_TOKEN_FIELD_NUMBER = 1;
   private com.halloapp.proto.server.PushToken pushToken_;
@@ -56,6 +57,53 @@ public  final class PushRegister extends
    * <code>.server.PushToken push_token = 1;</code>
    */
   private void clearPushToken() {  pushToken_ = null;
+    
+  }
+
+  public static final int LANG_ID_FIELD_NUMBER = 2;
+  private java.lang.String langId_;
+  /**
+   * <code>string lang_id = 2;</code>
+   * @return The langId.
+   */
+  @java.lang.Override
+  public java.lang.String getLangId() {
+    return langId_;
+  }
+  /**
+   * <code>string lang_id = 2;</code>
+   * @return The bytes for langId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getLangIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(langId_);
+  }
+  /**
+   * <code>string lang_id = 2;</code>
+   * @param value The langId to set.
+   */
+  private void setLangId(
+      java.lang.String value) {
+    value.getClass();
+  
+    langId_ = value;
+  }
+  /**
+   * <code>string lang_id = 2;</code>
+   */
+  private void clearLangId() {
+    
+    langId_ = getDefaultInstance().getLangId();
+  }
+  /**
+   * <code>string lang_id = 2;</code>
+   * @param value The bytes for langId to set.
+   */
+  private void setLangIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    langId_ = value.toStringUtf8();
     
   }
 
@@ -201,6 +249,55 @@ public  final class PushRegister extends
       return this;
     }
 
+    /**
+     * <code>string lang_id = 2;</code>
+     * @return The langId.
+     */
+    @java.lang.Override
+    public java.lang.String getLangId() {
+      return instance.getLangId();
+    }
+    /**
+     * <code>string lang_id = 2;</code>
+     * @return The bytes for langId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLangIdBytes() {
+      return instance.getLangIdBytes();
+    }
+    /**
+     * <code>string lang_id = 2;</code>
+     * @param value The langId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLangId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setLangId(value);
+      return this;
+    }
+    /**
+     * <code>string lang_id = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLangId() {
+      copyOnWrite();
+      instance.clearLangId();
+      return this;
+    }
+    /**
+     * <code>string lang_id = 2;</code>
+     * @param value The bytes for langId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLangIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setLangIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.PushRegister)
   }
   @java.lang.Override
@@ -218,9 +315,11 @@ public  final class PushRegister extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "pushToken_",
+            "langId_",
           };
           java.lang.String info =
-              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t";
+              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0002\u0208" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

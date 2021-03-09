@@ -67,6 +67,10 @@ public  final class GroupStanza extends
      * <code>SET_NAME = 10;</code>
      */
     SET_NAME(10),
+    /**
+     * <code>JOIN = 11;</code>
+     */
+    JOIN(11),
     UNRECOGNIZED(-1),
     ;
 
@@ -114,6 +118,10 @@ public  final class GroupStanza extends
      * <code>SET_NAME = 10;</code>
      */
     public static final int SET_NAME_VALUE = 10;
+    /**
+     * <code>JOIN = 11;</code>
+     */
+    public static final int JOIN_VALUE = 11;
 
 
     @java.lang.Override
@@ -148,6 +156,7 @@ public  final class GroupStanza extends
         case 8: return MODIFY_MEMBERS;
         case 9: return AUTO_PROMOTE_ADMINS;
         case 10: return SET_NAME;
+        case 11: return JOIN;
         default: return null;
       }
     }
