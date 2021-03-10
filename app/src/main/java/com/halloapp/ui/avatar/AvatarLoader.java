@@ -103,7 +103,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 } else {
                     view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
                 }
-            } else if (chatId instanceof GroupId && serverProps.getGroupFeedEnabled()) {
+            } else if (chatId instanceof GroupId) {
                 GroupId groupId = (GroupId) chatId;
                 view.setOnClickListener(v -> v.getContext().startActivity(ViewGroupFeedActivity.viewFeed(v.getContext(), groupId)));
             } else {

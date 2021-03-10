@@ -385,11 +385,7 @@ public class MainConnectionObserver extends Connection.Observer {
         members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
 
         contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, members), () -> {
-            if (serverProps.getGroupFeedEnabled()) {
-                addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
-            } else {
-                addSystemMessage(groupId, sender, Message.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
-            }
+            addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
         });
     }
 
@@ -409,20 +405,12 @@ public class MainConnectionObserver extends Connection.Observer {
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed, () -> {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
-                if (serverProps.getGroupFeedEnabled()) {
-                    addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
-                } else {
-                    addSystemMessage(groupId, sender, Message.USAGE_ADD_MEMBERS, idList, null);
-                }
+                addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
             }
 
             if (!removed.isEmpty()) {
                 String idList = toUserIdList(removed);
-                if (serverProps.getGroupFeedEnabled()) {
-                    addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
-                } else {
-                    addSystemMessage(groupId, sender, Message.USAGE_REMOVE_MEMBER, idList, null);
-                }
+                addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
             }
 
             for (MemberInfo member : removed) {
@@ -448,19 +436,11 @@ public class MainConnectionObserver extends Connection.Observer {
 
         contentDb.addRemoveGroupMembers(groupId, null, null, new ArrayList<>(), left, () -> {
             for (MemberInfo member : left) {
-                if (serverProps.getGroupFeedEnabled()) {
                     addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_LEFT, null, () -> {
                         if (member.userId.isMe()) {
                             contentDb.setGroupInactive(groupId, null);
                         }
                     });
-                } else {
-                    addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, () -> {
-                        if (member.userId.isMe()) {
-                            contentDb.setGroupInactive(groupId, null);
-                        }
-                    });
-                }
             }
 
             connection.sendAck(ackId);
@@ -483,20 +463,12 @@ public class MainConnectionObserver extends Connection.Observer {
         contentDb.promoteDemoteGroupAdmins(groupId, promoted, demoted, () -> {
             if (!promoted.isEmpty()) {
                 String idList = toUserIdList(promoted);
-                if (serverProps.getGroupFeedEnabled()) {
-                    addSystemPost(groupId, sender, Post.USAGE_PROMOTE, idList, null);
-                } else {
-                    addSystemMessage(groupId, sender, Message.USAGE_PROMOTE, idList, null);
-                }
+                addSystemPost(groupId, sender, Post.USAGE_PROMOTE, idList, null);
             }
 
             if (!demoted.isEmpty()) {
                 String idList = toUserIdList(demoted);
-                if (serverProps.getGroupFeedEnabled()) {
-                    addSystemPost(groupId, sender, Post.USAGE_DEMOTE, idList, null);
-                } else {
-                    addSystemMessage(groupId, sender, Message.USAGE_DEMOTE, idList, null);
-                }
+                addSystemPost(groupId, sender, Post.USAGE_DEMOTE, idList, null);
             }
 
             connection.sendAck(ackId);
@@ -506,11 +478,7 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         contentDb.setGroupName(groupId, name, () -> {
-            if (serverProps.getGroupFeedEnabled()) {
-                addSystemPost(groupId, sender, Post.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
-            } else {
-                addSystemMessage(groupId, sender, Message.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
-            }
+            addSystemPost(groupId, sender, Post.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
         });
     }
 
@@ -518,11 +486,7 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         contentDb.setGroupAvatar(groupId, avatarId, () -> {
             avatarLoader.reportAvatarUpdate(groupId, avatarId);
-            if (serverProps.getGroupFeedEnabled()) {
-                addSystemPost(groupId, sender, Post.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
-            } else {
-                addSystemMessage(groupId, sender, Message.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
-            }
+            addSystemPost(groupId, sender, Post.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
         });
     }
 
@@ -538,11 +502,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
         contentDb.promoteDemoteGroupAdmins(groupId, promoted, new ArrayList<>(), () -> {
             for (MemberInfo member : promoted) {
-                if (serverProps.getGroupFeedEnabled()) {
-                    addSystemPost(groupId, member.userId, Post.USAGE_AUTO_PROMOTE, null, null);
-                } else {
-                    addSystemMessage(groupId, member.userId, Message.USAGE_AUTO_PROMOTE, null, null);
-                }
+                addSystemPost(groupId, member.userId, Post.USAGE_AUTO_PROMOTE, null, null);
             }
 
             connection.sendAck(ackId);
@@ -551,19 +511,11 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        if (serverProps.getGroupFeedEnabled()) {
-            addSystemPost(groupId, sender, Post.USAGE_GROUP_DELETED, null, () -> {
-                contentDb.setGroupInactive(groupId, () -> {
-                    connection.sendAck(ackId);
-                });
+        addSystemPost(groupId, sender, Post.USAGE_GROUP_DELETED, null, () -> {
+            contentDb.setGroupInactive(groupId, () -> {
+                connection.sendAck(ackId);
             });
-        } else {
-            addSystemMessage(groupId, sender, Message.USAGE_GROUP_DELETED, null, () -> {
-                contentDb.setGroupInactive(groupId, () -> {
-                    connection.sendAck(ackId);
-                });
-            });
-        }
+        });
     }
 
     private String toUserIdList(@NonNull List<MemberInfo> members) {

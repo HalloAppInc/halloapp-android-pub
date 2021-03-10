@@ -125,9 +125,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-        if (!serverProps.getGroupFeedEnabled()) {
-            navView.getMenu().removeItem(R.id.navigation_groups);
-        }
 
         navView.setSaveEnabled(false);
         navView.setOnNavigationItemReselectedListener(item -> scrollToTop());

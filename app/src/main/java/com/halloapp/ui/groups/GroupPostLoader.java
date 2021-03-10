@@ -21,13 +21,11 @@ import java.util.concurrent.Callable;
 public class GroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
 
     private final ContentDb contentDb;
-    private final ServerProps serverProps;
 
     private final LruCache<ChatId, Post> cache;
 
     public GroupPostLoader() {
         contentDb = ContentDb.getInstance();
-        serverProps = ServerProps.getInstance();
 
         cache = new LruCache<>(128);
     }
@@ -35,7 +33,7 @@ public class GroupPostLoader extends ViewDataLoader<View, Post, ChatId> {
     @MainThread
     public void load(@NonNull View view, @NonNull ChatId chatId, @NonNull Displayer<View, Post> displayer) {
         final Callable<Post> loader = () -> {
-            if (chatId instanceof GroupId && serverProps.getGroupFeedEnabled()) {
+            if (chatId instanceof GroupId) {
                 return contentDb.getLastGroupPost((GroupId) chatId);
             }
             return null;
