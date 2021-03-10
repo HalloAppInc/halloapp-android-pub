@@ -15,6 +15,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.EventData;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.util.stats.Stats;
@@ -65,6 +66,7 @@ public abstract class Connection {
         public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
         public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
@@ -136,6 +138,8 @@ public abstract class Connection {
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
 
     public abstract void sendGroupMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
+
+    public abstract Observable<Iq> sendIqRequest(@NonNull HalloIq iq);
 
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 

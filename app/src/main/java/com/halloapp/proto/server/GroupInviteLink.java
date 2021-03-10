@@ -38,6 +38,10 @@ public  final class GroupInviteLink extends
      * <code>JOIN = 3;</code>
      */
     JOIN(3),
+    /**
+     * <code>PREVIEW = 4;</code>
+     */
+    PREVIEW(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -57,6 +61,10 @@ public  final class GroupInviteLink extends
      * <code>JOIN = 3;</code>
      */
     public static final int JOIN_VALUE = 3;
+    /**
+     * <code>PREVIEW = 4;</code>
+     */
+    public static final int PREVIEW_VALUE = 4;
 
 
     @java.lang.Override
@@ -84,6 +92,7 @@ public  final class GroupInviteLink extends
         case 1: return GET;
         case 2: return RESET;
         case 3: return JOIN;
+        case 4: return PREVIEW;
         default: return null;
       }
     }

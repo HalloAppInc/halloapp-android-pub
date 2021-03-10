@@ -77,6 +77,7 @@ public class GroupInfoActivity extends HalloActivity {
 
     private MenuItem deleteMenuItem;
     private MenuItem leaveMenuItem;
+    private MenuItem inviteLinkMenuItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,6 +150,9 @@ public class GroupInfoActivity extends HalloActivity {
         if (deleteMenuItem != null) {
             deleteMenuItem.setVisible(both);
         }
+        if (inviteLinkMenuItem != null) {
+            inviteLinkMenuItem.setVisible(both && ServerProps.getInstance().getGroupInviteLinksEnabled());
+        }
         if (leaveMenuItem != null) {
             leaveMenuItem.setVisible(chatIsActive);
         }
@@ -165,6 +169,8 @@ public class GroupInfoActivity extends HalloActivity {
         getMenuInflater().inflate(R.menu.group_info_menu, menu);
         deleteMenuItem = menu.findItem(R.id.delete);
         leaveMenuItem = menu.findItem(R.id.leave);
+        inviteLinkMenuItem = menu.findItem(R.id.invite_link);
+
         updateVisibilities();
         return true;
     }
@@ -197,6 +203,8 @@ public class GroupInfoActivity extends HalloActivity {
             builder.setNegativeButton(R.string.no, null);
             builder.show();
             return true;
+        } else if (item.getItemId() == R.id.invite_link) {
+            startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
         }
         return super.onOptionsItemSelected(item);
     }

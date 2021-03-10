@@ -24,7 +24,7 @@ public class MemberElement {
         String MEMBER = "member";
     }
 
-    @StringDef({Action.ADD, Action.REMOVE, Action.LEAVE, Action.PROMOTE, Action.DEMOTE, Action.INVALID})
+    @StringDef({Action.ADD, Action.REMOVE, Action.LEAVE, Action.PROMOTE, Action.DEMOTE, Action.JOIN, Action.INVALID})
     public @interface Action {
         String INVALID = "invalid";
         String ADD = "add";
@@ -32,6 +32,7 @@ public class MemberElement {
         String LEAVE = "leave";
         String PROMOTE = "promote";
         String DEMOTE = "demote";
+        String JOIN = "join";
     }
 
     @StringDef({Result.OK, Result.FAILED, Result.INVALID})

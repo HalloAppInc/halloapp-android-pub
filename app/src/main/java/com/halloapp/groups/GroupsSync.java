@@ -63,6 +63,12 @@ public class GroupsSync {
         this.serverProps = ServerProps.getInstance();
     }
 
+    public void forceGroupSync() {
+        Log.d("GroupSync.forcingGroupSync");
+        preferences.setLastGroupSyncTime(0);
+        performGroupSync();
+    }
+
     public void startGroupsSync() {
         Log.d("GroupsSync.startGroupsSync");
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(GroupSyncWorker.class).build();

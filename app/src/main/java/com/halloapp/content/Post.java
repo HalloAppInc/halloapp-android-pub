@@ -56,7 +56,7 @@ public class Post extends ContentItem {
     public @Type int type;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({USAGE_POST, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED})
+    @IntDef({USAGE_POST, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_MEMBER_JOINED})
     public @interface Usage {}
     public static final int USAGE_POST = 0;
     public static final int USAGE_CREATE_GROUP = 1;
@@ -69,6 +69,7 @@ public class Post extends ContentItem {
     public static final int USAGE_NAME_CHANGE = 8;
     public static final int USAGE_AVATAR_CHANGE = 9;
     public static final int USAGE_GROUP_DELETED = 10;
+    public static final int USAGE_MEMBER_JOINED = 11;
 
     public @Usage int usage;
 

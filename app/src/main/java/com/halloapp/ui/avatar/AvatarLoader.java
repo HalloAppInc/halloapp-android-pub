@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.collection.LruCache;
 
@@ -126,6 +127,24 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         load(view, loader, displayer, chatId.rawId(), cache);
     }
 
+    @MainThread
+    public void load(@NonNull ImageView view, @NonNull ChatId chatId, String avatarId) {
+        final Callable<Bitmap> loader = () -> getAvatarImpl(chatId, avatarId);
+        final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
+
+            @Override
+            public void showResult(@NonNull ImageView view, Bitmap result) {
+                view.setImageBitmap(result != null ? result : getDefaultAvatar(chatId));
+            }
+
+            @Override
+            public void showLoading(@NonNull ImageView view) {
+                view.setImageBitmap(getDefaultAvatar(chatId));
+            }
+        };
+        load(view, loader, displayer, chatId.rawId(), cache);
+    }
+
     @WorkerThread
     @NonNull public Bitmap getAvatar(@NonNull ChatId chatId) {
         Bitmap avatar = cache.get(chatId.rawId());
@@ -143,6 +162,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @WorkerThread
     private Bitmap getAvatarImpl(@NonNull ChatId chatId) {
+        return getAvatarImpl(chatId, null);
+    }
+
+    @WorkerThread
+    private Bitmap getAvatarImpl(@NonNull ChatId chatId, @Nullable String knownAvatarId) {
         FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(chatId.rawId());
 
@@ -151,7 +175,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         long currentTimeMs = System.currentTimeMillis();
         if (currentTimeMs - contactAvatarInfo.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
             try {
-                String avatarId = null;
+                String avatarId = knownAvatarId;
 
                 if (chatId instanceof UserId) {
                     UserId userId = (UserId) chatId;
@@ -178,8 +202,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                         contactAvatarInfo.avatarId = contact.avatarId;
                     }
                 } else {
-                    Chat chat = Preconditions.checkNotNull(ContentDb.getInstance().getChat(chatId));
-                    avatarId = chat.groupAvatarId;
+                    Chat chat = ContentDb.getInstance().getChat(chatId);
+                    if (chat != null) {
+                        avatarId = chat.groupAvatarId;
+                    } else {
+                        Log.i("AvatarLoader: group no chat");
+                    }
 
                     if (TextUtils.isEmpty(avatarId)) {
                         Log.i("AvatarLoader: no group avatar id " + avatarId);

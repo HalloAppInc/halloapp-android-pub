@@ -198,6 +198,19 @@
         <item quantity="one">HalloApp expires in %d day</item>
         <item quantity="other">HalloApp expires in %d days</item>
     </plurals>
+    <string name="invite_links_not_currently_supported">Invite links are not supported yet</string>
+    <string name="view_group_invite_link_action">View group invite</string>
+    <string name="invite_link_resetting_progress">Resetting link…</string>
+    <string name="invite_link_reset">Link reset</string>
+    <string name="invite_link_reset_failed">Failed to reset link</string>
+    <string name="reset_invite_link_confirmation">Would you like to reset the group invite link?</string>
+    <string name="invite_link_joining">Joining group…</string>
+    <string name="invite_link_loading">Loading group…</string>
+    <string name="invite_link_copied">Link copied!</string>
+    <string name="invite_link_title">Invite link</string>
+    <string name="invite_link_summary">Anyone with HalloApp can use this link to join this group.</string>
+    <string name="invite_link_failed_to_join">Failed to join the group</string>
+    <string name="join_group_action">Join group</string>
     <string name="app_expiration_download_button">Download update</string>
     <string name="app_expired_explanation">This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>
     <string name="app_expiration_no_play_store">Google Play not installed</string>
@@ -309,6 +322,8 @@
     <string name="system_message_group_avatar_changed_by_you">You changed the group avatar</string>
     <string name="system_message_group_deleted">%s deleted the group</string>
     <string name="system_message_group_deleted_by_you">You deleted the group</string>
+    <string name="system_message_you_joined">You joined the group via invite link</string>
+    <string name="system_message_joined">%s joined the group via invite link</string>
 
     <string name="system_post_group_created">This group was created by %s</string>
     <string name="system_post_group_created_by_you">This group was created by you</string>

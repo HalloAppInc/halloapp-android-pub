@@ -10,6 +10,7 @@ public class Constants {
     public static final String ABOUT_PAGE_URL = "https://www.halloapp.com/about";
     public static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy-policy";
     public static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms-of-service";
+    public static final String GROUP_INVITE_BASE_URL = "https://invite.halloapp.com/";
 
     public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
     public static final String SUPPORT_EMAIL_LOCAL_PART = "android-support";

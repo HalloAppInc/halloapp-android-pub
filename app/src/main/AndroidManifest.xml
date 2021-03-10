@@ -114,6 +114,11 @@
             android:label="@string/invite_title"
             android:windowSoftInputMode="stateUnchanged|adjustResize"/>
 
+        <activity android:name=".ui.groups.GroupInviteLinkActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/invite_link_title"
+            android:windowSoftInputMode="stateUnchanged|adjustResize"/>
+
         <activity
             android:name=".ui.ContentComposerActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -153,6 +158,20 @@
                 <data android:mimeType="video/*" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
+        </activity>
+        
+        <activity android:name=".ui.groups.ViewGroupInviteLinkActivity"
+            android:label="@string/invite_link_title"
+            android:theme="@style/AppTheme.Transparent">
+            <intent-filter android:label="@string/view_group_invite_link_action">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                    android:host="invite.halloapp.com" />
+                <data android:scheme="https"
+                    android:host="invite.halloapp.com" />
+                </intent-filter>
         </activity>
 
         <activity

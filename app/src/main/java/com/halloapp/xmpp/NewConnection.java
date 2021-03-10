@@ -63,7 +63,6 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Counter;
-import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
@@ -643,6 +642,21 @@ public class NewConnection extends Connection {
 
     // NOTE: Should NOT be called from executor.
     @Override
+    public Observable<Iq> sendIqRequest(@NonNull HalloIq iq) {
+        MutableObservable<Iq> iqResponse = new MutableObservable<>();
+        sendIqRequestAsync(iq).onResponse(resultIq -> {
+            try {
+                iqResponse.setResponse(resultIq);
+            } catch (ClassCastException e) {
+                iqResponse.setException(e);
+            }
+        }).onError(iqResponse::setException);
+        return iqResponse;
+    }
+
+
+    // NOTE: Should NOT be called from executor.
+    @Override
     public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         MutableObservable<T> iqResponse = new MutableObservable<>();
         sendIqRequestAsync(iq).onResponse(resultIq -> {
@@ -1037,6 +1051,8 @@ public class NewConnection extends Connection {
                         connectionObservers.notifyGroupAdminAutoPromoteReceived(groupId, elements, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.DELETE)) {
                         connectionObservers.notifyGroupDeleteReceived(groupId, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.JOIN)) {
+                        connectionObservers.notifyGroupMemberJoinReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else {
                         handled = false;
                         Log.w("Unrecognized group stanza action " + groupStanza.getAction());

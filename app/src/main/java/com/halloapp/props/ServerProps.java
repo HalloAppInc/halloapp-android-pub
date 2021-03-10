@@ -30,12 +30,12 @@ public class ServerProps {
     private static final String PROP_INTERNAL_USER = "dev";
     private static final String PROP_GROUP_CHATS_ENABLED = "group_chat";
     private static final String PROP_MAX_GROUP_SIZE = "max_group_size";
-    private static final String PROP_GROUP_FEED = "group_feed";
     private static final String PROP_SILENT_CHAT_MESSAGES = "silent_chat_messages";
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_PRIVATE_REACTS = "private_reactions";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
+    private static final String PROP_GROUP_INVITE_LINKS = "group_invite_links";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -67,6 +67,7 @@ public class ServerProps {
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final BooleanProp propPrivateReactionsEnabled = createProp(PROP_PRIVATE_REACTS, false);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
+    private final BooleanProp propGroupInviteLinksEnabled = createProp(PROP_GROUP_INVITE_LINKS, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -202,5 +203,9 @@ public class ServerProps {
 
     public synchronized int getMinGroupSyncIntervalSeconds() {
         return propMinGroupSyncInterval.getValue();
+    }
+
+    public synchronized boolean getGroupInviteLinksEnabled() {
+        return propGroupInviteLinksEnabled.getValue();
     }
 }

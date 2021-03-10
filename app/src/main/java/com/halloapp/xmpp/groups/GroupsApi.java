@@ -7,6 +7,9 @@ import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.GroupInviteLink;
+import com.halloapp.proto.server.GroupMember;
+import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.util.Observable;
@@ -92,6 +95,60 @@ public class GroupsApi {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
             return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
+        });
+    }
+
+    public Observable<String> getGroupInviteLink(@NonNull GroupId groupId) {
+        final GetGroupInviteLinkIq requestIq = new GetGroupInviteLinkIq(groupId);
+
+        return connection.sendIqRequest(requestIq).map(response -> {
+            GroupInviteLink groupInviteLink = response.getGroupInviteLink();
+            if (groupInviteLink == null) {
+                return null;
+            }
+            return groupInviteLink.getLink();
+        });
+    }
+
+    public Observable<Boolean> resetGroupInviteLink(@NonNull GroupId groupId) {
+        final ResetGroupInviteLinkIq requestIq = new ResetGroupInviteLinkIq(groupId);
+
+        return connection.sendIqRequest(requestIq).map(response -> {
+            GroupInviteLink groupInviteLink = response.getGroupInviteLink();
+            if (groupInviteLink == null) {
+                return null;
+            }
+            return GroupInviteLink.Action.RESET.equals(groupInviteLink.getAction());
+        });
+    }
+
+    public Observable<GroupInfo> previewGroupInviteLink(@NonNull String code) {
+        final PreviewGroupInviteLinkIq requestIq = new PreviewGroupInviteLinkIq(code);
+
+        return connection.sendIqRequest(requestIq).map(response -> {
+            GroupInviteLink groupInviteLink = response.getGroupInviteLink();
+            if (groupInviteLink == null) {
+                return null;
+            }
+            GroupStanza groupStanza = groupInviteLink.getGroup();
+            List<GroupMember> groupMembers = groupStanza.getMembersList();
+            List<MemberInfo> membersList = new ArrayList<>();
+            for (GroupMember g : groupMembers) {
+                membersList.add(MemberInfo.fromGroupMember(g));
+            }
+            return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), membersList);
+        });
+    }
+
+    public Observable<Boolean> joinGroupViaInviteLink(@NonNull String code) {
+        final JoinGroupInviteLinkIq requestIq = new JoinGroupInviteLinkIq(code);
+
+        return connection.sendIqRequest(requestIq).map(response -> {
+            GroupInviteLink groupInviteLink = response.getGroupInviteLink();
+            if (groupInviteLink == null) {
+                return false;
+            }
+            return true;
         });
     }
 

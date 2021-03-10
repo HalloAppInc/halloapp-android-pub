@@ -71,6 +71,10 @@ public  final class GroupStanza extends
      * <code>JOIN = 11;</code>
      */
     JOIN(11),
+    /**
+     * <code>PREVIEW = 12;</code>
+     */
+    PREVIEW(12),
     UNRECOGNIZED(-1),
     ;
 
@@ -122,6 +126,10 @@ public  final class GroupStanza extends
      * <code>JOIN = 11;</code>
      */
     public static final int JOIN_VALUE = 11;
+    /**
+     * <code>PREVIEW = 12;</code>
+     */
+    public static final int PREVIEW_VALUE = 12;
 
 
     @java.lang.Override
@@ -157,6 +165,7 @@ public  final class GroupStanza extends
         case 9: return AUTO_PROMOTE_ADMINS;
         case 10: return SET_NAME;
         case 11: return JOIN;
+        case 12: return PREVIEW;
         default: return null;
       }
     }

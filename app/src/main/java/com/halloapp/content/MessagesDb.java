@@ -374,7 +374,7 @@ class MessagesDb {
             }
             if (!groupExists) {
                 addGroupChat(new GroupInfo(groupId, groupName, null, avatarId, new ArrayList<>()));
-                GroupsSync.getInstance(AppContext.getInstance().get()).startGroupsSync();
+                GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
             }
 
             for (MemberInfo member : added) {

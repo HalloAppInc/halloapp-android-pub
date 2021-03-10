@@ -252,6 +252,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupMemberJoinReceived(groupId, groupName, avatarId, members, sender, senderName, ackId);
+            }
+        }
+    }
+
     public void notifyGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

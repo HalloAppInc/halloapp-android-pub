@@ -545,6 +545,10 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                         systemMessageSingleUser(post, R.string.system_message_group_deleted_by_you, R.string.system_message_group_deleted);
                         break;
                     }
+                    case Post.USAGE_MEMBER_JOINED: {
+                        systemMessageSingleUser(post, R.string.system_message_you_joined, R.string.system_message_joined);
+                        break;
+                    }
                     case Post.USAGE_POST:
                     default: {
                         Log.w("Unrecognized system message usage " + post.usage);

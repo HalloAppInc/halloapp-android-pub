@@ -425,6 +425,25 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        List<MemberInfo> joined = new ArrayList<>();
+        for (MemberElement memberElement : members) {
+            MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+            if (MemberElement.Action.JOIN.equals(memberElement.action)) {
+                joined.add(memberInfo);
+            }
+        }
+
+        contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, joined, new ArrayList<>(), () -> {
+            for (MemberInfo member : joined) {
+                addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, null);
+            }
+
+            connection.sendAck(ackId);
+        });
+    }
+
+    @Override
     public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         List<MemberInfo> left = new ArrayList<>();
         for (MemberElement memberElement : members) {
