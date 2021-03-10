@@ -3,9 +3,6 @@ package com.halloapp.util.stats;
 import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.Platform;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class DecryptStats {
     public final long rowId;
     public final String messageId;
@@ -52,7 +49,8 @@ public class DecryptStats {
                 .setSenderVersion(senderVersion)
                 .setSenderPlatform(senderPlatform)
                 .setRerequestCount(rerequestCount)
-                .setTimeTakenS((int)timeTakenS);
+                .setTimeTakenS((int)timeTakenS)
+                .setIsSilent(false);
         return builder.build();
     }
 }
