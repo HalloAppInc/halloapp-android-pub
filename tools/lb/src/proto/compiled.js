@@ -20696,13 +20696,15 @@ $root.server = (function() {
          * Properties of a DecryptionReport.
          * @memberof server
          * @interface IDecryptionReport
-         * @property {string|null} [result] DecryptionReport result
+         * @property {server.DecryptionReport.Status|null} [result] DecryptionReport result
+         * @property {string|null} [reason] DecryptionReport reason
          * @property {string|null} [msgId] DecryptionReport msgId
          * @property {string|null} [originalVersion] DecryptionReport originalVersion
-         * @property {string|null} [senderVersion] DecryptionReport senderVersion
          * @property {server.Platform|null} [senderPlatform] DecryptionReport senderPlatform
+         * @property {string|null} [senderVersion] DecryptionReport senderVersion
          * @property {number|null} [rerequestCount] DecryptionReport rerequestCount
          * @property {number|null} [timeTakenS] DecryptionReport timeTakenS
+         * @property {boolean|null} [isSilent] DecryptionReport isSilent
          */
 
         /**
@@ -20722,11 +20724,19 @@ $root.server = (function() {
 
         /**
          * DecryptionReport result.
-         * @member {string} result
+         * @member {server.DecryptionReport.Status} result
          * @memberof server.DecryptionReport
          * @instance
          */
-        DecryptionReport.prototype.result = "";
+        DecryptionReport.prototype.result = 0;
+
+        /**
+         * DecryptionReport reason.
+         * @member {string} reason
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.reason = "";
 
         /**
          * DecryptionReport msgId.
@@ -20745,20 +20755,20 @@ $root.server = (function() {
         DecryptionReport.prototype.originalVersion = "";
 
         /**
-         * DecryptionReport senderVersion.
-         * @member {string} senderVersion
-         * @memberof server.DecryptionReport
-         * @instance
-         */
-        DecryptionReport.prototype.senderVersion = "";
-
-        /**
          * DecryptionReport senderPlatform.
          * @member {server.Platform} senderPlatform
          * @memberof server.DecryptionReport
          * @instance
          */
         DecryptionReport.prototype.senderPlatform = 0;
+
+        /**
+         * DecryptionReport senderVersion.
+         * @member {string} senderVersion
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.senderVersion = "";
 
         /**
          * DecryptionReport rerequestCount.
@@ -20775,6 +20785,14 @@ $root.server = (function() {
          * @instance
          */
         DecryptionReport.prototype.timeTakenS = 0;
+
+        /**
+         * DecryptionReport isSilent.
+         * @member {boolean} isSilent
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.isSilent = false;
 
         /**
          * Creates a new DecryptionReport instance using the specified properties.
@@ -20801,19 +20819,23 @@ $root.server = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.result != null && Object.hasOwnProperty.call(message, "result"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.result);
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.reason);
             if (message.msgId != null && Object.hasOwnProperty.call(message, "msgId"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.msgId);
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.msgId);
             if (message.originalVersion != null && Object.hasOwnProperty.call(message, "originalVersion"))
-                writer.uint32(/* id 3, wireType 2 =*/26).string(message.originalVersion);
-            if (message.senderVersion != null && Object.hasOwnProperty.call(message, "senderVersion"))
-                writer.uint32(/* id 4, wireType 2 =*/34).string(message.senderVersion);
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.originalVersion);
             if (message.senderPlatform != null && Object.hasOwnProperty.call(message, "senderPlatform"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.senderPlatform);
+            if (message.senderVersion != null && Object.hasOwnProperty.call(message, "senderVersion"))
+                writer.uint32(/* id 6, wireType 2 =*/50).string(message.senderVersion);
             if (message.rerequestCount != null && Object.hasOwnProperty.call(message, "rerequestCount"))
-                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.rerequestCount);
+                writer.uint32(/* id 7, wireType 0 =*/56).uint32(message.rerequestCount);
             if (message.timeTakenS != null && Object.hasOwnProperty.call(message, "timeTakenS"))
-                writer.uint32(/* id 7, wireType 0 =*/56).uint32(message.timeTakenS);
+                writer.uint32(/* id 8, wireType 0 =*/64).uint32(message.timeTakenS);
+            if (message.isSilent != null && Object.hasOwnProperty.call(message, "isSilent"))
+                writer.uint32(/* id 9, wireType 0 =*/72).bool(message.isSilent);
             return writer;
         };
 
@@ -20849,25 +20871,31 @@ $root.server = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.result = reader.string();
+                    message.result = reader.int32();
                     break;
                 case 2:
-                    message.msgId = reader.string();
+                    message.reason = reader.string();
                     break;
                 case 3:
-                    message.originalVersion = reader.string();
+                    message.msgId = reader.string();
                     break;
                 case 4:
-                    message.senderVersion = reader.string();
+                    message.originalVersion = reader.string();
                     break;
                 case 5:
                     message.senderPlatform = reader.int32();
                     break;
                 case 6:
-                    message.rerequestCount = reader.uint32();
+                    message.senderVersion = reader.string();
                     break;
                 case 7:
+                    message.rerequestCount = reader.uint32();
+                    break;
+                case 8:
                     message.timeTakenS = reader.uint32();
+                    break;
+                case 9:
+                    message.isSilent = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -20905,17 +20933,22 @@ $root.server = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.result != null && message.hasOwnProperty("result"))
-                if (!$util.isString(message.result))
-                    return "result: string expected";
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                if (!$util.isString(message.reason))
+                    return "reason: string expected";
             if (message.msgId != null && message.hasOwnProperty("msgId"))
                 if (!$util.isString(message.msgId))
                     return "msgId: string expected";
             if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
                 if (!$util.isString(message.originalVersion))
                     return "originalVersion: string expected";
-            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
-                if (!$util.isString(message.senderVersion))
-                    return "senderVersion: string expected";
             if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
                 switch (message.senderPlatform) {
                 default:
@@ -20925,12 +20958,18 @@ $root.server = (function() {
                 case 2:
                     break;
                 }
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                if (!$util.isString(message.senderVersion))
+                    return "senderVersion: string expected";
             if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
                 if (!$util.isInteger(message.rerequestCount))
                     return "rerequestCount: integer expected";
             if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
                 if (!$util.isInteger(message.timeTakenS))
                     return "timeTakenS: integer expected";
+            if (message.isSilent != null && message.hasOwnProperty("isSilent"))
+                if (typeof message.isSilent !== "boolean")
+                    return "isSilent: boolean expected";
             return null;
         };
 
@@ -20946,14 +20985,22 @@ $root.server = (function() {
             if (object instanceof $root.server.DecryptionReport)
                 return object;
             var message = new $root.server.DecryptionReport();
-            if (object.result != null)
-                message.result = String(object.result);
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.reason != null)
+                message.reason = String(object.reason);
             if (object.msgId != null)
                 message.msgId = String(object.msgId);
             if (object.originalVersion != null)
                 message.originalVersion = String(object.originalVersion);
-            if (object.senderVersion != null)
-                message.senderVersion = String(object.senderVersion);
             switch (object.senderPlatform) {
             case "UNKNOWN":
             case 0:
@@ -20968,10 +21015,14 @@ $root.server = (function() {
                 message.senderPlatform = 2;
                 break;
             }
+            if (object.senderVersion != null)
+                message.senderVersion = String(object.senderVersion);
             if (object.rerequestCount != null)
                 message.rerequestCount = object.rerequestCount >>> 0;
             if (object.timeTakenS != null)
                 message.timeTakenS = object.timeTakenS >>> 0;
+            if (object.isSilent != null)
+                message.isSilent = Boolean(object.isSilent);
             return message;
         };
 
@@ -20989,28 +21040,34 @@ $root.server = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.result = "";
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = "";
                 object.msgId = "";
                 object.originalVersion = "";
-                object.senderVersion = "";
                 object.senderPlatform = options.enums === String ? "UNKNOWN" : 0;
+                object.senderVersion = "";
                 object.rerequestCount = 0;
                 object.timeTakenS = 0;
+                object.isSilent = false;
             }
             if (message.result != null && message.hasOwnProperty("result"))
-                object.result = message.result;
+                object.result = options.enums === String ? $root.server.DecryptionReport.Status[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = message.reason;
             if (message.msgId != null && message.hasOwnProperty("msgId"))
                 object.msgId = message.msgId;
             if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
                 object.originalVersion = message.originalVersion;
-            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
-                object.senderVersion = message.senderVersion;
             if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
                 object.senderPlatform = options.enums === String ? $root.server.Platform[message.senderPlatform] : message.senderPlatform;
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                object.senderVersion = message.senderVersion;
             if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
                 object.rerequestCount = message.rerequestCount;
             if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
                 object.timeTakenS = message.timeTakenS;
+            if (message.isSilent != null && message.hasOwnProperty("isSilent"))
+                object.isSilent = message.isSilent;
             return object;
         };
 
@@ -21024,6 +21081,20 @@ $root.server = (function() {
         DecryptionReport.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * Status enum.
+         * @name server.DecryptionReport.Status
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        DecryptionReport.Status = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
 
         return DecryptionReport;
     })();

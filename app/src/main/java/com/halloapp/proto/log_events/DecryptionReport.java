@@ -450,6 +450,32 @@ public  final class DecryptionReport extends
     timeTakenS_ = 0;
   }
 
+  public static final int IS_SILENT_FIELD_NUMBER = 9;
+  private boolean isSilent_;
+  /**
+   * <code>bool is_silent = 9;</code>
+   * @return The isSilent.
+   */
+  @java.lang.Override
+  public boolean getIsSilent() {
+    return isSilent_;
+  }
+  /**
+   * <code>bool is_silent = 9;</code>
+   * @param value The isSilent to set.
+   */
+  private void setIsSilent(boolean value) {
+    
+    isSilent_ = value;
+  }
+  /**
+   * <code>bool is_silent = 9;</code>
+   */
+  private void clearIsSilent() {
+    
+    isSilent_ = false;
+  }
+
   public static com.halloapp.proto.log_events.DecryptionReport parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -909,6 +935,34 @@ public  final class DecryptionReport extends
       return this;
     }
 
+    /**
+     * <code>bool is_silent = 9;</code>
+     * @return The isSilent.
+     */
+    @java.lang.Override
+    public boolean getIsSilent() {
+      return instance.getIsSilent();
+    }
+    /**
+     * <code>bool is_silent = 9;</code>
+     * @param value The isSilent to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsSilent(boolean value) {
+      copyOnWrite();
+      instance.setIsSilent(value);
+      return this;
+    }
+    /**
+     * <code>bool is_silent = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIsSilent() {
+      copyOnWrite();
+      instance.clearIsSilent();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.DecryptionReport)
   }
   @java.lang.Override
@@ -933,10 +987,11 @@ public  final class DecryptionReport extends
             "senderVersion_",
             "rerequestCount_",
             "timeTakenS_",
+            "isSilent_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b\t\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

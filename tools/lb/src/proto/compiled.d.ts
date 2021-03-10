@@ -7786,7 +7786,10 @@ export namespace server {
     interface IDecryptionReport {
 
         /** DecryptionReport result */
-        result?: (string|null);
+        result?: (server.DecryptionReport.Status|null);
+
+        /** DecryptionReport reason */
+        reason?: (string|null);
 
         /** DecryptionReport msgId */
         msgId?: (string|null);
@@ -7794,17 +7797,20 @@ export namespace server {
         /** DecryptionReport originalVersion */
         originalVersion?: (string|null);
 
-        /** DecryptionReport senderVersion */
-        senderVersion?: (string|null);
-
         /** DecryptionReport senderPlatform */
         senderPlatform?: (server.Platform|null);
+
+        /** DecryptionReport senderVersion */
+        senderVersion?: (string|null);
 
         /** DecryptionReport rerequestCount */
         rerequestCount?: (number|null);
 
         /** DecryptionReport timeTakenS */
         timeTakenS?: (number|null);
+
+        /** DecryptionReport isSilent */
+        isSilent?: (boolean|null);
     }
 
     /** Represents a DecryptionReport. */
@@ -7817,7 +7823,10 @@ export namespace server {
         constructor(properties?: server.IDecryptionReport);
 
         /** DecryptionReport result. */
-        public result: string;
+        public result: server.DecryptionReport.Status;
+
+        /** DecryptionReport reason. */
+        public reason: string;
 
         /** DecryptionReport msgId. */
         public msgId: string;
@@ -7825,17 +7834,20 @@ export namespace server {
         /** DecryptionReport originalVersion. */
         public originalVersion: string;
 
-        /** DecryptionReport senderVersion. */
-        public senderVersion: string;
-
         /** DecryptionReport senderPlatform. */
         public senderPlatform: server.Platform;
+
+        /** DecryptionReport senderVersion. */
+        public senderVersion: string;
 
         /** DecryptionReport rerequestCount. */
         public rerequestCount: number;
 
         /** DecryptionReport timeTakenS. */
         public timeTakenS: number;
+
+        /** DecryptionReport isSilent. */
+        public isSilent: boolean;
 
         /**
          * Creates a new DecryptionReport instance using the specified properties.
@@ -7906,5 +7918,14 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace DecryptionReport {
+
+        /** Status enum. */
+        enum Status {
+            OK = 0,
+            FAIL = 1
+        }
     }
 }

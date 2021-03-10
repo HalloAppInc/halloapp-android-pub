@@ -96,4 +96,10 @@ public interface DecryptionReportOrBuilder extends
    * @return The timeTakenS.
    */
   int getTimeTakenS();
+
+  /**
+   * <code>bool is_silent = 9;</code>
+   * @return The isSilent.
+   */
+  boolean getIsSilent();
 }
