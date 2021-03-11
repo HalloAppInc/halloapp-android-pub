@@ -17,10 +17,22 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 
 import java.text.BreakIterator;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FilterUtils {
+
+    private static final Collator collator = Collator.getInstance();
+
+    static {
+        collator.setStrength(Collator.PRIMARY);
+    }
+
+    private static boolean startsWith(@NonNull String text, @NonNull String prefix) {
+        return collator.compare(prefix, text.substring(0, Math.min(text.length(), prefix.length()))) == 0;
+    }
+
     @Nullable
     public static List<String> getFilterTokens(final @Nullable CharSequence filterText) {
         if (TextUtils.isEmpty(filterText)) {
@@ -51,7 +63,7 @@ public class FilterUtils {
             }
             final String word = text.substring(start, end).toLowerCase();
             for (String filterToken : filterTokens) {
-                if (word.startsWith(filterToken)) {
+                if (startsWith(word, filterToken)) {
                     if (formattedName == null) {
                         formattedName = new SpannableString(text);
                     }
@@ -73,7 +85,7 @@ public class FilterUtils {
         for (String filterToken : filterTokens) {
             boolean tokenMatch = false;
             for (String word : words) {
-                if (word.startsWith(filterToken)) {
+                if (startsWith(word, filterToken)) {
                     tokenMatch = true;
                     break;
                 }
