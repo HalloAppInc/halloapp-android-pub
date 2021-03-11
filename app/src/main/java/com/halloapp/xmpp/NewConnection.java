@@ -98,7 +98,7 @@ public class NewConnection extends Connection {
 
     private static final String HOST = "s.halloapp.net";
     private static final String DEBUG_HOST = "s-test.halloapp.net";
-    private static final int NOISE_PORT = 5208;
+    private static final int NOISE_PORT = 5222;
 
     public static final String FEED_THREAD_ID = "feed";
 
