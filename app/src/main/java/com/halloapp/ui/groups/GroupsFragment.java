@@ -212,6 +212,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    MenuItem leaveItem = menu.findItem(R.id.leave_group);
+                    leaveItem.setTitle(getResources().getQuantityString(R.plurals.leave_group_plural, selectedChats.size()));
                     return true;
                 }
 

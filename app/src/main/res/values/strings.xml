@@ -386,6 +386,10 @@
     <string name="remove_member_in_progress">Removing member…</string>
     <string name="failed_remove_member">Failed to remove member, try again later</string>
     <string name="leave_group">Leave group</string>
+    <plurals name="leave_group_plural">
+        <item quantity="one">Leave group</item>
+        <item quantity="other">Leave groups</item>
+    </plurals>
     <string name="leave_group_confirmation">Would you like to leave this group?</string>
     <plurals name="leave_multiple_groups_confirmation">
         <item quantity="one">Would you like to leave this group?</item>
