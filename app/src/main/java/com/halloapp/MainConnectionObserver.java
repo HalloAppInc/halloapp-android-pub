@@ -162,7 +162,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
         connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
-        HalloApp.sendPushTokenFromFirebase();
+        HalloApp.updateFirebasePushTokenIfNeeded();
         new RequestExpirationInfoTask(connection, context).execute();
         presenceLoader.onReconnect();
         groupsSync.startGroupsSync();

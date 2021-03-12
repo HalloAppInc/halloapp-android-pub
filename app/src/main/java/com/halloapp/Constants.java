@@ -19,6 +19,7 @@ public class Constants {
     public static final long SHARE_OLD_POST_LIMIT = 7 * DateUtils.DAY_IN_MILLIS;
     public static final long RETRACT_COMMENT_ALLOWED_TIME = DateUtils.HOUR_IN_MILLIS;
     public static final long MINIMUM_PROGRESS_DIALOG_TIME_MILLIS = 300;
+    public static final long PUSH_TOKEN_RESYNC_TIME = DateUtils.DAY_IN_MILLIS;
     public static final int MAX_TEXT_LENGTH = 32000;
     public static final int MAX_IMAGE_DIMENSION = 1600;
     public static final int MAX_POST_MEDIA_ITEMS = 10;

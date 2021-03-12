@@ -9,9 +9,11 @@ import com.halloapp.proto.server.PushToken;
 public class PushRegisterRequestIq extends HalloIq {
 
     private final String token;
+    private final String languageCode;
 
-    PushRegisterRequestIq(@NonNull String token) {
+    PushRegisterRequestIq(@NonNull String token, @NonNull String languageCode) {
         this.token = token;
+        this.languageCode = languageCode;
     }
 
     @Override
@@ -26,6 +28,7 @@ public class PushRegisterRequestIq extends HalloIq {
                                                 .setOs(PushToken.Os.ANDROID)
                                                 .setToken(token)
                                 )
+                        .setLangId(languageCode)
                 )
                 .build();
     }

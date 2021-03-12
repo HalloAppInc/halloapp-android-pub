@@ -3,7 +3,9 @@ package com.halloapp;
 import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
@@ -23,6 +25,8 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+
+import java.util.Locale;
 
 public class HalloApp extends Application {
 
@@ -103,7 +107,7 @@ public class HalloApp extends Application {
         Log.w("halloapp: low memory");
     }
 
-    public static void sendPushTokenFromFirebase() {
+    public static void updateFirebasePushTokenIfNeeded() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
@@ -116,7 +120,25 @@ public class HalloApp extends Application {
                         Log.e("halloapp: error getting push token");
                     } else {
                         Log.d("halloapp: obtained the push token!");
-                        Connection.getInstance().sendPushToken(pushToken);
+
+                        Configuration configuration = AppContext.getInstance().get().getResources().getConfiguration();
+                        Locale locale;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            locale = configuration.getLocales().get(0);
+                        } else {
+                            locale = configuration.locale;
+                        }
+                        String language = locale.getLanguage();
+                        String savedLocale = Preferences.getInstance().getLastDeviceLocale();
+                        String savedToken = Preferences.getInstance().getLastPushToken();
+                        long lastUpdateTime = Preferences.getInstance().getLastPushTokenSyncTime();
+                        if (!pushToken.equals(savedToken)
+                                || !language.equals(savedLocale)
+                                || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
+                            Connection.getInstance().sendPushToken(pushToken, language);
+                        } else {
+                            Log.i("halloapp: no need to sync push token");
+                        }
                     }
                 });
     }

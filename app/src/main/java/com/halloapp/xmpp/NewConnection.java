@@ -316,10 +316,15 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public void sendPushToken(@NonNull String pushToken) {
-        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken);
+    public void sendPushToken(@NonNull String pushToken, @NonNull String languageCode) {
+        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode);
         sendIqRequestAsync(pushIq)
-                .onResponse(response -> Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response)))
+                .onResponse(response -> {
+                    Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response));
+                    preferences.setLastPushToken(pushToken);
+                    preferences.setLastDeviceLocale(languageCode);
+                    preferences.setLastPushTokenSyncTime(System.currentTimeMillis());
+                })
                 .onError(e -> Log.e("connection: cannot send push token", e));
     }
 

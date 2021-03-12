@@ -21,6 +21,11 @@ public class Preferences {
     private static final String PREF_KEY_LAST_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
     private static final String PREF_KEY_REQUIRE_SHARE_POSTS = "require_share_posts";
+
+    private static final String PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME = "last_push_token_sync";
+    private static final String PREF_KEY_SYNCED_PUSH_TOKEN = "last_synced_push_token";
+    private static final String PREF_KEY_SYNCED_LANGUAGE = "last_synced_language";
+
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
@@ -89,6 +94,42 @@ public class Preferences {
     public void setLastBlockListSyncTime(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last block list sync time");
+        }
+    }
+
+    @WorkerThread
+    public long getLastPushTokenSyncTime() {
+        return getPreferences().getLong(PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, 0);
+    }
+
+    @WorkerThread
+    public void setLastPushTokenSyncTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, time).commit()) {
+            Log.e("preferences: failed to set last push token sync time");
+        }
+    }
+
+    @WorkerThread
+    public String getLastPushToken() {
+        return getPreferences().getString(PREF_KEY_SYNCED_PUSH_TOKEN, null);
+    }
+
+    @WorkerThread
+    public void setLastPushToken(String token) {
+        if (!getPreferences().edit().putString(PREF_KEY_SYNCED_PUSH_TOKEN, token).commit()) {
+            Log.e("preferences: failed to set last push token");
+        }
+    }
+
+    @WorkerThread
+    public String getLastDeviceLocale() {
+        return getPreferences().getString(PREF_KEY_SYNCED_LANGUAGE, null);
+    }
+
+    @WorkerThread
+    public void setLastDeviceLocale(String languageCode) {
+        if (!getPreferences().edit().putString(PREF_KEY_SYNCED_LANGUAGE, languageCode).commit()) {
+            Log.e("preferences: failed to set last synced language");
         }
     }
 
