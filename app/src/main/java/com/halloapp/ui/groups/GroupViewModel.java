@@ -26,6 +26,7 @@ import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
@@ -112,6 +113,17 @@ public class GroupViewModel extends AndroidViewModel {
                     }
                 }
                 Collections.sort(members, new Comparator<MemberInfo>() {
+                    private final HashMap<UserId, Contact> contacts = new HashMap<>();
+
+                    private Contact getContact(@NonNull UserId userId) {
+                        Contact contact = contacts.get(userId);
+                        if (contact == null) {
+                            contact = contactsDb.getContact(userId);
+                            contacts.put(userId, contact);
+                        }
+                        return contact;
+                    }
+
                     @Override
                     public int compare(MemberInfo m1, MemberInfo m2) {
                         if (m1.userId.isMe()) {
@@ -123,8 +135,8 @@ public class GroupViewModel extends AndroidViewModel {
                         } else if (m2.isAdmin() && !m1.isAdmin()) {
                             return 1;
                         }
-                        Contact c1 = contactsDb.getContact(m1.userId);
-                        Contact c2 = contactsDb.getContact(m2.userId);
+                        Contact c1 = getContact(m1.userId);
+                        Contact c2 = getContact(m2.userId);
                         if (c1.friend && !c2.friend) {
                             return -1;
                         } else if (c2.friend && !c1.friend) {
