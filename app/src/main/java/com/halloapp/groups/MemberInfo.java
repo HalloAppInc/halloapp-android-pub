@@ -35,4 +35,8 @@ public class MemberInfo {
                 Objects.equals(type, member.type) &&
                 Objects.equals(name, member.name);
     }
+
+    public boolean isAdmin() {
+        return MemberElement.Type.ADMIN.equals(type);
+    }
 }

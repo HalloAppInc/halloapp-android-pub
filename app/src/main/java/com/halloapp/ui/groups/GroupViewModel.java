@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Me;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.groups.MemberInfo;
@@ -23,6 +25,7 @@ import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
@@ -30,6 +33,7 @@ public class GroupViewModel extends AndroidViewModel {
     private final Me me;
     private final ContentDb contentDb;
     private final GroupsApi groupsApi;
+    private final ContactsDb contactsDb;
 
     private final GroupId groupId;
 
@@ -85,6 +89,7 @@ public class GroupViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
         groupsApi = GroupsApi.getInstance();
+        contactsDb = ContactsDb.getInstance();
 
         chatLiveData = new ComputableLiveData<Chat>() {
             @Override
@@ -106,6 +111,32 @@ public class GroupViewModel extends AndroidViewModel {
                         break;
                     }
                 }
+                Collections.sort(members, new Comparator<MemberInfo>() {
+                    @Override
+                    public int compare(MemberInfo m1, MemberInfo m2) {
+                        if (m1.userId.isMe()) {
+                            return -1;
+                        } else if (m2.userId.isMe()) {
+                            return 1;
+                        } else if (m1.isAdmin() && !m2.isAdmin()) {
+                            return -1;
+                        } else if (m2.isAdmin() && !m1.isAdmin()) {
+                            return 1;
+                        }
+                        Contact c1 = contactsDb.getContact(m1.userId);
+                        Contact c2 = contactsDb.getContact(m2.userId);
+                        if (c1.friend && !c2.friend) {
+                            return -1;
+                        } else if (c2.friend && !c1.friend) {
+                            return 1;
+                        } else if (c1.addressBookName != null && c2.addressBookName == null) {
+                            return -1;
+                        } else if (c2.addressBookName != null && c1.addressBookName == null) {
+                            return 1;
+                        }
+                        return c1.getDisplayName().compareTo(c2.getDisplayName());
+                    }
+                });
                 return members;
             }
         };
