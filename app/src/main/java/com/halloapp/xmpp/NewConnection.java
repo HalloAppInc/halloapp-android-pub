@@ -970,6 +970,7 @@ public class NewConnection extends Connection {
                     } else {
                         connectionObservers.notifyContactsChanged(infos, new ArrayList<>(), msg.getId());
                     }
+                    handled = true;
                 } else if (msg.hasWhisperKeys()) {
                     Log.i("connection: got whisper keys " + ProtoPrinter.toString(msg));
                     WhisperKeys whisperKeys = msg.getWhisperKeys();
