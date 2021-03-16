@@ -92,12 +92,23 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     public void setMedia(@NonNull List<Media> media) {
-        this.media = media;
-        this.fixedAspectRatio = Media.getMaxAspectRatio(media);
-        if (maxAspectRatio != 0) {
-            fixedAspectRatio = Math.min(fixedAspectRatio, maxAspectRatio);
+        if (this.media == null || media.size() != this.media.size()) {
+            this.media = media;
+            this.fixedAspectRatio = Media.getMaxAspectRatio(media);
+            if (maxAspectRatio != 0) {
+                fixedAspectRatio = Math.min(fixedAspectRatio, maxAspectRatio);
+            }
+            notifyDataSetChanged();
+        } else {
+            for (int i=0; i<media.size(); i++) {
+                Media newMedia = media.get(i);
+                Media oldMedia = this.media.get(i);
+                if (!oldMedia.equals(newMedia)) {
+                    this.media.set(i, newMedia);
+                    notifyItemChanged(i);
+                }
+            }
         }
-        notifyDataSetChanged();
     }
 
     public void setMediaInset(int leftInsetPx, int topInsetPx, int rightInsetPx, int bottomInsetPx) {
@@ -115,15 +126,6 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
     public String getContentId() {
         return contentId;
-    }
-
-    public boolean isPlaying(int index) {
-        RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(index);
-        if (vh == null) {
-            return false;
-        }
-        MediaPagerAdapter.MediaViewHolder mvh = (MediaPagerAdapter.MediaViewHolder) vh;
-        return mvh.isPlaying();
     }
 
     public void setChat(ChatId chatId) {

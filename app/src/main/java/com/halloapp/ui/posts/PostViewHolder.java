@@ -218,21 +218,23 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         final boolean noCaption = TextUtils.isEmpty(post.text);
 
         final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
-        if (!post.media.isEmpty() && (!post.id.equals(mediaPagerAdapter.getContentId()) || !mediaPagerAdapter.isPlaying(selPos == null ? 0 : selPos))) {
-            mediaPagerAdapter.setContentId(post.id);
+        if (!post.media.isEmpty()) {
             mediaPagerAdapter.setMedia(post.media);
-            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            if (post.media.size() > 1) {
-                mediaPagerIndicator.setVisibility(View.VISIBLE);
-                mediaPagerIndicator.setViewPager(mediaPagerView);
-                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
-            } else {
-                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
-                mediaPagerIndicator.setVisibility(View.GONE);
+            if (!post.id.equals(mediaPagerAdapter.getContentId())) {
+                mediaPagerAdapter.setContentId(post.id);
+                final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
+                if (post.media.size() > 1) {
+                    mediaPagerIndicator.setVisibility(View.VISIBLE);
+                    mediaPagerIndicator.setViewPager(mediaPagerView);
+                    mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
+                } else {
+                    mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
+                    mediaPagerIndicator.setVisibility(View.GONE);
+                }
+                mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
+                mediaPagerView.setNestedScrollingEnabled(false);
+                mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));
             }
-            mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
-            mediaPagerView.setNestedScrollingEnabled(false);
-            mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));
         }
         final Integer textLimit = parent.getTextLimits().get(post.rowId);
         textView.setLineLimit(textLimit != null ? textLimit :
