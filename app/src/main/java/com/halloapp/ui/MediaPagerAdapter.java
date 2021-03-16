@@ -117,6 +117,15 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         return contentId;
     }
 
+    public boolean isPlaying(int index) {
+        RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(index);
+        if (vh == null) {
+            return false;
+        }
+        MediaPagerAdapter.MediaViewHolder mvh = (MediaPagerAdapter.MediaViewHolder) vh;
+        return mvh.isPlaying();
+    }
+
     public void setChat(ChatId chatId) {
         isChatMedia = true;
         this.chatId = chatId;

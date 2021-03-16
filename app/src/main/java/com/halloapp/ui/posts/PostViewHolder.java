@@ -217,7 +217,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         final boolean noCaption = TextUtils.isEmpty(post.text);
 
-        if (!post.media.isEmpty() && !post.id.equals(mediaPagerAdapter.getContentId())) {
+        final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
+        if (!post.media.isEmpty() && (!post.id.equals(mediaPagerAdapter.getContentId()) || !mediaPagerAdapter.isPlaying(selPos == null ? 0 : selPos))) {
             mediaPagerAdapter.setContentId(post.id);
             mediaPagerAdapter.setMedia(post.media);
             final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
@@ -229,7 +230,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
                 mediaPagerIndicator.setVisibility(View.GONE);
             }
-            final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
             mediaPagerView.setNestedScrollingEnabled(false);
             mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));

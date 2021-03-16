@@ -272,7 +272,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             }
         }
 
-        if (!message.media.isEmpty() && mediaPagerAdapter != null && !message.id.equals(mediaPagerAdapter.getContentId())) {
+        final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
+        if (!message.media.isEmpty() && mediaPagerAdapter != null && (!message.id.equals(mediaPagerAdapter.getContentId()) || !mediaPagerAdapter.isPlaying(selPos == null ? 0 : selPos))) {
             mediaPagerAdapter.setChat(message.chatId);
             mediaPagerAdapter.setMedia(message.media);
             mediaPagerAdapter.setContentId(message.id);
@@ -282,7 +283,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             } else {
                 mediaPagerIndicator.setVisibility(View.GONE);
             }
-            final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
             mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(message.id));
             mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
             parent.setReplyMessageMediaIndex(message.rowId, selPos == null ? 0 : selPos);
