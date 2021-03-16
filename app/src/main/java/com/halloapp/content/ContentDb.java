@@ -566,9 +566,7 @@ public class ContentDb {
 
     public void addSilentMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.addSilentMessage(message.senderUserId, message.id)) {
-                observers.notifyMessageAdded(message);
-            }
+            messagesDb.addSilentMessage(message.senderUserId, message.id);
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
