@@ -90,7 +90,6 @@
   <string name="commented_on_someones_post_2">&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%3$s&lt;/b&gt;</string>
   <string name="commented_on_someones_post_3">&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, y &lt;b&gt;%3$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;</string>
   <string name="contact_hashing_faq_dialog_title">Tu privacidad es nuestra prioridad</string>
-  <string name="contact_hashing_faq_dialog_info">• HalloApp solo usa el campo de tu número de teléfono para conectarte con tus amigos en HalloApp, y no recoge datos adicionales de tu libreta de contactos.\n\n• No guardamos tu lista de teléfonos en nuestros servidores, solo llevamos un seguimiento de los números de teléfono que están registrados en HalloApp.\n\n• Conectamos a los usuarios que recientemente se han registrado por medio de "hashing" de números de teléfonos. Puedes encontrar la información de nuestro algoritmo en halloapp.com/faq</string>
   <string name="commented_on_own_post">&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación</string>
   <string name="list_of_two">%s y %s</string>
   <string name="list_of_many_start">%s</string>
