@@ -23,6 +23,7 @@
         android:paddingEnd="12dp"
         android:paddingStart="0dp"
         android:paddingBottom="6dp"
+        android:textColor="#19C253"
         android:textSize="10sp"
         tools:text="11:49 PM"/>
 

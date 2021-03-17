@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 
 public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, String> {
 
-    private static final String successEmoji = "✅";
+    private static final String successEmoji = "\u2714\uFE0E";
     private static final String failureEmoji ="\uD83D\uDCA5";
 
     private final LruCache<String, DecryptStats> cache = new LruCache<>(512);
