@@ -79,7 +79,6 @@ public class GroupsSync {
             Log.i("GroupsSync.performGroupSync last group sync too recent: " + lastSyncTime);
             return ListenableWorker.Result.success();
         }
-        preferences.setLastGroupSyncTime(now);
 
         try {
             List<GroupInfo> groups = groupsApi.getGroupsList().await();
@@ -149,6 +148,7 @@ public class GroupsSync {
 
             contactsDb.updateUserNames(nameMap);
 
+            preferences.setLastGroupSyncTime(now);
             return ListenableWorker.Result.success();
         } catch (ObservableErrorException e) {
             Log.e("GroupsSync.perfromGroupSync observable error", e);
