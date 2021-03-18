@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
@@ -390,7 +391,7 @@ public class ContentDb {
 
     @WorkerThread
     public @Nullable Post getLastGroupPost(@NonNull GroupId groupId) {
-        List<Post> posts = getPosts(null, 10, true, null, groupId, false);
+        List<Post> posts = getPosts(null, Constants.MAX_POST_MEDIA_ITEMS + 1, true, null, groupId, false);
         if (posts.isEmpty()) {
             return null;
         }
