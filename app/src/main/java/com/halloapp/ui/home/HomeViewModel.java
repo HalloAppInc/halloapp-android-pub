@@ -41,6 +41,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Boolean> showFeedNux;
     final ComputableLiveData<Boolean> showActivityCenterNux;
+    final ComputableLiveData<Boolean> showWelcomeNux;
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
@@ -154,6 +155,12 @@ public class HomeViewModel extends AndroidViewModel {
                 return !preferences.getShowedFeedNux();
             }
         };
+        showWelcomeNux = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return !preferences.getShowedWelcomeNux();
+            }
+        };
     }
 
     public void closeFeedNux() {
@@ -169,6 +176,10 @@ public class HomeViewModel extends AndroidViewModel {
             preferences.markActivityCenterNuxShown();
             showActivityCenterNux.invalidate();
         });
+    }
+
+    public void markWelcomeNuxShown() {
+        bgWorkers.execute(preferences::markWelcomeNuxShown);
     }
 
     @Override

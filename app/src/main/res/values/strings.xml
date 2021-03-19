@@ -49,7 +49,7 @@
     <string name="posts_empty">Your posts will appear here</string>
     <string name="posts_exchange_numbers">To connect you must exchange phone numbers</string>
     <string name="home_page_empty">Posts from your contacts will appear here</string>
-    <string name="chats_page_empty">Your contacts &amp; messages will appear here</string>
+    <string name="chats_page_empty">Contacts and messages will appear here</string>
     <string name="chats_search_empty">No chats found for \'%s\'</string>
     <string name="groups_page_empty">Your groups will appear here</string>
     <string name="groups_search_empty">No groups found for \'%s\'</string>
@@ -471,6 +471,7 @@
     <string name="post_audience_nux_text">Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings.</string>
     <string name="make_post_nux">Tap to share an update with your friends &amp; family on HalloApp</string>
     <string name="activity_center_nux">This is your activity center. Tap to see your most recent activity.</string>
+    <string name="activity_center_welcome">Hallo!</string>
     <string name="home_feed_nux">Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp.</string>
     <string name="home_feed_nux_learn_more">Learn more</string>
     <string name="camera_error_generic">Camera failure.</string>

@@ -39,6 +39,7 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_PROFILE_NUX = "showed_profile_nux";
     private static final String PREF_KEY_SHOWED_MAKE_POST_NUX = "showed_make_post_nux";
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
+    private static final String PREF_KEY_SHOWED_WELCOME_NUX = "showed_welcome_nux";
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
     private static final String PREF_KEY_NEXT_PRESENCE_ID = "next_presence_id";
     private static final String PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID = "last_decrypt_message_row_id";
@@ -272,6 +273,18 @@ public class Preferences {
     public void markActivityCenterNuxShown() {
         if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, true).commit()) {
             Log.e("preferences: failed to mark activity center nux shown");
+        }
+    }
+
+    @WorkerThread
+    public boolean getShowedWelcomeNux() {
+        return getPreferences().getBoolean(PREF_KEY_SHOWED_WELCOME_NUX, false);
+    }
+
+    @WorkerThread
+    public void markWelcomeNuxShown() {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_WELCOME_NUX, true).commit()) {
+            Log.e("preferences: failed to mark welcome nux shown");
         }
     }
 

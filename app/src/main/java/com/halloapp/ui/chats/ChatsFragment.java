@@ -42,6 +42,7 @@ import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
@@ -165,27 +166,28 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
 
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
-
-        viewModel.showMessagesNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
-            if (shouldShow == null) {
-                return;
-            }
-            if (shouldShow) {
-                if (nux == null) {
-                    TransitionManager.beginDelayedTransition(nuxContainer);
-                    nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_bubble_up_arrow, nuxContainer, true);
-                    TextView text = nux.findViewById(R.id.nux_text);
-                    View btn = nux.findViewById(R.id.ok_btn);
-                    text.setText(R.string.messages_nux_text);
-                    btn.setOnClickListener(v -> {
-                        viewModel.closeNux();
-                    });
+        if (!ServerProps.getInstance().getIsInternalUser()) {
+            viewModel.showMessagesNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
+                if (shouldShow == null) {
+                    return;
                 }
-            } else {
-                TransitionManager.beginDelayedTransition(nuxContainer);
-                nuxContainer.setVisibility(View.GONE);
-            }
-        });
+                if (shouldShow) {
+                    if (nux == null) {
+                        TransitionManager.beginDelayedTransition(nuxContainer);
+                        nux = LayoutInflater.from(requireContext()).inflate(R.layout.nux_bubble_up_arrow, nuxContainer, true);
+                        TextView text = nux.findViewById(R.id.nux_text);
+                        View btn = nux.findViewById(R.id.ok_btn);
+                        text.setText(R.string.messages_nux_text);
+                        btn.setOnClickListener(v -> {
+                            viewModel.closeNux();
+                        });
+                    }
+                } else {
+                    TransitionManager.beginDelayedTransition(nuxContainer);
+                    nuxContainer.setVisibility(View.GONE);
+                }
+            });
+        }
 
         return root;
     }
