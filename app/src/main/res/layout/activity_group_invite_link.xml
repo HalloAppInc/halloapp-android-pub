@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="@color/primary_text"
-            android:text="Copy Link" />
+            android:text="@string/copy_link" />
 
     </LinearLayout>
 
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="@color/primary_text"
-            android:text="Reset Link" />
+            android:text="@string/reset_link" />
 
     </LinearLayout>
 
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="@color/primary_text"
-            android:text="Share Link" />
+            android:text="@string/share_link" />
 
     </LinearLayout>
 

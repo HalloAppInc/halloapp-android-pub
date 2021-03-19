@@ -198,6 +198,9 @@
         <item quantity="one">HalloApp expires in %d day</item>
         <item quantity="other">HalloApp expires in %d days</item>
     </plurals>
+    <string name="share_link">Share link</string>
+    <string name="copy_link">Copy link</string>
+    <string name="reset_link">Reset link</string>
     <string name="invite_links_not_currently_supported">Invite links are not supported yet</string>
     <string name="view_group_invite_link_action">View group invite</string>
     <string name="invite_link_resetting_progress">Resetting link…</string>
