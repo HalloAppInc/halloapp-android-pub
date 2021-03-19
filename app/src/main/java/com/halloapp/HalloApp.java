@@ -21,6 +21,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
@@ -79,6 +80,7 @@ public class HalloApp extends Application {
 
         BgWorkers.getInstance().execute(() -> {
             ContentDb.getInstance().fixGroupMembership();
+            EncryptedKeyStore.getInstance().ensureMigrated(); // TODO(jack): Remove after May 1
         });
     }
 

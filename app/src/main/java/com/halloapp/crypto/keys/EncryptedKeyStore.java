@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 
 import androidx.annotation.Nullable;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.AppContext;
@@ -16,9 +18,12 @@ import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,6 +38,8 @@ public class EncryptedKeyStore {
 
     private static final String ENC_PREF_FILE_NAME = "halloapp_keys";
     private static final String PT_PREF_FILE_NAME = "pt_halloapp_keys";
+
+    private static final String PREF_KEY_PT_MIGRATED = "pt_migrated";
 
     private static final String PREF_KEY_MY_ED25519_IDENTITY_KEY = "my_ed25519_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
@@ -94,6 +101,10 @@ public class EncryptedKeyStore {
             sharedPreferences = getSharedPreferences(appContext.get());
         }
         return sharedPreferences;
+    }
+
+    public void ensureMigrated() {
+        getPreferences();
     }
 
     public boolean getSessionAlreadySetUp(UserId peerUserId) {
@@ -665,8 +676,60 @@ public class EncryptedKeyStore {
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
-        // TODO(jack): bring back EncryptedSharedPreferences once Google fixes the androidx security-crypto library
-        return context.getSharedPreferences(EncryptedKeyStore.PT_PREF_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences encrypted;
+        try {
+            MasterKey masterKey = new MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encrypted = EncryptedSharedPreferences.create(
+                    context,
+                    EncryptedKeyStore.ENC_PREF_FILE_NAME,
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (GeneralSecurityException | IOException e) {
+            Log.e("EncryptedKeyStore failed to get shared preferences", e);
+            return null;
+        }
+
+        boolean migrated = encrypted.getBoolean(PREF_KEY_PT_MIGRATED, false);
+        Log.i("EncryptedKeyStore migrated? " + migrated);
+        if (!migrated) {
+            SharedPreferences plaintext = context.getSharedPreferences(EncryptedKeyStore.PT_PREF_FILE_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = encrypted.edit();
+
+            for (Map.Entry<String, ?> entry : plaintext.getAll().entrySet()) {
+                String key = entry.getKey();
+                Log.i("EncryptedKeyStore migrating entry " + key);
+                Object value = entry.getValue();
+                if (value instanceof Boolean) {
+                    editor.putBoolean(key, (Boolean) value);
+                } else if (value instanceof Integer) {
+                    editor.putInt(key, (Integer) value);
+                } else if (value instanceof Long) {
+                    editor.putLong(key, (Long) value);
+                } else if (value instanceof Float) {
+                    editor.putFloat(key, (Float) value);
+                } else if (value instanceof String) {
+                    editor.putString(key, (String) value);
+                } else if (value instanceof Set) {
+                    editor.putStringSet(key, (Set<String>) value);
+                }
+            }
+
+            editor.putBoolean(PREF_KEY_PT_MIGRATED, true);
+            if (editor.commit()) {
+                plaintext.edit().clear().apply();
+            } else {
+                Log.e("Failed to migrate EncryptedKeyStore");
+                Log.sendErrorReport("EncryptedKeyStore Migration Failed");
+            }
+
+        }
+
+        return encrypted;
     }
 
     private static String bytesToString(byte[] bytes) {
