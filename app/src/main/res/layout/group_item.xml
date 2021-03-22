@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
+    android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
 
     <FrameLayout
@@ -70,7 +71,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/name"
         app:layout_constraintBottom_toBottomOf="@id/name"
-        android:layout_marginEnd="16dp"
         android:singleLine="true"
         android:ellipsize="end"
         android:textSize="12sp"
@@ -110,7 +110,6 @@
         android:layout_height="16sp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="3dp"
-        android:layout_marginEnd="16dp"
         app:layout_constraintStart_toEndOf="@+id/info_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time"
