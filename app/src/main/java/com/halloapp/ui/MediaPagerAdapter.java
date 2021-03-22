@@ -92,23 +92,22 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     public void setMedia(@NonNull List<Media> media) {
-        if (this.media == null || media.size() != this.media.size()) {
-            this.media = media;
-            this.fixedAspectRatio = Media.getMaxAspectRatio(media);
-            if (maxAspectRatio != 0) {
-                fixedAspectRatio = Math.min(fixedAspectRatio, maxAspectRatio);
-            }
+        this.fixedAspectRatio = Media.getMaxAspectRatio(media);
+        if (maxAspectRatio != 0) {
+            fixedAspectRatio = Math.min(fixedAspectRatio, maxAspectRatio);
+        }
+        if (this.media == null || this.media.size() != media.size()) {
             notifyDataSetChanged();
         } else {
-            for (int i=0; i<media.size(); i++) {
+            for (int i = 0; i < media.size(); i++) {
                 Media newMedia = media.get(i);
                 Media oldMedia = this.media.get(i);
                 if (!oldMedia.equals(newMedia)) {
-                    this.media.set(i, newMedia);
                     notifyItemChanged(i);
                 }
             }
         }
+        this.media = media;
     }
 
     public void setMediaInset(int leftInsetPx, int topInsetPx, int rightInsetPx, int bottomInsetPx) {
