@@ -282,7 +282,7 @@ public class PostContentActivity extends HalloActivity {
             switch (viewType & POST_DIRECTION_MASK) {
                 case POST_DIRECTION_INCOMING: {
                     LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                    return new IncomingPostViewHolder(layout, postViewHolderParent, false);
+                    return new IncomingPostViewHolder(layout, postViewHolderParent);
                 }
                 case POST_DIRECTION_OUTGOING: {
                     LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);

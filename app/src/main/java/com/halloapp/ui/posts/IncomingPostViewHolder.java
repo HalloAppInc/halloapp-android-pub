@@ -24,7 +24,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
     private final View commentsIndicator;
     private final View message;
 
-    public IncomingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent, boolean privateReactions) {
+    public IncomingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
 
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
@@ -38,26 +38,14 @@ public class IncomingPostViewHolder extends PostViewHolder {
             parent.startActivity(intent);
         });
         message.setOnClickListener(view -> {
-            if (privateReactions) {
-                ReactionsPopupWindow p = new ReactionsPopupWindow(view.getContext());
-                p.show(view, post, parent.getMediaPagerPositionMap().get(post.rowId));
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.setSaturation(.25f);
-                view.setAlpha(0.4f);
-                ColorMatrixColorFilter colorFilter = new ColorMatrixColorFilter(matrix);
-                TextPaint textPaint = ((TextView) message).getPaint();
-                textPaint.setColorFilter(colorFilter);
-                p.setOnDismissListener(this::resetEmoji);
-            } else {
-                final Intent intent = new Intent(itemView.getContext(), ChatActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId);
-                intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, post.id);
-                intent.putExtra(ChatActivity.EXTRA_REPLY_POST_SENDER_ID, post.senderUserId);
-                final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
-                intent.putExtra(ChatActivity.EXTRA_REPLY_POST_MEDIA_INDEX, selPos == null ? 0 : selPos);
-                parent.startActivity(intent);
-            }
+            final Intent intent = new Intent(itemView.getContext(), ChatActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId);
+            intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, post.id);
+            intent.putExtra(ChatActivity.EXTRA_REPLY_POST_SENDER_ID, post.senderUserId);
+            final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
+            intent.putExtra(ChatActivity.EXTRA_REPLY_POST_MEDIA_INDEX, selPos == null ? 0 : selPos);
+            parent.startActivity(intent);
         });
     }
 

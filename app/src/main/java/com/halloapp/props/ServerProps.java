@@ -33,7 +33,6 @@ public class ServerProps {
     private static final String PROP_SILENT_CHAT_MESSAGES = "silent_chat_messages";
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
-    private static final String PROP_PRIVATE_REACTS = "private_reactions";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
     private static final String PROP_GROUP_INVITE_LINKS = "group_invite_links";
 
@@ -65,7 +64,6 @@ public class ServerProps {
     private final IntegerProp propSilentChatMessages = createProp(PROP_SILENT_CHAT_MESSAGES, 5);
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
-    private final BooleanProp propPrivateReactionsEnabled = createProp(PROP_PRIVATE_REACTS, false);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
     private final BooleanProp propGroupInviteLinksEnabled = createProp(PROP_GROUP_INVITE_LINKS, false);
 
@@ -93,6 +91,9 @@ public class ServerProps {
                 Log.e("ServerProps/init failed to update app version");
             }
         }
+
+        preferences.edit().remove("private_reactions").apply(); // TODO(jack): Remove after May 1
+
         loadProps();
     }
 
@@ -195,10 +196,6 @@ public class ServerProps {
 
     public synchronized int getMaxChatVideoDuration() {
         return propMaxChatVideoDuration.getValue();
-    }
-
-    public synchronized boolean getPrivateReactionsEnabled() {
-        return propPrivateReactionsEnabled.getValue();
     }
 
     public synchronized int getMinGroupSyncIntervalSeconds() {
