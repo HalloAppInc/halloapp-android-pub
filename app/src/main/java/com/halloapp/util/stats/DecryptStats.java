@@ -43,10 +43,14 @@ public class DecryptStats {
         if (failureReason != null) {
             builder.setReason(failureReason);
         }
+        if (version != null) {
+            builder.setOriginalVersion(version);
+        }
+        if (senderVersion != null) {
+            builder.setSenderVersion(senderVersion);
+        }
         builder.setResult(failureReason == null ? DecryptionReport.Status.OK : DecryptionReport.Status.FAIL)
                 .setMsgId(messageId)
-                .setOriginalVersion(version)
-                .setSenderVersion(senderVersion)
                 .setSenderPlatform(senderPlatform)
                 .setRerequestCount(rerequestCount)
                 .setTimeTakenS((int)timeTakenS)
