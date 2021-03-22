@@ -25,44 +25,26 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
     private static final int MAX_SEEN_BY_AVATARS = 3;
 
-    private final View addCommentButton;
-    private final View viewCommentsButton;
     private final View viewCommentsIndicator;
     private final AvatarsLayout seenIndicator;
     private final View seenButton;
-    private final View firstCommentContent;
-    private final ImageView firstCommentAvatar;
-    private final TextView firstCommentName;
-    private final TextView firstCommentText;
-    private final TextView firstCommentTimestamp;
-    private final ImageView myAvatarView;
 
     public OutgoingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
 
-        addCommentButton = itemView.findViewById(R.id.add_comment);
-        viewCommentsButton = itemView.findViewById(R.id.view_comments);
         viewCommentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
         seenButton = itemView.findViewById(R.id.seen_button);
-        firstCommentContent = itemView.findViewById(R.id.comment_content);
-        firstCommentAvatar = itemView.findViewById(R.id.comment_avatar);
-        firstCommentName = itemView.findViewById(R.id.comment_name);
-        firstCommentText = itemView.findViewById(R.id.comment_text);
-        firstCommentTimestamp = itemView.findViewById(R.id.comment_time);
-        myAvatarView = itemView.findViewById(R.id.my_avatar);
 
         seenIndicator.setAvatarLoader(parent.getAvatarLoader());
 
-        final View.OnClickListener commentsClickListener = v -> {
+        itemView.findViewById(R.id.comment).setOnClickListener(view -> {
             final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
             intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
             intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
-        };
-        addCommentButton.setOnClickListener(commentsClickListener);
-        viewCommentsButton.setOnClickListener(commentsClickListener);
+        });
 
         final View.OnClickListener seenClickListener = v -> {
             final Intent intent = new Intent(itemView.getContext(), PostSeenByActivity.class);
@@ -71,31 +53,11 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         };
         seenIndicator.setOnClickListener(seenClickListener);
         seenButton.setOnClickListener(seenClickListener);
-
-        itemView.findViewById(R.id.comment_reply).setOnClickListener(v -> {
-            final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
-            intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
-            intent.putExtra(CommentsActivity.EXTRA_REPLY_USER_ID, post.firstComment.commentSenderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_REPLY_COMMENT_ID, post.firstComment.commentId);
-            intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, true);
-            parent.startActivity(intent);
-        });
     }
 
     @CallSuper
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
-
-        parent.getAvatarLoader().load(myAvatarView, UserId.ME);
-
-        if (post.commentCount == 0) {
-            addCommentButton.setVisibility(View.VISIBLE);
-            viewCommentsButton.setVisibility(View.GONE);
-        } else {
-            addCommentButton.setVisibility(View.GONE);
-            viewCommentsButton.setVisibility(View.VISIBLE);
-        }
 
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);
@@ -130,23 +92,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             footerSpacing.setVisibility(View.GONE);
         }
 
-        viewCommentsIndicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.GONE);
-
-        final Comment firstComment = post.firstComment;
-        if (firstComment != null) {
-            firstCommentContent.setVisibility(View.VISIBLE);
-
-            parent.getAvatarLoader().load(firstCommentAvatar, firstComment.commentSenderUserId);
-
-            parent.getTextContentLoader().load(firstCommentText, firstComment);
-
-            parent.getContactLoader().load(firstCommentName, firstComment.commentSenderUserId);
-
-            TimeFormatter.setTimePostsFormat(firstCommentTimestamp, firstComment.timestamp);
-            parent.getTimestampRefresher().scheduleTimestampRefresh(firstComment.timestamp);
-        } else {
-            firstCommentContent.setVisibility(View.GONE);
-        }
+        viewCommentsIndicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.INVISIBLE);
     }
 }
 
