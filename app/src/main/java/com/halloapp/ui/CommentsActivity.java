@@ -7,7 +7,9 @@ import android.graphics.Outline;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -205,7 +207,7 @@ public class CommentsActivity extends HalloActivity {
         commentsView.setAdapter(adapter);
         editText = findViewById(R.id.entry_card);
         editText.setMentionPickerView(mentionPickerView);
-        final View sendButton = findViewById(R.id.send);
+        final ImageView sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
             final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
             final String postText = StringUtils.preparePostText(textWithMentions.first);
@@ -236,6 +238,27 @@ public class CommentsActivity extends HalloActivity {
             final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             resetReplyIndicator();
+        });
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s == null || TextUtils.isEmpty(s.toString())) {
+                    sendButton.clearColorFilter();
+                } else {
+                    sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+                }
+            }
         });
 
         if (getIntent().getBooleanExtra(EXTRA_NO_POST_LENGTH_LIMIT, false)) {
