@@ -490,6 +490,7 @@
         <item quantity="other">Sharing with %d of my contacts</item>
     </plurals>
     <string name="post_preview_no_caption">%s shared a post</string>
+    <string name="post_preview_retracted">%s deleted a post</string>
     <string name="post_preview_with_caption">%s: %s</string>
     <string name="composer_sharing_message">Sending to %s</string>
     <string name="composer_sharing_post">Sharing with %s</string>

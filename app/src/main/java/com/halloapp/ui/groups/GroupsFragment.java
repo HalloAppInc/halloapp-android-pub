@@ -641,7 +641,9 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             }
 
             private void bindPostCaption(@NonNull String sender, @NonNull Post post) {
-                if (TextUtils.isEmpty(post.text)) {
+                if (post.isRetracted()) {
+                    infoView.setText(getString(R.string.post_preview_retracted, sender));
+                } else if (TextUtils.isEmpty(post.text)) {
                     infoView.setText(getString(R.string.post_preview_no_caption, sender));
                 } else {
                     infoView.setText(getString(R.string.post_preview_with_caption, sender, post.text));
