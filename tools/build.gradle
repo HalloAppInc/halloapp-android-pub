@@ -24,17 +24,3 @@ task syncStrings(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.halloapp.tools.POEditorStringManagerKt"
 }
-
-task updateStrings(type: JavaExec) {
-    description = "Pulls strings from the Android Strings Google sheet and updates the corresponding strings.xml files. Also exports if necessary"
-    group = "Localization"
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.halloapp.tools.StringImporterKt"
-}
-
-task exportStrings(type: JavaExec) {
-    description = "Output strings from all the supported locale strings.xml into strings.xlsx"
-    group = "Localization"
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.halloapp.tools.StringExporterKt"
-}
