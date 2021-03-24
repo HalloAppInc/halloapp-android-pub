@@ -6,33 +6,29 @@ import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
-import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
-import com.halloapp.id.UserId;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
-import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.AvatarsLayout;
 
 public class OutgoingPostViewHolder extends PostViewHolder {
 
     private static final int MAX_SEEN_BY_AVATARS = 3;
 
-    private final View viewCommentsIndicator;
+    private final View commentsIndicator;
     private final AvatarsLayout seenIndicator;
     private final View seenButton;
 
     public OutgoingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
 
-        viewCommentsIndicator = itemView.findViewById(R.id.comments_indicator);
+        commentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
         seenButton = itemView.findViewById(R.id.seen_button);
 
@@ -92,7 +88,15 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             footerSpacing.setVisibility(View.GONE);
         }
 
-        viewCommentsIndicator.setVisibility(post.unseenCommentCount > 0 ? View.VISIBLE : View.INVISIBLE);
+        if (post.unseenCommentCount > 0) {
+            commentsIndicator.setVisibility(View.VISIBLE);
+            commentsIndicator.setBackgroundResource(R.drawable.new_comments_indicator);
+        } else if (post.commentCount > 0) {
+            commentsIndicator.setVisibility(View.VISIBLE);
+            commentsIndicator.setBackgroundResource(R.drawable.old_comments_indicator);
+        } else {
+            commentsIndicator.setVisibility(View.INVISIBLE);
+        }
     }
 }
 
