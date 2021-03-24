@@ -21,7 +21,11 @@ import com.halloapp.proto.server.EventOrBuilder;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.util.MutableObservable;
+import com.halloapp.xmpp.util.Observable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 public class Events {
@@ -73,23 +77,41 @@ public class Events {
     }
 
     private void sendEvent(@NonNull EventData.Builder builder) {
+        sendEvents(Collections.singleton(builder));
+    }
+
+    public Observable<Void> sendDecryptionReports(@NonNull Collection<DecryptionReport> decryptionReports) {
+        Collection<EventData.Builder> events = new ArrayList<>();
+        for (DecryptionReport decryptionReport : decryptionReports) {
+            events.add(EventData.newBuilder().setDecryptionReport(decryptionReport));
+        }
+        return sendEvents(events);
+    }
+
+    private Observable<Void> sendEvents(@NonNull Collection<EventData.Builder> builders) {
+        MutableObservable<Void> ret = new MutableObservable<>();
         bgWorkers.execute(() -> {
             if (!me.isRegistered()) {
                 return;
             }
-            builder.setPlatform(Platform.ANDROID);
-            builder.setVersion(BuildConfig.VERSION_NAME);
-            String uidStr = me.getUser();
-            if (uidStr != null) {
-                try {
-                    builder.setUid(Long.parseLong(uidStr));
-                } catch (NumberFormatException e) {
-                    Log.e("Events/createBaseEvent uid not a long");
-                    return;
+            Collection<EventData> events = new ArrayList<>();
+            for (EventData.Builder builder : builders) {
+                builder.setPlatform(Platform.ANDROID);
+                builder.setVersion(BuildConfig.VERSION_NAME);
+                String uidStr = me.getUser();
+                if (uidStr != null) {
+                    try {
+                        builder.setUid(Long.parseLong(uidStr));
+                    } catch (NumberFormatException e) {
+                        Log.e("Events/createBaseEvent uid not a long");
+                        return;
+                    }
                 }
+                events.add(builder.build());
             }
-            connection.sendEvents(Collections.singleton(builder.build()));
+            connection.sendEvents(events).onResponse(ret::setResponse).onError(ret::setException);
         });
+        return ret;
     }
 
 }

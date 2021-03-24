@@ -393,13 +393,9 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public void sendEvents(Collection<EventData> events) {
+    public Observable<Void> sendEvents(Collection<EventData> events) {
         final EventsIq eventsIq = new EventsIq(events);
-        sendIqRequestAsync(eventsIq)
-                .onResponse(response -> {
-                    Log.d("connection: response for send events  " + ProtoPrinter.toString(response));
-                })
-                .onError(e -> Log.e("connection: cannot send events", e));
+        return sendIqRequestAsync(eventsIq).map(r -> null);
     }
 
     @Override

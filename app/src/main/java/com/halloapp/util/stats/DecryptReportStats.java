@@ -17,8 +17,9 @@ import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
 import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.util.logs.Log;
-import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,8 @@ public class DecryptReportStats {
 
     private static final String DECRYPT_STATS_WORK_ID = "decrypt-report-stats";
 
-    private static final long MIN_DELAY = DateUtils.DAY_IN_MILLIS;
+    private static final long MIN_DELAY = DateUtils.MINUTE_IN_MILLIS;
+    private static final int MAX_BATCH_SIZE = 50;
 
     private static DecryptReportStats instance;
 
@@ -55,7 +57,7 @@ public class DecryptReportStats {
 
     public void start() {
         Log.d("DecryptReportStats.start");
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(DecryptTimelineStatsWorker.class).build();
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(DecryptReportStatsWorker.class).build();
         WorkManager.getInstance(appContext.get()).enqueueUniqueWork(DECRYPT_STATS_WORK_ID, ExistingWorkPolicy.KEEP, workRequest);
     }
 
@@ -66,6 +68,7 @@ public class DecryptReportStats {
         long now = System.currentTimeMillis();
         long lastId = preferences.getLastDecryptStatMessageRowId();
         List<DecryptStats> stats = contentDb.getMessageDecryptStats(lastId);
+        Log.i("DecryptReportStats.run lastId: " + lastId);
 
         if (lastId < 0) {
             Log.i("DecryptReportStats.run first time running; setting last id to most recent message");
@@ -78,27 +81,50 @@ public class DecryptReportStats {
             return ListenableWorker.Result.success();
         }
 
-        int reports = 0;
+        Collections.sort(stats, (o1, o2) -> Long.compare(o1.rowId, o2.rowId));
+        List<List<DecryptStats>> batches = new ArrayList<>();
+        List<DecryptStats> current = new ArrayList<>();
         for (DecryptStats stat : stats) {
-            if (now - stat.originalTimestamp > MIN_DELAY) {
-                reports++;
-                events.sendEvent(stat.toDecryptionReport());
-                if (stat.rowId > lastId) {
-                    lastId = stat.rowId;
+            if (now - stat.originalTimestamp < MIN_DELAY) {
+                break;
+            } else {
+                if (current.size() >= MAX_BATCH_SIZE) {
+                    batches.add(current);
+                    current = new ArrayList<>();
                 }
+
+                current.add(stat);
             }
         }
-        if (reports > 0) {
-            preferences.setLastDecryptStatMessageRowId(lastId);
+        if (current.size() > 0) {
+            batches.add(current);
+        }
+        Log.i("DecryptReportStats.run made " + batches.size() + " batches");
+
+        for (List<DecryptStats> batch : batches) {
+            List<DecryptionReport> reports = new ArrayList<>();
+            for (DecryptStats ds : batch) {
+                reports.add(ds.toDecryptionReport());
+            }
+
+            try {
+                events.sendDecryptionReports(reports).await();
+                long newLastId = batch.get(batch.size() - 1).rowId;
+                preferences.setLastDecryptStatMessageRowId(newLastId);
+                Log.i("DecryptReportStats.run batch succeeded; new lastId is " + newLastId);
+            } catch (InterruptedException | ObservableErrorException e) {
+                Log.e("DecryptReportStats.run batch failed", e);
+                return ListenableWorker.Result.failure();
+            }
         }
 
-        Log.i("DecryptReportStats reported for " + reports + " messages");
+        Log.i("DecryptReportStats success");
         return ListenableWorker.Result.success();
     }
 
-    public static class DecryptTimelineStatsWorker extends Worker {
+    public static class DecryptReportStatsWorker extends Worker {
 
-        public DecryptTimelineStatsWorker(@NonNull Context context, @NonNull WorkerParameters params) {
+        public DecryptReportStatsWorker(@NonNull Context context, @NonNull WorkerParameters params) {
             super(context, params);
         }
 

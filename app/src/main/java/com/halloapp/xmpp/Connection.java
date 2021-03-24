@@ -111,7 +111,7 @@ public abstract class Connection {
 
     public abstract void sendStats(List<Counter> counters);
 
-    public abstract void sendEvents(Collection<EventData> events);
+    public abstract Observable<Void> sendEvents(Collection<EventData> events);
 
     public abstract Observable<String> setAvatar(String base64, long numBytes, int width, int height);
 
