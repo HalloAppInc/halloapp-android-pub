@@ -26,6 +26,7 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -64,6 +65,7 @@ public class Debug {
     private static final String DEBUG_MENU_CLEAR_LOGS = "Clear logs";
     private static final String DEBUG_MENU_RUN_DAILY_WORKER = "Run daily worker";
     private static final String DEBUG_MENU_CORRUPT_KEY_STORE = "Corrupt key store";
+    private static final String DEBUG_MENU_NORMAL_USER_MODE = "Normal user mode";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -87,6 +89,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CLEAR_LOGS);
         menu.getMenu().add(DEBUG_MENU_RUN_DAILY_WORKER);
         menu.getMenu().add(DEBUG_MENU_CORRUPT_KEY_STORE);
+        menu.getMenu().add(DEBUG_MENU_NORMAL_USER_MODE);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -232,6 +235,17 @@ public class Debug {
                             selectUserBuilder.create().show();
                         });
                     });
+                    break;
+                }
+                case DEBUG_MENU_NORMAL_USER_MODE: {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("Enter normal user mode?")
+                            .setMessage("Force-quit app to be treated as an internal user again")
+                            .setNegativeButton("No", (dialog, which) -> {
+                                // Nothing
+                            })
+                            .setPositiveButton("Yes", (dialog, which) -> ServerProps.getInstance().forceExternalUser());
+                    builder.show();
                     break;
                 }
             }

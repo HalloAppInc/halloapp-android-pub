@@ -77,7 +77,7 @@ public class SettingsPrivacy extends HalloActivity {
             });
 
             final PreferenceCategory debugCategory = Preconditions.checkNotNull(findPreference("debug"));
-            debugCategory.setVisible(BuildConfig.DEBUG || serverProps.getIsInternalUser());
+            debugCategory.setVisible(serverProps.getIsInternalUser());
 
             final Preference hostPreference = Preconditions.checkNotNull(findPreference("use_debug_host"));
             hostPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

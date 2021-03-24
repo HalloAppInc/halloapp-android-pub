@@ -178,6 +178,10 @@ public class ServerProps {
         return propInternalUser.getValue();
     }
 
+    public synchronized void forceExternalUser() {
+        propInternalUser.parse("false");
+    }
+
     public synchronized int getMaxGroupSize() {
         return propMaxGroupSize.getValue();
     }
