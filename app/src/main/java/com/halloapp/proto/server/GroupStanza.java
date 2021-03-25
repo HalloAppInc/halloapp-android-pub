@@ -17,6 +17,7 @@ public  final class GroupStanza extends
     avatarId_ = "";
     senderName_ = "";
     members_ = emptyProtobufList();
+    background_ = "";
   }
   /**
    * Protobuf enum {@code server.GroupStanza.Action}
@@ -75,6 +76,10 @@ public  final class GroupStanza extends
      * <code>PREVIEW = 12;</code>
      */
     PREVIEW(12),
+    /**
+     * <code>SET_BACKGROUND = 13;</code>
+     */
+    SET_BACKGROUND(13),
     UNRECOGNIZED(-1),
     ;
 
@@ -130,6 +135,10 @@ public  final class GroupStanza extends
      * <code>PREVIEW = 12;</code>
      */
     public static final int PREVIEW_VALUE = 12;
+    /**
+     * <code>SET_BACKGROUND = 13;</code>
+     */
+    public static final int SET_BACKGROUND_VALUE = 13;
 
 
     @java.lang.Override
@@ -166,6 +175,7 @@ public  final class GroupStanza extends
         case 10: return SET_NAME;
         case 11: return JOIN;
         case 12: return PREVIEW;
+        case 13: return SET_BACKGROUND;
         default: return null;
       }
     }
@@ -554,6 +564,53 @@ public  final class GroupStanza extends
   private void removeMembers(int index) {
     ensureMembersIsMutable();
     members_.remove(index);
+  }
+
+  public static final int BACKGROUND_FIELD_NUMBER = 8;
+  private java.lang.String background_;
+  /**
+   * <code>string background = 8;</code>
+   * @return The background.
+   */
+  @java.lang.Override
+  public java.lang.String getBackground() {
+    return background_;
+  }
+  /**
+   * <code>string background = 8;</code>
+   * @return The bytes for background.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getBackgroundBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(background_);
+  }
+  /**
+   * <code>string background = 8;</code>
+   * @param value The background to set.
+   */
+  private void setBackground(
+      java.lang.String value) {
+    value.getClass();
+  
+    background_ = value;
+  }
+  /**
+   * <code>string background = 8;</code>
+   */
+  private void clearBackground() {
+    
+    background_ = getDefaultInstance().getBackground();
+  }
+  /**
+   * <code>string background = 8;</code>
+   * @param value The bytes for background to set.
+   */
+  private void setBackgroundBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    background_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.GroupStanza parseFrom(
@@ -1023,6 +1080,55 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <code>string background = 8;</code>
+     * @return The background.
+     */
+    @java.lang.Override
+    public java.lang.String getBackground() {
+      return instance.getBackground();
+    }
+    /**
+     * <code>string background = 8;</code>
+     * @return The bytes for background.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getBackgroundBytes() {
+      return instance.getBackgroundBytes();
+    }
+    /**
+     * <code>string background = 8;</code>
+     * @param value The background to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBackground(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setBackground(value);
+      return this;
+    }
+    /**
+     * <code>string background = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearBackground() {
+      copyOnWrite();
+      instance.clearBackground();
+      return this;
+    }
+    /**
+     * <code>string background = 8;</code>
+     * @param value The bytes for background to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBackgroundBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setBackgroundBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1047,10 +1153,11 @@ public  final class GroupStanza extends
             "senderName_",
             "members_",
             com.halloapp.proto.server.GroupMember.class,
+            "background_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0001\u0000\u0001\f\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

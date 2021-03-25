@@ -85,4 +85,16 @@ public interface GroupStanzaOrBuilder extends
    * <code>repeated .server.GroupMember members = 7;</code>
    */
   int getMembersCount();
+
+  /**
+   * <code>string background = 8;</code>
+   * @return The background.
+   */
+  java.lang.String getBackground();
+  /**
+   * <code>string background = 8;</code>
+   * @return The bytes for background.
+   */
+  com.google.protobuf.ByteString
+      getBackgroundBytes();
 }

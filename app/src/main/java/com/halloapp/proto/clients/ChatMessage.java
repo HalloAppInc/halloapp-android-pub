@@ -18,6 +18,7 @@ public  final class ChatMessage extends
     mentions_ = emptyProtobufList();
     chatReplyMessageId_ = "";
     chatReplyMessageSenderId_ = "";
+    contacts_ = emptyProtobufList();
   }
   public static final int MEDIA_FIELD_NUMBER = 1;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Media> media_;
@@ -445,6 +446,100 @@ public  final class ChatMessage extends
     checkByteStringIsUtf8(value);
     chatReplyMessageSenderId_ = value.toStringUtf8();
     
+  }
+
+  public static final int CONTACTS_FIELD_NUMBER = 9;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Contact> contacts_;
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.clients.Contact> getContactsList() {
+    return contacts_;
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.clients.ContactOrBuilder> 
+      getContactsOrBuilderList() {
+    return contacts_;
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  @java.lang.Override
+  public int getContactsCount() {
+    return contacts_.size();
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Contact getContacts(int index) {
+    return contacts_.get(index);
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  public com.halloapp.proto.clients.ContactOrBuilder getContactsOrBuilder(
+      int index) {
+    return contacts_.get(index);
+  }
+  private void ensureContactsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Contact> tmp = contacts_;
+    if (!tmp.isModifiable()) {
+      contacts_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  private void setContacts(
+      int index, com.halloapp.proto.clients.Contact value) {
+    value.getClass();
+  ensureContactsIsMutable();
+    contacts_.set(index, value);
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  private void addContacts(com.halloapp.proto.clients.Contact value) {
+    value.getClass();
+  ensureContactsIsMutable();
+    contacts_.add(value);
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  private void addContacts(
+      int index, com.halloapp.proto.clients.Contact value) {
+    value.getClass();
+  ensureContactsIsMutable();
+    contacts_.add(index, value);
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  private void addAllContacts(
+      java.lang.Iterable<? extends com.halloapp.proto.clients.Contact> values) {
+    ensureContactsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, contacts_);
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  private void clearContacts() {
+    contacts_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  private void removeContacts(int index) {
+    ensureContactsIsMutable();
+    contacts_.remove(index);
   }
 
   public static com.halloapp.proto.clients.ChatMessage parseFrom(
@@ -998,6 +1093,108 @@ public  final class ChatMessage extends
       return this;
     }
 
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.clients.Contact> getContactsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getContactsList());
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    @java.lang.Override
+    public int getContactsCount() {
+      return instance.getContactsCount();
+    }/**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Contact getContacts(int index) {
+      return instance.getContacts(index);
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder setContacts(
+        int index, com.halloapp.proto.clients.Contact value) {
+      copyOnWrite();
+      instance.setContacts(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder setContacts(
+        int index, com.halloapp.proto.clients.Contact.Builder builderForValue) {
+      copyOnWrite();
+      instance.setContacts(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder addContacts(com.halloapp.proto.clients.Contact value) {
+      copyOnWrite();
+      instance.addContacts(value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder addContacts(
+        int index, com.halloapp.proto.clients.Contact value) {
+      copyOnWrite();
+      instance.addContacts(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder addContacts(
+        com.halloapp.proto.clients.Contact.Builder builderForValue) {
+      copyOnWrite();
+      instance.addContacts(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder addContacts(
+        int index, com.halloapp.proto.clients.Contact.Builder builderForValue) {
+      copyOnWrite();
+      instance.addContacts(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder addAllContacts(
+        java.lang.Iterable<? extends com.halloapp.proto.clients.Contact> values) {
+      copyOnWrite();
+      instance.addAllContacts(values);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder clearContacts() {
+      copyOnWrite();
+      instance.clearContacts();
+      return this;
+    }
+    /**
+     * <code>repeated .clients.Contact contacts = 9;</code>
+     */
+    public Builder removeContacts(int index) {
+      copyOnWrite();
+      instance.removeContacts(index);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.ChatMessage)
   }
   @java.lang.Override
@@ -1024,10 +1221,12 @@ public  final class ChatMessage extends
             "chatReplyMessageId_",
             "chatReplyMessageMediaIndex_",
             "chatReplyMessageSenderId_",
+            "contacts_",
+            com.halloapp.proto.clients.Contact.class,
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0002\u0000\u0001\u001b\u0002\u0208\u0003\u0208" +
-              "\u0004\u0004\u0005\u001b\u0006\u0208\u0007\u0004\b\u0208";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0003\u0000\u0001\u001b\u0002\u0208\u0003\u0208" +
+              "\u0004\u0004\u0005\u001b\u0006\u0208\u0007\u0004\b\u0208\t\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

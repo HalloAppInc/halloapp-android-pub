@@ -6197,6 +6197,7 @@ $root.server = (function() {
          * @property {number|Long|null} [senderUid] GroupStanza senderUid
          * @property {string|null} [senderName] GroupStanza senderName
          * @property {Array.<server.IGroupMember>|null} [members] GroupStanza members
+         * @property {string|null} [background] GroupStanza background
          */
 
         /**
@@ -6272,6 +6273,14 @@ $root.server = (function() {
         GroupStanza.prototype.members = $util.emptyArray;
 
         /**
+         * GroupStanza background.
+         * @member {string} background
+         * @memberof server.GroupStanza
+         * @instance
+         */
+        GroupStanza.prototype.background = "";
+
+        /**
          * Creates a new GroupStanza instance using the specified properties.
          * @function create
          * @memberof server.GroupStanza
@@ -6310,6 +6319,8 @@ $root.server = (function() {
             if (message.members != null && message.members.length)
                 for (var i = 0; i < message.members.length; ++i)
                     $root.server.GroupMember.encode(message.members[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+            if (message.background != null && Object.hasOwnProperty.call(message, "background"))
+                writer.uint32(/* id 8, wireType 2 =*/66).string(message.background);
             return writer;
         };
 
@@ -6367,6 +6378,9 @@ $root.server = (function() {
                         message.members = [];
                     message.members.push($root.server.GroupMember.decode(reader, reader.uint32()));
                     break;
+                case 8:
+                    message.background = reader.string();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -6418,6 +6432,8 @@ $root.server = (function() {
                 case 9:
                 case 10:
                 case 11:
+                case 12:
+                case 13:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -6444,6 +6460,9 @@ $root.server = (function() {
                         return "members." + error;
                 }
             }
+            if (message.background != null && message.hasOwnProperty("background"))
+                if (!$util.isString(message.background))
+                    return "background: string expected";
             return null;
         };
 
@@ -6508,6 +6527,14 @@ $root.server = (function() {
             case 11:
                 message.action = 11;
                 break;
+            case "PREVIEW":
+            case 12:
+                message.action = 12;
+                break;
+            case "SET_BACKGROUND":
+            case 13:
+                message.action = 13;
+                break;
             }
             if (object.gid != null)
                 message.gid = String(object.gid);
@@ -6536,6 +6563,8 @@ $root.server = (function() {
                     message.members[i] = $root.server.GroupMember.fromObject(object.members[i]);
                 }
             }
+            if (object.background != null)
+                message.background = String(object.background);
             return message;
         };
 
@@ -6565,6 +6594,7 @@ $root.server = (function() {
                 } else
                     object.senderUid = options.longs === String ? "0" : 0;
                 object.senderName = "";
+                object.background = "";
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupStanza.Action[message.action] : message.action;
@@ -6586,6 +6616,8 @@ $root.server = (function() {
                 for (var j = 0; j < message.members.length; ++j)
                     object.members[j] = $root.server.GroupMember.toObject(message.members[j], options);
             }
+            if (message.background != null && message.hasOwnProperty("background"))
+                object.background = message.background;
             return object;
         };
 
@@ -6616,6 +6648,8 @@ $root.server = (function() {
          * @property {number} AUTO_PROMOTE_ADMINS=9 AUTO_PROMOTE_ADMINS value
          * @property {number} SET_NAME=10 SET_NAME value
          * @property {number} JOIN=11 JOIN value
+         * @property {number} PREVIEW=12 PREVIEW value
+         * @property {number} SET_BACKGROUND=13 SET_BACKGROUND value
          */
         GroupStanza.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -6631,6 +6665,8 @@ $root.server = (function() {
             values[valuesById[9] = "AUTO_PROMOTE_ADMINS"] = 9;
             values[valuesById[10] = "SET_NAME"] = 10;
             values[valuesById[11] = "JOIN"] = 11;
+            values[valuesById[12] = "PREVIEW"] = 12;
+            values[valuesById[13] = "SET_BACKGROUND"] = 13;
             return values;
         })();
 
@@ -7453,6 +7489,7 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -7503,6 +7540,10 @@ $root.server = (function() {
             case "JOIN":
             case 3:
                 message.action = 3;
+                break;
+            case "PREVIEW":
+            case 4:
+                message.action = 4;
                 break;
             }
             if (object.gid != null)
@@ -7576,6 +7617,7 @@ $root.server = (function() {
          * @property {number} GET=1 GET value
          * @property {number} RESET=2 RESET value
          * @property {number} JOIN=3 JOIN value
+         * @property {number} PREVIEW=4 PREVIEW value
          */
         GroupInviteLink.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -7583,6 +7625,7 @@ $root.server = (function() {
             values[valuesById[1] = "GET"] = 1;
             values[valuesById[2] = "RESET"] = 2;
             values[valuesById[3] = "JOIN"] = 3;
+            values[valuesById[4] = "PREVIEW"] = 4;
             return values;
         })();
 
@@ -7898,6 +7941,7 @@ $root.server = (function() {
          * @property {string|null} [result] AuthResult result
          * @property {string|null} [reason] AuthResult reason
          * @property {Uint8Array|null} [propsHash] AuthResult propsHash
+         * @property {number|Long|null} [versionTtl] AuthResult versionTtl
          */
 
         /**
@@ -7940,6 +7984,14 @@ $root.server = (function() {
         AuthResult.prototype.propsHash = $util.newBuffer([]);
 
         /**
+         * AuthResult versionTtl.
+         * @member {number|Long} versionTtl
+         * @memberof server.AuthResult
+         * @instance
+         */
+        AuthResult.prototype.versionTtl = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new AuthResult instance using the specified properties.
          * @function create
          * @memberof server.AuthResult
@@ -7969,6 +8021,8 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.reason);
             if (message.propsHash != null && Object.hasOwnProperty.call(message, "propsHash"))
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.propsHash);
+            if (message.versionTtl != null && Object.hasOwnProperty.call(message, "versionTtl"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.versionTtl);
             return writer;
         };
 
@@ -8011,6 +8065,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.propsHash = reader.bytes();
+                    break;
+                case 4:
+                    message.versionTtl = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -8056,6 +8113,9 @@ $root.server = (function() {
             if (message.propsHash != null && message.hasOwnProperty("propsHash"))
                 if (!(message.propsHash && typeof message.propsHash.length === "number" || $util.isString(message.propsHash)))
                     return "propsHash: buffer expected";
+            if (message.versionTtl != null && message.hasOwnProperty("versionTtl"))
+                if (!$util.isInteger(message.versionTtl) && !(message.versionTtl && $util.isInteger(message.versionTtl.low) && $util.isInteger(message.versionTtl.high)))
+                    return "versionTtl: integer|Long expected";
             return null;
         };
 
@@ -8080,6 +8140,15 @@ $root.server = (function() {
                     $util.base64.decode(object.propsHash, message.propsHash = $util.newBuffer($util.base64.length(object.propsHash)), 0);
                 else if (object.propsHash.length)
                     message.propsHash = object.propsHash;
+            if (object.versionTtl != null)
+                if ($util.Long)
+                    (message.versionTtl = $util.Long.fromValue(object.versionTtl)).unsigned = false;
+                else if (typeof object.versionTtl === "string")
+                    message.versionTtl = parseInt(object.versionTtl, 10);
+                else if (typeof object.versionTtl === "number")
+                    message.versionTtl = object.versionTtl;
+                else if (typeof object.versionTtl === "object")
+                    message.versionTtl = new $util.LongBits(object.versionTtl.low >>> 0, object.versionTtl.high >>> 0).toNumber();
             return message;
         };
 
@@ -8106,6 +8175,11 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.propsHash = $util.newBuffer(object.propsHash);
                 }
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.versionTtl = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.versionTtl = options.longs === String ? "0" : 0;
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = message.result;
@@ -8113,6 +8187,11 @@ $root.server = (function() {
                 object.reason = message.reason;
             if (message.propsHash != null && message.hasOwnProperty("propsHash"))
                 object.propsHash = options.bytes === String ? $util.base64.encode(message.propsHash, 0, message.propsHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.propsHash) : message.propsHash;
+            if (message.versionTtl != null && message.hasOwnProperty("versionTtl"))
+                if (typeof message.versionTtl === "number")
+                    object.versionTtl = options.longs === String ? String(message.versionTtl) : message.versionTtl;
+                else
+                    object.versionTtl = options.longs === String ? $util.Long.prototype.toString.call(message.versionTtl) : options.longs === Number ? new $util.LongBits(message.versionTtl.low >>> 0, message.versionTtl.high >>> 0).toNumber() : message.versionTtl;
             return object;
         };
 

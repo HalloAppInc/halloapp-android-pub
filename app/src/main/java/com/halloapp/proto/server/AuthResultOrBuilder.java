@@ -36,4 +36,10 @@ public interface AuthResultOrBuilder extends
    * @return The propsHash.
    */
   com.google.protobuf.ByteString getPropsHash();
+
+  /**
+   * <code>int64 version_ttl = 4;</code>
+   * @return The versionTtl.
+   */
+  long getVersionTtl();
 }

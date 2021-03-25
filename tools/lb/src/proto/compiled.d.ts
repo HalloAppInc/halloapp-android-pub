@@ -2419,6 +2419,9 @@ export namespace server {
 
         /** GroupStanza members */
         members?: (server.IGroupMember[]|null);
+
+        /** GroupStanza background */
+        background?: (string|null);
     }
 
     /** Represents a GroupStanza. */
@@ -2450,6 +2453,9 @@ export namespace server {
 
         /** GroupStanza members. */
         public members: server.IGroupMember[];
+
+        /** GroupStanza background. */
+        public background: string;
 
         /**
          * Creates a new GroupStanza instance using the specified properties.
@@ -2537,7 +2543,9 @@ export namespace server {
             MODIFY_MEMBERS = 8,
             AUTO_PROMOTE_ADMINS = 9,
             SET_NAME = 10,
-            JOIN = 11
+            JOIN = 11,
+            PREVIEW = 12,
+            SET_BACKGROUND = 13
         }
     }
 
@@ -2898,7 +2906,8 @@ export namespace server {
             UNKNOWN = 0,
             GET = 1,
             RESET = 2,
-            JOIN = 3
+            JOIN = 3,
+            PREVIEW = 4
         }
     }
 
@@ -3027,6 +3036,9 @@ export namespace server {
 
         /** AuthResult propsHash */
         propsHash?: (Uint8Array|null);
+
+        /** AuthResult versionTtl */
+        versionTtl?: (number|Long|null);
     }
 
     /** Represents an AuthResult. */
@@ -3046,6 +3058,9 @@ export namespace server {
 
         /** AuthResult propsHash. */
         public propsHash: Uint8Array;
+
+        /** AuthResult versionTtl. */
+        public versionTtl: (number|Long);
 
         /**
          * Creates a new AuthResult instance using the specified properties.

@@ -141,6 +141,32 @@ public  final class AuthResult extends
     propsHash_ = getDefaultInstance().getPropsHash();
   }
 
+  public static final int VERSION_TTL_FIELD_NUMBER = 4;
+  private long versionTtl_;
+  /**
+   * <code>int64 version_ttl = 4;</code>
+   * @return The versionTtl.
+   */
+  @java.lang.Override
+  public long getVersionTtl() {
+    return versionTtl_;
+  }
+  /**
+   * <code>int64 version_ttl = 4;</code>
+   * @param value The versionTtl to set.
+   */
+  private void setVersionTtl(long value) {
+    
+    versionTtl_ = value;
+  }
+  /**
+   * <code>int64 version_ttl = 4;</code>
+   */
+  private void clearVersionTtl() {
+    
+    versionTtl_ = 0L;
+  }
+
   public static com.halloapp.proto.server.AuthResult parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -366,6 +392,34 @@ public  final class AuthResult extends
       return this;
     }
 
+    /**
+     * <code>int64 version_ttl = 4;</code>
+     * @return The versionTtl.
+     */
+    @java.lang.Override
+    public long getVersionTtl() {
+      return instance.getVersionTtl();
+    }
+    /**
+     * <code>int64 version_ttl = 4;</code>
+     * @param value The versionTtl to set.
+     * @return This builder for chaining.
+     */
+    public Builder setVersionTtl(long value) {
+      copyOnWrite();
+      instance.setVersionTtl(value);
+      return this;
+    }
+    /**
+     * <code>int64 version_ttl = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearVersionTtl() {
+      copyOnWrite();
+      instance.clearVersionTtl();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.AuthResult)
   }
   @java.lang.Override
@@ -385,10 +439,11 @@ public  final class AuthResult extends
             "result_",
             "reason_",
             "propsHash_",
+            "versionTtl_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\n";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\n\u0004\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
