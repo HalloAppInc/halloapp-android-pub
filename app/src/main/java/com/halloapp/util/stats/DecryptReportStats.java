@@ -27,7 +27,7 @@ public class DecryptReportStats {
 
     private static final String DECRYPT_STATS_WORK_ID = "decrypt-report-stats";
 
-    private static final long MIN_DELAY = DateUtils.MINUTE_IN_MILLIS;
+    private static final long MIN_DELAY = DateUtils.DAY_IN_MILLIS;
     private static final int MAX_BATCH_SIZE = 50;
 
     private static DecryptReportStats instance;
