@@ -24,6 +24,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class GroupViewModel extends AndroidViewModel {
     private final GroupId groupId;
 
     private final ComputableLiveData<Chat> chatLiveData;
-    private final ComputableLiveData<List<MemberInfo>> membersLiveData;
+    private final ComputableLiveData<List<GroupMember>> membersLiveData;
 
     private final MutableLiveData<Boolean> userIsAdmin = new MutableLiveData<>();
     private final MutableLiveData<Boolean> chatIsActive = new MutableLiveData<>();
@@ -102,9 +103,10 @@ public class GroupViewModel extends AndroidViewModel {
         };
         chatLiveData.invalidate();
 
-        membersLiveData = new ComputableLiveData<List<MemberInfo>>() {
+        membersLiveData = new ComputableLiveData<List<GroupMember>>() {
             @Override
-            protected List<MemberInfo> compute() {
+            protected List<GroupMember> compute() {
+                List<GroupMember> groupMembers = new ArrayList<>();
                 List<MemberInfo> members = contentDb.getGroupMembers(groupId);
                 for (MemberInfo member : members) {
                     if (member.userId.isMe() || member.userId.rawId().equals(me.getUser())) {
@@ -112,44 +114,34 @@ public class GroupViewModel extends AndroidViewModel {
                         break;
                     }
                 }
-                Collections.sort(members, new Comparator<MemberInfo>() {
-                    private final HashMap<UserId, Contact> contacts = new HashMap<>();
-
-                    private Contact getContact(@NonNull UserId userId) {
-                        Contact contact = contacts.get(userId);
-                        if (contact == null) {
-                            contact = contactsDb.getContact(userId);
-                            contacts.put(userId, contact);
-                        }
-                        return contact;
-                    }
-
+                for (MemberInfo memberInfo : members) {
+                    groupMembers.add(new GroupMember(memberInfo, contactsDb.getContact(memberInfo.userId)));
+                }
+                Collections.sort(groupMembers, new Comparator<GroupMember>() {
                     @Override
-                    public int compare(MemberInfo m1, MemberInfo m2) {
-                        if (m1.userId.isMe()) {
+                    public int compare(GroupMember m1, GroupMember m2) {
+                        if (m1.memberInfo.userId.isMe()) {
                             return -1;
-                        } else if (m2.userId.isMe()) {
+                        } else if (m2.memberInfo.userId.isMe()) {
                             return 1;
-                        } else if (m1.isAdmin() && !m2.isAdmin()) {
+                        } else if (m1.memberInfo.isAdmin() && !m2.memberInfo.isAdmin()) {
                             return -1;
-                        } else if (m2.isAdmin() && !m1.isAdmin()) {
-                            return 1;
-                        }
-                        Contact c1 = getContact(m1.userId);
-                        Contact c2 = getContact(m2.userId);
-                        if (c1.friend && !c2.friend) {
-                            return -1;
-                        } else if (c2.friend && !c1.friend) {
-                            return 1;
-                        } else if (c1.addressBookName != null && c2.addressBookName == null) {
-                            return -1;
-                        } else if (c2.addressBookName != null && c1.addressBookName == null) {
+                        } else if (m2.memberInfo.isAdmin() && !m1.memberInfo.isAdmin()) {
                             return 1;
                         }
-                        return c1.getDisplayName().compareTo(c2.getDisplayName());
+                        if (m1.contact.friend && !m2.contact.friend) {
+                            return -1;
+                        } else if (m2.contact.friend && !m1.contact.friend) {
+                            return 1;
+                        } else if (m1.contact.addressBookName != null && m2.contact.addressBookName == null) {
+                            return -1;
+                        } else if (m2.contact.addressBookName != null && m1.contact.addressBookName == null) {
+                            return 1;
+                        }
+                        return m1.contact.getDisplayName().compareTo(m2.contact.getDisplayName());
                     }
                 });
-                return members;
+                return groupMembers;
             }
         };
         membersLiveData.invalidate();
@@ -159,7 +151,7 @@ public class GroupViewModel extends AndroidViewModel {
         return chatLiveData.getLiveData();
     }
 
-    public LiveData<List<MemberInfo>> getMembers() {
+    public LiveData<List<GroupMember>> getMembers() {
         return membersLiveData.getLiveData();
     }
 
@@ -259,6 +251,16 @@ public class GroupViewModel extends AndroidViewModel {
                 return (T) new GroupViewModel(application, groupId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+    }
+
+    public static class GroupMember {
+        public final Contact contact;
+        public final MemberInfo memberInfo;
+
+        GroupMember(@NonNull MemberInfo memberInfo, @NonNull Contact contact) {
+            this.contact = contact;
+            this.memberInfo = memberInfo;
         }
     }
 }

@@ -114,11 +114,11 @@ public class GroupInfoActivity extends HalloActivity {
 
         addMembersView = adapter.addHeader(R.layout.add_members_item);
         addMembersView.setOnClickListener(v -> {
-            List<MemberInfo> members = viewModel.getMembers().getValue();
+            List<GroupViewModel.GroupMember> members = viewModel.getMembers().getValue();
             List<UserId> excludeIds = new ArrayList<>();
             if (members != null) {
-                for (MemberInfo memberInfo : members) {
-                    excludeIds.add(memberInfo.userId);
+                for (GroupViewModel.GroupMember member : members) {
+                    excludeIds.add(member.memberInfo.userId);
                 }
             }
             int maxGroupSize = ServerProps.getInstance().getMaxGroupSize() - excludeIds.size();
@@ -260,7 +260,7 @@ public class GroupInfoActivity extends HalloActivity {
         });
     }
 
-    private class MemberAdapter extends HeaderFooterAdapter<MemberInfo> {
+    private class MemberAdapter extends HeaderFooterAdapter<GroupViewModel.GroupMember> {
 
         public MemberAdapter() {
             super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
@@ -280,17 +280,17 @@ public class GroupInfoActivity extends HalloActivity {
 
         private static final int TYPE_MEMBER = 1;
 
-        void submitMembers(List<MemberInfo> members) {
+        void submitMembers(List<GroupViewModel.GroupMember> members) {
             submitItems(members);
         }
 
         @Override
-        public long getIdForItem(@NonNull MemberInfo memberInfo) {
-            return memberInfo.rowId;
+        public long getIdForItem(@NonNull GroupViewModel.GroupMember groupMember) {
+            return groupMember.memberInfo.rowId;
         }
 
         @Override
-        public int getViewTypeForItem(@NonNull MemberInfo memberInfo) {
+        public int getViewTypeForItem(@NonNull GroupViewModel.GroupMember memberInfo) {
             return TYPE_MEMBER;
         }
 
@@ -326,7 +326,8 @@ public class GroupInfoActivity extends HalloActivity {
             admin = itemView.findViewById(R.id.admin);
         }
 
-        void bindTo(@NonNull MemberInfo member) {
+        void bindTo(@NonNull GroupViewModel.GroupMember groupMember) {
+            MemberInfo member = groupMember.memberInfo;
             admin.setVisibility(MemberElement.Type.ADMIN.equals(member.type) ? View.VISIBLE : View.GONE);
             if (member.userId.isMe() || member.userId.rawId().equals(me.getUser())) {
                 contactLoader.cancel(name);
@@ -343,7 +344,9 @@ public class GroupInfoActivity extends HalloActivity {
                 Context context = getBaseContext();
                 List<String> optionsList = new ArrayList<>();
                 optionsList.add(context.getString(R.string.view_profile));
-                optionsList.add(context.getString(R.string.message));
+                if (groupMember.contact.addressBookName != null) {
+                    optionsList.add(context.getString(R.string.message));
+                }
                 if (getUserIsAdmin() && getChatIsActive()) {
                     optionsList.add(context.getString(R.string.group_remove_member));
                     optionsList.add(context.getString(MemberElement.Type.ADMIN.equals(member.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
