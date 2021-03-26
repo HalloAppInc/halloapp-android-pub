@@ -294,7 +294,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
                 }
                 if (nuxWelcome != null) {
                     welcomeNuxContainer.setVisibility(View.GONE);
-                    viewModel.markWelcomeNuxShown();
+                    viewModel.closeWelcomeNux();
                 }
             }
             return true;

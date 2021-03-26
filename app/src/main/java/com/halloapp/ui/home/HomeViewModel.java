@@ -182,6 +182,13 @@ public class HomeViewModel extends AndroidViewModel {
         bgWorkers.execute(preferences::markWelcomeNuxShown);
     }
 
+    public void closeWelcomeNux() {
+        bgWorkers.execute(() -> {
+            preferences.markWelcomeNuxShown();
+            showWelcomeNux.invalidate();
+        });
+    }
+
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
