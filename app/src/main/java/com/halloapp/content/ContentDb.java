@@ -567,7 +567,16 @@ public class ContentDb {
 
     public void addSilentMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            messagesDb.addSilentMessage(message.senderUserId, message.id);
+            messagesDb.addSilentMessage(message);
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void updateSilentMessageDecrypt(@NonNull Message message, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.updateSilentMessageDecrypt(message);
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
@@ -843,6 +852,11 @@ public class ContentDb {
 
     public void updatePostAudience(@NonNull Map<UserId, Collection<Post>> shareMap) {
         postsDb.updatePostAudience(shareMap);
+    }
+
+    @WorkerThread
+    public List<DecryptStats> getSilentMessageDecryptStats(long lastRowId) {
+        return messagesDb.getSilentMessageDecryptStats(lastRowId);
     }
 
     @WorkerThread

@@ -27,7 +27,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 38;
+    private static final int DATABASE_VERSION = 39;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -99,7 +99,13 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + SilentMessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + SilentMessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                 + SilentMessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
-                + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
+                + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER,"
+                + SilentMessagesTable.COLUMN_FAILURE_REASON + " TEXT,"
+                + SilentMessagesTable.COLUMN_CLIENT_VERSION + " TEXT,"
+                + SilentMessagesTable.COLUMN_SENDER_PLATFORM + " TEXT,"
+                + SilentMessagesTable.COLUMN_SENDER_VERSION + " TEXT,"
+                + SilentMessagesTable.COLUMN_RECEIVE_TIME + " INTEGER,"
+                + SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
@@ -383,6 +389,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 37: {
                 upgradeFromVersion37(db);
+            }
+            case 38: {
+                upgradeFromVersion38(db);
             }
             break;
             default: {
@@ -708,6 +717,15 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_SENDER_VERSION + " TEXT");
         db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_RECEIVE_TIME + " INTEGER");
         db.execSQL("ALTER TABLE " + MessagesTable.TABLE_NAME + " ADD COLUMN " + MessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
+    }
+
+    private void upgradeFromVersion38(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_FAILURE_REASON + " TEXT");
+        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_CLIENT_VERSION + " TEXT");
+        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_SENDER_PLATFORM + " TEXT");
+        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_SENDER_VERSION + " TEXT");
+        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_RECEIVE_TIME + " INTEGER");
+        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
     }
 
     /**

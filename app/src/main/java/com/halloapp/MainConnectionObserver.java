@@ -265,6 +265,12 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onIncomingSilentMessageRedecrypt(@NonNull Message message) {
+        final Runnable completionRunnable = () -> connection.sendAck(message.id);
+        contentDb.updateSilentMessageDecrypt(message, completionRunnable);
+    }
+
+    @Override
     public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         contentDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
     }

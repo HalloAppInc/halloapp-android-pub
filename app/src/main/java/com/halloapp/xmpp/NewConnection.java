@@ -926,14 +926,14 @@ public class NewConnection extends Connection {
                     // NOTE: push names are not collected because eventually these messages will be removed
 
                     bgWorkers.execute(() -> {
+                        ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
+                        Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true, chatStanza.getSenderClientVersion());
+                        processMentions(message.mentions);
                         if (!ContentDb.getInstance().hasSilentMessage(fromUserId, msg.getId())) {
-                            ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                            Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true, chatStanza.getSenderClientVersion());
-                            processMentions(message.mentions);
                             connectionObservers.notifyIncomingSilentMessageReceived(message);
                         } else {
-                            Log.i("silent message id " + msg.getId() + " already present in DB; ignoring silent chat stanza and acking");
-                            sendAck(msg.getId());
+                            Log.i("silent message id " + msg.getId() + " already present in DB; only updating decrypt status");
+                            connectionObservers.notifyIncomingSilentMessageRedecrypt(message);
                         }
                     });
 

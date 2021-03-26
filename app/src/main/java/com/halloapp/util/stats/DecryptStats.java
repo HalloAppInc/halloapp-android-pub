@@ -13,6 +13,7 @@ public class DecryptStats {
     public final String senderPlatform;
     public final long originalTimestamp;
     public final long lastUpdatedTimestamp;
+    public final boolean isSilent;
 
     public DecryptStats(
             long rowId,
@@ -23,7 +24,8 @@ public class DecryptStats {
             String senderVersion,
             String senderPlatform,
             long originalTimestamp,
-            long lastUpdatedTimestamp
+            long lastUpdatedTimestamp,
+            boolean isSilent
     ) {
         this.rowId = rowId;
         this.messageId = messageId;
@@ -34,6 +36,7 @@ public class DecryptStats {
         this.senderPlatform = senderPlatform;
         this.originalTimestamp = originalTimestamp;
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
+        this.isSilent = isSilent;
     }
 
     public DecryptionReport toDecryptionReport() {
@@ -54,7 +57,7 @@ public class DecryptStats {
                 .setSenderPlatform(senderPlatform)
                 .setRerequestCount(rerequestCount)
                 .setTimeTakenS((int)timeTakenS)
-                .setIsSilent(false);
+                .setIsSilent(isSilent);
         return builder.build();
     }
 }

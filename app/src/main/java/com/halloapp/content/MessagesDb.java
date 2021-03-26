@@ -1703,7 +1703,10 @@ class MessagesDb {
 
     // TODO(jack): Remove silent messages once no longer needed
     @WorkerThread
-    boolean addSilentMessage(@NonNull UserId senderUserId, @NonNull String messageId) {
+    boolean addSilentMessage(@NonNull Message message) {
+        long now = System.currentTimeMillis();
+        UserId senderUserId = message.senderUserId;
+        String messageId = message.id;
         Log.i("MessagesDb.addSilentMessage " + senderUserId + " " + messageId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
@@ -1711,6 +1714,12 @@ class MessagesDb {
             values.put(SilentMessagesTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
             values.put(SilentMessagesTable.COLUMN_MESSAGE_ID, messageId);
             values.put(SilentMessagesTable.COLUMN_REREQUEST_COUNT, 0);
+            values.put(SilentMessagesTable.COLUMN_RECEIVE_TIME, now);
+            values.put(SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
+            values.put(SilentMessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
+            values.put(SilentMessagesTable.COLUMN_CLIENT_VERSION, message.clientVersion);
+            values.put(SilentMessagesTable.COLUMN_SENDER_VERSION, message.senderVersion);
+            values.put(SilentMessagesTable.COLUMN_SENDER_PLATFORM, message.senderPlatform);
 
             db.insertWithOnConflict(SilentMessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
@@ -1774,6 +1783,69 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean updateSilentMessageDecrypt(@NonNull Message message) {
+        Log.i("ContentDb.updateSilentMessageDecrypt " + message);
+        long now = System.currentTimeMillis();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues messageValues = new ContentValues();
+            messageValues.put(SilentMessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
+            messageValues.put(SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
+
+            int count = db.update(SilentMessagesTable.TABLE_NAME, messageValues,
+                    SilentMessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + SilentMessagesTable.COLUMN_MESSAGE_ID + "=? AND ? - " + SilentMessagesTable.COLUMN_RECEIVE_TIME + " < ?",
+                    new String [] {message.chatId.rawId(), message.senderUserId.rawId(), message.id, Long.toString(now), Long.toString(DateUtils.DAY_IN_MILLIS)});
+
+            db.setTransactionSuccessful();
+
+            Log.i("ContentDb.updateSilentMessageDecrypt: updated " + count + " rows");
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.updateSilentMessageDecrypt: " + ex.getMessage() + " " + message.id);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    public List<DecryptStats> getSilentMessageDecryptStats(long lastRowId) {
+        List<DecryptStats> ret = new ArrayList<>();
+        final String sql =
+                "SELECT " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable._ID + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_MESSAGE_ID + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_REREQUEST_COUNT + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_FAILURE_REASON + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_CLIENT_VERSION + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_SENDER_VERSION + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_SENDER_PLATFORM + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_RECEIVE_TIME + ","
+                        + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + SilentMessagesTable.TABLE_NAME
+                        + " WHERE " + SilentMessagesTable.TABLE_NAME + "." + SilentMessagesTable._ID + " > ?";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
+            while (cursor.moveToNext()) {
+                ret.add(new DecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getLong(7),
+                        cursor.getLong(8),
+                        true
+                ));
+            }
+        }
+        return ret;
+    }
+
+    @WorkerThread
     public List<DecryptStats> getMessageDecryptStats(long lastRowId) {
         List<DecryptStats> ret = new ArrayList<>();
         final String sql =
@@ -1801,7 +1873,8 @@ class MessagesDb {
                         cursor.getString(5),
                         cursor.getString(6),
                         cursor.getLong(7),
-                        cursor.getLong(8)
+                        cursor.getLong(8),
+                        false
                 ));
             }
         }
@@ -1835,7 +1908,8 @@ class MessagesDb {
                         cursor.getString(5),
                         cursor.getString(6),
                         cursor.getLong(7),
-                        cursor.getLong(8)
+                        cursor.getLong(8),
+                        false
                 );
             }
         }

@@ -66,9 +66,26 @@ public class DecryptReportStats {
         Log.i("DecryptReportStats.run");
 
         long now = System.currentTimeMillis();
-        long lastId = preferences.getLastDecryptStatMessageRowId();
-        List<DecryptStats> stats = contentDb.getMessageDecryptStats(lastId);
-        Log.i("DecryptReportStats.run lastId: " + lastId);
+
+        if (!run(now, false)) {
+            Log.i("DecryptReportStats.run normal message failure");
+            return ListenableWorker.Result.failure();
+        }
+
+        if (!run(now, true)) {
+            Log.i("DecryptReportStats.run silent message failure");
+            return ListenableWorker.Result.failure();
+        }
+
+        Log.i("DecryptReportStats success");
+        return ListenableWorker.Result.success();
+    }
+
+    @WorkerThread
+    private boolean run(long now, boolean silent) {
+        long lastId = silent ? preferences.getLastSilentDecryptStatMessageRowId() : preferences.getLastDecryptStatMessageRowId();
+        List<DecryptStats> stats = silent ? contentDb.getSilentMessageDecryptStats(lastId) : contentDb.getMessageDecryptStats(lastId);
+        Log.i("DecryptReportStats.run silent: " + silent + " lastId: " + lastId);
 
         if (lastId < 0) {
             Log.i("DecryptReportStats.run first time running; setting last id to most recent message");
@@ -77,8 +94,14 @@ public class DecryptReportStats {
                     lastId = stat.rowId;
                 }
             }
-            preferences.setLastDecryptStatMessageRowId(lastId);
-            return ListenableWorker.Result.success();
+
+            if (silent) {
+                preferences.setLastSilentDecryptStatMessageRowId(lastId);
+            } else {
+                preferences.setLastDecryptStatMessageRowId(lastId);
+            }
+
+            return true;
         }
 
         Collections.sort(stats, (o1, o2) -> Long.compare(o1.rowId, o2.rowId));
@@ -110,16 +133,21 @@ public class DecryptReportStats {
             try {
                 events.sendDecryptionReports(reports).await();
                 long newLastId = batch.get(batch.size() - 1).rowId;
-                preferences.setLastDecryptStatMessageRowId(newLastId);
+
+                if (silent) {
+                    preferences.setLastSilentDecryptStatMessageRowId(newLastId);
+                } else {
+                    preferences.setLastDecryptStatMessageRowId(newLastId);
+                }
+
                 Log.i("DecryptReportStats.run batch succeeded; new lastId is " + newLastId);
             } catch (InterruptedException | ObservableErrorException e) {
                 Log.e("DecryptReportStats.run batch failed", e);
-                return ListenableWorker.Result.failure();
+                return false;
             }
         }
 
-        Log.i("DecryptReportStats success");
-        return ListenableWorker.Result.success();
+        return true;
     }
 
     public static class DecryptReportStatsWorker extends Worker {
