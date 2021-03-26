@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.Preferences;
+import com.halloapp.contacts.AddressBookContacts;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.util.BgWorkers;
@@ -26,6 +27,7 @@ import java.text.Collator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class InviteContactsViewModel extends AndroidViewModel {
 
@@ -38,7 +40,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
     MutableLiveData<Integer> inviteCountData;
     ComputableLiveData<List<Contact>> contactList;
-
+    ComputableLiveData<Set<String>> waContacts;
     ComputableLiveData<InviteOptions> inviteOptions;
 
     public static final int RESPONSE_RETRYABLE = -1;
@@ -47,7 +49,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
         @Override
         public void onContactsChanged() {
-            contactList.invalidate();
+            refreshContacts();
         }
     };
 
@@ -108,6 +110,13 @@ public class InviteContactsViewModel extends AndroidViewModel {
             }
         };
 
+        waContacts = new ComputableLiveData<Set<String>>() {
+            @Override
+            protected Set<String> compute() {
+                return AddressBookContacts.fetchWANumbers(application);
+            }
+        };
+
         contactsDb.addObserver(contactsObserver);
         fetchInvites();
     }
@@ -149,6 +158,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
     public void refreshContacts() {
         contactList.invalidate();
+        waContacts.invalidate();
     }
 
     public LiveData<Integer> getInviteCount() {
@@ -165,7 +175,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
             inviteResult.postValue(result);
             contactsDb.markInvited(contact);
             fetchInvites();
-            contactList.invalidate();
+            refreshContacts();
         }).onError(e -> {
             inviteResult.postValue(InvitesResponseIq.Result.UNKNOWN);
             Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);

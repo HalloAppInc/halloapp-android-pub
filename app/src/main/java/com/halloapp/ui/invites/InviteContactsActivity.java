@@ -51,6 +51,7 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -130,6 +131,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         viewModel = new ViewModelProvider(this).get(InviteContactsViewModel.class);
         viewModel.getContactList().observe(this, adapter::setContacts);
         viewModel.inviteOptions.getLiveData().observe(this, adapter::setInviteOptions);
+        viewModel.waContacts.getLiveData().observe(this, adapter::setWAContacts);
 
         View progress = findViewById(R.id.progress);
 
@@ -333,6 +335,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         private List<Contact> filteredContacts;
         private CharSequence filterText;
         private List<String> filterTokens;
+        private Set<String> waContacts;
 
         private InviteContactsViewModel.InviteOptions inviteOptions;
 
@@ -353,6 +356,11 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
             notifyDataSetChanged();
         }
 
+        void setWAContacts(@NonNull Set<String> waContacts) {
+            this.waContacts = waContacts;
+            notifyDataSetChanged();
+        }
+
         @Override
         public @NonNull ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_invite_item, parent, false));
@@ -361,7 +369,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         @Override
         public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
             if (position < getFilteredContactsCount()) {
-                holder.bindTo(filteredContacts.get(position), filterTokens, inviteOptions);
+                holder.bindTo(filteredContacts.get(position), filterTokens, inviteOptions, waContacts);
             }
         }
 
@@ -445,7 +453,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
             });
         }
 
-        void bindTo(@NonNull Contact contact, List<String> filterTokens, @Nullable InviteContactsViewModel.InviteOptions inviteOptions) {
+        void bindTo(@NonNull Contact contact, List<String> filterTokens, @Nullable InviteContactsViewModel.InviteOptions inviteOptions, @Nullable Set<String> waContacts) {
             if (!sendingEnabled || contact.userId != null) {
                 itemView.setAlpha(0.54f);
                 itemView.setClickable(false);
@@ -487,7 +495,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
                 pendingView.setVisibility((contact.invited && contact.userId == null) ? View.VISIBLE : View.GONE);
             } else {
                 pendingView.setVisibility(View.GONE);
-                if (inviteOptions.hasWA) {
+                if (waContacts != null && waContacts.contains(contact.normalizedPhone) && inviteOptions.hasWA) {
                     waView.setVisibility(View.VISIBLE);
                     if (waIcon == null) {
                         try {

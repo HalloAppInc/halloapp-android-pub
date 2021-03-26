@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-class AddressBookContacts {
+public class AddressBookContacts {
 
     static class AddressBookContact {
 
@@ -69,6 +69,31 @@ class AddressBookContacts {
             return contacts;
         } catch (SecurityException ex) {
             Log.e("AddressBookContacts", ex);
+            return null;
+        }
+    }
+
+    public static Set<String> fetchWANumbers(@NonNull Context context) {
+        String selection = "account_type IN (?)";
+        String[] selectionArgs = new String[] { "com.whatsapp" };
+
+        final Set<String> contacts = new HashSet<>();
+        try (Cursor contactsCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,selection,selectionArgs, null)) {
+            if (contactsCursor == null) {
+                Log.e("AddressBookContacts/fetchWAnumbers: no contacts cursor");
+                return null;
+            }
+            final int phoneColumnIndex = contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            while (contactsCursor.moveToNext()) {
+                final String phone = contactsCursor.getString(phoneColumnIndex);
+                if (!TextUtils.isEmpty(phone)) {
+                    contacts.add(phone.replaceAll( "[^\\d]", ""));
+                }
+            }
+            Log.i("AddressBookContacts/fetchWANumbers: " + contacts.size() + " wa numbers");
+            return contacts;
+        } catch (SecurityException ex) {
+            Log.e("AddressBookContacts/fetchWANumbers", ex);
             return null;
         }
     }
