@@ -91,7 +91,7 @@ public class FileStore {
                 }
             }
         }
-        Collections.sort(logFiles, (o1, o2) -> (int) (o1.lastModified() - o2.lastModified()));
+        Collections.sort(logFiles);
         if (logFiles.size() > MAX_LOG_FILES) {
             while (logFiles.size() > MAX_LOG_FILES) {
                 File f = logFiles.remove(0);
