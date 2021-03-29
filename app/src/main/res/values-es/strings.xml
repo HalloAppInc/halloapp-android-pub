@@ -420,6 +420,8 @@ version: %s
     <string name="delete_group_confirmation">"¿Te gustaría eliminar este grupo?"</string>
     <string name="delete_group_in_progress">"Eliminando el grupo…"</string>
     <string name="failed_delete_group">"No se pudo eliminar el grupo, inténtalo más tarde"</string>
+
+    <!-- Fuzzy -->
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d amigo en HalloApp"</item>
         <item quantity="other">"%d amigos en HalloApp"</item>
@@ -515,4 +517,5 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
     <string name="system_message_you_joined">"You joined the group via invite link"</string>
     <string name="system_message_joined">"%s joined the group via invite link"</string>
     <string name="activity_center_welcome">"Hallo!"</string>
+    <string name="post_preview_retracted">"%s deleted a post"</string>
 </resources>

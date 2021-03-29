@@ -1,69 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">"HalloApp"</string>
-    <string name="title_home">"घर"</string>
+    <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
-    <string name="title_profile">"प्रोफ़ाइल"</string>
+    <string name="title_profile">"Profile"</string>
     <string name="title_groups">"Groups"</string>
-    <string name="comment">"टिप्पणी"</string>
-    <string name="next">"आगामी"</string>
-    <string name="message">"संदेश"</string>
-    <string name="add_post">"पोस्ट जोड़ें"</string>
-    <string name="new_chat">"नई चैट"</string>
+    <string name="comment">"Comment"</string>
+    <string name="next">"Next"</string>
+    <string name="message">"Message"</string>
+    <string name="add_post">"Add post"</string>
+    <string name="new_chat">"New chat"</string>
     <string name="new_group">"New group"</string>
-    <string name="notifications">"सूचनाएं"</string>
-    <string name="feed_notifications_channel_name">"फ़ीड के लिए सूचनाएं"</string>
-    <string name="message_notifications_channel_name">"संदेश सूचनाएं"</string>
-    <string name="critical_notifications_channel_name">"महत्वपूर्ण एप्लिकेशन अलर्ट"</string>
-    <string name="invite_notifications_channel_name">"सूचनाएं आमंत्रित करें"</string>
-    <string name="invite_notification_text">"%s ने HalloApp में शामिल होने के लिए आपके निमंत्रण को अभी स्वीकार किया है 🎉"</string>
-    <string name="me">"मैं"</string>
-    <string name="you">"आप"</string>
-    <string name="copy_text">"टेक्स्ट कॉपी करें"</string>
-    <string name="camera_post">"कैमरा"</string>
-    <string name="gallery_post">"गेलरी"</string>
-    <string name="text_post">"टेक्स्ट"</string>
-    <string name="bad_image">"असमर्थित मीडिया प्रकार"</string>
-    <string name="time_diff_now">"अभी"</string>
-    <string name="phone_number_hint">"फ़ोन नंबर"</string>
-    <string name="request_registration_title">"स्वागत हे!"</string>
-    <string name="reverify_registration_title">"कृपया, अपना फ़ोन नंबर पुनः सत्यापित करें"</string>
-    <string name="request_registration_subtitle">"आपको एक सत्यापन कोड प्राप्त होगा।
-करियर दरें लागू हो सकती हैं।"</string>
-    <string name="verify_registration_title">"वह कोड दर्ज करें जो हमने भेजा
+    <string name="notifications">"Notifications"</string>
+    <string name="feed_notifications_channel_name">"Feed notifications"</string>
+    <string name="message_notifications_channel_name">"Message notifications"</string>
+    <string name="critical_notifications_channel_name">"Critical app alerts"</string>
+    <string name="invite_notifications_channel_name">"Invite notifications"</string>
+    <string name="invite_notification_text">"%s just accepted your invite to join HalloApp 🎉"</string>
+    <string name="me">"Me"</string>
+    <string name="you">"You"</string>
+    <string name="copy_text">"copy text"</string>
+    <string name="camera_post">"Camera"</string>
+    <string name="gallery_post">"Gallery"</string>
+    <string name="text_post">"Text"</string>
+    <string name="bad_image">"Unsupported media type"</string>
+    <string name="time_diff_now">"Now"</string>
+    <string name="phone_number_hint">"Phone number"</string>
+    <string name="request_registration_title">"Welcome!"</string>
+    <string name="reverify_registration_title">"Please, re-verify your phone number"</string>
+    <string name="request_registration_subtitle">"You will receive a verification code.
+Carrier rates may apply."</string>
+    <string name="verify_registration_title">"Enter the code we sent to
 %s"</string>
-    <string name="contact_permission_title">"एक अंतिम बात"</string>
-    <string name="registration_code_invalid">"अमान्य पंजीकरण कोड, पुनः प्रयास करें"</string>
-    <string name="registration_failed">"फ़ोन नंबर पंजीकृत करने में विफल, पुनः प्रयास करें"</string>
-    <string name="registration_failed_no_friends">"वर्तमान में हम केवल निमंत्रण द्वारा ही हैI यदि आपके पास कोई मित्र या परिवार का सदस्य है जो HalloApp का उपयोग करता है, तो उन्हें अपने फोन नंबर का उपयोग करके आपको आमंत्रित करने के लिए कहें।"</string>
-    <string name="registration_failed_no_friends_title">"ओह!"</string>
-    <string name="type_a_message_hint">"एक संदेश लिखें"</string>
-    <string name="write_a_description">"एक विवरण लिखें"</string>
-    <string name="write_a_post">"एक पोस्ट लिखें"</string>
-    <string name="send">"भेजें"</string>
-    <string name="set_avatar_done">"पूर्ण"</string>
-    <string name="set_avatar_reset">"रीसेट"</string>
-    <string name="new_post">"नई पोस्ट"</string>
+    <string name="contact_permission_title">"One last thing"</string>
+    <string name="registration_code_invalid">"Invalid registration code, try again"</string>
+    <string name="registration_failed">"Failed to register phone number, try again"</string>
+    <string name="registration_failed_no_friends">"We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number."</string>
+    <string name="registration_failed_no_friends_title">"Shucks!"</string>
+    <string name="type_a_message_hint">"Type a message"</string>
+    <string name="write_a_description">"Write a description"</string>
+    <string name="write_a_post">"Write a post"</string>
+    <string name="send">"Send"</string>
+    <string name="set_avatar_done">"Done"</string>
+    <string name="set_avatar_reset">"Reset"</string>
+    <string name="new_post">"New post"</string>
     <string name="new_message">"New message"</string>
     <string name="chat_message_attribution">"%s: %s"</string>
-    <string name="empty_chat_placeholder">"सुनो! मैं HalloApp का उपयोग कर रहा हूँ"</string>
+    <string name="empty_chat_placeholder">"Hey there! I'm using HalloApp"</string>
     <string name="empty_chat_with_name_placeholder">"%s is on HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! 🎉"</string>
-    <string name="posts_empty">"आपके पोस्ट यहां दिखाई देंगे"</string>
+    <string name="new_chat_name_placeholder">"%s is using HalloApp! 🎉"</string>
+    <string name="posts_empty">"Your posts will appear here"</string>
     <string name="posts_exchange_numbers">"To connect you must exchange phone numbers"</string>
-    <string name="home_page_empty">"आपके संपर्कों के पोस्ट यहां दिखाई देंगे"</string>
-
-    <!-- Fuzzy -->
-    <string name="chats_page_empty">"आपके संपर्क और संदेश यहां दिखाई देंगे"</string>
-    <string name="chats_search_empty">"%s \" के लिए कोई चैट नहीं मिली"</string>
+    <string name="home_page_empty">"Posts from your contacts will appear here"</string>
+    <string name="chats_page_empty">"Contacts and messages will appear here"</string>
+    <string name="chats_search_empty">"No chats found for '%s'"</string>
     <string name="groups_page_empty">"Your groups will appear here"</string>
     <string name="groups_search_empty">"No groups found for '%s'"</string>
-    <string name="your_post_title">"आपके पोस्ट"</string>
-    <string name="contact_profile_empty">"%s's पोस्ट यहां दिखाई देंगे"</string>
-    <string name="contact_profile_not_friends">"आप HalloApp पर %s के मित्र नहीं हैं"</string>
-    <string name="invalid_phone_number">"अवैध फोन नंबर"</string>
-    <string name="share_option_post">"पोस्ट"</string>
-    <string name="share_option_message">"संदेश"</string>
+    <string name="your_post_title">"Your post"</string>
+    <string name="contact_profile_empty">"%s's posts will appear here"</string>
+    <string name="contact_profile_not_friends">"You are not friends with %s on HalloApp"</string>
+    <string name="invalid_phone_number">"Invalid phone number"</string>
+    <string name="share_option_post">"Post"</string>
+    <string name="share_option_message">"Message"</string>
     <plurals name="time_diff_minutes">
         <item quantity="one">"%dm"</item>
         <item quantity="other">"%dm"</item>
@@ -92,24 +90,28 @@
         <item quantity="one">"You can select up to %d item per post"</item>
         <item quantity="other">"You can select up to %d item per post"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"फ़ोटो लेने और वीडियो रिकॉर्ड करने के लिए हमें कैमरे तक पहुंचने और आपके डिवाइस पर ऑडियो रिकॉर्ड करने की अनुमति चाहिए"</string>
-    <string name="camera_record_audio_permission_rationale_denied">"फ़ोटो लेने और वीडियो रिकॉर्ड करने के लिए हमें कैमरे तक पहुंचने और अपने डिवाइस पर ऑडियो रिकॉर्ड करने की अनुमति चाहिए। \ n \ n ऐप अनुमतियों को संशोधित करने के लिए ऐप सेटिंग स्क्रीन पर क्लिक करें।"</string>
-    <string name="contacts_permission_rationale">"अपने मित्रों और परिवार से जुड़ने के लिए हमें आपके डिवाइस पर संपर्कों तक पहुंचने की अनुमति चाहिए"</string>
-    <string name="contacts_permission_rationale_denied">"अपने मित्रों और परिवार से जुड़ने के लिए हमें आपके डिवाइस पर संपर्कों को एक्सेस करने की अनुमति चाहिए।
+    <string name="camera_record_audio_permission_rationale">"To take photos and record videos we need permission to access the camera and record audio on your device"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"To take photos and record videos we need permission to access the camera and record audio on your device.
 
-एप्लिकेशन अनुमतियों को संशोधित करने के लिए ऐप सेटिंग स्क्रीन पर क्लिक करें।"</string>
-    <string name="storage_permission_rationale">"मीडिया चुनें हमें आपके डिवाइस स्टोरेज तक पहुंचने की अनुमति चाहिए"</string>
-    <string name="storage_permission_rationale_denied">"मीडिया चुनें हमें आपके डिवाइस स्टोरेज तक पहुँचने के लिए एक अनुमति की आवश्यकता है। \ n \ n ऐप अनुमतियों को संशोधित करने के लिए ऐप सेटिंग्स स्क्रीन पर क्लिक करें।"</string>
-    <string name="initializing_please_wait">"प्रारंभ में, कृपया प्रतीक्षा करें …"</string>
-    <string name="retry">"पुन: प्रयास करें"</string>
-    <string name="contact_rationale_upload">"आपको अपने मित्रों और परिवार से जोड़ने के लिए हमें आपके संपर्कों तक पहुँचने के लिए आपकी अनुमति की आवश्यकता होगी। और अधिक जानें"</string>
-    <string name="contact_rationale_continue">"स्वीकार करें"</string>
-    <string name="failed_to_initialize">"प्रारंभ करने में विफल"</string>
-    <string name="type_a_comment_hint">"एक टिप्पणी जोड़े"</string>
-    <string name="comments">"टिप्पणियाँ"</string>
-    <string name="reply">"जवाब"</string>
-    <string name="close">"बंद करे"</string>
-    <string name="reply_to_self">"खुद को जवाब दे"</string>
+Open the app settings screen to modify app permissions."</string>
+    <string name="contacts_permission_rationale">"To connect with your friends and family we need permission to access contacts on your device"</string>
+    <string name="contacts_permission_rationale_denied">"To connect with your friends and family we need permission to access contacts on your device.
+
+Open the app settings screen to modify app permissions."</string>
+    <string name="storage_permission_rationale">"Pick media we need a permission to access your device storage"</string>
+    <string name="storage_permission_rationale_denied">"Pick media we need a permission to access your device storage.
+
+Open the app settings screen to modify app permissions."</string>
+    <string name="initializing_please_wait">"Initializing, please wait…"</string>
+    <string name="retry">"Retry"</string>
+    <string name="contact_rationale_upload">"In order to connect you with your friends &amp; family we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="contact_rationale_continue">"Accept"</string>
+    <string name="failed_to_initialize">"Failed to initialize"</string>
+    <string name="type_a_comment_hint">"Add a comment"</string>
+    <string name="comments">"Comments"</string>
+    <string name="reply">"Reply"</string>
+    <string name="close">"Close"</string>
+    <string name="reply_to_self">"Reply to myself"</string>
     <string name="reply_to_contact">"Reply to %s"</string>
     <string name="reply_original_not_found">"Original message not found"</string>
     <string name="reply_original_post_not_found">"Original post not found"</string>
@@ -410,9 +412,9 @@ version: %s
     </plurals>
     <string name="failed_leave_group">"Failed to leave group, try again later"</string>
     <string name="delete_group">"Delete group"</string>
-    <string name="delete_group_confirmation">"क्या आप इस समूह को हटाना चाहते हैं?"</string>
+    <string name="delete_group_confirmation">"Would you like to delete this group?"</string>
     <string name="delete_group_in_progress">"Deleting group…"</string>
-    <string name="failed_delete_group">"समूह को हटाने में विफल, बाद में पुन: प्रयास करें"</string>
+    <string name="failed_delete_group">"Failed to delete group, try again later"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d contact on HalloApp"</item>
         <item quantity="other">"%d contact on HalloApp"</item>
@@ -421,13 +423,13 @@ version: %s
         <item quantity="one">"%d invite available"</item>
         <item quantity="other">"%d invite available"</item>
     </plurals>
-    <string name="settings_invite_none_summary">"कोई आमंत्रण उपलब्ध नहीं है"</string>
+    <string name="settings_invite_none_summary">"No invites available"</string>
     <plurals name="settings_block_list_summary">
         <item quantity="one">"%d contact"</item>
         <item quantity="other">"%d contact"</item>
     </plurals>
-    <string name="settings_block_list_none_summary">"कोई नहीं"</string>
-    <string name="settings_feed_contacts_summary">"मेरे फोन संपर्क"</string>
+    <string name="settings_block_list_none_summary">"None"</string>
+    <string name="settings_feed_contacts_summary">"My phone contacts"</string>
     <plurals name="settings_feed_excluded_summary">
         <item quantity="one">"%d contact excluded"</item>
         <item quantity="other">"%d contact excluded"</item>
@@ -436,44 +438,48 @@ version: %s
         <item quantity="one">"%d contact selected"</item>
         <item quantity="other">"%d contact selected"</item>
     </plurals>
-    <string name="settings_feed_selected_empty">"कोई संपर्क नहीं चुना गया"</string>
-    <string name="settings_version_footer">"HalloApp संस्करण %s"</string>
-    <string name="connectivity_info_airplane_mode">"हवाई जहाज मोड पर"</string>
-    <string name="connectivity_info_not_connected">"कोई नेटवर्क नहीं"</string>
-    <string name="blocking_user_failed_check_internet">"%s को नहीं अवरोधित किया जा सका। अपना इंटरनेट जांचें और पुन: प्रयास करें।"</string>
-    <string name="blocking_user_successful">"%s को अवरोधित किया गया"</string>
-    <string name="blocking_user_in_progress">"%s अवरुद्ध कर रहा है …"</string>
-    <string name="unblocking_user_successful">"अनब्लॉक %s"</string>
-    <string name="unblocking_user_failed_check_internet">"%s को नहीं हटाया जा सका। अपना इंटरनेट जांचें और पुन: प्रयास करें।"</string>
-    <string name="unblocking_user_in_progress">"%s अनब्लॉक करें …"</string>
-    <string name="are_you_sure_dialog_title">"क्या आपको यकीन है?"</string>
-    <string name="hide_future_posts_confirmation">"क्या आप सुनिश्चित हैं कि आप अपने भविष्य के सभी पोस्ट को %s से छुपाना चाहते हैं? आप इसे बाद में बदल सकते हैं।"</string>
-    <string name="feed_privacy_hide_success">"फ़ीड गोपनीयता अपडेट की गई। %s से पोस्ट छिपाएँ"</string>
-    <string name="feed_privacy_hide_failure">"फ़ीड गोपनीयता अपडेट करने में विफल, अपना इंटरनेट जांचें और पुन: प्रयास करें"</string>
-    <string name="user_typing">"टाइपिंग …"</string>
-    <string name="group_user_typing">"%s टाइप कर रहा है …"</string>
-    <string name="group_many_users_typing">"टाइप करने वाले कई उपयोगकर्ता …"</string>
-    <string name="feed_nux_bottom_sheet_title">"HalloApp के बारे में"</string>
-    <string name="feed_nux_bottom_sheet_text">"होम फीड आपको 30 दिनों के बाद गायब होने वाले पाठ, फोटो और वीडियो अपडेट साझा करने की अनुमति देता है। \ n \ n यदि आप किसी के साथ अपडेट साझा करना चाहते हैं, तो दोनों पक्षों के पास अपने फोन पर सहेजे गए एक-दूसरे के नंबर होने चाहिए। \ n \ n आप अपने संपूर्ण संपर्क सूची के साथ या केवल चयनित लोगों के साथ अपने अपडेट साझा कर सकते हैं। फीड प्राइवेसी बदलने के लिए सेटिंग में जाएं।"</string>
-    <string name="messages_nux_text">"यह वह जगह है जहाँ आप अपने मित्रों और परिवार से संदेश प्राप्त करेंगे। जब कोई नया व्यक्ति HalloApp से जुड़ता है तो आप उन्हें यहाँ देख सकते हैं।"</string>
-    <string name="profile_nux_text">"यह आपकी प्रोफ़ाइल है। आपके अपने पोस्ट यहां एकत्र होंगे। प्रत्येक पोस्ट 30 दिनों में समाप्त हो जाएगी।"</string>
-    <string name="post_audience_nux_title">"मेरी पोस्ट कौन देखेगा?"</string>
-    <string name="post_audience_nux_text">"आपकी पोस्ट आपके फ़ोन संपर्कों के साथ साझा की जाएगी जो HalloApp का उपयोग करते हैं। आप प्रोफ़ाइल → सेटिंग पर जाकर अपनी पोस्ट तक उनकी पहुंच सीमित कर सकते हैं।"</string>
-    <string name="make_post_nux">"HalloApp पर अपने दोस्तों और परिवार के साथ अपडेट साझा करने के लिए टैप करें"</string>
-    <string name="activity_center_nux">"यह आपका गतिविधि केंद्र है। अपनी सबसे हाल की गतिविधि देखने के लिए टैप करें।"</string>
-    <string name="home_feed_nux">"अपने home फ़ीड में आपका स्वागत है! यह वह जगह है जहां आप अपने फोन संपर्कों से पोस्ट देख सकते हैं जो HalloApp का उपयोग करते हैं।"</string>
-    <string name="home_feed_nux_learn_more">"और अधिक जानें"</string>
-    <string name="camera_error_generic">"कैमरा विफलता"</string>
-    <string name="camera_error_photo">"फ़ोटो नहीं ले सका।"</string>
-    <string name="camera_error_video">"वीडियो रिकॉर्ड नहीं किया जा सका।"</string>
-    <string name="discard_photo_title">"फोटो को त्यागें"</string>
-    <string name="discard_photo_warning">"क्या आप वाकई अपनी फ़ोटो को छोड़ना चाहते हैं?"</string>
+    <string name="settings_feed_selected_empty">"No contacts selected"</string>
+    <string name="settings_version_footer">"HalloApp Version %s"</string>
+    <string name="connectivity_info_airplane_mode">"Airplane mode on"</string>
+    <string name="connectivity_info_not_connected">"No network"</string>
+    <string name="blocking_user_failed_check_internet">"Couldn't block %s. Check your internet and try again."</string>
+    <string name="blocking_user_successful">"Blocked %s"</string>
+    <string name="blocking_user_in_progress">"Blocking %s…"</string>
+    <string name="unblocking_user_successful">"Unblocked %s"</string>
+    <string name="unblocking_user_failed_check_internet">"Couldn't unblock %s. Check your internet and try again."</string>
+    <string name="unblocking_user_in_progress">"Unblocking %s…"</string>
+    <string name="are_you_sure_dialog_title">"Are you sure?"</string>
+    <string name="hide_future_posts_confirmation">"Are you sure you want to hide all your future posts from %s? You can always change this later."</string>
+    <string name="feed_privacy_hide_success">"Feed privacy updated. Hiding posts from %s"</string>
+    <string name="feed_privacy_hide_failure">"Failed to update feed privacy, check your internet and try again"</string>
+    <string name="user_typing">"typing…"</string>
+    <string name="group_user_typing">"%s is typing…"</string>
+    <string name="group_many_users_typing">"multiple users typing…"</string>
+    <string name="feed_nux_bottom_sheet_title">"About HalloApp"</string>
+    <string name="feed_nux_bottom_sheet_text">"Home feed allows you to share text, photo, and video updates that disappear after 30 days.
+
+If you want to share updates with someone, both parties must have each other's numbers saved on their phones.
+
+You can share your updates with your entire contact list or only with selected people. Go to settings to change feed privacy."</string>
+    <string name="messages_nux_text">"This is where you’ll find messages from your friends &amp; family. When someone new joins HalloApp you can see them here."</string>
+    <string name="profile_nux_text">"This is your profile. Your own posts will collect here. Each post expires in 30 days."</string>
+    <string name="post_audience_nux_title">"Who will see my post?"</string>
+    <string name="post_audience_nux_text">"Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings."</string>
+    <string name="make_post_nux">"Tap to share an update with your friends &amp; family on HalloApp"</string>
+    <string name="activity_center_nux">"This is your activity center. Tap to see your most recent activity."</string>
+    <string name="home_feed_nux">"Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp."</string>
+    <string name="home_feed_nux_learn_more">"Learn more"</string>
+    <string name="camera_error_generic">"Camera failure."</string>
+    <string name="camera_error_photo">"Could not take a photo."</string>
+    <string name="camera_error_video">"Could not record a video."</string>
+    <string name="discard_photo_title">"Discard photo"</string>
+    <string name="discard_photo_warning">"Are you sure you want to discard your photo?"</string>
     <plurals name="group_feed_members">
         <item quantity="one">"%d member"</item>
         <item quantity="other">"%d member"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"मेरे संपर्कों के साथ साझा करें"</string>
-    <string name="composer_sharing_except_summary">"मेरे कुछ संपर्कों के साथ साझा करें"</string>
+    <string name="composer_sharing_all_summary">"Sharing with my contacts"</string>
+    <string name="composer_sharing_except_summary">"Sharing with some of my contacts"</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Sharing with %d of my contacts"</item>
         <item quantity="other">"Sharing with %d of my contacts"</item>
