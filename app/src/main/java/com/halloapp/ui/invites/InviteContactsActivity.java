@@ -482,7 +482,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
             if (contact.userId != null) {
                 captionView.setVisibility(View.VISIBLE);
                 captionView.setText(getString(R.string.invite_already_on_halloapp));
-            } else if (contact.numPotentialFriends > 1) {
+            } else if (contact.numPotentialFriends > 0) {
                 captionView.setText(getResources().getQuantityString(R.plurals.friends_on_halloapp, (int) contact.numPotentialFriends, (int) contact.numPotentialFriends));
                 captionView.setVisibility(View.VISIBLE);
             } else {

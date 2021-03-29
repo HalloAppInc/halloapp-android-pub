@@ -424,8 +424,8 @@
     <string name="delete_group_in_progress">Deleting group…</string>
     <string name="failed_delete_group">Failed to delete group, try again later</string>
     <plurals name="friends_on_halloapp">
-        <item quantity="one">%d friend on HalloApp</item>
-        <item quantity="other">%d friends on HalloApp</item>
+        <item quantity="one">%d contact on HalloApp</item>
+        <item quantity="other">%d contacts on HalloApp</item>
     </plurals>
     <plurals name="settings_invite_summary">
         <item quantity="one">%d invite available</item>
