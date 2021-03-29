@@ -65,6 +65,8 @@ object POEditorStringManager {
 
             val input: InputStream = BufferedInputStream(url.openStream(),
                     8192)
+            var stringFile = getStringFile(language.code)
+            stringFile.parentFile.mkdirs()
             val output: OutputStream = FileOutputStream(getStringFile(language.code))
 
             val data = ByteArray(1024)
