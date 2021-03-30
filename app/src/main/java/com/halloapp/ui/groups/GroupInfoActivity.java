@@ -103,16 +103,19 @@ public class GroupInfoActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this, new GroupViewModel.Factory(getApplication(), groupId)).get(GroupViewModel.class);
 
         membersView = findViewById(R.id.members);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
         membersView.setLayoutManager(layoutManager);
-        membersView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
         membersView.setAdapter(adapter);
 
-        final View headerView = adapter.addHeader(R.layout.group_info_header);
-        avatarView = headerView.findViewById(R.id.avatar);
+        avatarView = findViewById(R.id.avatar);
         avatarLoader.load(avatarView, groupId, false);
 
-        addMembersView = adapter.addHeader(R.layout.add_members_item);
+        addMembersView = findViewById(R.id.add_members);
         addMembersView.setOnClickListener(v -> {
             List<GroupViewModel.GroupMember> members = viewModel.getMembers().getValue();
             List<UserId> excludeIds = new ArrayList<>();
@@ -130,13 +133,29 @@ public class GroupInfoActivity extends HalloActivity {
                 startActivity(EditGroupActivity.openEditGroup(this, groupId));
             }
         };
-        groupNameView = headerView.findViewById(R.id.name);
-        groupNameView.setOnClickListener(openEditGroupListener);
+        groupNameView = findViewById(R.id.name);
         avatarView.setOnClickListener(openEditGroupListener);
+
+        View leaveGroup = findViewById(R.id.leave_group);
+        View deleteGroup = findViewById(R.id.delete_group);
+        View nameContainer = findViewById(R.id.name_container);
+        TextView memberTitle = findViewById(R.id.member_title);
+
+        nameContainer.setOnClickListener(openEditGroupListener);
+
+        deleteGroup.setOnClickListener(v -> {
+            askDeleteGroup();
+        });
+        leaveGroup.setOnClickListener(v -> {
+            askLeaveGroup();
+        });
 
         viewModel.getChat().observe(this, chat -> groupNameView.setText(chat.name));
 
-        viewModel.getMembers().observe(this, adapter::submitMembers);
+        viewModel.getMembers().observe(this, members -> {
+            adapter.submitMembers(members);
+            memberTitle.setText(getString(R.string.group_info_members, members.size()));
+        });
 
         viewModel.getUserIsAdmin().observe(this, userIsAdmin -> updateVisibilities());
         viewModel.getChatIsActive().observe(this, chatIsActive -> updateVisibilities());
@@ -188,25 +207,33 @@ public class GroupInfoActivity extends HalloActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.leave) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getBaseContext().getString(R.string.leave_group_confirmation));
-            builder.setCancelable(true);
-            builder.setPositiveButton(R.string.yes, (dialog, which) -> leaveGroup());
-            builder.setNegativeButton(R.string.no, null);
-            builder.show();
+            askLeaveGroup();
             return true;
         } else if (item.getItemId() == R.id.delete) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getBaseContext().getString(R.string.delete_group_confirmation));
-            builder.setCancelable(true);
-            builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteGroup());
-            builder.setNegativeButton(R.string.no, null);
-            builder.show();
+            askDeleteGroup();
             return true;
         } else if (item.getItemId() == R.id.invite_link) {
             startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void askDeleteGroup() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getBaseContext().getString(R.string.delete_group_confirmation));
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteGroup());
+        builder.setNegativeButton(R.string.no, null);
+        builder.show();
+    }
+
+    private void askLeaveGroup() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getBaseContext().getString(R.string.leave_group_confirmation));
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> leaveGroup());
+        builder.setNegativeButton(R.string.no, null);
+        builder.show();
     }
 
     @Override

@@ -393,6 +393,7 @@
     <string name="group_picker_title">New group</string>
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
+    <string name="group_background_hint">Background</string>
     <string name="failed_create_group">Failed to create group, try again later</string>
     <string name="group_remove_member">Remove</string>
     <string name="group_promote_to_admin">Promote to admin</string>
@@ -483,6 +484,7 @@
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>
     </plurals>
+    <string name="group_info_members">Members (%d)</string>
     <string name="composer_sharing_all_summary">Sharing with my contacts</string>
     <string name="composer_sharing_except_summary">Sharing with some of my contacts</string>
     <plurals name="composer_sharing_only_summary">
