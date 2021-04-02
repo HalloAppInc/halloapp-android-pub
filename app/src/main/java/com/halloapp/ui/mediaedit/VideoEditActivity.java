@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -51,6 +52,7 @@ import java.util.HashMap;
 public class VideoEditActivity extends HalloActivity {
     private static final int TRIMMING_BUFFER_SIZE = 2 * 1024 * 1024;
 
+    private long videoDuration;
     private final int numberOfThumbnails = 6;
     private float thumbnailSize;
     private VideoRangeView range;
@@ -230,8 +232,10 @@ public class VideoEditActivity extends HalloActivity {
         playerView.setPlayer(player);
 
         DataSource.Factory factory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-        MediaSource source = new ProgressiveMediaSource.Factory(factory).createMediaSource(uri);
-        player.prepare(source);
+        MediaItem mediaItem = MediaItem.fromUri(uri);
+        MediaSource source = new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
+        player.setMediaSource(source);
+        player.prepare();
 
         player.addListener(new Player.EventListener() {
             @Override
@@ -243,12 +247,14 @@ public class VideoEditActivity extends HalloActivity {
                 } else {
                     handler.removeCallbacks(resetPlayerAction);
                 }
+                playerView.setKeepScreenOn(isPlaying);
             }
 
             @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if (playbackState == Player.STATE_READY && !isPlayerInitialized) {
+            public void onPlaybackStateChanged(int state) {
+                if (state == Player.STATE_READY && !isPlayerInitialized) {
                     isPlayerInitialized = true;
+                    videoDuration = player.getDuration();
 
                     player.setVolume(videoState.mute ? 0 : 1);
 
@@ -266,15 +272,15 @@ public class VideoEditActivity extends HalloActivity {
     }
 
     private long getDurationInSeconds() {
-        return (long) ((float)player.getDuration() * (videoState.end - videoState.start) / 1000);
+        return (long) (videoDuration * (videoState.end - videoState.start) / 1000);
     }
 
     private long getStartTime() {
-        return (long) ((float)player.getDuration() * videoState.start);
+        return (long) (videoDuration * videoState.start);
     }
 
     private long getEndTime() {
-        return (long) ((float)player.getDuration() * videoState.end);
+        return (long) (videoDuration * videoState.end);
     }
 
     private void setRange(float start, float end) {

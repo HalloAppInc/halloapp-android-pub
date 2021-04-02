@@ -38,6 +38,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
@@ -464,10 +465,8 @@ public class ContentComposerActivity extends HalloActivity {
         if (calledFromPicker) {
             viewModel.doNotDeleteTempFiles();
             prepareResult();
-            super.onBackPressed();
-        } else {
-            super.onBackPressed();
         }
+        super.onBackPressed();
     }
 
     private void openMediaPicker() {
@@ -854,11 +853,9 @@ public class ContentComposerActivity extends HalloActivity {
 
     private void updateMediaButtons() {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
-        final int currentItem = getCurrentItem();
         final boolean editIsFocused = editText != null && editText.isFocused();
         if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
             addMediaButton.setVisibility(calledFromCamera ? View.GONE : View.VISIBLE);
-            final Media mediaItem = mediaPairList.get(currentItem).getRelevantMedia();
             deletePictureButton.setVisibility(View.VISIBLE);
             cropPictureButton.setVisibility(View.VISIBLE);
         } else {
@@ -905,32 +902,35 @@ public class ContentComposerActivity extends HalloActivity {
         refreshVideoPlayers(getCurrentItem());
     }
 
-    private void initializeVideoPlayer(@NonNull ContentComposerViewModel.EditMediaPair mediaPair,
-                                       @NonNull ContentPlayerView contentPlayerView,
+    private void initializeVideoPlayer(@NonNull final ContentComposerViewModel.EditMediaPair mediaPair,
+                                       @NonNull final ContentPlayerView contentPlayerView,
                                        boolean shouldAutoPlay) {
         SimpleExoPlayer player = playerMap.get(mediaPair);
-        if (player == null) {
-            final DataSource.Factory dataSourceFactory =
-                    new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
-            final MediaSource mediaSource =
-                    new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.getRelevantMedia().file));
 
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+        if (player == null) {
+            Log.d(String.format("ContentComposerActivity: initializeVideoPlayer %s", mediaPair.uri));
+            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
+            final MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(mediaPair.getRelevantMedia().file));
+            final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
+
+            final AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setUsage(C.USAGE_MEDIA)
                     .setContentType(C.CONTENT_TYPE_MOVIE)
                     .build();
 
             player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+            player.addListener(new Player.EventListener() {
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    contentPlayerView.setKeepScreenOn(isPlaying);
+                }
+            });
             playerMap.put(mediaPair, player);
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
             player.setAudioAttributes(audioAttributes, true);
             contentPlayerView.setPlayer(player);
-            player.prepare(mediaSource, false, false);
-            Log.d(String.format("ContentComposerActivity: initializeVideoPlayer %s", mediaPair.uri));
-        } else {
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(mediaPair.getRelevantMedia().file));
-            player.prepare(mediaSource, false, false);
+            player.setMediaSource(mediaSource, false);
+            player.prepare();
         }
 
         if (shouldAutoPlay != player.getPlayWhenReady()) {

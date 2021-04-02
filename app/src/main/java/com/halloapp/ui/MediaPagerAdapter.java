@@ -20,6 +20,8 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -352,23 +354,32 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             playerView.setControllerAutoShow(true);
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(media.file));
+            MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(media.file));
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
 
             isPlayerInitialized = false;
             SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
 
             player.addListener(new Player.EventListener() {
                 @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    if (playbackState == Player.STATE_READY && !isPlayerInitialized) {
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY && !isPlayerInitialized) {
                         isPlayerInitialized = true;
                         seekToThumbnailFrame(player);
                     }
+                }
+
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    playerView.setKeepScreenOn(isPlaying);
                 }
             });
 
             PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
             controlView.setControlDispatcher(new ControlDispatcher() {
+                @Override
+                public boolean dispatchPrepare(Player player) { return false; }
+
                 @Override
                 public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
                     if (playWhenReady) {
@@ -381,22 +392,44 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 }
 
                 @Override
-                public boolean dispatchSeekTo(@NonNull Player player, int windowIndex, long positionMs) { return false; }
+                public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) { return false; }
 
                 @Override
-                public boolean dispatchSetRepeatMode(@NonNull Player player, int repeatMode) { return false; }
+                public boolean dispatchPrevious(Player player) { return false; }
 
                 @Override
-                public boolean dispatchSetShuffleModeEnabled(@NonNull Player player, boolean shuffleModeEnabled) { return false; }
+                public boolean dispatchNext(Player player) { return false; }
 
                 @Override
-                public boolean dispatchStop(@NonNull Player player, boolean reset) { return false; }
+                public boolean dispatchRewind(Player player) { return false; }
+
+                @Override
+                public boolean dispatchFastForward(Player player) { return false; }
+
+                @Override
+                public boolean dispatchSetRepeatMode(Player player, int repeatMode) { return false; }
+
+                @Override
+                public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) { return false; }
+
+                @Override
+                public boolean dispatchStop(Player player, boolean reset) { return false; }
+
+                @Override
+                public boolean dispatchSetPlaybackParameters(Player player, PlaybackParameters playbackParameters) { return false; }
+
+                @Override
+                public boolean isRewindEnabled() { return false; }
+
+                @Override
+                public boolean isFastForwardEnabled() { return false; }
             });
 
             playerView.setPlayer(player);
 
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
-            player.prepare(mediaSource);
+            player.setMediaSource(mediaSource);
+            player.prepare();
         }
 
         private void seekToThumbnailFrame(Player player) {

@@ -32,6 +32,7 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -78,6 +79,7 @@ public class MediaExplorerActivity extends HalloActivity {
     private boolean isSwipeExitInProgress = false;
     private ImageView transitionImage;
     private boolean isExiting = false;
+
     private final HashSet<PlayerView> playerViews = new HashSet<>();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -614,7 +616,8 @@ public class MediaExplorerActivity extends HalloActivity {
             playerView.setTag(model);
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(model.uri);
+            MediaItem mediaItem = MediaItem.fromUri(model.uri);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
 
             if (playerView.getPlayer() != null) {
                 Player player = playerView.getPlayer();
@@ -625,10 +628,17 @@ public class MediaExplorerActivity extends HalloActivity {
             }
 
             SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
+            player.addListener(new Player.EventListener() {
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    playerView.setKeepScreenOn(isPlaying);
+                }
+            });
             playerView.setPlayer(player);
 
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
-            player.prepare(mediaSource);
+            player.setMediaSource(mediaSource);
+            player.prepare();
         }
     }
 
