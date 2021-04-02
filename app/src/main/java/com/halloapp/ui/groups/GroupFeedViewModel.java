@@ -89,6 +89,11 @@ public class GroupFeedViewModel extends ViewModel {
         }
 
         @Override
+        public void onGroupBackgroundChanged(@NonNull GroupId groupId) {
+            chat.invalidate();
+        }
+
+        @Override
         public void onFeedCleanup() {
             invalidatePosts();
         }

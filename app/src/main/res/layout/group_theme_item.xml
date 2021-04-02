@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="80dp">
+
+    <FrameLayout
+        android:id="@+id/bg_color"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/group_theme_3_bg"
+        android:background="@drawable/color_bg_circle"
+        android:foreground="@drawable/color_bg_ring"/>
+
+    <View
+        android:id="@+id/selected_ring"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:background="@drawable/color_bg_selected_ring"/>
+
+</FrameLayout>

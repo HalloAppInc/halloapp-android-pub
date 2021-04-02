@@ -39,6 +39,11 @@
         <item name="useLightSystemBars">false</item>
     </style>
 
+    <style name="AppTheme.GroupBackground">
+        <item name="actionBarStyle">@style/ActionBar.GroupBackground</item>
+        <item name="actionModeBackground">@color/group_bg_picker_background</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
@@ -161,6 +166,15 @@
         <item name="background">@color/color_action_bar</item>
         <item name="backgroundStacked">@color/color_action_bar</item>
         <item name="backgroundSplit">@color/color_action_bar</item>
+        <item name="elevation">0dp</item>
+        <item name="titleTextStyle">@style/TextAppearance.Toolbar.Title</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.Toolbar.Subtitle</item>
+    </style>
+
+    <style name="ActionBar.GroupBackground" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
+        <item name="background">@color/group_bg_picker_background</item>
+        <item name="backgroundStacked">@color/group_bg_picker_background</item>
+        <item name="backgroundSplit">@color/group_bg_picker_background</item>
         <item name="elevation">0dp</item>
         <item name="titleTextStyle">@style/TextAppearance.Toolbar.Title</item>
         <item name="subtitleTextStyle">@style/TextAppearance.Toolbar.Subtitle</item>

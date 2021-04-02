@@ -27,7 +27,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 39;
+    private static final int DATABASE_VERSION = 40;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -126,7 +126,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_IS_GROUP + " INTEGER DEFAULT 0,"
                 + ChatsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1,"
                 + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
-                + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT"
+                + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
+                + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + GroupMembersTable.TABLE_NAME);
@@ -392,6 +393,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 38: {
                 upgradeFromVersion38(db);
+            }
+            case 39: {
+                upgradeFromVersion39(db);
             }
             break;
             default: {
@@ -726,6 +730,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_SENDER_VERSION + " TEXT");
         db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_RECEIVE_TIME + " INTEGER");
         db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
+    }
+
+    private void upgradeFromVersion39(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0");
     }
 
     /**

@@ -163,17 +163,6 @@ public interface IqOrBuilder extends
   com.halloapp.proto.server.PrivacyList getPrivacyList();
 
   /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   * @return Whether the privacyListResult field is set.
-   */
-  boolean hasPrivacyListResult();
-  /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   * @return The privacyListResult.
-   */
-  com.halloapp.proto.server.PrivacyListResult getPrivacyListResult();
-
-  /**
    * <code>.server.PrivacyLists privacy_lists = 16;</code>
    * @return Whether the privacyLists field is set.
    */

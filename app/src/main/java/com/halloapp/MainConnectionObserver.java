@@ -473,6 +473,13 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onGroupBackgroundChangeReceived(@NonNull GroupId groupId, int theme, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        contentDb.setGroupTheme(groupId, theme, () -> {
+            addSystemPost(groupId, sender, Post.USAGE_GROUP_THEME_CHANGED, null, () -> connection.sendAck(ackId));
+        });
+    }
+
+    @Override
     public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         List<MemberInfo> promoted = new ArrayList<>();
         List<MemberInfo> demoted = new ArrayList<>();

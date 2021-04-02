@@ -20,10 +20,6 @@ public enum MediaType
    * <code>MEDIA_TYPE_VIDEO = 2;</code>
    */
   MEDIA_TYPE_VIDEO(2),
-  /**
-   * <code>MEDIA_TYPE_AUDIO = 3;</code>
-   */
-  MEDIA_TYPE_AUDIO(3),
   UNRECOGNIZED(-1),
   ;
 
@@ -39,10 +35,6 @@ public enum MediaType
    * <code>MEDIA_TYPE_VIDEO = 2;</code>
    */
   public static final int MEDIA_TYPE_VIDEO_VALUE = 2;
-  /**
-   * <code>MEDIA_TYPE_AUDIO = 3;</code>
-   */
-  public static final int MEDIA_TYPE_AUDIO_VALUE = 3;
 
 
   @java.lang.Override
@@ -69,7 +61,6 @@ public enum MediaType
       case 0: return MEDIA_TYPE_UNSPECIFIED;
       case 1: return MEDIA_TYPE_IMAGE;
       case 2: return MEDIA_TYPE_VIDEO;
-      case 3: return MEDIA_TYPE_AUDIO;
       default: return null;
     }
   }

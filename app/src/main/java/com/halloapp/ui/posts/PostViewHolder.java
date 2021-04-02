@@ -28,6 +28,7 @@ import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.groups.GroupTheme;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
@@ -165,6 +166,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     @Override
                     public void showResult(@NonNull View view, @Nullable Chat result) {
                         if (result != null) {
+                            GroupTheme theme = GroupTheme.getTheme(result.theme);
+                            groupView.setTextColor(ContextCompat.getColor(view.getContext(), theme.textColor));
                             groupView.setText(result.name);
                             groupView.setOnClickListener(v -> {
                                 ChatId chatId = result.chatId;

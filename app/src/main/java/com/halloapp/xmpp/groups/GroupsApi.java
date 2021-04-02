@@ -140,6 +140,12 @@ public class GroupsApi {
         });
     }
 
+    public Observable<Boolean> setGroupBackground(@NonNull GroupId groupId, int theme) {
+        final SetGroupBackgroundIq requestIq = new SetGroupBackgroundIq(theme, groupId);
+
+        return connection.sendIqRequest(requestIq).map(response -> response.getGroupStanza() != null);
+    }
+
     public Observable<Boolean> joinGroupViaInviteLink(@NonNull String code) {
         final JoinGroupInviteLinkIq requestIq = new JoinGroupInviteLinkIq(code);
 

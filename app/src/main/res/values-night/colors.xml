@@ -12,6 +12,8 @@
     <color name="gallery_placeholder">#424242</color>
     <color name="seen_comment_background">#383838</color>
     <color name="card_background">@color/cardview_dark_background</color>
+    <color name="dummy_post_background">@color/black_40</color>
+    <color name="dummy_post_content_background">@color/white_20</color>
     <color name="reply_indicator_background">#606060</color>
     <color name="text_post_thumbnail_color">#ffffffff</color>
     <color name="message_background_incoming">#424242</color>
@@ -24,6 +26,7 @@
     <color name="avatars_footer_divider">#292929</color>
     <color name="thick_progress_spinner">#9B9B9B</color>
     <color name="message_highlight">#BBFFF81B</color>
+    <color name="group_bg_picker_background">@android:color/black</color>
 
     <color name="selected_chat_highlight">@color/white_5</color>
 
@@ -86,4 +89,16 @@
     <color name="group_bg_12">#4E4153</color>
     <color name="group_bg_13">#33323E</color>
     <color name="group_bg_14">#505341</color>
+
+    <color name="group_theme_1_bg">#394666</color>
+    <color name="group_theme_2_bg">#43676F</color>
+    <color name="group_theme_3_bg">#3E603D</color>
+    <color name="group_theme_4_bg">#505A53</color>
+    <color name="group_theme_5_bg">#585265</color>
+    <color name="group_theme_6_bg">#694376</color>
+    <color name="group_theme_7_bg">#894471</color>
+    <color name="group_theme_8_bg">#5F4242</color>
+    <color name="group_theme_9_bg">#98704B</color>
+    <color name="group_theme_10_bg">#756D51</color>
+
 </resources>

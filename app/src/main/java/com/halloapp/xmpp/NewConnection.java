@@ -27,6 +27,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -1049,6 +1050,15 @@ public class NewConnection extends Connection {
                         connectionObservers.notifyGroupDeleteReceived(groupId, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.JOIN)) {
                         connectionObservers.notifyGroupMemberJoinReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.SET_BACKGROUND)) {
+                        Background background = null;
+                        try {
+                            background = Background.parseFrom(groupStanza.getBackgroundBytes());
+                        } catch (InvalidProtocolBufferException e) {
+                            Log.e("connection: invalid background received", e);
+                        }
+                        connectionObservers.notifyGroupBackgroundChangeReceived(groupId, background == null ? 0 : background.getTheme(), senderUserId, senderName, ackId);
+
                     } else {
                         handled = false;
                         Log.w("Unrecognized group stanza action " + groupStanza.getAction());

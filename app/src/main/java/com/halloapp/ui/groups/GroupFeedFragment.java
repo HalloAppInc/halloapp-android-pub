@@ -9,6 +9,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -97,6 +98,11 @@ public class GroupFeedFragment extends PostsFragment {
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
+
+        viewModel.chat.getLiveData().observe(getViewLifecycleOwner(), chat -> {
+            GroupTheme theme = GroupTheme.getTheme(chat.theme);
+            root.setBackgroundColor(ContextCompat.getColor(requireContext(), theme.bgColor));
+        });
 
         adapter.setShowGroup(false);
         postsView.setAdapter(adapter);

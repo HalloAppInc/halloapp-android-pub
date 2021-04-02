@@ -325,6 +325,8 @@
     <string name="system_message_group_avatar_changed_by_you">You changed the group avatar</string>
     <string name="system_message_group_deleted">%s deleted the group</string>
     <string name="system_message_group_deleted_by_you">You deleted the group</string>
+    <string name="system_message_group_bg_changed">%s changed the background color</string>
+    <string name="system_message_group_bg_changed_by_you">You changed the background color</string>
     <string name="system_message_you_joined">You joined the group via invite link</string>
     <string name="system_message_joined">%s joined the group via invite link</string>
 
@@ -394,6 +396,11 @@
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
     <string name="group_background_hint">Background</string>
+    <string name="group_background_saving_dialog">Setting background…</string>
+    <string name="group_background_save_failed">Failed to set group background</string>
+    <string name="group_background_save_success">Group background updated</string>
+    <string name="group_background_color">Color</string>
+    <string name="group_background_default">Default</string>
     <string name="failed_create_group">Failed to create group, try again later</string>
     <string name="group_remove_member">Remove</string>
     <string name="group_promote_to_admin">Promote to admin</string>

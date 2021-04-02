@@ -69,6 +69,13 @@ public class GroupViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onGroupBackgroundChanged(@NonNull GroupId groupId) {
+            if (groupId.equals(GroupViewModel.this.groupId)) {
+                invalidateChat();
+            }
+        }
+
+        @Override
         public void onChatDeleted(@NonNull ChatId chatId) {
             // TODO(jack): handle chat deletion
         }

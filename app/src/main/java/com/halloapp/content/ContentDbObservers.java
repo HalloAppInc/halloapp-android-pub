@@ -114,6 +114,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyGroupBackgroundChanged(@NonNull GroupId groupId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onGroupBackgroundChanged(groupId);
+            }
+        }
+    }
+
     void notifyGroupMembersChanged(@NonNull GroupId groupId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

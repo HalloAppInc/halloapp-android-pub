@@ -292,6 +292,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyGroupBackgroundChangeReceived(@NonNull GroupId groupId, int theme, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupBackgroundChangeReceived(groupId, theme, sender, senderName, ackId);
+            }
+        }
+    }
+
     public void notifyGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

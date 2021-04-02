@@ -74,6 +74,7 @@ public class ContentDb {
         void onGroupMetadataChanged(@NonNull GroupId groupId);
         void onGroupMembersChanged(@NonNull GroupId groupId);
         void onGroupAdminsChanged(@NonNull GroupId groupId);
+        void onGroupBackgroundChanged(@NonNull GroupId groupId);
         void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
@@ -100,6 +101,7 @@ public class ContentDb {
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
         public void onGroupMembersChanged(@NonNull GroupId groupId) {}
         public void onGroupAdminsChanged(@NonNull GroupId groupId) {}
+        public void onGroupBackgroundChanged(@NonNull GroupId groupId) {}
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
@@ -609,6 +611,17 @@ public class ContentDb {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.setGroupName(groupId, name)) {
                 observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupTheme(@NonNull GroupId groupId, int theme, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupTheme(groupId, theme)) {
+                observers.notifyGroupBackgroundChanged(groupId);
             }
             if (completionRunnable != null) {
                 completionRunnable.run();

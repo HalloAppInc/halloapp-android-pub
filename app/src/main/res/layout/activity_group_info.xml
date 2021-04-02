@@ -119,6 +119,60 @@
 
             </FrameLayout>
 
+            <FrameLayout
+                android:id="@+id/group_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:background="@color/card_background">
+
+                <LinearLayout
+                    android:id="@+id/background_container"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="34dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="7dp"
+                    android:elevation="1dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/group_background_hint"
+                        android:textSize="12sp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textColor="@color/secondary_text"/>
+
+                    <TextView
+                        android:id="@+id/group_background_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/group_background_default"
+                        android:textSize="20sp"
+                        android:textColor="@color/primary_text"/>
+
+                </LinearLayout>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/bg_color_preview"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center_vertical|end"
+                    tools:src="@color/group_theme_3_bg"
+                    app:civ_border_color="@color/black_20"
+                    app:civ_border_width="1dp"
+                    app:civ_border_overlay="true"
+                    android:layout_marginEnd="13dp"
+                    android:layout_marginStart="13dp"/>
+
+            </FrameLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

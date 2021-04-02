@@ -300,6 +300,27 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean setGroupTheme(@NonNull GroupId groupId, int theme) {
+        Log.i("MessagesDb.setGroupBackground " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_THEME, theme);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.setGroupBackground: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.setGroupBackground: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
     boolean setGroupName(@NonNull GroupId groupId, @NonNull String name) {
         Log.i("MessagesDb.setGroupName " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -1547,7 +1568,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_IS_GROUP,
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
-                        ChatsTable.COLUMN_IS_ACTIVE},
+                        ChatsTable.COLUMN_IS_ACTIVE,
+                        ChatsTable.COLUMN_THEME},
                 selection, null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
@@ -1561,7 +1583,8 @@ class MessagesDb {
                         cursor.getInt(7) == 1,
                         cursor.getString(8),
                         cursor.getString(9),
-                        cursor.getInt(10) == 1);
+                        cursor.getInt(10) == 1,
+                        cursor.getInt(11));
                 if (!serverProps.getGroupChatsEnabled() && chat.isGroup) {
                     continue;
                 }
@@ -1587,7 +1610,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_IS_GROUP,
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
-                        ChatsTable.COLUMN_IS_ACTIVE},
+                        ChatsTable.COLUMN_IS_ACTIVE,
+                        ChatsTable.COLUMN_THEME},
                 ChatsTable.COLUMN_IS_GROUP + "=?",
                 new String[]{"1"}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
@@ -1602,7 +1626,8 @@ class MessagesDb {
                         cursor.getInt(7) == 1,
                         cursor.getString(8),
                         cursor.getString(9),
-                        cursor.getInt(10) == 1);
+                        cursor.getInt(10) == 1,
+                        cursor.getInt(11));
                 chats.add(chat);
             }
         }
@@ -1624,7 +1649,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_IS_GROUP,
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
-                        ChatsTable.COLUMN_IS_ACTIVE},
+                        ChatsTable.COLUMN_IS_ACTIVE,
+                        ChatsTable.COLUMN_THEME},
                 ChatsTable.COLUMN_CHAT_ID + "=?",
                 new String [] {chatId.rawId()},
                 null, null, null)) {
@@ -1640,7 +1666,8 @@ class MessagesDb {
                         cursor.getInt(7) == 1,
                         cursor.getString(8),
                         cursor.getString(9),
-                        cursor.getInt(10) == 1);
+                        cursor.getInt(10) == 1,
+                        cursor.getInt(11));
             }
         }
         return null;

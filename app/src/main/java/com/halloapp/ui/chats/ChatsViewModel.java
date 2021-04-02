@@ -155,7 +155,7 @@ public class ChatsViewModel extends AndroidViewModel {
                     }
                     Chat chat = chatsMap.get(friend.userId);
                     if (chat == null && !friend.hideChat) {
-                        chat = new Chat(-1, friend.userId, friend.connectionTime, friend.newConnection ? Chat.MARKED_UNSEEN : 0, -1L, -1L, friend.getDisplayName(), false, null, null, true);
+                        chat = new Chat(-1, friend.userId, friend.connectionTime, friend.newConnection ? Chat.MARKED_UNSEEN : 0, -1L, -1L, friend.getDisplayName(), false, null, null, true, 0);
                         if (friend.connectionTime > 0) {
                             chats.add(chat);
                         } else {

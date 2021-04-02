@@ -15,6 +15,7 @@ public class Chat {
     public final boolean isGroup;
     public final String groupDescription;
     public final String groupAvatarId;
+    public int theme;
 
     public String name;
 
@@ -29,7 +30,8 @@ public class Chat {
             boolean isGroup,
             String groupDescription,
             String groupAvatarId,
-            boolean isActive
+            boolean isActive,
+            int theme
     ) {
         this.rowId = rowId;
         this.chatId = chatId;
@@ -42,5 +44,6 @@ public class Chat {
         this.groupDescription = groupDescription;
         this.groupAvatarId = groupAvatarId;
         this.isActive = isActive;
+        this.theme = theme;
     }
 }

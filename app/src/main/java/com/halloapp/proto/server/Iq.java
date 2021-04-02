@@ -136,7 +136,6 @@ public  final class Iq extends
     PING(12),
     FEED_ITEM(13),
     PRIVACY_LIST(14),
-    PRIVACY_LIST_RESULT(15),
     PRIVACY_LISTS(16),
     GROUP_STANZA(17),
     GROUPS_STANZA(18),
@@ -178,7 +177,6 @@ public  final class Iq extends
         case 12: return PING;
         case 13: return FEED_ITEM;
         case 14: return PRIVACY_LIST;
-        case 15: return PRIVACY_LIST_RESULT;
         case 16: return PRIVACY_LISTS;
         case 17: return GROUP_STANZA;
         case 18: return GROUPS_STANZA;
@@ -898,56 +896,6 @@ public  final class Iq extends
    */
   private void clearPrivacyList() {
     if (payloadCase_ == 14) {
-      payloadCase_ = 0;
-      payload_ = null;
-    }
-  }
-
-  public static final int PRIVACY_LIST_RESULT_FIELD_NUMBER = 15;
-  /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   */
-  @java.lang.Override
-  public boolean hasPrivacyListResult() {
-    return payloadCase_ == 15;
-  }
-  /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   */
-  @java.lang.Override
-  public com.halloapp.proto.server.PrivacyListResult getPrivacyListResult() {
-    if (payloadCase_ == 15) {
-       return (com.halloapp.proto.server.PrivacyListResult) payload_;
-    }
-    return com.halloapp.proto.server.PrivacyListResult.getDefaultInstance();
-  }
-  /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   */
-  private void setPrivacyListResult(com.halloapp.proto.server.PrivacyListResult value) {
-    value.getClass();
-  payload_ = value;
-    payloadCase_ = 15;
-  }
-  /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   */
-  private void mergePrivacyListResult(com.halloapp.proto.server.PrivacyListResult value) {
-    value.getClass();
-  if (payloadCase_ == 15 &&
-        payload_ != com.halloapp.proto.server.PrivacyListResult.getDefaultInstance()) {
-      payload_ = com.halloapp.proto.server.PrivacyListResult.newBuilder((com.halloapp.proto.server.PrivacyListResult) payload_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      payload_ = value;
-    }
-    payloadCase_ = 15;
-  }
-  /**
-   * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-   */
-  private void clearPrivacyListResult() {
-    if (payloadCase_ == 15) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2432,54 +2380,6 @@ public  final class Iq extends
     }
 
     /**
-     * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-     */
-    @java.lang.Override
-    public boolean hasPrivacyListResult() {
-      return instance.hasPrivacyListResult();
-    }
-    /**
-     * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-     */
-    @java.lang.Override
-    public com.halloapp.proto.server.PrivacyListResult getPrivacyListResult() {
-      return instance.getPrivacyListResult();
-    }
-    /**
-     * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-     */
-    public Builder setPrivacyListResult(com.halloapp.proto.server.PrivacyListResult value) {
-      copyOnWrite();
-      instance.setPrivacyListResult(value);
-      return this;
-    }
-    /**
-     * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-     */
-    public Builder setPrivacyListResult(
-        com.halloapp.proto.server.PrivacyListResult.Builder builderForValue) {
-      copyOnWrite();
-      instance.setPrivacyListResult(builderForValue.build());
-      return this;
-    }
-    /**
-     * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-     */
-    public Builder mergePrivacyListResult(com.halloapp.proto.server.PrivacyListResult value) {
-      copyOnWrite();
-      instance.mergePrivacyListResult(value);
-      return this;
-    }
-    /**
-     * <code>.server.PrivacyListResult privacy_list_result = 15;</code>
-     */
-    public Builder clearPrivacyListResult() {
-      copyOnWrite();
-      instance.clearPrivacyListResult();
-      return this;
-    }
-
-    /**
      * <code>.server.PrivacyLists privacy_lists = 16;</code>
      */
     @java.lang.Override
@@ -3183,7 +3083,6 @@ public  final class Iq extends
             com.halloapp.proto.server.Ping.class,
             com.halloapp.proto.server.FeedItem.class,
             com.halloapp.proto.server.PrivacyList.class,
-            com.halloapp.proto.server.PrivacyListResult.class,
             com.halloapp.proto.server.PrivacyLists.class,
             com.halloapp.proto.server.GroupStanza.class,
             com.halloapp.proto.server.GroupsStanza.class,
@@ -3200,11 +3099,11 @@ public  final class Iq extends
             com.halloapp.proto.server.GroupInviteLink.class,
           };
           java.lang.String info =
-              "\u0000\u001d\u0001\u0000\u0001\u001f\u001d\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001c\u0001\u0000\u0001\u001f\u001c\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
-              "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
-              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000";
+              "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
+              "<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
+              "\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

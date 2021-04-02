@@ -104,6 +104,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:theme="@style/AppTheme.GroupBackground"
+            android:name=".ui.groups.GroupBackgroundActivity"
+            android:label="@string/group_background_hint" />
+
+        <activity
             android:name=".ui.groups.EditGroupActivity" />
 
         <activity

@@ -3,6 +3,7 @@ package com.halloapp.ui.groups;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +47,8 @@ import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GroupInfoActivity extends HalloActivity {
 
@@ -139,8 +143,22 @@ public class GroupInfoActivity extends HalloActivity {
         View leaveGroup = findViewById(R.id.leave_group);
         View deleteGroup = findViewById(R.id.delete_group);
         View nameContainer = findViewById(R.id.name_container);
+        View bgContainer = findViewById(R.id.background_container);
+        CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
+
+        TextView groupBgDesc = findViewById(R.id.group_background_description);
         TextView memberTitle = findViewById(R.id.member_title);
 
+        if (ServerProps.getInstance().getIsInternalUser()) {
+            bgContainer.setVisibility(View.VISIBLE);
+        } else {
+            bgContainer.setVisibility(View.GONE);
+        }
+
+        bgContainer.setOnClickListener(v -> {
+            Intent i = GroupBackgroundActivity.newIntent(this, groupId);
+            startActivity(i);
+        });
         nameContainer.setOnClickListener(openEditGroupListener);
 
         deleteGroup.setOnClickListener(v -> {
@@ -150,7 +168,12 @@ public class GroupInfoActivity extends HalloActivity {
             askLeaveGroup();
         });
 
-        viewModel.getChat().observe(this, chat -> groupNameView.setText(chat.name));
+        viewModel.getChat().observe(this, chat -> {
+            groupNameView.setText(chat.name);
+            groupBgDesc.setText(chat.theme == 0 ? R.string.group_background_default : R.string.group_background_color);
+            GroupTheme theme = GroupTheme.getTheme(chat.theme);
+            bgColorPreview.setImageDrawable(new ColorDrawable(ContextCompat.getColor(this, theme.bgColor)));
+        });
 
         viewModel.getMembers().observe(this, members -> {
             adapter.submitMembers(members);
