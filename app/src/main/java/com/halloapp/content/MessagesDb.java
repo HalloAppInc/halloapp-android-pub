@@ -1795,7 +1795,7 @@ class MessagesDb {
 
             int count = db.update(SilentMessagesTable.TABLE_NAME, messageValues,
                     SilentMessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + SilentMessagesTable.COLUMN_MESSAGE_ID + "=? AND ? - " + SilentMessagesTable.COLUMN_RECEIVE_TIME + " < ?",
-                    new String [] {message.chatId.rawId(), message.senderUserId.rawId(), message.id, Long.toString(now), Long.toString(DateUtils.DAY_IN_MILLIS)});
+                    new String [] {message.senderUserId.rawId(), message.id, Long.toString(now), Long.toString(DateUtils.DAY_IN_MILLIS)});
 
             db.setTransactionSuccessful();
 
