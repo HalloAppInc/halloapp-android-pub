@@ -37,6 +37,8 @@
     <color name="group_bg_picker_background">#FFFFFF</color>
     <color name="dimmed_window_overlay">#80000000</color>
     <color name="post_actions_separator">#1a000000</color>
+    <color name="post_card_color_background">@color/cardview_light_background</color>
+    <color name="post_card_background">#ffffff</color>
     <color name="badge_text">#ffffff</color>
     <color name="badge_background">#ff4500</color>
     <color name="selected_badge_background">@color/color_secondary</color>

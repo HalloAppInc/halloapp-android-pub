@@ -73,6 +73,7 @@
     <dimen name="swipe_exit_finish_threshold">40dp</dimen>
     <dimen name="swipe_exit_transition_distance">80dp</dimen>
     <dimen name="group_bg_item_width">80dp</dimen>
+    <dimen name="post_elevation">2dp</dimen>
 
     <!-- Message Bubbles -->
     <dimen name="message_bubble_corner_radius">15dp</dimen>

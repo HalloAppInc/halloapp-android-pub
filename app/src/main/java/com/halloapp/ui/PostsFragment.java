@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -139,6 +140,7 @@ public class PostsFragment extends HalloFragment {
         static final int POST_DIRECTION_MASK = 0xFF00;
 
         private boolean showGroup = true;
+        private @ColorRes int cardBgColor;
 
         private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
@@ -258,6 +260,13 @@ public class PostsFragment extends HalloFragment {
             setDiffer(new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build()));
         }
 
+        public void setCardBackgroundColor(@ColorRes int cardBackgroundColor) {
+            if (this.cardBgColor != cardBackgroundColor) {
+                this.cardBgColor = cardBackgroundColor;
+                notifyDataSetChanged();
+            }
+        }
+
         public void setShowGroup(boolean showGroup) {
             this.showGroup = showGroup;
         }
@@ -319,8 +328,10 @@ public class PostsFragment extends HalloFragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof PostViewHolder) {
-                ((PostViewHolder)holder).setShowGroupName(showGroup);
-                ((PostViewHolder)holder).bindTo(Preconditions.checkNotNull(getItem(position)));
+                PostViewHolder postViewHolder = (PostViewHolder) holder;
+                postViewHolder.setShowGroupName(showGroup);
+                postViewHolder.setCardBackgroundColor(cardBgColor);
+                postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)));
             } else if (holder instanceof SubtlePostViewHolder) {
                 ((SubtlePostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
             }

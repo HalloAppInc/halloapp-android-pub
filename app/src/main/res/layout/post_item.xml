@@ -11,10 +11,12 @@
     android:clipToPadding="false">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="15dp"
-        app:cardElevation="2dp">
+        app:cardBackgroundColor="@color/post_card_background"
+        app:cardElevation="@dimen/post_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"

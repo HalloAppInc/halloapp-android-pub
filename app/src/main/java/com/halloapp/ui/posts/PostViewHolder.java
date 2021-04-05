@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -54,6 +56,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final PostAttributionLayout postHeader;
     protected final MediaPagerAdapter mediaPagerAdapter;
     private final View footer;
+    private final CardView cardView;
     final View footerSpacing;
 
     final PostViewHolderParent parent;
@@ -63,6 +66,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     Post post;
 
     private boolean showGroupName;
+    private @ColorRes int cardBgColor;
 
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         public boolean shouldOpenProfileOnNamePress() {
@@ -74,6 +78,17 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.showGroupName = visible;
     }
 
+    public void setCardBackgroundColor(@ColorRes int bgColor) {
+        if (this.cardBgColor != bgColor) {
+            this.cardBgColor = bgColor;
+            if (cardBgColor == 0) {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), R.color.post_card_background));
+            } else {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), cardBgColor));
+            }
+        }
+    }
+
     PostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView);
 
@@ -83,6 +98,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
 
+        cardView = itemView.findViewById(R.id.card_view);
         postHeader = itemView.findViewById(R.id.post_header);
         avatarView = itemView.findViewById(R.id.avatar);
         nameView = itemView.findViewById(R.id.name);
@@ -152,7 +168,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     public void bindTo(@NonNull Post post) {
 
         this.post = post;
-
         parent.getAvatarLoader().load(avatarView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));
