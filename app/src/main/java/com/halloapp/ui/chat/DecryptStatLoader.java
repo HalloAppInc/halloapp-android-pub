@@ -8,6 +8,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.content.ContentDb;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
@@ -68,7 +69,11 @@ public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, St
                     });
                     builder.setPositiveButton("Yes", (dialog, which) -> {
                         Log.e("Sending logs related to message " + messageId);
-                        LogProvider.openDebugLogcatIntent(v.getContext(), messageId);
+                        if (BuildConfig.DEBUG) {
+                            LogProvider.openDebugLogcatIntent(v.getContext(), messageId);
+                        } else {
+                            LogProvider.openEmailLogIntent(v.getContext(), messageId);
+                        }
                     });
                     builder.show();
                 });
