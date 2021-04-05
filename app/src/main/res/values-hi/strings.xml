@@ -2,15 +2,15 @@
 <resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"घर"</string>
-    <string name="title_messages">"Chats"</string>
+    <string name="title_messages">"बातचीत"</string>
     <string name="title_profile">"प्रोफ़ाइल"</string>
-    <string name="title_groups">"Groups"</string>
+    <string name="title_groups">"समूह"</string>
     <string name="comment">"टिप्पणी"</string>
     <string name="next">"आगामी"</string>
     <string name="message">"संदेश"</string>
     <string name="add_post">"पोस्ट जोड़ें"</string>
-    <string name="new_chat">"नई चैट"</string>
-    <string name="new_group">"New group"</string>
+    <string name="new_chat">"नई बातचीत"</string>
+    <string name="new_group">"नया समूह"</string>
     <string name="notifications">"सूचनाएं"</string>
     <string name="feed_notifications_channel_name">"फ़ीड के लिए सूचनाएं"</string>
     <string name="message_notifications_channel_name">"संदेश सूचनाएं"</string>
@@ -44,20 +44,20 @@
     <string name="set_avatar_done">"पूर्ण"</string>
     <string name="set_avatar_reset">"रीसेट"</string>
     <string name="new_post">"नई पोस्ट"</string>
-    <string name="new_message">"New message"</string>
+    <string name="new_message">"नया संदेश"</string>
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_placeholder">"सुनो! मैं HalloApp का उपयोग कर रहा हूँ"</string>
-    <string name="empty_chat_with_name_placeholder">"%s is on HalloApp."</string>
+    <string name="empty_chat_with_name_placeholder">"%s HalloApp पर हैI"</string>
     <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! 🎉"</string>
     <string name="posts_empty">"आपके पोस्ट यहां दिखाई देंगे"</string>
-    <string name="posts_exchange_numbers">"To connect you must exchange phone numbers"</string>
+    <string name="posts_exchange_numbers">"कनेक्ट करने के लिए आपको फोन नंबर एक्सचेंज करना होगा"</string>
     <string name="home_page_empty">"आपके संपर्कों के पोस्ट यहां दिखाई देंगे"</string>
 
     <!-- Fuzzy -->
     <string name="chats_page_empty">"आपके संपर्क और संदेश यहां दिखाई देंगे"</string>
     <string name="chats_search_empty">"%s \" के लिए कोई चैट नहीं मिली"</string>
-    <string name="groups_page_empty">"Your groups will appear here"</string>
-    <string name="groups_search_empty">"No groups found for '%s'"</string>
+    <string name="groups_page_empty">"आपके समूह यहां दिखाई देंगे"</string>
+    <string name="groups_search_empty">"'%s' के लिए कोई समूह नहीं मिला"</string>
     <string name="your_post_title">"आपके पोस्ट"</string>
     <string name="contact_profile_empty">"%s's पोस्ट यहां दिखाई देंगे"</string>
     <string name="contact_profile_not_friends">"आप HalloApp पर %s के मित्र नहीं हैं"</string>
@@ -69,28 +69,28 @@
         <item quantity="other">"%dm"</item>
     </plurals>
     <plurals name="time_diff_minutes_long">
-        <item quantity="one">"%d minute ago"</item>
-        <item quantity="other">"%d minute ago"</item>
+        <item quantity="one">"%d मिनट पहले"</item>
+        <item quantity="other">"%d मिनट पहले"</item>
     </plurals>
     <plurals name="time_diff_hours">
         <item quantity="one">"%dh"</item>
         <item quantity="other">"%dh"</item>
     </plurals>
     <plurals name="time_diff_hours_long">
-        <item quantity="one">"%d hour ago"</item>
-        <item quantity="other">"%d hour ago"</item>
+        <item quantity="one">"%d घंटा पहले"</item>
+        <item quantity="other">"%d घंटे पहले"</item>
     </plurals>
     <plurals name="time_diff_days">
-        <item quantity="one">"%dd"</item>
-        <item quantity="other">"%dd"</item>
+        <item quantity="one">"एक %dd"</item>
+        <item quantity="other">"अन्य %dd"</item>
     </plurals>
     <plurals name="time_diff_days_long">
-        <item quantity="one">"%d day ago"</item>
-        <item quantity="other">"%d day ago"</item>
+        <item quantity="one">"%d दिन पहले"</item>
+        <item quantity="other">"%d दिन पहले"</item>
     </plurals>
     <plurals name="max_post_media_items">
-        <item quantity="one">"You can select up to %d item per post"</item>
-        <item quantity="other">"You can select up to %d item per post"</item>
+        <item quantity="one">"आप प्रति पोस्ट पर %d आइटम का चयन कर सकते हैं "</item>
+        <item quantity="other">"आप प्रति पोस्ट पर %d आइटम का चयन कर सकते हैं"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"फ़ोटो लेने और वीडियो रिकॉर्ड करने के लिए हमें कैमरे तक पहुंचने और आपके डिवाइस पर ऑडियो रिकॉर्ड करने की अनुमति चाहिए"</string>
     <string name="camera_record_audio_permission_rationale_denied">"फ़ोटो लेने और वीडियो रिकॉर्ड करने के लिए हमें कैमरे तक पहुंचने और अपने डिवाइस पर ऑडियो रिकॉर्ड करने की अनुमति चाहिए। \ n \ n ऐप अनुमतियों को संशोधित करने के लिए ऐप सेटिंग स्क्रीन पर क्लिक करें।"</string>
@@ -505,4 +505,13 @@ version: %s
     <string name="system_message_joined">"%s joined the group via invite link"</string>
     <string name="activity_center_welcome">"Hallo!"</string>
     <string name="post_preview_retracted">"%s deleted a post"</string>
+    <string name="system_message_group_bg_changed">"%s changed the background color"</string>
+    <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
+    <string name="group_background_hint">"Background"</string>
+    <string name="group_background_saving_dialog">"Setting background…"</string>
+    <string name="group_background_save_failed">"Failed to set group background"</string>
+    <string name="group_background_save_success">"Group background updated"</string>
+    <string name="group_background_color">"Color"</string>
+    <string name="group_background_default">"Default"</string>
+    <string name="group_info_members">"Members (%d)"</string>
 </resources>

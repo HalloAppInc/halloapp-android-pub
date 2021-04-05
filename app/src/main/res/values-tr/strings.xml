@@ -511,4 +511,13 @@ You can share your updates with your entire contact list or only with selected p
     <string name="system_message_joined">"%s joined the group via invite link"</string>
     <string name="activity_center_welcome">"Hallo!"</string>
     <string name="post_preview_retracted">"%s deleted a post"</string>
+    <string name="system_message_group_bg_changed">"%s changed the background color"</string>
+    <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
+    <string name="group_background_hint">"Background"</string>
+    <string name="group_background_saving_dialog">"Setting background…"</string>
+    <string name="group_background_save_failed">"Failed to set group background"</string>
+    <string name="group_background_save_success">"Group background updated"</string>
+    <string name="group_background_color">"Color"</string>
+    <string name="group_background_default">"Default"</string>
+    <string name="group_info_members">"Members (%d)"</string>
 </resources>
