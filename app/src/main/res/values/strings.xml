@@ -225,6 +225,7 @@
     <string name="post_retracted_placeholder">This post has been deleted</string>
     <string name="message_retracted_placeholder">This message has been deleted</string>
     <string name="comment_retracted_placeholder">This comment has been deleted</string>
+    <string name="message_tombstone_placeholder">Waiting for this message. This may take a while. <a href="https://halloapp.com/help/">Learn more</a>.</string>
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to delete your post?</string>
     <string name="retract_comment_confirmation">Would you like to delete your comment?</string>

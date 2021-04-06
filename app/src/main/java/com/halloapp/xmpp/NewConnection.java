@@ -907,10 +907,10 @@ public class NewConnection extends Connection {
                         ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
                         Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false, chatStanza.getSenderClientVersion());
                         processMentions(message.mentions);
-                        if (!ContentDb.getInstance().hasMessage(fromUserId, msg.getId())) {
+                        // TODO(jack): Replace whole if/else with just if branch to release tombstones to all
+                        if (ServerProps.getInstance().getIsInternalUser() || !ContentDb.getInstance().hasMessage(fromUserId, msg.getId())) {
                             connectionObservers.notifyIncomingMessageReceived(message);
                         } else {
-                            // TODO(jack): Update contents when plaintext is removed and failures show tombstones
                             Log.i("message id " + msg.getId() + " already present in DB; only updating decrypt status");
                             connectionObservers.notifyIncomingMessageRedecrypt(message);
                         }

@@ -70,6 +70,14 @@ class MessagesDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
+            Long tombstoneRowId = null;
+            String tombstoneSql = "SELECT " + MessagesTable._ID + " FROM " + MessagesTable.TABLE_NAME + " WHERE " + MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "=" + Message.STATE_INCOMING_DECRYPT_FAILED;
+            try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{message.chatId.rawId(), message.id})) {
+                if (cursor.moveToNext()) {
+                    tombstoneRowId = cursor.getLong(0);
+                }
+            }
+
             final ContentValues messageValues = new ContentValues();
             messageValues.put(MessagesTable.COLUMN_CHAT_ID, message.chatId.rawId());
             messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
@@ -78,7 +86,6 @@ class MessagesDb {
             messageValues.put(MessagesTable.COLUMN_TYPE, message.type);
             messageValues.put(MessagesTable.COLUMN_USAGE, message.usage);
             messageValues.put(MessagesTable.COLUMN_STATE, message.state);
-            messageValues.put(MessagesTable.COLUMN_RECEIVE_TIME, now);
             messageValues.put(MessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
             messageValues.put(MessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
             messageValues.put(MessagesTable.COLUMN_CLIENT_VERSION, message.clientVersion);
@@ -87,109 +94,119 @@ class MessagesDb {
             if (message.text != null) {
                 messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
             }
-            message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, messageValues, SQLiteDatabase.CONFLICT_ABORT);
-            for (Media mediaItem : message.media) {
-                final ContentValues mediaItemValues = new ContentValues();
-                mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
-                mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, message.rowId);
-                mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
-                if (mediaItem.url != null) {
-                    mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
-                }
-                if (mediaItem.file != null) {
-                    mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
-                    if (mediaItem.width == 0 || mediaItem.height == 0) {
-                        final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
-                        if (dimensions != null) {
-                            mediaItem.width = dimensions.getWidth();
-                            mediaItem.height = dimensions.getHeight();
+
+            if (tombstoneRowId != null) {
+                db.update(MessagesTable.TABLE_NAME, messageValues, MessagesTable._ID + "=?", new String[]{tombstoneRowId.toString()});
+                message.rowId = tombstoneRowId;
+            } else {
+                messageValues.put(MessagesTable.COLUMN_RECEIVE_TIME, now);
+                message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, messageValues, SQLiteDatabase.CONFLICT_ABORT);
+            }
+
+            if (!message.isTombstone()) {
+                for (Media mediaItem : message.media) {
+                    final ContentValues mediaItemValues = new ContentValues();
+                    mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
+                    mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, message.rowId);
+                    mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
+                    if (mediaItem.url != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+                    }
+                    if (mediaItem.file != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
+                        if (mediaItem.width == 0 || mediaItem.height == 0) {
+                            final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
+                            if (dimensions != null) {
+                                mediaItem.width = dimensions.getWidth();
+                                mediaItem.height = dimensions.getHeight();
+                            }
                         }
                     }
-                }
-                if (mediaItem.encFile != null) {
-                    mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
-                }
-                if (mediaItem.width > 0 && mediaItem.height > 0) {
-                    mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
-                    mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
-                }
-                if (mediaItem.encKey != null) {
-                    mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
-                }
-                if (mediaItem.sha256hash != null) {
-                    mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
-                }
-                mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
-            }
-            mentionsDb.addMentions(message);
-
-            if (message.replyPostId != null || message.replyMessageId != null) {
-                final ContentValues replyValues = new ContentValues();
-                replyValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
-
-                ContentItem replyItem = null;
-                int mediaIndex = -1;
-                if (message.replyMessageId != null) {
-                    replyItem = replyMessage;
-                    mediaIndex = message.replyMessageMediaIndex;
-                    replyValues.put(RepliesTable.COLUMN_POST_ID, ""); // TODO(jack)
-                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_ID, message.replyMessageId);
-                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX, message.replyMessageMediaIndex);
-                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
-                } else {
-                    replyItem = replyPost;
-                    mediaIndex = message.replyPostMediaIndex;
-                    replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
-                    replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
-                    replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId == null ? null : message.replyMessageSenderId.rawId());
-                }
-
-                if (replyItem != null) {
-                    if (!TextUtils.isEmpty(replyItem.text)) {
-                        replyValues.put(RepliesTable.COLUMN_TEXT, replyItem.text);
+                    if (mediaItem.encFile != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
                     }
-                    final Media replyMedia = (mediaIndex >= 0 && mediaIndex < replyItem.media.size()) ? replyItem.media.get(mediaIndex) : null;
-                    if (replyMedia != null && replyMedia.file != null) {
-                        replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
-                        final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
-                        try {
-                            MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
-                            replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
-                        } catch (IOException e) {
-                            Log.e("ContentDb.addMessage: cannot create reply preview", e);
+                    if (mediaItem.width > 0 && mediaItem.height > 0) {
+                        mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
+                        mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+                    }
+                    if (mediaItem.encKey != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+                    }
+                    if (mediaItem.sha256hash != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+                    }
+                    mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+                }
+                mentionsDb.addMentions(message);
+
+                if (message.replyPostId != null || message.replyMessageId != null) {
+                    final ContentValues replyValues = new ContentValues();
+                    replyValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
+
+                    ContentItem replyItem = null;
+                    int mediaIndex = -1;
+                    if (message.replyMessageId != null) {
+                        replyItem = replyMessage;
+                        mediaIndex = message.replyMessageMediaIndex;
+                        replyValues.put(RepliesTable.COLUMN_POST_ID, ""); // TODO(jack)
+                        replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_ID, message.replyMessageId);
+                        replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX, message.replyMessageMediaIndex);
+                        replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId.rawId());
+                    } else {
+                        replyItem = replyPost;
+                        mediaIndex = message.replyPostMediaIndex;
+                        replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
+                        replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+                        replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId == null ? null : message.replyMessageSenderId.rawId());
+                    }
+
+                    if (replyItem != null) {
+                        if (!TextUtils.isEmpty(replyItem.text)) {
+                            replyValues.put(RepliesTable.COLUMN_TEXT, replyItem.text);
+                        }
+                        final Media replyMedia = (mediaIndex >= 0 && mediaIndex < replyItem.media.size()) ? replyItem.media.get(mediaIndex) : null;
+                        if (replyMedia != null && replyMedia.file != null) {
+                            replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
+                            final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
+                            try {
+                                MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
+                                replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
+                            } catch (IOException e) {
+                                Log.e("ContentDb.addMessage: cannot create reply preview", e);
+                            }
                         }
                     }
+                    long id = db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    if (replyItem != null && replyItem.mentions.size() > 0) {
+                        mentionsDb.addReplyPreviewMentions(id, replyItem.mentions);
+                    }
                 }
-                long id = db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyValues, SQLiteDatabase.CONFLICT_IGNORE);
-                if (replyItem != null && replyItem.mentions.size() > 0) {
-                    mentionsDb.addReplyPreviewMentions(id, replyItem.mentions);
-                }
-            }
 
-            final int updatedRowsCount;
-            try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
-                    ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
-                    (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
-                    (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
-                    (message.type == Message.TYPE_CHAT ? (", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " ") : "") +
-                    " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
-                updatedRowsCount = statement.executeUpdateDelete();
-            }
-            if (updatedRowsCount == 0) {
-                final ContentValues chatValues = new ContentValues();
-                chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
-                chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
-                if (message.type == Message.TYPE_CHAT) {
-                    chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+                final int updatedRowsCount;
+                try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
+                        ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
+                        (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
+                        (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
+                        (message.type == Message.TYPE_CHAT ? (", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " ") : "") +
+                        " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
+                    updatedRowsCount = statement.executeUpdateDelete();
                 }
-                if (unseen) {
-                    chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
-                    chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
-                } else {
-                    chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
-                    chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
+                if (updatedRowsCount == 0) {
+                    final ContentValues chatValues = new ContentValues();
+                    chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
+                    chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
+                    if (message.type == Message.TYPE_CHAT) {
+                        chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+                    }
+                    if (unseen) {
+                        chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
+                        chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, message.rowId);
+                    } else {
+                        chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+                        chatValues.put(ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID, -1);
+                    }
+                    db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
                 }
-                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_ABORT);
             }
 
             db.setTransactionSuccessful();

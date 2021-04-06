@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +62,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView newMessagesSeparator;
     private final TextView nameView;
     private final TextView systemMessage;
+    private final TextView tombstoneMessage;
     private final LimitingTextView textView;
     private final MessageTextLayout messageTextLayout;
     private final ViewPager2 mediaPagerView;
@@ -126,6 +128,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         systemMessage = itemView.findViewById(R.id.system_message);
+        tombstoneMessage = itemView.findViewById(R.id.tombstone_text);
         messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
         if (textView != null) {
@@ -152,6 +155,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     parent.unblockContactFromTap();
                 }
             });
+        }
+
+        if (tombstoneMessage != null) {
+            tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         if (statusView != null) {

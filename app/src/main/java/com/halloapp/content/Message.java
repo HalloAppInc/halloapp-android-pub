@@ -65,13 +65,14 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN})
+    @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN, STATE_INCOMING_DECRYPT_FAILED})
     public @interface State {}
     public static final int STATE_INITIAL = 0;
     public static final int STATE_INCOMING_RECEIVED = 1;
     public static final int STATE_OUTGOING_SENT = 1;
     public static final int STATE_OUTGOING_DELIVERED = 2;
     public static final int STATE_OUTGOING_SEEN = 3;
+    public static final int STATE_INCOMING_DECRYPT_FAILED = 4;
 
     public Message(
             long rowId,
@@ -104,6 +105,10 @@ public class Message extends ContentItem {
 
     public boolean isLocalMessage() {
         return type == Message.TYPE_SYSTEM;
+    }
+
+    public boolean isTombstone() {
+        return state == Message.STATE_INCOMING_DECRYPT_FAILED;
     }
 
     public boolean isMeMessageSender() {

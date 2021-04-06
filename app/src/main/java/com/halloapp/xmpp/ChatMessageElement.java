@@ -23,6 +23,7 @@ import com.halloapp.crypto.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.ChatStanza;
@@ -105,7 +106,11 @@ public class ChatMessageElement {
                 Log.e("Failed to decrypt message: " + failureReason + ", falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure: " + failureReason);
                 stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
-                chatMessage = plaintextChatMessage;
+
+                // TODO(jack): Remove this block to enable tombstones for all users
+                if (!ServerProps.getInstance().getIsInternalUser()) {
+                    chatMessage = plaintextChatMessage;
+                }
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
@@ -124,34 +129,55 @@ public class ChatMessageElement {
                 }
             }
         }
-        String rawReplyMessageId = chatMessage.getChatReplyMessageId();
-        String rawSenderId = chatMessage.getChatReplyMessageSenderId();
-        final Message message = new Message(0,
-                fromUserId,
-                fromUserId,
-                id,
-                timestamp,
-                Message.TYPE_CHAT,
-                Message.USAGE_CHAT,
-                chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
-                chatMessage.getText(),
-                chatMessage.getFeedPostId(),
-                chatMessage.getFeedPostMediaIndex(),
-                TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
-                chatMessage.getChatReplyMessageMediaIndex(),
-                rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
-                0);
-        for (com.halloapp.proto.clients.Media item : chatMessage.getMediaList()) {
-            message.media.add(Media.createFromUrl(
-                    MessageElementHelper.fromProtoMediaType(item.getType()),
-                    item.getDownloadUrl(),
-                    item.getEncryptionKey().toByteArray(),
-                    item.getPlaintextHash().toByteArray(),
-                    item.getWidth(),
-                    item.getHeight()));
-        }
-        for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
-            message.mentions.add(Mention.parseFromProto(item));
+
+        final Message message;
+        if (chatMessage != null) {
+            String rawReplyMessageId = chatMessage.getChatReplyMessageId();
+            String rawSenderId = chatMessage.getChatReplyMessageSenderId();
+            message = new Message(0,
+                    fromUserId,
+                    fromUserId,
+                    id,
+                    timestamp,
+                    Message.TYPE_CHAT,
+                    Message.USAGE_CHAT,
+                    chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
+                    chatMessage.getText(),
+                    chatMessage.getFeedPostId(),
+                    chatMessage.getFeedPostMediaIndex(),
+                    TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                    chatMessage.getChatReplyMessageMediaIndex(),
+                    rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                    0);
+            for (com.halloapp.proto.clients.Media item : chatMessage.getMediaList()) {
+                message.media.add(Media.createFromUrl(
+                        MessageElementHelper.fromProtoMediaType(item.getType()),
+                        item.getDownloadUrl(),
+                        item.getEncryptionKey().toByteArray(),
+                        item.getPlaintextHash().toByteArray(),
+                        item.getWidth(),
+                        item.getHeight()));
+            }
+            for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
+                message.mentions.add(Mention.parseFromProto(item));
+            }
+        } else {
+            message = new Message(0,
+                    fromUserId,
+                    fromUserId,
+                    id,
+                    timestamp,
+                    Message.TYPE_CHAT,
+                    Message.USAGE_CHAT,
+                    Message.STATE_INCOMING_DECRYPT_FAILED,
+                    "",
+                    "",
+                    0,
+                    null,
+                    0,
+                    UserId.ME,
+                    0
+                    );
         }
 
         message.senderPlatform = senderPlatform;

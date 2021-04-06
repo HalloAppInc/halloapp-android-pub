@@ -1011,6 +1011,7 @@ public class ChatActivity extends HalloActivity {
         static final int VIEW_TYPE_OUTGOING_RETRACTED = 6;
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
         static final int VIEW_TYPE_SYSTEM = 8;
+        static final int VIEW_TYPE_INCOMING_TOMBSTONE = 9;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -1045,7 +1046,9 @@ public class ChatActivity extends HalloActivity {
             if (message.type == Message.TYPE_SYSTEM) {
                 return VIEW_TYPE_SYSTEM;
             } else if (message.isIncoming()) {
-                if (message.isRetracted()) {
+                if (message.isTombstone()) {
+                    return VIEW_TYPE_INCOMING_TOMBSTONE;
+                } if (message.isRetracted()) {
                     return VIEW_TYPE_INCOMING_RETRACTED;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_INCOMING_TEXT;
@@ -1095,6 +1098,10 @@ public class ChatActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_SYSTEM: {
                     layoutRes = R.layout.message_item_system;
+                    break;
+                }
+                case VIEW_TYPE_INCOMING_TOMBSTONE: {
+                    layoutRes = R.layout.message_item_tombstone;
                     break;
                 }
                 default: {

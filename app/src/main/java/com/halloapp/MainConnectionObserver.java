@@ -243,10 +243,10 @@ public class MainConnectionObserver extends Connection.Observer {
             }
             connection.sendAck(message.id);
         };
-        if (message.isRetracted()) {
-            contentDb.retractMessage(message, completionRunnable);
-        } else {
+        if (message.isTombstone() || !message.isRetracted()) {
             contentDb.addMessage(message, !isMessageForForegroundChat, completionRunnable);
+        } else {
+            contentDb.retractMessage(message, completionRunnable);
         }
     }
 
