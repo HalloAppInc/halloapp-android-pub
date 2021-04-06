@@ -47,6 +47,7 @@ public class ChatMessageElement {
 
     private final Stats stats = Stats.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
+    private final ServerProps serverProps = ServerProps.getInstance();
     private final EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
@@ -84,6 +85,7 @@ public class ChatMessageElement {
         return senderName;
     }
 
+    @NonNull
     Message getMessage(UserId fromUserId, String id, boolean isSilentMessage, String senderAgent) {
         boolean isFriend = ContactsDb.getInstance().getContact(fromUserId).friend;
         Log.i("Local state relevant to message " + id + " from " + (isFriend ? "friend" : "non-friend") + ": " + getLogInfo(fromUserId));
@@ -244,8 +246,11 @@ public class ChatMessageElement {
 
     public ChatStanza toProto() {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
-        builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
         builder.setSenderLogInfo(getLogInfo(recipientUserId));
+
+        if (serverProps.getCleartextChatMessagesEnabled()) {
+            builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
+        }
 
         if (sessionSetupInfo != null) {
             builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
@@ -269,7 +274,7 @@ public class ChatMessageElement {
         ByteString plaintext = chatStanza.getPayload();
 
         ChatMessage plaintextChatMessage = null;
-        if (plaintext != null) {
+        if (plaintext != null && !ServerProps.getInstance().getIsInternalUser()) {
             plaintextChatMessage = MessageElementHelper.readEncodedEntry(plaintext.toByteArray());
         }
 
