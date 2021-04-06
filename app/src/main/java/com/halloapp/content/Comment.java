@@ -8,62 +8,107 @@ import androidx.annotation.Nullable;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.id.UserId;
-import com.halloapp.ui.mentions.TextContent;
+import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Comment implements TextContent {
+public class Comment extends ContentItem {
 
-    public long rowId;
     public final String postId;
-    public final UserId commentSenderUserId;
-    public final String commentId;
     public final String parentCommentId;
-    public final long timestamp;
 
     private Post parentPost;
 
     public final boolean transferred;
     public boolean seen;
 
-    public final String text;
-
     public final List<Mention> mentions = new ArrayList<>();
 
     public Comment(
             long rowId,
             String postId,
-            UserId commentSenderUserId,
+            UserId senderUserId,
             String commentId,
             String parentCommentId,
             long timestamp,
             boolean transferred,
             boolean seen,
             String text) {
-        this.rowId = rowId;
+        super(rowId, senderUserId, commentId, timestamp, text);
         this.postId = postId;
-        this.commentSenderUserId = commentSenderUserId;
-        this.commentId = commentId;
         this.parentCommentId = parentCommentId;
-        this.timestamp = timestamp;
         this.transferred = transferred;
-        this.seen = commentSenderUserId.isMe() || seen;
-        this.text = text;
+        this.seen = senderUserId.isMe() || seen;
     }
 
     @Override
     public @NonNull String toString() {
-        return "{timestamp:" + timestamp + ", post:" + postId + ", commentSender:" + commentSenderUserId + ", parentCommentId:" + parentCommentId + ", commentId:" + commentId + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
+        return "{timestamp:" + timestamp + ", post:" + postId + ", commentSender:" + senderUserId + ", parentCommentId:" + parentCommentId + ", commentId:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";
     }
 
     public boolean shouldSend() {
         return !transferred;
     }
 
+    @Override
+    public void addToStorage(@NonNull ContentDb contentDb) {
+        contentDb.addComment(this);
+    }
+
+    @Override
+    public void send(@NonNull Connection connection) {
+        connection.sendComment(this);
+    }
+
+    @Override
+    public void setMediaTransferred(@NonNull Media media, @NonNull ContentDb contentDb) {
+        contentDb.setMediaTransferred(this, media);
+    }
+
+    @Override
+    public void setPatchUrl(long rowId, @NonNull String url, @NonNull ContentDb contentDb) {
+        contentDb.setPatchUrl(this, rowId, url);
+    }
+
+    @Override
+    public String getPatchUrl(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getPatchUrl(this, rowId);
+    }
+
+    @Override
+    public int getMediaTransferred(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getMediaTransferred(this, rowId);
+    }
+
+    @Override
+    public byte[] getMediaEncKey(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getMediaEncKey(this, rowId);
+    }
+
+    @Override
+    public void setUploadProgress(long rowId, long offset, @NonNull ContentDb contentDb) {
+        contentDb.setUploadProgress(this, rowId, offset);
+    }
+
+    @Override
+    public long getUploadProgress(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getUploadProgress(this, rowId);
+    }
+
+    @Override
+    public void setRetryCount(long rowId, int count, @NonNull ContentDb contentDb) {
+        contentDb.setRetryCount(this, rowId, count);
+    }
+
+    @Override
+    public int getRetryCount(long rowId, @NonNull ContentDb contentDb) {
+        return contentDb.getRetryCount(this, rowId);
+    }
+
     public boolean isOutgoing() {
-        return commentSenderUserId.isMe();
+        return senderUserId.isMe();
     }
 
     public boolean isIncoming() {
@@ -114,8 +159,8 @@ public class Comment implements TextContent {
         final Comment comment = (Comment) o;
         return rowId == comment.rowId &&
                 Objects.equals(postId, comment.postId) &&
-                Objects.equals(commentSenderUserId, comment.commentSenderUserId) &&
-                Objects.equals(commentId, comment.commentId) &&
+                Objects.equals(senderUserId, comment.senderUserId) &&
+                Objects.equals(id, comment.id) &&
                 Objects.equals(parentCommentId, comment.parentCommentId) &&
                 timestamp == comment.timestamp &&
                 Objects.equals(text, comment.text) &&

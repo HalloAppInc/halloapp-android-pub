@@ -16,6 +16,7 @@ import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
 import com.halloapp.proto.log_events.DecryptionReport;
+import com.halloapp.proto.server.Comment;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.util.ObservableErrorException;
 

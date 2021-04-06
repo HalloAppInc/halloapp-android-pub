@@ -327,6 +327,39 @@ class PostsDb {
     }
 
     @WorkerThread
+    void setMediaTransferred(@NonNull Comment comment, @NonNull Media media) {
+        Log.i("ContentDb.setMediaTransferred: comment=" + comment + " media=" + media);
+        final ContentValues values = new ContentValues();
+        values.put(MediaTable.COLUMN_FILE, media.file == null ? null : media.file.getName());
+        values.put(MediaTable.COLUMN_ENC_FILE, media.encFile == null ? null : media.encFile.getName());
+        values.put(MediaTable.COLUMN_URL, media.url);
+        if (media.encKey != null) {
+            values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
+        }
+        if (media.sha256hash != null) {
+            values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
+        }
+        if (media.file != null && (media.width == 0 || media.height == 0)) {
+            final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
+            if (dimensions != null && dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
+                values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
+                values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
+            }
+        }
+        values.put(MediaTable.COLUMN_TRANSFERRED, media.transferred);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MediaTable.TABLE_NAME, values,
+                    MediaTable._ID + "=?",
+                    new String [] {Long.toString(media.rowId)},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setMediaTransferred: failed", ex);
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     public void setPatchUrl(long rowId, @NonNull String url) {
         final ContentValues values = new ContentValues();
         values.put(MediaTable.COLUMN_PATCH_URL, url);
@@ -475,8 +508,8 @@ class PostsDb {
         }
         final ContentValues values = new ContentValues();
         values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
-        values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.commentSenderUserId.rawId());
-        values.put(CommentsTable.COLUMN_COMMENT_ID, comment.commentId);
+        values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
+        values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
         values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
         values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
         values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
@@ -484,37 +517,84 @@ class PostsDb {
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        for (Media mediaItem : comment.media) {
+            final ContentValues mediaItemValues = new ContentValues();
+            mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, CommentsTable.TABLE_NAME);
+            mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, comment.rowId);
+            mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
+            if (mediaItem.url != null) {
+                mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+            }
+            if (mediaItem.file != null) {
+                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
+                if (mediaItem.width == 0 || mediaItem.height == 0) {
+                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
+                    if (dimensions != null) {
+                        mediaItem.width = dimensions.getWidth();
+                        mediaItem.height = dimensions.getHeight();
+                    }
+                }
+            }
+            if (mediaItem.encFile != null) {
+                mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
+            }
+            if (mediaItem.width > 0 && mediaItem.height > 0) {
+                mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
+                mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+            }
+            if (mediaItem.encKey != null) {
+                mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+            }
+            if (mediaItem.sha256hash != null) {
+                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+            }
+            mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+        }
         mentionsDb.addMentions(comment);
         Log.i("ContentDb.addComment: added " + comment);
     }
 
     @WorkerThread
     void retractComment(@NonNull Comment comment) {
-        Log.i("ContentDb.retractComment: senderUserId=" + comment.commentSenderUserId + " commentId=" + comment.commentId);
+        Log.i("ContentDb.retractComment: senderUserId=" + comment.senderUserId + " commentId=" + comment.id);
         final ContentValues values = new ContentValues();
-        values.put(CommentsTable.COLUMN_TRANSFERRED, !comment.commentSenderUserId.isMe());
+        values.put(CommentsTable.COLUMN_TRANSFERRED, !comment.senderUserId.isMe());
         values.put(CommentsTable.COLUMN_TEXT, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             if (comment.rowId == 0) {
-                final Comment dbComment = getComment(comment.commentId);
+                final Comment dbComment = getComment(comment.id);
                 if (dbComment != null) {
                     comment = dbComment;
                 }
             }
             final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                     CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
-                    new String [] {comment.commentSenderUserId.rawId(), comment.commentId},
+                    new String [] {comment.senderUserId.rawId(), comment.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
                 values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
-                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.commentSenderUserId.rawId());
-                values.put(CommentsTable.COLUMN_COMMENT_ID, comment.commentId);
+                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
+                values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
                 values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
                 values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
                 values.put(CommentsTable.COLUMN_SEEN, comment.seen);
                 comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            } else {
+                db.delete(MediaTable.TABLE_NAME,
+                        MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'",
+                        new String[]{Long.toString(comment.rowId)});
+                db.delete(MentionsTable.TABLE_NAME,
+                        MentionsTable.COLUMN_PARENT_ROW_ID + "=? AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'",
+                        new String[]{Long.toString(comment.rowId)});
+                for (Media media : comment.media) {
+                    if (media.file != null) {
+                        if (!media.file.delete()) {
+                            Log.e("ContentDb.retractComment: failed to delete " + media.file.getAbsolutePath());
+                        }
+                    }
+                }
             }
             db.setTransactionSuccessful();
         } catch (SQLException ex) {
@@ -917,6 +997,7 @@ class PostsDb {
                         cursor.getInt(6) == 1,
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
+                fillMedia(comment);
                 mentionsDb.fillMentions(comment);
                 comment.setParentPost(parentPost);
                 comments.add(comment);
@@ -924,6 +1005,49 @@ class PostsDb {
         }
         Log.i("ContentDb.getComments: start=" + start + " count=" + count + " comments.size=" + comments.size());
         return comments;
+    }
+
+    // TODO(jack): Switch to this style for loading media everywhere and move to MediaDb (Terlici team adding)
+    @WorkerThread
+    private void fillMedia(@NonNull Comment comment) {
+        comment.media.clear();
+        comment.media.addAll(readMedia(CommentsTable.TABLE_NAME, comment.rowId));
+    }
+
+    @WorkerThread
+    private List<Media> readMedia(@NonNull String parentTable, long parentRowId) {
+        String sql =
+                "SELECT " +
+                    MediaTable._ID + "," +
+                    MediaTable.COLUMN_TYPE + "," +
+                    MediaTable.COLUMN_URL + "," +
+                    MediaTable.COLUMN_FILE + "," +
+                    MediaTable.COLUMN_ENC_FILE + "," +
+                    MediaTable.COLUMN_WIDTH + "," +
+                    MediaTable.COLUMN_HEIGHT + "," +
+                    MediaTable.COLUMN_TRANSFERRED + " " +
+                "FROM " + MediaTable.TABLE_NAME + " " +
+                "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_ROW_ID + " = ? AND " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_TABLE + " = ?" +
+                "ORDER BY " + MediaTable._ID + " ASC";
+        List<Media> ret = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {Long.toString(parentRowId), parentTable})) {
+            while (cursor.moveToNext()) {
+                Media media = new Media(
+                        cursor.getLong(0),
+                        cursor.getInt(1),
+                        cursor.getString(2),
+                        fileStore.getMediaFile(cursor.getString(3)),
+                        null,
+                        null,
+                        cursor.getInt(5),
+                        cursor.getInt(6),
+                        cursor.getInt(7));
+                media.encFile = fileStore.getTmpFile(cursor.getString(4));
+                ret.add(media);
+            }
+        }
+        return ret;
     }
 
     @WorkerThread
@@ -1059,8 +1183,6 @@ class PostsDb {
 
     @WorkerThread
     @Nullable Comment getComment(@NonNull String commentId) {
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-
         final String sql =
                 "SELECT " +
                         CommentsTable._ID + ", " +
@@ -1076,6 +1198,7 @@ class PostsDb {
                         "WHERE comments.comment_id=? " +
                         "AND comments.timestamp>" + getPostExpirationTime() + " " +
                         "LIMIT " + 1;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[] {commentId})) {
             if (cursor.moveToNext()) {
                 final Comment comment = new Comment(
@@ -1090,6 +1213,7 @@ class PostsDb {
                         cursor.getString(7));
                 Post parentPost = getPost(comment.postId);
                 comment.setParentPost(parentPost);
+                fillMedia(comment);
                 mentionsDb.fillMentions(comment);
                 return comment;
             }

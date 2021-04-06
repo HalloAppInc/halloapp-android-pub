@@ -519,7 +519,7 @@ public class NewConnection extends Connection {
         for (Mention mention : comment.mentions) {
             entry.mentions.add(Mention.toProto(mention));
         }
-        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.commentId, comment.postId, entry.getEncodedEntryString());
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, entry.getEncodedEntryString());
         commentItem.parentCommentId = comment.parentCommentId;
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
@@ -528,7 +528,7 @@ public class NewConnection extends Connection {
             requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
         }
         sendIqRequestAsync(requestIq)
-                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.commentId))
+                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id))
                 .onError(e -> Log.e("connection: cannot send comment", e));
     }
 

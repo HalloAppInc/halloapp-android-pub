@@ -1,11 +1,19 @@
 package com.halloapp.ui;
 
+import android.app.Application;
+import android.graphics.RectF;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Pair;
+import android.util.Size;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -14,24 +22,45 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.groups.MemberInfo;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
+import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
+import com.halloapp.media.MediaUtils;
+import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.FileUtils;
+import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-class CommentsViewModel extends ViewModel {
+class CommentsViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Comment>> commentList;
     final ComputableLiveData<Long> lastSeenCommentRowId;
@@ -39,8 +68,10 @@ class CommentsViewModel extends ViewModel {
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
+    final MutableLiveData<Media> commentMedia = new MutableLiveData<>();
 
     private final Me me = Me.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
 
@@ -48,6 +79,7 @@ class CommentsViewModel extends ViewModel {
     private final CommentsDataSource.Factory dataSourceFactory;
 
     private LoadUserTask loadUserTask;
+    private LoadMediaUriTask loadMediaUriTask;
 
     private Observer<Post> postObserver;
 
@@ -104,7 +136,8 @@ class CommentsViewModel extends ViewModel {
         }
     };
 
-    private CommentsViewModel(@NonNull String postId) {
+    private CommentsViewModel(@NonNull Application application, @NonNull String postId) {
+        super(application);
         this.postId = postId;
 
         contentDb.addObserver(contentObserver);
@@ -163,8 +196,8 @@ class CommentsViewModel extends ViewModel {
                 PagedList<Comment> comments = commentList.getValue();
                 if (comments != null) {
                     for (Comment comment : comments) {
-                        if (!comment.commentSenderUserId.isMe()) {
-                            contactSet.add(comment.commentSenderUserId);
+                        if (!comment.senderUserId.isMe()) {
+                            contactSet.add(comment.senderUserId);
                         }
                     }
                 }
@@ -212,6 +245,83 @@ class CommentsViewModel extends ViewModel {
         new LoadPostTask(postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    void loadCommentMediaUri(@NonNull Uri uri) {
+        if (loadMediaUriTask != null) {
+            loadMediaUriTask.cancel(true);
+        }
+
+        loadMediaUriTask = new LoadMediaUriTask(getApplication(), uri, commentMedia);
+        loadMediaUriTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    void resetCommentMediaUri() {
+        if (loadMediaUriTask != null) {
+            loadMediaUriTask.cancel(true);
+        }
+        commentMedia.setValue(null);
+    }
+
+    void sendComment(@Nullable String postText, List<Mention> mentions, @Nullable String replyCommentId, boolean supportsWideColor) {
+        final Comment comment = new Comment(
+                0,
+                postId,
+                UserId.ME,
+                RandomId.create(),
+                replyCommentId,
+                System.currentTimeMillis(),
+                false,
+                true,
+                postText);
+        comment.setParentPost(post.getValue());
+        comment.mentions.clear();
+        for (Mention mention : mentions) {
+            if (mention.index < 0 || mention.index >= postText.length()) {
+                continue;
+            }
+            comment.mentions.add(mention);
+        }
+
+        Media mediaItem = commentMedia.getValue();
+        if (mediaItem == null) {
+            contentDb.addComment(comment);
+        } else {
+            bgWorkers.execute(() -> {
+                final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
+                switch (mediaItem.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        try {
+                            RectF cropRect = null;
+                            if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                                final float padding = (mediaItem.height - Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) / 2;
+                                cropRect = new RectF(0, padding / mediaItem.height, 1, 1 - padding / mediaItem.height);
+                            }
+                            MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, !supportsWideColor);
+                        } catch (IOException e) {
+                            Log.e("failed to transcode image", e);
+                            return; // TODO(jack): Error messages for user for these 3 cases
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        if (!mediaItem.file.renameTo(postFile)) {
+                            Log.e("failed to rename " + mediaItem.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
+                            return;
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        Log.e("unknown media type " + mediaItem.file.getAbsolutePath());
+                        return;
+                    }
+                }
+                final Media sendMedia = Media.createFromFile(mediaItem.type, postFile);
+                comment.media.add(sendMedia);
+                contentDb.addComment(comment);
+            });
+        }
+    }
+
     static class LoadUserTask extends AsyncTask<Void, Void, Contact> {
 
         private final UserId userId;
@@ -254,11 +364,49 @@ class CommentsViewModel extends ViewModel {
         }
     }
 
+    private static class LoadMediaUriTask extends AsyncTask<Void, Void, Media> {
+
+        private final Uri uri;
+        private final Application application;
+        private final MutableLiveData<Media> media;
+
+        LoadMediaUriTask(@NonNull Application application, @NonNull Uri uri, @NonNull MutableLiveData<Media> media) {
+            this.application = application;
+            this.uri = uri;
+            this.media = media;
+        }
+
+        @Override
+        protected Media doInBackground(Void... voids) {
+            final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, Collections.singletonList(uri));
+            @Media.MediaType int mediaType = types.get(uri);
+            final File file = FileStore.getInstance().getTmpFile(RandomId.create());
+            FileUtils.uriToFile(application, uri, file);
+            final Size size = MediaUtils.getDimensions(file, mediaType);
+            if (size != null) {
+                final Media mediaItem = Media.createFromFile(mediaType, file);
+                mediaItem.width = size.getWidth();
+                mediaItem.height = size.getHeight();
+                return mediaItem;
+            } else {
+                Log.e("CommentsViewModel: failed to load " + uri);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Media media) {
+            this.media.postValue(media);
+        }
+    }
+
     public static class Factory implements ViewModelProvider.Factory {
 
+        private final Application application;
         private final String postId;
 
-        Factory(@NonNull String postId) {
+        Factory(@NonNull Application application, @NonNull String postId) {
+            this.application = application;
             this.postId = postId;
         }
 
@@ -266,7 +414,7 @@ class CommentsViewModel extends ViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(postId);
+                return (T) new CommentsViewModel(application, postId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

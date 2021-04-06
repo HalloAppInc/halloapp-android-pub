@@ -36,11 +36,9 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
-import com.halloapp.util.logs.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -118,7 +116,7 @@ public class SocialHistoryPopup {
                 comments.addAll(mentionedComments);
 
                 for (Comment comment : comments) {
-                    contentDb.setCommentSeen(comment.postId, comment.commentId, true);
+                    contentDb.setCommentSeen(comment.postId, comment.id, true);
                 }
 
                 for (Post post : mentionedPosts) {

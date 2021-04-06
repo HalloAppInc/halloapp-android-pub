@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -53,11 +54,14 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
@@ -71,6 +75,7 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +90,8 @@ public class CommentsActivity extends HalloActivity {
 
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
     private static final String KEY_REPLY_USER_ID = "reply_user_id";
+
+    private static final int REQUEST_CODE_PICK_MEDIA = 1;
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -166,7 +173,7 @@ public class CommentsActivity extends HalloActivity {
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(postId)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
         viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {
         }));
 
@@ -187,6 +194,19 @@ public class CommentsActivity extends HalloActivity {
                 }
             }
         });
+
+        View mediaContainer = findViewById(R.id.media_container);
+        ImageView imageView = findViewById(R.id.media_preview);
+        viewModel.commentMedia.observe(this, media -> {
+            if (media == null) {
+                mediaContainer.setVisibility(View.GONE);
+            } else {
+                mediaContainer.setVisibility(View.VISIBLE);
+                mediaThumbnailLoader.load(imageView, media);
+            }
+        });
+        View removeMedia = findViewById(R.id.remove);
+        removeMedia.setOnClickListener(v -> viewModel.resetCommentMediaUri());
 
         viewModel.postDeleted.observe(this, deleted -> {
             if (Boolean.TRUE.equals(deleted)) {
@@ -217,30 +237,16 @@ public class CommentsActivity extends HalloActivity {
                 Log.w("CommentsActivity: cannot send empty comment");
                 return;
             }
-            final Comment comment = new Comment(
-                    0,
-                    postId,
-                    UserId.ME,
-                    RandomId.create(),
-                    replyCommentId,
-                    System.currentTimeMillis(),
-                    false,
-                    true,
-                    postText);
-            comment.setParentPost(viewModel.post.getValue());
-            comment.mentions.clear();
-            for (Mention mention : textWithMentions.second) {
-                if (mention.index < 0 || mention.index >= postText.length()) {
-                    continue;
-                }
-                comment.mentions.add(mention);
-            }
-            ContentDb.getInstance().addComment(comment);
+            viewModel.sendComment(postText, textWithMentions.second, replyCommentId, ActivityUtils.supportsWideColor(this));
             editText.setText(null);
             final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             resetReplyIndicator();
         });
+
+        final View media = findViewById(R.id.media);
+        media.setOnClickListener(v -> pickMedia());
+//        media.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -310,7 +316,7 @@ public class CommentsActivity extends HalloActivity {
             @Override
             public boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {
                 final Comment comment = ((ViewHolder)viewHolder).comment;
-                return comment != null && comment.commentSenderUserId.isMe() && !comment.isRetracted();
+                return comment != null && comment.senderUserId.isMe() && !comment.isRetracted();
             }
 
             @Override
@@ -321,7 +327,7 @@ public class CommentsActivity extends HalloActivity {
                 itemSwipeHelper.attachToRecyclerView(commentsView);
 
                 final Comment comment = ((ViewHolder)viewHolder).comment;
-                if (comment == null || !comment.commentSenderUserId.isMe() || comment.isRetracted()) {
+                if (comment == null || !comment.senderUserId.isMe() || comment.isRetracted()) {
                     return;
                 }
                 final AlertDialog.Builder builder = new AlertDialog.Builder(CommentsActivity.this);
@@ -333,6 +339,32 @@ public class CommentsActivity extends HalloActivity {
             }
         });
         itemSwipeHelper.attachToRecyclerView(commentsView);
+    }
+
+    private void pickMedia() {
+        final Intent intent = new Intent(this, MediaPickerActivity.class);
+        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_COMMENT);
+        startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_PICK_MEDIA: {
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        final ArrayList<Uri> uris = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+                        if (uris.size() == 1) {
+                            viewModel.loadCommentMediaUri(uris.get(0));
+                        } else {
+                            Log.w("CommentsActivity: Invalid comment media count " + uris.size());
+                        }
+                    }
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -421,12 +453,14 @@ public class CommentsActivity extends HalloActivity {
         replyUserId = null;
         replyCommentId = null;
         viewModel.resetReplyUser();
+        viewModel.resetCommentMediaUri();
     }
 
     private class ViewHolder extends ViewHolderWithLifecycle {
 
         final ImageView avatarView;
         final TextView nameView;
+        final ImageView commentMedia;
         final LimitingTextView commentView;
         final TextView timeView;
         final View progressView;
@@ -441,6 +475,7 @@ public class CommentsActivity extends HalloActivity {
             super(v);
             avatarView = v.findViewById(R.id.avatar);
             nameView = v.findViewById(R.id.name);
+            commentMedia = v.findViewById(R.id.comment_media);
             commentView = v.findViewById(R.id.comment_text);
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
@@ -459,8 +494,8 @@ public class CommentsActivity extends HalloActivity {
 
             this.comment = comment;
 
-            avatarLoader.load(avatarView, comment.commentSenderUserId);
-            contactLoader.load(nameView, comment.commentSenderUserId);
+            avatarLoader.load(avatarView, comment.senderUserId);
+            contactLoader.load(nameView, comment.senderUserId);
 
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
@@ -491,11 +526,17 @@ public class CommentsActivity extends HalloActivity {
                 return false;
             });
 
+            if (comment.media.isEmpty()) {
+                commentMedia.setVisibility(View.GONE);
+            } else {
+                mediaThumbnailLoader.load(commentMedia, comment.media.get(0));
+            }
+
             cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
 
             replyButton.setOnClickListener(v -> {
                 keyboardScrollHelper.setAnchorForKeyboardChange(position);
-                updateReplyIndicator(comment.commentSenderUserId, comment.commentId);
+                updateReplyIndicator(comment.senderUserId, comment.id);
                 editText.requestFocus();
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.showSoftInput(editText,0);

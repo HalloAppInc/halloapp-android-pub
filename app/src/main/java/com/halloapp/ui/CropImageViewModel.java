@@ -180,6 +180,7 @@ public class CropImageViewModel extends AndroidViewModel {
         return null;
     }
 
+    // TODO(jack): Move both of these into MediaUtils?
     private List<MediaModel> load(List<Uri> uris, Bundle state) {
         List<MediaModel> result = new ArrayList<>(uris.size());
         Map<Uri, Integer> types = MediaUtils.getMediaTypes(getApplication(), uris);

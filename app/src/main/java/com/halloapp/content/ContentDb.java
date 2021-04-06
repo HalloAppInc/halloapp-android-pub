@@ -1,10 +1,8 @@
 package com.halloapp.content;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,12 +12,6 @@ import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
-import com.halloapp.contacts.Contact;
-import com.halloapp.content.tables.ChatsTable;
-import com.halloapp.content.tables.CommentsTable;
-import com.halloapp.content.tables.MessagesTable;
-import com.halloapp.content.tables.PostsTable;
-import com.halloapp.content.tables.SeenTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -27,7 +19,6 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.stats.DecryptStats;
 
 import java.util.ArrayList;
@@ -266,10 +257,29 @@ public class ContentDb {
         });
     }
 
+    public void setMediaTransferred(@NonNull Comment comment, @NonNull Media media) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setMediaTransferred(comment, media);
+            if (comment.isIncoming() && comment.isAllMediaTransferred()) {
+                postsDb.setCommentTransferred(comment.postId, comment.senderUserId, comment.id);
+            }
+            // TODO(jack): Should this be notifyCommentUpdated?
+            observers.notifyPostUpdated(comment.senderUserId, comment.id);
+        });
+    }
+
     @WorkerThread
     public void setPatchUrl(@NonNull Post post, long rowId, @NonNull String url) {
         databaseWriteExecutor.execute(() -> {
             Log.i("Set patch url in Post: " + post);
+            postsDb.setPatchUrl(rowId, url);
+        });
+    }
+
+    @WorkerThread
+    public void setPatchUrl(@NonNull Comment comment, long rowId, @NonNull String url) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set patch url in Comment: " + comment);
             postsDb.setPatchUrl(rowId, url);
         });
     }
@@ -289,6 +299,12 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public String getPatchUrl(@NonNull Comment comment, long rowId) {
+        Log.i("Get patch url in Comment: " + comment);
+        return postsDb.getPatchUrl(rowId);
+    }
+
+    @WorkerThread
     public String getPatchUrl(@NonNull Message message, long rowId) {
         Log.i("Get patch url in Message: " + message);
         return messagesDb.getPatchUrl(rowId);
@@ -297,6 +313,12 @@ public class ContentDb {
     @WorkerThread
     public @Media.TransferredState int getMediaTransferred(@NonNull Post post, long rowId) {
         Log.i("Get transferred state from Post: "+ post);
+        return postsDb.getMediaTransferred(rowId);
+    }
+
+    @WorkerThread
+    public @Media.TransferredState int getMediaTransferred(@NonNull Comment comment, long rowId) {
+        Log.i("Get transferred state from Comment: "+ comment);
         return postsDb.getMediaTransferred(rowId);
     }
 
@@ -313,6 +335,12 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public byte[] getMediaEncKey(@NonNull Comment comment, long rowId) {
+        Log.i("Get Media encKey from Comment: "+ comment);
+        return postsDb.getMediaEncKey(rowId);
+    }
+
+    @WorkerThread
     public byte[] getMediaEncKey(@NonNull Message message, long rowId) {
         Log.i("Get Media encKey from Message: "+ message);
         return messagesDb.getMediaEncKey(rowId);
@@ -322,6 +350,14 @@ public class ContentDb {
     public void setUploadProgress(@NonNull Post post, long rowId, long offset) {
         databaseWriteExecutor.execute(() -> {
             Log.i("Set upload progress in Post: " + post);
+            postsDb.setUploadProgress(rowId, offset);
+        });
+    }
+
+    @WorkerThread
+    public void setUploadProgress(@NonNull Comment comment, long rowId, long offset) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set upload progress in Comment: " + comment);
             postsDb.setUploadProgress(rowId, offset);
         });
     }
@@ -341,6 +377,12 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public long getUploadProgress(@NonNull Comment comment, long rowId) {
+        Log.i("Get upload progress in Comment: " + comment);
+        return postsDb.getUploadProgress(rowId);
+    }
+
+    @WorkerThread
     public long getUploadProgress(@NonNull Message message, long rowId) {
         Log.i("Get upload progress in Message: " + message);
         return messagesDb.getUploadProgress(rowId);
@@ -350,6 +392,14 @@ public class ContentDb {
     public void setRetryCount(@NonNull Post post, long rowId, int count) {
         databaseWriteExecutor.execute(() -> {
             Log.i("Set retry count in Post: " + post);
+            postsDb.setRetryCount(rowId, count);
+        });
+    }
+
+    @WorkerThread
+    public void setRetryCount(@NonNull Comment comment, long rowId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Set retry count in Comment: " + comment);
             postsDb.setRetryCount(rowId, count);
         });
     }
@@ -365,6 +415,12 @@ public class ContentDb {
     @WorkerThread
     public int getRetryCount(@NonNull Post post, long rowId) {
         Log.i("Get retry count in Post: " + post);
+        return postsDb.getRetryCount(rowId);
+    }
+
+    @WorkerThread
+    public int getRetryCount(@NonNull Comment comment, long rowId) {
+        Log.i("Get retry count in Comment: " + comment);
         return postsDb.getRetryCount(rowId);
     }
 
@@ -450,7 +506,7 @@ public class ContentDb {
         databaseWriteExecutor.execute(() -> {
             Comment dbComment = comment;
             if (dbComment.rowId == 0) {
-                Comment temp = postsDb.getComment(comment.commentId);
+                Comment temp = postsDb.getComment(comment.id);
                 if (temp != null) {
                     dbComment = temp;
                 }

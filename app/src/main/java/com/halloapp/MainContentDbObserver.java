@@ -112,11 +112,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onCommentRetracted(@NonNull Comment comment) {
-        if (comment.commentSenderUserId.isMe()) {
+        if (comment.senderUserId.isMe()) {
             if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
-                connection.retractComment(comment.getPostSenderUserId(), comment.postId, comment.commentId);
+                connection.retractComment(comment.getPostSenderUserId(), comment.postId, comment.id);
             } else {
-                connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.getParentPost().senderUserId, comment.postId, comment.commentId);
+                connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.getParentPost().senderUserId, comment.postId, comment.id);
             }
         }
     }

@@ -289,7 +289,7 @@ public class HomeViewModel extends AndroidViewModel {
                     lastActivity.seen = true;
                     seenComments.add(lastActivity);
                 }
-                lastActivity.involvedUsers.add(comment.commentSenderUserId);
+                lastActivity.involvedUsers.add(comment.senderUserId);
                 if (comment.timestamp > lastActivity.timestamp) {
                     lastActivity.timestamp = comment.timestamp;
                 }
@@ -301,7 +301,7 @@ public class HomeViewModel extends AndroidViewModel {
                     commentsGroup.seen = false;
                     unseenComments.put(postKey, commentsGroup);
                 }
-                commentsGroup.involvedUsers.add(comment.commentSenderUserId);
+                commentsGroup.involvedUsers.add(comment.senderUserId);
                 if (comment.timestamp > commentsGroup.timestamp) {
                     commentsGroup.timestamp = comment.timestamp;
                 }
@@ -378,7 +378,7 @@ public class HomeViewModel extends AndroidViewModel {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_COMMENT, parentPost.senderUserId, comment.postId);
             activity.timestamp = comment.timestamp;
             activity.seen = comment.seen;
-            activity.involvedUsers.add(comment.commentSenderUserId);
+            activity.involvedUsers.add(comment.senderUserId);
             return activity;
         }
 

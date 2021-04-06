@@ -55,6 +55,15 @@
                 android:textAlignment="gravity"
                 tools:text="Ded Pihtov"/>
 
+            <ImageView
+                android:id="@+id/comment_media"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginBottom="4dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                />
+
             <com.halloapp.widget.LimitingTextView
                 android:id="@+id/comment_text"
                 android:layout_width="match_parent"

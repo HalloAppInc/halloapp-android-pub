@@ -422,7 +422,7 @@ public class Notifications {
         final Set<String> postIds = new HashSet<>();
         for (Comment comment : unseenComments) {
             Log.d("Notifications.update: " + comment);
-            userIds.add(comment.commentSenderUserId);
+            userIds.add(comment.senderUserId);
             postIds.add(comment.postId);
             if (comment.timestamp > feedNotificationTimeCutoff) {
                 feedNotificationTimeCutoff = comment.timestamp;

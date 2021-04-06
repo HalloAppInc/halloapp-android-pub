@@ -70,6 +70,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public static final int PICKER_PURPOSE_RESULT = 3;
     public static final int PICKER_PURPOSE_POST = 4;
     public static final int PICKER_PURPOSE_GROUP_AVATAR = 5;
+    public static final int PICKER_PURPOSE_COMMENT = 6;
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
@@ -370,7 +371,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         } else if (isAvatarPicker()) {
             Preconditions.checkState(uris.size() == 1);
             startAvatarPreview(uris.get(0));
-        } else if (pickerPurpose == PICKER_PURPOSE_RESULT) {
+        } else if (pickerPurpose == PICKER_PURPOSE_RESULT || pickerPurpose == PICKER_PURPOSE_COMMENT) {
             Preconditions.checkState(uris.size() > 0);
             finishWithSelected(uris);
         }
@@ -390,7 +391,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                         getMenuInflater().inflate(R.menu.media_picker_action_mode, menu);
 
                         MenuItem menuItem = menu.findItem(R.id.select);
-                        SpannableString ss = new SpannableString(getString(pickerPurpose == PICKER_PURPOSE_RESULT ? R.string.done : R.string.next));
+                        SpannableString ss = new SpannableString(getString(pickerPurpose == PICKER_PURPOSE_RESULT || pickerPurpose == PICKER_PURPOSE_COMMENT ? R.string.done : R.string.next));
                         ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), R.color.color_secondary)), 0, ss.length(), 0);
                         menuItem.setTitle(ss);
 
@@ -693,7 +694,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
 
-            if (isAvatarPicker()) {
+            if (isAvatarPicker() || pickerPurpose == PICKER_PURPOSE_COMMENT) {
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
                 thumbnailView.setSelected(false);
@@ -740,7 +741,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void onItemClicked() {
-            if (isAvatarPicker()) {
+            if (isAvatarPicker() || pickerPurpose == PICKER_PURPOSE_COMMENT) {
                 final ArrayList<Uri> uris = new ArrayList<>(1);
                 uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
                 handleSelection(uris);
