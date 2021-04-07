@@ -1,6 +1,7 @@
 package com.halloapp.ui.avatar;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -57,6 +58,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private Bitmap defaultUserAvatar;
     private Bitmap defaultGroupAvatar;
+
+    private boolean isDarkMode;
 
     public static AvatarLoader getInstance() {
         if (instance == null) {
@@ -254,6 +257,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @NonNull private Bitmap getDefaultAvatar(@NonNull ChatId chatId) {
+        boolean darkMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        if (darkMode != isDarkMode) {
+            isDarkMode = darkMode;
+            defaultGroupAvatar = null;
+            defaultUserAvatar = null;
+        }
         return chatId instanceof GroupId ? getDefaultGroupAvatar() : getDefaultUserAvatar();
     }
 
