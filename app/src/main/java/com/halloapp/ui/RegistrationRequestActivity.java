@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -23,6 +24,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.installreferrer.api.InstallReferrerClient;
+import com.android.installreferrer.api.InstallReferrerStateListener;
+import com.android.installreferrer.api.ReferrerDetails;
+import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
 import com.halloapp.Preferences;
@@ -209,6 +214,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     public static class RegistrationRequestViewModel extends AndroidViewModel {
 
+        private final BgWorkers bgWorkers = BgWorkers.getInstance();
         private final Registration registration = Registration.getInstance();
 
         private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
@@ -222,30 +228,44 @@ public class RegistrationRequestActivity extends HalloActivity {
         }
 
         void requestRegistration(@NonNull String phone, @Nullable String name) {
-            new RegistrationRequestTask(this, phone, name).execute();
+            InstallReferrerClient referrerClient = InstallReferrerClient.newBuilder(AppContext.getInstance().get().getApplicationContext()).build();
+            referrerClient.startConnection(new InstallReferrerStateListener() {
+                @Override
+                public void onInstallReferrerSetupFinished(int responseCode) {
+                    String inviteCode = null;
+                    switch (responseCode) {
+                        case InstallReferrerClient.InstallReferrerResponse.OK:
+                            try {
+                                ReferrerDetails details = referrerClient.getInstallReferrer();
+                                inviteCode = details.getInstallReferrer();
+                                if (!TextUtils.isEmpty(inviteCode) && inviteCode.startsWith("ginvite-")) {
+                                    inviteCode = inviteCode.substring(8);
+                                } else {
+                                    Log.w("RegistrationRequestActivity/requestRegistration no referrer invite");
+                                }
+                            } catch (RemoteException e) {
+                                Log.e("RegistrationRequestActivity/requestRegistration failed to get install referrer", e);
+                            }
+                            break;
+                        case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
+                            Log.w("RegistrationRequestActivity/requestRegistration referrer not available");
+                            break;
+                        case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
+                            Log.w("RegistrationRequestActivity/requestRegistration no connection");
+                            break;
+                    }
+                    final String code = inviteCode;
+                    bgWorkers.execute(() -> {
+                        registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code));
+                        referrerClient.endConnection();
+                    });
+                }
+
+                @Override
+                public void onInstallReferrerServiceDisconnected() {
+                }
+            });
         }
     }
 
-    private static class RegistrationRequestTask extends AsyncTask<Void, Void, Registration.RegistrationRequestResult> {
-
-        final RegistrationRequestViewModel viewModel;
-        final String phone;
-        final @Nullable String name;
-
-        RegistrationRequestTask(@NonNull RegistrationRequestViewModel viewModel, @NonNull String phone, @Nullable String name) {
-            this.viewModel = viewModel;
-            this.phone = phone;
-            this.name = name;
-        }
-
-        @Override
-        protected Registration.RegistrationRequestResult doInBackground(Void... voids) {
-            return viewModel.registration.registerPhoneNumber(name, phone);
-        }
-
-        @Override
-        protected void onPostExecute(final Registration.RegistrationRequestResult result) {
-            viewModel.registrationRequestResult.setValue(result);
-        }
-    }
 }

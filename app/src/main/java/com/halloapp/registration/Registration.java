@@ -71,7 +71,7 @@ public class Registration {
     }
 
     @WorkerThread
-    public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone) {
+    public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone, @Nullable String groupInviteToken) {
         Log.i("Registration.requestRegistration phone=" + phone);
         ThreadUtils.setSocketTag();
 
@@ -91,6 +91,9 @@ public class Registration {
             connection.setRequestProperty("Content-Type", "application/json");
             JSONObject requestJson = new JSONObject();
             requestJson.put("phone", phone);
+            if (groupInviteToken != null) {
+                requestJson.put("group_invite_token", groupInviteToken);
+            }
             connection.getOutputStream().write(requestJson.toString().getBytes());
 
             final int responseCode = connection.getResponseCode();
@@ -124,11 +127,11 @@ public class Registration {
         }
     }
 
-    public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone) {
+    public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone, @Nullable String groupInviteToken) {
         if (name != null) {
             me.saveName(name);
         }
-        return requestRegistration(phone);
+        return requestRegistration(phone, groupInviteToken);
     }
 
     @WorkerThread
