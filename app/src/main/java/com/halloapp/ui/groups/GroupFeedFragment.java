@@ -119,6 +119,6 @@ public class GroupFeedFragment extends PostsFragment {
 
     @Override
     protected boolean shouldOpenProfileOnNamePress() {
-        return false;
+        return true;
     }
 }
