@@ -577,8 +577,8 @@ public class NewConnection extends Connection {
     }
 
     private String getSilentIdFromMessage(@NonNull Message message) {
-        // Format: shhh:from:to:timestampInSeconds:retryCount
-        return "shhh:" + me.getUser() + ":" + message.chatId.rawId() + ":" + message.timestamp / 1000L + ":" + 0;
+        // Format: shhh:from:to:timestampInSeconds:id
+        return "shhh:" + me.getUser() + ":" + message.chatId.rawId() + ":" + message.timestamp / 1000L + ":" + message.id;
     }
 
     public void sendSilentMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
