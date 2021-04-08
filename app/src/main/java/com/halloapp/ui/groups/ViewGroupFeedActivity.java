@@ -97,6 +97,16 @@ public class ViewGroupFeedActivity extends HalloActivity {
         viewModel.chat.getLiveData().observe(this, chat -> {
             if (chat != null) {
                 titleView.setText(chat.name);
+                if (chat.theme == 0) {
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.window_background));
+                    titleView.setTextColor(ContextCompat.getColor(this, R.color.primary_text));
+                    toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.window_background));
+                } else {
+                    GroupTheme theme = GroupTheme.getTheme(chat.theme);
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this, theme.bgColor));
+                    titleView.setTextColor(ContextCompat.getColor(this, R.color.primary_text));
+                    toolbar.setBackgroundColor(ContextCompat.getColor(this, theme.bgColor));
+                }
             } else {
                 titleView.setText(null);
             }

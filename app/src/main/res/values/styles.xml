@@ -153,8 +153,8 @@
     </style>
 
     <style name="Toolbar.GroupFeed" parent="ThemeOverlay.MaterialComponents.ActionBar">
-        <item name="titleTextColor">@color/color_secondary</item>
-        <item name="colorControlNormal">@color/color_secondary</item>
+        <item name="titleTextColor">@color/primary_text</item>
+        <item name="colorControlNormal">@color/primary_text</item>
     </style>
 
     <style name="Toolbar.Settings" parent="Toolbar">
@@ -173,7 +173,7 @@
 
     <style name="ActionBar.GroupBackground" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
         <item name="background">@color/group_bg_picker_background</item>
-        <item name="backgroundStacked">@color/group_bg_picker_background</item>
+        <item name="backgroundStacked">@color/group_bg_picker_background</item>z
         <item name="backgroundSplit">@color/group_bg_picker_background</item>
         <item name="elevation">0dp</item>
         <item name="titleTextStyle">@style/TextAppearance.Toolbar.Title</item>

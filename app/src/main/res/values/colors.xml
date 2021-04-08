@@ -119,6 +119,7 @@
     <color name="system_post_text">@color/black_87</color>
     <color name="system_post_bg">#CDE3FF</color>
     <color name="deleted_post_bg">@color/black_5</color>
+    <color name="deleted_post_themed_bg">@color/white_40</color>
 
     <color name="scroll_down_background_pressed">#EEEEEE</color>
     <color name="scroll_down_background">#FFFFFF</color>

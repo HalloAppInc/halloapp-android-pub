@@ -140,7 +140,8 @@ public class PostsFragment extends HalloFragment {
         static final int POST_DIRECTION_MASK = 0xFF00;
 
         private boolean showGroup = true;
-        private @ColorRes int cardBgColor;
+
+        private int theme;
 
         private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
@@ -260,9 +261,9 @@ public class PostsFragment extends HalloFragment {
             setDiffer(new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build()));
         }
 
-        public void setCardBackgroundColor(@ColorRes int cardBackgroundColor) {
-            if (this.cardBgColor != cardBackgroundColor) {
-                this.cardBgColor = cardBackgroundColor;
+        public void applyTheme(int theme) {
+            if (this.theme != theme) {
+                this.theme = theme;
                 notifyDataSetChanged();
             }
         }
@@ -330,10 +331,12 @@ public class PostsFragment extends HalloFragment {
             if (holder instanceof PostViewHolder) {
                 PostViewHolder postViewHolder = (PostViewHolder) holder;
                 postViewHolder.setShowGroupName(showGroup);
-                postViewHolder.setCardBackgroundColor(cardBgColor);
+                postViewHolder.setCardBackgroundColor(theme == 0 ? 0 : R.color.post_card_color_background);
                 postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)));
             } else if (holder instanceof SubtlePostViewHolder) {
-                ((SubtlePostViewHolder) holder).bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
+                SubtlePostViewHolder postViewHolder = (SubtlePostViewHolder) holder;
+                postViewHolder.applyTheme(theme);
+                postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
             }
         }
     }

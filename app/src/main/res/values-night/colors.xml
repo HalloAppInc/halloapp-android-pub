@@ -63,6 +63,10 @@
     <color name="scroll_down_background_pressed">#323232</color>
 
     <color name="deleted_post_bg">@color/white_5</color>
+    <color name="deleted_post_themed_bg">@color/black_30</color>
+
+    <color name="system_post_bg">#cc69A1FF</color>
+    <color name="system_post_text">@color/white_87</color>
 
     <!-- Text Colors -->
     <color name="primary_text">@color/white_87</color>

@@ -102,7 +102,7 @@ public class GroupFeedFragment extends PostsFragment {
         viewModel.chat.getLiveData().observe(getViewLifecycleOwner(), chat -> {
             GroupTheme theme = GroupTheme.getTheme(chat.theme);
             root.setBackgroundColor(ContextCompat.getColor(requireContext(), theme.bgColor));
-            adapter.setCardBackgroundColor(chat.theme == 0 ? 0 : R.color.post_card_color_background);
+            adapter.applyTheme(chat.theme);
         });
 
         adapter.setShowGroup(false);

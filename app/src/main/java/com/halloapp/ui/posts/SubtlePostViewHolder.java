@@ -34,6 +34,8 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
     private TextView textView;
     private TextView timeView;
 
+    private int theme;
+
     public SubtlePostViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView);
 
@@ -57,7 +59,7 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
 
         if (post.type == Post.TYPE_USER) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.secondary_text));
-            textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), R.color.deleted_post_bg)));
+            textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), theme == 0 ? R.color.deleted_post_bg : R.color.deleted_post_themed_bg)));
             if (post.isOutgoing()) {
                 // I deleted a post
                 textView.setText(R.string.post_retracted_by_me);
@@ -88,6 +90,10 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
             textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), R.color.system_post_bg)));
             bindGroupSystemPostPreview(post);
         }
+    }
+
+    public void applyTheme(int theme) {
+        this.theme = theme;
     }
 
     private void bindGroupSystemPostPreview(@NonNull Post post) {
