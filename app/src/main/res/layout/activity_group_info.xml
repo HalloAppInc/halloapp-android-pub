@@ -247,24 +247,6 @@
                     android:paddingEnd="15dp"
                     android:background="?selectableItemBackground"
                     android:textColor="@color/color_primary"/>
-                
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider_color"/>
-
-                <TextView
-                    android:id="@+id/delete_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delete_group"
-                    android:textSize="20sp"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp"
-                    android:paddingStart="34dp"
-                    android:paddingEnd="15dp"
-                    android:background="?selectableItemBackground"
-                    android:textColor="@color/color_primary"/>
 
             </LinearLayout>
 

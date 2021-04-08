@@ -225,17 +225,6 @@ public class GroupViewModel extends AndroidViewModel {
         return result;
     }
 
-    public LiveData<Boolean> deleteGroup() {
-        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
-        groupsApi.deleteGroup(groupId)
-                .onResponse(result::postValue)
-                .onError(error -> {
-                    Log.e("Delete group failed", error);
-                    result.postValue(false);
-                });
-        return result;
-    }
-
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);

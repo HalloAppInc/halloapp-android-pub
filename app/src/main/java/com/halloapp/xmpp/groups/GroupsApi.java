@@ -50,14 +50,6 @@ public class GroupsApi {
         });
     }
 
-    public Observable<Boolean> deleteGroup(@NonNull GroupId groupId) {
-        final DeleteGroupIq requestIq = new DeleteGroupIq(groupId);
-        final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);
-        return observable.map(response -> {
-            return true;
-        });
-    }
-
     public Observable<Boolean> addRemoveMembers(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
         final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);

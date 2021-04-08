@@ -141,7 +141,6 @@ public class GroupInfoActivity extends HalloActivity {
         avatarView.setOnClickListener(openEditGroupListener);
 
         View leaveGroup = findViewById(R.id.leave_group);
-        View deleteGroup = findViewById(R.id.delete_group);
         View nameContainer = findViewById(R.id.name_container);
         View bgContainer = findViewById(R.id.background_container);
         CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
@@ -161,9 +160,6 @@ public class GroupInfoActivity extends HalloActivity {
         });
         nameContainer.setOnClickListener(openEditGroupListener);
 
-        deleteGroup.setOnClickListener(v -> {
-            askDeleteGroup();
-        });
         leaveGroup.setOnClickListener(v -> {
             askLeaveGroup();
         });
@@ -232,22 +228,10 @@ public class GroupInfoActivity extends HalloActivity {
         if (item.getItemId() == R.id.leave) {
             askLeaveGroup();
             return true;
-        } else if (item.getItemId() == R.id.delete) {
-            askDeleteGroup();
-            return true;
         } else if (item.getItemId() == R.id.invite_link) {
             startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void askDeleteGroup() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getBaseContext().getString(R.string.delete_group_confirmation));
-        builder.setCancelable(true);
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteGroup());
-        builder.setNegativeButton(R.string.no, null);
-        builder.show();
     }
 
     private void askLeaveGroup() {
@@ -289,20 +273,6 @@ public class GroupInfoActivity extends HalloActivity {
             leaveGroupDialog.cancel();
             if (success == null || !success) {
                 SnackbarHelper.showWarning(this, R.string.failed_leave_group);
-            } else {
-                setResult(RESULT_CODE_EXIT_CHAT);
-                finish();
-            }
-        });
-    }
-
-    private void deleteGroup() {
-        ProgressDialog deleteGroupDialog = ProgressDialog.show(this, null, getString(R.string.delete_group_in_progress), true);
-        deleteGroupDialog.show();
-        viewModel.deleteGroup().observe(this, success -> {
-            deleteGroupDialog.cancel();
-            if (success == null || !success) {
-                SnackbarHelper.showWarning(this, R.string.failed_delete_group);
             } else {
                 setResult(RESULT_CODE_EXIT_CHAT);
                 finish();
