@@ -117,6 +117,17 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/error_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:textColor="@color/primary_text"
+                tools:text="Test"/>
+
         </FrameLayout>
 
         <LinearLayout

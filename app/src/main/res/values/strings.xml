@@ -213,6 +213,7 @@
     <string name="invite_link_title">Invite link</string>
     <string name="invite_link_summary">Anyone with HalloApp can use this link to join this group.</string>
     <string name="invite_link_failed_to_join">Failed to join the group</string>
+    <string name="invite_link_load_failed">Failed to open group invite link</string>
     <string name="join_group_action">Join group</string>
     <string name="app_expiration_download_button">Download update</string>
     <string name="app_expired_explanation">This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>

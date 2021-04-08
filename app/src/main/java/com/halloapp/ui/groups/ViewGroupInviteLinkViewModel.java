@@ -3,6 +3,7 @@ package com.halloapp.ui.groups;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -19,7 +20,15 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     private final String linkCode;
 
-    private MutableLiveData<GroupInfo> inviteLinkPreview;
+    private MutableLiveData<InviteLinkResult> inviteLinkPreview;
+
+    public static class InviteLinkResult {
+        public final GroupInfo groupInfo;
+
+        private InviteLinkResult(@Nullable GroupInfo groupInfo) {
+            this.groupInfo = groupInfo;
+        }
+    }
 
     public ViewGroupInviteLinkViewModel(@NonNull Application application, @NonNull String linkCode) {
         super(application);
@@ -31,7 +40,7 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
         fetchInvitePreview();
     }
 
-    public LiveData<GroupInfo> getInvitePreview() {
+    public LiveData<InviteLinkResult> getInvitePreview() {
         return inviteLinkPreview;
     }
 
@@ -45,7 +54,9 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     private void fetchInvitePreview() {
         groupsApi.previewGroupInviteLink(linkCode).onResponse(info -> {
-            inviteLinkPreview.postValue(info);
+            inviteLinkPreview.postValue(new InviteLinkResult(info));
+        }).onError(e -> {
+            inviteLinkPreview.postValue(new InviteLinkResult(null));
         });
     }
 

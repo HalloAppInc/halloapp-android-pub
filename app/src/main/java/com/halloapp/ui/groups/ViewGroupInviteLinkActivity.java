@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
@@ -75,6 +76,8 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
         View progressContainer = findViewById(R.id.progress_container);
         TextView progressMessage = findViewById(R.id.progress_text);
 
+        TextView errorMessage = findViewById(R.id.error_msg);
+
         View linkPreviewContainer = findViewById(R.id.link_preview_container);
 
         View joinGroup = findViewById(R.id.join_group);
@@ -88,7 +91,7 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
                     return;
                 }
                 if (result) {
-                    startActivity(ViewGroupFeedActivity.viewFeed(this, viewModel.getInvitePreview().getValue().groupId));
+                    startActivity(ViewGroupFeedActivity.viewFeed(this, viewModel.getInvitePreview().getValue().groupInfo.groupId));
                     finish();
                 } else {
                     CenterToast.show(this, R.string.invite_link_failed_to_join);
@@ -110,29 +113,32 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
 
         initBottomSheetBehavior();
 
-        viewModel.getInvitePreview().observe(this, groupInfo -> {
-            if (groupInfo == null) {
-                linkPreviewContainer.setVisibility(View.GONE);
-                return;
-            }
-            List<UserId> userIds = new ArrayList<>();
-            for (MemberInfo memberInfo :groupInfo.members) {
-                if (memberInfo.userId.isMe()) {
-                    startActivity(ViewGroupFeedActivity.viewFeed(this, groupInfo.groupId));
-                    finish();
-                    return;
+        viewModel.getInvitePreview().observe(this, inviteLinkResult -> {
+            if (inviteLinkResult.groupInfo != null) {
+                GroupInfo groupInfo = inviteLinkResult.groupInfo;
+                List<UserId> userIds = new ArrayList<>();
+                for (MemberInfo memberInfo : groupInfo.members) {
+                    if (memberInfo.userId.isMe()) {
+                        startActivity(ViewGroupFeedActivity.viewFeed(this, groupInfo.groupId));
+                        finish();
+                        return;
+                    }
+                    userIds.add(memberInfo.userId);
                 }
-                userIds.add(memberInfo.userId);
+                joinGroup.setVisibility(View.VISIBLE);
+                linkPreviewContainer.setVisibility(View.VISIBLE);
+                progressContainer.setVisibility(View.INVISIBLE);
+                groupNameTv.setText(groupInfo.name);
+                groupDescriptionTv.setVisibility(TextUtils.isEmpty(groupInfo.description) ? View.GONE : View.VISIBLE);
+                groupDescriptionTv.setText(groupInfo.description);
+                avatarLoader.load(groupAvatarView, groupInfo.groupId, groupInfo.avatar);
+                participantHeader.setText(getResources().getQuantityString(R.plurals.group_feed_members, groupInfo.members.size(), groupInfo.members.size()));
+                contactsAdapter.setContactList(userIds);
+            } else {
+                progressContainer.setVisibility(View.INVISIBLE);
+                errorMessage.setVisibility(View.VISIBLE);
+                errorMessage.setText(R.string.invite_link_load_failed);
             }
-            joinGroup.setVisibility(View.VISIBLE);
-            linkPreviewContainer.setVisibility(View.VISIBLE);
-            progressContainer.setVisibility(View.INVISIBLE);
-            groupNameTv.setText(groupInfo.name);
-            groupDescriptionTv.setVisibility(TextUtils.isEmpty(groupInfo.description) ? View.GONE : View.VISIBLE);
-            groupDescriptionTv.setText(groupInfo.description);
-            avatarLoader.load(groupAvatarView, groupInfo.groupId, groupInfo.avatar);
-            participantHeader.setText(getResources().getQuantityString(R.plurals.group_feed_members, groupInfo.members.size(), groupInfo.members.size()));
-            contactsAdapter.setContactList(userIds);
         });
     }
 
@@ -218,9 +224,15 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
 
     @Nullable
     private String tryParseInviteLink(@Nullable Uri uri) {
-        if (uri == null) {
+        if (uri == null || uri.getHost() == null) {
             return null;
         }
-        return uri.getLastPathSegment();
+        if (uri.getHost().toLowerCase().startsWith("invite.")) {
+            return uri.getLastPathSegment();
+        }
+        if (!"invite".equalsIgnoreCase(uri.getLastPathSegment())) {
+            return null;
+        }
+        return uri.getQueryParameter("g");
     }
 }

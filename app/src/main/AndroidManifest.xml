@@ -177,6 +177,18 @@
                 <data android:scheme="https"
                     android:host="invite.halloapp.com" />
                 </intent-filter>
+
+            <intent-filter android:label="@string/view_group_invite_link_action">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                    android:host="halloapp.com"
+                    android:pathPrefix="/invite"/>
+                <data android:scheme="https"
+                    android:host="halloapp.com"
+                    android:pathPrefix="/invite"/>
+            </intent-filter>
         </activity>
 
         <activity
