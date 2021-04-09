@@ -49,14 +49,14 @@
 
             <ImageView
                 style="@style/PostButtonIcon"
-                android:src="@drawable/ic_feed_message"/>
+                android:src="@drawable/ic_post_reply"/>
 
             <TextView
                 style="@style/PostButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/message" />
+                android:text="@string/reply" />
 
         </LinearLayout>
 
