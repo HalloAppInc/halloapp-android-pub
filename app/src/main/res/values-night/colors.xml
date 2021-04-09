@@ -45,6 +45,8 @@
     <color name="message_state_sent">#66C3DDFF</color>
     <color name="message_state_read">#C3DDFF</color>
 
+    <color name="group_bg_ring_stroke">@color/white_20</color>
+
     <color name="settings_header_background">#353535</color>
     <color name="settings_text_entry_background">@color/white_20</color>
 
