@@ -12,4 +12,10 @@
         android:icon="@drawable/ic_copy"
         android:title="@string/copy"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/delete"
+        app:showAsAction="ifRoom"/>
 </menu>

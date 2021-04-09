@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Outline;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.transition.TransitionManager;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -108,6 +108,7 @@ public class ChatActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_SELECTED_MESSAGE_ROW_ID = "selected_message_row_id";
+    public static final String EXTRA_SELECTED_MESSAGE_SENDER_ID = "selected_message_sender_id";
     public static final String EXTRA_COPY_TEXT = "copy_text";
     public static final String EXTRA_OPEN_KEYBOARD = "open_keyboard";
 
@@ -153,6 +154,7 @@ public class ChatActivity extends HalloActivity {
     private Message replyMessage;
     private int replyPostMediaIndex;
     private int replyMessageMediaIndex = 0;
+    private UserId selectedMessageSenderId;
     private long selectedMessageRowId = -1;
     private long highlightedMessageRowId = -1;
     private String copyText;
@@ -299,6 +301,7 @@ public class ChatActivity extends HalloActivity {
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
             selectedMessageRowId = savedInstanceState.getLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
+            selectedMessageSenderId = savedInstanceState.getParcelable(EXTRA_SELECTED_MESSAGE_SENDER_ID);
             copyText = savedInstanceState.getString(EXTRA_COPY_TEXT);
             if (selectedMessageRowId != -1) {
                 updateActionMode(copyText);
@@ -702,8 +705,11 @@ public class ChatActivity extends HalloActivity {
             outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }
 
-        outState.putLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
-        outState.putString(EXTRA_COPY_TEXT, copyText);
+        if (selectedMessageSenderId != null) {
+            outState.putParcelable(EXTRA_SELECTED_MESSAGE_SENDER_ID, selectedMessageSenderId);
+            outState.putLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
+            outState.putString(EXTRA_COPY_TEXT, copyText);
+        }
     }
 
     @Override
@@ -1161,6 +1167,34 @@ public class ChatActivity extends HalloActivity {
                             actionMode.finish();
                         }
                         return true;
+                    } else if (item.getItemId() == R.id.delete) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                        builder.setMessage(R.string.delete_message_confirmation);
+                        builder.setNegativeButton(R.string.cancel, null);
+                        DialogInterface.OnClickListener listener = (dialog, which) -> {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE: {
+                                    ContentDb.getInstance().deleteMessage(selectedMessageRowId);
+                                    if (actionMode != null) {
+                                        actionMode.finish();
+                                    }
+                                    break;
+                                }
+                                case DialogInterface.BUTTON_NEUTRAL: {
+                                    ContentDb.getInstance().retractMessage(selectedMessageRowId, null);
+                                    if (actionMode != null) {
+                                        actionMode.finish();
+                                    }
+                                    break;
+                                }
+                            }
+                        };
+                        builder.setPositiveButton(R.string.delete_message_option, listener);
+                        if (selectedMessageSenderId != null && selectedMessageSenderId.isMe()) {
+                            builder.setNeutralButton(R.string.retract_message_option, listener);
+                        }
+                        builder.create().show();
+                        return true;
                     }
                     return true;
                 }
@@ -1180,8 +1214,9 @@ public class ChatActivity extends HalloActivity {
         private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
         @Override
-        public void onItemLongClicked(String text, long messageRowId) {
-            selectedMessageRowId = messageRowId;
+        public void onItemLongClicked(String text, @NonNull Message message) {
+            selectedMessageRowId = message.rowId;
+            selectedMessageSenderId = message.senderUserId;
             updateActionMode(text);
             adapter.notifyDataSetChanged();
         }

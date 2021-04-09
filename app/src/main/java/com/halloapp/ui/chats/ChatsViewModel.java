@@ -83,6 +83,10 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
+        public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+            invalidateMessage(chatId, senderUserId, messageId);
+        }
+
         public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
             invalidateMessage(chatId, senderUserId, messageId);
         }

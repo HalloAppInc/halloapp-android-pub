@@ -156,6 +156,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyMessageRetracted(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String msgId, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onMessageRevoked(chatId, userId, msgId, ackId);
+            }
+        }
+    }
+
     public void notifyIncomingMessageReceived(@NonNull Message message) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

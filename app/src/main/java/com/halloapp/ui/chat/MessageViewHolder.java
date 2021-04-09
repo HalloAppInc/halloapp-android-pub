@@ -42,7 +42,6 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.xmpp.Connection;
@@ -81,7 +80,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
-        abstract void onItemLongClicked(String text, long messageRowId);
+        abstract void onItemLongClicked(String text, @NonNull Message message);
         abstract long getSelectedMessageRowId();
         abstract long getHighlightedMessageRowId();
         abstract ReplyLoader getReplyLoader();
@@ -134,7 +133,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         if (textView != null) {
             textView.setOnLongClickListener(v -> {
                 if (parent.getSelectedMessageRowId() == -1) {
-                    parent.onItemLongClicked(textView.getText().toString(), message.rowId);
+                    parent.onItemLongClicked(textView.getText().toString(), message);
                 }
                 return true;
             });
@@ -143,7 +142,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         if (contentView != null) {
             contentView.setOnLongClickListener(v -> {
                 if (parent.getSelectedMessageRowId() == -1 && textView != null) {
-                    parent.onItemLongClicked(textView.getText().toString(), message.rowId);
+                    parent.onItemLongClicked(textView.getText().toString(), message);
                 }
                 return true;
             });

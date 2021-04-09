@@ -178,6 +178,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onMessageDeleted(chatId, senderUserId, messageId);
+            }
+        }
+    }
+
     void notifyChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

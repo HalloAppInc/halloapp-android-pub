@@ -363,6 +363,13 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {
+        contentDb.retractMessage(chatId, senderUserId, messageId, () -> {
+            connection.sendAck(ackId);
+        });
+    }
+
+    @Override
     public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {
         if (message.count != null) {
             int count = message.count;

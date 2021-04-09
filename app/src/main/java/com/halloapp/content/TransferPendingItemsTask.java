@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.FileStore;
 import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.id.UserId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
@@ -63,7 +64,11 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                     contentDb.setMessageTransferred(message.chatId, message.senderUserId, message.id);
                 }
             } else /*post.isOutgoing()*/ {
-                if (message.media.isEmpty()) {
+                if (message.isRetracted()) {
+                    if (message.chatId instanceof UserId) {
+                        connection.retractMessage((UserId) message.chatId, message.id);
+                    }
+                } else if (message.media.isEmpty()) {
                     encryptedSessionManager.sendMessage(message, false);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));

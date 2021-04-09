@@ -18,7 +18,6 @@ import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
-import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
 
@@ -81,6 +80,7 @@ public abstract class Connection {
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
         public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId) {}
         public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
+        public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
     }
 
     public abstract void connect();
@@ -132,6 +132,8 @@ public abstract class Connection {
     public abstract void retractGroupPost(final @NonNull GroupId groupId, @NonNull String postId);
 
     public abstract void sendComment(final @NonNull Comment comment);
+
+    public abstract void retractMessage(final @NonNull UserId chatUserId, final @NonNull String messageId);
 
     public abstract void retractComment(final @Nullable UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
 

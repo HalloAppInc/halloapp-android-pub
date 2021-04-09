@@ -69,6 +69,7 @@ public class ContentDb {
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onGroupChatAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
@@ -96,6 +97,7 @@ public class ContentDb {
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onGroupChatAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
@@ -669,6 +671,38 @@ public class ContentDb {
             }
             if (completionRunnable != null) {
                 completionRunnable.run();
+            }
+        });
+    }
+
+    public void deleteMessage(long rowId) {
+        databaseWriteExecutor.execute(() -> {
+            Message message = messagesDb.getMessage(rowId);
+            if (message != null) {
+                messagesDb.deleteMessage(rowId);
+                observers.notifyMessageDeleted(message.chatId, message.senderUserId, message.id);
+            }
+        });
+    }
+
+    public void retractMessage(long rowId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            Message msg = messagesDb.getMessage(rowId);
+            if (msg != null) {
+                retractMessage(msg, completionRunnable);
+            } else {
+                Log.e("ContentDb/retractMessage no message found for row id");
+            }
+        });
+    }
+
+    public void retractMessage(@NonNull ChatId chatId, @NonNull UserId senderId, @NonNull String msgId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            Message msg = messagesDb.getMessage(chatId, senderId, msgId);
+            if (msg != null) {
+                retractMessage(msg, completionRunnable);
+            } else {
+                Log.e("ContentDb/retractMessage no message found for row id");
             }
         });
     }

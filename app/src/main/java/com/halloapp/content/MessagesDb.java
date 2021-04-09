@@ -721,6 +721,13 @@ class MessagesDb {
     }
 
     @WorkerThread
+    void deleteMessage(long rowId) {
+        Log.i("MessagesDb.deleteMessage: messageId=" + rowId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(MessagesTable.TABLE_NAME, MessagesTable._ID + "=?", new String[]{Long.toString(rowId)});
+    }
+
+    @WorkerThread
     void retractMessage(@NonNull Message message) {
         Log.i("ContentDb.retractMessage: messageId=" + message.id);
         final ContentValues values = new ContentValues();

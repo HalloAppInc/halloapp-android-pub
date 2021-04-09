@@ -33,6 +33,7 @@ import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
 import com.halloapp.proto.server.Avatar;
+import com.halloapp.proto.server.ChatRetract;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.proto.server.ChatState;
 import com.halloapp.proto.server.ClientMode;
@@ -538,6 +539,26 @@ public class NewConnection extends Connection {
                 .onError(e -> Log.e("connection: cannot retract comment", e));
     }
 
+    public void retractMessage(@NonNull UserId chatUserId, @NonNull String messageId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot send message, no connection");
+                return;
+            }
+
+            String id = RandomId.create();
+
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setToUid(Long.parseLong(chatUserId.rawId()))
+                    .setType(Msg.Type.CHAT)
+                    .setChatRetract(ChatRetract.newBuilder().setId(messageId).build())
+                    .build();
+            ackHandlers.put(messageId, () -> connectionObservers.notifyOutgoingMessageSent(chatUserId, messageId));
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+        });
+    }
+
     @Override
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
@@ -938,6 +959,13 @@ public class NewConnection extends Connection {
                         }
                     });
 
+                    handled = true;
+                } else if (msg.hasChatRetract()) {
+                    Log.i("connection: got chat retract " + ProtoPrinter.toString(msg));
+                    ChatRetract retractStanza = msg.getChatRetract();
+                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+                    String msgId = retractStanza.getId();
+                    connectionObservers.notifyMessageRetracted(fromUserId, fromUserId, msgId, msg.getId());
                     handled = true;
                 } else if (msg.hasGroupChat()) {
                     Log.i("connection: got group chat " + ProtoPrinter.toString(msg));

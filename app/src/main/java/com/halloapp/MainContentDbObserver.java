@@ -148,9 +148,15 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         if (senderUserId.isMe()) {
-            // TODO (ds): implement
-            //connection.retractMessage(chatId, messageId);
+            if (chatId instanceof UserId) {
+                connection.retractMessage((UserId) chatId, messageId);
+            }
         }
+    }
+
+    @Override
+    public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+
     }
 
     @Override
