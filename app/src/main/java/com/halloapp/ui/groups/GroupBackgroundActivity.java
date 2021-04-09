@@ -55,6 +55,8 @@ public class GroupBackgroundActivity extends HalloActivity {
 
         View container = findViewById(R.id.container);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.group_bg_picker_background));
 
         RecyclerView rv = findViewById(R.id.bg_colors);
