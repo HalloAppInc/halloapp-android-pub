@@ -43,12 +43,17 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 public class RegistrationRequestActivity extends HalloActivity {
 
     public static final String EXTRA_RE_VERIFY = "reverify";
 
     private static final int REQUEST_CODE_VERIFICATION = 1;
+    private static final long INSTALL_REFERRER_TIMEOUT_MS = 2000;
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
@@ -229,6 +234,21 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         void requestRegistration(@NonNull String phone, @Nullable String name) {
             InstallReferrerClient referrerClient = InstallReferrerClient.newBuilder(AppContext.getInstance().get().getApplicationContext()).build();
+
+            AtomicBoolean registerCalled = new AtomicBoolean(false);
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    if (registerCalled.compareAndSet(false, true)) {
+                        Log.i("RegistrationRequestViewModel InstallReferrer took too long");
+                        registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, null));
+                        referrerClient.endConnection();
+                    }
+                }
+            };
+            timer.schedule(timerTask, INSTALL_REFERRER_TIMEOUT_MS);
+
             referrerClient.startConnection(new InstallReferrerStateListener() {
                 @Override
                 public void onInstallReferrerSetupFinished(int responseCode) {
@@ -256,8 +276,10 @@ public class RegistrationRequestActivity extends HalloActivity {
                     }
                     final String code = inviteCode;
                     bgWorkers.execute(() -> {
-                        registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code));
-                        referrerClient.endConnection();
+                        if (registerCalled.compareAndSet(false, true)) {
+                            registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code));
+                            referrerClient.endConnection();
+                        }
                     });
                 }
 
