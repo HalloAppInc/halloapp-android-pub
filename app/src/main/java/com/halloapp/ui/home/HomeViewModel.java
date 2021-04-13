@@ -1,5 +1,6 @@
 package com.halloapp.ui.home;
 
+import android.Manifest;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +13,7 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
@@ -34,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
@@ -42,6 +46,8 @@ public class HomeViewModel extends AndroidViewModel {
     final ComputableLiveData<Boolean> showFeedNux;
     final ComputableLiveData<Boolean> showActivityCenterNux;
     final ComputableLiveData<Boolean> showWelcomeNux;
+
+    final MutableLiveData<Boolean> showContactPermsNag;
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
@@ -161,6 +167,21 @@ public class HomeViewModel extends AndroidViewModel {
                 return !preferences.getShowedWelcomeNux();
             }
         };
+
+        showContactPermsNag = new MutableLiveData<>(false);
+
+        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        if (!EasyPermissions.hasPermissions(application, perms)) {
+            showContactPermsNag.setValue(true);
+        }
+    }
+
+    public LiveData<Boolean> showContactsPermissionsNag() {
+        return showContactPermsNag;
+    }
+
+    public void hideContactsNag() {
+        showContactPermsNag.setValue(false);
     }
 
     public void closeFeedNux() {

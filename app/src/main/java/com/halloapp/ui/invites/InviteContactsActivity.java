@@ -39,7 +39,9 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
@@ -221,24 +223,13 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            //noinspection SwitchStatementWithTooFewBranches
-            switch (requestCode) {
-                case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                    new AppSettingsDialog.Builder(this)
-                            .setRationale(getString(R.string.contacts_permission_rationale_denied))
-                            .build().show();
-                    break;
-                }
-            }
-        }
+
     }
 
     private void loadContacts() {
         final String[] perms = {Manifest.permission.READ_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
-                    REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
+            ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
         } else {
             viewModel.refreshContacts();
         }

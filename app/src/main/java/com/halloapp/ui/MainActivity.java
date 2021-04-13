@@ -43,6 +43,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
@@ -79,6 +80,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
     private static final int REQUEST_CODE_SELECT_CONTACT = 3;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT = 4;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP = 5;
+
 
     private final ServerProps serverProps = ServerProps.getInstance();
 
@@ -183,12 +187,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else {
-                final String[] perms = {Manifest.permission.READ_CONTACTS};
-                if (!EasyPermissions.hasPermissions(this, perms)) {
-                    EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
-                            REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
-                }
             }
             progress.setVisibility(View.GONE);
         });
@@ -205,6 +203,14 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
+    private void startNewChat() {
+        startActivityForResult(new Intent(getBaseContext(), ContactsActivity.class), REQUEST_CODE_SELECT_CONTACT);
+    }
+
+    private void createNewGroup() {
+        startActivity(GroupCreationPickerActivity.newIntent(MainActivity.this, null));
+    }
+
     private void updateFab(@IdRes int id) {
         fabView.clearActionItems();
         if (id == R.id.navigation_messages) {
@@ -214,7 +220,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
                 public boolean onMainActionSelected() {
-                    startActivityForResult(new Intent(getBaseContext(), ContactsActivity.class), REQUEST_CODE_SELECT_CONTACT);
+                    final String[] perms = {Manifest.permission.READ_CONTACTS};
+                    if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
+                        ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT);
+                    } else {
+                        startNewChat();
+                    }
                     return true;
                 }
 
@@ -230,7 +241,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
                 public boolean onMainActionSelected() {
-                    startActivity(GroupCreationPickerActivity.newIntent(MainActivity.this, null));
+                    final String[] perms = {Manifest.permission.READ_CONTACTS};
+                    if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
+                        ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP);
+                    } else {
+                        createNewGroup();
+                    }
                     return true;
                 }
 
@@ -355,24 +371,20 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 ContactsSync.getInstance(this).startContactsSync(true);
                 break;
             }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT: {
+                startNewChat();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP: {
+                createNewGroup();
+                break;
+            }
         }
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        // Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
-        // This will display a dialog directing them to enable the permission in app settings.
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            //noinspection SwitchStatementWithTooFewBranches
-            switch (requestCode) {
-                case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                    new AppSettingsDialog.Builder(this)
-                            .setRationale(getString(R.string.contacts_permission_rationale_denied))
-                            .build().show();
-                    break;
-                }
-            }
-        }
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.halloapp.ui.settings;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -20,13 +21,20 @@ import com.halloapp.R;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
-public class SettingsPrivacy extends HalloActivity {
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class SettingsPrivacy extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,27 @@ public class SettingsPrivacy extends HalloActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+
     }
 
     public static class SettingsFragment extends HalloPreferenceFragment {

@@ -62,6 +62,9 @@
     <string name="invalid_phone_number">Invalid phone number</string>
     <string name="share_option_post">Post</string>
     <string name="share_option_message">Message</string>
+    <string name="contact_permissions_dialog_title">Contacts</string>
+    <string name="not_now">Not now</string>
+    <string name="continue_button">Continue</string>
     <plurals name="time_diff_minutes">
         <item quantity="one">%dm</item>
         <item quantity="other">%dm</item>
@@ -106,6 +109,10 @@
     <string name="comments">Comments</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
+    <string name="contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a></string>
+    <string name="contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a>. Tap Settings > Permissions, and turn Contacts on</string>
+    <string name="home_contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts.</string>
+    <string name="home_contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. Tap Settings > Permissions, and turn Contacts on</string>
     <string name="reply_to_self">Reply to myself</string>
     <string name="reply_to_contact">Reply to %s</string>
     <string name="reply_original_not_found">Original message not found</string>

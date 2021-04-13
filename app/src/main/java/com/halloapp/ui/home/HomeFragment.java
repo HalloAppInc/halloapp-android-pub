@@ -1,8 +1,11 @@
 package com.halloapp.ui.home;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.props.ServerProps;
@@ -36,7 +42,11 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class HomeFragment extends PostsFragment implements MainNavFragment {
+
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     private HomeViewModel viewModel;
     private BadgedDrawable notificationDrawable;
@@ -86,6 +96,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         final RecyclerView postsView = root.findViewById(R.id.posts);
         final View emptyView = root.findViewById(android.R.id.empty);
         final View newPostsView = root.findViewById(R.id.new_posts);
+
+        final View contactPermsNag = root.findViewById(R.id.contact_permissions_nag);
+        final Button contactsContinue = contactPermsNag.findViewById(R.id.continue_btn);
+        final View contactsNotNow = contactPermsNag.findViewById(R.id.not_now);
+        final TextView contactsInfo = contactPermsNag.findViewById(R.id.contact_permissions_info);
 
         nuxActivityCenterContainer = root.findViewById(R.id.activity_center_nux_container);
         welcomeNuxContainer = root.findViewById(R.id.welcome_nux_container);
@@ -201,6 +216,40 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
                     nuxWelcome = null;
                 }
             });
+        }
+
+        viewModel.showContactsPermissionsNag().observe(getViewLifecycleOwner(), showNag -> {
+            if (showNag == null || !showNag) {
+                contactPermsNag.setVisibility(View.GONE);
+            } else {
+                contactPermsNag.setVisibility(View.VISIBLE);
+            }
+        });
+
+        contactsNotNow.setOnClickListener(v -> {
+            viewModel.hideContactsNag();
+        });
+
+        contactsContinue.setOnClickListener(v -> {
+            viewModel.hideContactsNag();
+
+            if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        .setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
+                startActivity(intent);
+            } else {
+                // You can directly ask for the permission.
+                final String[] perms = {Manifest.permission.READ_CONTACTS};
+                requestPermissions(perms, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+            }
+        });
+
+        if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
+            contactsInfo.setText(R.string.home_contact_permissions_nag_permanently_blocked);
+            contactsContinue.setText(R.string.settings);
+        } else {
+            contactsInfo.setText(R.string.home_contact_permissions_nag);
+            contactsContinue.setText(R.string.continue_button);
         }
 
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()) {
