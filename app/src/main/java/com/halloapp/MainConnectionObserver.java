@@ -290,6 +290,7 @@ public class MainConnectionObserver extends Connection.Observer {
                          encryptedKeyStore.setPeerResponded(peerUserId, true);
                      } catch (CryptoException e) {
                          Log.e("Failed to reset session on message rerequest", e);
+                         Log.sendErrorReport("Rerequest reset failed");
                      }
                  }
              }
