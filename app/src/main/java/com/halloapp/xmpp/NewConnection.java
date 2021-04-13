@@ -357,7 +357,6 @@ public class NewConnection extends Connection {
                 Log.e("connection: update presence: no connection");
                 return;
             }
-            // TODO(jack): Uniquely-generated IDs without using Smack
             PresenceStanza stanza = new PresenceStanza(null, available ? "available" : "away");
             Packet packet = Packet.newBuilder().setPresence(stanza.toProto()).build();
             sendPacket(packet);

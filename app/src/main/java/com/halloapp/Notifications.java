@@ -129,8 +129,6 @@ public class Notifications {
             notificationManager.createNotificationChannel(messageNotificationsChannel);
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
             notificationManager.createNotificationChannel(inviteNotificationsChannel);
-
-            notificationManager.deleteNotificationChannel("new_post_notification"); // TODO (ds): remove
         }
     }
 

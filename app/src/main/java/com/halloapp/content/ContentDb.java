@@ -938,52 +938,6 @@ public class ContentDb {
         Log.i("ContentDb.groupmembership fix complete");
     }
 
-    // TODO (ds): remove
-    public void migrateUserIds(Collection<Contact> contacts) {
-        databaseWriteExecutor.execute(() -> {
-            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-            db.beginTransaction();
-            for (com.halloapp.contacts.Contact contact : contacts) {
-                if (contact.userId == null || TextUtils.isEmpty(contact.userId.rawId()) || TextUtils.isEmpty(contact.normalizedPhone)) {
-                    continue;
-                }
-                final String newId = Preconditions.checkNotNull(Preconditions.checkNotNull(contact.userId).rawId());
-                final String oldId = Preconditions.checkNotNull(contact.normalizedPhone);
-
-                ContentValues values = new ContentValues();
-                values.put(MessagesTable.COLUMN_CHAT_ID, newId);
-                db.update(MessagesTable.TABLE_NAME, values, MessagesTable.COLUMN_CHAT_ID + "=?", new String[]{oldId});
-
-                values.clear();
-                values.put(MessagesTable.COLUMN_SENDER_USER_ID, newId);
-                db.update(MessagesTable.TABLE_NAME, values, MessagesTable.COLUMN_SENDER_USER_ID + "=?", new String[]{oldId});
-
-                values.clear();
-                values.put(ChatsTable.COLUMN_CHAT_ID, newId);
-                try {
-                    db.update(ChatsTable.TABLE_NAME, values, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{oldId});
-                } catch (SQLiteConstraintException ignore) {}
-
-                values.clear();
-                values.put(PostsTable.COLUMN_SENDER_USER_ID, newId);
-                db.update(PostsTable.TABLE_NAME, values, PostsTable.COLUMN_SENDER_USER_ID + "=?", new String[]{oldId});
-
-                values.clear();
-                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, newId);
-                db.update(CommentsTable.TABLE_NAME, values, CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=?", new String[]{oldId});
-
-                values.clear();
-                values.put(SeenTable.COLUMN_SEEN_BY_USER_ID, newId);
-                db.update(SeenTable.TABLE_NAME, values, SeenTable.COLUMN_SEEN_BY_USER_ID + "=?", new String[]{oldId});
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            observers.notifyChatSeen(UserId.ME, new ArrayList<>());
-            observers.notifyFeedCleanup();
-        });
-    }
-
     public void deleteDb() {
         databaseHelper.deleteDb();
     }

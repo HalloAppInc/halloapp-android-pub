@@ -170,7 +170,6 @@ public class GroupsApi {
         final LeaveGroupIq requestIq = new LeaveGroupIq(groupId);
         final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
-            // TODO(jack): mark group as left somehow
             return true;
         });
     }

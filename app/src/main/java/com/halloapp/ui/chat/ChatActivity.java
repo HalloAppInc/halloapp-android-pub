@@ -964,7 +964,6 @@ public class ChatActivity extends HalloActivity {
     }
 
     private void pickMedia() {
-        // TODO (ds): uncomment when implemented
         final Intent intent = new Intent(this, MediaPickerActivity.class);
         intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_SEND);
         intent.putExtra(MediaPickerActivity.EXTRA_CHAT_ID, chatId);

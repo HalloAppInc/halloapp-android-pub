@@ -338,14 +338,14 @@ public class PostSeenByActivity extends HalloActivity {
                     getMenuInflater().inflate(R.menu.contact_menu, menu.getMenu());
                     menu.setOnMenuItemClickListener(item -> {
                         if (item.getItemId() == R.id.block) {
-                            SnackbarHelper.showInfo(itemView, R.string.block); // TODO (ds): add contact blocking
+                            SnackbarHelper.showInfo(itemView, R.string.block);
                             return true;
                         }
                         return false;
                     });
                     menu.show();
                 });
-                menuView.setVisibility(View.GONE); // TODO (ds): uncomment when blocking is implemented
+                menuView.setVisibility(View.GONE);
             }
 
             @Override

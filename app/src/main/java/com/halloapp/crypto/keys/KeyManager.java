@@ -226,7 +226,7 @@ public class KeyManager {
             updateOutboundChainAndRootKey(peerUserId, newEphemeralKey, ephemeralKey);
 
             encryptedKeyStore.setOutboundPreviousChainLength(peerUserId, encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId));
-            encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, 0); // TODO(jack): synchronization (per user would work?)
+            encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, 0);
         }
 
         return messageKey;

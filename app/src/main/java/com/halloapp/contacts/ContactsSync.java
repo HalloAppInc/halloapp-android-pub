@@ -337,8 +337,6 @@ public class ContactsSync {
                     nameMap.put(contact.userId, contact.halloName);
                 }
                 ContactsDb.getInstance().updateUserNames(nameMap);
-                // TODO(ds): remove
-                ContentDb.getInstance().migrateUserIds(updatedContacts);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("ContactsSync.performContactSync: failed to update server data", e);
                 return ListenableWorker.Result.failure();
