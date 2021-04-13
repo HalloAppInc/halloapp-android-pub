@@ -220,12 +220,13 @@ public class EncryptedSessionManager {
     }
 
     private SessionSetupInfo setUpSession(UserId peerUserId) throws CryptoException {
-        if (encryptedKeyStore.getPeerResponded(peerUserId)) {
+        boolean missingOutboundKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId) == -1;
+
+        if (!missingOutboundKeyId && encryptedKeyStore.getPeerResponded(peerUserId)) {
             Log.d("EncryptedSessionManager.setUpSession: peer already responded!");
             return null;
         }
 
-        boolean missingOutboundKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId) == -1;
         if (missingOutboundKeyId || !encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
             // TODO(jack): Reconsider once encryption is fully deployed
             long now = System.currentTimeMillis();
