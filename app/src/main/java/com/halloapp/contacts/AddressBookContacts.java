@@ -83,7 +83,7 @@ public class AddressBookContacts {
                 Log.e("AddressBookContacts/fetchWAnumbers: no contacts cursor");
                 return null;
             }
-            final int phoneColumnIndex = contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            final int phoneColumnIndex = contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER);
             while (contactsCursor.moveToNext()) {
                 final String phone = contactsCursor.getString(phoneColumnIndex);
                 if (!TextUtils.isEmpty(phone)) {
