@@ -225,7 +225,8 @@ public class EncryptedSessionManager {
             return null;
         }
 
-        if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
+        boolean missingOutboundKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId) == -1;
+        if (missingOutboundKeyId || !encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
             // TODO(jack): Reconsider once encryption is fully deployed
             long now = System.currentTimeMillis();
             if (now - encryptedKeyStore.getLastDownloadAttempt(peerUserId) < MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS) {
