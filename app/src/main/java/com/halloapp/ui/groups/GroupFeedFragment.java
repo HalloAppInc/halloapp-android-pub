@@ -100,6 +100,9 @@ public class GroupFeedFragment extends PostsFragment {
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         viewModel.chat.getLiveData().observe(getViewLifecycleOwner(), chat -> {
+            if (chat == null) {
+                return;
+            }
             GroupTheme theme = GroupTheme.getTheme(chat.theme);
             root.setBackgroundColor(ContextCompat.getColor(requireContext(), theme.bgColor));
             adapter.applyTheme(chat.theme);
