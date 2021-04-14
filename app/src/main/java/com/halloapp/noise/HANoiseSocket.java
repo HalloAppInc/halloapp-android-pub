@@ -87,7 +87,7 @@ public class HANoiseSocket extends Socket {
         } else {
             Log.i("NoiseSocket/authenticate trying IK handshake");
             try {
-                performIKHandshake(authRequest, noiseKey, serverStaticKey.getKeyMaterial());
+                performIKHandshake(authRequest, noiseKey, serverStaticKey);
             } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException | CryptoException e) {
                 throw new NoiseException(e);
             }
@@ -102,7 +102,7 @@ public class HANoiseSocket extends Socket {
         out.write('0');
     }
 
-    private void performIKHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair, byte[] remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
+    private void performIKHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair, PublicEdECKey remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
         sendHAHandshakeSignature();
 
         handshakeState = new HandshakeState(IK_PROTOCOL, HandshakeState.INITIATOR);
@@ -110,7 +110,7 @@ public class HANoiseSocket extends Socket {
         PrivateEdECKey priv = new PrivateEdECKey(Arrays.copyOfRange(localKeypair, 32, 96));
         byte[] convertedKey = CryptoUtils.convertPrivateEdToX(priv).getKeyMaterial();
         handshakeState.getLocalKeyPair().setPrivateKey(convertedKey, 0);
-        handshakeState.getRemotePublicKey().setPublicKey(remoteStaticKey, 0);
+        handshakeState.getRemotePublicKey().setPublicKey(remoteStaticKey.getKeyMaterial(), 0);
 
         handshakeState.start();
 
@@ -148,7 +148,7 @@ public class HANoiseSocket extends Socket {
         if (fallback) {
             me.setServerStaticKey(getServerStaticKey());
             // TODO: clarkc remove after we figure out fallback issue
-            Log.e("NoiseSocket/xx_fallback triggered. Old: " + Base64.encodeToString(remoteStaticKey, Base64.NO_WRAP) + " New: " + Base64.encodeToString(getServerStaticKey(), Base64.NO_WRAP));
+            Log.e("NoiseSocket/xx_fallback triggered. Old: " + Base64.encodeToString(remoteStaticKey.getKeyMaterial(), Base64.NO_WRAP) + " New: " + Base64.encodeToString(getServerStaticKey(), Base64.NO_WRAP));
         }
     }
 
