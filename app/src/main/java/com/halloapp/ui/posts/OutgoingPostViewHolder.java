@@ -21,6 +21,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
     private static final int MAX_SEEN_BY_AVATARS = 3;
 
+    private final View postActionsSeparator;
     private final View commentsIndicator;
     private final AvatarsLayout seenIndicator;
     private final View seenButton;
@@ -28,6 +29,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
     public OutgoingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
 
+        postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
         seenButton = itemView.findViewById(R.id.seen_button);
@@ -83,8 +85,10 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             seenButton.setVisibility(View.VISIBLE);
         }
         if (TextUtils.isEmpty(post.text)) {
+            postActionsSeparator.setVisibility(View.GONE);
             footerSpacing.setVisibility(View.VISIBLE);
         } else {
+            postActionsSeparator.setVisibility(View.VISIBLE);
             footerSpacing.setVisibility(View.GONE);
         }
 

@@ -21,12 +21,14 @@ import com.halloapp.ui.chat.ChatActivity;
 
 public class IncomingPostViewHolder extends PostViewHolder {
 
+    private final View postActionsSeparator;
     private final View commentsIndicator;
     private final View message;
 
     public IncomingPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
 
+        postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
         message = itemView.findViewById(R.id.message);
 
@@ -72,8 +74,10 @@ public class IncomingPostViewHolder extends PostViewHolder {
         }
 
         if (TextUtils.isEmpty(post.text)) {
+            postActionsSeparator.setVisibility(View.GONE);
             footerSpacing.setVisibility(View.GONE);
         } else {
+            postActionsSeparator.setVisibility(View.VISIBLE);
             footerSpacing.setVisibility(View.VISIBLE);
         }
     }
