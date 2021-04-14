@@ -78,6 +78,7 @@ public class GroupInfoActivity extends HalloActivity {
     private RecyclerView membersView;
     private ImageView avatarView;
     private View addMembersView;
+    private View leaveGroup;
 
     private MenuItem deleteMenuItem;
     private MenuItem leaveMenuItem;
@@ -135,12 +136,14 @@ public class GroupInfoActivity extends HalloActivity {
         View.OnClickListener openEditGroupListener = v -> {
             if (getChatIsActive()) {
                 startActivity(EditGroupActivity.openEditGroup(this, groupId));
+            } else {
+                SnackbarHelper.showWarning(avatarView, R.string.failed_no_longer_member);
             }
         };
         groupNameView = findViewById(R.id.name);
         avatarView.setOnClickListener(openEditGroupListener);
 
-        View leaveGroup = findViewById(R.id.leave_group);
+        leaveGroup = findViewById(R.id.leave_group);
         View nameContainer = findViewById(R.id.name_container);
         View bgContainer = findViewById(R.id.background_container);
         CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
@@ -155,8 +158,12 @@ public class GroupInfoActivity extends HalloActivity {
         }
 
         bgContainer.setOnClickListener(v -> {
-            Intent i = GroupBackgroundActivity.newIntent(this, groupId);
-            startActivity(i);
+            if (getChatIsActive()) {
+                Intent i = GroupBackgroundActivity.newIntent(this, groupId);
+                startActivity(i);
+            } else {
+                SnackbarHelper.showWarning(bgContainer, R.string.failed_no_longer_member);
+            }
         });
         nameContainer.setOnClickListener(openEditGroupListener);
 
@@ -193,6 +200,9 @@ public class GroupInfoActivity extends HalloActivity {
         }
         if (leaveMenuItem != null) {
             leaveMenuItem.setVisible(chatIsActive);
+        }
+        if (leaveGroup != null) {
+            leaveGroup.setVisibility(chatIsActive ? View.VISIBLE : View.GONE);
         }
     }
 

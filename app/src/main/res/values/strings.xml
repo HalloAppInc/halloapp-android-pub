@@ -439,6 +439,7 @@
         <item quantity="other">Leaving groups…</item>
     </plurals>
     <string name="failed_leave_group">Failed to leave group, try again later</string>
+    <string name="failed_no_longer_member">You are no longer a member of this group</string>
     <string name="delete_group">Delete group</string>
     <string name="delete_group_confirmation">Would you like to delete this group?</string>
     <string name="delete_group_in_progress">Deleting group…</string>
