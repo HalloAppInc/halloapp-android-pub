@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
@@ -33,6 +34,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.Background;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -303,6 +305,9 @@ class MessagesDb {
             chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
             chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
             chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
+            if (groupInfo.background != null) {
+                chatValues.put(ChatsTable.COLUMN_THEME, groupInfo.background.getTheme());
+            }
             db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
 
             db.setTransactionSuccessful();
@@ -411,7 +416,7 @@ class MessagesDb {
                 groupExists = cursor.getCount() > 0;
             }
             if (!groupExists) {
-                addGroupChat(new GroupInfo(groupId, groupName, null, avatarId, new ArrayList<>()));
+                addGroupChat(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>()));
                 GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
             }
 

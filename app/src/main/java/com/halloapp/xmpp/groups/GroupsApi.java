@@ -3,10 +3,12 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
@@ -46,7 +48,7 @@ public class GroupsApi {
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
+            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos);
         });
     }
 
@@ -86,7 +88,7 @@ public class GroupsApi {
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, memberInfos);
+            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos);
         });
     }
 
@@ -128,7 +130,12 @@ public class GroupsApi {
             for (GroupMember g : groupMembers) {
                 membersList.add(MemberInfo.fromGroupMember(g));
             }
-            return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), membersList);
+            Background b = null;
+            try {
+                b = Background.parseFrom(groupStanza.getBackgroundBytes());
+            } catch (InvalidProtocolBufferException e) {
+            }
+            return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, membersList);
         });
     }
 

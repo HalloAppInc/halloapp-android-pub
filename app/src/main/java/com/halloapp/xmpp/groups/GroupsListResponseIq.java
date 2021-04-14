@@ -1,7 +1,9 @@
 package com.halloapp.xmpp.groups;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.GroupsStanza;
 import com.halloapp.proto.server.Iq;
@@ -26,7 +28,12 @@ public class GroupsListResponseIq extends HalloIq {
     public static GroupsListResponseIq fromProto(GroupsStanza groupsStanza) {
         List<GroupInfo> groupInfos = new ArrayList<>();
         for (GroupStanza groupStanza : groupsStanza.getGroupStanzasList()) {
-            groupInfos.add(new GroupInfo(new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), new ArrayList<>()));
+            Background b = null;
+            try {
+                b = Background.parseFrom(groupStanza.getBackgroundBytes());
+            } catch (InvalidProtocolBufferException e) {
+            }
+            groupInfos.add(new GroupInfo(new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, new ArrayList<>()));
         }
         return new GroupsListResponseIq(groupInfos);
     }

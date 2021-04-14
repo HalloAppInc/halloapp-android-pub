@@ -13,6 +13,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -20,6 +21,8 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.clients.BackgroundOrBuilder;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -166,6 +169,9 @@ public class GroupsSync {
 
     private boolean haveSameMetadata(@NonNull GroupInfo groupInfo, @NonNull Chat chat) {
         Preconditions.checkArgument(groupInfo.groupId.equals(chat.chatId));
+        if (groupInfo.background != null && groupInfo.background.getTheme() != chat.theme) {
+            return false;
+        }
         return TextUtils.equals(groupInfo.name, chat.name)
                 && TextUtils.equals(groupInfo.description, chat.groupDescription)
                 && TextUtils.equals(groupInfo.avatar, chat.groupAvatarId);

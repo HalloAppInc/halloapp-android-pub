@@ -31,6 +31,7 @@ import com.halloapp.groups.GroupsSync;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.Background;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -398,7 +399,7 @@ public class MainConnectionObserver extends Connection.Observer {
         }
         members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
 
-        contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, members), () -> {
+        contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members), () -> {
             addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
         });
     }
