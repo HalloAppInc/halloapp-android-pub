@@ -118,6 +118,8 @@ public class CommentsActivity extends HalloActivity {
 
     private TimestampRefresher timestampRefresher;
 
+    private boolean showKeyboardOnResume;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -266,7 +268,7 @@ public class CommentsActivity extends HalloActivity {
         }
 
         if (getIntent().getBooleanExtra(EXTRA_SHOW_KEYBOARD, true)) {
-            editText.requestFocus();
+            showKeyboardOnResume = true;
         }
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
@@ -331,6 +333,23 @@ public class CommentsActivity extends HalloActivity {
             }
         });
         itemSwipeHelper.attachToRecyclerView(commentsView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (showKeyboardOnResume) {
+            editText.postDelayed(this::showKeyboard, Constants.KEYBOARD_SHOW_DELAY);
+
+            showKeyboardOnResume = false;
+        }
+    }
+
+    private void showKeyboard() {
+        editText.requestFocus();
+        final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override

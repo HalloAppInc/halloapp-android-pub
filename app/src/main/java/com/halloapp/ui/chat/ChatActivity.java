@@ -307,9 +307,6 @@ public class ChatActivity extends HalloActivity {
                 updateActionMode(copyText);
             }
         }
-        if (replyPostId != null) {
-            editText.requestFocus();
-        }
 
         viewModel = new ViewModelProvider(this,
                 new ChatViewModel.Factory(getApplication(), chatId, replySenderId, replyPostId)).get(ChatViewModel.class);
@@ -610,7 +607,11 @@ public class ChatActivity extends HalloActivity {
             }
         });
 
-        showKeyboardOnResume = getIntent().getBooleanExtra(EXTRA_OPEN_KEYBOARD, false);
+        showKeyboardOnResume = getIntent().getBooleanExtra(EXTRA_OPEN_KEYBOARD, showKeyboardOnResume);
+
+        if (replyPostId != null) {
+            showKeyboardOnResume = true;
+        }
     }
 
     private void showKeyboard() {
@@ -625,7 +626,7 @@ public class ChatActivity extends HalloActivity {
         avatarLoader.load(avatarView, chatId);
 
         if (showKeyboardOnResume) {
-            showKeyboard();
+            editText.postDelayed(this::showKeyboard, Constants.KEYBOARD_SHOW_DELAY);
             showKeyboardOnResume = false;
         }
     }

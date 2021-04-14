@@ -34,6 +34,8 @@ public class Constants {
     public static final int MAX_NAME_LENGTH = 25;
     public static final int MAX_GROUP_NAME_LENGTH = 25;
 
+    public static final int KEYBOARD_SHOW_DELAY = 300;
+
     public static final int JPEG_QUALITY = 80;
     public static int VIDEO_BITRATE = 2000000;
     public static int VIDEO_RESOLUTION_H264 = 360;
