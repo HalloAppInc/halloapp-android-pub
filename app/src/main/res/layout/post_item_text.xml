@@ -26,6 +26,6 @@
     <Space
         android:id="@+id/footer_spacing"
         android:layout_width="0dp"
-        android:layout_height="2dp"/>
+        android:layout_height="14dp"/>
 
 </merge>

@@ -86,10 +86,10 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         }
         if (TextUtils.isEmpty(post.text)) {
             postActionsSeparator.setVisibility(View.GONE);
-            footerSpacing.setVisibility(View.VISIBLE);
+            footerSpacing.setVisibility(View.GONE);
         } else {
             postActionsSeparator.setVisibility(View.VISIBLE);
-            footerSpacing.setVisibility(View.GONE);
+            footerSpacing.setVisibility(View.VISIBLE);
         }
 
         if (post.unseenCommentCount > 0) {
