@@ -2936,6 +2936,8 @@ $root.server = (function() {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
+                case 6:
                     break;
                 }
             if (message.syncId != null && message.hasOwnProperty("syncId"))
@@ -2991,6 +2993,14 @@ $root.server = (function() {
             case "INVITER_NOTICE":
             case 4:
                 message.type = 4;
+                break;
+            case "DELETE_NOTICE":
+            case 5:
+                message.type = 5;
+                break;
+            case "CONTACT_NOTICE":
+            case 6:
+                message.type = 6;
                 break;
             }
             if (object.syncId != null)
@@ -3069,6 +3079,8 @@ $root.server = (function() {
          * @property {number} NORMAL=2 NORMAL value
          * @property {number} FRIEND_NOTICE=3 FRIEND_NOTICE value
          * @property {number} INVITER_NOTICE=4 INVITER_NOTICE value
+         * @property {number} DELETE_NOTICE=5 DELETE_NOTICE value
+         * @property {number} CONTACT_NOTICE=6 CONTACT_NOTICE value
          */
         ContactList.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -3077,6 +3089,8 @@ $root.server = (function() {
             values[valuesById[2] = "NORMAL"] = 2;
             values[valuesById[3] = "FRIEND_NOTICE"] = 3;
             values[valuesById[4] = "INVITER_NOTICE"] = 4;
+            values[valuesById[5] = "DELETE_NOTICE"] = 5;
+            values[valuesById[6] = "CONTACT_NOTICE"] = 6;
             return values;
         })();
 
@@ -9157,6 +9171,7 @@ $root.server = (function() {
          * @interface IUploadMedia
          * @property {number|Long|null} [size] UploadMedia size
          * @property {server.IMediaUrl|null} [url] UploadMedia url
+         * @property {string|null} [downloadUrl] UploadMedia downloadUrl
          */
 
         /**
@@ -9191,6 +9206,14 @@ $root.server = (function() {
         UploadMedia.prototype.url = null;
 
         /**
+         * UploadMedia downloadUrl.
+         * @member {string} downloadUrl
+         * @memberof server.UploadMedia
+         * @instance
+         */
+        UploadMedia.prototype.downloadUrl = "";
+
+        /**
          * Creates a new UploadMedia instance using the specified properties.
          * @function create
          * @memberof server.UploadMedia
@@ -9218,6 +9241,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 0 =*/8).int64(message.size);
             if (message.url != null && Object.hasOwnProperty.call(message, "url"))
                 $root.server.MediaUrl.encode(message.url, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.downloadUrl != null && Object.hasOwnProperty.call(message, "downloadUrl"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.downloadUrl);
             return writer;
         };
 
@@ -9257,6 +9282,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.url = $root.server.MediaUrl.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.downloadUrl = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -9301,6 +9329,9 @@ $root.server = (function() {
                 if (error)
                     return "url." + error;
             }
+            if (message.downloadUrl != null && message.hasOwnProperty("downloadUrl"))
+                if (!$util.isString(message.downloadUrl))
+                    return "downloadUrl: string expected";
             return null;
         };
 
@@ -9330,6 +9361,8 @@ $root.server = (function() {
                     throw TypeError(".server.UploadMedia.url: object expected");
                 message.url = $root.server.MediaUrl.fromObject(object.url);
             }
+            if (object.downloadUrl != null)
+                message.downloadUrl = String(object.downloadUrl);
             return message;
         };
 
@@ -9353,6 +9386,7 @@ $root.server = (function() {
                 } else
                     object.size = options.longs === String ? "0" : 0;
                 object.url = null;
+                object.downloadUrl = "";
             }
             if (message.size != null && message.hasOwnProperty("size"))
                 if (typeof message.size === "number")
@@ -9361,6 +9395,8 @@ $root.server = (function() {
                     object.size = options.longs === String ? $util.Long.prototype.toString.call(message.size) : options.longs === Number ? new $util.LongBits(message.size.low >>> 0, message.size.high >>> 0).toNumber() : message.size;
             if (message.url != null && message.hasOwnProperty("url"))
                 object.url = $root.server.MediaUrl.toObject(message.url, options);
+            if (message.downloadUrl != null && message.hasOwnProperty("downloadUrl"))
+                object.downloadUrl = message.downloadUrl;
             return object;
         };
 
@@ -10718,7 +10754,6 @@ $root.server = (function() {
          * @property {server.IPing|null} [ping] Iq ping
          * @property {server.IFeedItem|null} [feedItem] Iq feedItem
          * @property {server.IPrivacyList|null} [privacyList] Iq privacyList
-         * @property {server.IPrivacyListResult|null} [privacyListResult] Iq privacyListResult
          * @property {server.IPrivacyLists|null} [privacyLists] Iq privacyLists
          * @property {server.IGroupStanza|null} [groupStanza] Iq groupStanza
          * @property {server.IGroupsStanza|null} [groupsStanza] Iq groupsStanza
@@ -10863,14 +10898,6 @@ $root.server = (function() {
         Iq.prototype.privacyList = null;
 
         /**
-         * Iq privacyListResult.
-         * @member {server.IPrivacyListResult|null|undefined} privacyListResult
-         * @memberof server.Iq
-         * @instance
-         */
-        Iq.prototype.privacyListResult = null;
-
-        /**
          * Iq privacyLists.
          * @member {server.IPrivacyLists|null|undefined} privacyLists
          * @memberof server.Iq
@@ -10987,12 +11014,12 @@ $root.server = (function() {
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyListResult", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -11048,8 +11075,6 @@ $root.server = (function() {
                 $root.server.FeedItem.encode(message.feedItem, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
             if (message.privacyList != null && Object.hasOwnProperty.call(message, "privacyList"))
                 $root.server.PrivacyList.encode(message.privacyList, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
-            if (message.privacyListResult != null && Object.hasOwnProperty.call(message, "privacyListResult"))
-                $root.server.PrivacyListResult.encode(message.privacyListResult, writer.uint32(/* id 15, wireType 2 =*/122).fork()).ldelim();
             if (message.privacyLists != null && Object.hasOwnProperty.call(message, "privacyLists"))
                 $root.server.PrivacyLists.encode(message.privacyLists, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
             if (message.groupStanza != null && Object.hasOwnProperty.call(message, "groupStanza"))
@@ -11153,9 +11178,6 @@ $root.server = (function() {
                     break;
                 case 14:
                     message.privacyList = $root.server.PrivacyList.decode(reader, reader.uint32());
-                    break;
-                case 15:
-                    message.privacyListResult = $root.server.PrivacyListResult.decode(reader, reader.uint32());
                     break;
                 case 16:
                     message.privacyLists = $root.server.PrivacyLists.decode(reader, reader.uint32());
@@ -11364,16 +11386,6 @@ $root.server = (function() {
                     var error = $root.server.PrivacyList.verify(message.privacyList);
                     if (error)
                         return "privacyList." + error;
-                }
-            }
-            if (message.privacyListResult != null && message.hasOwnProperty("privacyListResult")) {
-                if (properties.payload === 1)
-                    return "payload: multiple values";
-                properties.payload = 1;
-                {
-                    var error = $root.server.PrivacyListResult.verify(message.privacyListResult);
-                    if (error)
-                        return "privacyListResult." + error;
                 }
             }
             if (message.privacyLists != null && message.hasOwnProperty("privacyLists")) {
@@ -11611,11 +11623,6 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.privacyList: object expected");
                 message.privacyList = $root.server.PrivacyList.fromObject(object.privacyList);
             }
-            if (object.privacyListResult != null) {
-                if (typeof object.privacyListResult !== "object")
-                    throw TypeError(".server.Iq.privacyListResult: object expected");
-                message.privacyListResult = $root.server.PrivacyListResult.fromObject(object.privacyListResult);
-            }
             if (object.privacyLists != null) {
                 if (typeof object.privacyLists !== "object")
                     throw TypeError(".server.Iq.privacyLists: object expected");
@@ -11769,11 +11776,6 @@ $root.server = (function() {
                 object.privacyList = $root.server.PrivacyList.toObject(message.privacyList, options);
                 if (options.oneofs)
                     object.payload = "privacyList";
-            }
-            if (message.privacyListResult != null && message.hasOwnProperty("privacyListResult")) {
-                object.privacyListResult = $root.server.PrivacyListResult.toObject(message.privacyListResult, options);
-                if (options.oneofs)
-                    object.payload = "privacyListResult";
             }
             if (message.privacyLists != null && message.hasOwnProperty("privacyLists")) {
                 object.privacyLists = $root.server.PrivacyLists.toObject(message.privacyLists, options);
@@ -15016,247 +15018,6 @@ $root.server = (function() {
         })();
 
         return PrivacyList;
-    })();
-
-    server.PrivacyListResult = (function() {
-
-        /**
-         * Properties of a PrivacyListResult.
-         * @memberof server
-         * @interface IPrivacyListResult
-         * @property {string|null} [result] PrivacyListResult result
-         * @property {string|null} [reason] PrivacyListResult reason
-         * @property {Uint8Array|null} [hash] PrivacyListResult hash
-         */
-
-        /**
-         * Constructs a new PrivacyListResult.
-         * @memberof server
-         * @classdesc Represents a PrivacyListResult.
-         * @implements IPrivacyListResult
-         * @constructor
-         * @param {server.IPrivacyListResult=} [properties] Properties to set
-         */
-        function PrivacyListResult(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PrivacyListResult result.
-         * @member {string} result
-         * @memberof server.PrivacyListResult
-         * @instance
-         */
-        PrivacyListResult.prototype.result = "";
-
-        /**
-         * PrivacyListResult reason.
-         * @member {string} reason
-         * @memberof server.PrivacyListResult
-         * @instance
-         */
-        PrivacyListResult.prototype.reason = "";
-
-        /**
-         * PrivacyListResult hash.
-         * @member {Uint8Array} hash
-         * @memberof server.PrivacyListResult
-         * @instance
-         */
-        PrivacyListResult.prototype.hash = $util.newBuffer([]);
-
-        /**
-         * Creates a new PrivacyListResult instance using the specified properties.
-         * @function create
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {server.IPrivacyListResult=} [properties] Properties to set
-         * @returns {server.PrivacyListResult} PrivacyListResult instance
-         */
-        PrivacyListResult.create = function create(properties) {
-            return new PrivacyListResult(properties);
-        };
-
-        /**
-         * Encodes the specified PrivacyListResult message. Does not implicitly {@link server.PrivacyListResult.verify|verify} messages.
-         * @function encode
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {server.IPrivacyListResult} message PrivacyListResult message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PrivacyListResult.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.result);
-            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.reason);
-            if (message.hash != null && Object.hasOwnProperty.call(message, "hash"))
-                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.hash);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PrivacyListResult message, length delimited. Does not implicitly {@link server.PrivacyListResult.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {server.IPrivacyListResult} message PrivacyListResult message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PrivacyListResult.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PrivacyListResult message from the specified reader or buffer.
-         * @function decode
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {server.PrivacyListResult} PrivacyListResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PrivacyListResult.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PrivacyListResult();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.result = reader.string();
-                    break;
-                case 2:
-                    message.reason = reader.string();
-                    break;
-                case 3:
-                    message.hash = reader.bytes();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PrivacyListResult message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {server.PrivacyListResult} PrivacyListResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PrivacyListResult.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PrivacyListResult message.
-         * @function verify
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PrivacyListResult.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.result != null && message.hasOwnProperty("result"))
-                if (!$util.isString(message.result))
-                    return "result: string expected";
-            if (message.reason != null && message.hasOwnProperty("reason"))
-                if (!$util.isString(message.reason))
-                    return "reason: string expected";
-            if (message.hash != null && message.hasOwnProperty("hash"))
-                if (!(message.hash && typeof message.hash.length === "number" || $util.isString(message.hash)))
-                    return "hash: buffer expected";
-            return null;
-        };
-
-        /**
-         * Creates a PrivacyListResult message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {server.PrivacyListResult} PrivacyListResult
-         */
-        PrivacyListResult.fromObject = function fromObject(object) {
-            if (object instanceof $root.server.PrivacyListResult)
-                return object;
-            var message = new $root.server.PrivacyListResult();
-            if (object.result != null)
-                message.result = String(object.result);
-            if (object.reason != null)
-                message.reason = String(object.reason);
-            if (object.hash != null)
-                if (typeof object.hash === "string")
-                    $util.base64.decode(object.hash, message.hash = $util.newBuffer($util.base64.length(object.hash)), 0);
-                else if (object.hash.length)
-                    message.hash = object.hash;
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PrivacyListResult message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof server.PrivacyListResult
-         * @static
-         * @param {server.PrivacyListResult} message PrivacyListResult
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PrivacyListResult.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.result = "";
-                object.reason = "";
-                if (options.bytes === String)
-                    object.hash = "";
-                else {
-                    object.hash = [];
-                    if (options.bytes !== Array)
-                        object.hash = $util.newBuffer(object.hash);
-                }
-            }
-            if (message.result != null && message.hasOwnProperty("result"))
-                object.result = message.result;
-            if (message.reason != null && message.hasOwnProperty("reason"))
-                object.reason = message.reason;
-            if (message.hash != null && message.hasOwnProperty("hash"))
-                object.hash = options.bytes === String ? $util.base64.encode(message.hash, 0, message.hash.length) : options.bytes === Array ? Array.prototype.slice.call(message.hash) : message.hash;
-            return object;
-        };
-
-        /**
-         * Converts this PrivacyListResult to JSON.
-         * @function toJSON
-         * @memberof server.PrivacyListResult
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PrivacyListResult.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        return PrivacyListResult;
     })();
 
     server.PrivacyLists = (function() {
@@ -18998,6 +18759,234 @@ $root.server = (function() {
         };
 
         return DeleteAccount;
+    })();
+
+    server.PushContent = (function() {
+
+        /**
+         * Properties of a PushContent.
+         * @memberof server
+         * @interface IPushContent
+         * @property {Uint8Array|null} [certificate] PushContent certificate
+         * @property {Uint8Array|null} [content] PushContent content
+         */
+
+        /**
+         * Constructs a new PushContent.
+         * @memberof server
+         * @classdesc Represents a PushContent.
+         * @implements IPushContent
+         * @constructor
+         * @param {server.IPushContent=} [properties] Properties to set
+         */
+        function PushContent(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PushContent certificate.
+         * @member {Uint8Array} certificate
+         * @memberof server.PushContent
+         * @instance
+         */
+        PushContent.prototype.certificate = $util.newBuffer([]);
+
+        /**
+         * PushContent content.
+         * @member {Uint8Array} content
+         * @memberof server.PushContent
+         * @instance
+         */
+        PushContent.prototype.content = $util.newBuffer([]);
+
+        /**
+         * Creates a new PushContent instance using the specified properties.
+         * @function create
+         * @memberof server.PushContent
+         * @static
+         * @param {server.IPushContent=} [properties] Properties to set
+         * @returns {server.PushContent} PushContent instance
+         */
+        PushContent.create = function create(properties) {
+            return new PushContent(properties);
+        };
+
+        /**
+         * Encodes the specified PushContent message. Does not implicitly {@link server.PushContent.verify|verify} messages.
+         * @function encode
+         * @memberof server.PushContent
+         * @static
+         * @param {server.IPushContent} message PushContent message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PushContent.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.certificate != null && Object.hasOwnProperty.call(message, "certificate"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.certificate);
+            if (message.content != null && Object.hasOwnProperty.call(message, "content"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.content);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PushContent message, length delimited. Does not implicitly {@link server.PushContent.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PushContent
+         * @static
+         * @param {server.IPushContent} message PushContent message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PushContent.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PushContent message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PushContent
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PushContent} PushContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PushContent.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PushContent();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.certificate = reader.bytes();
+                    break;
+                case 2:
+                    message.content = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PushContent message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PushContent
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PushContent} PushContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PushContent.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PushContent message.
+         * @function verify
+         * @memberof server.PushContent
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PushContent.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.certificate != null && message.hasOwnProperty("certificate"))
+                if (!(message.certificate && typeof message.certificate.length === "number" || $util.isString(message.certificate)))
+                    return "certificate: buffer expected";
+            if (message.content != null && message.hasOwnProperty("content"))
+                if (!(message.content && typeof message.content.length === "number" || $util.isString(message.content)))
+                    return "content: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a PushContent message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PushContent
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PushContent} PushContent
+         */
+        PushContent.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PushContent)
+                return object;
+            var message = new $root.server.PushContent();
+            if (object.certificate != null)
+                if (typeof object.certificate === "string")
+                    $util.base64.decode(object.certificate, message.certificate = $util.newBuffer($util.base64.length(object.certificate)), 0);
+                else if (object.certificate.length)
+                    message.certificate = object.certificate;
+            if (object.content != null)
+                if (typeof object.content === "string")
+                    $util.base64.decode(object.content, message.content = $util.newBuffer($util.base64.length(object.content)), 0);
+                else if (object.content.length)
+                    message.content = object.content;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PushContent message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PushContent
+         * @static
+         * @param {server.PushContent} message PushContent
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PushContent.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.certificate = "";
+                else {
+                    object.certificate = [];
+                    if (options.bytes !== Array)
+                        object.certificate = $util.newBuffer(object.certificate);
+                }
+                if (options.bytes === String)
+                    object.content = "";
+                else {
+                    object.content = [];
+                    if (options.bytes !== Array)
+                        object.content = $util.newBuffer(object.content);
+                }
+            }
+            if (message.certificate != null && message.hasOwnProperty("certificate"))
+                object.certificate = options.bytes === String ? $util.base64.encode(message.certificate, 0, message.certificate.length) : options.bytes === Array ? Array.prototype.slice.call(message.certificate) : message.certificate;
+            if (message.content != null && message.hasOwnProperty("content"))
+                object.content = options.bytes === String ? $util.base64.encode(message.content, 0, message.content.length) : options.bytes === Array ? Array.prototype.slice.call(message.content) : message.content;
+            return object;
+        };
+
+        /**
+         * Converts this PushContent to JSON.
+         * @function toJSON
+         * @memberof server.PushContent
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PushContent.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PushContent;
     })();
 
     server.EventData = (function() {

@@ -94,4 +94,18 @@ public interface ChatMessageOrBuilder extends
    */
   com.google.protobuf.ByteString
       getChatReplyMessageSenderIdBytes();
+
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  java.util.List<com.halloapp.proto.clients.Contact> 
+      getContactsList();
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  com.halloapp.proto.clients.Contact getContacts(int index);
+  /**
+   * <code>repeated .clients.Contact contacts = 9;</code>
+   */
+  int getContactsCount();
 }

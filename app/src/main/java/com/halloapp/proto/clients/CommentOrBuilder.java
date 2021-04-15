@@ -56,4 +56,15 @@ public interface CommentOrBuilder extends
    * <code>repeated .clients.Mention mentions = 5;</code>
    */
   int getMentionsCount();
+
+  /**
+   * <code>.clients.Media media = 6;</code>
+   * @return Whether the media field is set.
+   */
+  boolean hasMedia();
+  /**
+   * <code>.clients.Media media = 6;</code>
+   * @return The media.
+   */
+  com.halloapp.proto.clients.Media getMedia();
 }

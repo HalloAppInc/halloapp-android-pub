@@ -12,6 +12,7 @@ public  final class UploadMedia extends
     // @@protoc_insertion_point(message_implements:server.UploadMedia)
     UploadMediaOrBuilder {
   private UploadMedia() {
+    downloadUrl_ = "";
   }
   public static final int SIZE_FIELD_NUMBER = 1;
   private long size_;
@@ -82,6 +83,53 @@ public  final class UploadMedia extends
    * <code>.server.MediaUrl url = 2;</code>
    */
   private void clearUrl() {  url_ = null;
+    
+  }
+
+  public static final int DOWNLOAD_URL_FIELD_NUMBER = 3;
+  private java.lang.String downloadUrl_;
+  /**
+   * <code>string download_url = 3;</code>
+   * @return The downloadUrl.
+   */
+  @java.lang.Override
+  public java.lang.String getDownloadUrl() {
+    return downloadUrl_;
+  }
+  /**
+   * <code>string download_url = 3;</code>
+   * @return The bytes for downloadUrl.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getDownloadUrlBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(downloadUrl_);
+  }
+  /**
+   * <code>string download_url = 3;</code>
+   * @param value The downloadUrl to set.
+   */
+  private void setDownloadUrl(
+      java.lang.String value) {
+    value.getClass();
+  
+    downloadUrl_ = value;
+  }
+  /**
+   * <code>string download_url = 3;</code>
+   */
+  private void clearDownloadUrl() {
+    
+    downloadUrl_ = getDefaultInstance().getDownloadUrl();
+  }
+  /**
+   * <code>string download_url = 3;</code>
+   * @param value The bytes for downloadUrl to set.
+   */
+  private void setDownloadUrlBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    downloadUrl_ = value.toStringUtf8();
     
   }
 
@@ -255,6 +303,55 @@ public  final class UploadMedia extends
       return this;
     }
 
+    /**
+     * <code>string download_url = 3;</code>
+     * @return The downloadUrl.
+     */
+    @java.lang.Override
+    public java.lang.String getDownloadUrl() {
+      return instance.getDownloadUrl();
+    }
+    /**
+     * <code>string download_url = 3;</code>
+     * @return The bytes for downloadUrl.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDownloadUrlBytes() {
+      return instance.getDownloadUrlBytes();
+    }
+    /**
+     * <code>string download_url = 3;</code>
+     * @param value The downloadUrl to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDownloadUrl(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setDownloadUrl(value);
+      return this;
+    }
+    /**
+     * <code>string download_url = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearDownloadUrl() {
+      copyOnWrite();
+      instance.clearDownloadUrl();
+      return this;
+    }
+    /**
+     * <code>string download_url = 3;</code>
+     * @param value The bytes for downloadUrl to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDownloadUrlBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setDownloadUrlBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.UploadMedia)
   }
   @java.lang.Override
@@ -273,10 +370,11 @@ public  final class UploadMedia extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "size_",
             "url_",
+            "downloadUrl_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0002\t" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0002\u0002\t" +
+              "\u0003\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

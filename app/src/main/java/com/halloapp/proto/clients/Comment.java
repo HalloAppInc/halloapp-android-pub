@@ -252,6 +252,52 @@ public  final class Comment extends
     mentions_.remove(index);
   }
 
+  public static final int MEDIA_FIELD_NUMBER = 6;
+  private com.halloapp.proto.clients.Media media_;
+  /**
+   * <code>.clients.Media media = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasMedia() {
+    return media_ != null;
+  }
+  /**
+   * <code>.clients.Media media = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Media getMedia() {
+    return media_ == null ? com.halloapp.proto.clients.Media.getDefaultInstance() : media_;
+  }
+  /**
+   * <code>.clients.Media media = 6;</code>
+   */
+  private void setMedia(com.halloapp.proto.clients.Media value) {
+    value.getClass();
+  media_ = value;
+    
+    }
+  /**
+   * <code>.clients.Media media = 6;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeMedia(com.halloapp.proto.clients.Media value) {
+    value.getClass();
+  if (media_ != null &&
+        media_ != com.halloapp.proto.clients.Media.getDefaultInstance()) {
+      media_ =
+        com.halloapp.proto.clients.Media.newBuilder(media_).mergeFrom(value).buildPartial();
+    } else {
+      media_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.Media media = 6;</code>
+   */
+  private void clearMedia() {  media_ = null;
+    
+  }
+
   public static com.halloapp.proto.clients.Comment parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -596,6 +642,53 @@ public  final class Comment extends
       return this;
     }
 
+    /**
+     * <code>.clients.Media media = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasMedia() {
+      return instance.hasMedia();
+    }
+    /**
+     * <code>.clients.Media media = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Media getMedia() {
+      return instance.getMedia();
+    }
+    /**
+     * <code>.clients.Media media = 6;</code>
+     */
+    public Builder setMedia(com.halloapp.proto.clients.Media value) {
+      copyOnWrite();
+      instance.setMedia(value);
+      return this;
+      }
+    /**
+     * <code>.clients.Media media = 6;</code>
+     */
+    public Builder setMedia(
+        com.halloapp.proto.clients.Media.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMedia(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Media media = 6;</code>
+     */
+    public Builder mergeMedia(com.halloapp.proto.clients.Media value) {
+      copyOnWrite();
+      instance.mergeMedia(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Media media = 6;</code>
+     */
+    public Builder clearMedia() {  copyOnWrite();
+      instance.clearMedia();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Comment)
   }
   @java.lang.Override
@@ -617,10 +710,11 @@ public  final class Comment extends
             "text_",
             "mentions_",
             com.halloapp.proto.clients.Mention.class,
+            "media_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0005\u0004\u0000\u0001\u0000\u0001\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\u001b";
+              "\u0000\u0005\u0000\u0000\u0001\u0006\u0005\u0000\u0001\u0000\u0001\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\u001b\u0006\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

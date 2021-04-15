@@ -40,6 +40,14 @@ public  final class ContactList extends
      * <code>INVITER_NOTICE = 4;</code>
      */
     INVITER_NOTICE(4),
+    /**
+     * <code>DELETE_NOTICE = 5;</code>
+     */
+    DELETE_NOTICE(5),
+    /**
+     * <code>CONTACT_NOTICE = 6;</code>
+     */
+    CONTACT_NOTICE(6),
     UNRECOGNIZED(-1),
     ;
 
@@ -63,6 +71,14 @@ public  final class ContactList extends
      * <code>INVITER_NOTICE = 4;</code>
      */
     public static final int INVITER_NOTICE_VALUE = 4;
+    /**
+     * <code>DELETE_NOTICE = 5;</code>
+     */
+    public static final int DELETE_NOTICE_VALUE = 5;
+    /**
+     * <code>CONTACT_NOTICE = 6;</code>
+     */
+    public static final int CONTACT_NOTICE_VALUE = 6;
 
 
     @java.lang.Override
@@ -91,6 +107,8 @@ public  final class ContactList extends
         case 2: return NORMAL;
         case 3: return FRIEND_NOTICE;
         case 4: return INVITER_NOTICE;
+        case 5: return DELETE_NOTICE;
+        case 6: return CONTACT_NOTICE;
         default: return null;
       }
     }

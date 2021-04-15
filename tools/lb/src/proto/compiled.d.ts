@@ -1240,7 +1240,9 @@ export namespace server {
             DELTA = 1,
             NORMAL = 2,
             FRIEND_NOTICE = 3,
-            INVITER_NOTICE = 4
+            INVITER_NOTICE = 4,
+            DELETE_NOTICE = 5,
+            CONTACT_NOTICE = 6
         }
     }
 
@@ -3537,6 +3539,9 @@ export namespace server {
 
         /** UploadMedia url */
         url?: (server.IMediaUrl|null);
+
+        /** UploadMedia downloadUrl */
+        downloadUrl?: (string|null);
     }
 
     /** Represents an UploadMedia. */
@@ -3553,6 +3558,9 @@ export namespace server {
 
         /** UploadMedia url. */
         public url?: (server.IMediaUrl|null);
+
+        /** UploadMedia downloadUrl. */
+        public downloadUrl: string;
 
         /**
          * Creates a new UploadMedia instance using the specified properties.
@@ -4246,9 +4254,6 @@ export namespace server {
         /** Iq privacyList */
         privacyList?: (server.IPrivacyList|null);
 
-        /** Iq privacyListResult */
-        privacyListResult?: (server.IPrivacyListResult|null);
-
         /** Iq privacyLists */
         privacyLists?: (server.IPrivacyLists|null);
 
@@ -4343,9 +4348,6 @@ export namespace server {
         /** Iq privacyList. */
         public privacyList?: (server.IPrivacyList|null);
 
-        /** Iq privacyListResult. */
-        public privacyListResult?: (server.IPrivacyListResult|null);
-
         /** Iq privacyLists. */
         public privacyLists?: (server.IPrivacyLists|null);
 
@@ -4389,7 +4391,7 @@ export namespace server {
         public groupInviteLink?: (server.IGroupInviteLink|null);
 
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyListResult"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -5508,108 +5510,6 @@ export namespace server {
             MUTE = 3,
             ONLY = 4
         }
-    }
-
-    /** Properties of a PrivacyListResult. */
-    interface IPrivacyListResult {
-
-        /** PrivacyListResult result */
-        result?: (string|null);
-
-        /** PrivacyListResult reason */
-        reason?: (string|null);
-
-        /** PrivacyListResult hash */
-        hash?: (Uint8Array|null);
-    }
-
-    /** Represents a PrivacyListResult. */
-    class PrivacyListResult implements IPrivacyListResult {
-
-        /**
-         * Constructs a new PrivacyListResult.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: server.IPrivacyListResult);
-
-        /** PrivacyListResult result. */
-        public result: string;
-
-        /** PrivacyListResult reason. */
-        public reason: string;
-
-        /** PrivacyListResult hash. */
-        public hash: Uint8Array;
-
-        /**
-         * Creates a new PrivacyListResult instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns PrivacyListResult instance
-         */
-        public static create(properties?: server.IPrivacyListResult): server.PrivacyListResult;
-
-        /**
-         * Encodes the specified PrivacyListResult message. Does not implicitly {@link server.PrivacyListResult.verify|verify} messages.
-         * @param message PrivacyListResult message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: server.IPrivacyListResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified PrivacyListResult message, length delimited. Does not implicitly {@link server.PrivacyListResult.verify|verify} messages.
-         * @param message PrivacyListResult message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: server.IPrivacyListResult, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a PrivacyListResult message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns PrivacyListResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PrivacyListResult;
-
-        /**
-         * Decodes a PrivacyListResult message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns PrivacyListResult
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PrivacyListResult;
-
-        /**
-         * Verifies a PrivacyListResult message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a PrivacyListResult message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns PrivacyListResult
-         */
-        public static fromObject(object: { [k: string]: any }): server.PrivacyListResult;
-
-        /**
-         * Creates a plain object from a PrivacyListResult message. Also converts values to other types if specified.
-         * @param message PrivacyListResult
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: server.PrivacyListResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this PrivacyListResult to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a PrivacyLists. */
@@ -7146,6 +7046,102 @@ export namespace server {
 
         /**
          * Converts this DeleteAccount to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PushContent. */
+    interface IPushContent {
+
+        /** PushContent certificate */
+        certificate?: (Uint8Array|null);
+
+        /** PushContent content */
+        content?: (Uint8Array|null);
+    }
+
+    /** Represents a PushContent. */
+    class PushContent implements IPushContent {
+
+        /**
+         * Constructs a new PushContent.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPushContent);
+
+        /** PushContent certificate. */
+        public certificate: Uint8Array;
+
+        /** PushContent content. */
+        public content: Uint8Array;
+
+        /**
+         * Creates a new PushContent instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PushContent instance
+         */
+        public static create(properties?: server.IPushContent): server.PushContent;
+
+        /**
+         * Encodes the specified PushContent message. Does not implicitly {@link server.PushContent.verify|verify} messages.
+         * @param message PushContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPushContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PushContent message, length delimited. Does not implicitly {@link server.PushContent.verify|verify} messages.
+         * @param message PushContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPushContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PushContent message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PushContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PushContent;
+
+        /**
+         * Decodes a PushContent message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PushContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PushContent;
+
+        /**
+         * Verifies a PushContent message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PushContent message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PushContent
+         */
+        public static fromObject(object: { [k: string]: any }): server.PushContent;
+
+        /**
+         * Creates a plain object from a PushContent message. Also converts values to other types if specified.
+         * @param message PushContent
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PushContent, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PushContent to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

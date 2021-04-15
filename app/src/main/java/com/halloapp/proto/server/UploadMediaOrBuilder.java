@@ -23,4 +23,16 @@ public interface UploadMediaOrBuilder extends
    * @return The url.
    */
   com.halloapp.proto.server.MediaUrl getUrl();
+
+  /**
+   * <code>string download_url = 3;</code>
+   * @return The downloadUrl.
+   */
+  java.lang.String getDownloadUrl();
+  /**
+   * <code>string download_url = 3;</code>
+   * @return The bytes for downloadUrl.
+   */
+  com.google.protobuf.ByteString
+      getDownloadUrlBytes();
 }
