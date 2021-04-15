@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.TransitionManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -61,6 +63,16 @@ public class ViewGroupFeedActivity extends HalloActivity {
 
     private boolean scrollUpOnDataLoaded;
 
+    private TextView titleView;
+    private TextView subtitleView;
+
+    private Runnable hideSubtitle = () -> {
+        if (subtitleView != null) {
+            TransitionManager.beginDelayedTransition((ViewGroup) subtitleView.getParent());
+            subtitleView.setVisibility(View.GONE);
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +97,8 @@ public class ViewGroupFeedActivity extends HalloActivity {
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        TextView titleView = findViewById(R.id.title);
-        TextView subtitleView = findViewById(R.id.subtitle);
+        titleView = findViewById(R.id.title);
+        subtitleView = findViewById(R.id.subtitle);
         ImageView avatarView = findViewById(R.id.avatar);
 
         View toolbarTitleContainer = findViewById(R.id.toolbar_text_container);
@@ -165,6 +177,15 @@ public class ViewGroupFeedActivity extends HalloActivity {
             scrollUpOnDataLoaded = true;
             viewModel.reloadPostsAt(Long.MAX_VALUE);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        subtitleView.removeCallbacks(hideSubtitle);
+        subtitleView.setVisibility(View.VISIBLE);
+        subtitleView.postDelayed(hideSubtitle, 3000);
     }
 
     private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
