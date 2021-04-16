@@ -90,10 +90,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.WeakHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class NewConnection extends Connection {
 
@@ -108,7 +110,7 @@ public class NewConnection extends Connection {
     private final Preferences preferences;
     private final ConnectionObservers connectionObservers;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ConnectionExecutor executor = new ConnectionExecutor();
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
     private HANoiseSocket socket = null;
@@ -246,6 +248,8 @@ public class NewConnection extends Connection {
 
     public void disconnect() {
         shutdownComponents();
+        int canceled = executor.reset();
+        Log.i("connection: disconnect canceled " + canceled + " tasks in executor queue");
         executor.execute(this::disconnectInBackground);
     }
 
@@ -688,7 +692,7 @@ public class NewConnection extends Connection {
 
     private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq) {
         BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
-        executor.execute(() -> {
+        executor.executeWithDropHandler(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send iq " + iq + ", no connection");
                 iqResponse.setException(new NotConnectedException());
@@ -698,7 +702,7 @@ public class NewConnection extends Connection {
             iqRouter.sendAsync(protoIq)
                     .onResponse(iqResponse::setResponse)
                     .onError(iqResponse::setException);
-        });
+        }, () -> iqResponse.setException(new ExecutorResetException()));
         return iqResponse;
     }
 
@@ -1533,6 +1537,38 @@ public class NewConnection extends Connection {
             } else if (success != null) {
                 success.handleResponse(response);
             }
+        }
+    }
+
+    private static class ConnectionExecutor extends ThreadPoolExecutor {
+        private static final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+        private static final WeakHashMap<Runnable, Runnable> dropHandlers = new WeakHashMap<>();
+
+        public ConnectionExecutor() {
+            super(1, 1, 0L, TimeUnit.MILLISECONDS, queue);
+        }
+
+        public int reset() {
+            List<Runnable> drain = new ArrayList<>();
+            queue.drainTo(drain);
+            for (Runnable drained : drain) {
+                Runnable dropHandler = dropHandlers.get(drained);
+                if (dropHandler != null) {
+                    BgWorkers.getInstance().execute(dropHandler);
+                }
+            }
+            return drain.size();
+        }
+
+        public void executeWithDropHandler(Runnable toExecute, Runnable dropHandler) {
+            dropHandlers.put(toExecute, dropHandler);
+            execute(toExecute);
+        }
+    }
+
+    private static class ExecutorResetException extends Exception {
+        public ExecutorResetException() {
+            super("Executor reset while queueing");
         }
     }
 
