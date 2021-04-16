@@ -20,6 +20,8 @@ import com.halloapp.ui.avatar.AvatarLoader;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class AvatarsLayout extends FrameLayout {
 
     private int avatarSize;
@@ -74,10 +76,8 @@ public class AvatarsLayout extends FrameLayout {
                 view.paint.setColor(paddingColor);
                 view.paint.setStrokeWidth(2 * paddingSize);
                 view.paint.setStyle(Paint.Style.STROKE);
-                view.setClipToOutline(true);
                 view.setElevation(elevation);
                 view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                view.setBackgroundResource(R.drawable.avatar_circle);
                 view.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
                 view.setImageResource(R.drawable.avatar_person);
                 addView(view, 0);
@@ -165,7 +165,7 @@ public class AvatarsLayout extends FrameLayout {
         }
     }
 
-    public static class AvatarImageView extends AppCompatImageView {
+    public static class AvatarImageView extends CircleImageView {
 
         final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
