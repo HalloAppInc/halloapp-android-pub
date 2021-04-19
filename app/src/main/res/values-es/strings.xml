@@ -99,7 +99,11 @@ Abre la pantalla de configuración de la aplicación para modificar los permisos
     <string name="contacts_permission_rationale_denied">"Para conectarte con tu familia y tus amigos necesitamos permiso para tener acceso a los contactos en tu dispositivo.
 
 Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
+
+    <!-- Fuzzy -->
     <string name="storage_permission_rationale">"Escoge el medio, necesitamos permiso para tener acceso al almacenamiento de tu dispositivo."</string>
+
+    <!-- Fuzzy -->
     <string name="storage_permission_rationale_denied">"Escoge el medio necesitamos permiso para tener acceso al almacenamiento de tu dispositivo.
 
 Para modificar los permisos abre la pantalla de configuración de la aplicación."</string>
@@ -527,4 +531,17 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
     <string name="group_background_color">"Color"</string>
     <string name="group_background_default">"Default"</string>
     <string name="group_info_members">"Members (%d)"</string>
+    <string name="delete_message_confirmation">"Delete selected message?"</string>
+    <string name="retract_message_option">"Delete for everyone"</string>
+    <string name="delete_message_option">"Delete for me"</string>
+    <string name="contact_permissions_dialog_title">"Contacts"</string>
+    <string name="not_now">"Not now"</string>
+    <string name="continue_button">"Continue"</string>
+    <string name="contact_permissions_nag">"To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="contact_permissions_nag_permanently_blocked">"To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+    <string name="home_contact_permissions_nag">"To help you connect with friends and family, we’ll need your permission to access your contacts."</string>
+    <string name="home_contact_permissions_nag_permanently_blocked">"To help you connect with friends and family, we’ll need your permission to access your contacts. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+    <string name="invite_link_load_failed">"Failed to open group invite link"</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="failed_no_longer_member">"You are no longer a member of this group"</string>
 </resources>
