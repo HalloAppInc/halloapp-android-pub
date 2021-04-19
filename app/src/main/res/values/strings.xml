@@ -98,8 +98,8 @@
     <string name="camera_record_audio_permission_rationale_denied">To take photos and record videos we need permission to access the camera and record audio on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="contacts_permission_rationale">To connect with your friends and family we need permission to access contacts on your device</string>
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
-    <string name="storage_permission_rationale">Pick media we need a permission to access your device storage</string>
-    <string name="storage_permission_rationale_denied">Pick media we need a permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="storage_permission_rationale">To pick media we need permission to access your device storage</string>
+    <string name="storage_permission_rationale_denied">To pick media we need permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="initializing_please_wait">Initializing, please wait…</string>
     <string name="retry">Retry</string>
     <string name="contact_rationale_upload">In order to connect you with your friends &amp; family we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a></string>
