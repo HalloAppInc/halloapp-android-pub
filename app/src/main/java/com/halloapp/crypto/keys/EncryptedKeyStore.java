@@ -72,7 +72,7 @@ public class EncryptedKeyStore {
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
-    private static final int ONE_TIME_PRE_KEY_BATCH_COUNT = 20;
+    private static final int ONE_TIME_PRE_KEY_BATCH_COUNT = 100;
 
     private static EncryptedKeyStore instance;
 
