@@ -879,6 +879,9 @@ public class NewConnection extends Connection {
                 Log.e("connection: failed to login");
                 disconnectInBackground();
                 connectionObservers.notifyLoginFailed();
+            } else if ("invalid client version".equalsIgnoreCase(authResult.getReason())) {
+                Log.e("connection: invalid client version");
+                clientExpired();
             } else {
                 ServerProps.getInstance().onReceiveServerPropsHash(connectionPropHash);
             }
