@@ -158,6 +158,7 @@ public class FileLogger {
                     outputStream.write(android.util.Log.getStackTraceString(logLine.t));
                     outputStream.write('\n');
                 }
+                outputStream.flush();
                 return;
             }
 
@@ -185,6 +186,7 @@ public class FileLogger {
                 outputStream.write(android.util.Log.getStackTraceString(logLine.t));
                 outputStream.write('\n');
             }
+            outputStream.flush();
         }
 
         private String getFileDate() {
