@@ -240,8 +240,12 @@ public class PublishedEntry {
                 builder.feedItemId(comment.getFeedPostId());
                 builder.parentCommentId(comment.getParentCommentId());
                 builder.text(comment.getText());
-                builder.media(fromMediaProtos(Collections.singletonList(comment.getMedia())));
                 builder.mentions(comment.getMentionsList());
+
+                com.halloapp.proto.clients.Media media = comment.getMedia();
+                if (!"".equals(media.getDownloadUrl())) {
+                    builder.media(fromMediaProtos(Collections.singletonList(media)));
+                }
             } else {
                 Log.i("Unknown encoded entry type");
             }
