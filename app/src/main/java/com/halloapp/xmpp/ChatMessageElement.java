@@ -156,7 +156,7 @@ public class ChatMessageElement {
                         MessageElementHelper.fromProtoMediaType(item.getType()),
                         item.getDownloadUrl(),
                         item.getEncryptionKey().toByteArray(),
-                        item.getPlaintextHash().toByteArray(),
+                        item.getCiphertextHash().toByteArray(),
                         item.getWidth(),
                         item.getHeight()));
             }

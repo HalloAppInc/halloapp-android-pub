@@ -37,10 +37,10 @@ public interface MediaOrBuilder extends
   com.google.protobuf.ByteString getEncryptionKey();
 
   /**
-   * <code>bytes plaintext_hash = 5;</code>
-   * @return The plaintextHash.
+   * <code>bytes ciphertext_hash = 5;</code>
+   * @return The ciphertextHash.
    */
-  com.google.protobuf.ByteString getPlaintextHash();
+  com.google.protobuf.ByteString getCiphertextHash();
 
   /**
    * <code>string download_url = 6;</code>

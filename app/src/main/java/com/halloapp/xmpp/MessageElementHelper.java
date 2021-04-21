@@ -59,7 +59,7 @@ public class MessageElementHelper {
             mediaBuilder.setWidth(media.width);
             mediaBuilder.setHeight(media.height);
             mediaBuilder.setEncryptionKey(ByteString.copyFrom(media.encKey));
-            mediaBuilder.setPlaintextHash(ByteString.copyFrom(media.sha256hash));
+            mediaBuilder.setCiphertextHash(ByteString.copyFrom(media.sha256hash));
             mediaBuilder.setDownloadUrl(media.url);
             chatMessageBuilder.addMedia(mediaBuilder.build());
         }

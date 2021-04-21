@@ -38,8 +38,9 @@ public  final class WhisperKeys extends
      */
     GET(3),
     /**
-     * <code>SET = 4;</code>
+     * <code>SET = 4 [deprecated = true];</code>
      */
+    @java.lang.Deprecated
     SET(4),
     /**
      * <code>UPDATE = 5;</code>
@@ -65,9 +66,9 @@ public  final class WhisperKeys extends
      */
     public static final int GET_VALUE = 3;
     /**
-     * <code>SET = 4;</code>
+     * <code>SET = 4 [deprecated = true];</code>
      */
-    public static final int SET_VALUE = 4;
+    @java.lang.Deprecated public static final int SET_VALUE = 4;
     /**
      * <code>UPDATE = 5;</code>
      */

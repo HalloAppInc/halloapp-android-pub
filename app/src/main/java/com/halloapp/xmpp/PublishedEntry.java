@@ -174,7 +174,7 @@ public class PublishedEntry {
             mediaBuilder.setWidth(item.width);
             mediaBuilder.setHeight(item.height);
             mediaBuilder.setEncryptionKey(ByteString.copyFrom(item.encKey));
-            mediaBuilder.setPlaintextHash(ByteString.copyFrom(item.sha256hash));
+            mediaBuilder.setCiphertextHash(ByteString.copyFrom(item.sha256hash));
             mediaBuilder.setDownloadUrl(item.url);
             mediaList.add(mediaBuilder.build());
         }
@@ -208,7 +208,7 @@ public class PublishedEntry {
                     item.getType()),
                     item.getDownloadUrl(),
                     item.getEncryptionKey().toByteArray(),
-                    item.getPlaintextHash().toByteArray(),
+                    item.getCiphertextHash().toByteArray(),
                     item.getWidth(),
                     item.getHeight()));
         }

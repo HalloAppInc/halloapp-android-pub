@@ -13,7 +13,7 @@ public  final class Media extends
     MediaOrBuilder {
   private Media() {
     encryptionKey_ = com.google.protobuf.ByteString.EMPTY;
-    plaintextHash_ = com.google.protobuf.ByteString.EMPTY;
+    ciphertextHash_ = com.google.protobuf.ByteString.EMPTY;
     downloadUrl_ = "";
   }
   public static final int TYPE_FIELD_NUMBER = 1;
@@ -137,31 +137,31 @@ public  final class Media extends
     encryptionKey_ = getDefaultInstance().getEncryptionKey();
   }
 
-  public static final int PLAINTEXT_HASH_FIELD_NUMBER = 5;
-  private com.google.protobuf.ByteString plaintextHash_;
+  public static final int CIPHERTEXT_HASH_FIELD_NUMBER = 5;
+  private com.google.protobuf.ByteString ciphertextHash_;
   /**
-   * <code>bytes plaintext_hash = 5;</code>
-   * @return The plaintextHash.
+   * <code>bytes ciphertext_hash = 5;</code>
+   * @return The ciphertextHash.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString getPlaintextHash() {
-    return plaintextHash_;
+  public com.google.protobuf.ByteString getCiphertextHash() {
+    return ciphertextHash_;
   }
   /**
-   * <code>bytes plaintext_hash = 5;</code>
-   * @param value The plaintextHash to set.
+   * <code>bytes ciphertext_hash = 5;</code>
+   * @param value The ciphertextHash to set.
    */
-  private void setPlaintextHash(com.google.protobuf.ByteString value) {
+  private void setCiphertextHash(com.google.protobuf.ByteString value) {
     value.getClass();
   
-    plaintextHash_ = value;
+    ciphertextHash_ = value;
   }
   /**
-   * <code>bytes plaintext_hash = 5;</code>
+   * <code>bytes ciphertext_hash = 5;</code>
    */
-  private void clearPlaintextHash() {
+  private void clearCiphertextHash() {
     
-    plaintextHash_ = getDefaultInstance().getPlaintextHash();
+    ciphertextHash_ = getDefaultInstance().getCiphertextHash();
   }
 
   public static final int DOWNLOAD_URL_FIELD_NUMBER = 6;
@@ -437,30 +437,30 @@ public  final class Media extends
     }
 
     /**
-     * <code>bytes plaintext_hash = 5;</code>
-     * @return The plaintextHash.
+     * <code>bytes ciphertext_hash = 5;</code>
+     * @return The ciphertextHash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getPlaintextHash() {
-      return instance.getPlaintextHash();
+    public com.google.protobuf.ByteString getCiphertextHash() {
+      return instance.getCiphertextHash();
     }
     /**
-     * <code>bytes plaintext_hash = 5;</code>
-     * @param value The plaintextHash to set.
+     * <code>bytes ciphertext_hash = 5;</code>
+     * @param value The ciphertextHash to set.
      * @return This builder for chaining.
      */
-    public Builder setPlaintextHash(com.google.protobuf.ByteString value) {
+    public Builder setCiphertextHash(com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setPlaintextHash(value);
+      instance.setCiphertextHash(value);
       return this;
     }
     /**
-     * <code>bytes plaintext_hash = 5;</code>
+     * <code>bytes ciphertext_hash = 5;</code>
      * @return This builder for chaining.
      */
-    public Builder clearPlaintextHash() {
+    public Builder clearCiphertextHash() {
       copyOnWrite();
-      instance.clearPlaintextHash();
+      instance.clearCiphertextHash();
       return this;
     }
 
@@ -533,7 +533,7 @@ public  final class Media extends
             "width_",
             "height_",
             "encryptionKey_",
-            "plaintextHash_",
+            "ciphertextHash_",
             "downloadUrl_",
           };
           java.lang.String info =
