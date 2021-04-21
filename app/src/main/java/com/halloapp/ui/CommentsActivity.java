@@ -106,6 +106,7 @@ public class CommentsActivity extends HalloActivity {
 
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
+    private ImageView sendButton;
 
     private ItemSwipeHelper itemSwipeHelper;
     private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
@@ -204,6 +205,7 @@ public class CommentsActivity extends HalloActivity {
                 mediaContainer.setVisibility(View.VISIBLE);
                 mediaThumbnailLoader.load(imageView, media);
             }
+            updateSendButtonColor();
         });
         View removeMedia = findViewById(R.id.remove);
         removeMedia.setOnClickListener(v -> viewModel.resetCommentMediaUri());
@@ -229,11 +231,11 @@ public class CommentsActivity extends HalloActivity {
         commentsView.setAdapter(adapter);
         editText = findViewById(R.id.entry_card);
         editText.setMentionPickerView(mentionPickerView);
-        final ImageView sendButton = findViewById(R.id.send);
+        sendButton = findViewById(R.id.send);
         sendButton.setOnClickListener(v -> {
             final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
             final String postText = StringUtils.preparePostText(textWithMentions.first);
-            if (TextUtils.isEmpty(postText)) {
+            if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
                 Log.w("CommentsActivity: cannot send empty comment");
                 return;
             }
@@ -246,7 +248,7 @@ public class CommentsActivity extends HalloActivity {
 
         final View media = findViewById(R.id.media);
         media.setOnClickListener(v -> pickMedia());
-//        media.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+        media.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -261,11 +263,7 @@ public class CommentsActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s == null || TextUtils.isEmpty(s.toString())) {
-                    sendButton.clearColorFilter();
-                } else {
-                    sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
-                }
+                updateSendButtonColor();
             }
         });
 
@@ -339,6 +337,17 @@ public class CommentsActivity extends HalloActivity {
             }
         });
         itemSwipeHelper.attachToRecyclerView(commentsView);
+    }
+
+    private void updateSendButtonColor() {
+        Editable e = editText.getText();
+        String s = e == null ? null : e.toString();
+        Media m = viewModel.commentMedia.getValue();
+        if (m != null || !TextUtils.isEmpty(s)) {
+            sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+        } else {
+            sendButton.clearColorFilter();
+        }
     }
 
     private void pickMedia() {
@@ -504,13 +513,15 @@ public class CommentsActivity extends HalloActivity {
             final Integer textLimit = textLimits.get(comment.rowId);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
             commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-            if (TextUtils.isEmpty(comment.text)) {
+            if (comment.isRetracted()) {
                 commentView.setText(getString(R.string.comment_retracted_placeholder));
                 commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceRetracted);
                 replyButton.setVisibility(View.GONE);
                 retractButton.setVisibility(View.GONE);
             } else {
                 textContentLoader.load(commentView, comment);
+
+                commentView.setVisibility(TextUtils.isEmpty(comment.text) ? View.GONE : View.VISIBLE);
 
                 if (StringUtils.isFewEmoji(comment.text)) {
                     commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceFewEmoji);

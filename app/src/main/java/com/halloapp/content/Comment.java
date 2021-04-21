@@ -115,10 +115,6 @@ public class Comment extends ContentItem {
         return !isOutgoing();
     }
 
-    public boolean isRetracted() {
-        return TextUtils.isEmpty(text);
-    }
-
     public boolean canBeRetracted() {
         return isOutgoing() && (timestamp + Constants.RETRACT_COMMENT_ALLOWED_TIME > System.currentTimeMillis());
     }
