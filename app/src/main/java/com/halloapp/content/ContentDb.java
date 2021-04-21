@@ -263,8 +263,7 @@ public class ContentDb {
             if (comment.isIncoming() && comment.isAllMediaTransferred()) {
                 postsDb.setCommentTransferred(comment.postId, comment.senderUserId, comment.id);
             }
-            // TODO(jack): Should this be notifyCommentUpdated?
-            observers.notifyPostUpdated(comment.senderUserId, comment.id);
+            observers.notifyCommentUpdated(comment.postId, comment.senderUserId, comment.id);
         });
     }
 

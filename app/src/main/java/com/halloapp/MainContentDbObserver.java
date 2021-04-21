@@ -98,9 +98,16 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onCommentAdded(@NonNull Comment comment) {
         if (comment.isOutgoing()) {
             if (comment.shouldSend()) {
-                connection.sendComment(comment);
+                if (comment.media.isEmpty()) {
+                    connection.sendComment(comment);
+                } else {
+                    new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                }
             }
         } else { // if (comment.isIncoming())
+            if (!comment.media.isEmpty()) {
+                new DownloadMediaTask(comment, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+            }
             Post parentPost = comment.getParentPost();
             if (parentPost != null) {
                 if (parentPost.senderUserId.isMe()) {

@@ -529,6 +529,7 @@ public class CommentsActivity extends HalloActivity {
             if (comment.media.isEmpty()) {
                 commentMedia.setVisibility(View.GONE);
             } else {
+                commentMedia.setVisibility(View.VISIBLE);
                 mediaThumbnailLoader.load(commentMedia, comment.media.get(0));
             }
 

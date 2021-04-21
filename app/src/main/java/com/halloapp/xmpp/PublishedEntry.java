@@ -20,6 +20,7 @@ import com.halloapp.util.logs.Log;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PublishedEntry {
@@ -145,6 +146,9 @@ public class PublishedEntry {
             case ENTRY_COMMENT: {
                 Comment.Builder commentBuilder = Comment.newBuilder();
                 commentBuilder.setFeedPostId(feedItemId);
+                if (!media.isEmpty()) {
+                    commentBuilder.setMedia(getMediaProtos().get(0));
+                }
                 if (parentCommentId != null) {
                     commentBuilder.setParentCommentId(parentCommentId);
                 }
@@ -236,6 +240,7 @@ public class PublishedEntry {
                 builder.feedItemId(comment.getFeedPostId());
                 builder.parentCommentId(comment.getParentCommentId());
                 builder.text(comment.getText());
+                builder.media(fromMediaProtos(Collections.singletonList(comment.getMedia())));
                 builder.mentions(comment.getMentionsList());
             } else {
                 Log.i("Unknown encoded entry type");

@@ -516,6 +516,9 @@ public class NewConnection extends Connection {
                 comment.text,
                 comment.postId,
                 comment.parentCommentId);
+        for (Media media : comment.media) {
+            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+        }
         for (Mention mention : comment.mentions) {
             entry.mentions.add(Mention.toProto(mention));
         }
@@ -1184,6 +1187,11 @@ public class NewConnection extends Connection {
                                 false,
                                 publishedEntry.text
                         );
+                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
+                            comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
+                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.width, entryMedia.height));
+                        }
                         for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
                             Mention mention = Mention.parseFromProto(mentionProto);
                             processMention(mention);
@@ -1229,6 +1237,11 @@ public class NewConnection extends Connection {
                                 true,
                                 false,
                                 publishedEntry.text);
+                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
+                            comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
+                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.width, entryMedia.height));
+                        }
                         for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
                             Mention mention = Mention.parseFromProto(mentionProto);
                             processMention(mention);
