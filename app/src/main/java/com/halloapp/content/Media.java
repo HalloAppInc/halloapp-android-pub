@@ -36,17 +36,18 @@ public class Media {
     public int width;
     public int height;
     public byte [] encKey;
-    public byte [] sha256hash;
+    public byte [] encSha256hash;
+    public byte [] decSha256hash;
     private boolean initialState = false;
 
     public @TransferredState int transferred;
 
     public static Media createFromFile(@MediaType int type, File file) {
-        return new Media(0, type, null, file, generateEncKey(), null,0, 0, TRANSFERRED_NO);
+        return new Media(0, type, null, file, generateEncKey(), null, null,0, 0, TRANSFERRED_NO);
     }
 
-    public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] sha256hash, int width, int height) {
-        return new Media(0, type, url, null, encKey, sha256hash, width, height, TRANSFERRED_NO);
+    public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] encSha256hash, int width, int height) {
+        return new Media(0, type, url, null, encKey, encSha256hash, null, width, height, TRANSFERRED_NO);
     }
 
     public static float getMaxAspectRatio(List<Media> media) {
@@ -89,13 +90,14 @@ public class Media {
         }
     }
 
-    public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] sha256hash, int width, int height, @TransferredState int transferred) {
+    public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] encSha256hash, byte [] decSha256hash, int width, int height, @TransferredState int transferred) {
         this.rowId = rowId;
         this.type = type;
         this.url = url;
         this.file = file;
         this.encKey = encKey;
-        this.sha256hash = sha256hash;
+        this.encSha256hash = encSha256hash;
+        this.decSha256hash = decSha256hash;
         this.width = width;
         this.height = height;
         this.transferred = transferred;

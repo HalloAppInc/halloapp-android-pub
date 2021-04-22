@@ -93,7 +93,7 @@ public abstract class Connection {
 
     public abstract Observable<Integer> requestSecondsToExpiration();
 
-    public abstract Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize);
+    public abstract Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl);
 
     public abstract Observable<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
 

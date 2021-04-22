@@ -216,7 +216,7 @@ public class CropImageViewModel extends AndroidViewModel {
             if (edit.exists()) {
                 editMedia = mediaFromFile(type, edit);
             } else {
-                editMedia = new Media(0, type, null, edit, null, null, 0, 0, Media.TRANSFERRED_NO);
+                editMedia = new Media(0, type, null, edit, null, null, null,0, 0, Media.TRANSFERRED_NO);
             }
 
             Parcelable editState = null;
@@ -228,7 +228,7 @@ public class CropImageViewModel extends AndroidViewModel {
                 tmp.delete();
             }
 
-            Media tmpMedia = new Media(0, type, null, tmp, null, null, 0, 0, Media.TRANSFERRED_NO);
+            Media tmpMedia = new Media(0, type, null, tmp, null, null, null,0, 0, Media.TRANSFERRED_NO);
 
             final Long date = dates.get(uri);
             result.add(new MediaModel(uri, originalMedia, editMedia, tmpMedia, editState, date != null ? date : 0L));

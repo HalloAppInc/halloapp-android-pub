@@ -300,8 +300,8 @@ public class NewConnection extends Connection {
     }
 
     @Override
-    public Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize) {
-        final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize);
+    public Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl) {
+        final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize, downloadUrl);
         return sendIqRequestAsync(mediaUploadIq).map(response -> MediaUploadIq.fromProto(response.getUploadMedia()).urls);
     }
 
@@ -467,7 +467,7 @@ public class NewConnection extends Connection {
                 null,
                 null);
         for (Media media : post.media) {
-            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height));
         }
         for (Mention mention : post.mentions) {
             entry.mentions.add(Mention.toProto(mention));
@@ -517,7 +517,7 @@ public class NewConnection extends Connection {
                 comment.postId,
                 comment.parentCommentId);
         for (Media media : comment.media) {
-            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.sha256hash, media.width, media.height));
+            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height));
         }
         for (Mention mention : comment.mentions) {
             entry.mentions.add(Mention.toProto(mention));
@@ -777,7 +777,7 @@ public class NewConnection extends Connection {
             Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
         });
     }
-    
+
     @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
@@ -1159,7 +1159,7 @@ public class NewConnection extends Connection {
                         Post np = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.encKey, entryMedia.encSha256hash,
                                     entryMedia.width, entryMedia.height));
                         }
                         for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
@@ -1189,7 +1189,7 @@ public class NewConnection extends Connection {
                         );
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.encKey, entryMedia.encSha256hash,
                                     entryMedia.width, entryMedia.height));
                         }
                         for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
@@ -1239,7 +1239,7 @@ public class NewConnection extends Connection {
                                 publishedEntry.text);
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.encKey, entryMedia.encSha256hash,
                                     entryMedia.width, entryMedia.height));
                         }
                         for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
@@ -1263,7 +1263,7 @@ public class NewConnection extends Connection {
                         Post post = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
                         for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                             post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.sha256hash,
+                                    entryMedia.encKey, entryMedia.encSha256hash,
                                     entryMedia.width, entryMedia.height));
                         }
                         for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {

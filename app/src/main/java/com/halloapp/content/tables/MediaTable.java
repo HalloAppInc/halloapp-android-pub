@@ -9,6 +9,7 @@ public final class MediaTable implements BaseColumns {
     public static final String TABLE_NAME = "media";
 
     public static final String INDEX_MEDIA_KEY = "media_key";
+    public static final String INDEX_DEC_HASH_KEY = "dec_hash_key";
 
     public static final String COLUMN_PARENT_TABLE = "parent_table";
     public static final String COLUMN_PARENT_ROW_ID = "parent_row_id";
@@ -24,5 +25,6 @@ public final class MediaTable implements BaseColumns {
     public static final String COLUMN_HEIGHT = "height";
     public static final String COLUMN_UPLOAD_PROGRESS = "upload_progress";
     public static final String COLUMN_RETRY_COUNT = "retry_count";
+    public static final String COLUMN_DEC_SHA256_HASH = "dec_sha256_hash";
 }
 

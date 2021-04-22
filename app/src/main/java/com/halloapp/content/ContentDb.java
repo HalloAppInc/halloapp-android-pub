@@ -44,6 +44,7 @@ public class ContentDb {
     private final Me me;
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
+    private final MediaDb mediaDb;
     private final PostsDb postsDb;
 
     private final ServerProps serverProps;
@@ -128,6 +129,7 @@ public class ContentDb {
         mentionsDb = new MentionsDb(databaseHelper);
         messagesDb = new MessagesDb(fileStore, mentionsDb, serverProps, databaseHelper);
         postsDb = new PostsDb(mentionsDb, databaseHelper, fileStore, serverProps);
+        mediaDb = new MediaDb(databaseHelper, fileStore);
     }
 
     public void addObserver(@NonNull Observer observer) {
@@ -307,6 +309,12 @@ public class ContentDb {
     public String getPatchUrl(@NonNull Message message, long rowId) {
         Log.i("Get patch url in Message: " + message);
         return messagesDb.getPatchUrl(rowId);
+    }
+
+    @WorkerThread
+    public @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash) {
+        Log.i("Get latest media with a given data hash");
+        return mediaDb.getLatestMediaWithHash(decSha256hash);
     }
 
     @WorkerThread

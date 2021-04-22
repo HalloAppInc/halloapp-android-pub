@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
@@ -134,8 +133,11 @@ class MessagesDb {
                     if (mediaItem.encKey != null) {
                         mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
                     }
-                    if (mediaItem.sha256hash != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+                    if (mediaItem.encSha256hash != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
+                    }
+                    if (mediaItem.decSha256hash != null) {
+                        mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
                     }
                     mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
                 }
@@ -494,8 +496,11 @@ class MessagesDb {
         if (media.encKey != null) {
             values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
         }
-        if (media.sha256hash != null) {
-            values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
+        if (media.encSha256hash != null) {
+            values.put(MediaTable.COLUMN_SHA256_HASH, media.encSha256hash);
+        }
+        if (media.decSha256hash != null) {
+            values.put(MediaTable.COLUMN_DEC_SHA256_HASH, media.decSha256hash);
         }
         if (media.file != null && (media.width == 0 || media.height == 0)) {
             final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
@@ -880,6 +885,7 @@ class MessagesDb {
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
+                            null,
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17));
@@ -994,6 +1000,7 @@ class MessagesDb {
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
+                            null,
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17));
@@ -1030,6 +1037,7 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
                 "m." + MediaTable.COLUMN_ENC_KEY + ", " +
                 "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
                 "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
                 "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
@@ -1049,6 +1057,7 @@ class MessagesDb {
                     MediaTable.COLUMN_HEIGHT + "," +
                     MediaTable.COLUMN_ENC_KEY + ", " +
                     MediaTable.COLUMN_SHA256_HASH + "," +
+                    MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
@@ -1067,7 +1076,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
-                    String rawReplySenderId = cursor.getString(24);
+                    String rawReplySenderId = cursor.getString(25);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1078,10 +1087,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(20),
-                            cursor.getInt(21),
-                            cursor.getString(22),
-                            cursor.getInt(23),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1094,6 +1103,7 @@ class MessagesDb {
                             fileStore.getMediaFile(cursor.getString(13)),
                             cursor.getBlob(18),
                             cursor.getBlob(19),
+                            cursor.getBlob(20),
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17));
@@ -1243,6 +1253,7 @@ class MessagesDb {
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
+                            null,
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17));
@@ -1296,6 +1307,7 @@ class MessagesDb {
                     cursor.getInt(1),
                     cursor.getString(2),
                     fileStore.getMediaFile(cursor.getString(3)),
+                    null,
                     null,
                     null,
                     cursor.getInt(5),
@@ -1361,6 +1373,7 @@ class MessagesDb {
                     "m." + MediaTable.COLUMN_ENC_FILE + "," +
                     "m." + MediaTable.COLUMN_ENC_KEY + "," +
                     "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                    "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
@@ -1381,6 +1394,7 @@ class MessagesDb {
                         MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_SHA256_HASH + "," +
+                        MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -1420,10 +1434,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(20),
-                            cursor.getInt(21),
-                            cursor.getString(22),
-                            cursor.getInt(23),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1436,9 +1450,10 @@ class MessagesDb {
                             fileStore.getMediaFile(cursor.getString(13)),
                             cursor.getBlob(15),
                             cursor.getBlob(16),
-                            cursor.getInt(17),
+                            cursor.getBlob(17),
                             cursor.getInt(18),
-                            cursor.getInt(19));
+                            cursor.getInt(19),
+                            cursor.getInt(20));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }

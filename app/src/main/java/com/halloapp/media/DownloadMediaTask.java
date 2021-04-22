@@ -11,6 +11,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.proto.log_events.MediaDownload;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.stats.Events;
@@ -77,7 +78,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
                     media.encFile = encFile;
                     contentItem.setMediaTransferred(media, contentDb);
-                    Downloader.run(media.url, media.encKey, media.sha256hash, media.type, encFile, file, downloadListener);
+                    Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, encFile, file, downloadListener);
                     if (!file.setLastModified(contentItem.timestamp)) {
                         Log.w("DownloadMediaTask: failed to set last modified to " + file.getAbsolutePath());
                     }
@@ -85,6 +86,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                         Log.w("DownloadMediaTask: failed to delete temp enc file");
                     }
                     media.file = file;
+                    media.decSha256hash = FileUtils.getFileSha256(media.file);
                     media.transferred = Media.TRANSFERRED_YES;
                     contentItem.setMediaTransferred(media, contentDb);
                     totalSize += file.length();

@@ -100,8 +100,11 @@ class PostsDb {
             if (mediaItem.encKey != null) {
                 mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
             }
-            if (mediaItem.sha256hash != null) {
-                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+            if (mediaItem.encSha256hash != null) {
+                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
+            }
+            if (mediaItem.decSha256hash != null) {
+                mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
             }
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
@@ -303,8 +306,11 @@ class PostsDb {
         if (media.encKey != null) {
             values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
         }
-        if (media.sha256hash != null) {
-            values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
+        if (media.encSha256hash != null) {
+            values.put(MediaTable.COLUMN_SHA256_HASH, media.encSha256hash);
+        }
+        if (media.decSha256hash != null) {
+            values.put(MediaTable.COLUMN_DEC_SHA256_HASH, media.decSha256hash);
         }
         if (media.file != null && (media.width == 0 || media.height == 0)) {
             final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
@@ -336,8 +342,8 @@ class PostsDb {
         if (media.encKey != null) {
             values.put(MediaTable.COLUMN_ENC_KEY, media.encKey);
         }
-        if (media.sha256hash != null) {
-            values.put(MediaTable.COLUMN_SHA256_HASH, media.sha256hash);
+        if (media.encSha256hash != null) {
+            values.put(MediaTable.COLUMN_SHA256_HASH, media.encSha256hash);
         }
         if (media.file != null && (media.width == 0 || media.height == 0)) {
             final Size dimensions = MediaUtils.getDimensions(media.file, media.type);
@@ -545,8 +551,8 @@ class PostsDb {
             if (mediaItem.encKey != null) {
                 mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
             }
-            if (mediaItem.sha256hash != null) {
-                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.sha256hash);
+            if (mediaItem.encSha256hash != null) {
+                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
             }
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
@@ -844,6 +850,7 @@ class PostsDb {
                             fileStore.getMediaFile(cursor.getString(14)),
                             null,
                             null,
+                            null,
                             cursor.getInt(16),
                             cursor.getInt(17),
                             cursor.getInt(18));
@@ -945,6 +952,7 @@ class PostsDb {
                             fileStore.getMediaFile(cursor.getString(13)),
                             null,
                             null,
+                            null,
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17));
@@ -1040,6 +1048,7 @@ class PostsDb {
                         fileStore.getMediaFile(cursor.getString(3)),
                         null,
                         null,
+                        null,
                         cursor.getInt(5),
                         cursor.getInt(6),
                         cursor.getInt(7));
@@ -1114,6 +1123,7 @@ class PostsDb {
                             cursor.getInt(11),
                             cursor.getString(12),
                             fileStore.getMediaFile(cursor.getString(13)),
+                            null,
                             null,
                             null,
                             cursor.getInt(15),
@@ -1397,6 +1407,7 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_ENC_FILE + "," +
                     "m." + MediaTable.COLUMN_ENC_KEY + "," +
                     "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                    "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + " " +
@@ -1412,6 +1423,7 @@ class PostsDb {
                         MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_SHA256_HASH + "," +
+                        MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -1460,9 +1472,10 @@ class PostsDb {
                             fileStore.getMediaFile(cursor.getString(14)),
                             cursor.getBlob(16),
                             cursor.getBlob(17),
-                            cursor.getInt(18),
+                            cursor.getBlob(18),
                             cursor.getInt(19),
-                            cursor.getInt(20));
+                            cursor.getInt(20),
+                            cursor.getInt(21));
                     media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }

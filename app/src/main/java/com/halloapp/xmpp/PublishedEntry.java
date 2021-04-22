@@ -55,15 +55,15 @@ public class PublishedEntry {
         final String type;
         final String url;
         final byte [] encKey;
-        final byte [] sha256hash;
+        final byte [] encSha256hash;
         int width;
         int height;
 
-        public Media(@MediaType String type, String url, byte [] encKey, byte [] sha256hash, int width, int height) {
+        public Media(@MediaType String type, String url, byte [] encKey, byte [] encSha256hash, int width, int height) {
             this.type = type;
             this.url = url;
             this.encKey = encKey;
-            this.sha256hash = sha256hash;
+            this.encSha256hash = encSha256hash;
             this.width = width;
             this.height = height;
         }
@@ -178,7 +178,7 @@ public class PublishedEntry {
             mediaBuilder.setWidth(item.width);
             mediaBuilder.setHeight(item.height);
             mediaBuilder.setEncryptionKey(ByteString.copyFrom(item.encKey));
-            mediaBuilder.setCiphertextHash(ByteString.copyFrom(item.sha256hash));
+            mediaBuilder.setCiphertextHash(ByteString.copyFrom(item.encSha256hash));
             mediaBuilder.setDownloadUrl(item.url);
             mediaList.add(mediaBuilder.build());
         }

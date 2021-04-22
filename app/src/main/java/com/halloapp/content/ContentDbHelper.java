@@ -27,7 +27,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 40;
+    private static final int DATABASE_VERSION = 41;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -179,13 +179,19 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_WIDTH + " INTEGER,"
                 + MediaTable.COLUMN_HEIGHT + " INTEGER,"
                 + MediaTable.COLUMN_UPLOAD_PROGRESS + " INTEGER DEFAULT 0,"
-                + MediaTable.COLUMN_RETRY_COUNT + " INTEGER DEFAULT 0"
+                + MediaTable.COLUMN_RETRY_COUNT + " INTEGER DEFAULT 0,"
+                + MediaTable.COLUMN_DEC_SHA256_HASH + " BLOB"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_MEDIA_KEY);
         db.execSQL("CREATE INDEX " + MediaTable.INDEX_MEDIA_KEY + " ON " + MediaTable.TABLE_NAME + "("
                 + MediaTable.COLUMN_PARENT_TABLE + ", "
                 + MediaTable.COLUMN_PARENT_ROW_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_DEC_HASH_KEY);
+        db.execSQL("CREATE INDEX " + MediaTable.INDEX_DEC_HASH_KEY + " ON " + MediaTable.TABLE_NAME + "("
+                + MediaTable.COLUMN_DEC_SHA256_HASH
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MentionsTable.TABLE_NAME);
@@ -396,6 +402,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 39: {
                 upgradeFromVersion39(db);
+            }
+            case 40: {
+                upgradeFromVersion40(db);
             }
             break;
             default: {
@@ -734,6 +743,15 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion39(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion40(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_DEC_SHA256_HASH + " BLOB");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_DEC_HASH_KEY);
+        db.execSQL("CREATE INDEX " + MediaTable.INDEX_DEC_HASH_KEY + " ON " + MediaTable.TABLE_NAME + "("
+                + MediaTable.COLUMN_DEC_SHA256_HASH
+                + ");");
     }
 
     /**

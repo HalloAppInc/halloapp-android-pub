@@ -107,6 +107,20 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 break;
             }
 
+            byte[] decSha256hash = null;
+            Media existingHashedMedia = null;
+            try {
+                decSha256hash = FileUtils.getFileSha256(media.file);
+                existingHashedMedia = contentDb.getLatestMediaWithHash(decSha256hash);
+                Log.d("Resumable Uploader: existing upload = " + existingHashedMedia);
+            } catch (IOException e) {
+                Log.e("Resumable Uploader: could not compute hash for " + media.file.getAbsolutePath(), e);
+            } catch (NoSuchAlgorithmException e) {
+                Log.e("Resumable Uploader NoSuchAlgorithmException");
+            }
+
+            Log.d("Resumable Uploader: transferred = " + media.transferred);
+
             File encryptedFile;
             try {
                 encryptedFile = encryptFile(media.file, media.encKey, media.type, contentItem.id);
@@ -120,11 +134,13 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             long offset = 0;
             if (media.transferred == Media.TRANSFERRED_NO) {
                 try {
-                    urls = connection.requestMediaUpload(fileSize).await();
+                    final String downloadUrl = existingHashedMedia != null ? existingHashedMedia.url : null;
+                    urls = connection.requestMediaUpload(fileSize, downloadUrl).await();
                     if (urls == null) {
                         Log.e("Resumable Uploader: failed to get urls");
                         break;
                     }
+                    Log.d("Resumable Uploader: obtained downloadUrl = " + urls.downloadUrl);
 
                     if (urls.patchUrl != null) {
                         contentItem.setPatchUrl(media.rowId, urls.patchUrl, contentDb);
@@ -176,10 +192,27 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
             final Uploader.UploadListener uploadListener = percent -> true;
             final ResumableUploader.ResumableUploadListener resumableUploadListener = percent -> true;
-            if (urls != null && urls.patchUrl != null) {
+            if (urls != null &&
+                    urls.downloadUrl != null &&
+                    existingHashedMedia != null &&
+                    urls.downloadUrl.equals(existingHashedMedia.url) &&
+                    existingHashedMedia.encKey != null &&
+                    existingHashedMedia.encSha256hash != null) {
+
+                media.url = urls.downloadUrl;
+                media.encKey = existingHashedMedia.encKey;
+                media.encSha256hash = existingHashedMedia.encSha256hash;
+                media.decSha256hash = decSha256hash;
+                media.transferred = Media.TRANSFERRED_YES;
+                if (encryptedFile.exists()) {
+                    encryptedFile.delete();
+                }
+                success = true;
+            } else if (urls != null && urls.patchUrl != null) {
                 try {
                     media.url = ResumableUploader.sendPatchRequest(encryptedFile, offset, urls.patchUrl, resumableUploadListener);
-                    media.sha256hash = FileUtils.getFileSha256(encryptedFile);
+                    media.encSha256hash = FileUtils.getFileSha256(encryptedFile);
+                    media.decSha256hash = decSha256hash;
                     media.transferred = Media.TRANSFERRED_YES;
                     if (encryptedFile.exists()) {
                         encryptedFile.delete();
@@ -210,7 +243,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 }
             } else if (urls != null && urls.putUrl != null) {
                 try {
-                    media.sha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
+                    media.encSha256hash = Uploader.run(media.file, media.encKey, media.type, urls.putUrl, uploadListener);
+                    media.decSha256hash = decSha256hash;
                     media.url = urls.getUrl;
                     media.transferred = Media.TRANSFERRED_YES;
                     success = true;
