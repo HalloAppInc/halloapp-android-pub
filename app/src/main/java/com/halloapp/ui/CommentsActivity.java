@@ -76,6 +76,7 @@ import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -127,6 +128,7 @@ public class CommentsActivity extends HalloActivity {
     private TimestampRefresher timestampRefresher;
 
     private boolean showKeyboardOnResume;
+    private int commentsFsePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,17 +140,33 @@ public class CommentsActivity extends HalloActivity {
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                Post post = viewModel.post.getValue();
-                RecyclerView gallery = findViewById(R.id.comments).findViewWithTag(post);
-                RecyclerView.LayoutManager layoutManager = gallery.getLayoutManager();
-
+                RecyclerView comments = findViewById(R.id.comments);
                 String name = names.get(0);
-                for (int i = 0; i < post.media.size(); ++i) {
-                    View view = layoutManager.findViewByPosition(i);
 
-                    if (view != null && name.equals(view.getTransitionName())) {
-                        sharedElements.put(name, view);
-                        return;
+                if (commentsFsePosition == 0) {
+                    Post post = viewModel.post.getValue();
+                    RecyclerView gallery = comments.findViewWithTag(post);
+                    RecyclerView.LayoutManager layoutManager = gallery.getLayoutManager();
+
+                    for (int i = 0; i < post.media.size(); ++i) {
+                        View view = layoutManager.findViewByPosition(i);
+
+                        if (view != null && name.equals(view.getTransitionName())) {
+                            sharedElements.put(name, view);
+                            return;
+                        }
+                    }
+                } else {
+                    RecyclerView.LayoutManager commentsLayoutManager = comments.getLayoutManager();
+                    View row = commentsLayoutManager.getChildAt(commentsFsePosition);
+
+                    if (row != null) {
+                        View view = row.findViewById(R.id.comment_media);
+
+                        if (view != null && name.equals(view.getTransitionName())) {
+                            sharedElements.put(name, view);
+                            return;
+                        }
                     }
                 }
 
@@ -541,7 +559,24 @@ public class CommentsActivity extends HalloActivity {
                 commentMedia.setVisibility(View.GONE);
             } else {
                 commentMedia.setVisibility(View.VISIBLE);
-                mediaThumbnailLoader.load(commentMedia, comment.media.get(0));
+                Media media = comment.media.get(0);
+                mediaThumbnailLoader.load(commentMedia, media);
+                commentMedia.setOnClickListener(v -> {
+                    commentsFsePosition = position;
+
+                    Intent intent = new Intent(commentMedia.getContext(), MediaExplorerActivity.class);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(Collections.singletonList(media)));
+                    intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, comment.id);
+
+                    if (commentMedia.getContext() instanceof Activity) {
+                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(CommentsActivity.this, commentMedia, commentMedia.getTransitionName());
+                        startActivity(intent, options.toBundle());
+                    } else {
+                        startActivity(intent);
+                    }
+                });
+                commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
             }
 
             cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
@@ -638,6 +673,8 @@ public class CommentsActivity extends HalloActivity {
                 imageView.setAdjustViewBounds(true);
                 mediaThumbnailLoader.load(imageView, media.get(position));
                 imageView.setOnClickListener(v -> {
+                    commentsFsePosition = 0;
+
                     Intent intent = new Intent(imageView.getContext(), MediaExplorerActivity.class);
                     intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
                     intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
