@@ -1,9 +1,6 @@
 package com.halloapp.ui.chat;
 
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -82,6 +79,7 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.ClipUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
@@ -1153,9 +1151,7 @@ public class ChatActivity extends HalloActivity {
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     if (item.getItemId() == R.id.copy) {
-                        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clipData = ClipData.newPlainText(getString(R.string.copy_text), text);
-                        clipboardManager.setPrimaryClip(clipData);
+                        ClipUtils.copyToClipboard(text);
                         if (actionMode != null) {
                             actionMode.finish();
                         }

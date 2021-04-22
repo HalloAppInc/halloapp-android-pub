@@ -9,15 +9,11 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.CharacterStyle;
-import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
-import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
-import com.halloapp.contacts.Contact;
 
 import java.text.BreakIterator;
 import java.util.List;

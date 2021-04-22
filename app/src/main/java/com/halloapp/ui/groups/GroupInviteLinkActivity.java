@@ -2,8 +2,6 @@ package com.halloapp.ui.groups;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +17,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.ClipUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.CenterToast;
@@ -63,9 +62,7 @@ public class GroupInviteLinkActivity extends HalloActivity {
         View inviteLinkContainer = findViewById(R.id.invite_link_container);
 
         copyLink.setOnClickListener(v -> {
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(null, getInviteLink());
-            clipboard.setPrimaryClip(clip);
+            ClipUtils.copyToClipboard(getInviteLink());
             CenterToast.show(this, R.string.invite_link_copied);
         });
         viewModel.getInviteLink().observe(this, link -> {
