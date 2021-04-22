@@ -103,6 +103,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             setTitle(R.string.avatar_picker_title);
         } else if (pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
             setTitle(R.string.group_avatar_picker_title);
+        } else if (pickerPurpose == PICKER_PURPOSE_COMMENT) {
+            setTitle(R.string.comment);
         }
 
         final RecyclerView mediaView = findViewById(android.R.id.list);

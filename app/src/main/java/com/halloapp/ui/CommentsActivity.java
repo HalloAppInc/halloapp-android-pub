@@ -216,6 +216,16 @@ public class CommentsActivity extends HalloActivity {
 
         View mediaContainer = findViewById(R.id.media_container);
         ImageView imageView = findViewById(R.id.media_preview);
+        imageView.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_preview_corner_radius));
+            }
+        });
+        imageView.setClipToOutline(true);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setAdjustViewBounds(true);
+
         viewModel.commentMedia.observe(this, media -> {
             if (media == null) {
                 mediaContainer.setVisibility(View.GONE);
@@ -514,6 +524,15 @@ public class CommentsActivity extends HalloActivity {
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
                 mediaGallery.setLayoutManager(layoutManager);
                 mediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing)));
+            }
+            if (commentMedia != null) {
+                commentMedia.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_corner_radius));
+                    }
+                });
+                commentMedia.setClipToOutline(true);
             }
         }
 
