@@ -276,7 +276,8 @@ public class CommentsActivity extends HalloActivity {
 
         final View media = findViewById(R.id.media);
         media.setOnClickListener(v -> pickMedia());
-        media.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+        // TODO(jack): Enable media comments when future-proofing is complete
+//        media.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
