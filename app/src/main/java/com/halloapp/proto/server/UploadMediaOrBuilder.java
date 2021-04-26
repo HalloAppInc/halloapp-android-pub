@@ -35,4 +35,15 @@ public interface UploadMediaOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDownloadUrlBytes();
+
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  int getTypeValue();
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   * @return The type.
+   */
+  com.halloapp.proto.server.UploadMedia.Type getType();
 }

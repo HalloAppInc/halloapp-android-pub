@@ -3542,6 +3542,9 @@ export namespace server {
 
         /** UploadMedia downloadUrl */
         downloadUrl?: (string|null);
+
+        /** UploadMedia type */
+        type?: (server.UploadMedia.Type|null);
     }
 
     /** Represents an UploadMedia. */
@@ -3561,6 +3564,9 @@ export namespace server {
 
         /** UploadMedia downloadUrl. */
         public downloadUrl: string;
+
+        /** UploadMedia type. */
+        public type: server.UploadMedia.Type;
 
         /**
          * Creates a new UploadMedia instance using the specified properties.
@@ -3631,6 +3637,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace UploadMedia {
+
+        /** Type enum. */
+        enum Type {
+            DEFAULT = 0,
+            RESUMABLE = 1,
+            DIRECT = 2
+        }
     }
 
     /** Properties of a ChatStanza. */
@@ -7432,7 +7448,8 @@ export namespace server {
         /** Type enum. */
         enum Type {
             POST = 0,
-            MESSAGE = 1
+            MESSAGE = 1,
+            COMMENT = 2
         }
 
         /** Status enum. */
@@ -7579,7 +7596,8 @@ export namespace server {
         /** Type enum. */
         enum Type {
             POST = 0,
-            MESSAGE = 1
+            MESSAGE = 1,
+            COMMENT = 2
         }
 
         /** Status enum. */

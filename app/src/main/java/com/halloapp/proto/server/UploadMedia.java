@@ -14,6 +14,104 @@ public  final class UploadMedia extends
   private UploadMedia() {
     downloadUrl_ = "";
   }
+  /**
+   * Protobuf enum {@code server.UploadMedia.Type}
+   */
+  public enum Type
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>DEFAULT = 0;</code>
+     */
+    DEFAULT(0),
+    /**
+     * <code>RESUMABLE = 1;</code>
+     */
+    RESUMABLE(1),
+    /**
+     * <code>DIRECT = 2;</code>
+     */
+    DIRECT(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>DEFAULT = 0;</code>
+     */
+    public static final int DEFAULT_VALUE = 0;
+    /**
+     * <code>RESUMABLE = 1;</code>
+     */
+    public static final int RESUMABLE_VALUE = 1;
+    /**
+     * <code>DIRECT = 2;</code>
+     */
+    public static final int DIRECT_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Type valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Type forNumber(int value) {
+      switch (value) {
+        case 0: return DEFAULT;
+        case 1: return RESUMABLE;
+        case 2: return DIRECT;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Type>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Type> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+            @java.lang.Override
+            public Type findValueByNumber(int number) {
+              return Type.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return TypeVerifier.INSTANCE;
+    }
+
+    private static final class TypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Type.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Type(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.UploadMedia.Type)
+  }
+
   public static final int SIZE_FIELD_NUMBER = 1;
   private long size_;
   /**
@@ -131,6 +229,48 @@ public  final class UploadMedia extends
     checkByteStringIsUtf8(value);
     downloadUrl_ = value.toStringUtf8();
     
+  }
+
+  public static final int TYPE_FIELD_NUMBER = 4;
+  private int type_;
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  @java.lang.Override
+  public int getTypeValue() {
+    return type_;
+  }
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   * @return The type.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.UploadMedia.Type getType() {
+    com.halloapp.proto.server.UploadMedia.Type result = com.halloapp.proto.server.UploadMedia.Type.forNumber(type_);
+    return result == null ? com.halloapp.proto.server.UploadMedia.Type.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   * @param value The enum numeric value on the wire for type to set.
+   */
+  private void setTypeValue(int value) {
+      type_ = value;
+  }
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   * @param value The type to set.
+   */
+  private void setType(com.halloapp.proto.server.UploadMedia.Type value) {
+    type_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.UploadMedia.Type type = 4;</code>
+   */
+  private void clearType() {
+    
+    type_ = 0;
   }
 
   public static com.halloapp.proto.server.UploadMedia parseFrom(
@@ -352,6 +492,52 @@ public  final class UploadMedia extends
       return this;
     }
 
+    /**
+     * <code>.server.UploadMedia.Type type = 4;</code>
+     * @return The enum numeric value on the wire for type.
+     */
+    @java.lang.Override
+    public int getTypeValue() {
+      return instance.getTypeValue();
+    }
+    /**
+     * <code>.server.UploadMedia.Type type = 4;</code>
+     * @param value The type to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTypeValue(int value) {
+      copyOnWrite();
+      instance.setTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.UploadMedia.Type type = 4;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.UploadMedia.Type getType() {
+      return instance.getType();
+    }
+    /**
+     * <code>.server.UploadMedia.Type type = 4;</code>
+     * @param value The enum numeric value on the wire for type to set.
+     * @return This builder for chaining.
+     */
+    public Builder setType(com.halloapp.proto.server.UploadMedia.Type value) {
+      copyOnWrite();
+      instance.setType(value);
+      return this;
+    }
+    /**
+     * <code>.server.UploadMedia.Type type = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearType() {
+      copyOnWrite();
+      instance.clearType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.UploadMedia)
   }
   @java.lang.Override
@@ -371,10 +557,11 @@ public  final class UploadMedia extends
             "size_",
             "url_",
             "downloadUrl_",
+            "type_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0002\u0002\t" +
-              "\u0003\u0208";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0002\t" +
+              "\u0003\u0208\u0004\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

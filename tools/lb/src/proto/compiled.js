@@ -9172,6 +9172,7 @@ $root.server = (function() {
          * @property {number|Long|null} [size] UploadMedia size
          * @property {server.IMediaUrl|null} [url] UploadMedia url
          * @property {string|null} [downloadUrl] UploadMedia downloadUrl
+         * @property {server.UploadMedia.Type|null} [type] UploadMedia type
          */
 
         /**
@@ -9214,6 +9215,14 @@ $root.server = (function() {
         UploadMedia.prototype.downloadUrl = "";
 
         /**
+         * UploadMedia type.
+         * @member {server.UploadMedia.Type} type
+         * @memberof server.UploadMedia
+         * @instance
+         */
+        UploadMedia.prototype.type = 0;
+
+        /**
          * Creates a new UploadMedia instance using the specified properties.
          * @function create
          * @memberof server.UploadMedia
@@ -9243,6 +9252,8 @@ $root.server = (function() {
                 $root.server.MediaUrl.encode(message.url, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.downloadUrl != null && Object.hasOwnProperty.call(message, "downloadUrl"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.downloadUrl);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.type);
             return writer;
         };
 
@@ -9285,6 +9296,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.downloadUrl = reader.string();
+                    break;
+                case 4:
+                    message.type = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -9332,6 +9346,15 @@ $root.server = (function() {
             if (message.downloadUrl != null && message.hasOwnProperty("downloadUrl"))
                 if (!$util.isString(message.downloadUrl))
                     return "downloadUrl: string expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
             return null;
         };
 
@@ -9363,6 +9386,20 @@ $root.server = (function() {
             }
             if (object.downloadUrl != null)
                 message.downloadUrl = String(object.downloadUrl);
+            switch (object.type) {
+            case "DEFAULT":
+            case 0:
+                message.type = 0;
+                break;
+            case "RESUMABLE":
+            case 1:
+                message.type = 1;
+                break;
+            case "DIRECT":
+            case 2:
+                message.type = 2;
+                break;
+            }
             return message;
         };
 
@@ -9387,6 +9424,7 @@ $root.server = (function() {
                     object.size = options.longs === String ? "0" : 0;
                 object.url = null;
                 object.downloadUrl = "";
+                object.type = options.enums === String ? "DEFAULT" : 0;
             }
             if (message.size != null && message.hasOwnProperty("size"))
                 if (typeof message.size === "number")
@@ -9397,6 +9435,8 @@ $root.server = (function() {
                 object.url = $root.server.MediaUrl.toObject(message.url, options);
             if (message.downloadUrl != null && message.hasOwnProperty("downloadUrl"))
                 object.downloadUrl = message.downloadUrl;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.UploadMedia.Type[message.type] : message.type;
             return object;
         };
 
@@ -9410,6 +9450,22 @@ $root.server = (function() {
         UploadMedia.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * Type enum.
+         * @name server.UploadMedia.Type
+         * @enum {number}
+         * @property {number} DEFAULT=0 DEFAULT value
+         * @property {number} RESUMABLE=1 RESUMABLE value
+         * @property {number} DIRECT=2 DIRECT value
+         */
+        UploadMedia.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "DEFAULT"] = 0;
+            values[valuesById[1] = "RESUMABLE"] = 1;
+            values[valuesById[2] = "DIRECT"] = 2;
+            return values;
+        })();
 
         return UploadMedia;
     })();
@@ -19725,6 +19781,7 @@ $root.server = (function() {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.durationMs != null && message.hasOwnProperty("durationMs"))
@@ -19775,6 +19832,10 @@ $root.server = (function() {
             case "MESSAGE":
             case 1:
                 message.type = 1;
+                break;
+            case "COMMENT":
+            case 2:
+                message.type = 2;
                 break;
             }
             if (object.durationMs != null)
@@ -19859,11 +19920,13 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} POST=0 POST value
          * @property {number} MESSAGE=1 MESSAGE value
+         * @property {number} COMMENT=2 COMMENT value
          */
         MediaUpload.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "POST"] = 0;
             values[valuesById[1] = "MESSAGE"] = 1;
+            values[valuesById[2] = "COMMENT"] = 2;
             return values;
         })();
 
@@ -20121,6 +20184,7 @@ $root.server = (function() {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.durationMs != null && message.hasOwnProperty("durationMs"))
@@ -20171,6 +20235,10 @@ $root.server = (function() {
             case "MESSAGE":
             case 1:
                 message.type = 1;
+                break;
+            case "COMMENT":
+            case 2:
+                message.type = 2;
                 break;
             }
             if (object.durationMs != null)
@@ -20255,11 +20323,13 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} POST=0 POST value
          * @property {number} MESSAGE=1 MESSAGE value
+         * @property {number} COMMENT=2 COMMENT value
          */
         MediaDownload.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "POST"] = 0;
             values[valuesById[1] = "MESSAGE"] = 1;
+            values[valuesById[2] = "COMMENT"] = 2;
             return values;
         })();
 

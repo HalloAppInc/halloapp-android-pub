@@ -35,6 +35,10 @@ public  final class MediaUpload extends
      * <code>MESSAGE = 1;</code>
      */
     MESSAGE(1),
+    /**
+     * <code>COMMENT = 2;</code>
+     */
+    COMMENT(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -54,6 +58,10 @@ public  final class MediaUpload extends
      * <code>MESSAGE = 1;</code>
      */
     public static final int MESSAGE_VALUE = 1;
+    /**
+     * <code>COMMENT = 2;</code>
+     */
+    public static final int COMMENT_VALUE = 2;
 
 
     @java.lang.Override
@@ -79,6 +87,7 @@ public  final class MediaUpload extends
       switch (value) {
         case 0: return POST;
         case 1: return MESSAGE;
+        case 2: return COMMENT;
         default: return null;
       }
     }
