@@ -10,6 +10,7 @@ import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
@@ -72,6 +73,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             uploadEvent.setType(MediaUpload.Type.POST);
         } else if (contentItem instanceof Message) {
             uploadEvent.setType(MediaUpload.Type.MESSAGE);
+        } else if (contentItem instanceof Comment) {
+            uploadEvent.setType(MediaUpload.Type.COMMENT);
         }
         uploadEvent.setId(contentItem.id);
 

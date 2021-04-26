@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 
 import com.halloapp.FileStore;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
@@ -45,6 +46,8 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
             mediaDownloadEvent.setType(MediaDownload.Type.POST);
         } else if (contentItem instanceof Message) {
             mediaDownloadEvent.setType(MediaDownload.Type.MESSAGE);
+        } else if (contentItem instanceof Comment) {
+            mediaDownloadEvent.setType(MediaDownload.Type.COMMENT);
         }
         long totalSize = 0;
         int numPhotos = 0;
