@@ -145,7 +145,7 @@ public class GroupInfoActivity extends HalloActivity {
 
         leaveGroup = findViewById(R.id.leave_group);
         View nameContainer = findViewById(R.id.name_container);
-        View bgContainer = findViewById(R.id.background_container);
+        View bgContainer = findViewById(R.id.group_background);
         CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
 
         TextView groupBgDesc = findViewById(R.id.group_background_description);
