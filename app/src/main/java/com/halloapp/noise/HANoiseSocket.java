@@ -9,7 +9,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.goterl.lazycode.lazysodium.interfaces.Sign;
+import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.Me;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
