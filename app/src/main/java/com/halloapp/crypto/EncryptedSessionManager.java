@@ -96,7 +96,7 @@ public class EncryptedSessionManager {
                 keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                 encryptedKeyStore.setPeerResponded(peerUserId, true);
             } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
-                PublicXECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
+                PublicEdECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
                 if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), sessionSetupInfo.identityKey.getKeyMaterial())) {
                     Log.w("Session already set up but received session setup info with new identity key;"
                             + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)

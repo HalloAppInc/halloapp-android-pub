@@ -283,6 +283,8 @@
     <string name="new_messages">New messages</string>
     <string name="delete">Delete</string>
     <string name="clear_chat">Clear chat</string>
+    <string name="verify_keys">Verify keys</string>
+    <string name="verify_keys_title">Verify keys</string>
     <string name="view_profile">View profile</string>
     <string name="action_hide">Hide</string>
     <string name="hide_my_posts">Hide my posts</string>

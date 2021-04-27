@@ -327,8 +327,8 @@ public class EncryptedKeyStore {
         storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
-    public PublicXECKey getPeerPublicIdentityKey(UserId peerUserId) throws CryptoException {
-        return new PublicXECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
+    public PublicEdECKey getPeerPublicIdentityKey(UserId peerUserId) throws CryptoException {
+        return new PublicEdECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
     }
 
     public void clearPeerPublicIdentityKey(UserId peerUserId) {

@@ -59,6 +59,10 @@
             android:label=""
             android:windowSoftInputMode="adjustResize"/>
 
+        <activity android:name=".ui.chat.KeyVerificationActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/verify_keys_title"/>
+
         <activity android:name=".ui.groups.CreateGroupActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/new_group_title"

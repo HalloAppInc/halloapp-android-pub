@@ -65,6 +65,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -726,6 +727,7 @@ public class ChatActivity extends HalloActivity {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         menuItem = menu.findItem(R.id.block);
         menuItem.setVisible(chatId instanceof UserId);
+        menu.findItem(R.id.verify).setVisible(chatId instanceof UserId && ServerProps.getInstance().getIsInternalUser());
         viewModel.getBlockList().observe(this, userIds -> {
             blocked = updateBlockedContact(userIds);
             Log.i("ChatActivity: blocked = " + blocked);
@@ -755,6 +757,8 @@ public class ChatActivity extends HalloActivity {
                 unBlockContact(item);
             }
             return true;
+        } else if (item.getItemId() == R.id.verify) {
+            startActivity(KeyVerificationActivity.openKeyVerification(this, (UserId) chatId));
         }
         return super.onOptionsItemSelected(item);
     }

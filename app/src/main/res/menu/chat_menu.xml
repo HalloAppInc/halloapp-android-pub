@@ -12,4 +12,11 @@
         android:title="@string/block"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/verify"
+        android:title="@string/verify_keys"
+        app:showAsAction="never"
+        android:visible="false"
+        />
+
 </menu>
