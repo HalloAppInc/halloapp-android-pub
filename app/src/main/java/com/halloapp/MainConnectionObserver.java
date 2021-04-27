@@ -451,7 +451,11 @@ public class MainConnectionObserver extends Connection.Observer {
 
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, joined, new ArrayList<>(), () -> {
             for (MemberInfo member : joined) {
-                addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, null);
+                addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, () -> {
+                    if (member.userId.isMe()) {
+                        contentDb.setGroupActive(groupId, null);
+                    }
+                });
             }
 
             connection.sendAck(ackId);

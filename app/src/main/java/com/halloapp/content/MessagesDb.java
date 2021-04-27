@@ -387,6 +387,27 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean setGroupActive(@NonNull GroupId groupId) {
+        Log.i("MessagesDb.setGroupActive " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, 1);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.setGroupActive: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.setGroupActive: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
     boolean setGroupAvatar(@NonNull GroupId groupId, @NonNull String avatarId) {
         Log.i("MessagesDb.setGroupAvatar " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
