@@ -109,11 +109,6 @@ public class ChatMessageElement {
                 Log.sendErrorReport("Decryption failure: " + failureReason);
                 stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
 
-                // TODO(jack): Remove this block to enable tombstones for all users
-                if (!ServerProps.getInstance().getIsInternalUser()) {
-                    chatMessage = plaintextChatMessage;
-                }
-
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
                     int count;
