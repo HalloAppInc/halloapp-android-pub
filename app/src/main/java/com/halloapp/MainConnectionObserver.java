@@ -435,6 +435,13 @@ public class MainConnectionObserver extends Connection.Observer {
                 }
             }
 
+            for (MemberInfo member : added) {
+                if (member.userId.isMe()) {
+                    contentDb.setGroupActive(groupId, null);
+                    break;
+                }
+            }
+
             connection.sendAck(ackId);
         });
     }
