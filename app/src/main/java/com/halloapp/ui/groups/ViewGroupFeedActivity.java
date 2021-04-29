@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -28,7 +27,6 @@ import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -148,28 +146,6 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 }
             }
             fabView.hide();
-        });
-
-        BottomNavigationView bottomNav = findViewById(R.id.nav_view);
-        bottomNav.setSelectedItemId(R.id.navigation_groups);
-        bottomNav.setOnNavigationItemSelectedListener(item -> {
-            Intent homeIntent = new Intent(this, MainActivity.class);
-            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            String navTarget = MainActivity.NAV_TARGET_FEED;
-            if (item.getItemId() == R.id.navigation_home) {
-                navTarget = MainActivity.NAV_TARGET_FEED;
-            } else if (item.getItemId() == R.id.navigation_messages) {
-                navTarget = MainActivity.NAV_TARGET_MESSAGES;
-            } else if (item.getItemId() == R.id.navigation_profile) {
-                navTarget = MainActivity.NAV_TARGET_PROFILE;
-            } else if (item.getItemId() == R.id.navigation_groups) {
-                navTarget = MainActivity.NAV_TARGET_GROUPS;
-            }
-            homeIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, navTarget);
-            startActivity(homeIntent);
-            finish();
-            overridePendingTransition(0, 0);
-            return true;
         });
 
         final View newPostsView = findViewById(R.id.new_posts);
