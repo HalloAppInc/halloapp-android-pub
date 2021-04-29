@@ -42,6 +42,7 @@
     <style name="AppTheme.GroupBackground">
         <item name="actionBarStyle">@style/ActionBar.GroupBackground</item>
         <item name="actionModeBackground">@color/group_bg_picker_background</item>
+        <item name="android:actionMenuTextAppearance">@style/TextAppearance.ActionMenuItem</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -316,6 +317,13 @@
     <style name="TextAppearance.Toolbar.GroupFeed.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/color_secondary</item>
         <item name="android:textSize">17dp</item>
+    </style>
+
+    <style name="TextAppearance.ActionMenuItem" parent="">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="actionMenuTextColor">@color/color_secondary</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Widget.Button.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
