@@ -151,6 +151,144 @@ public  final class Container extends
     
   }
 
+  public static final int POST_CONTAINER_FIELD_NUMBER = 4;
+  private com.halloapp.proto.clients.PostContainer postContainer_;
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   */
+  @java.lang.Override
+  public boolean hasPostContainer() {
+    return postContainer_ != null;
+  }
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.PostContainer getPostContainer() {
+    return postContainer_ == null ? com.halloapp.proto.clients.PostContainer.getDefaultInstance() : postContainer_;
+  }
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   */
+  private void setPostContainer(com.halloapp.proto.clients.PostContainer value) {
+    value.getClass();
+  postContainer_ = value;
+    
+    }
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergePostContainer(com.halloapp.proto.clients.PostContainer value) {
+    value.getClass();
+  if (postContainer_ != null &&
+        postContainer_ != com.halloapp.proto.clients.PostContainer.getDefaultInstance()) {
+      postContainer_ =
+        com.halloapp.proto.clients.PostContainer.newBuilder(postContainer_).mergeFrom(value).buildPartial();
+    } else {
+      postContainer_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   */
+  private void clearPostContainer() {  postContainer_ = null;
+    
+  }
+
+  public static final int COMMENT_CONTAINER_FIELD_NUMBER = 5;
+  private com.halloapp.proto.clients.CommentContainer commentContainer_;
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   */
+  @java.lang.Override
+  public boolean hasCommentContainer() {
+    return commentContainer_ != null;
+  }
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.CommentContainer getCommentContainer() {
+    return commentContainer_ == null ? com.halloapp.proto.clients.CommentContainer.getDefaultInstance() : commentContainer_;
+  }
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   */
+  private void setCommentContainer(com.halloapp.proto.clients.CommentContainer value) {
+    value.getClass();
+  commentContainer_ = value;
+    
+    }
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeCommentContainer(com.halloapp.proto.clients.CommentContainer value) {
+    value.getClass();
+  if (commentContainer_ != null &&
+        commentContainer_ != com.halloapp.proto.clients.CommentContainer.getDefaultInstance()) {
+      commentContainer_ =
+        com.halloapp.proto.clients.CommentContainer.newBuilder(commentContainer_).mergeFrom(value).buildPartial();
+    } else {
+      commentContainer_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   */
+  private void clearCommentContainer() {  commentContainer_ = null;
+    
+  }
+
+  public static final int CHAT_CONTAINER_FIELD_NUMBER = 6;
+  private com.halloapp.proto.clients.ChatContainer chatContainer_;
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasChatContainer() {
+    return chatContainer_ != null;
+  }
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.ChatContainer getChatContainer() {
+    return chatContainer_ == null ? com.halloapp.proto.clients.ChatContainer.getDefaultInstance() : chatContainer_;
+  }
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   */
+  private void setChatContainer(com.halloapp.proto.clients.ChatContainer value) {
+    value.getClass();
+  chatContainer_ = value;
+    
+    }
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeChatContainer(com.halloapp.proto.clients.ChatContainer value) {
+    value.getClass();
+  if (chatContainer_ != null &&
+        chatContainer_ != com.halloapp.proto.clients.ChatContainer.getDefaultInstance()) {
+      chatContainer_ =
+        com.halloapp.proto.clients.ChatContainer.newBuilder(chatContainer_).mergeFrom(value).buildPartial();
+    } else {
+      chatContainer_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   */
+  private void clearChatContainer() {  chatContainer_ = null;
+    
+  }
+
   public static com.halloapp.proto.clients.Container parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -387,6 +525,147 @@ public  final class Container extends
       return this;
     }
 
+    /**
+     * <code>.clients.PostContainer post_container = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasPostContainer() {
+      return instance.hasPostContainer();
+    }
+    /**
+     * <code>.clients.PostContainer post_container = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.PostContainer getPostContainer() {
+      return instance.getPostContainer();
+    }
+    /**
+     * <code>.clients.PostContainer post_container = 4;</code>
+     */
+    public Builder setPostContainer(com.halloapp.proto.clients.PostContainer value) {
+      copyOnWrite();
+      instance.setPostContainer(value);
+      return this;
+      }
+    /**
+     * <code>.clients.PostContainer post_container = 4;</code>
+     */
+    public Builder setPostContainer(
+        com.halloapp.proto.clients.PostContainer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPostContainer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.PostContainer post_container = 4;</code>
+     */
+    public Builder mergePostContainer(com.halloapp.proto.clients.PostContainer value) {
+      copyOnWrite();
+      instance.mergePostContainer(value);
+      return this;
+    }
+    /**
+     * <code>.clients.PostContainer post_container = 4;</code>
+     */
+    public Builder clearPostContainer() {  copyOnWrite();
+      instance.clearPostContainer();
+      return this;
+    }
+
+    /**
+     * <code>.clients.CommentContainer comment_container = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasCommentContainer() {
+      return instance.hasCommentContainer();
+    }
+    /**
+     * <code>.clients.CommentContainer comment_container = 5;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.CommentContainer getCommentContainer() {
+      return instance.getCommentContainer();
+    }
+    /**
+     * <code>.clients.CommentContainer comment_container = 5;</code>
+     */
+    public Builder setCommentContainer(com.halloapp.proto.clients.CommentContainer value) {
+      copyOnWrite();
+      instance.setCommentContainer(value);
+      return this;
+      }
+    /**
+     * <code>.clients.CommentContainer comment_container = 5;</code>
+     */
+    public Builder setCommentContainer(
+        com.halloapp.proto.clients.CommentContainer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setCommentContainer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.CommentContainer comment_container = 5;</code>
+     */
+    public Builder mergeCommentContainer(com.halloapp.proto.clients.CommentContainer value) {
+      copyOnWrite();
+      instance.mergeCommentContainer(value);
+      return this;
+    }
+    /**
+     * <code>.clients.CommentContainer comment_container = 5;</code>
+     */
+    public Builder clearCommentContainer() {  copyOnWrite();
+      instance.clearCommentContainer();
+      return this;
+    }
+
+    /**
+     * <code>.clients.ChatContainer chat_container = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasChatContainer() {
+      return instance.hasChatContainer();
+    }
+    /**
+     * <code>.clients.ChatContainer chat_container = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.ChatContainer getChatContainer() {
+      return instance.getChatContainer();
+    }
+    /**
+     * <code>.clients.ChatContainer chat_container = 6;</code>
+     */
+    public Builder setChatContainer(com.halloapp.proto.clients.ChatContainer value) {
+      copyOnWrite();
+      instance.setChatContainer(value);
+      return this;
+      }
+    /**
+     * <code>.clients.ChatContainer chat_container = 6;</code>
+     */
+    public Builder setChatContainer(
+        com.halloapp.proto.clients.ChatContainer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setChatContainer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.ChatContainer chat_container = 6;</code>
+     */
+    public Builder mergeChatContainer(com.halloapp.proto.clients.ChatContainer value) {
+      copyOnWrite();
+      instance.mergeChatContainer(value);
+      return this;
+    }
+    /**
+     * <code>.clients.ChatContainer chat_container = 6;</code>
+     */
+    public Builder clearChatContainer() {  copyOnWrite();
+      instance.clearChatContainer();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Container)
   }
   @java.lang.Override
@@ -406,10 +685,13 @@ public  final class Container extends
             "post_",
             "comment_",
             "chatMessage_",
+            "postContainer_",
+            "commentContainer_",
+            "chatContainer_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0002\t\u0003" +
-              "\t";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0002\t\u0003" +
+              "\t\u0004\t\u0005\t\u0006\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

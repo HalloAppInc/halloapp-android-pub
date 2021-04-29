@@ -39,4 +39,37 @@ public interface ContainerOrBuilder extends
    * @return The chatMessage.
    */
   com.halloapp.proto.clients.ChatMessage getChatMessage();
+
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   * @return Whether the postContainer field is set.
+   */
+  boolean hasPostContainer();
+  /**
+   * <code>.clients.PostContainer post_container = 4;</code>
+   * @return The postContainer.
+   */
+  com.halloapp.proto.clients.PostContainer getPostContainer();
+
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   * @return Whether the commentContainer field is set.
+   */
+  boolean hasCommentContainer();
+  /**
+   * <code>.clients.CommentContainer comment_container = 5;</code>
+   * @return The commentContainer.
+   */
+  com.halloapp.proto.clients.CommentContainer getCommentContainer();
+
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   * @return Whether the chatContainer field is set.
+   */
+  boolean hasChatContainer();
+  /**
+   * <code>.clients.ChatContainer chat_container = 6;</code>
+   * @return The chatContainer.
+   */
+  com.halloapp.proto.clients.ChatContainer getChatContainer();
 }
