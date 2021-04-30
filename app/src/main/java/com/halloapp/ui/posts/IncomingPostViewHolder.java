@@ -11,13 +11,17 @@ import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Post;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.ReactionsPopupWindow;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.util.ViewDataLoader;
 
 public class IncomingPostViewHolder extends PostViewHolder {
 
@@ -80,6 +84,18 @@ public class IncomingPostViewHolder extends PostViewHolder {
             postActionsSeparator.setVisibility(View.VISIBLE);
             footerSpacing.setVisibility(View.VISIBLE);
         }
+
+        parent.getContactLoader().load(message.findViewById(R.id.message_text), post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            @Override
+            public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                message.setVisibility(result != null && result.addressBookName != null ? View.VISIBLE : View.INVISIBLE);
+            }
+
+            @Override
+            public void showLoading(@NonNull TextView view) {
+                message.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }
 

@@ -58,6 +58,7 @@
                 android:src="@drawable/ic_post_reply"/>
 
             <TextView
+                android:id="@+id/message_text"
                 style="@style/PostButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
