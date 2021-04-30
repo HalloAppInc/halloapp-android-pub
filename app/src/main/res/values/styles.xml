@@ -114,14 +114,8 @@
     <style name="AppTheme.MediaPickerActivity">
         <item name="actionMenuTextColor">@color/color_secondary</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:actionMenuTextAppearance">@style/AppTheme.MediaPickerActivity.MenuText</item>
+        <item name="android:actionMenuTextAppearance">@style/TextAppearance.ActionMenuItem</item>
         <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
-    </style>
-
-    <style name="AppTheme.MediaPickerActivity.MenuText">
-        <item name="android:textSize">17sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:paddingEnd">100dp</item>
     </style>
 
     <style name="RoundedBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
@@ -213,14 +207,10 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="ActionBarTitleComposer" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textSize">17sp</item>
-    </style>
-
     <style name="ActionBar.Composer" parent="@style/ThemeOverlay.MaterialComponents.ActionBar">
         <item name="android:actionMenuTextColor">@color/color_secondary</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:actionMenuTextAppearance">@style/ActionBarTitleComposer</item>
+        <item name="android:actionMenuTextAppearance">@style/TextAppearance.ActionMenuItem</item>
     </style>
 
     <style name="PostButton">
@@ -321,9 +311,9 @@
 
     <style name="TextAppearance.ActionMenuItem" parent="">
         <item name="android:textSize">17sp</item>
-        <item name="android:textStyle">bold</item>
         <item name="actionMenuTextColor">@color/color_secondary</item>
         <item name="android:textAllCaps">false</item>
+        <item name="fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="Widget.Button.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
