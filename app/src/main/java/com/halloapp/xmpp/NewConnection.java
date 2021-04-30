@@ -1008,7 +1008,7 @@ public class NewConnection extends Connection {
                 } else if (msg.hasContactHash()) {
                     Log.i("connection: got contact hash " + ProtoPrinter.toString(msg));
                     ContactHash contactHash = msg.getContactHash();
-                    connectionObservers.notifyContactsChanged(new ArrayList<>(), Collections.singletonList(Hex.bytesToStringLowercase(contactHash.getHash().toByteArray())), msg.getId());
+                    connectionObservers.notifyContactsChanged(new ArrayList<>(), Collections.singletonList(Base64.encodeToString(contactHash.getHash().toByteArray(), Base64.NO_WRAP)), msg.getId());
                     handled = true;
                 } else if (msg.hasContactList()) {
                     Log.i("connection: got contact list " + ProtoPrinter.toString(msg));

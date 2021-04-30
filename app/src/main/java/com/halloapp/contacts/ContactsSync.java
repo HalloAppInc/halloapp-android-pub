@@ -20,10 +20,9 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
-import com.halloapp.content.ContentDb;
 import com.halloapp.id.UserId;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.util.ObservableErrorException;
