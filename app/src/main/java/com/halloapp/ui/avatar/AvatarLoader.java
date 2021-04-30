@@ -56,8 +56,8 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private final ServerProps serverProps;
     private final LruCache<String, Bitmap> cache;
 
-    private Bitmap defaultUserAvatar;
-    private Bitmap defaultGroupAvatar;
+    private Drawable defaultUserAvatar;
+    private Drawable defaultGroupAvatar;
 
     private boolean isDarkMode;
 
@@ -119,12 +119,16 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                view.setImageBitmap(result != null ? result : getDefaultAvatar(chatId));
+                if (result == null) {
+                    view.setImageDrawable(getDefaultAvatar(chatId));
+                } else {
+                    view.setImageBitmap(result);
+                }
             }
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageBitmap(getDefaultAvatar(chatId));
+                view.setImageDrawable(getDefaultAvatar(chatId));
             }
         };
         load(view, loader, displayer, chatId.rawId(), cache);
@@ -137,12 +141,16 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
-                view.setImageBitmap(result != null ? result : getDefaultAvatar(chatId));
+                if (result == null) {
+                    view.setImageDrawable(getDefaultAvatar(chatId));
+                } else {
+                    view.setImageBitmap(result);
+                }
             }
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageBitmap(getDefaultAvatar(chatId));
+                view.setImageDrawable(getDefaultAvatar(chatId));
             }
         };
         load(view, loader, displayer, chatId.rawId(), cache);
@@ -160,7 +168,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             cache.put(chatId.rawId(), avatar);
         }
 
-        return avatar != null ? avatar : getDefaultAvatar(chatId);
+        return avatar != null ? avatar : drawableToBitmap(getDefaultAvatar(chatId));
     }
 
     @WorkerThread
@@ -256,7 +264,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return contactAvatarInfo;
     }
 
-    @NonNull private Bitmap getDefaultAvatar(@NonNull ChatId chatId) {
+    @NonNull private Drawable getDefaultAvatar(@NonNull ChatId chatId) {
         boolean darkMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         if (darkMode != isDarkMode) {
             isDarkMode = darkMode;
@@ -266,18 +274,16 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return chatId instanceof GroupId ? getDefaultGroupAvatar() : getDefaultUserAvatar();
     }
 
-    @NonNull private Bitmap getDefaultUserAvatar() {
+    @NonNull private Drawable getDefaultUserAvatar() {
         if (defaultUserAvatar == null) {
-            Drawable drawable = context.getDrawable(R.drawable.avatar_person);
-            defaultUserAvatar = drawableToBitmap(drawable);
+            defaultUserAvatar = context.getDrawable(R.drawable.avatar_person);
         }
         return defaultUserAvatar;
     }
 
-    @NonNull private Bitmap getDefaultGroupAvatar() {
+    @NonNull private Drawable getDefaultGroupAvatar() {
         if (defaultGroupAvatar == null) {
-            Drawable drawable = context.getDrawable(R.drawable.avatar_groups_placeholder);
-            defaultGroupAvatar = drawableToBitmap(drawable);
+            defaultGroupAvatar = context.getDrawable(R.drawable.avatar_groups_placeholder);
         }
         return defaultGroupAvatar;
     }
