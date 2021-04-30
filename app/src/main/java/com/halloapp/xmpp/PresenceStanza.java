@@ -39,7 +39,7 @@ public class PresenceStanza extends HalloStanza {
         builder.setId(getStanzaId());
         builder.setType(Presence.Type.valueOf(type.toUpperCase(Locale.US)));
         if (userId != null) {
-            builder.setUid(Long.parseLong(userId.rawId()));
+            builder.setToUid(Long.parseLong(userId.rawId()));
         }
         return builder.build();
     }
