@@ -645,13 +645,23 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             }
 
             private void bindPostCaption(@NonNull String sender, @NonNull Post post) {
-                if (post.isRetracted()) {
-                    infoView.setText(getString(R.string.post_preview_retracted, sender));
-                } else if (TextUtils.isEmpty(post.text) || post.type == Post.TYPE_FUTURE_PROOF) {
-                    infoView.setText(getString(R.string.post_preview_no_caption, sender));
-                } else {
-                    infoView.setText(getString(R.string.post_preview_with_caption, sender, post.text));
-                }
+                textContentLoader.load(infoView, post, new TextContentLoader.TextDisplayer() {
+                    @Override
+                    public void showResult(TextView tv, CharSequence text) {
+                        if (post.isRetracted()) {
+                            infoView.setText(getString(R.string.post_preview_retracted, sender));
+                        } else if (TextUtils.isEmpty(post.text) || post.type == Post.TYPE_FUTURE_PROOF) {
+                            infoView.setText(getString(R.string.post_preview_no_caption, sender));
+                        } else {
+                            infoView.setText(getString(R.string.post_preview_with_caption, sender, text));
+                        }
+                    }
+
+                    @Override
+                    public void showPreview(TextView tv, CharSequence text) {
+                        infoView.setText("");
+                    }
+                });
             }
         }
     }
