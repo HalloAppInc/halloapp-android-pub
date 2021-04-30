@@ -158,10 +158,12 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             }
         });
 
-        textView.setOnReadMoreListener((view, limit) -> {
-            parent.getTextLimits().put(post.rowId, limit);
-            return false;
-        });
+        if (textView != null) {
+            textView.setOnReadMoreListener((view, limit) -> {
+                parent.getTextLimits().put(post.rowId, limit);
+                return false;
+            });
+        }
     }
 
     @CallSuper
@@ -254,22 +256,24 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));
             }
         }
-        final Integer textLimit = parent.getTextLimits().get(post.rowId);
-        textView.setLineLimit(textLimit != null ? textLimit :
-                (post.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
-        textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-        if (post.text != null) {
-            parent.getTextContentLoader().load(textView, post);
-        } else {
-            textView.setText("");
-        }
+        if (textView != null) {
+            final Integer textLimit = parent.getTextLimits().get(post.rowId);
+            textView.setLineLimit(textLimit != null ? textLimit :
+                    (post.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
+            textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
+            if (post.text != null) {
+                parent.getTextContentLoader().load(textView, post);
+            } else {
+                textView.setText("");
+            }
 
-        if (noCaption) {
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setVisibility(View.VISIBLE);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
-                    (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
+            if (noCaption) {
+                textView.setVisibility(View.GONE);
+            } else {
+                textView.setVisibility(View.VISIBLE);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
+                        (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
+            }
         }
 
         if (post.isRetracted()) {

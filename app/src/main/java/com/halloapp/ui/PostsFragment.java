@@ -36,6 +36,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
@@ -133,6 +134,7 @@ public class PostsFragment extends HalloFragment {
         static final int POST_TYPE_MEDIA = 0x01;
         static final int POST_TYPE_RETRACTED = 0x02;
         static final int POST_TYPE_SYSTEM = 0x03;
+        static final int POST_TYPE_FUTURE_PROOF = 0x04;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -274,10 +276,22 @@ public class PostsFragment extends HalloFragment {
 
         @Override
         public int getViewTypeForItem(Post post) {
-            if (post.type == Post.TYPE_SYSTEM) {
-                return POST_TYPE_SYSTEM;
+            int type = Post.TYPE_USER;
+            switch (post.type) {
+                case Post.TYPE_SYSTEM:
+                    return POST_TYPE_SYSTEM;
+                case Post.TYPE_FUTURE_PROOF:
+                    type = POST_TYPE_FUTURE_PROOF;
+                    break;
+                case Post.TYPE_USER: {
+                    type = post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA;
+                    break;
+                }
             }
-            return (post.isRetracted() ? POST_TYPE_RETRACTED : (post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA)) |
+            if (post.isRetracted()) {
+                type = POST_TYPE_RETRACTED;
+            }
+            return type |
                     (post.isOutgoing() ? POST_DIRECTION_OUTGOING : POST_DIRECTION_INCOMING);
         }
 
@@ -294,6 +308,7 @@ public class PostsFragment extends HalloFragment {
                 return new SubtlePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.centered_post_item, parent, false), postViewHolderParent);
             }
             View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
+
             @LayoutRes int contentLayoutRes;
             switch (postType) {
                 case POST_TYPE_TEXT: {
@@ -302,6 +317,10 @@ public class PostsFragment extends HalloFragment {
                 }
                 case POST_TYPE_MEDIA: {
                     contentLayoutRes = R.layout.post_item_media;
+                    break;
+                }
+                case POST_TYPE_FUTURE_PROOF: {
+                    contentLayoutRes = R.layout.post_item_future_proof;
                     break;
                 }
                 default: {
@@ -314,16 +333,18 @@ public class PostsFragment extends HalloFragment {
             switch (viewType & POST_DIRECTION_MASK) {
                 case POST_DIRECTION_INCOMING: {
                     LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                    return new IncomingPostViewHolder(layout, postViewHolderParent);
+                    if (postType == POST_TYPE_FUTURE_PROOF) {
+                        return new FutureProofPostViewHolder(layout, postViewHolderParent);
+                    } else {
+                        return new IncomingPostViewHolder(layout, postViewHolderParent);
+                    }
                 }
                 case POST_DIRECTION_OUTGOING: {
                     LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
                     return new OutgoingPostViewHolder(layout, postViewHolderParent);
                 }
-                default: {
-                    throw new IllegalArgumentException();
-                }
             }
+            throw new IllegalArgumentException();
         }
 
         @Override

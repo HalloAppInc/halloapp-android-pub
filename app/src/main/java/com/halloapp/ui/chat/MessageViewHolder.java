@@ -3,14 +3,25 @@ package com.halloapp.ui.chat;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.text.Selection;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -19,6 +30,7 @@ import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
@@ -30,10 +42,13 @@ import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.UploadMediaTask;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.ui.groups.GroupParticipants;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -44,6 +59,7 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
@@ -62,6 +78,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView nameView;
     private final TextView systemMessage;
     private final TextView tombstoneMessage;
+    private final TextView futureProofMessage;
     private final LimitingTextView textView;
     private final MessageTextLayout messageTextLayout;
     private final ViewPager2 mediaPagerView;
@@ -128,6 +145,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         systemMessage = itemView.findViewById(R.id.system_message);
         tombstoneMessage = itemView.findViewById(R.id.tombstone_text);
+        futureProofMessage = itemView.findViewById(R.id.future_proof_text);
         messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
         if (textView != null) {
@@ -158,6 +176,44 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         if (tombstoneMessage != null) {
             tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        if (futureProofMessage != null) {
+            SpannableStringBuilder current= new SpannableStringBuilder(futureProofMessage.getText());
+            URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
+
+            int linkColor = ContextCompat.getColor(futureProofMessage.getContext(), R.color.color_link);
+
+            for (URLSpan span : spans) {
+                int start = current.getSpanStart(span);
+                int end = current.getSpanEnd(span);
+                current.removeSpan(span);
+
+                ClickableSpan learnMoreSpan = new ClickableSpan() {
+                    @Override
+                    public void updateDrawState(@NonNull TextPaint ds) {
+                        ds.setUnderlineText(false);
+                        ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                        ds.setColor(linkColor);
+                    }
+
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        try {
+                            final Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID));
+                            intent.setPackage("com.android.vending");
+                            parent.startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            Log.i("MessageViewHolder Play Store Not Installed", e);
+                            SnackbarHelper.showWarning(futureProofMessage,  R.string.app_expiration_no_play_store);
+                        }
+                    }
+                };
+                current.setSpan(learnMoreSpan, start, end, 0);
+            }
+            futureProofMessage.setText(current);
+            futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         if (statusView != null) {

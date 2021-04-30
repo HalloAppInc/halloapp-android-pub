@@ -3,6 +3,12 @@ package com.halloapp.content;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.clients.AlbumMedia;
+import com.halloapp.proto.clients.EncryptedResource;
+import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.Video;
+import com.halloapp.xmpp.PublishedEntry;
+
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,6 +54,28 @@ public class Media {
 
     public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] encSha256hash, int width, int height) {
         return new Media(0, type, url, null, encKey, encSha256hash, null, width, height, TRANSFERRED_NO);
+    }
+
+    public static Media parseFromProto(Image image) {
+        EncryptedResource resource = image.getImg();
+        return createFromUrl(MEDIA_TYPE_IMAGE, resource.getDownloadUrl(),
+                resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
+                image.getWidth(), image.getHeight());
+    }
+
+    public static Media parseFromProto(Video video) {
+        EncryptedResource resource = video.getVideo();
+        return createFromUrl(MEDIA_TYPE_VIDEO, resource.getDownloadUrl(),
+                resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
+                video.getWidth(), video.getHeight());
+    }
+
+    public static Media parseFromProto(AlbumMedia albumMedia) {
+        switch (albumMedia.getMediaCase()) {
+            case IMAGE: return parseFromProto(albumMedia.getImage());
+            case VIDEO: return parseFromProto(albumMedia.getVideo());
+        }
+        return null;
     }
 
     public static float getMaxAspectRatio(List<Media> media) {

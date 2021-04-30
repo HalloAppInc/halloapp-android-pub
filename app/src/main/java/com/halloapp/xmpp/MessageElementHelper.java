@@ -4,13 +4,22 @@ import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.proto.clients.Album;
+import com.halloapp.proto.clients.AlbumMedia;
+import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.clients.ChatContext;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.EncryptedResource;
+import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.MediaType;
+import com.halloapp.proto.clients.Text;
+import com.halloapp.proto.clients.Video;
 import com.halloapp.util.logs.Log;
 
 public class MessageElementHelper {
@@ -51,7 +60,27 @@ public class MessageElementHelper {
         return null;
     }
 
+    public static ChatContainer readEncodedContainer(byte[] entry) {
+        final Container container;
+        try {
+            container = Container.parseFrom(entry);
+        } catch (InvalidProtocolBufferException e) {
+            Log.w("Error reading encoded entry", e);
+            return null;
+        }
+        if (container.hasChatContainer()) {
+            return container.getChatContainer();
+        } else {
+            Log.i("Unknown encoded entry type");
+        }
+        return null;
+    }
+
+    // TODO: (clarkc) remove when non container clients expire
     public static ChatMessage messageToChatMessage(@NonNull Message message) {
+        if (message.type != Message.TYPE_CHAT) {
+            return null;
+        }
         ChatMessage.Builder chatMessageBuilder = ChatMessage.newBuilder();
         for (Media media : message.media) {
             com.halloapp.proto.clients.Media.Builder mediaBuilder = com.halloapp.proto.clients.Media.newBuilder();
@@ -79,5 +108,55 @@ public class MessageElementHelper {
             chatMessageBuilder.setChatReplyMessageSenderId(message.replyMessageSenderId.isMe() ? Me.getInstance().getUser() : message.replyMessageSenderId.rawId());
         }
         return chatMessageBuilder.build();
+    }
+
+    public static ChatContainer messageToChatContainer(@NonNull Message message) {
+        ChatContainer.Builder chatContainerBuilder = ChatContainer.newBuilder();
+        Text.Builder textBuilder = Text.newBuilder();
+        if (message.text != null) {
+            textBuilder.setText(message.text);
+        }
+        for (Mention mention : message.mentions) {
+            textBuilder.addMentions(Mention.toProto(mention));
+        }
+
+        if (!message.media.isEmpty()) {
+            Album.Builder albumBuilder = Album.newBuilder();
+            for (Media media : message.media) {
+                EncryptedResource resource = EncryptedResource.newBuilder()
+                        .setDownloadUrl(media.url)
+                        .setCiphertextHash(ByteString.copyFrom(media.encSha256hash))
+                        .setEncryptionKey(ByteString.copyFrom(media.encKey)).build();
+                AlbumMedia.Builder mediaBuilder = AlbumMedia.newBuilder();
+                if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                    mediaBuilder.setImage(Image.newBuilder()
+                            .setImg(resource)
+                            .setWidth(media.width)
+                            .setHeight(media.height));
+                } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    mediaBuilder.setVideo(Video.newBuilder()
+                            .setVideo(resource)
+                            .setHeight(media.height)
+                            .setWidth(media.width));
+                }
+                albumBuilder.addMedia(mediaBuilder.build());
+            }
+            albumBuilder.setText(textBuilder);
+            chatContainerBuilder.setAlbum(albumBuilder);
+        } else {
+            chatContainerBuilder.setText(textBuilder);
+        }
+        ChatContext.Builder context = ChatContext.newBuilder();
+        if (message.replyPostId != null) {
+            context.setFeedPostId(message.replyPostId);
+            context.setFeedPostMediaIndex(message.replyPostMediaIndex);
+        }
+        if (message.replyMessageId != null) {
+            context.setChatReplyMessageId(message.replyMessageId);
+            context.setChatReplyMessageMediaIndex(message.replyMessageMediaIndex);
+            context.setChatReplyMessageSenderId(message.replyMessageSenderId.isMe() ? Me.getInstance().getUser() : message.replyMessageSenderId.rawId());
+        }
+        chatContainerBuilder.setContext(context);
+        return chatContainerBuilder.build();
     }
 }

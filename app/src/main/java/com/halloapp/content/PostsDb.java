@@ -38,12 +38,19 @@ import java.util.Map;
 class PostsDb {
 
     private final MentionsDb mentionsDb;
+    private final FutureProofDb futureProofDb;
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
     private final ServerProps serverProps;
 
-    PostsDb(MentionsDb mentionsDb, ContentDbHelper databaseHelper, FileStore fileStore, ServerProps serverProps) {
+    PostsDb(
+            MentionsDb mentionsDb,
+            FutureProofDb futureProofDb,
+            ContentDbHelper databaseHelper,
+            FileStore fileStore,
+            ServerProps serverProps) {
         this.mentionsDb = mentionsDb;
+        this.futureProofDb = futureProofDb;
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
         this.serverProps = serverProps;
@@ -128,6 +135,9 @@ class PostsDb {
             }
         }
         mentionsDb.addMentions(post);
+        if (post instanceof FutureProofPost) {
+            futureProofDb.saveFutureProof((FutureProofPost) post);
+        }
         Log.i("ContentDb.addPost: added " + post);
     }
 
@@ -521,6 +531,7 @@ class PostsDb {
         values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
         values.put(CommentsTable.COLUMN_SEEN, comment.seen);
         values.put(CommentsTable.COLUMN_TEXT, comment.text);
+        values.put(CommentsTable.COLUMN_TYPE, comment.type);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
         for (Media mediaItem : comment.media) {
@@ -557,6 +568,9 @@ class PostsDb {
             mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
         }
         mentionsDb.addMentions(comment);
+        if (comment instanceof FutureProofComment) {
+            futureProofDb.saveFutureProof((FutureProofComment) comment);
+        }
         Log.i("ContentDb.addComment: added " + comment);
     }
 
@@ -984,10 +998,10 @@ class PostsDb {
     @NonNull List<Comment> getComments(@NonNull String postId, int start, int count) {
         final String sql =
                 "WITH RECURSIVE " +
-                    "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text) AS ( " +
-                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text FROM comments WHERE post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
+                    "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type) AS ( " +
+                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type FROM comments WHERE post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
                         "UNION ALL " +
-                        "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.seen, comments.text " +
+                        "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.seen, comments.text, comments.type " +
                             "FROM comments, comments_tree WHERE comments.parent_id=comments_tree.comment_id ORDER BY 1 DESC, 2) " +
                 "SELECT * FROM comments_tree LIMIT " + count + " OFFSET " + start;
         final List<Comment> comments = new ArrayList<>();
@@ -1005,6 +1019,7 @@ class PostsDb {
                         cursor.getInt(6) == 1,
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
+                comment.type = cursor.getInt(9);
                 fillMedia(comment);
                 mentionsDb.fillMentions(comment);
                 comment.setParentPost(parentPost);

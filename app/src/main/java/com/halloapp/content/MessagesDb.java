@@ -50,16 +50,19 @@ class MessagesDb {
 
     private final FileStore fileStore;
     private final MentionsDb mentionsDb;
+    private final FutureProofDb futureProofDb;
     private final ServerProps serverProps;
     private final ContentDbHelper databaseHelper;
 
     MessagesDb(
             FileStore fileStore,
             MentionsDb mentionsDb,
+            FutureProofDb futureProofDb,
             ServerProps serverProps,
             ContentDbHelper databaseHelper) {
         this.fileStore = fileStore;
         this.mentionsDb = mentionsDb;
+        this.futureProofDb = futureProofDb;
         this.serverProps = serverProps;
         this.databaseHelper = databaseHelper;
     }
@@ -142,6 +145,10 @@ class MessagesDb {
                     mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
                 }
                 mentionsDb.addMentions(message);
+
+                if (message instanceof FutureProofMessage) {
+                    futureProofDb.saveFutureProof((FutureProofMessage) message);
+                }
 
                 if (message.replyPostId != null || message.replyMessageId != null) {
                     final ContentValues replyValues = new ContentValues();

@@ -448,10 +448,10 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     public void showResult(@NonNull View view, @Nullable Post result) {
                         if (result != null) {
                             infoView.setVisibility(View.VISIBLE);
-                            if (result.type == Post.TYPE_USER) {
-                                bindGroupPostPreview(result);
-                            } else if (result.type == Post.TYPE_SYSTEM) {
+                            if (result.type == Post.TYPE_SYSTEM) {
                                 bindGroupSystemPostPreview(result);
+                            } else {
+                                bindGroupPostPreview(result);
                             }
                         } else {
                             infoView.setText("");
@@ -647,7 +647,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             private void bindPostCaption(@NonNull String sender, @NonNull Post post) {
                 if (post.isRetracted()) {
                     infoView.setText(getString(R.string.post_preview_retracted, sender));
-                } else if (TextUtils.isEmpty(post.text)) {
+                } else if (TextUtils.isEmpty(post.text) || post.type == Post.TYPE_FUTURE_PROOF) {
                     infoView.setText(getString(R.string.post_preview_no_caption, sender));
                 } else {
                     infoView.setText(getString(R.string.post_preview_with_caption, sender, post.text));

@@ -20,5 +20,6 @@ public final class CommentsTable implements BaseColumns {
     public static final String COLUMN_TRANSFERRED = "transferred";
     public static final String COLUMN_SEEN = "seen";
     public static final String COLUMN_TEXT = "text";
+    public static final String COLUMN_TYPE = "type";
 }
 

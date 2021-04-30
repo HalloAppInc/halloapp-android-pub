@@ -7,12 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.FutureProofMessage;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -24,8 +26,13 @@ import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.Album;
+import com.halloapp.proto.clients.AlbumMedia;
+import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.clients.ChatContext;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Stats;
@@ -38,12 +45,14 @@ import java.util.Locale;
 public class ChatMessageElement {
 
     private ChatMessage chatMessage;
+    private ChatContainer chatContainer;
     private final long timestamp;
     private final String senderName;
     private final UserId recipientUserId;
     private final SessionSetupInfo sessionSetupInfo;
     private final byte[] encryptedBytes;
     private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
+    private ChatContainer plaintextChatContainer = null;
 
     private final Stats stats = Stats.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
@@ -52,6 +61,7 @@ public class ChatMessageElement {
 
     ChatMessageElement(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
         this.chatMessage = MessageElementHelper.messageToChatMessage(message);
+        this.chatContainer = MessageElementHelper.messageToChatContainer(message);
         this.timestamp = 0;
         this.senderName = null;
         this.recipientUserId = recipientUserId;
@@ -95,13 +105,32 @@ public class ChatMessageElement {
         if (encryptedBytes != null) {
             try {
                 final byte[] dec = EncryptedSessionManager.getInstance().decryptMessage(this.encryptedBytes, fromUserId, sessionSetupInfo);
-                chatMessage = MessageElementHelper.readEncodedEntry(dec);
-                if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
-                    Log.sendErrorReport("Decrypted message does not match plaintext");
-                    failureReason = "plaintext_mismatch";
-                    stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
-                } else {
-                    stats.reportDecryptSuccess(senderPlatform, senderVersion);
+                try {
+                    Container container = Container.parseFrom(dec);
+                    // TODO: (clarkc) remove legacy proto format once clients are all sending new format
+                    if (!container.hasChatContainer()) {
+                        chatMessage = MessageElementHelper.readEncodedEntry(dec);
+                        if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
+                            Log.sendErrorReport("Decrypted message does not match plaintext");
+                            failureReason = "plaintext_mismatch";
+                            stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
+                        } else {
+                            stats.reportDecryptSuccess(senderPlatform, senderVersion);
+                        }
+                    } else {
+                        chatContainer = container.getChatContainer();
+                        if (plaintextChatContainer != null && !plaintextChatContainer.equals(chatContainer)) {
+                            Log.sendErrorReport("Decrypted message container does not match plaintext");
+                            failureReason = "plaintext_mismatch";
+                            stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
+                        } else {
+                            stats.reportDecryptSuccess(senderPlatform, senderVersion);
+                        }
+                    }
+                } catch (InvalidProtocolBufferException e) {
+                    chatMessage = null;
+                    chatContainer = null;
+                    Log.e("Payload not a valid container", e);
                 }
             } catch (CryptoException | ArrayIndexOutOfBoundsException e) {
                 failureReason = e instanceof CryptoException ? e.getMessage() : "aioobe";
@@ -163,6 +192,78 @@ public class ChatMessageElement {
             for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
                 message.mentions.add(Mention.parseFromProto(item));
             }
+        } else if (chatContainer != null) {
+            ChatContext context = chatContainer.getContext();
+            String rawReplyMessageId = context.getChatReplyMessageId();
+            String rawSenderId = context.getChatReplyMessageSenderId();
+            switch (chatContainer.getMessageCase()) {
+                case ALBUM:
+                    Album album = chatContainer.getAlbum();
+                    Text albumText = album.getText();
+                    message = new Message(0,
+                            fromUserId,
+                            fromUserId,
+                            id,
+                            timestamp,
+                            Message.TYPE_CHAT,
+                            Message.USAGE_CHAT,
+                            album.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
+                            albumText.getText(),
+                            context.getFeedPostId(),
+                            context.getFeedPostMediaIndex(),
+                            TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                            context.getChatReplyMessageMediaIndex(),
+                            rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                            0);
+                    for (AlbumMedia item : album.getMediaList()) {
+                        message.media.add(Media.parseFromProto(item));
+                    }
+                    for (com.halloapp.proto.clients.Mention item : albumText.getMentionsList()) {
+                        message.mentions.add(Mention.parseFromProto(item));
+                    }
+                    break;
+                case TEXT:
+                    Text text = chatContainer.getText();
+                    message = new Message(0,
+                            fromUserId,
+                            fromUserId,
+                            id,
+                            timestamp,
+                            Message.TYPE_CHAT,
+                            Message.USAGE_CHAT,
+                            Message.STATE_INCOMING_RECEIVED,
+                            text.getText(),
+                            context.getFeedPostId(),
+                            context.getFeedPostMediaIndex(),
+                            TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                            context.getChatReplyMessageMediaIndex(),
+                            rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                            0);
+                    for (com.halloapp.proto.clients.Mention item : text.getMentionsList()) {
+                        message.mentions.add(Mention.parseFromProto(item));
+                    }
+                    break;
+                default:
+                case MESSAGE_NOT_SET: {
+                    FutureProofMessage futureProofMessage = new FutureProofMessage(0,
+                            fromUserId,
+                            fromUserId,
+                            id,
+                            timestamp,
+                            Message.USAGE_CHAT,
+                            Message.STATE_INCOMING_RECEIVED,
+                            null,
+                            context.getFeedPostId(),
+                            context.getFeedPostMediaIndex(),
+                            TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                            context.getChatReplyMessageMediaIndex(),
+                            rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                            0);
+                    futureProofMessage.setProtoBytes(chatContainer.toByteArray());
+                    message = futureProofMessage;
+                    break;
+                }
+            }
         } else {
             message = new Message(0,
                     fromUserId,
@@ -207,7 +308,12 @@ public class ChatMessageElement {
 
     private byte[] getEncodedEntry() {
         Container.Builder containerBuilder = Container.newBuilder();
-        containerBuilder.setChatMessage(chatMessage);
+        if (chatMessage != null) {
+            containerBuilder.setChatMessage(chatMessage);
+        }
+        if (Constants.SEND_CONTAINER) {
+            containerBuilder.setChatContainer(chatContainer);
+        }
         return containerBuilder.build().toByteArray();
     }
 
@@ -274,8 +380,10 @@ public class ChatMessageElement {
         ByteString plaintext = chatStanza.getPayload();
 
         ChatMessage plaintextChatMessage = null;
+        ChatContainer plaintextChatContainer = null;
         if (plaintext != null && !ServerProps.getInstance().getIsInternalUser()) {
             plaintextChatMessage = MessageElementHelper.readEncodedEntry(plaintext.toByteArray());
+            plaintextChatContainer = MessageElementHelper.readEncodedContainer(plaintext.toByteArray());
         }
 
         ChatMessageElement ret = null;
@@ -288,6 +396,8 @@ public class ChatMessageElement {
         if (ret == null) {
             ret = new ChatMessageElement(plaintextChatMessage, timestamp);
         }
+
+        ret.plaintextChatContainer = plaintextChatContainer;
 
         return ret;
     }

@@ -1,16 +1,23 @@
 package com.halloapp.ui;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -54,7 +61,6 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
@@ -63,7 +69,6 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
@@ -73,6 +78,7 @@ import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
 import java.util.ArrayList;
@@ -193,8 +199,7 @@ public class CommentsActivity extends HalloActivity {
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
         viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
-        viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {
-        }));
+        viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {}));
 
         viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));
 
@@ -494,6 +499,86 @@ public class CommentsActivity extends HalloActivity {
         viewModel.resetCommentMediaUri();
     }
 
+    private class FutureProofViewHolder extends ViewHolder {
+
+        Comment comment;
+
+        public FutureProofViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            TextView futureProofMessage = itemView.findViewById(R.id.future_proof_text);
+
+            SpannableStringBuilder current= new SpannableStringBuilder(futureProofMessage.getText());
+            URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
+
+            int linkColor = ContextCompat.getColor(futureProofMessage.getContext(), R.color.color_link);
+
+            for (URLSpan span : spans) {
+                int start = current.getSpanStart(span);
+                int end = current.getSpanEnd(span);
+                current.removeSpan(span);
+
+                ClickableSpan learnMoreSpan = new ClickableSpan() {
+                    @Override
+                    public void updateDrawState(@NonNull TextPaint ds) {
+                        ds.setUnderlineText(false);
+                        ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                        ds.setColor(linkColor);
+                    }
+
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        try {
+                            final Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID));
+                            intent.setPackage("com.android.vending");
+                            startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            Log.i("CommentsActivity Play Store Not Installed", e);
+                            SnackbarHelper.showWarning(futureProofMessage,  R.string.app_expiration_no_play_store);
+                        }
+                    }
+                };
+                current.setSpan(learnMoreSpan, start, end, 0);
+            }
+            futureProofMessage.setText(current);
+            futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
+
+            this.comment = comment;
+
+            avatarLoader.load(avatarView, comment.senderUserId);
+            contactLoader.load(nameView, comment.senderUserId);
+
+            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
+            TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
+            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
+
+            replyButton.setVisibility(View.VISIBLE);
+            retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
+
+            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
+            replyButton.setOnClickListener(v -> {
+                keyboardScrollHelper.setAnchorForKeyboardChange(position);
+                updateReplyIndicator(comment.senderUserId, comment.id);
+                editText.requestFocus();
+                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+                imm.showSoftInput(editText,0);
+            });
+            retractButton.setOnClickListener(v -> {
+                final Context context = itemView.getContext();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(context.getString(R.string.retract_comment_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
+            });
+        }
+    }
+
     private class ViewHolder extends ViewHolderWithLifecycle {
 
         final ImageView avatarView;
@@ -538,7 +623,6 @@ public class CommentsActivity extends HalloActivity {
         }
 
         void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
-
             this.comment = comment;
 
             avatarLoader.load(avatarView, comment.senderUserId);
@@ -634,24 +718,26 @@ public class CommentsActivity extends HalloActivity {
             TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
 
-            mediaGallery.setTag(post);
-            if (post.media.isEmpty()) {
-                mediaGallery.setVisibility(View.GONE);
-            } else {
-                mediaGallery.setVisibility(View.VISIBLE);
-                mediaGallery.setAdapter(new MediaAdapter(post));
+            if (post.type != Post.TYPE_FUTURE_PROOF) {
+                mediaGallery.setTag(post);
+                if (post.media.isEmpty()) {
+                    mediaGallery.setVisibility(View.GONE);
+                } else {
+                    mediaGallery.setVisibility(View.VISIBLE);
+                    mediaGallery.setAdapter(new MediaAdapter(post));
+                }
+
+                final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
+                commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
+                commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
+                commentView.setOnReadMoreListener((view, limit) -> {
+                    textLimits.put(POST_TEXT_LIMITS_ID, limit);
+                    return false;
+                });
+
+                commentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
+                textContentLoader.load(commentView, post);
             }
-
-            final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
-            commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
-            commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-            commentView.setOnReadMoreListener((view, limit) -> {
-                textLimits.put(POST_TEXT_LIMITS_ID, limit);
-                return false;
-            });
-
-            commentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
-            textContentLoader.load(commentView, post);
         }
 
         private class PostMediaItemViewHolder extends RecyclerView.ViewHolder {
@@ -735,6 +821,9 @@ public class CommentsActivity extends HalloActivity {
     private static final int ITEM_TYPE_POST = 0;
     private static final int ITEM_TYPE_COMMENT = 1;
     private static final int ITEM_TYPE_REPLY = 2;
+    private static final int ITEM_TYPE_FUTURE_PROOF_POST = 3;
+    private static final int ITEM_TYPE_COMMENT_FUTURE_PROOF = 4;
+    private static final int ITEM_TYPE_REPLY_FUTURE_PROOF = 5;
 
     private class CommentsAdapter extends AdapterWithLifecycle<ViewHolder> {
 
@@ -804,26 +893,40 @@ public class CommentsActivity extends HalloActivity {
         @Override
         public int getItemViewType(int position) {
             if (position == 0) {
-                return ITEM_TYPE_POST;
+                Post post = viewModel.post.getValue();
+                if (post != null && post.type == Post.TYPE_FUTURE_PROOF) {
+                    return ITEM_TYPE_FUTURE_PROOF_POST;
+                }
             }
             final Comment comment = Preconditions.checkNotNull(getItem(position));
-            return comment.parentCommentId == null ? ITEM_TYPE_COMMENT : ITEM_TYPE_REPLY;
+            return comment.parentCommentId == null
+                    ? (comment.type == Comment.TYPE_FUTURE_PROOF) ? ITEM_TYPE_COMMENT_FUTURE_PROOF : ITEM_TYPE_COMMENT
+                    : (comment.type == Comment.TYPE_FUTURE_PROOF) ? ITEM_TYPE_REPLY_FUTURE_PROOF : ITEM_TYPE_REPLY;
         }
 
         private @LayoutRes int getLayoutId(int viewType) {
             switch (viewType) {
+                case ITEM_TYPE_FUTURE_PROOF_POST:
+                    return R.layout.comment_future_proof_post_item;
                 case ITEM_TYPE_POST:
                     return R.layout.comment_post_item;
                 case ITEM_TYPE_COMMENT:
                     return R.layout.comment_item;
                 case ITEM_TYPE_REPLY:
                     return R.layout.comment_reply_item;
+                case ITEM_TYPE_COMMENT_FUTURE_PROOF:
+                    return R.layout.comment_future_proof;
+                case ITEM_TYPE_REPLY_FUTURE_PROOF:
+                    return R.layout.comment_reply_item_future_proof;
             }
             throw new IllegalArgumentException("unknown view type " + viewType);
         }
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == ITEM_TYPE_COMMENT_FUTURE_PROOF || viewType == ITEM_TYPE_REPLY_FUTURE_PROOF) {
+                return new FutureProofViewHolder(LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), parent, false));
+            }
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), parent, false));
         }
 

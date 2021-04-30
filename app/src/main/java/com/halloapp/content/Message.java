@@ -10,6 +10,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
@@ -40,10 +41,11 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_CHAT, TYPE_SYSTEM})
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF})
     public @interface Type {}
     public static final int TYPE_CHAT = 0;
     public static final int TYPE_SYSTEM = 1;
+    public static final int TYPE_FUTURE_PROOF = 2;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -109,6 +111,10 @@ public class Message extends ContentItem {
 
     public boolean isTombstone() {
         return state == Message.STATE_INCOMING_DECRYPT_FAILED;
+    }
+
+    public boolean isRetracted() {
+        return type == TYPE_CHAT && super.isRetracted();
     }
 
     public boolean isMeMessageSender() {

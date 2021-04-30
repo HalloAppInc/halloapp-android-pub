@@ -2,14 +2,18 @@ package com.halloapp.content;
 
 import android.text.TextUtils;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.xmpp.Connection;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +30,14 @@ public class Comment extends ContentItem {
 
     public final List<Mention> mentions = new ArrayList<>();
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF})
+    public @interface Type {}
+    public static final int TYPE_USER = 0;
+    public static final int TYPE_FUTURE_PROOF = 1;
+
+    public @Type int type;
+
     public Comment(
             long rowId,
             String postId,
@@ -38,9 +50,10 @@ public class Comment extends ContentItem {
             String text) {
         super(rowId, senderUserId, commentId, timestamp, text);
         this.postId = postId;
-        this.parentCommentId = parentCommentId;
+        this.parentCommentId = TextUtils.isEmpty(parentCommentId) ? null : parentCommentId;
         this.transferred = transferred;
         this.seen = senderUserId.isMe() || seen;
+        this.type = TYPE_USER;
     }
 
     @Override
@@ -113,6 +126,10 @@ public class Comment extends ContentItem {
 
     public boolean isIncoming() {
         return !isOutgoing();
+    }
+
+    public boolean isRetracted() {
+        return type == TYPE_USER && TextUtils.isEmpty(text);
     }
 
     public boolean canBeRetracted() {

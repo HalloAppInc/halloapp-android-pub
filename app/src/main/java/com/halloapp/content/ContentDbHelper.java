@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
@@ -27,7 +28,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 41;
+    private static final int DATABASE_VERSION = 42;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -220,7 +221,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_TIMESTAMP + " INTEGER,"
                 + CommentsTable.COLUMN_TRANSFERRED + " INTEGER,"
                 + CommentsTable.COLUMN_SEEN + " INTEGER,"
-                + CommentsTable.COLUMN_TEXT + " TEXT"
+                + CommentsTable.COLUMN_TEXT + " TEXT,"
+                + CommentsTable.COLUMN_TYPE + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
@@ -273,6 +275,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + FutureProofTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + FutureProofTable.TABLE_NAME + " ("
+                + FutureProofTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + FutureProofTable.COLUMN_PARENT_TABLE + " TEXT NOT NULL,"
+                + FutureProofTable.COLUMN_PARENT_ROW_ID + " INTEGER,"
+                + FutureProofTable.COLUMN_CONTENT_BYTES + " BLOB"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + FutureProofTable.INDEX_FUTURE_PROOF_KEY);
+        db.execSQL("CREATE INDEX " + FutureProofTable.INDEX_FUTURE_PROOF_KEY + " ON " + FutureProofTable.TABLE_NAME + "("
+                + FutureProofTable.COLUMN_PARENT_TABLE + ", "
+                + FutureProofTable.COLUMN_PARENT_ROW_ID
+                + ");");
+
         db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
         //noinspection SyntaxError
         db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
@@ -282,6 +298,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
+                +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
@@ -289,12 +306,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "BEGIN "
                 +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + CommentsTable.TRIGGER_DELETE);
         db.execSQL("CREATE TRIGGER " + CommentsTable.TRIGGER_DELETE + " AFTER DELETE ON " + CommentsTable.TABLE_NAME + " "
                 + "BEGIN "
                 +   "DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
+                +   "DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + ChatsTable.TRIGGER_DELETE);
@@ -405,6 +424,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 40: {
                 upgradeFromVersion40(db);
+            }
+            case 41: {
+                upgradeFromVersion41(db);
             }
             break;
             default: {
@@ -752,6 +774,52 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE INDEX " + MediaTable.INDEX_DEC_HASH_KEY + " ON " + MediaTable.TABLE_NAME + "("
                 + MediaTable.COLUMN_DEC_SHA256_HASH
                 + ");");
+    }
+
+    private void upgradeFromVersion41(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_TYPE + " INTEGER DEFAULT 0");
+
+        db.execSQL("DROP TABLE IF EXISTS " + FutureProofTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + FutureProofTable.TABLE_NAME + " ("
+                + FutureProofTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + FutureProofTable.COLUMN_PARENT_TABLE + " TEXT NOT NULL,"
+                + FutureProofTable.COLUMN_PARENT_ROW_ID + " INTEGER,"
+                + FutureProofTable.COLUMN_CONTENT_BYTES + " BLOB"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + FutureProofTable.INDEX_FUTURE_PROOF_KEY);
+        db.execSQL("CREATE INDEX " + FutureProofTable.INDEX_FUTURE_PROOF_KEY + " ON " + FutureProofTable.TABLE_NAME + "("
+                + FutureProofTable.COLUMN_PARENT_TABLE + ", "
+                + FutureProofTable.COLUMN_PARENT_ROW_ID
+                + ");");
+
+        // Update triggers to also delete from future proof table
+        db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
+        //noinspection SyntaxError
+        db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
+                + "BEGIN "
+                + " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                + " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                + " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
+                + " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                + " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
+                + " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                + "END;");
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + MessagesTable.TRIGGER_DELETE + " AFTER DELETE ON " + MessagesTable.TABLE_NAME + " "
+                + "BEGIN "
+                + " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                + " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
+                + " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                + "END;");
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + CommentsTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + CommentsTable.TRIGGER_DELETE + " AFTER DELETE ON " + CommentsTable.TABLE_NAME + " "
+                + "BEGIN "
+                + "DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
+                + "DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
+                + "END;");
     }
 
     /**

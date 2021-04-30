@@ -491,6 +491,7 @@ public class ChatActivity extends HalloActivity {
                     case ChatAdapter.VIEW_TYPE_SYSTEM:
                     case ChatAdapter.VIEW_TYPE_INCOMING_RETRACTED:
                     case ChatAdapter.VIEW_TYPE_OUTGOING_RETRACTED:
+                    case ChatAdapter.VIEW_TYPE_INCOMING_FUTURE_PROOF:
                         return false;
                 }
                 return true;
@@ -1016,6 +1017,7 @@ public class ChatActivity extends HalloActivity {
         static final int VIEW_TYPE_INCOMING_RETRACTED = 7;
         static final int VIEW_TYPE_SYSTEM = 8;
         static final int VIEW_TYPE_INCOMING_TOMBSTONE = 9;
+        static final int VIEW_TYPE_INCOMING_FUTURE_PROOF = 10;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -1049,6 +1051,8 @@ public class ChatActivity extends HalloActivity {
             final Message message = Preconditions.checkNotNull(getItem(position));
             if (message.type == Message.TYPE_SYSTEM) {
                 return VIEW_TYPE_SYSTEM;
+            } else if (message.type == Message.TYPE_FUTURE_PROOF) {
+                return VIEW_TYPE_INCOMING_FUTURE_PROOF;
             } else if (message.isIncoming()) {
                 if (message.isTombstone()) {
                     return VIEW_TYPE_INCOMING_TOMBSTONE;
@@ -1106,6 +1110,10 @@ public class ChatActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_INCOMING_TOMBSTONE: {
                     layoutRes = R.layout.message_item_tombstone;
+                    break;
+                }
+                case VIEW_TYPE_INCOMING_FUTURE_PROOF: {
+                    layoutRes = R.layout.message_item_future_proof;
                     break;
                 }
                 default: {

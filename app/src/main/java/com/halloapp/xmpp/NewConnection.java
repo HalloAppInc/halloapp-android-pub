@@ -15,6 +15,8 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.FutureProofComment;
+import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -27,7 +29,16 @@ import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.Album;
+import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.clients.CommentContainer;
+import com.halloapp.proto.clients.CommentContext;
+import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.Text;
+import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -1140,58 +1151,21 @@ public class NewConnection extends Connection {
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
-                            names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
+                        Post post = processPost(protoPost, names);
+                        if (post != null) {
+                            posts.add(post);
+                        } else {
+                            Log.e("connection: invalid post");
                         }
 
-                        byte[] payload = protoPost.getPayload().toByteArray();
-                        PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
-
-                        // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
-                        UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
-                        @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
-                        Post np = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
-                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
-                            np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.encSha256hash,
-                                    entryMedia.width, entryMedia.height));
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            np.mentions.add(mention);
-                        }
-                        posts.add(np);
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
-                            names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
+                        Comment comment = processComment(protoComment, names);
+                        if (comment != null) {
+                            comments.add(comment);
+                        } else {
+                            Log.e("connection: invalid comment");
                         }
-
-                        byte[] payload = protoComment.getPayload().toByteArray();
-                        PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
-
-                        final Comment comment = new Comment(0,
-                                publishedEntry.feedItemId,
-                                getUserId(Long.toString(protoComment.getPublisherUid())),
-                                publishedEntry.id,
-                                publishedEntry.parentCommentId,
-                                publishedEntry.timestamp,
-                                true,
-                                false,
-                                publishedEntry.text
-                        );
-                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
-                            comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.encSha256hash,
-                                    entryMedia.width, entryMedia.height));
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            comment.mentions.add(mention);
-                        }
-                        comments.add(comment);
                     }
                 }
             }
@@ -1207,6 +1181,209 @@ public class NewConnection extends Connection {
             return !posts.isEmpty() || !comments.isEmpty();
         }
 
+        private Post processPost( com.halloapp.proto.server.Post protoPost, Map<UserId, String> names) {
+            if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
+                names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
+            }
+
+            byte[] payload = protoPost.getPayload().toByteArray();
+            Container container;
+            try {
+                container = Container.parseFrom(payload);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e("connection: invalid post payload");
+                return null;
+            }
+            if (!container.hasPostContainer()) {
+                PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
+
+                // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
+                UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
+                @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
+                Post np = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
+                for (PublishedEntry.Media entryMedia : publishedEntry.media) {
+                    np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
+                            entryMedia.encKey, entryMedia.encSha256hash,
+                            entryMedia.width, entryMedia.height));
+                }
+                for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
+                    Mention mention = Mention.parseFromProto(mentionProto);
+                    processMention(mention);
+                    np.mentions.add(mention);
+                }
+                return np;
+            } else {
+                PostContainer postContainer = container.getPostContainer();
+                UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
+                long timeStamp = 1000L * protoPost.getTimestamp();
+
+                switch (postContainer.getPostCase()) {
+                    default:
+                    case POST_NOT_SET: {
+                        @Post.TransferredState int transferState = Post.TRANSFERRED_YES;
+                        FutureProofPost futureproofPost = new FutureProofPost(-1, posterUserId, protoPost.getId(), timeStamp, transferState, Post.SEEN_NO, null);
+                        futureproofPost.setProtoBytes(postContainer.toByteArray());
+
+                        return futureproofPost;
+                    }
+                    case TEXT: {
+                        Text text = postContainer.getText();
+                        Post np = new Post(-1, posterUserId, protoPost.getId(), timeStamp, Post.TRANSFERRED_YES, Post.SEEN_NO, text.getText());
+                        for (com.halloapp.proto.clients.Mention mentionProto : text.getMentionsList()) {
+                            Mention mention = Mention.parseFromProto(mentionProto);
+                            processMention(mention);
+                            np.mentions.add(mention);
+                        }
+                        return np;
+                    }
+                    case ALBUM: {
+                        Album album = postContainer.getAlbum();
+                        Text caption = album.getText();
+                        Post np = new Post(-1, posterUserId, protoPost.getId(), timeStamp, posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, caption.getText());
+                        for (AlbumMedia albumMedia : album.getMediaList()) {
+                            switch (albumMedia.getMediaCase()) {
+                                case IMAGE: {
+                                    Image image = albumMedia.getImage();
+                                    np.media.add(Media.parseFromProto(image));
+                                    break;
+                                }
+                                case VIDEO: {
+                                    Video video = albumMedia.getVideo();
+                                    np.media.add(Media.parseFromProto(video));
+                                    break;
+                                }
+                            }
+                        }
+                        for (com.halloapp.proto.clients.Mention mentionProto : caption.getMentionsList()) {
+                            Mention mention = Mention.parseFromProto(mentionProto);
+                            processMention(mention);
+                            np.mentions.add(mention);
+                        }
+                        return np;
+                    }
+                }
+            }
+        }
+
+        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names) {
+            if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
+                names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
+            }
+
+            byte[] payload = protoComment.getPayload().toByteArray();
+
+            Container container;
+            try {
+                container = Container.parseFrom(payload);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e("connection: invalid comment payload");
+                return null;
+            }
+
+            if (!container.hasCommentContainer()) {
+                PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
+
+                final Comment comment = new Comment(0,
+                        publishedEntry.feedItemId,
+                        getUserId(Long.toString(protoComment.getPublisherUid())),
+                        publishedEntry.id,
+                        publishedEntry.parentCommentId,
+                        publishedEntry.timestamp,
+                        true,
+                        false,
+                        publishedEntry.text
+                );
+                for (PublishedEntry.Media entryMedia : publishedEntry.media) {
+                    comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
+                            entryMedia.encKey, entryMedia.encSha256hash,
+                            entryMedia.width, entryMedia.height));
+                }
+                for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
+                    Mention mention = Mention.parseFromProto(mentionProto);
+                    processMention(mention);
+                    comment.mentions.add(mention);
+                }
+                return comment;
+            } else {
+                CommentContainer commentContainer = container.getCommentContainer();
+                CommentContext context = commentContainer.getContext();
+                long timestamp = protoComment.getTimestamp() * 1000L;
+
+                switch (commentContainer.getCommentCase()) {
+                    default:
+                    case COMMENT_NOT_SET: {
+                        final FutureProofComment comment = new FutureProofComment(0,
+                                context.getFeedPostId(),
+                                getUserId(Long.toString(protoComment.getPublisherUid())),
+                                protoComment.getId(),
+                                protoComment.getParentCommentId(),
+                                timestamp,
+                                true,
+                                false,
+                                null
+                        );
+                        comment.setProtoBytes(commentContainer.toByteArray());
+                        return comment;
+                    }
+                    case ALBUM: {
+                        Album album = commentContainer.getAlbum();
+                        Text caption = album.getText();
+                        final Comment comment = new Comment(0,
+                                context.getFeedPostId(),
+                                getUserId(Long.toString(protoComment.getPublisherUid())),
+                                protoComment.getId(),
+                                protoComment.getParentCommentId(),
+                                timestamp,
+                                true,
+                                false,
+                                caption.getText()
+                        );
+                        for (AlbumMedia albumMedia : album.getMediaList()) {
+                            switch (albumMedia.getMediaCase()) {
+                                case IMAGE: {
+                                    Image image = albumMedia.getImage();
+                                    comment.media.add(Media.parseFromProto(image));
+                                    break;
+                                }
+                                case VIDEO: {
+                                    Video video = albumMedia.getVideo();
+                                    comment.media.add(Media.parseFromProto(video));
+                                    break;
+                                }
+                            }
+                        }
+                        for (com.halloapp.proto.clients.Mention mentionProto : caption.getMentionsList()) {
+                            Mention mention = Mention.parseFromProto(mentionProto);
+                            processMention(mention);
+                            comment.mentions.add(mention);
+                        }
+
+                        return comment;
+                    }
+                    case TEXT: {
+                        Text text = commentContainer.getText();
+                        final Comment comment = new Comment(0,
+                                context.getFeedPostId(),
+                                getUserId(Long.toString(protoComment.getPublisherUid())),
+                                protoComment.getId(),
+                                protoComment.getParentCommentId(),
+                                timestamp,
+                                true,
+                                false,
+                                text.getText()
+                        );
+                        for (com.halloapp.proto.clients.Mention mentionProto : text.getMentionsList()) {
+                            Mention mention = Mention.parseFromProto(mentionProto);
+                            processMention(mention);
+                            comment.mentions.add(mention);
+                        }
+                        return comment;
+                    }
+                }
+            }
+        }
+
+
         private boolean processGroupFeedItems(@NonNull List<GroupFeedItem> items, @NonNull String ackId) {
             final List<Post> posts = new ArrayList<>();
             final List<Comment> comments = new ArrayList<>();
@@ -1216,57 +1393,19 @@ public class NewConnection extends Connection {
                 if (item.getAction() == GroupFeedItem.Action.PUBLISH) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
-                            names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
+                        Comment comment = processComment(protoComment, names);
+                        if (comment != null) {
+                            comments.add(comment);
+                        } else {
+                            Log.e("connection: invalid comment");
                         }
-
-                        byte[] payload = protoComment.getPayload().toByteArray();
-                        PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
-                        final Comment comment = new Comment(0,
-                                publishedEntry.feedItemId,
-                                getUserId(Long.toString(protoComment.getPublisherUid())),
-                                publishedEntry.id,
-                                publishedEntry.parentCommentId,
-                                publishedEntry.timestamp,
-                                true,
-                                false,
-                                publishedEntry.text);
-                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
-                            comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.encSha256hash,
-                                    entryMedia.width, entryMedia.height));
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            comment.mentions.add(mention);
-                        }
-                        comments.add(comment);
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
-                            names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
+                        Post post = processPost(protoPost, names);
+                        if (post != null) {
+                            post.setParentGroup(new GroupId(item.getGid()));
+                            posts.add(post);
                         }
-
-                        byte[] payload = protoPost.getPayload().toByteArray();
-                        PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
-
-                        // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
-                        UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
-                        @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
-                        Post post = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
-                        for (PublishedEntry.Media entryMedia : publishedEntry.media) {
-                            post.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                                    entryMedia.encKey, entryMedia.encSha256hash,
-                                    entryMedia.width, entryMedia.height));
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            post.mentions.add(mention);
-                        }
-                        post.setParentGroup(new GroupId(item.getGid()));
-                        posts.add(post);
                     }
                 } else if (item.getAction() == GroupFeedItem.Action.RETRACT) {
                     if (item.hasComment()) {

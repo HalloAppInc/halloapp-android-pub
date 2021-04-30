@@ -10,12 +10,23 @@ import androidx.annotation.StringDef;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
+import com.halloapp.proto.clients.Album;
+import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.Comment;
+import com.halloapp.proto.clients.CommentContainer;
+import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.EncryptedResource;
+import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.MediaType;
 import com.halloapp.proto.clients.Post;
+import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.Text;
+import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+
+import org.mp4parser.boxes.threegpp.ts26244.AlbumBox;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -165,7 +176,100 @@ public class PublishedEntry {
                 throw new IllegalStateException("Unknown type " + type);
             }
         }
+        if (Constants.SEND_CONTAINER) {
+            switch (type) {
+                case ENTRY_FEED: {
+                    PostContainer.Builder builder = PostContainer.newBuilder();
+                    Text textContainer = null;
+                    if (text != null) {
+                        Text.Builder textBuilder = Text.newBuilder();
+                        textBuilder.setText(text);
+                        if (!mentions.isEmpty()) {
+                            textBuilder.addAllMentions(mentions);
+                        }
+                        textContainer = textBuilder.build();
+                    }
+
+                    if (!media.isEmpty()) {
+                        Album.Builder albumBuilder = Album.newBuilder();
+                        albumBuilder.addAllMedia(getAlbumMediaProtos());
+                        if (textContainer != null) {
+                            albumBuilder.setText(textContainer);
+                        }
+                        builder.setAlbum(albumBuilder);
+                    } else {
+                        builder.setText(textContainer);
+                    }
+                    containerBuilder.setPostContainer(builder);
+                    break;
+                }
+                case ENTRY_COMMENT: {
+                    CommentContainer.Builder builder = CommentContainer.newBuilder();
+                    CommentContext.Builder context = CommentContext.newBuilder()
+                            .setFeedPostId(feedItemId);
+                    if (parentCommentId != null) {
+                        context.setParentCommentId(parentCommentId);
+                    }
+                    Text textContainer = null;
+                    if (text != null) {
+                        Text.Builder textBuilder = Text.newBuilder();
+                        textBuilder.setText(text);
+                        if (!mentions.isEmpty()) {
+                            textBuilder.addAllMentions(mentions);
+                        }
+                        textContainer = textBuilder.build();
+                    }
+
+                    if (!media.isEmpty()) {
+                        Album.Builder albumBuilder = Album.newBuilder();
+                        albumBuilder.addMedia(getAlbumMediaProtos().get(0));
+                        if (textContainer != null) {
+                            albumBuilder.setText(textContainer);
+                        }
+                        builder.setAlbum(albumBuilder);
+                    } else {
+                        builder.setText(textContainer);
+                    }
+                    builder.setContext(context.build());
+                    containerBuilder.setCommentContainer(builder.build());
+                    break;
+                }
+                default: {
+                    throw new IllegalStateException("Unknown type " + type);
+                }
+            }
+        }
         return containerBuilder.build().toByteArray();
+    }
+
+    private List<AlbumMedia> getAlbumMediaProtos() {
+        Preconditions.checkState(!media.isEmpty(), "Trying to get empty media proto");
+
+        List<AlbumMedia> mediaList = new ArrayList<>();
+        for (Media item : media) {
+            EncryptedResource encryptedResource = EncryptedResource.newBuilder()
+                    .setEncryptionKey(ByteString.copyFrom(item.encKey))
+                    .setCiphertextHash(ByteString.copyFrom(item.encSha256hash))
+                    .setDownloadUrl(item.url).build();
+
+            AlbumMedia.Builder albumMediaBuilder = AlbumMedia.newBuilder();
+            if ("image".equals(item.type)) {
+                albumMediaBuilder.setImage(Image.newBuilder()
+                        .setWidth(item.width)
+                        .setHeight(item.height)
+                        .setImg(encryptedResource).build());
+
+            } else if ("video".equals(item.type)) {
+                albumMediaBuilder.setVideo(Video.newBuilder()
+                        .setWidth(item.width)
+                        .setHeight(item.height)
+                        .setVideo(encryptedResource).build());
+            } else {
+                continue;
+            }
+            mediaList.add(albumMediaBuilder.build());
+        }
+        return mediaList;
     }
 
     private List<com.halloapp.proto.clients.Media> getMediaProtos() {
@@ -227,7 +331,6 @@ public class PublishedEntry {
         try {
             Container container = Container.parseFrom(entry);
             Builder builder = new Builder();
-
             if (container.hasPost()) {
                 Post post = container.getPost();
                 builder.type(ENTRY_FEED);

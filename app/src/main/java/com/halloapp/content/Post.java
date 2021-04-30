@@ -7,7 +7,10 @@ import androidx.annotation.Nullable;
 import com.halloapp.BuildConfig;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.CommentContainer;
+import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.PublishedEntry;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.lang.annotation.Retention;
@@ -39,10 +42,11 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_YES = 1;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_SYSTEM})
+    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_SYSTEM = 1;
+    public static final int TYPE_FUTURE_PROOF = 2;
 
     public int commentCount;
     public int unseenCommentCount;
@@ -189,7 +193,7 @@ public class Post extends ContentItem {
 
     @Override
     public boolean isRetracted() {
-        return type != TYPE_SYSTEM && super.isRetracted();
+        return type == TYPE_USER && super.isRetracted();
     }
 
     @Override

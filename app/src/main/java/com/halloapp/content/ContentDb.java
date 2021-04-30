@@ -45,6 +45,7 @@ public class ContentDb {
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
     private final MediaDb mediaDb;
+    private final FutureProofDb futureProofDb;
     private final PostsDb postsDb;
 
     private final ServerProps serverProps;
@@ -127,9 +128,10 @@ public class ContentDb {
         this.serverProps = serverProps;
 
         mentionsDb = new MentionsDb(databaseHelper);
-        messagesDb = new MessagesDb(fileStore, mentionsDb, serverProps, databaseHelper);
-        postsDb = new PostsDb(mentionsDb, databaseHelper, fileStore, serverProps);
         mediaDb = new MediaDb(databaseHelper, fileStore);
+        futureProofDb = new FutureProofDb(databaseHelper);
+        messagesDb = new MessagesDb(fileStore, mentionsDb, futureProofDb, serverProps, databaseHelper);
+        postsDb = new PostsDb(mentionsDb, futureProofDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {
