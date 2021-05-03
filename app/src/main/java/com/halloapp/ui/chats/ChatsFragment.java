@@ -1,11 +1,11 @@
 package com.halloapp.ui.chats;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,10 +55,10 @@ import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.FilterUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.xmpp.PresenceLoader;
 
@@ -643,7 +643,11 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             private void bindMessageText(@Nullable String sender, @NonNull Message message) {
                 infoView.setTextColor(infoView.getResources().getColor(R.color.chat_message_preview));
                 final String text;
-                if (TextUtils.isEmpty(message.text)) {
+                if (message.isRetracted()) {
+                    SpannableString ss = new SpannableString(getString(R.string.message_retracted_placeholder));
+                    ss.setSpan(new StyleSpan(Typeface.ITALIC), 0, ss.length(), 0);
+                    infoView.setText(ss);
+                } else if (TextUtils.isEmpty(message.text)) {
                     if (message.media.size() == 1) {
                         final Media media = message.media.get(0);
                         switch (media.type) {
