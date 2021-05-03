@@ -7,7 +7,7 @@
     <string name="title_groups">"Grupos"</string>
     <string name="comment">"Comentario"</string>
     <string name="next">"Siguiente"</string>
-    <string name="message">"Mensaje"</string>
+    <string name="message">"Enviar un mensaje"</string>
     <string name="add_post">"Agrega una publicación"</string>
     <string name="new_chat">"Nuevo chat"</string>
     <string name="new_group">"Nuevo grupo"</string>
@@ -502,46 +502,55 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
     <string name="max_video_length">"Tu video dura más de %d segundos. Por favor selecciona otro video o edítalo."</string>
     <string name="video_edit_unable_trim">"No se pudo editar el video."</string>
     <string name="mute">"Silenciar"</string>
-    <string name="share_link">"Share link"</string>
-    <string name="copy_link">"Copy link"</string>
-    <string name="reset_link">"Reset link"</string>
-    <string name="invite_links_not_currently_supported">"Invite links are not supported yet"</string>
-    <string name="view_group_invite_link_action">"View group invite"</string>
-    <string name="invite_link_resetting_progress">"Resetting link…"</string>
-    <string name="invite_link_reset">"Link reset"</string>
-    <string name="invite_link_reset_failed">"Failed to reset link"</string>
-    <string name="reset_invite_link_confirmation">"Would you like to reset the group invite link?"</string>
-    <string name="invite_link_joining">"Joining group…"</string>
-    <string name="invite_link_loading">"Loading group…"</string>
-    <string name="invite_link_copied">"Link copied!"</string>
-    <string name="invite_link_title">"Invite link"</string>
-    <string name="invite_link_summary">"Anyone with HalloApp can use this link to join this group."</string>
-    <string name="invite_link_failed_to_join">"Failed to join the group"</string>
-    <string name="join_group_action">"Join group"</string>
-    <string name="system_message_you_joined">"You joined the group via invite link"</string>
-    <string name="system_message_joined">"%s joined the group via invite link"</string>
-    <string name="activity_center_welcome">"Hallo!"</string>
-    <string name="post_preview_retracted">"%s deleted a post"</string>
-    <string name="system_message_group_bg_changed">"%s changed the background color"</string>
-    <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
-    <string name="group_background_hint">"Background"</string>
-    <string name="group_background_saving_dialog">"Setting background…"</string>
-    <string name="group_background_save_failed">"Failed to set group background"</string>
-    <string name="group_background_save_success">"Group background updated"</string>
+    <string name="share_link">"Compartir el enlace"</string>
+    <string name="copy_link">"Copiar el enlace"</string>
+    <string name="reset_link">"Restablecer el enlace"</string>
+    <string name="invite_links_not_currently_supported">"Aún no hay enlaces para invitaciones. "</string>
+    <string name="view_group_invite_link_action">"Ver la invitación del grupo"</string>
+    <string name="invite_link_resetting_progress">"Restableciendo el enlace..."</string>
+    <string name="invite_link_reset">"Enlace restablecido"</string>
+    <string name="invite_link_reset_failed">"No se pudo restablecer el enlace"</string>
+    <string name="reset_invite_link_confirmation">"¿Quieres restablecer el enlace de la invitación al grupo?"</string>
+    <string name="invite_link_joining">"Uniéndose al grupo..."</string>
+    <string name="invite_link_loading">"Cargando el grupo..."</string>
+    <string name="invite_link_copied">"¡El enlace ha sido copiado!"</string>
+    <string name="invite_link_title">"Enlace de invitación"</string>
+    <string name="invite_link_summary">"Cualquier persona en HalloApp puede usar este enlace para unirse a este grupo."</string>
+    <string name="invite_link_failed_to_join">"No se pudo unir a este grupo."</string>
+    <string name="join_group_action">"Unirse al grupo"</string>
+    <string name="system_message_you_joined">"Te has unido el grupo con el enlace de invitación"</string>
+    <string name="system_message_joined">"%s se unió al grupo con el enlace de invitación"</string>
+    <string name="activity_center_welcome">"¡Hallo!"</string>
+    <string name="post_preview_retracted">"%s eliminó una publicación"</string>
+    <string name="system_message_group_bg_changed">"%s cambió el color del fondo de pantalla"</string>
+    <string name="system_message_group_bg_changed_by_you">"Tú cambiaste el color del fondo de pantalla"</string>
+    <string name="group_background_hint">"Fondo de pantalla"</string>
+    <string name="group_background_saving_dialog">"Configurar el fondo..."</string>
+    <string name="group_background_save_failed">"No se pudo configurar el fondo de pantalla del grupo"</string>
+    <string name="group_background_save_success">"El fondo de pantalla del grupo ha sido actualizado"</string>
     <string name="group_background_color">"Color"</string>
-    <string name="group_background_default">"Default"</string>
-    <string name="group_info_members">"Members (%d)"</string>
-    <string name="delete_message_confirmation">"Delete selected message?"</string>
-    <string name="retract_message_option">"Delete for everyone"</string>
-    <string name="delete_message_option">"Delete for me"</string>
-    <string name="contact_permissions_dialog_title">"Contacts"</string>
-    <string name="not_now">"Not now"</string>
-    <string name="continue_button">"Continue"</string>
-    <string name="contact_permissions_nag">"To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
-    <string name="contact_permissions_nag_permanently_blocked">"To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;. Tap Settings &gt; Permissions, and turn Contacts on"</string>
-    <string name="home_contact_permissions_nag">"To help you connect with friends and family, we’ll need your permission to access your contacts."</string>
-    <string name="home_contact_permissions_nag_permanently_blocked">"To help you connect with friends and family, we’ll need your permission to access your contacts. Tap Settings &gt; Permissions, and turn Contacts on"</string>
-    <string name="invite_link_load_failed">"Failed to open group invite link"</string>
-    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
-    <string name="failed_no_longer_member">"You are no longer a member of this group"</string>
+    <string name="group_background_default">"Por defecto"</string>
+    <string name="group_info_members">"Miembros (%d)"</string>
+    <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
+    <string name="retract_message_option">"Eliminar para todos."</string>
+    <string name="delete_message_option">"Eliminar solo para mí."</string>
+    <string name="contact_permissions_dialog_title">"Contactos"</string>
+    <string name="not_now">"Ahora no"</string>
+    <string name="continue_button">"Continuar"</string>
+    <string name="contact_permissions_nag">"Para que puedas conectarte con tus amigos y familia, necesitamos que nos des permiso para tener acceso a tus contactos. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="contact_permissions_nag_permanently_blocked">"Para que puedas conectarte con tus amigos y familia, necesitamos que nos des permiso para tener acceso a tus contactos. &lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;. Toca Configuración &gt; Permisos, y enciende Contactos"</string>
+    <string name="home_contact_permissions_nag">"Para que puedas conectarte con tus amigos y familia, necesitamos que nos des permiso para tener acceso a tus contactos."</string>
+    <string name="home_contact_permissions_nag_permanently_blocked">"Para que puedas conectarte con tus amigos y familia, necesitamos que nos des permiso para tener acceso a tus contactos. Toca Configuración &gt; Permisos, y enciende Contactos"</string>
+    <string name="invite_link_load_failed">"No se pudo abrir el enlace de invitación del grupo"</string>
+    <string name="message_tombstone_placeholder">"Esperando este mensaje. Esto puede tomar un tiempo.&lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="failed_no_longer_member">"Ya no eres un miembro de este grupo."</string>
+
+    <!-- Placeholder when we do not understand the received message -->
+    <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received post -->
+    <string name="post_upgrade_placeholder">"Your version of HalloApp does not support this type of post. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received comment -->
+    <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
 </resources>

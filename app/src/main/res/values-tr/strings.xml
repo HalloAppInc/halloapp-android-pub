@@ -5,27 +5,29 @@
     <string name="title_messages">"Sohbetler"</string>
     <string name="title_profile">"Profil"</string>
     <string name="title_groups">"Gruplar"</string>
+
+    <!-- Noun or verb? -->
     <string name="comment">"Yorum yaz"</string>
     <string name="next">"İleri"</string>
     <string name="message">"Mesaj at"</string>
     <string name="add_post">"Yeni gönderi"</string>
     <string name="new_chat">"Yeni sohbet"</string>
     <string name="new_group">"Yeni grup"</string>
-    <string name="notifications">"İletiler"</string>
-    <string name="feed_notifications_channel_name">"Geri bildirim"</string>
-    <string name="message_notifications_channel_name">"Mesaj bildirimi"</string>
+    <string name="notifications">"Bildirimler"</string>
+    <string name="feed_notifications_channel_name">"Geri bildirim ver"</string>
+    <string name="message_notifications_channel_name">"Mesaj bildirimleri"</string>
     <string name="critical_notifications_channel_name">"Önemli uygulama uyarıları"</string>
-    <string name="invite_notifications_channel_name">"Davet talepleri"</string>
-    <string name="invite_notification_text">"%s HalloApp'e davetini kabul etti 🎉"</string>
+    <string name="invite_notifications_channel_name">"Davet bildirimleri"</string>
+    <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti 🎉"</string>
     <string name="me">"Ben"</string>
     <string name="you">"Sen"</string>
-    <string name="copy_text">"Kopyala"</string>
+    <string name="copy_text">"Metni kopyala"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Metin"</string>
     <string name="bad_image">"Desteklenmeyen medya formatı"</string>
     <string name="time_diff_now">"Şimdi"</string>
-    <string name="phone_number_hint">"Telefon numaran"</string>
+    <string name="phone_number_hint">"Telefon numarası"</string>
     <string name="request_registration_title">"Hoş geldin!"</string>
     <string name="reverify_registration_title">"Lütfen telefon numaranı kontrol et"</string>
     <string name="request_registration_subtitle">"Bir onay kodu alacaksın. Bu mesaj ücretli olabilir."</string>
@@ -33,7 +35,7 @@
     <string name="contact_permission_title">"Son bir şey"</string>
     <string name="registration_code_invalid">"Geçersiz kod, tekrar dene"</string>
     <string name="registration_failed">"Telefon numarası kaydedilemedi, tekrar dene"</string>
-    <string name="registration_failed_no_friends">"Şu anda yalnızca HalloApp kullanan bir aile üyen veya arkadaşın varsa katılabilirsin; sana telefon numaranla davet göndermelerini isteyebilirsin."</string>
+    <string name="registration_failed_no_friends">"Şu anda yalnızca davet sistemiyle çalışıyoruz. HalloApp kullanan bir aile üyen veya arkadaşın varsa, telefon numaranı kullanarak sana davet göndermelerini isteyebilirsin."</string>
     <string name="registration_failed_no_friends_title">"Tüh!"</string>
     <string name="type_a_message_hint">"Mesaj yaz"</string>
     <string name="write_a_description">"Bir açıklama yaz"</string>
@@ -45,10 +47,10 @@
     <string name="new_message">"Yeni mesaj"</string>
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_placeholder">"Selam! Ben HalloApp kullanıyorum"</string>
-    <string name="empty_chat_with_name_placeholder">"%s artık HalloApp'te"</string>
-    <string name="new_chat_name_placeholder">"%s artık HalloApp kullanıyor! 🎉"</string>
+    <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
+    <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! 🎉"</string>
     <string name="posts_empty">"Gönderilerin burada görünecek"</string>
-    <string name="posts_exchange_numbers">"İletişim kurmak için birbirinize telefon numalarınızı vermelisiniz."</string>
+    <string name="posts_exchange_numbers">"İletişim kurmak için birbirinize telefon numaralarınızı vermelisiniz"</string>
     <string name="home_page_empty">"Kişilerinin paylaştıkları gönderiler, burada görünecek"</string>
     <string name="chats_page_empty">"Kişilerin ve mesajların burada görünecek"</string>
     <string name="chats_search_empty">"%s ile yapılmış herhangi bir sohbet bulunamadı"</string>
@@ -56,495 +58,543 @@
     <string name="groups_search_empty">"%s kişisinin bulunduğu bir grup bulunamadı"</string>
     <string name="your_post_title">"Gönderin"</string>
     <string name="contact_profile_empty">"%s kişisinin gönderileri burada görünecek"</string>
-    <string name="contact_profile_not_friends">"%s kişisi ile HalloApp'te henüz arkadaş değilsiniz"</string>
+    <string name="contact_profile_not_friends">"%s ile HalloApp'te arkadaş değilsiniz"</string>
     <string name="invalid_phone_number">"Geçersiz numara"</string>
+
+    <!-- Noun or verb? -->
     <string name="share_option_post">"Paylaş"</string>
     <string name="share_option_message">"Mesaj at"</string>
     <plurals name="time_diff_minutes">
-        <item quantity="one">"%dm"</item>
-        <item quantity="other">"%dm"</item>
-    </plurals>
-    <plurals name="time_diff_minutes_long">
-        <item quantity="one">"%d dakika önce
-
-%d dakika önce"</item>
-        <item quantity="other">"%d dakika önce
-
-%d dakika önce"</item>
-    </plurals>
-    <plurals name="time_diff_hours">
-        <item quantity="one">"%dh"</item>
-        <item quantity="other">"%dh"</item>
-    </plurals>
-    <plurals name="time_diff_hours_long">
-        <item quantity="one">"%d saat önce
-
-%d saat önce"</item>
-        <item quantity="other">"%d saat önce
-
-%d saat önce"</item>
-    </plurals>
-    <plurals name="time_diff_days">
         <item quantity="one">"%dd"</item>
         <item quantity="other">"%dd"</item>
     </plurals>
+    <plurals name="time_diff_minutes_long">
+        <item quantity="one">"%d dakika önce
+"</item>
+        <item quantity="other">"%d dakika önce"</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">"%ds 
+"</item>
+        <item quantity="other">"%ds "</item>
+    </plurals>
+    <plurals name="time_diff_hours_long">
+        <item quantity="one">"%d saat önce"</item>
+        <item quantity="other">"%d saat önce"</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">"%dg"</item>
+        <item quantity="other">"%dg"</item>
+    </plurals>
     <plurals name="time_diff_days_long">
-        <item quantity="one">"%d gün önce
-
-%d gün önce"</item>
-        <item quantity="other">"%d gün önce
-
-%d gün önce"</item>
+        <item quantity="one">"%d gün önce"</item>
+        <item quantity="other">"%d gün önce"</item>
     </plurals>
     <plurals name="max_post_media_items">
-        <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin.
-
-Gönderi başına en fazla %d öge seçebilirsin."</item>
-        <item quantity="other">"Gönderi başına en fazla %d öge seçebilirsin.
-
-Gönderi başına en fazla %d öge seçebilirsin."</item>
+        <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin
+"</item>
+        <item quantity="other">"Gönderi başına en fazla %d öge seçebilirsin"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Fotoğraf çekebilmek ve video kaydedebilmek için cihaz ayarlarından kamera ve ses kaydına erişim izni vermen gerekmektedir."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Fotoğraf çekebilmek ve video kaydedebilmek için cihaz ayarlarından kamera ve ses kaydına erişim izni vermen gerekmektedir.
 
-Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</string>
-    <string name="contacts_permission_rationale">"Ailen ve arkadaşlarınla bağlantı kurabilmen için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir. "</string>
-    <string name="contacts_permission_rationale_denied">"Ailen ve arkadaşlarınla bağlantı kurabilmen için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir. 
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git."</string>
+    <string name="contacts_permission_rationale">"Ailen ve arkadaşlarınla bağlantı kurabilmek için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir"</string>
+    <string name="contacts_permission_rationale_denied">"Ailen ve arkadaşlarınla bağlantı kurabilmek için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir
 
-Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</string>
-    <string name="storage_permission_rationale">"To pick media we need permission to access your device storage"</string>
-    <string name="storage_permission_rationale_denied">"To pick media we need permission to access your device storage.
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git"</string>
+    <string name="storage_permission_rationale">"Bir ortam ögesi seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir"</string>
+    <string name="storage_permission_rationale_denied">"Bir çoklu ortam ögesi seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir
 
-Open the app settings screen to modify app permissions."</string>
-    <string name="initializing_please_wait">"Başlatılıyor, lütfen bekleyin..."</string>
-    <string name="retry">"Tekrar deneyin"</string>
-    <string name="contact_rationale_upload">"In order to connect you with your friends &amp; family we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
-    <string name="contact_rationale_continue">"Tamam"</string>
-    <string name="failed_to_initialize">"Failed to initialize"</string>
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</string>
+    <string name="initializing_please_wait">"Başlatılıyor, lütfen bekle..."</string>
+    <string name="retry">"Tekrar dene"</string>
+    <string name="contact_rationale_upload">"Ailen ve arkadaşlarınla bağlantı kurabilmen için kişilerine erişim iznine ihtiyacımız olacak. Daha fazlasını öğren."</string>
+    <string name="contact_rationale_continue">"Onayla"</string>
+    <string name="failed_to_initialize">"Başlatılamadı"</string>
     <string name="type_a_comment_hint">"Yorum ekle"</string>
     <string name="comments">"Yorumlar"</string>
     <string name="reply">"Yanıtla"</string>
     <string name="close">"Kapat"</string>
-    <string name="reply_to_self">"Reply to myself"</string>
-    <string name="reply_to_contact">"Reply to %s"</string>
-    <string name="reply_original_not_found">"Orjinal mesaj bulunamadı"</string>
-    <string name="reply_original_post_not_found">"Original post not found"</string>
-    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in their post"</string>
-    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
-    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1s&lt;/b&gt; and &lt;b&gt;%2s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt;, and &lt;b&gt;%3s&lt;/b&gt; commented on your post"</string>
+    <string name="reply_to_self">"Kendini yanıtla"</string>
+    <string name="reply_to_contact">"%s kişisine yanıt ver"</string>
+    <string name="reply_original_not_found">"Asıl mesaj bulunamadı"</string>
+    <string name="reply_original_post_not_found">"Asıl gönderi bulunamadı"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisinde senden bahsetti"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt;, gönderindeki bir yorumda senden bahsetti"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisindeki bir yorumda senden bahsetti"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yaptığı yorumda senden bahsetti"</string>
+    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt;, gönderine yorum yaptı"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%s&lt;/b&gt; ve  &lt;b&gt;%2s&lt;/b&gt; gönderine yorum yaptılar"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve &lt;b&gt;%3s&lt;/b&gt; gönderine yorum yaptılar"</string>
     <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt;, and %d other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt;, and %d other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı
+
+"</item>
+        <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı"</item>
     </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt;,  &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</string>
+    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt;,  &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string>
+    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt;,  &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string>
     <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı
+
+"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
     </plurals>
-    <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string>
-    <string name="list_of_two">"%s and %s"</string>
+    <string name="contact_hashing_faq_dialog_title">"Gizliliğin önceliğimizdir"</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp, seni HalloApp kullanan arkadaşlarınla eşleştirmek için yalnızca telefon numaranı kullanır; rehberindeki başka herhangi bir veriyi almaz"</string>
+    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;, kendi gönderisine yorum yaptı"</string>
+    <string name="list_of_two">"%s ve %s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
-    <string name="list_of_many_end">", and %s"</string>
-    <string name="no_activity">"No activity"</string>
-    <string name="failed_to_load_media">"Failed to load media"</string>
+    <string name="list_of_many_end">", ve %s"</string>
+    <string name="no_activity">"Herhangi bir hareket yok"</string>
+
+    <!-- Ebru diger platformlarda mi 'ortam ögesi'sini kullanio? Daha casual bir tabir var mi? -->
+    <string name="failed_to_load_media">"Ortam ögesi yüklenemedi"</string>
     <string name="settings">"Ayarlar"</string>
-    <string name="send_logs">"Share feedback &amp; logs"</string>
-    <string name="terms_of_service">"Terms of service"</string>
-    <string name="privacy_policy">"Privacy policy"</string>
-    <string name="settings_block_list">"Blocked contacts"</string>
-    <string name="settings_feed_privacy">"Posts"</string>
+    <string name="send_logs">"Geri bildirim paylaş"</string>
+    <string name="terms_of_service">"Kullanım şartları"</string>
+    <string name="privacy_policy">"Gizlilik politikası"</string>
+    <string name="settings_block_list">"Engellenen kişiler"</string>
+    <string name="settings_feed_privacy">"Gönderiler"</string>
     <string name="settings_privacy">"Gizlilik"</string>
     <plurals name="contact_selection_subtitle">
-        <item quantity="one">"%d contact selected"</item>
-        <item quantity="other">"%d contact selected"</item>
+        <item quantity="one">"%d kişi seçildi
+
+"</item>
+        <item quantity="other">"%d kişi seçildi"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"You may select at most %d contact"</item>
-        <item quantity="other">"You may select at most %d contact"</item>
+        <item quantity="one">"En fazla %d kişi seçebilirsin
+
+"</item>
+        <item quantity="other">"En fazla %d kişi seçebilirsin"</item>
     </plurals>
-    <string name="no_contacts_selected_subtitle">"No contacts selected"</string>
+    <string name="no_contacts_selected_subtitle">"Kişi seçilmedi"</string>
     <string name="help">"Yardım"</string>
+
+    <!-- Like about us or about sth else? -->
     <string name="about">"Hakkımızda"</string>
-    <string name="notify_posts">"Posts"</string>
-    <string name="notify_comments">"Comments"</string>
+    <string name="notify_posts">"Gönderiler"</string>
+    <string name="notify_comments">"Yorumlar"</string>
     <string name="read_more">"Devamını oku"</string>
-    <string name="no_photos_or_videos_found">"No photos or videos found"</string>
+    <string name="no_photos_or_videos_found">"Fotoğraf veya video bulunamadı"</string>
     <string name="gallery">"Galeri"</string>
     <string name="select">"Tamam"</string>
-    <string name="avatar_picker_title">"Profil Fotorafı"</string>
-    <string name="group_avatar_picker_title">"Group avatar"</string>
-    <string name="other_media">"Other media"</string>
+    <string name="avatar_picker_title">"Profil fotoğrafı"</string>
+    <string name="group_avatar_picker_title">"Grup simgesi"</string>
+    <string name="other_media">"Diğer ortam ögeleri"</string>
     <string name="rotate">"Döndür"</string>
     <plurals name="seen_by">
-        <item quantity="one">"Görenler"</item>
-        <item quantity="other">"Görenler"</item>
+        <item quantity="one">"%d kişi tarafından görüldü
+
+"</item>
+        <item quantity="other">"%d kişi tarafından görüldü"</item>
     </plurals>
-    <string name="empty_viewed_by">"No one has viewed your post"</string>
-    <string name="empty_sent_to">"No one has received your post"</string>
-    <string name="options">"Options"</string>
+    <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
+    <string name="empty_sent_to">"Gönderini henüz kimse almadı"</string>
+    <string name="options">"Seçenekler"</string>
     <string name="block">"Engelle"</string>
     <string name="play">"Oynat"</string>
     <string name="pause">"Durdur"</string>
     <string name="new_posts">"Yeni gönderiler"</string>
-    <string name="alert_discard_changes_message">"Discard changes?"</string>
-    <string name="action_discard">"Discard"</string>
-    <string name="new_post_notification">"New post from %s"</string>
+    <string name="alert_discard_changes_message">"Değişiklikleri iptal et?"</string>
+    <string name="action_discard">"İptal et"</string>
+    <string name="new_post_notification">"%s, yeni bir gönderi paylaştı"</string>
     <plurals name="new_posts_notification">
-        <item quantity="one">"%d new post from %s"</item>
-        <item quantity="other">"%d new post from %s"</item>
+        <item quantity="one">"%s, %d yeni gönderi paylaştı
+
+"</item>
+        <item quantity="other">"%s, %d yeni gönderi paylaştı"</item>
     </plurals>
     <plurals name="new_messages_notification">
-        <item quantity="one">"%d message from %s"</item>
-        <item quantity="other">"%d message from %s"</item>
+        <item quantity="one">"%s kişisinden %d yeni mesaj 
+
+"</item>
+        <item quantity="other">"%s kişisinden %d yeni mesaj "</item>
     </plurals>
     <plurals name="new_messages_separator">
-        <item quantity="one">"%d new message"</item>
-        <item quantity="other">"%d new message"</item>
+        <item quantity="one">"%d yeni mesaj
+
+"</item>
+        <item quantity="other">"%d yeni mesaj"</item>
     </plurals>
-    <string name="new_comments_notification">"%s commented on your post"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s commented on your posts"</string>
+    <string name="new_comments_notification">"%s, gönderine yorum yaptı"</string>
+    <string name="new_comments_on_multiple_posts_notification">"%s, gönderilerine yorum yaptı"</string>
     <string name="new_posts_and_comments_notification">"%s. %s."</string>
-    <string name="notification_app_expired_title">"HalloApp has expired"</string>
-    <string name="notification_app_expiration_body">"Please download the latest release"</string>
+    <string name="notification_app_expired_title">"HalloApp'in süresi doldu"</string>
+    <string name="notification_app_expiration_body">"Lütfen en son sürümü indir"</string>
     <plurals name="notification_app_expiration_days_left_title">
-        <item quantity="one">"HalloApp expires in %d day"</item>
-        <item quantity="other">"HalloApp expires in %d day"</item>
+        <item quantity="one">"HalloApp'in süresi, %d gün sonra dolacak
+
+"</item>
+        <item quantity="other">"HalloApp'in süresi, %d gün sonra dolacak"</item>
     </plurals>
-    <string name="app_expiration_download_button">"Download update"</string>
-    <string name="app_expired_explanation">"This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release."</string>
-    <string name="app_expiration_no_play_store">"Google Play not installed"</string>
-    <string name="see_all_comments">"Yorumları gör"</string>
-    <string name="add_comment">"Yorum yaz"</string>
-    <string name="refresh_contacts">"Refresh contacts"</string>
-    <string name="post_retracted_with_name">"%s deleted their post"</string>
-    <string name="post_retracted_by_me">"You deleted your post"</string>
-    <string name="post_retracted_placeholder">"This post has been deleted"</string>
-    <string name="message_retracted_placeholder">"This message has been deleted"</string>
-    <string name="comment_retracted_placeholder">"This comment has been deleted"</string>
-    <string name="retract">"Delete"</string>
-    <string name="retract_post_confirmation">"Would you like to delete your post?"</string>
-    <string name="retract_comment_confirmation">"Would you like to delete your comment?"</string>
+    <string name="app_expiration_download_button">"Güncellemeyi indir"</string>
+    <string name="app_expired_explanation">"HalloApp'in bu sürümü çok eski ve artık kullanılamaz. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</string>
+    <string name="app_expiration_no_play_store">"Google Play yüklü değil"</string>
+    <string name="see_all_comments">"Bütün yorumları gör"</string>
+    <string name="add_comment">"Yorum ekle"</string>
+    <string name="refresh_contacts">"Kişileri yenile"</string>
+    <string name="post_retracted_with_name">"%s, gönderisini sildi"</string>
+    <string name="post_retracted_by_me">"Gönderini sildin"</string>
+    <string name="post_retracted_placeholder">"Bu gönderi silinmiş"</string>
+    <string name="message_retracted_placeholder">"Bu mesaj silinmiş"</string>
+    <string name="comment_retracted_placeholder">"Bu yorum silinmiş"</string>
+    <string name="retract">"Sil"</string>
+    <string name="retract_post_confirmation">"Gönderini silmek mi istiyorsun?"</string>
+    <string name="retract_comment_confirmation">"Yorumunu silmek mi istiyorsun?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="one">"Would you like to delete this chat?"</item>
-        <item quantity="other">"Would you like to delete this chat?"</item>
+        <item quantity="one">"Bu sohbeti silmek mi istiyorsun?
+
+"</item>
+        <item quantity="other">"Seçtiğin %d sohbeti silmek mi istiyorsun?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
-        <item quantity="one">"Would you like to delete this group?"</item>
-        <item quantity="other">"Would you like to delete this group?"</item>
+        <item quantity="one">"Bu grubu silmek mi istiyorsun? 
+
+"</item>
+        <item quantity="other">"Seçtiğin %d grubu silmek mi istiyorsun?"</item>
     </plurals>
-    <string name="delete_chat_confirmation">"Would you like to delete this group?"</string>
-    <string name="delete_multiple_chats_confirmation">"Would you like to delete the selected chats?"</string>
+    <string name="delete_chat_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
+    <string name="delete_multiple_chats_confirmation">"Seçilen sohbetleri silmek mi istiyorsun?"</string>
     <string name="yes">"Evet"</string>
     <string name="no">"Hayır"</string>
     <string name="ok">"Tamam"</string>
-    <string name="activity">"Aktivite"</string>
-    <string name="mark_all_read">"Mark all read"</string>
-    <string name="login_failed">"Giriş Başarısız"</string>
-    <string name="login_failed_explanation">"Please, re-verify your phone number"</string>
+    <string name="activity">"Hareketler"</string>
+    <string name="mark_all_read">"Hepsini okundu olarak işaretle"</string>
+    <string name="login_failed">"Giriş başarısız"</string>
+    <string name="login_failed_explanation">"Lütfen telefon numaranı kontrol et"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="one">"This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
-        <item quantity="other">"This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
+        <item quantity="one">"HalloApp'in bu sürümünün süresi, %d gün içinde dolacak. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir. 
+
+"</item>
+        <item quantity="other">"HalloApp'in bu sürümünün süresi, %d gün içinde dolacak. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</item>
     </plurals>
-    <string name="could_not_set_avatar">"Please try a different image"</string>
-    <string name="pick_media">"Pick media"</string>
+    <string name="could_not_set_avatar">"Lütfen başka bir resim dene"</string>
+    <string name="pick_media">"Ortam ögesi seç"</string>
     <string name="video">"Video"</string>
-    <string name="photo">"Fotoraf"</string>
+    <string name="photo">"Fotoğraf"</string>
     <string name="album">"Albüm"</string>
-    <string name="new_messages">"Yeni mesaj"</string>
+    <string name="new_messages">"Yeni mesajlar"</string>
     <string name="delete">"Sil"</string>
-    <string name="clear_chat">"Clear chat"</string>
-    <string name="view_profile">"Profil görüntüle"</string>
-    <string name="action_hide">"Hide"</string>
-    <string name="hide_my_posts">"Hide my posts"</string>
-    <string name="my_posts">"Paylaşımlarım"</string>
+    <string name="clear_chat">"Sohbeti temizle"</string>
+    <string name="view_profile">"Profili görüntüle"</string>
+    <string name="action_hide">"Gizle"</string>
+    <string name="hide_my_posts">"Gönderilerimi gizle"</string>
+    <string name="my_posts">"Gönderilerim"</string>
     <string name="about_halloapp">"HalloApp hakkında"</string>
     <string name="last_seen">"Son görülme %s"</string>
-    <string name="last_seen_less_minute">"Last seen less than a minute ago"</string>
+    <string name="last_seen_less_minute">"Son görülme 1 dakikadan daha kısa süre önce"</string>
     <string name="online">"Çevrimiçi"</string>
     <string name="today">"Bugün"</string>
-    <string name="today_at_time">"Bugün %s"</string>
+    <string name="today_at_time">"Bugün saat %s'de/te"</string>
     <string name="yesterday">"Dün"</string>
-    <string name="yesterday_at_time">"Dün %s"</string>
-    <string name="day_of_week_at_time">"%s at %s"</string>
-    <string name="unknown_contact">"Unknown contact"</string>
-    <string name="select_contact">"New message"</string>
-    <string name="search_contacts">"Search contacts"</string>
+    <string name="yesterday_at_time">"Dün saat %s'de/te"</string>
+    <string name="day_of_week_at_time">"%s saat %s'de/te"</string>
+    <string name="unknown_contact">"Bilinmeyen kişi"</string>
+    <string name="select_contact">"Yeni mesaj"</string>
+    <string name="search_contacts">"Kişilerde ara"</string>
     <string name="search">"Ara"</string>
-    <string name="contact_search_empty">"Nothing found for '%s'"</string>
+    <string name="contact_search_empty">"%s için bir şey bulunamadı"</string>
     <string name="action_save">"Kaydet"</string>
-    <string name="invite_friends">"Invite friends &amp; family"</string>
-    <string name="invite_a_friend">"Invite a friend"</string>
-    <string name="invite_friend_chooser_title">"Invite %s"</string>
-    <string name="invite_text">"Join me on HalloApp — a simple and private way to stay in touch with friends and family. Get it at https://halloapp.com/dl"</string>
-    <string name="invite_text_with_name_and_number">"Hey %s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %s to register. Get it at halloapp.com/dl"</string>
-    <string name="name_hint">"İsmin"</string>
-    <string name="name_must_be_specified">"Name must be specified"</string>
-    <string name="update">"Update"</string>
+    <string name="invite_friends">"Aile ve arkadaşlarını davet et"</string>
+    <string name="invite_a_friend">"Bir arkadaşını davet et "</string>
+    <string name="invite_friend_chooser_title">"% kişisini davet et"</string>
+    <string name="invite_text">"HalloApp'te bana katıl — aile ve arkadaşlarınla iletişimde kalmanın kolay ve özel bir yolu. https://halloapp.com/dl adresinden indir."</string>
+
+    <!-- Will the second %s here be a link? -->
+    <string name="invite_text_with_name_and_number">"Selam %s, HalloApp'te (günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması) bana katılman için seni davet ediyorum. Kaydolmak için %s kullan. halloapp.com/dl adresinden indir."</string>
+    <string name="name_hint">"Adın"</string>
+    <string name="name_must_be_specified">"Ad belirtilmeli"</string>
+    <string name="update">"Güncelle"</string>
     <string name="counter">"%d/%d"</string>
-    <string name="invite_pending">"Pending"</string>
-    <string name="failed_update_profile">"Failed to update profile, try again later"</string>
-    <string name="profile_updated">"Profile updated"</string>
-    <string name="try_again">"Try again"</string>
-    <string name="crop">"Crop"</string>
-    <string name="flip">"Flip"</string>
-    <string name="no_one_seen_your_post">"No one saw your post :("</string>
-    <string name="other_friends">"Gönderilenler"</string>
+    <string name="invite_pending">"Beklemede"</string>
+    <string name="failed_update_profile">"Profil güncellemesi başarısız, daha sonra tekrar dene"</string>
+    <string name="profile_updated">"Profil güncellendi"</string>
+    <string name="try_again">"Tekrar dene"</string>
+    <string name="crop">"Kes"</string>
+    <string name="flip">"Çevir"</string>
+    <string name="no_one_seen_your_post">"Gönderini kimse görmedi :("</string>
+    <string name="other_friends">"Şunlara gönderildi: "</string>
     <string name="email_logs_subject">"HalloApp Android %s %s"</string>
-    <string name="email_logs_text">"
-----------------------------------------
-Please describe the issue above.
-uid: %s
-version: %s
+    <string name="email_logs_text">"Lüften sorununu yukarıda açıkla.
 "</string>
     <string name="share">"Paylaş"</string>
-    <string name="unblock">"Unblock"</string>
-    <string name="unblock_user_confirmation">"Would you like to unblock %s?"</string>
-    <string name="menu_item_block_user">"Block user"</string>
-    <string name="picker_title_block_user">"Block user"</string>
+    <string name="unblock">"Engeli kaldır"</string>
+    <string name="unblock_user_confirmation">"%s kişisinin engelini kaldırmak mı istiyorsun?"</string>
+    <string name="menu_item_block_user">"Kullanıcıyı engelle"</string>
+    <string name="picker_title_block_user">"Kullanıcıyı engelle"</string>
     <string name="cancel">"İptal et"</string>
-    <string name="group_subtitle">"tap here for group info"</string>
-    <string name="empty_block_list">"No blocked contacts"</string>
-    <string name="block_notification">"You blocked this contact. Tap to unblock"</string>
-    <string name="unblock_notification">"You unblocked this contact"</string>
-    <string name="system_message_group_created">"This group was created by %s"</string>
-    <string name="system_message_group_created_by_you">"This group was created by you"</string>
-    <string name="system_message_members_added">"%s added %s"</string>
-    <string name="system_message_members_added_by_you">"You added %s"</string>
-    <string name="system_message_members_removed">"%s removed %s"</string>
-    <string name="system_message_members_removed_by_you">"You removed %s"</string>
-    <string name="system_message_member_left">"%s left"</string>
-    <string name="system_message_member_you_left">"You left"</string>
-    <string name="system_message_members_promoted">"%s promoted %s to admin"</string>
-    <string name="system_message_members_promoted_by_you">"You promoted %s to admin"</string>
-    <string name="system_message_members_demoted">"%s demoted %s from admin"</string>
-    <string name="system_message_members_demoted_by_you">"You demoted %s from admin"</string>
-    <string name="system_message_member_auto_promoted">"%s was auto-promoted to admin"</string>
-    <string name="system_message_member_auto_promoted_you">"You were auto-promoted to admin"</string>
-    <string name="system_message_group_name_changed">"%s changed the group name to %s"</string>
-    <string name="system_message_group_name_changed_by_you">"You changed the group name to %s"</string>
-    <string name="system_message_group_avatar_changed">"%s changed the group avatar"</string>
-    <string name="system_message_group_avatar_changed_by_you">"You changed the group avatar"</string>
-    <string name="system_message_group_deleted">"%s deleted the group"</string>
-    <string name="system_message_group_deleted_by_you">"You deleted the group"</string>
-    <string name="system_post_group_created">"This group was created by %s"</string>
-    <string name="system_post_group_created_by_you">"This group was created by you"</string>
-    <string name="system_post_members_added">"%s added %s"</string>
-    <string name="system_post_members_added_by_you">"You added %s"</string>
-    <string name="system_post_members_removed">"%s removed %s"</string>
-    <string name="system_post_members_removed_by_you">"You removed %s"</string>
-    <string name="system_post_member_left">"%s left"</string>
-    <string name="system_post_member_you_left">"You left"</string>
-    <string name="system_post_members_promoted">"%s promoted %s to admin"</string>
-    <string name="system_post_members_promoted_by_you">"You promoted %s to admin"</string>
-    <string name="system_post_members_demoted">"%s demoted %s from admin"</string>
-    <string name="system_post_members_demoted_by_you">"You demoted %s from admin"</string>
-    <string name="system_post_member_auto_promoted">"%s was auto-promoted to admin"</string>
-    <string name="system_post_member_auto_promoted_you">"You were auto-promoted to admin"</string>
-    <string name="system_post_group_name_changed">"%s changed the group name to %s"</string>
-    <string name="system_post_group_name_changed_by_you">"You changed the group name to %s"</string>
-    <string name="system_post_group_avatar_changed">"%s changed the group avatar"</string>
-    <string name="system_post_group_avatar_changed_by_you">"You changed the group avatar"</string>
-    <string name="system_post_group_deleted">"%s deleted the group"</string>
-    <string name="system_post_group_deleted_by_you">"You deleted the group"</string>
-    <string name="group_info_title">"Group info"</string>
-    <string name="admin">"Admin"</string>
+    <string name="group_subtitle">"Grup bilgisi için buraya dokun"</string>
+    <string name="empty_block_list">"Engellenen kişi yok"</string>
+    <string name="block_notification">"Bu kişiyi engelledin. Engeli kaldırmak için dokun."</string>
+    <string name="unblock_notification">"Bu kişinin engelini kaldırdın."</string>
+    <string name="system_message_group_created">"Bu grup %s tarafından kuruldu"</string>
+    <string name="system_message_group_created_by_you">"Bu grubu sen kurdun"</string>
+    <string name="system_message_members_added">"%s, %s kişisini ekledi"</string>
+    <string name="system_message_members_added_by_you">"%s kişisini ekledin"</string>
+    <string name="system_message_members_removed">"%s, %s kişisini çıkardı"</string>
+    <string name="system_message_members_removed_by_you">"%s kişisini çıkardın"</string>
+    <string name="system_message_member_left">"%s ayrıldı"</string>
+    <string name="system_message_member_you_left">"Ayrıldın"</string>
+    <string name="system_message_members_promoted">"%s, %s kişisini yönetici yaptı"</string>
+    <string name="system_message_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
+    <string name="system_message_members_demoted">"%s, %s kişisini yöneticilikten çıkardı"</string>
+    <string name="system_message_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
+    <string name="system_message_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
+    <string name="system_message_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
+    <string name="system_message_group_name_changed">"%s, grubun adını %s olarak değiştirdi"</string>
+    <string name="system_message_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
+    <string name="system_message_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
+    <string name="system_message_group_deleted">"%s, grubu sildi"</string>
+    <string name="system_message_group_deleted_by_you">"Grubu sildin"</string>
+    <string name="system_post_group_created">"Bu grup, %s tarafından kuruldu"</string>
+    <string name="system_post_group_created_by_you">"Bu grubu sen kurdun"</string>
+    <string name="system_post_members_added">"%s, %s kişisini ekledi"</string>
+    <string name="system_post_members_added_by_you">"%s kişisini ekledin"</string>
+    <string name="system_post_members_removed">"%s, %s kişisini sildi"</string>
+    <string name="system_post_members_removed_by_you">"%s kişisini sildin"</string>
+    <string name="system_post_member_left">"%s ayrıldı"</string>
+    <string name="system_post_member_you_left">"Ayrıldın"</string>
+    <string name="system_post_members_promoted">"%s, %s kişisini yönetici yaptı"</string>
+    <string name="system_post_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
+    <string name="system_post_members_demoted">"%s, %s kişisini yöneticilikten çıkardı"</string>
+    <string name="system_post_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
+    <string name="system_post_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
+    <string name="system_post_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
+    <string name="system_post_group_name_changed">"%s, grubun adını %s olarak değiştirdi"</string>
+    <string name="system_post_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
+    <string name="system_post_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
+    <string name="system_post_group_deleted">"%s, grubu sildi"</string>
+    <string name="system_post_group_deleted_by_you">"Grubu sildin"</string>
+    <string name="group_info_title">"Grup bilgisi"</string>
+    <string name="admin">"Yönetici"</string>
     <string name="save">"Kaydet"</string>
-    <string name="contact_picker_feed_except_title">"Hide posts from…"</string>
-    <string name="contact_picker_feed_only_title">"Share posts with…"</string>
-    <string name="setting_feed_privacy_title">"Who can see my posts"</string>
-    <string name="setting_feed_all">"My contacts"</string>
-    <string name="setting_feed_only">"Only share with…"</string>
-    <string name="setting_feed_except">"My contacts except…"</string>
-    <string name="feed_privacy_fail_to_load">"Failed to load privacy settings"</string>
-    <string name="feed_privacy_update_success">"Setting updated successfully"</string>
-    <string name="feed_privacy_update_failure">"Failed to update setting"</string>
-    <string name="invite_failed_internet">"Failed to send invite, check your internet and try again"</string>
-    <string name="invite_failed_no_invites">"Sorry you're out of invites, try again later"</string>
-    <string name="invite_failed_invalid_number">"That phone number is invalid"</string>
-    <string name="invite_failed_existing_user">"Your friend is already on HalloApp!"</string>
-    <string name="invite_failed_unknown">"Failed to send invite"</string>
-    <string name="invite_creation_in_progress">"Creating invite…"</string>
-    <string name="invite_info_fetch_internet">"Failed to retrieve invite info, check your internet and try again"</string>
-    <string name="invite_confirmation_message">"Use one of your invites to invite %s?"</string>
+    <string name="contact_picker_feed_except_title">"Şu kişinin/kişilerin gönderilerini gizle:"</string>
+    <string name="contact_picker_feed_only_title">"Gönderilerini şu kişiyle/kişilerle paylaş:"</string>
+    <string name="setting_feed_privacy_title">"Gönderilerimi kimler görebilir"</string>
+    <string name="setting_feed_all">"Kişilerim"</string>
+    <string name="setting_feed_only">"Yalnızca şu kişiyle/kişilerle paylaş:"</string>
+    <string name="setting_feed_except">"Şunlar hariç kişilerim:"</string>
+    <string name="feed_privacy_fail_to_load">"Gizlilik ayarları yüklenemedi"</string>
+    <string name="feed_privacy_update_success">"Ayar güncellemesi başarılı"</string>
+    <string name="feed_privacy_update_failure">"Ayar güncellemesi başarısız"</string>
+    <string name="invite_failed_internet">"Davet gönderilemedi. İnternet bağlantını kontrol et ve tekrar dene"</string>
+    <string name="invite_failed_no_invites">"Üzgünüm, davet hakkın kalmadı. Daha sonra tekrar dene"</string>
+    <string name="invite_failed_invalid_number">"Telefon numarası geçersiz"</string>
+    <string name="invite_failed_existing_user">"Arkadaşın zaten HalloApp'te!"</string>
+    <string name="invite_failed_unknown">"Davet gönderilemedi"</string>
+    <string name="invite_creation_in_progress">"Davet oluşturuluyor..."</string>
+    <string name="invite_info_fetch_internet">"Davet bilgileri alınamadı. İnternet bağlantını kontrol et ve tekrar dene"</string>
+    <string name="invite_confirmation_message">"%s kişisini davet etmek için davetlerinden birini kullanmak ister misin?"</string>
     <plurals name="invites_remaining">
-        <item quantity="one">"You have %s invite remaining"</item>
-        <item quantity="other">"You have %s invite remaining"</item>
+        <item quantity="one">"%s davet hakkın kaldı
+
+"</item>
+        <item quantity="other">"%s davet hakkın kaldı"</item>
     </plurals>
-    <string name="no_invites_remaining">"More invites coming this Monday!"</string>
+    <string name="no_invites_remaining">"Bu pazartesi daha fazla davet hakkı gelecek!"</string>
     <string name="invite_friends_title">"Aileni ve arkadaşlarını davet et"</string>
-    <string name="invite_action">"Davet"</string>
-    <string name="invite_title">"Invite"</string>
+    <string name="invite_action">"Davet et"</string>
+    <string name="invite_title">"Davet"</string>
     <string name="settings_invite_option">"HalloApp'e davet et"</string>
-    <string name="invite_already_a_user_subtitle">"Already a HalloApp user"</string>
-    <string name="invite_already_on_halloapp">"Already on HalloApp"</string>
-    <string name="invite_invalid_phone_number">"Invalid phone number"</string>
+    <string name="invite_already_a_user_subtitle">"Halihazırda HalloApp kullanıcısı"</string>
+    <string name="invite_already_on_halloapp">"Halihazırda HalloApp'te"</string>
+    <string name="invite_invalid_phone_number">"Telefon numarası geçersiz"</string>
     <string name="edit">"Düzenle"</string>
     <string name="done">"Tamam"</string>
-    <string name="members_header">"Katılımcılar (%s)"</string>
-    <string name="add_members">"Katılımcı ekle"</string>
-    <string name="add_members_in_progress">"Katılımcı ekleniyor…"</string>
-    <string name="failed_add_members">"Katılımcı ekleme başarısız, sonra tekrar deneyiniz"</string>
+    <string name="members_header">"Üyeler (%s)"</string>
+    <string name="add_members">"Üye ekle"</string>
+    <string name="add_members_in_progress">"Üye ekleniyor…"</string>
+    <string name="failed_add_members">"Üye ekleme başarısız, daha sonra tekrar dene"</string>
     <string name="create_group">"Yeni grup oluştur"</string>
-    <string name="create_group_in_progress">"Oluşturuluyor %s…"</string>
-    <string name="new_group_title">"Gruba bir isim ver"</string>
-    <string name="group_picker_title">"New group"</string>
+    <string name="create_group_in_progress">" %s adlı grup oluşturuluyor..."</string>
+    <string name="new_group_title">"Grubuna bir ad ver"</string>
+    <string name="group_picker_title">"Yeni grup"</string>
     <string name="button_create_group">"Oluştur"</string>
-    <string name="group_name_hint">"Grup ismi"</string>
-    <string name="failed_create_group">"İşlem başarısız oldu, sonra tekrar deneyiniz"</string>
-    <string name="group_remove_member">"Remove"</string>
-    <string name="group_promote_to_admin">"Promote to admin"</string>
-    <string name="promote_admin_in_progress">"Promoting to admin…"</string>
-    <string name="failed_promote_admin">"Failed to promote admin, try again later"</string>
-    <string name="group_demote_from_admin">"Demote admin"</string>
-    <string name="demote_admin_in_progress">"Demoting admin…"</string>
-    <string name="failed_demote_admin">"Failed to demote admin, try again later"</string>
-    <string name="remove_member_in_progress">"Removing member…"</string>
-    <string name="failed_remove_member">"Failed to remove member, try again later"</string>
-    <string name="leave_group">"Leave group"</string>
+    <string name="group_name_hint">"Grup adı"</string>
+    <string name="failed_create_group">"Grup oluşturma başarısız, daha sonra tekrar dene"</string>
+    <string name="group_remove_member">"Çıkar"</string>
+    <string name="group_promote_to_admin">"Yönetici yap"</string>
+    <string name="promote_admin_in_progress">"Yönetici yapılıyor..."</string>
+    <string name="failed_promote_admin">"Yönetici yapma başarısız, daha sonra tekrar dene"</string>
+    <string name="group_demote_from_admin">"Yöneticilikten çıkar"</string>
+    <string name="demote_admin_in_progress">"Yöneticilikten çıkarılıyor..."</string>
+    <string name="failed_demote_admin">"Yönetici çıkarma başarısız, daha sonra tekrar dene"</string>
+    <string name="remove_member_in_progress">"Üye çıkarılıyor..."</string>
+    <string name="failed_remove_member">"Üye çıkarma başarısız, daha sonra tekrar dene"</string>
+    <string name="leave_group">"Gruptan ayrıl"</string>
     <plurals name="leave_group_plural">
-        <item quantity="one">"Leave group"</item>
-        <item quantity="other">"Leave group"</item>
+        <item quantity="one">"Gruptan ayrıl 
+
+"</item>
+        <item quantity="other">"Gruplardan ayrıl"</item>
     </plurals>
-    <string name="leave_group_confirmation">"Would you like to leave this group?"</string>
+    <string name="leave_group_confirmation">"Bu gruptan ayrılmak mı istiyorsun?"</string>
     <plurals name="leave_multiple_groups_confirmation">
-        <item quantity="one">"Would you like to leave this group?"</item>
-        <item quantity="other">"Would you like to leave this group?"</item>
+        <item quantity="one">"Bu gruptan ayrılmak mı istiyorsun?
+
+"</item>
+        <item quantity="other">"Seçtiğin %d gruptan ayrılmak mı istiyorsun?"</item>
     </plurals>
-    <string name="leave_group_in_progress">"Leaving group…"</string>
+    <string name="leave_group_in_progress">"Gruptan ayrılınıyor..."</string>
     <plurals name="leave_groups_progress">
-        <item quantity="one">"Leaving group…"</item>
-        <item quantity="other">"Leaving group…"</item>
+        <item quantity="one">"Gruptan ayrılınıyor... 
+
+"</item>
+        <item quantity="other">"Gruplardan ayrılınıyor..."</item>
     </plurals>
-    <string name="failed_leave_group">"Failed to leave group, try again later"</string>
-    <string name="delete_group">"Delete group"</string>
-    <string name="delete_group_confirmation">"Would you like to delete this group?"</string>
-    <string name="delete_group_in_progress">"Deleting group…"</string>
-    <string name="failed_delete_group">"Failed to delete group, try again later"</string>
+    <string name="failed_leave_group">"Gruptan ayrılma başarısız, daha sonra tekrar dene"</string>
+    <string name="delete_group">"Grubu sil"</string>
+    <string name="delete_group_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
+    <string name="delete_group_in_progress">"Grup siliniyor..."</string>
+    <string name="failed_delete_group">"Grup silme başarısız, daha sonra tekrar dene"</string>
     <plurals name="friends_on_halloapp">
-        <item quantity="one">"%d contact on HalloApp"</item>
-        <item quantity="other">"%d contact on HalloApp"</item>
+        <item quantity="one">"HalloApp'te bağlantın olan %d kişi var
+
+"</item>
+        <item quantity="other">"HalloApp'te bağlantın olan %d kişi var"</item>
     </plurals>
     <plurals name="settings_invite_summary">
-        <item quantity="one">"%d invite available"</item>
-        <item quantity="other">"%d invite available"</item>
+        <item quantity="one">"Mevcut %d davetin var 
+
+"</item>
+        <item quantity="other">"Mevcut %d davetin var"</item>
     </plurals>
-    <string name="settings_invite_none_summary">"No invites available"</string>
+    <string name="settings_invite_none_summary">"Hiç davetin kalmadı"</string>
     <plurals name="settings_block_list_summary">
-        <item quantity="one">"%d contact"</item>
-        <item quantity="other">"%d contact"</item>
+        <item quantity="one">"%d kişi
+
+"</item>
+        <item quantity="other">"%d kişi"</item>
     </plurals>
-    <string name="settings_block_list_none_summary">"None"</string>
-    <string name="settings_feed_contacts_summary">"My phone contacts"</string>
+
+    <!-- We have multiple words for this. I need a sentence example to choose correctly. -->
+    <string name="settings_block_list_none_summary">"Yok"</string>
+    <string name="settings_feed_contacts_summary">"Rehberimdeki kişiler"</string>
     <plurals name="settings_feed_excluded_summary">
-        <item quantity="one">"%d contact excluded"</item>
-        <item quantity="other">"%d contact excluded"</item>
+        <item quantity="one">"%d kişi hariç
+
+"</item>
+        <item quantity="other">"%d kişi hariç"</item>
     </plurals>
     <plurals name="settings_feed_selected">
-        <item quantity="one">"%d contact selected"</item>
-        <item quantity="other">"%d contact selected"</item>
+        <item quantity="one">"%d kişi seçildi 
+
+"</item>
+        <item quantity="other">"%d kişi seçildi"</item>
     </plurals>
-    <string name="settings_feed_selected_empty">"No contacts selected"</string>
-    <string name="settings_version_footer">"HalloApp Version %s"</string>
-    <string name="connectivity_info_airplane_mode">"Airplane mode on"</string>
-    <string name="connectivity_info_not_connected">"No network"</string>
-    <string name="blocking_user_failed_check_internet">"Couldn't block %s. Check your internet and try again."</string>
-    <string name="blocking_user_successful">"Blocked %s"</string>
-    <string name="blocking_user_in_progress">"Blocking %s…"</string>
-    <string name="unblocking_user_successful">"Unblocked %s"</string>
-    <string name="unblocking_user_failed_check_internet">"Couldn't unblock %s. Check your internet and try again."</string>
-    <string name="unblocking_user_in_progress">"Unblocking %s…"</string>
-    <string name="are_you_sure_dialog_title">"Are you sure?"</string>
-    <string name="hide_future_posts_confirmation">"Are you sure you want to hide all your future posts from %s? You can always change this later."</string>
-    <string name="feed_privacy_hide_success">"Feed privacy updated. Hiding posts from %s"</string>
-    <string name="feed_privacy_hide_failure">"Failed to update feed privacy, check your internet and try again"</string>
-    <string name="user_typing">"typing…"</string>
-    <string name="group_user_typing">"%s is typing…"</string>
-    <string name="group_many_users_typing">"multiple users typing…"</string>
-    <string name="feed_nux_bottom_sheet_title">"About HalloApp"</string>
-    <string name="feed_nux_bottom_sheet_text">"Home feed allows you to share text, photo, and video updates that disappear after 30 days.
+    <string name="settings_feed_selected_empty">"Kişi seçilmedi"</string>
+    <string name="settings_version_footer">"HalloApp %s sürümü"</string>
+    <string name="connectivity_info_airplane_mode">"Uçak modu açık"</string>
+    <string name="connectivity_info_not_connected">"Ağ yok"</string>
+    <string name="blocking_user_failed_check_internet">"%s engellenemiyor. İnternet bağlantını kontrol et ve tekrar dene"</string>
+    <string name="blocking_user_successful">"%s engellendi"</string>
+    <string name="blocking_user_in_progress">"%s engelleniyor..."</string>
+    <string name="unblocking_user_successful">"%s kişisinin engeli kaldırıldı"</string>
+    <string name="unblocking_user_failed_check_internet">"%s kişisinin engeli kaldırılamıyor. İnternet bağlantını kontrol et ve tekrar dene"</string>
+    <string name="unblocking_user_in_progress">"%s kişisinin engeli kaldırılıyor..."</string>
+    <string name="are_you_sure_dialog_title">"Emin misin?"</string>
+    <string name="hide_future_posts_confirmation">"Gelecekteki bütün gönderilerini %s kişisinden gizlemek istediğine emin misin? Bunu daha sonra değiştirebilirsin."</string>
+    <string name="feed_privacy_hide_success">"Yayın gizliliği güncellendi. %s kişisinin gönderileri gizleniyor"</string>
+    <string name="feed_privacy_hide_failure">"Yayın gizliliği güncellemesi başarısız. Bağlantını kontrol et ve tekrar dene"</string>
+    <string name="user_typing">"yazıyor..."</string>
+    <string name="group_user_typing">"%s yazıyor..."</string>
+    <string name="group_many_users_typing">"Birden çok kişi yazıyor..."</string>
+    <string name="feed_nux_bottom_sheet_title">"HalloApp hakkında"</string>
+    <string name="feed_nux_bottom_sheet_text">"Ana sayfada, 30 gün sonra kaybolacak olan metin, fotoğraf ve video yayınları paylaşabilirsin.
 
-If you want to share updates with someone, both parties must have each other's numbers saved on their phones.
+Bu yayınları görmesini istediğin kişilerle telefon numaralarınızın birbirinizde ekli olması gerekir. 
 
-You can share your updates with your entire contact list or only with selected people. Go to settings to change feed privacy."</string>
-    <string name="messages_nux_text">"This is where you’ll find messages from your friends &amp; family. When someone new joins HalloApp you can see them here."</string>
-    <string name="profile_nux_text">"This is your profile. Your own posts will collect here. Each post expires in 30 days."</string>
-    <string name="post_audience_nux_title">"Who will see my post?"</string>
-    <string name="post_audience_nux_text">"Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings."</string>
-    <string name="make_post_nux">"Tap to share an update with your friends &amp; family on HalloApp"</string>
-    <string name="activity_center_nux">"This is your activity center. Tap to see your most recent activity."</string>
-    <string name="home_feed_nux">"Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp."</string>
-    <string name="home_feed_nux_learn_more">"Learn more"</string>
-    <string name="camera_error_generic">"Camera failure."</string>
-    <string name="camera_error_photo">"Could not take a photo."</string>
-    <string name="camera_error_video">"Could not record a video."</string>
-    <string name="discard_photo_title">"Discard photo"</string>
-    <string name="discard_photo_warning">"Are you sure you want to discard your photo?"</string>
+Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçtiğin kişilerle paylaşabilirsin. Yayın gizliliğini değiştirmek için ayarlara git. "</string>
+    <string name="messages_nux_text">"Ailenden ve arkadaşlarından gelen mesajları burada bulabilirsin. HalloApp'e yeni biri katıldığında, onu burada görebilirsin."</string>
+    <string name="profile_nux_text">"Burası senin profilin. Gönderilerin burada toplanacak. Her gönderi, 30 gün sonra kaybolur."</string>
+    <string name="post_audience_nux_title">"Gönderilerimi kimler görebilir?"</string>
+    <string name="post_audience_nux_text">"Gönderilerin, rehberinde bulunan ve HalloApp kullanan kişilerle paylaşılacak. Profil→Ayarlar'a giderek gönderilerine erişimlerini sınırlayabilirsin."</string>
+    <string name="make_post_nux">"HalloApp'te ailen ve arkadaşlarınla bir gönderi paylaşmak için dokun"</string>
+    <string name="activity_center_nux">"Burası senin hareket merkezin. En son etkinliğini görmek için dokun"</string>
+    <string name="home_feed_nux">"Ana sayfana hoş geldin! Rehberinde bulunan ve HalloApp kullanan kişilerin gönderilerini burada görebilirsin"</string>
+    <string name="home_feed_nux_learn_more">"Daha fazlasını öğren"</string>
+    <string name="camera_error_generic">"Kamera çalışmıyor"</string>
+    <string name="camera_error_photo">"Fotoğraf çekilemiyor"</string>
+    <string name="camera_error_video">"Video kaydedilemiyor"</string>
+    <string name="discard_photo_title">"Fotoğrafı kaldır"</string>
+    <string name="discard_photo_warning">"Fotoğrafı kaldırmak istediğine emin misin?"</string>
     <plurals name="group_feed_members">
-        <item quantity="one">"%d member"</item>
-        <item quantity="other">"%d member"</item>
+        <item quantity="one">"%d üye
+
+"</item>
+        <item quantity="other">"%d üye"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Sharing with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Sharing with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"Kişilerimle paylaşılıyor"</string>
+    <string name="composer_sharing_except_summary">"Kişilerimden bazılarıyla paylaşılıyor"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Sharing with %d of my contacts"</item>
-        <item quantity="other">"Sharing with %d of my contacts"</item>
+        <item quantity="one">"Kişilerimden %d tanesi ile paylaşılıyor
+
+"</item>
+        <item quantity="other">"Kişilerimden %d tanesi ile paylaşılıyor"</item>
     </plurals>
-    <string name="post_preview_no_caption">"%s shared a post"</string>
+    <string name="post_preview_no_caption">"%s, bir gönderi paylaştı"</string>
     <string name="post_preview_with_caption">"%s: %s"</string>
-    <string name="composer_sharing_message">"Sending to %s"</string>
-    <string name="composer_sharing_post">"Sharing with %s"</string>
-    <string name="max_video_length">"Your video is over %d seconds long. Please select another video or edit it."</string>
-    <string name="video_edit_unable_trim">"Video trimming was unsuccessful."</string>
-    <string name="mute">"Mute"</string>
-    <string name="share_link">"Share link"</string>
-    <string name="copy_link">"Copy link"</string>
-    <string name="reset_link">"Reset link"</string>
-    <string name="invite_links_not_currently_supported">"Invite links are not supported yet"</string>
-    <string name="view_group_invite_link_action">"View group invite"</string>
-    <string name="invite_link_resetting_progress">"Resetting link…"</string>
-    <string name="invite_link_reset">"Link reset"</string>
-    <string name="invite_link_reset_failed">"Failed to reset link"</string>
-    <string name="reset_invite_link_confirmation">"Would you like to reset the group invite link?"</string>
-    <string name="invite_link_joining">"Joining group…"</string>
-    <string name="invite_link_loading">"Loading group…"</string>
-    <string name="invite_link_copied">"Link copied!"</string>
-    <string name="invite_link_title">"Invite link"</string>
-    <string name="invite_link_summary">"Anyone with HalloApp can use this link to join this group."</string>
-    <string name="invite_link_failed_to_join">"Failed to join the group"</string>
-    <string name="join_group_action">"Join group"</string>
-    <string name="system_message_you_joined">"You joined the group via invite link"</string>
-    <string name="system_message_joined">"%s joined the group via invite link"</string>
+    <string name="composer_sharing_message">"%s kişisine gönderiliyor"</string>
+    <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
+    <string name="max_video_length">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç"</string>
+    <string name="video_edit_unable_trim">"Video kırpma başarısız"</string>
+    <string name="mute">"Sessize al"</string>
+    <string name="share_link">"İlişimi paylaş"</string>
+    <string name="copy_link">"İlişimi kopyala"</string>
+    <string name="reset_link">"İlişimi sıfırla"</string>
+    <string name="invite_links_not_currently_supported">"Davet ilişimleri henüz desteklenmiyor"</string>
+    <string name="view_group_invite_link_action">"Grup davetini görüntüle"</string>
+    <string name="invite_link_resetting_progress">"İlişim sıfırlanıyor..."</string>
+    <string name="invite_link_reset">"İlişim sıfırlama"</string>
+    <string name="invite_link_reset_failed">"İlişim sıfırlama başarısız"</string>
+    <string name="reset_invite_link_confirmation">"Gruba davet ilişimini sıfırlamak ister misin?"</string>
+    <string name="invite_link_joining">"Gruba katılınıyor..."</string>
+    <string name="invite_link_loading">"Grup yükleniyor..."</string>
+    <string name="invite_link_copied">"İlişim kopyalandı!"</string>
+    <string name="invite_link_title">"Davet ilişimi"</string>
+    <string name="invite_link_summary">"HalloApp'e sahip olan herkes, bu ilişimi kullanarak gruba katılabilir."</string>
+    <string name="invite_link_failed_to_join">"Gruba katılma başarısız"</string>
+    <string name="join_group_action">"Gruba katıl"</string>
+    <string name="system_message_you_joined">"Gruba, davet ilişimiyle katıldın"</string>
+    <string name="system_message_joined">"%s, davet ilişimiyle gruba katıldı"</string>
     <string name="activity_center_welcome">"Hallo!"</string>
-    <string name="post_preview_retracted">"%s deleted a post"</string>
-    <string name="system_message_group_bg_changed">"%s changed the background color"</string>
-    <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
-    <string name="group_background_hint">"Background"</string>
-    <string name="group_background_saving_dialog">"Setting background…"</string>
-    <string name="group_background_save_failed">"Failed to set group background"</string>
-    <string name="group_background_save_success">"Group background updated"</string>
-    <string name="group_background_color">"Color"</string>
-    <string name="group_background_default">"Default"</string>
-    <string name="group_info_members">"Members (%d)"</string>
-    <string name="delete_message_confirmation">"Delete selected message?"</string>
-    <string name="retract_message_option">"Delete for everyone"</string>
-    <string name="delete_message_option">"Delete for me"</string>
-    <string name="contact_permissions_dialog_title">"Contacts"</string>
-    <string name="not_now">"Not now"</string>
-    <string name="continue_button">"Continue"</string>
-    <string name="contact_permissions_nag">"To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
-    <string name="contact_permissions_nag_permanently_blocked">"To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;. Tap Settings &gt; Permissions, and turn Contacts on"</string>
-    <string name="home_contact_permissions_nag">"To help you connect with friends and family, we’ll need your permission to access your contacts."</string>
-    <string name="home_contact_permissions_nag_permanently_blocked">"To help you connect with friends and family, we’ll need your permission to access your contacts. Tap Settings &gt; Permissions, and turn Contacts on"</string>
-    <string name="invite_link_load_failed">"Failed to open group invite link"</string>
-    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
-    <string name="failed_no_longer_member">"You are no longer a member of this group"</string>
+    <string name="post_preview_retracted">"%s, bir gönderiyi sildi"</string>
+    <string name="system_message_group_bg_changed">"%, arka plan rengini değiştirdi"</string>
+    <string name="system_message_group_bg_changed_by_you">"Arka plan rengini değiştirdin"</string>
+    <string name="group_background_hint">"Arka plan"</string>
+    <string name="group_background_saving_dialog">"Arka plan ayarlanıyor..."</string>
+    <string name="group_background_save_failed">"Arka plan ayarlaması başarısız"</string>
+    <string name="group_background_save_success">"Grubun arka planı güncellendi"</string>
+    <string name="group_background_color">"Renk"</string>
+    <string name="group_background_default">"Varsayılan"</string>
+    <string name="group_info_members">"Üyeler (%d)"</string>
+    <string name="delete_message_confirmation">"Seçilen mesajları sil?"</string>
+    <string name="retract_message_option">"Herkesten sil"</string>
+    <string name="delete_message_option">"Benden sil"</string>
+    <string name="contact_permissions_dialog_title">"Kişiler"</string>
+    <string name="not_now">"Şimdi değil"</string>
+    <string name="continue_button">"Devam"</string>
+    <string name="contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Daha fazlasını öğren."</string>
+    <string name="contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Daha fazlasını öğren. Ayarlar&gt;İzinler'e git ve Kişiler'i aç."</string>
+    <string name="home_contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var."</string>
+    <string name="home_contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Ayarlar&gt;İzinler'e git ve Kişiler'i aç."</string>
+    <string name="invite_link_load_failed">"Grup davet ilişimi açılamadı"</string>
+    <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. Daha fazlasını öğren."</string>
+    <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
+
+    <!-- Placeholder when we do not understand the received message -->
+    <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received post -->
+    <string name="post_upgrade_placeholder">"Your version of HalloApp does not support this type of post. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received comment -->
+    <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
 </resources>
