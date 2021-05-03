@@ -897,6 +897,7 @@ public class CommentsActivity extends HalloActivity {
                 if (post != null && post.type == Post.TYPE_FUTURE_PROOF) {
                     return ITEM_TYPE_FUTURE_PROOF_POST;
                 }
+                return ITEM_TYPE_POST;
             }
             final Comment comment = Preconditions.checkNotNull(getItem(position));
             return comment.parentCommentId == null
