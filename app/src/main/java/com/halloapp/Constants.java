@@ -25,7 +25,6 @@ public class Constants {
     public static final int MAX_IMAGE_DIMENSION = 1600;
     public static final int MAX_POST_MEDIA_ITEMS = 10;
     public static final float MAX_IMAGE_ASPECT_RATIO = 1.25f;
-    public static final long MAX_VIDEO_DURATION = 60 * 1000L;
     public static final long MAX_VIDEO_BITRATE = 8000000L;
     public static final int MEDIA_POST_LINE_LIMIT = 3;
     public static final int TEXT_POST_LINE_LIMIT = 12;

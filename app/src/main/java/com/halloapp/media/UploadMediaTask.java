@@ -16,6 +16,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaUpload;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
@@ -78,6 +79,13 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
         uploadEvent.setId(contentItem.id);
 
+        long maxVideoDurationSeconds = 0;
+        if (contentItem instanceof Message) {
+            maxVideoDurationSeconds = ServerProps.getInstance().getMaxChatVideoDuration();
+        } else if (contentItem instanceof Post || contentItem instanceof Comment) {
+            maxVideoDurationSeconds = ServerProps.getInstance().getMaxFeedVideoDuration();
+        }
+
         long startTimeMs = System.currentTimeMillis();
 
         int numPhotos = 0;
@@ -104,7 +112,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     break;
             }
             try {
-                prepareMedia(media);
+                prepareMedia(media, maxVideoDurationSeconds);
             } catch (IOException | MediaConversionException e) {
                 Log.e("UploadMediaTask", e);
                 break;
@@ -320,13 +328,14 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         return newEncryptedFile;
     }
 
-    private void prepareMedia(@NonNull Media media) throws IOException, MediaConversionException {
-        if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file)) {
+    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds) throws IOException, MediaConversionException {
+        if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds)) {
             final File file = fileStore.getTmpFile(RandomId.create());
             final MediaConverter mediaConverter = new MediaConverter();
             mediaConverter.setInput(media.file);
             mediaConverter.setOutput(file);
-            mediaConverter.setTimeRange(0, Constants.MAX_VIDEO_DURATION);
+
+            mediaConverter.setTimeRange(0, maxVideoDurationSeconds * 1000);
             try {
                 mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H265);
                 mediaConverter.setVideoResolution(Constants.VIDEO_RESOLUTION_H265);

@@ -321,7 +321,7 @@ public class MediaUtils {
     }
 
     @WorkerThread
-    public static boolean shouldConvertVideo(@NonNull File file) throws IOException {
+    public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds) throws IOException {
         final MediaExtractor extractor = new MediaExtractor();
         long fileLength = file.length();
         long bitrate = 0;
@@ -352,7 +352,7 @@ public class MediaUtils {
             Log.i("MediaUtils.shouldConvertVideo bitrate is " + bitrate + ", will convert");
             return true;
         }
-        if (duration > Constants.MAX_VIDEO_DURATION) {
+        if (duration > maxVideoDurationSeconds * 1000) {
             Log.i("MediaUtils.shouldConvertVideo duration is " + duration + ", will convert");
             return true;
         }
