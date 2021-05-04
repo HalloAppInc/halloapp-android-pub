@@ -22,9 +22,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url 'https://jitpack.io'
-        }
         jcenter {
             content {
                 // TODO(jack): Remove if they migrate to Maven Central https://github.com/leinardi/FloatingActionButtonSpeedDial/issues/159
