@@ -129,7 +129,7 @@ public class Comment extends ContentItem {
     }
 
     public boolean isRetracted() {
-        return type == TYPE_USER && TextUtils.isEmpty(text);
+        return type == TYPE_USER && super.isRetracted();
     }
 
     public boolean canBeRetracted() {
@@ -178,7 +178,8 @@ public class Comment extends ContentItem {
                 timestamp == comment.timestamp &&
                 Objects.equals(text, comment.text) &&
                 transferred == comment.transferred &&
-                seen == comment.seen;
+                seen == comment.seen &&
+                media.equals(comment.media);
     }
 
     @Override

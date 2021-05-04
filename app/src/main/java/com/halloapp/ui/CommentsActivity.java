@@ -61,6 +61,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
@@ -82,6 +83,7 @@ import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -253,9 +255,24 @@ public class CommentsActivity extends HalloActivity {
             mentionPickerView.setMentionableContacts(contacts);
         });
 
+        final View media = findViewById(R.id.media);
+        media.setOnClickListener(v -> pickMedia());
+
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
+
+            // TODO(jack): Remove restriction on group for media comments when ready for rollout
+            List<String> allowedGroups = Arrays.asList(
+                    "g9YekRT6-NDRXu6cALrn2L", // Test group
+                    "gTNOJoTsQakTj_HIRA5wJH", // HalloApp Android
+                    "gHRk9DYCJZcvuFAJuZvQPN"  // Everyone at HalloApp
+            );
+            boolean showCommentMediaPicker = ServerProps.getInstance().getIsInternalUser() &&
+                    post != null &&
+                    post.getParentGroup() != null &&
+                    allowedGroups.contains(post.getParentGroup().rawId());
+            media.setVisibility(showCommentMediaPicker ? View.VISIBLE : View.GONE);
         });
         viewModel.loadPost(postId);
 
@@ -278,11 +295,6 @@ public class CommentsActivity extends HalloActivity {
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             resetReplyIndicator();
         });
-
-        final View media = findViewById(R.id.media);
-        media.setOnClickListener(v -> pickMedia());
-        // TODO(jack): Enable media comments when future-proofing is complete
-//        media.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -636,6 +648,7 @@ public class CommentsActivity extends HalloActivity {
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
             commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
             if (comment.isRetracted()) {
+                commentView.setVisibility(View.VISIBLE);
                 commentView.setText(getString(R.string.comment_retracted_placeholder));
                 commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceRetracted);
                 replyButton.setVisibility(View.GONE);

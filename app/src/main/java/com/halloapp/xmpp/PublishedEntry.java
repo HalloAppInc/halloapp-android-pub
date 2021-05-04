@@ -227,7 +227,7 @@ public class PublishedEntry {
                             albumBuilder.setText(textContainer);
                         }
                         builder.setAlbum(albumBuilder);
-                    } else {
+                    } else if (textContainer != null) {
                         builder.setText(textContainer);
                     }
                     builder.setContext(context.build());
