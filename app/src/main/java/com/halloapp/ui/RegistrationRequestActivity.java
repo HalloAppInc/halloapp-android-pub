@@ -110,6 +110,8 @@ public class RegistrationRequestActivity extends HalloActivity {
             if (result.result == Registration.RegistrationRequestResult.RESULT_OK) {
                 final Intent intent = new Intent(this, RegistrationVerificationActivity.class);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
+                intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);
+                intent.putExtra(RegistrationVerificationActivity.EXTRA_GROUP_INVITE_TOKEN, registrationRequestViewModel.groupInviteToken);
                 startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
             } else {
                 if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NO_FRIENDS
@@ -120,6 +122,9 @@ public class RegistrationRequestActivity extends HalloActivity {
                         .setPositiveButton(R.string.ok, null)
                         .setCancelable(true);
                     builder.show();
+                } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_CLIENT_EXPIRED) {
+                    AppExpirationActivity.open(this, 0);
+                    finish();
                 } else {
                     SnackbarHelper.showInfo(this, R.string.registration_failed);
                 }
@@ -224,6 +229,8 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
 
+        private String groupInviteToken;
+
         public RegistrationRequestViewModel(@NonNull Application application) {
             super(application);
         }
@@ -275,6 +282,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                             break;
                     }
                     final String code = inviteCode;
+                    groupInviteToken = code;
                     bgWorkers.execute(() -> {
                         if (registerCalled.compareAndSet(false, true)) {
                             registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code));

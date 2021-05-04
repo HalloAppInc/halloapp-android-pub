@@ -1,19 +1,24 @@
 package com.halloapp.ui;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -22,6 +27,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
@@ -29,6 +36,8 @@ import com.halloapp.widget.SnackbarHelper;
 public class RegistrationVerificationActivity extends HalloActivity {
 
     public static final String EXTRA_PHONE_NUMBER = "phone_number";
+    public static final String EXTRA_RETRY_WAIT_TIME = "retry_wait_time";
+    public static final String EXTRA_GROUP_INVITE_TOKEN = "group_invite_token";
 
     private static final int CODE_LENGTH = 6;
 
@@ -81,6 +90,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         });
 
 
+        final String groupInviteToken = getIntent().getStringExtra(EXTRA_GROUP_INVITE_TOKEN);
         final String phoneNumber = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_PHONE_NUMBER));
         final TextView titleView = findViewById(R.id.title);
         titleView.setText(getString(R.string.verify_registration_title, PhoneNumberUtils.formatNumber("+" + phoneNumber, null)));
@@ -116,6 +126,57 @@ public class RegistrationVerificationActivity extends HalloActivity {
             codeEditText.setText(lastSmsCode);
         }
         smsVerificationManager.addObserver(smsVerificationObserver);
+
+        TextView smsCounter = findViewById(R.id.resent_sms_timer);
+        TextView callCounter = findViewById(R.id.call_me_timer);
+
+        View callMe = findViewById(R.id.call_me);
+        callMe.setOnClickListener(v -> {
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.registration_phone_code_progress));
+            registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken).observe(this, result -> {
+                if (result != null) {
+                    progressDialog.dismiss();
+                    registrationVerificationViewModel.updateRetry(result.retryWaitTimeSeconds);
+                }
+            });
+        });
+
+        View smsMe = findViewById(R.id.resend_sms);
+        smsMe.setOnClickListener(v -> {
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.registration_sms_retry_progress));
+            registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken).observe(this, result -> {
+                if (result != null) {
+                    progressDialog.dismiss();
+                    registrationVerificationViewModel.updateRetry(result.retryWaitTimeSeconds);
+                }
+            });
+        });
+
+        int waitTimeSeconds = getIntent().getIntExtra(EXTRA_RETRY_WAIT_TIME, 0);
+        registrationVerificationViewModel.updateRetry(waitTimeSeconds);
+
+        registrationVerificationViewModel.getCallRetryWait().observe(this, callWait -> {
+            if (callWait == null || callWait == 0) {
+                ViewUtils.setViewAndChildrenEnabled(callMe, true);
+                callCounter.setVisibility(View.GONE);
+            } else {
+                ViewUtils.setViewAndChildrenEnabled(callMe, false);
+                callCounter.setVisibility(View.VISIBLE);
+                callCounter.setText(DateUtils.formatElapsedTime(callWait));
+            }
+        });
+
+        registrationVerificationViewModel.getSmsRetryWait().observe(this, smsWait -> {
+            if (smsWait == null || smsWait == 0) {
+                ViewUtils.setViewAndChildrenEnabled(smsMe, true);
+                smsCounter.setVisibility(View.GONE);
+            } else {
+                ViewUtils.setViewAndChildrenEnabled(smsMe, false);
+                smsCounter.setVisibility(View.VISIBLE);
+                smsCounter.setText(DateUtils.formatElapsedTime(smsWait));
+            }
+        });
+
     }
 
     @Override
@@ -132,12 +193,19 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
 
+        private final BgWorkers bgWorkers = BgWorkers.getInstance();
         private final Registration registration = Registration.getInstance();
 
         private final MutableLiveData<Registration.RegistrationVerificationResult> registrationRequestResult = new MutableLiveData<>();
 
+        private final MutableLiveData<Integer> callRetryWaitSeconds = new MutableLiveData<>();
+        private final MutableLiveData<Integer> smsRetryWaitSeconds = new MutableLiveData<>();
+
+        private CountDownTimer countDownTimer;
+
         public RegistrationVerificationViewModel(@NonNull Application application) {
             super(application);
+
         }
 
         LiveData<Registration.RegistrationVerificationResult> getRegistrationVerificationResult() {
@@ -146,6 +214,61 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         void verifyRegistration(@NonNull String phone, @NonNull String code) {
             new RegistrationVerificationTask(this, phone, code).execute();
+        }
+
+        LiveData<Integer> getCallRetryWait() {
+            return callRetryWaitSeconds;
+        }
+
+        LiveData<Integer> getSmsRetryWait() {
+            return smsRetryWaitSeconds;
+        }
+
+        @UiThread
+        public void updateRetry(int retryWait) {
+            callRetryWaitSeconds.postValue(retryWait);
+            smsRetryWaitSeconds.postValue(retryWait);
+
+            synchronized (this) {
+                if (countDownTimer == null && retryWait > 0) {
+                    countDownTimer = new CountDownTimer(retryWait * 1000L, 1000L) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            int seconds = (int) (millisUntilFinished / 1000);
+                            callRetryWaitSeconds.postValue(seconds);
+                            smsRetryWaitSeconds.postValue(seconds);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            synchronized (RegistrationVerificationViewModel.this) {
+                                countDownTimer = null;
+                                updateRetry(0);
+                            }
+                        }
+                    };
+                    countDownTimer.start();
+                }
+            }
+        }
+
+
+        public LiveData<Registration.RegistrationRequestResult> requestSms(String phone, @Nullable String token) {
+            MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
+            bgWorkers.execute(() -> {
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token);
+                result.postValue(requestResult);
+            });
+            return result;
+        }
+
+        public LiveData<Registration.RegistrationRequestResult> requestCall(String phone, @Nullable String token) {
+            MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
+            bgWorkers.execute(() -> {
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token);
+                result.postValue(requestResult);
+            });
+            return result;
         }
     }
 

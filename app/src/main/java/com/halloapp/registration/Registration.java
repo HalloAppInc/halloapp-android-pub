@@ -44,6 +44,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class Registration {
 
     private static final String HOST = "api.halloapp.net";
+    private static final int RETRY_DEFAULT_WAIT_TIME_SECONDS = 15;
 
     private static Registration instance;
 
@@ -72,13 +73,18 @@ public class Registration {
 
     @WorkerThread
     public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone, @Nullable String groupInviteToken) {
+        return requestRegistrationType(phone, groupInviteToken,  false);
+    }
+
+    @WorkerThread
+    private @NonNull RegistrationRequestResult requestRegistrationType(@NonNull String phone, @Nullable String groupInviteToken, boolean phoneCall) {
         Log.i("Registration.requestRegistration phone=" + phone);
         ThreadUtils.setSocketTag();
 
         InputStream inStream = null;
         HttpsURLConnection connection = null;
         try {
-            final URL url = new URL("https://" + HOST + "/api/registration/request_sms");
+            final URL url = new URL("https://" + HOST + "/api/registration/request_otp");
             connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
@@ -94,6 +100,9 @@ public class Registration {
             if (groupInviteToken != null) {
                 requestJson.put("group_invite_token", groupInviteToken);
             }
+            if (phoneCall) {
+                requestJson.put("method", "voice_call");
+            }
             connection.getOutputStream().write(requestJson.toString().getBytes());
 
             final int responseCode = connection.getResponseCode();
@@ -105,26 +114,37 @@ public class Registration {
             final String result = responseJson.optString("result");
             final String normalizedPhone = responseJson.optString("phone");
             final String error = responseJson.optString("error");
+            final String retryTimeStr = responseJson.optString("retry_after_secs");
+            int retryTime = 0;
+            try {
+                retryTime = Integer.parseInt(retryTimeStr);
+            } catch (NumberFormatException e) {
+                Log.e("Registration/requestRegistration invalid retry time: " + retryTimeStr, e);
+            }
             Log.i("Registration.requestRegistration result=" + result + " error=" + error + " phone=" + normalizedPhone);
             if (!"ok".equals(result)) {
-                return new RegistrationRequestResult(RegistrationRequestResult.translateServerErrorCode(error));
+                return new RegistrationRequestResult(RegistrationRequestResult.translateServerErrorCode(error), retryTime);
             }
             if (TextUtils.isEmpty(phone)) {
-                return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER);
+                return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, retryTime);
             }
-            return new RegistrationRequestResult(phone);
+            return new RegistrationRequestResult(phone, retryTime);
         } catch (IOException e) {
             Log.e("Registration.requestRegistration", e);
-            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK);
+            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK, 0);
         } catch (JSONException e) {
             Log.e("Registration.requestRegistration", e);
-            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER);
+            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, RETRY_DEFAULT_WAIT_TIME_SECONDS);
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
                 connection.disconnect();
             }
         }
+    }
+
+    public @NonNull RegistrationRequestResult requestRegistrationViaVoiceCall(@NonNull String phone, @Nullable String groupInviteToken) {
+        return requestRegistrationType(phone, groupInviteToken, true);
     }
 
     public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone, @Nullable String groupInviteToken) {
@@ -308,7 +328,7 @@ public class Registration {
     public static class RegistrationRequestResult {
 
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS, RESULT_FAILED_SERVER_NOT_INVITED})
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS, RESULT_FAILED_SERVER_NOT_INVITED, RESULT_FAILED_CLIENT_EXPIRED})
         @interface Result {}
         public static final int RESULT_OK = 0;
         public static final int RESULT_FAILED_NETWORK = 1;
@@ -317,19 +337,23 @@ public class Registration {
         public static final int RESULT_FAILED_SERVER_CANNOT_ENROLL = 4; // Error during the enroll function. This one does not make much sense.
         public static final int RESULT_FAILED_SERVER_NO_FRIENDS = 5; // The Phone number is not in any existing users contacts. We don't let users create accounts if they are not going to have any friends. Note this error is not returned for 555 phone numbers.
         public static final int RESULT_FAILED_SERVER_NOT_INVITED = 6; // Phone number trying to register has not been invited using the in-app invites system.
+        public static final int RESULT_FAILED_CLIENT_EXPIRED = 7;
 
         public final String phone;
         public final @Result int result;
+        public int retryWaitTimeSeconds;
 
-        RegistrationRequestResult(@NonNull String phone) {
+        RegistrationRequestResult(@NonNull String phone, int retryWaitTimeSeconds) {
             this.phone = phone;
             this.result = RESULT_OK;
+            this.retryWaitTimeSeconds = retryWaitTimeSeconds;
         }
 
-        RegistrationRequestResult(@Result int result) {
+        RegistrationRequestResult(@Result int result, int retryWaitTimeSeconds) {
             Preconditions.checkState(result != RESULT_OK);
             this.phone = null;
             this.result = result;
+            this.retryWaitTimeSeconds = retryWaitTimeSeconds;
         }
 
         static @Result int translateServerErrorCode(String error) {
@@ -341,6 +365,8 @@ public class Registration {
                 return RESULT_FAILED_SERVER_NO_FRIENDS;
             } else if ("not_invited".equals(error)) {
                 return RESULT_FAILED_SERVER_NOT_INVITED;
+            } else if ("invalid_client_version".equals(error)) {
+                return RESULT_FAILED_CLIENT_EXPIRED;
             }
             return RESULT_FAILED_SERVER;
         }

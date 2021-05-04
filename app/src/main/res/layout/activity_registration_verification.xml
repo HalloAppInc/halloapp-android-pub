@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -63,5 +64,82 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/code"/>
+
+
+    <LinearLayout
+        android:id="@+id/resend_sms"
+        app:layout_constraintTop_toBottomOf="@id/code"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:background="?selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_sms"
+            android:layout_gravity="center"
+            app:tint="@color/primary_button_color_selector"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_button_color_selector"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:padding="4dp"
+            android:text="@string/resend_sms"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/call_me"
+        app:layout_constraintTop_toBottomOf="@id/resend_sms"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="15dp"
+        android:background="?selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_call"
+            app:tint="@color/primary_button_color_selector"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/primary_button_color_selector"
+            android:text="@string/call_me"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/resent_sms_timer"
+        app:layout_constraintTop_toTopOf="@id/resend_sms"
+        app:layout_constraintBottom_toBottomOf="@id/resend_sms"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/hint_text"
+        tools:text="1:30"/>
+
+    <TextView
+        android:id="@+id/call_me_timer"
+        app:layout_constraintTop_toTopOf="@id/call_me"
+        app:layout_constraintBottom_toBottomOf="@id/call_me"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/hint_text"
+        tools:text="1:30"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

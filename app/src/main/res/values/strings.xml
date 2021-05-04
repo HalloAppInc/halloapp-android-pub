@@ -34,6 +34,14 @@
     <string name="registration_failed">Failed to register phone number, try again</string>
     <string name="registration_failed_no_friends">We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number.</string>
     <string name="registration_failed_no_friends_title">Shucks!</string>
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">Requesting new SMS code…</string>
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">Requesting code via phone call…</string>
+    <!-- button to request another sms code -->
+    <string name="resend_sms">Resend SMS</string>
+    <!-- button to request registration code via phone call -->
+    <string name="call_me">Call me</string>
     <string name="type_a_message_hint">Type a message</string>
     <string name="write_a_description">Write a description</string>
     <string name="write_a_post">Write a post</string>
