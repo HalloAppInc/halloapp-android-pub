@@ -15,13 +15,13 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.AudienceTable;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentContainer;
@@ -727,7 +727,9 @@ class PostsDb {
                     "min(timestamp) as min_timestamp" + "," +
                     "count(*) AS comment_count" + ", " +
                     "sum(" + CommentsTable.COLUMN_SEEN + ") AS seen_comment_count" + " " +
-                    "FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_TEXT + " IS NOT NULL" + " GROUP BY " + CommentsTable.COLUMN_POST_ID + ") " +
+                    "FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_TEXT + " IS NOT NULL " +
+                    "OR (SELECT COUNT(*) FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_TABLE + " = '" + CommentsTable.TABLE_NAME + "' AND " + MediaTable.COLUMN_PARENT_ROW_ID + " = " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ") > 0" + " " +
+                    "GROUP BY " + CommentsTable.COLUMN_POST_ID + ") " +
                 "AS c ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=c." + CommentsTable.COLUMN_POST_ID + " " +
             "LEFT JOIN (" +
                 "SELECT " +
