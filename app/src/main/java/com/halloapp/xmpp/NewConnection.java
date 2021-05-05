@@ -76,6 +76,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Counter;
+import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
@@ -133,6 +134,8 @@ public class NewConnection extends Connection {
     private final PacketReader packetReader = new PacketReader();
     private final IqRouter iqRouter = new IqRouter();
 
+    private FeedContentParser feedContentParser;
+
     NewConnection(
             @NonNull Me me,
             @NonNull BgWorkers bgWorkers,
@@ -142,6 +145,8 @@ public class NewConnection extends Connection {
         this.bgWorkers = bgWorkers;
         this.preferences = preferences;
         this.connectionObservers = connectionObservers;
+
+        this.feedContentParser = new FeedContentParser(me);
     }
 
     @Override
@@ -1217,51 +1222,7 @@ public class NewConnection extends Connection {
                 UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
                 long timeStamp = 1000L * protoPost.getTimestamp();
 
-                switch (postContainer.getPostCase()) {
-                    default:
-                    case POST_NOT_SET: {
-                        @Post.TransferredState int transferState = Post.TRANSFERRED_YES;
-                        FutureProofPost futureproofPost = new FutureProofPost(-1, posterUserId, protoPost.getId(), timeStamp, transferState, Post.SEEN_NO, null);
-                        futureproofPost.setProtoBytes(postContainer.toByteArray());
-
-                        return futureproofPost;
-                    }
-                    case TEXT: {
-                        Text text = postContainer.getText();
-                        Post np = new Post(-1, posterUserId, protoPost.getId(), timeStamp, Post.TRANSFERRED_YES, Post.SEEN_NO, text.getText());
-                        for (com.halloapp.proto.clients.Mention mentionProto : text.getMentionsList()) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            np.mentions.add(mention);
-                        }
-                        return np;
-                    }
-                    case ALBUM: {
-                        Album album = postContainer.getAlbum();
-                        Text caption = album.getText();
-                        Post np = new Post(-1, posterUserId, protoPost.getId(), timeStamp, posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, caption.getText());
-                        for (AlbumMedia albumMedia : album.getMediaList()) {
-                            switch (albumMedia.getMediaCase()) {
-                                case IMAGE: {
-                                    Image image = albumMedia.getImage();
-                                    np.media.add(Media.parseFromProto(image));
-                                    break;
-                                }
-                                case VIDEO: {
-                                    Video video = albumMedia.getVideo();
-                                    np.media.add(Media.parseFromProto(video));
-                                    break;
-                                }
-                            }
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : caption.getMentionsList()) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            np.mentions.add(mention);
-                        }
-                        return np;
-                    }
-                }
+                return feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer);
             }
         }
 
@@ -1306,80 +1267,10 @@ public class NewConnection extends Connection {
                 return comment;
             } else {
                 CommentContainer commentContainer = container.getCommentContainer();
-                CommentContext context = commentContainer.getContext();
                 long timestamp = protoComment.getTimestamp() * 1000L;
+                UserId publisherId = getUserId(Long.toString(protoComment.getPublisherUid()));
 
-                switch (commentContainer.getCommentCase()) {
-                    default:
-                    case COMMENT_NOT_SET: {
-                        final FutureProofComment comment = new FutureProofComment(0,
-                                context.getFeedPostId(),
-                                getUserId(Long.toString(protoComment.getPublisherUid())),
-                                protoComment.getId(),
-                                protoComment.getParentCommentId(),
-                                timestamp,
-                                true,
-                                false,
-                                null
-                        );
-                        comment.setProtoBytes(commentContainer.toByteArray());
-                        return comment;
-                    }
-                    case ALBUM: {
-                        Album album = commentContainer.getAlbum();
-                        Text caption = album.getText();
-                        final Comment comment = new Comment(0,
-                                context.getFeedPostId(),
-                                getUserId(Long.toString(protoComment.getPublisherUid())),
-                                protoComment.getId(),
-                                protoComment.getParentCommentId(),
-                                timestamp,
-                                true,
-                                false,
-                                caption.getText()
-                        );
-                        for (AlbumMedia albumMedia : album.getMediaList()) {
-                            switch (albumMedia.getMediaCase()) {
-                                case IMAGE: {
-                                    Image image = albumMedia.getImage();
-                                    comment.media.add(Media.parseFromProto(image));
-                                    break;
-                                }
-                                case VIDEO: {
-                                    Video video = albumMedia.getVideo();
-                                    comment.media.add(Media.parseFromProto(video));
-                                    break;
-                                }
-                            }
-                        }
-                        for (com.halloapp.proto.clients.Mention mentionProto : caption.getMentionsList()) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            comment.mentions.add(mention);
-                        }
-
-                        return comment;
-                    }
-                    case TEXT: {
-                        Text text = commentContainer.getText();
-                        final Comment comment = new Comment(0,
-                                context.getFeedPostId(),
-                                getUserId(Long.toString(protoComment.getPublisherUid())),
-                                protoComment.getId(),
-                                protoComment.getParentCommentId(),
-                                timestamp,
-                                true,
-                                false,
-                                text.getText()
-                        );
-                        for (com.halloapp.proto.clients.Mention mentionProto : text.getMentionsList()) {
-                            Mention mention = Mention.parseFromProto(mentionProto);
-                            processMention(mention);
-                            comment.mentions.add(mention);
-                        }
-                        return comment;
-                    }
-                }
+                return feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer);
             }
         }
 

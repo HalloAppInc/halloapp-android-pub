@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.AudienceTable;
@@ -23,8 +24,11 @@ import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.CommentContainer;
+import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ import java.util.Map;
 
 class PostsDb {
 
+    private final MediaDb mediaDb;
     private final MentionsDb mentionsDb;
     private final FutureProofDb futureProofDb;
     private final ContentDbHelper databaseHelper;
@@ -44,11 +49,13 @@ class PostsDb {
     private final ServerProps serverProps;
 
     PostsDb(
+            MediaDb mediaDb,
             MentionsDb mentionsDb,
             FutureProofDb futureProofDb,
             ContentDbHelper databaseHelper,
             FileStore fileStore,
             ServerProps serverProps) {
+        this.mediaDb = mediaDb;
         this.mentionsDb = mentionsDb;
         this.futureProofDb = futureProofDb;
         this.databaseHelper = databaseHelper;
@@ -79,42 +86,9 @@ class PostsDb {
         }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-        for (Media mediaItem : post.media) {
-            final ContentValues mediaItemValues = new ContentValues();
-            mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, PostsTable.TABLE_NAME);
-            mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, post.rowId);
-            mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
-            if (mediaItem.url != null) {
-                mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
-            }
-            if (mediaItem.file != null) {
-                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
-                if (mediaItem.width == 0 || mediaItem.height == 0) {
-                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
-                    if (dimensions != null) {
-                        mediaItem.width = dimensions.getWidth();
-                        mediaItem.height = dimensions.getHeight();
-                    }
-                }
-            }
-            if (mediaItem.encFile != null) {
-                mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
-            }
-            if (mediaItem.width > 0 && mediaItem.height > 0) {
-                mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
-                mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
-            }
-            if (mediaItem.encKey != null) {
-                mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
-            }
-            if (mediaItem.encSha256hash != null) {
-                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
-            }
-            if (mediaItem.decSha256hash != null) {
-                mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
-            }
-            mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
+
+        mediaDb.addMedia(post);
+
         final List<UserId> audienceList = post.getAudienceList();
         if (audienceList != null) {
             for (UserId userId : audienceList) {
@@ -534,39 +508,7 @@ class PostsDb {
         values.put(CommentsTable.COLUMN_TYPE, comment.type);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-        for (Media mediaItem : comment.media) {
-            final ContentValues mediaItemValues = new ContentValues();
-            mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, CommentsTable.TABLE_NAME);
-            mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, comment.rowId);
-            mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
-            if (mediaItem.url != null) {
-                mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
-            }
-            if (mediaItem.file != null) {
-                mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
-                if (mediaItem.width == 0 || mediaItem.height == 0) {
-                    final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
-                    if (dimensions != null) {
-                        mediaItem.width = dimensions.getWidth();
-                        mediaItem.height = dimensions.getHeight();
-                    }
-                }
-            }
-            if (mediaItem.encFile != null) {
-                mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
-            }
-            if (mediaItem.width > 0 && mediaItem.height > 0) {
-                mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
-                mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
-            }
-            if (mediaItem.encKey != null) {
-                mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
-            }
-            if (mediaItem.encSha256hash != null) {
-                mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
-            }
-            mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
+        mediaDb.addMedia(comment);
         mentionsDb.addMentions(comment);
         if (comment instanceof FutureProofComment) {
             futureProofDb.saveFutureProof((FutureProofComment) comment);

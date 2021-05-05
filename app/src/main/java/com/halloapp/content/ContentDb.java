@@ -20,6 +20,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
+import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -131,7 +132,7 @@ public class ContentDb {
         mediaDb = new MediaDb(databaseHelper, fileStore);
         futureProofDb = new FutureProofDb(databaseHelper);
         messagesDb = new MessagesDb(fileStore, mentionsDb, futureProofDb, serverProps, databaseHelper);
-        postsDb = new PostsDb(mentionsDb, futureProofDb, databaseHelper, fileStore, serverProps);
+        postsDb = new PostsDb(mediaDb, mentionsDb, futureProofDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {
