@@ -95,6 +95,13 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+            if (CommentsViewModel.this.postId.equals(postId)) {
+                loadPost(postId);
+            }
+        }
+
+        @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (CommentsViewModel.this.postId.equals(comment.postId)) {
                 Post parentPost = comment.getParentPost();
