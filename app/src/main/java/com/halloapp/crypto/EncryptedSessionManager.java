@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.Constants;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
@@ -26,7 +25,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.NewConnection;
+import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
@@ -154,7 +153,7 @@ public class EncryptedSessionManager {
             connection.sendMessage(message, null);
         }
 
-        if (generateSilentMessages && connection instanceof NewConnection) {
+        if (generateSilentMessages && connection instanceof ConnectionImpl) {
             final List<Message> silentMessages = new ArrayList<>();
             final List<Contact> users = ContactsDb.getInstance().getUsers();
 
@@ -188,11 +187,11 @@ public class EncryptedSessionManager {
                 final UserId recipient = (UserId)silentMessage.chatId;
                 try (AutoCloseLock autoCloseLock = acquireLock(recipient)) {
                     SessionSetupInfo sessionSetupInfo = setUpSession(recipient);
-                    ((NewConnection)connection).sendSilentMessage(silentMessage, sessionSetupInfo);
+                    ((ConnectionImpl)connection).sendSilentMessage(silentMessage, sessionSetupInfo);
                 } catch (Exception e) {
                     Log.e("Failed to set up encryption session", e);
                     Log.sendErrorReport("Failed to get session setup info");
-                    ((NewConnection)connection).sendSilentMessage(silentMessage, null);
+                    ((ConnectionImpl)connection).sendSilentMessage(silentMessage, null);
                 }
             }
         }

@@ -34,7 +34,7 @@ public abstract class Connection {
         if (instance == null) {
             synchronized(Connection.class) {
                 if (instance == null) {
-                    instance = new NewConnection(Me.getInstance(), BgWorkers.getInstance(), Preferences.getInstance(), ConnectionObservers.getInstance());
+                    instance = new ConnectionImpl(Me.getInstance(), BgWorkers.getInstance(), Preferences.getInstance(), ConnectionObservers.getInstance());
                 }
             }
         }

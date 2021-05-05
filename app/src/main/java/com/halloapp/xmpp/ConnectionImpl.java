@@ -109,7 +109,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class NewConnection extends Connection {
+public class ConnectionImpl extends Connection {
 
     private static final String HOST = "s.halloapp.net";
     private static final String DEBUG_HOST = "s-test.halloapp.net";
@@ -136,7 +136,7 @@ public class NewConnection extends Connection {
 
     private FeedContentParser feedContentParser;
 
-    NewConnection(
+    ConnectionImpl(
             @NonNull Me me,
             @NonNull BgWorkers bgWorkers,
             @NonNull Preferences preferences,
