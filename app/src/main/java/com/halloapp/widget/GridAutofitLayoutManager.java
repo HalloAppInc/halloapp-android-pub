@@ -1,4 +1,4 @@
-package com.halloapp.ui.widget;
+package com.halloapp.widget;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -15,31 +15,8 @@ public class GridAutofitLayoutManager extends GridLayoutManager
     private int lastHeight;
 
     public GridAutofitLayoutManager(@NonNull final Context context, final int columnWidth) {
-        /* Initially set spanCount to 1, will be changed automatically later. */
         super(context, 1);
-        setColumnWidth(checkedColumnWidth(context, columnWidth));
-    }
-
-    public GridAutofitLayoutManager(
-            @NonNull final Context context,
-            final int columnWidth,
-            final int orientation,
-            final boolean reverseLayout) {
-
-        /* Initially set spanCount to 1, will be changed automatically later. */
-        super(context, 1, orientation, reverseLayout);
-        setColumnWidth(checkedColumnWidth(context, columnWidth));
-    }
-
-    private int checkedColumnWidth(@NonNull final Context context, final int columnWidth) {
-        if (columnWidth <= 0) {
-            /* Set default columnWidth value (48dp here). It is better to move this constant
-            to static constant on top, but we need context to convert it to dp, so can't really
-            do so. */
-            this.columnWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48,
-                    context.getResources().getDisplayMetrics());
-        }
-        return columnWidth;
+        setColumnWidth(columnWidth);
     }
 
     public void setColumnWidth(final int newColumnWidth) {
@@ -51,8 +28,8 @@ public class GridAutofitLayoutManager extends GridLayoutManager
 
     @Override
     public void onLayoutChildren(@NonNull final RecyclerView.Recycler recycler, @NonNull final RecyclerView.State state) {
-        final int width = getWidth();
-        final int height = getHeight();
+        final int width = getWidth() - getPaddingRight() - getPaddingLeft();
+        final int height = getHeight() - getPaddingTop() - getPaddingBottom();
         if (columnWidth > 0 && width > 0 && height > 0 && (isColumnWidthChanged || lastWidth != width || lastHeight != height)) {
             final int totalSpace;
             if (getOrientation() == VERTICAL) {

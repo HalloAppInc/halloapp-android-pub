@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.widget.GridAutofitLayoutManager;
+import com.halloapp.widget.GridAutofitLayoutManager;
 import com.halloapp.widget.SnackbarHelper;
 
 public class GroupBackgroundActivity extends HalloActivity {
