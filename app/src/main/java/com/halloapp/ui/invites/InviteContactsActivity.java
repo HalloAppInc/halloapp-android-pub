@@ -445,12 +445,13 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         }
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens, @Nullable InviteContactsViewModel.InviteOptions inviteOptions, @Nullable Set<String> waContacts) {
-            if (!sendingEnabled || contact.userId != null) {
-                itemView.setAlpha(0.54f);
-                itemView.setClickable(false);
-            } else {
+            boolean canSend = (sendingEnabled || contact.invited) && contact.userId == null;
+            if (canSend) {
                 itemView.setAlpha(1);
                 itemView.setClickable(true);
+            } else {
+                itemView.setAlpha(0.54f);
+                itemView.setClickable(false);
             }
             this.contact = contact;
             if (filterTokens != null && !filterTokens.isEmpty()) {
@@ -498,6 +499,9 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
                     }
                     waView.setImageDrawable(waIcon);
                     waView.setOnClickListener(v -> {
+                        if (!canSend) {
+                            return;
+                        }
                         sendInviteWA(contact);
                     });
                 } else {
@@ -518,6 +522,9 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
                     }
                     smsView.setImageDrawable(smsIcon);
                     smsView.setOnClickListener(v -> {
+                        if (!canSend) {
+                            return;
+                        }
                         sendInviteSms(contact);
                     });
                 }
