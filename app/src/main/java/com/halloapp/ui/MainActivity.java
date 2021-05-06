@@ -190,6 +190,17 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             progress.setVisibility(View.GONE);
         });
+
+        mainViewModel.unseenHomePosts.getLiveData().observe(this, unseenPosts -> {
+            if (unseenPosts == null || !unseenPosts) {
+                navView.removeBadge(R.id.navigation_home);
+            } else {
+                BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_home);
+                //badge.setVerticalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_vertical));
+                //badge.setHorizontalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_horizontal));
+                badge.setBackgroundColor(ContextCompat.getColor(this, R.color.color_secondary));
+            }
+        });
     }
 
     private void scrollToTop() {
