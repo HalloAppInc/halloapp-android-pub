@@ -339,7 +339,7 @@ public class ChatMessageElement {
         try {
             sb.append("; PIK:");
             sb.append(Base64.encodeToString(encryptedKeyStore.getPeerPublicIdentityKey(userId).getKeyMaterial(), Base64.NO_WRAP));
-        } catch (CryptoException e) {
+        } catch (NullPointerException | CryptoException e) {
             Log.w("Failed to get peer public identity key", e);
             sb.append("CryptoException");
         }
