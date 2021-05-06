@@ -7,10 +7,10 @@ import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.common.util.Hex;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -20,10 +20,11 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.UserId;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.nio.ByteBuffer;
@@ -37,13 +38,17 @@ import java.util.Locale;
 
 public class KeyVerificationViewModel extends AndroidViewModel {
 
+    private static final int QR_MATRIX_SIZE = 1000;
+
     private UserId userId;
 
     final ComputableLiveData<String> name;
     final ComputableLiveData<Bitmap> qrCode;
     final ComputableLiveData<List<String>> safetyNumber;
+    final MutableLiveData<Boolean> verificationResult = new MutableLiveData<>();
 
     private final Me me = Me.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
 
     public KeyVerificationViewModel(@NonNull Application application, @NonNull UserId userId) {
@@ -77,18 +82,11 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                     return null;
                 }
 
-                String version = bytesToString(new byte[] {0});
-                String myUid = bytesToString(uidToBytes(me.getUser()));
-                String peerUid = bytesToString(uidToBytes(userId.rawId()));
-                String myIdentityKeyStr = bytesToString(myIdentityKey.getKeyMaterial());
-                String peerIdentityKeyStr = bytesToString(peerIdentityKey.getKeyMaterial());
-
-                StringBuilder sb = new StringBuilder();
-                sb.append(version).append(myUid).append(peerUid).append(myIdentityKeyStr).append(peerIdentityKeyStr);
+                byte[] contents = CryptoUtils.concat(new byte[] {0}, uidToBytes(me.getUser()), uidToBytes(userId.rawId()), myIdentityKey.getKeyMaterial(), peerIdentityKey.getKeyMaterial());
+                String s = bytesToString(contents);
 
                 try {
-                    BitMatrix bm = new QRCodeWriter().encode(sb.toString(), BarcodeFormat.QR_CODE, 1000, 1000);
-
+                    BitMatrix bm = new QRCodeWriter().encode(s, BarcodeFormat.QR_CODE, QR_MATRIX_SIZE, QR_MATRIX_SIZE);
                     return bitMatrixToBitmap(bm);
                 } catch (WriterException e) {
                     Log.e("KeyVerification failed to encode QR", e);
@@ -133,6 +131,75 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         };
     }
 
+    void verify(@NonNull String result) {
+        bgWorkers.execute(() -> {
+            byte[] bytes = stringToBytes(result);
+            byte[] version = Arrays.copyOfRange(bytes, 0, 1);
+            if (version[0] != 0) {
+                Log.e("KeyVerification: Unrecognized key verification version!");
+                return;
+            }
+
+            if (bytes.length != 81) {
+                Log.e("KeyVerification: Incorrect payload size " + bytes.length);
+                return;
+            }
+
+            byte[] peerUidRecv = Arrays.copyOfRange(bytes, 1, 9);
+            byte[] myUidRecv = Arrays.copyOfRange(bytes, 9, 17);
+            byte[] peerIdentityKeyRecv = Arrays.copyOfRange(bytes, 17, 49);
+            byte[] myIdentityKeyRecv = Arrays.copyOfRange(bytes, 49, 81);
+
+            String peerUidStr = uidFromBytes(peerUidRecv);
+            String myUidStr = uidFromBytes(myUidRecv);
+
+            if (!me.getUser().equals(myUidStr)) {
+                Log.w("KeyVerification: My UID did not match");
+                verificationResult.postValue(false);
+                return;
+            }
+
+            if (!userId.rawId().equals(peerUidStr)) {
+                Log.w("KeyVerification: Peer UID did not match");
+                verificationResult.postValue(false);
+                return;
+            }
+
+            PublicXECKey peerIdentityKey;
+            try {
+                peerIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getPeerPublicIdentityKey(userId));
+            } catch (CryptoException e) {
+                Log.e("KeyVerification: Failed to fetch peer identity key", e);
+                verificationResult.postValue(false);
+                return;
+            }
+
+            PublicXECKey myIdentityKey;
+            try {
+                myIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getMyPublicEd25519IdentityKey());
+            } catch (CryptoException e) {
+                Log.e("KeyVerification: Failed to convert my identity key to XEC format", e);
+                verificationResult.postValue(false);
+                return;
+            }
+
+            if (!Arrays.equals(myIdentityKeyRecv, myIdentityKey.getKeyMaterial())) {
+                Log.e("KeyVerification: My identity key did not match");
+                verificationResult.postValue(false);
+                return;
+            }
+
+            if (!Arrays.equals(peerIdentityKeyRecv, peerIdentityKey.getKeyMaterial())) {
+                Log.e("KeyVerification: Peer identity key did not match");
+                verificationResult.postValue(false);
+                return;
+            }
+
+            Log.i("KeyVerification: Verification success");
+            verificationResult.postValue(true);
+        });
+    }
+
     private static boolean ordered(List<String> a, List<String> b) {
         for (int i=0; i<a.size(); i++) {
             String as = a.get(i);
@@ -156,7 +223,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA512");
 
-            byte[] bytes = input.getBytes(StandardCharsets.US_ASCII);
+            byte[] bytes = stringToBytes(input);
             for (int i=0; i<5200; i++) {
                 bytes = messageDigest.digest(bytes);
                 messageDigest.reset();
@@ -180,15 +247,19 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         long l = Long.parseLong(uid);
         ByteBuffer buffer = ByteBuffer.allocate(8);
         buffer.putLong(l);
-        byte[] ret = buffer.array();
-        return ret;
+        return buffer.array();
     }
 
     private static String bytesToString(@NonNull byte[] a) {
-        return new String(a, StandardCharsets.US_ASCII);
+        return new String(a, StandardCharsets.ISO_8859_1);
     }
 
-    private static String uidFromBytes(byte[] bytes) {
+    private static byte[] stringToBytes(@NonNull String s) {
+        return s.getBytes(StandardCharsets.ISO_8859_1);
+    }
+
+    private static String uidFromBytes(@NonNull byte[] bytes) {
+        Preconditions.checkArgument(bytes.length == 8);
         ByteBuffer buffer = ByteBuffer.allocate(8);
         buffer.put(bytes);
         buffer.flip();
@@ -201,7 +272,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         int[] pixels = new int[width * height];
         for (int i=0; i<height; i++) {
             for (int j=0; j<width; j++) {
-                pixels[i*height + j] = bitMatrix.get(j, i) ? Color.WHITE : Color.BLACK;
+                pixels[i*height + j] = bitMatrix.get(j, i) ? Color.BLACK : Color.WHITE;
             }
         }
 

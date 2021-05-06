@@ -12,18 +12,26 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.zxing.client.android.Intents;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 public class KeyVerificationActivity extends HalloActivity {
 
@@ -34,6 +42,7 @@ public class KeyVerificationActivity extends HalloActivity {
     }
 
     private static final String EXTRA_USER_ID = "user_id";
+    private static final int SAFETY_NUMBER_SPACING_DP = 5;
 
     private KeyVerificationViewModel viewModel;
     private ImageView qrCode;
@@ -62,6 +71,15 @@ public class KeyVerificationActivity extends HalloActivity {
         }
 
         qrCode = findViewById(R.id.qr_code);
+        qrCode.setOnClickListener(v -> {
+            Intent intent = new IntentIntegrator(this)
+                    .setPrompt("")
+                    .setBeepEnabled(false)
+                    .createScanIntent();
+            intent.putExtra(Intents.Scan.MODE, Intents.Scan.QR_CODE_MODE);
+            intent.putExtra(Intents.Scan.CHARACTER_SET, StandardCharsets.ISO_8859_1.name());
+            startActivityForResult(intent, IntentIntegrator.REQUEST_CODE);
+        });
 
         viewModel = new ViewModelProvider(this,
                 new KeyVerificationViewModel.Factory(getApplication(), userId)).get(KeyVerificationViewModel.class);
@@ -87,7 +105,7 @@ public class KeyVerificationActivity extends HalloActivity {
             }
 
             LinearLayout safetyNumber = findViewById(R.id.safety_number);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SAFETY_NUMBER_SPACING_DP, getResources().getDisplayMetrics());
 
             LinearLayout horizontal = null;
             for (int i=0; i<12; i++) {
@@ -109,5 +127,29 @@ public class KeyVerificationActivity extends HalloActivity {
                 horizontal.addView(tv);
             }
         });
+
+        viewModel.verificationResult.observe(this, success -> {
+            if (Boolean.TRUE.equals(success)) {
+                SnackbarHelper.showInfo(this, R.string.key_verification_success);
+            } else {
+                SnackbarHelper.showWarning(this, R.string.key_verification_failure);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            String results = result.getContents();
+            if (results != null) {
+                viewModel.verify(results);
+            } else {
+                Log.i("KeyVerification: null result content");
+            }
+        } else {
+            Log.i("KeyVerification: null IntentResult from scanner");
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

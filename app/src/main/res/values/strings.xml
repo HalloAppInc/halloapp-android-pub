@@ -284,7 +284,10 @@
     <string name="delete">Delete</string>
     <string name="clear_chat">Clear chat</string>
     <string name="verify_keys">Verify keys</string>
-    <string name="verify_keys_title">Verify keys</string>
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">Verification succeeded</string>
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">Verification failed</string>
     <string name="view_profile">View profile</string>
     <string name="action_hide">Hide</string>
     <string name="hide_my_posts">Hide my posts</string>
