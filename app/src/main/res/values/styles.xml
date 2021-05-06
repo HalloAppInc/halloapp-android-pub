@@ -305,7 +305,6 @@
     </style>
 
     <style name="TextAppearance.Toolbar.GroupFeed.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textColor">@color/color_secondary</item>
         <item name="android:textSize">17dp</item>
     </style>
 
