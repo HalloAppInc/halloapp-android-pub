@@ -595,7 +595,9 @@ public class CommentsActivity extends HalloActivity {
 
         final ImageView avatarView;
         final TextView nameView;
+        final View commentMediaContainer;
         final ImageView commentMedia;
+        final ImageView commentVideoIndicator;
         final LimitingTextView commentView;
         final TextView timeView;
         final View progressView;
@@ -610,7 +612,9 @@ public class CommentsActivity extends HalloActivity {
             super(v);
             avatarView = v.findViewById(R.id.avatar);
             nameView = v.findViewById(R.id.name);
+            commentMediaContainer = v.findViewById(R.id.comment_media_container);
             commentMedia = v.findViewById(R.id.comment_media);
+            commentVideoIndicator = v.findViewById(R.id.comment_video_indicator);
             commentView = v.findViewById(R.id.comment_text);
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
@@ -673,11 +677,12 @@ public class CommentsActivity extends HalloActivity {
             });
 
             if (comment.media.isEmpty()) {
-                commentMedia.setVisibility(View.GONE);
+                commentMediaContainer.setVisibility(View.GONE);
             } else {
-                commentMedia.setVisibility(View.VISIBLE);
+                commentMediaContainer.setVisibility(View.VISIBLE);
                 Media media = comment.media.get(0);
                 mediaThumbnailLoader.load(commentMedia, media);
+                commentVideoIndicator.setVisibility(media.type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
                 commentMedia.setOnClickListener(v -> {
                     commentsFsePosition = position;
 
