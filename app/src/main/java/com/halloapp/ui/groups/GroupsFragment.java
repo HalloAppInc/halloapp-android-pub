@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,6 +67,8 @@ import java.util.Locale;
 
 public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
+    private static final int REQUEST_CODE_OPEN_GROUP = 1;
+
     private final GroupsAdapter adapter = new GroupsAdapter();
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
@@ -84,7 +87,24 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
     private ActionMode actionMode;
 
+    private MenuItem searchMenuItem;
+
     private HashMap<ChatId, Chat> selectedChats = new HashMap<>();
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_OPEN_GROUP: {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (searchMenuItem != null) {
+                        searchMenuItem.collapseActionView();
+                    }
+                }
+                break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,7 +124,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.chat_list_menu, menu);
-        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        searchMenuItem = menu.findItem(R.id.menu_search);
         final MenuItem closeMenuItem = menu.findItem(R.id.menu_clear);
         final SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
@@ -417,7 +437,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 });
                 itemView.setOnClickListener(v -> {
                     if (actionMode == null) {
-                        startActivity(ViewGroupFeedActivity.viewFeed(requireContext(), (GroupId) chat.chatId));
+                        startActivityForResult(ViewGroupFeedActivity.viewFeed(requireContext(), (GroupId) chat.chatId), REQUEST_CODE_OPEN_GROUP);
                     } else {
                         updateChatSelection(chat);
                     }

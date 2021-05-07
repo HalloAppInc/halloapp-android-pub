@@ -372,8 +372,8 @@ public class ContentComposerActivity extends HalloActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else if (groupId != null) {
-                    final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 } else if (calledFromCamera ||
                         Intent.ACTION_SEND.equals(getIntent().getAction()) ||

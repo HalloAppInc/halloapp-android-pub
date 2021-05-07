@@ -40,14 +40,24 @@ import java.util.Collections;
 
 public class ViewGroupFeedActivity extends HalloActivity {
 
+    private static final String KEY_INTERACTED_WITH = "interacted_with";
+    private static final int INTERACTION_TIMEOUT_MS = 30_000;
+
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
 
     private static final String EXTRA_GROUP_ID = "group_id";
+    private static final String EXTRA_FROM_CONTENT_COMPOSER = "from_content_composer";
 
     public static Intent viewFeed(@NonNull Context context, @NonNull GroupId groupId) {
         Intent intent = new Intent(context, ViewGroupFeedActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
+        return intent;
+    }
+
+    public static Intent viewFeed(@NonNull Context context, @NonNull GroupId groupId, boolean fromComposer) {
+        Intent intent = viewFeed(context, groupId);
+        intent.putExtra(EXTRA_FROM_CONTENT_COMPOSER, fromComposer);
         return intent;
     }
 
@@ -71,6 +81,8 @@ public class ViewGroupFeedActivity extends HalloActivity {
         }
     };
 
+    private boolean userInteracted = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +95,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
             return;
         }
 
-        viewModel = new ViewModelProvider(this, new GroupFeedViewModel.Factory(groupId)).get(GroupFeedViewModel.class);
+        viewModel = new ViewModelProvider(getViewModelStore(), new GroupFeedViewModel.Factory(groupId)).get(GroupFeedViewModel.class);
 
         setContentView(R.layout.activity_view_group_feed);
         getSupportFragmentManager()
@@ -111,7 +123,14 @@ public class ViewGroupFeedActivity extends HalloActivity {
                 titleView.setText(null);
             }
         });
-
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_INTERACTED_WITH)) {
+            if (savedInstanceState.getBoolean(KEY_INTERACTED_WITH)) {
+                markUserInteracted();
+            }
+        }
+        if (getIntent().getBooleanExtra(EXTRA_FROM_CONTENT_COMPOSER, false)) {
+            markUserInteracted();
+        }
         avatarLoader.load(avatarView, groupId, false);
 
         fabView = findViewById(R.id.speed_dial);
@@ -143,6 +162,8 @@ public class ViewGroupFeedActivity extends HalloActivity {
             scrollUpOnDataLoaded = true;
             viewModel.reloadPostsAt(Long.MAX_VALUE);
         });
+
+        titleView.postDelayed(this::markUserInteracted, INTERACTION_TIMEOUT_MS);
     }
 
     @Override
@@ -152,6 +173,26 @@ public class ViewGroupFeedActivity extends HalloActivity {
         subtitleView.removeCallbacks(hideSubtitle);
         subtitleView.setVisibility(View.VISIBLE);
         subtitleView.postDelayed(hideSubtitle, 3000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        titleView.removeCallbacks(this::markUserInteracted);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra(EXTRA_FROM_CONTENT_COMPOSER, false)) {
+            markUserInteracted();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_INTERACTED_WITH, userInteracted);
     }
 
     private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
@@ -180,6 +221,11 @@ public class ViewGroupFeedActivity extends HalloActivity {
             startActivity(intent);
         }
         fabView.close(false);
+    }
+
+    private void markUserInteracted() {
+        userInteracted = true;
+        setResult(RESULT_OK);
     }
 
     @Override
