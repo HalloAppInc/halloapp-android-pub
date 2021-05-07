@@ -595,17 +595,27 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    public List<UserId> getFeedExclusionListForServer() {
+        return getFeedExclusionList(false);
+    }
+
+    @WorkerThread
     public List<UserId> getFeedExclusionList() {
+        return getFeedExclusionList(true);
+    }
+
+    private List<UserId> getFeedExclusionList(boolean addressBookOnly) {
         final List<UserId> exclusionList = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(
                 "SELECT " +
                         FeedExcludedTable.TABLE_NAME + "." + FeedExcludedTable.COLUMN_USER_ID + ", " +
                         ContactsTable.COLUMN_ADDRESS_BOOK_ID +
-                     " FROM " + FeedExcludedTable.TABLE_NAME +
-                     " LEFT JOIN " + ContactsTable.TABLE_NAME + " ON " +
+                        " FROM " + FeedExcludedTable.TABLE_NAME +
+                        " LEFT JOIN " + ContactsTable.TABLE_NAME + " ON " +
                         FeedExcludedTable.TABLE_NAME + "." + FeedExcludedTable.COLUMN_USER_ID + "=" + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID +
-                     " WHERE " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null)) {
+                        (addressBookOnly ? (" WHERE " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL") : "")
+                        , null)) {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(0);
@@ -651,7 +661,17 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    public List<UserId> getFeedShareListForServer() {
+        return getFeedShareList(false);
+    }
+
+    @WorkerThread
     public List<UserId> getFeedShareList() {
+        return getFeedShareList(true);
+    }
+
+    @WorkerThread
+    private List<UserId> getFeedShareList(boolean addressBookOnly) {
         final List<UserId> shareList = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(
@@ -661,7 +681,7 @@ public class ContactsDb {
                      " FROM " + FeedSelectedTable.TABLE_NAME +
                      " LEFT JOIN " + ContactsTable.TABLE_NAME + " ON " +
                         FeedSelectedTable.TABLE_NAME + "." + FeedSelectedTable.COLUMN_USER_ID + "=" + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID +
-                     " WHERE " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null)) {
+                        (addressBookOnly ? (" WHERE " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL") : ""), null)) {
             final Set<String> userIds = new HashSet<>();
             while (cursor.moveToNext()) {
                 final String userIdStr = cursor.getString(0);

@@ -44,9 +44,9 @@ public class SetPrivacyListIq extends HalloIq {
 
         List<UserId> userList;
         if (PrivacyList.Type.EXCEPT.equals(type)) {
-            userList = contactsDb.getFeedExclusionList();
+            userList = contactsDb.getFeedExclusionListForServer();
         } else if (PrivacyList.Type.ONLY.equals(type)) {
-            userList = contactsDb.getFeedShareList();
+            userList = contactsDb.getFeedShareListForServer();
         } else if (PrivacyList.Type.BLOCK.equals(type)) {
             userList = contactsDb.getBlockList();
         } else if (PrivacyList.Type.ALL.equals(type)) {
