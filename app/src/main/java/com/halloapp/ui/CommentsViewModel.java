@@ -42,6 +42,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.proto.server.Audience;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
@@ -192,10 +193,32 @@ class CommentsViewModel extends AndroidViewModel {
                         // Allow mentioning poster
                         contactSet.add(parentPost.senderUserId);
                     } else {
-                        // Otherwise we can mention everyone in our friends since they should be able to see our post
-                        List<Contact> friends = contactsDb.getFriends();
-                        for(Contact contact : friends) {
-                            contactSet.add(contact.userId);
+                        switch (parentPost.getAudienceType()) {
+                            case PrivacyList.Type.ALL: {
+                                List<Contact> contacts = contactsDb.getUsers();
+                                for(Contact contact : contacts) {
+                                    contactSet.add(contact.userId);
+                                }
+                                break;
+                            }
+                            case PrivacyList.Type.EXCEPT: {
+                                List<Contact> contacts = contactsDb.getUsers();
+                                for(Contact contact : contacts) {
+                                    contactSet.add(contact.userId);
+                                }
+                                if (parentPost.getExcludeList() != null) {
+                                    for (UserId id : parentPost.getExcludeList()) {
+                                        contactSet.remove(id);
+                                    }
+                                }
+                                break;
+                            }
+                            case PrivacyList.Type.ONLY: {
+                                if (parentPost.getAudienceList() != null) {
+                                    contactSet.addAll(parentPost.getAudienceList());
+                                }
+                                break;
+                            }
                         }
                     }
                 }
