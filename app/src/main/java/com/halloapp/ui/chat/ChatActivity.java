@@ -965,6 +965,8 @@ public class ChatActivity extends HalloActivity {
         replyMessageMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
         message.addToStorage(ContentDb.getInstance());
+
+        setResult(RESULT_OK);
     }
 
     private void pickMedia() {
