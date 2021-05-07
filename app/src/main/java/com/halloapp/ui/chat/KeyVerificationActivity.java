@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -12,7 +14,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +32,6 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 
 public class KeyVerificationActivity extends HalloActivity {
 
@@ -71,7 +71,8 @@ public class KeyVerificationActivity extends HalloActivity {
         }
 
         qrCode = findViewById(R.id.qr_code);
-        qrCode.setOnClickListener(v -> {
+        View qrRegion = findViewById(R.id.qr_region);
+        qrRegion.setOnClickListener(v -> {
             Intent intent = new IntentIntegrator(this)
                     .setPrompt("")
                     .setBeepEnabled(false)
@@ -91,6 +92,9 @@ public class KeyVerificationActivity extends HalloActivity {
             } else {
                 tv.setVisibility(View.VISIBLE);
                 tv.setText(name);
+                TextView explanationText = findViewById(R.id.explanation);
+                explanationText.setText(Html.fromHtml(getString(R.string.key_verification_explanation, name)));
+                explanationText.setMovementMethod(LinkMovementMethod.getInstance());
             }
         });
 

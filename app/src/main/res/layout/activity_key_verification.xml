@@ -72,18 +72,86 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <ImageView
-            android:id="@+id/qr_code"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/qr_region"
+            android:layout_width="@dimen/qr_region_size"
             android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
-            />
+            android:layout_margin="35dp"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/qr_region_size"
+                android:layout_height="@dimen/qr_region_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/avatar_circle"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/qr_guideline_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.15"
+                android:orientation="vertical"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/qr_guideline_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.85"
+                android:orientation="vertical"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/qr_guideline_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.15"
+                android:orientation="horizontal"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/qr_guideline_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.85"
+                android:orientation="horizontal"/>
+
+            <ImageView
+                android:id="@+id/qr_code"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="@id/qr_guideline_top"
+                app:layout_constraintBottom_toBottomOf="@id/qr_guideline_bottom"
+                app:layout_constraintStart_toStartOf="@id/qr_guideline_start"
+                app:layout_constraintEnd_toEndOf="@id/qr_guideline_end"
+                android:scaleType="fitCenter"
+                android:visibility="visible"
+                tools:src="@drawable/crop_add_button"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/qr_code"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/key_verification_tap_to_scan"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/safety_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/explanation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            tools:text="@string/key_verification_explanation"/>
 
     </LinearLayout>
 
