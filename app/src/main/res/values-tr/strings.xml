@@ -7,7 +7,7 @@
     <string name="title_groups">"Gruplar"</string>
 
     <!-- Noun or verb? -->
-    <string name="comment">"Yorum yaz"</string>
+    <string name="comment">"Yorum yap"</string>
     <string name="next">"İleri"</string>
     <string name="message">"Mesaj at"</string>
     <string name="add_post">"Yeni gönderi"</string>
@@ -25,7 +25,7 @@
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Metin"</string>
-    <string name="bad_image">"Desteklenmeyen medya formatı"</string>
+    <string name="bad_image">"Desteklenmeyen ortam formatı"</string>
     <string name="time_diff_now">"Şimdi"</string>
     <string name="phone_number_hint">"Telefon numarası"</string>
     <string name="request_registration_title">"Hoş geldin!"</string>
@@ -104,7 +104,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git."</stri
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git"</string>
     <string name="storage_permission_rationale">"Bir ortam ögesi seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir"</string>
-    <string name="storage_permission_rationale_denied">"Bir çoklu ortam ögesi seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir
+    <string name="storage_permission_rationale_denied">"Bir görsel seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</string>
     <string name="initializing_please_wait">"Başlatılıyor, lütfen bekle..."</string>
@@ -152,7 +152,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="no_activity">"Herhangi bir hareket yok"</string>
 
     <!-- Ebru diger platformlarda mi 'ortam ögesi'sini kullanio? Daha casual bir tabir var mi? -->
-    <string name="failed_to_load_media">"Ortam ögesi yüklenemedi"</string>
+    <string name="failed_to_load_media">"Görsel yüklenemedi"</string>
     <string name="settings">"Ayarlar"</string>
     <string name="send_logs">"Geri bildirim paylaş"</string>
     <string name="terms_of_service">"Kullanım şartları"</string>
@@ -185,7 +185,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="select">"Tamam"</string>
     <string name="avatar_picker_title">"Profil fotoğrafı"</string>
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
-    <string name="other_media">"Diğer ortam ögeleri"</string>
+    <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
     <plurals name="seen_by">
         <item quantity="one">"%d kişi tarafından görüldü
@@ -193,6 +193,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
 "</item>
         <item quantity="other">"%d kişi tarafından görüldü"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
     <string name="empty_sent_to">"Gönderini henüz kimse almadı"</string>
     <string name="options">"Seçenekler"</string>
@@ -203,11 +205,13 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="alert_discard_changes_message">"Değişiklikleri iptal et?"</string>
     <string name="action_discard">"İptal et"</string>
     <string name="new_post_notification">"%s, yeni bir gönderi paylaştı"</string>
+
+    <!-- Fuzzy -->
     <plurals name="new_posts_notification">
-        <item quantity="one">"%2$s, %1$d yeni gönderi paylaştı
+        <item quantity="one">"%s, %d yeni gönderi paylaştı
 
 "</item>
-        <item quantity="other">"%2$s, %1$d yeni gönderi paylaştı"</item>
+        <item quantity="other">"%s, %d yeni gönderi paylaştı"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="one">"%s kişisinden %d yeni mesaj 
@@ -274,7 +278,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
         <item quantity="other">"HalloApp'in bu sürümünün süresi, %d gün içinde dolacak. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</item>
     </plurals>
     <string name="could_not_set_avatar">"Lütfen başka bir resim dene"</string>
-    <string name="pick_media">"Ortam ögesi seç"</string>
+    <string name="pick_media">"Görsel seç"</string>
     <string name="video">"Video"</string>
     <string name="photo">"Fotoğraf"</string>
     <string name="album">"Albüm"</string>
@@ -303,7 +307,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="invite_friends">"Aile ve arkadaşlarını davet et"</string>
     <string name="invite_a_friend">"Bir arkadaşını davet et "</string>
     <string name="invite_friend_chooser_title">"% kişisini davet et"</string>
-    <string name="invite_text">"HalloApp'te bana katıl — aile ve arkadaşlarınla iletişimde kalmanın kolay ve özel bir yolu. https://halloapp.com/dl adresinden indir."</string>
+    <string name="invite_text">"HalloApp'te bana katıl — ailen ve arkadaşlarınla iletişimde kalmanın kolay ve özel bir yolu. https://halloapp.com/dl adresinden indir."</string>
 
     <!-- Will the second %s here be a link? -->
     <string name="invite_text_with_name_and_number">"Selam %s, HalloApp'te (günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması) bana katılman için seni davet ediyorum. Kaydolmak için %s kullan. halloapp.com/dl adresinden indir."</string>
@@ -320,6 +324,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="no_one_seen_your_post">"Gönderini kimse görmedi :("</string>
     <string name="other_friends">"Şunlara gönderildi: "</string>
     <string name="email_logs_subject">"HalloApp Android %s %s"</string>
+
+    <!-- Fuzzy -->
     <string name="email_logs_text">"Lüften sorununu yukarıda açıkla.
 "</string>
     <string name="share">"Paylaş"</string>
@@ -407,7 +413,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="invite_already_on_halloapp">"Halihazırda HalloApp'te"</string>
     <string name="invite_invalid_phone_number">"Telefon numarası geçersiz"</string>
     <string name="edit">"Düzenle"</string>
-    <string name="done">"Tamam"</string>
+    <string name="done">"Bitti"</string>
     <string name="members_header">"Üyeler (%s)"</string>
     <string name="add_members">"Üye ekle"</string>
     <string name="add_members_in_progress">"Üye ekleniyor…"</string>
@@ -581,20 +587,51 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <string name="contact_permissions_dialog_title">"Kişiler"</string>
     <string name="not_now">"Şimdi değil"</string>
     <string name="continue_button">"Devam"</string>
-    <string name="contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Daha fazlasını öğren."</string>
-    <string name="contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Daha fazlasını öğren. Ayarlar&gt;İzinler'e git ve Kişiler'i aç."</string>
+    <string name="contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
+    <string name="contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Daha fazlasını öğren. Ayarlar &gt; İzinler'e git ve Kişiler'i aç."</string>
     <string name="home_contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var."</string>
-    <string name="home_contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Ayarlar&gt;İzinler'e git ve Kişiler'i aç."</string>
+    <string name="home_contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Ayarlar &gt; İzinler'e git ve Kişiler'i aç."</string>
     <string name="invite_link_load_failed">"Grup davet ilişimi açılamadı"</string>
     <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. Daha fazlasını öğren."</string>
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"HalloApp sürümün, bu tür mesajları desteklemiyor. Uygulamanı güncelle"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Your version of HalloApp does not support this type of post. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"HalloApp sürümün, bu tür gönderileri desteklemiyor. Uygulamanı güncelle"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"HalloApp sürümün, bu tür yorumları desteklemiyor. Uygulamanı güncelle"</string>
+
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+
+    <!-- button to request another sms code -->
+    <string name="resend_sms">"Resend SMS"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="call_me">"Call me"</string>
+    <string name="verify_keys">"Verify keys"</string>
+
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">"Verification succeeded"</string>
+
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">"Verification failed"</string>
+
+    <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
+    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+
+    <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">"More"</string>
+
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">"Manage privacy"</string>
 </resources>

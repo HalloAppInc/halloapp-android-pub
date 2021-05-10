@@ -41,7 +41,7 @@
     <string name="write_a_post">"Crear publicación"</string>
     <string name="send">"Enviar"</string>
     <string name="set_avatar_done">"Listo"</string>
-    <string name="set_avatar_reset">"Reiniciar"</string>
+    <string name="set_avatar_reset">"Restablecer"</string>
     <string name="new_post">"Nuevo comentario"</string>
     <string name="new_message">"Nuevo mensaje"</string>
     <string name="chat_message_attribution">"%s: %s"</string>
@@ -179,6 +179,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
         <item quantity="one">"Visto por %d persona"</item>
         <item quantity="other">"Visto por %d personas"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="empty_viewed_by">"Nadie ha visto tu publicación"</string>
     <string name="empty_sent_to">"Nadie ha recibido tu publicación"</string>
     <string name="options">"Opciones"</string>
@@ -189,9 +191,11 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="alert_discard_changes_message">"¿Cancelar los cambios?"</string>
     <string name="action_discard">"Cancelar"</string>
     <string name="new_post_notification">"Nueva publicación de %s"</string>
+
+    <!-- Fuzzy -->
     <plurals name="new_posts_notification">
-        <item quantity="one">"%1$d nueva publicación de %2$s"</item>
-        <item quantity="other">"%1$d nuevas publicaciones de %2$s"</item>
+        <item quantity="one">"%d nueva publicación de %s"</item>
+        <item quantity="other">"%d nuevas publicaciones de %s"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="one">"%d nuevo mensaje de %s"</item>
@@ -292,6 +296,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="no_one_seen_your_post">"Nadie vio tu publicación :("</string>
     <string name="other_friends">"Enviado a"</string>
     <string name="email_logs_subject">"HalloApp Android %s %s"</string>
+
+    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
 Por favor describe tu asunto arriba.
@@ -384,10 +390,10 @@ version: %s
     <string name="invite_invalid_phone_number">"Número de teléfono inválido"</string>
     <string name="edit">"Editar"</string>
     <string name="done">"Listo"</string>
-    <string name="members_header">"Miembros (%s)"</string>
-    <string name="add_members">"Agregar miembros"</string>
-    <string name="add_members_in_progress">"Agregando miembros…"</string>
-    <string name="failed_add_members">"No se pudo agregar miembros, inténtalo más tarde"</string>
+    <string name="members_header">"Participantes (%s)"</string>
+    <string name="add_members">"Añadir participantes"</string>
+    <string name="add_members_in_progress">"Añadir participantes…"</string>
+    <string name="failed_add_members">"No se pudo añadir participantes, inténtalo más tarde"</string>
     <string name="create_group">"Crear un grupo nuevo"</string>
     <string name="create_group_in_progress">"Creando grupo %s…"</string>
     <string name="new_group_title">"Dale un nombre a tu grupo"</string>
@@ -403,7 +409,7 @@ version: %s
     <string name="demote_admin_in_progress">"Descartando al administrador"</string>
     <string name="failed_demote_admin">"No se pudo descartar al administrador, inténtalo más tarde"</string>
     <string name="remove_member_in_progress">"Eliminando a un participante…"</string>
-    <string name="failed_remove_member">"No se pudo eliminar al miembro, inténtalo más tarde"</string>
+    <string name="failed_remove_member">"No se pudo eliminar al participante, inténtalo más tarde"</string>
     <string name="leave_group">"Salir del grupo"</string>
     <plurals name="leave_group_plural">
         <item quantity="one">"Salir del grupo"</item>
@@ -530,7 +536,7 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
     <string name="group_background_save_success">"El fondo de pantalla del grupo ha sido actualizado"</string>
     <string name="group_background_color">"Color"</string>
     <string name="group_background_default">"Por defecto"</string>
-    <string name="group_info_members">"Miembros (%d)"</string>
+    <string name="group_info_members">"Participantes (%d)"</string>
     <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
     <string name="retract_message_option">"Eliminar para todos."</string>
     <string name="delete_message_option">"Eliminar solo para mí."</string>
@@ -543,7 +549,7 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
     <string name="home_contact_permissions_nag_permanently_blocked">"Para que puedas conectarte con tus amigos y familia, necesitamos que nos des permiso para tener acceso a tus contactos. Toca Configuración &gt; Permisos, y enciende Contactos"</string>
     <string name="invite_link_load_failed">"No se pudo abrir el enlace de invitación del grupo"</string>
     <string name="message_tombstone_placeholder">"Esperando este mensaje. Esto puede tomar un tiempo.&lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
-    <string name="failed_no_longer_member">"Ya no eres un miembro de este grupo."</string>
+    <string name="failed_no_longer_member">"Ya no formas parte de este grupo."</string>
 
     <!-- Placeholder when we do not understand the received message -->
     <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
@@ -553,4 +559,35 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
 
     <!-- Placeholder when we do not understand the received comment -->
     <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+
+    <!-- button to request another sms code -->
+    <string name="resend_sms">"Resend SMS"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="call_me">"Call me"</string>
+    <string name="verify_keys">"Verify keys"</string>
+
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">"Verification succeeded"</string>
+
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">"Verification failed"</string>
+
+    <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
+    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+
+    <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">"More"</string>
+
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">"Manage privacy"</string>
 </resources>

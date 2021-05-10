@@ -176,7 +176,7 @@
         <item quantity="one">"Seen by %d person"</item>
         <item quantity="other">"Seen by %d person"</item>
     </plurals>
-    <string name="empty_viewed_by">"No one has viewed your post"</string>
+    <string name="empty_viewed_by">"No one has seen your post yet"</string>
     <string name="empty_sent_to">"No one has received your post"</string>
     <string name="options">"Options"</string>
     <string name="block">"Block"</string>
@@ -292,6 +292,7 @@
 Please describe the issue above.
 uid: %s
 version: %s
+----------------------------------------
 "</string>
     <string name="share">"Share"</string>
     <string name="unblock">"Unblock"</string>
@@ -540,4 +541,35 @@ version: %s
 
     <!-- Placeholder when we do not understand the received comment -->
     <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+
+    <!-- button to request another sms code -->
+    <string name="resend_sms">"Resend SMS"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="call_me">"Call me"</string>
+    <string name="verify_keys">"Verify keys"</string>
+
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">"Verification succeeded"</string>
+
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">"Verification failed"</string>
+
+    <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
+    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+
+    <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">"More"</string>
+
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">"Manage privacy"</string>
 </resources>
