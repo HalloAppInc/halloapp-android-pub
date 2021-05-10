@@ -204,10 +204,10 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="action_discard">"İptal et"</string>
     <string name="new_post_notification">"%s, yeni bir gönderi paylaştı"</string>
     <plurals name="new_posts_notification">
-        <item quantity="one">"%s, %d yeni gönderi paylaştı
+        <item quantity="one">"%2$s, %1$d yeni gönderi paylaştı
 
 "</item>
-        <item quantity="other">"%s, %d yeni gönderi paylaştı"</item>
+        <item quantity="other">"%2$s, %1$d yeni gönderi paylaştı"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="one">"%s kişisinden %d yeni mesaj 

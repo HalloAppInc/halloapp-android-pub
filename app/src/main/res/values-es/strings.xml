@@ -190,8 +190,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="action_discard">"Cancelar"</string>
     <string name="new_post_notification">"Nueva publicación de %s"</string>
     <plurals name="new_posts_notification">
-        <item quantity="one">"%d nueva publicación de %s"</item>
-        <item quantity="other">"%d nuevas publicaciones de %s"</item>
+        <item quantity="one">"%1$d nueva publicación de %2$s"</item>
+        <item quantity="other">"%1$d nuevas publicaciones de %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="one">"%d nuevo mensaje de %s"</item>

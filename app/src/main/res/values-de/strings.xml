@@ -202,8 +202,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="action_discard">"Verwerfen"</string>
     <string name="new_post_notification">"Neuer Beitrag von %s"</string>
     <plurals name="new_posts_notification">
-        <item quantity="one">"%d neuer Beitrag von %s"</item>
-        <item quantity="other">"%d neue Beiträge von %s"</item>
+        <item quantity="one">"%1$d neuer Beitrag von %2$s"</item>
+        <item quantity="other">"%1$d neue Beiträge von %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="one">"%d Nachricht von %s"</item>
