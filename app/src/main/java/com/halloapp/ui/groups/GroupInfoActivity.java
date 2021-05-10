@@ -284,7 +284,6 @@ public class GroupInfoActivity extends HalloActivity {
             if (success == null || !success) {
                 SnackbarHelper.showWarning(this, R.string.failed_leave_group);
             } else {
-                setResult(RESULT_CODE_EXIT_CHAT);
                 finish();
             }
         });
