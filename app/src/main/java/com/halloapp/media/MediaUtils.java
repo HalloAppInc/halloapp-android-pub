@@ -29,10 +29,10 @@ import androidx.annotation.WorkerThread;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.Media;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.mediapicker.GalleryDataSource;
 import com.halloapp.util.logs.Log;
 
@@ -322,6 +322,7 @@ public class MediaUtils {
 
     @WorkerThread
     public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds) throws IOException {
+        final int maxBitrate = ServerProps.getInstance().getMaxVideoBitrate();
         final MediaExtractor extractor = new MediaExtractor();
         long fileLength = file.length();
         long bitrate = 0;
@@ -340,7 +341,7 @@ public class MediaUtils {
                 if (mediaFormat.containsKey(MediaFormat.KEY_DURATION)) {
                     final long trackDuration = mediaFormat.getLong(MediaFormat.KEY_DURATION);
                     if (trackDuration != 0) {
-                        bitrate = Math.max(bitrate, Constants.MAX_VIDEO_BITRATE * fileLength / trackDuration);
+                        bitrate = Math.max(bitrate, maxBitrate * fileLength / trackDuration);
                         duration = Math.max(duration, trackDuration / 1000L);
                     }
                 }
@@ -348,7 +349,7 @@ public class MediaUtils {
         } finally {
             extractor.release();
         }
-        if (bitrate > Constants.MAX_VIDEO_BITRATE) {
+        if (bitrate > maxBitrate) {
             Log.i("MediaUtils.shouldConvertVideo bitrate is " + bitrate + ", will convert");
             return true;
         }
