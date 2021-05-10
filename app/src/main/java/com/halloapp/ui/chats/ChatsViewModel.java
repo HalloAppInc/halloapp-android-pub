@@ -149,21 +149,21 @@ public class ChatsViewModel extends AndroidViewModel {
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);
                 }
-                final List<Contact> friends = ContactsDb.getInstance().getFriends();
+                final List<Contact> contacts = ContactsDb.getInstance().getUsers();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
-                Collections.sort(friends, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
-                final List<Chat> friendChats = new ArrayList<>();
-                for (Contact friend : friends) {
-                    if (friend.userId == null) {
+                Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
+                final List<Chat> contactChats = new ArrayList<>();
+                for (Contact contact : contacts) {
+                    if (contact.userId == null) {
                         continue;
                     }
-                    Chat chat = chatsMap.get(friend.userId);
-                    if (chat == null && !friend.hideChat) {
-                        chat = new Chat(-1, friend.userId, friend.connectionTime, friend.newConnection ? Chat.MARKED_UNSEEN : 0, -1L, -1L, friend.getDisplayName(), false, null, null, true, 0);
-                        if (friend.connectionTime > 0) {
+                    Chat chat = chatsMap.get(contact.userId);
+                    if (chat == null && !contact.hideChat) {
+                        chat = new Chat(-1, contact.userId, contact.connectionTime, contact.newConnection ? Chat.MARKED_UNSEEN : 0, -1L, -1L, contact.getDisplayName(), false, null, null, true, 0);
+                        if (contact.connectionTime > 0) {
                             chats.add(chat);
                         } else {
-                            friendChats.add(chat);
+                            contactChats.add(chat);
                         }
                     }
                 }
@@ -178,7 +178,7 @@ public class ChatsViewModel extends AndroidViewModel {
                     }
                     return obj1.timestamp < obj2.timestamp ? 1 : -1;
                 });
-                chats.addAll(friendChats);
+                chats.addAll(contactChats);
                 return chats;
             }
         };
