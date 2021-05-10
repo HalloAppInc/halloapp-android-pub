@@ -25,6 +25,8 @@ import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.ui.privacy.FeedPrivacyActivity;
+import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -32,6 +34,7 @@ import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +56,7 @@ public class PostSeenByActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_seen_by);
-        setTitle(R.string.your_post_title);
+        setTitle(R.string.seen_by);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -61,25 +64,12 @@ public class PostSeenByActivity extends HalloActivity {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         seenByView.setLayoutManager(layoutManager);
         seenByView.setAdapter(adapter);
-        seenByView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                int first = layoutManager.findFirstVisibleItemPosition();
-                HeaderListItem headerItem = adapter.getPreviousHeader(first);
-                if (headerItem != null) {
-                    setTitle(headerItem.title);
-                } else {
-                    setTitle(R.string.your_post_title);
-                }
-            }
-        });
         seenByView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         viewModel = new ViewModelProvider(this, new PostSeenByViewModel.Factory(getApplication(), postId)).get(PostSeenByViewModel.class);
         viewModel.seenByList.getLiveData().observe(this, adapter::setSeenBy);
-        viewModel.friendsList.getLiveData().observe(this, adapter::setFriends);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
         avatarLoader = AvatarLoader.getInstance();
@@ -172,6 +162,22 @@ public class PostSeenByActivity extends HalloActivity {
         }
     }
 
+    static class ManagePrivacyListItem implements ListItem {
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_MANAGE_PRIVACY;
+        }
+    }
+
+    static class ExpandListItem implements ListItem {
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_EXPAND;
+        }
+    }
+
     static class EmptyListItem implements ListItem {
         final boolean sentTo;
 
@@ -187,17 +193,21 @@ public class PostSeenByActivity extends HalloActivity {
 
     private class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
+        private static final int MAX_CONTACTS_BEFORE_COLLAPSE = 12;
+        private static final int INITIAL_CONTACTS_COLLAPSED = 10;
+
         static final int VIEW_TYPE_HEADER = 0;
         static final int VIEW_TYPE_CONTACT = 1;
         static final int VIEW_TYPE_EMPTY = 2;
         static final int VIEW_TYPE_DIVIDER = 3;
+        static final int VIEW_TYPE_MANAGE_PRIVACY = 5;
+        static final int VIEW_TYPE_EXPAND = 6;
 
         private List<PostSeenByViewModel.SeenByContact> seenByContacts;
-        private List<Contact> friends;
 
         private final List<ListItem> listItems = new ArrayList<>();
 
-        private final List<Integer> headerIndexes = new ArrayList();
+        private boolean expanded = false;
 
         void setSeenBy(List<PostSeenByViewModel.SeenByContact> seenByContacts) {
             this.seenByContacts = seenByContacts;
@@ -205,64 +215,28 @@ public class PostSeenByActivity extends HalloActivity {
             notifyDataSetChanged();
         }
 
-        void setFriends(List<Contact> friends) {
-            this.friends = friends;
-            notifyDataSetChanged();
-            createListItems();
-        }
-
-        public HeaderListItem getPreviousHeader(int firstVisible) {
-            int previousHeader = -1;
-            for (Integer headerIndex : headerIndexes) {
-                if (headerIndex < firstVisible && headerIndex > previousHeader) {
-                    previousHeader = headerIndex;
-                }
-            }
-            if (previousHeader >= 0) {
-                return (HeaderListItem) listItems.get(previousHeader);
-            }
-            return null;
-        }
-
         private void createListItems() {
             listItems.clear();
-            headerIndexes.clear();
             final Set<UserId> seenByUserIds = new HashSet<>();
-            boolean emptyDeliveredTo = friends == null || friends.isEmpty();
             boolean emptyViewedBy = seenByContacts == null || seenByContacts.isEmpty();
-            headerIndexes.add(listItems.size());
-            listItems.add(new HeaderListItem(getString(R.string.seen_by)));
             if (!emptyViewedBy) {
-                for (PostSeenByViewModel.SeenByContact seenByContact : seenByContacts) {
+                int count = 0;
+                int limit = (seenByContacts.size() > MAX_CONTACTS_BEFORE_COLLAPSE) ? INITIAL_CONTACTS_COLLAPSED : seenByContacts.size();
+                Iterator<PostSeenByViewModel.SeenByContact> iterator = seenByContacts.iterator();
+                while (iterator.hasNext() && (expanded || count < limit)) {
+                    PostSeenByViewModel.SeenByContact seenByContact = iterator.next();
                     listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
                     seenByUserIds.add(seenByContact.contact.userId);
+                    count++;
+                }
+                if (!expanded && count < seenByContacts.size()) {
+                    listItems.add(new ExpandListItem());
                 }
             } else {
                 listItems.add(new EmptyListItem(false));
             }
-            if (emptyViewedBy || !emptyDeliveredTo) {
-                boolean headerAdded = false;
-                if (emptyViewedBy) {
-                    listItems.add(new DividerListItem());
-                    headerAdded = true;
-                    headerIndexes.add(listItems.size());
-                    listItems.add(new HeaderListItem(getString(R.string.other_friends)));
-                }
-                if (!emptyDeliveredTo) {
-                    for (Contact contact : friends) {
-                        if (!seenByUserIds.contains(contact.userId)) {
-                            if (!headerAdded) {
-                                headerAdded = true;
-                                headerIndexes.add(listItems.size());
-                                listItems.add(new HeaderListItem(getString(R.string.other_friends)));
-                            }
-                            listItems.add(new ContactListItem(contact, -1));
-                        }
-                    }
-                } else {
-                    listItems.add(new EmptyListItem(true));
-                }
-            }
+            listItems.add(new DividerListItem());
+            listItems.add(new ManagePrivacyListItem());
         }
 
 
@@ -285,6 +259,12 @@ public class PostSeenByActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_DIVIDER: {
                     return new DividerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_divider_item, parent, false));
+                }
+                case VIEW_TYPE_MANAGE_PRIVACY: {
+                    return new ManagePrivacyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_manage_privacy, parent, false));
+                }
+                case VIEW_TYPE_EXPAND: {
+                    return new ExpandViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_view_more, parent, false));
                 }
             }
             throw new IllegalStateException("unknown item type");
@@ -387,26 +367,50 @@ public class PostSeenByActivity extends HalloActivity {
 
         private class EmptyViewHolder extends ViewHolder<EmptyListItem> {
 
-            private final View inviteText;
             private final TextView emptyText;
 
             EmptyViewHolder(@NonNull View itemView) {
                 super(itemView);
 
-                inviteText = itemView.findViewById(R.id.invite_text);
                 emptyText = itemView.findViewById(R.id.empty_text);
             }
 
             @Override
             void bindTo(@NonNull EmptyListItem item) {
-                inviteText.setVisibility(item.sentTo ? View.VISIBLE : View.INVISIBLE);
-                emptyText.setText(item.sentTo ? R.string.empty_sent_to : R.string.empty_viewed_by);
-                if (item.sentTo) {
-                    inviteText.setOnClickListener(v -> startActivity(new Intent(PostSeenByActivity.this, InviteContactsActivity.class)));
-                } else {
-                    inviteText.setOnClickListener(null);
-                    inviteText.setClickable(false);
-                }
+                emptyText.setText(R.string.empty_viewed_by);
+            }
+        }
+
+        private class ExpandViewHolder extends ViewHolder<ExpandListItem> {
+
+            ExpandViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                itemView.setOnClickListener(v -> {
+                    expanded = true;
+                    createListItems();
+                    adapter.notifyDataSetChanged();
+                });
+            }
+
+            @Override
+            void bindTo(@NonNull ExpandListItem item) {
+            }
+        }
+
+        private class ManagePrivacyViewHolder extends ViewHolder<ManagePrivacyListItem> {
+
+
+            ManagePrivacyViewHolder(@NonNull View itemView) {
+                super(itemView);
+                itemView.setOnClickListener(v -> {
+                    startActivity(SettingsPrivacy.openFeedPrivacy(v.getContext()));
+                });
+            }
+
+            @Override
+            void bindTo(@NonNull ManagePrivacyListItem item) {
+
             }
         }
     }

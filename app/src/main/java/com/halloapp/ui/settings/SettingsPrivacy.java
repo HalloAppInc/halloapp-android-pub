@@ -1,6 +1,7 @@
 package com.halloapp.ui.settings;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -36,6 +37,16 @@ public class SettingsPrivacy extends HalloActivity implements EasyPermissions.Pe
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    private static final String EXTRA_TARGET_SETTING = "target_setting";
+
+    private static final String TARGET_SETTING_FEED_PRIVACY = "feed_privacy";
+
+    public static Intent openFeedPrivacy(@NonNull Context context) {
+        Intent i = new Intent(context, SettingsPrivacy.class);
+        i.putExtra(EXTRA_TARGET_SETTING, TARGET_SETTING_FEED_PRIVACY);
+        return i;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +64,12 @@ public class SettingsPrivacy extends HalloActivity implements EasyPermissions.Pe
         final String[] perms = {Manifest.permission.READ_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        }
+
+        String targetSetting = getIntent().getStringExtra(EXTRA_TARGET_SETTING);
+        if (TARGET_SETTING_FEED_PRIVACY.equals(targetSetting)) {
+            Intent intent = new Intent(this, FeedPrivacyActivity.class);
+            startActivity(intent);
         }
     }
 

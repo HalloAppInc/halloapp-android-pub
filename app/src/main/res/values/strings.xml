@@ -180,8 +180,8 @@
     <string name="group_avatar_picker_title">Group avatar</string>
     <string name="other_media">Other media</string>
     <string name="rotate">Rotate</string>
-    <string name="seen_by">Viewed by</string>
-    <string name="empty_viewed_by">No one has viewed your post</string>
+    <string name="seen_by">Seen by</string>
+    <string name="empty_viewed_by">No one has seen your post yet</string>
     <string name="empty_sent_to">No one has received your post</string>
     <string name="options">Options</string>
     <string name="block">Block</string>
@@ -542,4 +542,8 @@
     <string name="max_video_length">Your video is over %d seconds long. Please select another video or edit it.</string>
     <string name="video_edit_unable_trim">Video trimming was unsuccessful.</string>
     <string name="mute">Mute</string>
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">More</string>
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">Manage privacy</string>
 </resources>

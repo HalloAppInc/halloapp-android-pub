@@ -27,7 +27,6 @@ public class PostSeenByViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
     final ComputableLiveData<List<SeenByContact>> seenByList;
-    final ComputableLiveData<List<Contact>> friendsList;
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
 
     private final Me me;
@@ -65,7 +64,6 @@ public class PostSeenByViewModel extends AndroidViewModel {
         @Override
         public void onContactsChanged() {
             mainHandler.post(seenByList::invalidate);
-            mainHandler.post(friendsList::invalidate);
         }
     };
 
@@ -89,36 +87,6 @@ public class PostSeenByViewModel extends AndroidViewModel {
                     seenByContacts.add(new SeenByContact(contactsDb.getContact(seenByInfo.userId), seenByInfo.timestamp));
                 }
                 return seenByContacts;
-            }
-        };
-
-        friendsList = new ComputableLiveData<List<Contact>>() {
-            @Override
-            protected List<Contact> compute() {
-                Post post = contentDb.getPost(postId);
-                if (post != null) {
-                    if (post.getParentGroup() == null) {
-                        List<UserId> audienceList = post.getAudienceList();
-                        if (audienceList != null) {
-                            List<Contact> sharedTo = new ArrayList<>();
-                            for (UserId userId : audienceList) {
-                                sharedTo.add(contactsDb.getContact(userId));
-                            }
-                            return Contact.sort(sharedTo);
-                        }
-                    } else {
-                        List<MemberInfo> members = contentDb.getGroupMembers(post.getParentGroup());
-                        List<Contact> audience = new ArrayList<>(members.size());
-                        for (MemberInfo info : members) {
-                            if (info.userId.isMe()) {
-                                continue;
-                            }
-                            audience.add(contactsDb.getContact(info.userId));
-                        }
-                        return Contact.sort(audience);
-                    }
-                }
-                return Contact.sort(contactsDb.getFriends());
             }
         };
 
