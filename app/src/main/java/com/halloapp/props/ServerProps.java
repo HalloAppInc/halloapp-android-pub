@@ -10,6 +10,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Constants;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -36,6 +37,7 @@ public class ServerProps {
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
     private static final String PROP_GROUP_INVITE_LINKS = "group_invite_links";
     private static final String PROP_CLEARTEXT_CHAT_MESSAGES = "cleartext_chat_messages";
+    private static final String PROP_NEW_CLIENT_CONTAINER = "new_client_container";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -68,6 +70,7 @@ public class ServerProps {
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
     private final BooleanProp propGroupInviteLinksEnabled = createProp(PROP_GROUP_INVITE_LINKS, false);
     private final BooleanProp propCleartextChatMessagesEnabled = createProp(PROP_CLEARTEXT_CHAT_MESSAGES, true);
+    private final BooleanProp propNewClientContainerEnabled = createProp(PROP_NEW_CLIENT_CONTAINER, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -190,6 +193,10 @@ public class ServerProps {
 
     public synchronized boolean getGroupChatsEnabled() {
         return propGroupChatsEnabled.getValue();
+    }
+
+    public synchronized boolean getNewClientContainerEnabled() {
+        return Constants.SEND_CONTAINER || propNewClientContainerEnabled.getValue();
     }
 
     public synchronized int getSilentChatMessageCount() {

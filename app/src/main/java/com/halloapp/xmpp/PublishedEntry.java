@@ -10,6 +10,7 @@ import androidx.annotation.StringDef;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.Comment;
@@ -25,8 +26,6 @@ import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
-
-import org.mp4parser.boxes.threegpp.ts26244.AlbumBox;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -176,7 +175,7 @@ public class PublishedEntry {
                 throw new IllegalStateException("Unknown type " + type);
             }
         }
-        if (Constants.SEND_CONTAINER) {
+        if (ServerProps.getInstance().getNewClientContainerEnabled()) {
             switch (type) {
                 case ENTRY_FEED: {
                     PostContainer.Builder builder = PostContainer.newBuilder();

@@ -11,7 +11,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.FutureProofMessage;
@@ -311,7 +310,7 @@ public class ChatMessageElement {
         if (chatMessage != null) {
             containerBuilder.setChatMessage(chatMessage);
         }
-        if (Constants.SEND_CONTAINER) {
+        if (serverProps.getNewClientContainerEnabled()) {
             containerBuilder.setChatContainer(chatContainer);
         }
         return containerBuilder.build().toByteArray();
