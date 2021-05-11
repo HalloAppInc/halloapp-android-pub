@@ -339,10 +339,10 @@ public class MediaUtils {
                     return true;
                 }
                 if (mediaFormat.containsKey(MediaFormat.KEY_DURATION)) {
-                    final long trackDuration = mediaFormat.getLong(MediaFormat.KEY_DURATION);
-                    if (trackDuration != 0) {
-                        bitrate = Math.max(bitrate, maxBitrate * fileLength / trackDuration);
-                        duration = Math.max(duration, trackDuration / 1000L);
+                    final long trackDurationMs = mediaFormat.getLong(MediaFormat.KEY_DURATION) / 1000;
+                    if (trackDurationMs != 0) {
+                        bitrate = Math.max(bitrate, 8 * fileLength / (trackDurationMs / 1000));
+                        duration = Math.max(duration, trackDurationMs);
                     }
                 }
             }
