@@ -138,7 +138,7 @@ public class CryptoUtils {
         }
 
         for (int i=0; i<bytes.length; i++) {
-            if (i >= 2 && i < bytes.length - 2) {
+            if (i >= 1 && i < bytes.length - 1) {
                 sb.append("*");
             } else {
                 sb.append(Hex.bytesToStringLowercase(new byte[] {bytes[i]}));
