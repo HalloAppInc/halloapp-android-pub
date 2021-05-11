@@ -268,7 +268,8 @@
     <string name="no">No</string>
     <string name="ok">OK</string>
     <string name="activity">Activity</string>
-    <string name="mark_all_read">Mark all read</string>
+    <!-- In activity center, mark all comments/mentions as read -->
+    <string name="mark_all_read">Read all</string>
     <string name="login_failed">Login failed</string>
     <string name="login_failed_explanation">Please, re-verify your phone number</string>
     <plurals name="app_expiration_days_left">

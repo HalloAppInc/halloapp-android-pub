@@ -29,10 +29,9 @@ import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.props.ServerProps;
-import com.halloapp.ui.CommentsActivity;
+import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.FeedNuxBottomSheetDialogFragment;
 import com.halloapp.ui.MainNavFragment;
-import com.halloapp.ui.SocialHistoryPopup;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.DialogFragmentUtils;
@@ -50,7 +49,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
 
     private HomeViewModel viewModel;
     private BadgedDrawable notificationDrawable;
-    private SocialHistoryPopup socialHistoryPopup;
     private PostThumbnailLoader postThumbnailLoader;
 
     private boolean scrollUpOnDataLoaded;
@@ -269,19 +267,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
 
         postsView.setAdapter(adapter);
 
-        socialHistoryPopup = new SocialHistoryPopup(requireContext(), postThumbnailLoader, root.findViewById(R.id.popup_anchor));
-        socialHistoryPopup.setOnItemClickListener(commentsGroup -> {
-            socialHistoryPopup.dismiss();
-            final HomeViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();
-            if (commentHistoryData != null) {
-                final Intent intent = new Intent(getContext(), CommentsActivity.class);
-                intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, commentsGroup.postSenderUserId.rawId());
-                intent.putExtra(CommentsActivity.EXTRA_POST_ID, commentsGroup.postId);
-                intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
-                startActivity(intent);
-            }
-        });
-
         return root;
     }
 
@@ -314,7 +299,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
             viewModel.saveScrollState(layoutManager.onSaveInstanceState());
         }
         super.onDestroyView();
-        socialHistoryPopup.destroy();
     }
 
     @Override
@@ -336,15 +320,13 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.notifications) {
-            if (!socialHistoryPopup.isShowing() && getView() != null) {
-                socialHistoryPopup.show(getView().getHeight() * 9 / 10);
-                if (nuxActivityCenter != null) {
-                    viewModel.closeActivityCenterNux();
-                }
-                if (nuxWelcome != null) {
-                    welcomeNuxContainer.setVisibility(View.GONE);
-                    viewModel.closeWelcomeNux();
-                }
+            startActivity(new Intent(requireContext(), ActivityCenterActivity.class));
+            if (nuxActivityCenter != null) {
+                viewModel.closeActivityCenterNux();
+            }
+            if (nuxWelcome != null) {
+                welcomeNuxContainer.setVisibility(View.GONE);
+                viewModel.closeWelcomeNux();
             }
             return true;
         }
@@ -359,6 +341,5 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         } else {
             nuxActivityCenterContainer.setVisibility(View.GONE);
         }
-        socialHistoryPopup.setSocialHistory(socialHistory);
     }
 }

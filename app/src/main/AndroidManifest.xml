@@ -38,6 +38,11 @@
         </activity>
 
         <activity
+            android:theme="@style/AppTheme.ActivityCenter"
+            android:name=".ui.ActivityCenterActivity"
+            android:label="@string/activity" />
+
+        <activity
             android:name=".ui.RegistrationVerificationActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
