@@ -1,12 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="oval">
-            <size
-                android:width="48dp"
-                android:height="48dp" />
-            <solid android:color="@color/color_secondary" />
-        </shape>
-    </item>
-    <item android:drawable="@drawable/ic_person_add" android:gravity="center"/>
-</layer-list>
+<vector android:height="48dp" android:viewportHeight="52"
+    android:viewportWidth="52" android:width="48dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#1A73E8" android:pathData="M26,26m-26,0a26,26 0,1 1,52 0a26,26 0,1 1,-52 0"/>
+    <path android:fillColor="#F3F2EF" android:pathData="M28.2727,26C30.6836,26 32.6364,23.9862 32.6364,21.5C32.6364,19.0138 30.6836,17 28.2727,17C25.8618,17 23.9091,19.0138 23.9091,21.5C23.9091,23.9862 25.8618,26 28.2727,26ZM19.4545,23.75V21.5C19.4545,20.8812 18.9636,20.375 18.3636,20.375C17.7636,20.375 17.2727,20.8812 17.2727,21.5V23.75H15.0909C14.4909,23.75 14,24.2562 14,24.875C14,25.4937 14.4909,26 15.0909,26H17.2727V28.25C17.2727,28.8687 17.7636,29.375 18.3636,29.375C18.9636,29.375 19.4545,28.8687 19.4545,28.25V26H21.6364C22.2364,26 22.7273,25.4937 22.7273,24.875C22.7273,24.2562 22.2364,23.75 21.6364,23.75H19.4545ZM28.2727,28.25C25.36,28.25 19.5455,29.7575 19.5455,32.75V33.875C19.5455,34.4937 20.0364,35 20.6364,35H35.9091C36.5091,35 37,34.4937 37,33.875V32.75C37,29.7575 31.1855,28.25 28.2727,28.25Z"/>
+</vector>
