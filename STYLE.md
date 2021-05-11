@@ -84,6 +84,7 @@ the code they describe
 - Log statements must not contain side effects
 - Wildcard imports are not allowed
 - Generated code and written code should not be updated in the same commit
+- Strings with more than one argument must use positional placeholders (e.g. "%1$s: %2$d")
 
 ## Samples
 
