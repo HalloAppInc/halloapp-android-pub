@@ -356,6 +356,13 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private void startAvatarPreview(@NonNull Uri uri) {
         final Intent intent = new Intent(this, AvatarPreviewActivity.class);
         intent.setData(uri);
+
+        if (pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
+            intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, AvatarPreviewActivity.AVATAR_FORM_SQUARE);
+        } else {
+            intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, AvatarPreviewActivity.AVATAR_FORM_CIRCLE);
+        }
+
         startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
     }
 

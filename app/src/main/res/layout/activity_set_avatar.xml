@@ -32,6 +32,7 @@
         />
 
     <com.halloapp.ui.avatar.AvatarCropOverlay
+        android:id="@+id/cropOverlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@+id/image"

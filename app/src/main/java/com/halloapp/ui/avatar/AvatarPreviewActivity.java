@@ -24,6 +24,11 @@ import com.halloapp.widget.SnackbarHelper;
 
 public class AvatarPreviewActivity extends HalloActivity {
 
+    public static final int AVATAR_FORM_CIRCLE = 1;
+    public static final int AVATAR_FORM_SQUARE = 2;
+
+    public static final String EXTRA_AVATAR_FORM = "avatar_form";
+
     public static final String RESULT_AVATAR_WIDTH = "avatar_width";
     public static final String RESULT_AVATAR_HEIGHT = "avatar_height";
     public static final String RESULT_AVATAR_HASH = "avatar_hash";
@@ -32,6 +37,7 @@ public class AvatarPreviewActivity extends HalloActivity {
     private AvatarPreviewViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
     private CropPhotoView imageView;
+    private AvatarCropOverlay cropOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +100,14 @@ public class AvatarPreviewActivity extends HalloActivity {
         } else {
             Log.e("AvatarPreviewActivity no uris provided");
             finish();
+        }
+
+        cropOverlay = findViewById(R.id.cropOverlay);
+
+        if (getIntent().getIntExtra(EXTRA_AVATAR_FORM, AVATAR_FORM_CIRCLE) == AVATAR_FORM_SQUARE) {
+            cropOverlay.setForm(AvatarCropOverlay.Form.SQUARE);
+        } else {
+            cropOverlay.setForm(AvatarCropOverlay.Form.CIRCLE);
         }
     }
 
