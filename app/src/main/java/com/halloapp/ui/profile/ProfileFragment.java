@@ -26,8 +26,10 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.chat.KeyVerificationActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.settings.SettingsProfile;
@@ -44,6 +46,7 @@ public class ProfileFragment extends PostsFragment {
     private final Me me = Me.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final ServerProps serverProps = ServerProps.getInstance();
 
     private ImageView avatarView;
     private TextView nameView;
@@ -224,6 +227,7 @@ public class ProfileFragment extends PostsFragment {
             inflater.inflate(R.menu.other_profile_menu, menu);
             blockMenuItem = menu.findItem(R.id.block);
             viewModel.getIsBlocked().observe(this, this::updateMenu);
+            menu.findItem(R.id.verify).setVisible(serverProps.getIsInternalUser());
         }
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -241,6 +245,8 @@ public class ProfileFragment extends PostsFragment {
                 unBlockContact();
             }
             return true;
+        } else if (item.getItemId() == R.id.verify) {
+            startActivity(KeyVerificationActivity.openKeyVerification(requireContext(), profileUserId));
         }
         return super.onOptionsItemSelected(item);
     }
