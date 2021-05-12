@@ -328,7 +328,11 @@ public class EncryptedKeyStore {
     }
 
     public PublicEdECKey getPeerPublicIdentityKey(UserId peerUserId) throws CryptoException {
-        return new PublicEdECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
+        try {
+            return new PublicEdECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
+        } catch (NullPointerException e) {
+            throw new CryptoException("no_key_found", e);
+        }
     }
 
     public void clearPeerPublicIdentityKey(UserId peerUserId) {
