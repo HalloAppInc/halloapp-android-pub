@@ -146,17 +146,11 @@ public class KeyVerificationActivity extends HalloActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if (Build.VERSION.SDK_INT >= 26) {
-            v.vibrate(VibrationEffect.createOneShot(VIBRATION_TIME_MS, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            v.vibrate(VIBRATION_TIME_MS);
-        }
-
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             String results = result.getContents();
             if (results != null) {
+                vibrate();
                 viewModel.verify(results);
             } else {
                 Log.i("KeyVerification: null result content");
@@ -164,6 +158,15 @@ public class KeyVerificationActivity extends HalloActivity {
         } else {
             Log.i("KeyVerification: null IntentResult from scanner");
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void vibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= 26) {
+            v.vibrate(VibrationEffect.createOneShot(VIBRATION_TIME_MS, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(VIBRATION_TIME_MS);
         }
     }
 }
