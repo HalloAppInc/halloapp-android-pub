@@ -49,6 +49,9 @@ public class Preferences {
     private static final String PREF_KEY_H264_RES = "h264_res";
     private static final String PREF_KEY_H265_RES = "h265_res";
 
+    private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
+    private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
+
     private AppContext appContext;
     private SharedPreferences preferences;
 
@@ -96,6 +99,30 @@ public class Preferences {
     public void setLastBlockListSyncTime(long time) {
         if (!getPreferences().edit().putLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, time).commit()) {
             Log.e("preferences: failed to set last block list sync time");
+        }
+    }
+
+    @WorkerThread
+    public boolean getWelcomeInviteNotificationSeen() {
+        return getPreferences().getBoolean(PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
+    }
+
+    @WorkerThread
+    public void setWelcomeInviteNotificationSeen(boolean seen) {
+        if (!getPreferences().edit().putBoolean(PREF_KEY_INVITE_NOTIFICATION_SEEN, seen).commit()) {
+            Log.e("preferences: failed to mark invite notification seen");
+        }
+    }
+
+    @WorkerThread
+    public long getInitialRegistrationTime() {
+        return getPreferences().getLong(PREF_KEY_REGISTRATION_TIME, 0);
+    }
+
+    @WorkerThread
+    public void setInitialRegistrationTime(long time) {
+        if (!getPreferences().edit().putLong(PREF_KEY_REGISTRATION_TIME, time).commit()) {
+            Log.e("preferences: failed to set initial registration time");
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.annotation.WorkerThread;
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -52,7 +53,7 @@ public class Registration {
         if (instance == null) {
             synchronized(Registration.class) {
                 if (instance == null) {
-                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance(), EncryptedKeyStore.getInstance());
+                    instance = new Registration(Me.getInstance(), ContentDb.getInstance(), Connection.getInstance(), Preferences.getInstance(), EncryptedKeyStore.getInstance());
                 }
             }
         }
@@ -62,12 +63,14 @@ public class Registration {
     private final Me me;
     private final ContentDb contentDb;
     private final Connection connection;
+    private final Preferences preferences;
     private final EncryptedKeyStore encryptedKeyStore;
 
-    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull EncryptedKeyStore encryptedKeyStore) {
+    private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull EncryptedKeyStore encryptedKeyStore) {
         this.me = me;
         this.contentDb = contentDb;
         this.connection = connection;
+        this.preferences = preferences;
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
@@ -167,6 +170,7 @@ public class Registration {
             me.saveRegistrationNoise(
                     Preconditions.checkNotNull(verificationResult.user),
                     Preconditions.checkNotNull(verificationResult.phone));
+            preferences.setInitialRegistrationTime(System.currentTimeMillis());
             connection.connect();
         }
         return verificationResult;

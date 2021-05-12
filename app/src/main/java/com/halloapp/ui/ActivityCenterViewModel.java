@@ -11,6 +11,7 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
@@ -19,6 +20,8 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.invites.InvitesApi;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,9 +39,15 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
+    private final Connection connection;
     private final ContactsDb contactsDb;
+    private final Preferences preferences;
+
+    private InvitesApi invitesApi;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private Integer numInvites;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
@@ -99,8 +108,12 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
+        connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
+        preferences = Preferences.getInstance();
+
+        invitesApi = new InvitesApi(connection);
 
         socialHistory = new ComputableLiveData<SocialHistory>() {
             @Override
@@ -124,10 +137,36 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 return contacts;
             }
         };
+
+        fetchInvites();
+    }
+
+    private void fetchInvites() {
+        bgWorkers.execute(() -> {
+            synchronized (this) {
+                if (numInvites == null) {
+                    numInvites = preferences.getInvitesRemaining();
+                    socialHistory.invalidate();
+                }
+            }
+            invitesApi.getAvailableInviteCount().onResponse(response -> {
+                if (response != null) {
+                    preferences.setInvitesRemaining(response);
+                    synchronized (this) {
+                        if (numInvites != response) {
+                            numInvites = response;
+                            socialHistory.invalidate();
+                        }
+                    }
+                }
+            });
+        });
     }
 
     public void markAllRead() {
         bgWorkers.execute(() -> {
+            preferences.setWelcomeInviteNotificationSeen(true);
+
             final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(-1));
             final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, -1);
             final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, -1);
@@ -173,6 +212,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 unseenOut.add(activity);
             }
         }
+    }
+
+    public void markInvitesNotificationSeen() {
+        bgWorkers.execute(() -> {
+            preferences.setWelcomeInviteNotificationSeen(true);
+            socialHistory.invalidate();
+        });
     }
 
     @WorkerThread
@@ -229,6 +275,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         socialActionEvents.addAll(unseenComments.values());
         socialActionEvents.addAll(seenComments);
 
+        long initialRegTimestamp = preferences.getInitialRegistrationTime();
+        if (initialRegTimestamp != 0 && numInvites > 0) {
+            SocialActionEvent event = SocialActionEvent.forInvites(numInvites, initialRegTimestamp);
+            event.seen = preferences.getWelcomeInviteNotificationSeen();
+            socialActionEvents.add(event);
+        }
+
         Collections.sort(socialActionEvents, ((o1, o2) -> {
             if (o1.seen != o2.seen) {
                 return o1.seen ? 1 : -1;
@@ -255,11 +308,12 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public static class SocialActionEvent {
 
-        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST})
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME})
         public @interface Action {
             int TYPE_COMMENT = 0;
             int TYPE_MENTION_IN_POST = 1;
             int TYPE_MENTION_IN_COMMENT = 2;
+            int TYPE_WELCOME = 3;
         }
 
         public final UserId postSenderUserId;
@@ -272,6 +326,8 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         public final @Action int action;
 
         public final List<UserId> involvedUsers = new ArrayList<>();
+
+        public int numInvites;
 
         public static SocialActionEvent fromMentionedPost(@NonNull Post post) {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_POST, post.senderUserId, post.id);
@@ -291,6 +347,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             activity.timestamp = comment.timestamp;
             activity.seen = comment.seen;
             activity.involvedUsers.add(comment.senderUserId);
+            return activity;
+        }
+
+        public static SocialActionEvent forInvites(int numInvites, long timestamp) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_WELCOME, UserId.ME, null);
+            activity.timestamp = timestamp;
+            activity.numInvites = numInvites;
             return activity;
         }
 

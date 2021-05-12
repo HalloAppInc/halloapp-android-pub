@@ -1,19 +1,30 @@
 package com.halloapp.util;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
 import android.text.Html;
+import android.text.Selection;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.SpannedString;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
+import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
+import android.text.style.URLSpan;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import com.halloapp.Constants;
+import com.halloapp.R;
+import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 
 import java.text.BreakIterator;
 import java.util.List;
@@ -60,6 +71,32 @@ public class StringUtils {
             res.setSpan(mediumSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return res;
+    }
+
+    public static Spanned replaceLink(@NonNull Context context, @NonNull CharSequence str, String url, Runnable onClick) {
+        SpannableStringBuilder current = new SpannableStringBuilder(str);
+        URLSpan[] spans = current.getSpans(0, str.length(), URLSpan.class);
+        for (URLSpan span : spans) {
+            int start = current.getSpanStart(span);
+            int end = current.getSpanEnd(span);
+            current.removeSpan(span);
+
+            ClickableSpan learnMoreSpan = new ClickableSpan() {
+                @Override
+                public void updateDrawState(@NonNull TextPaint ds) {
+                    ds.setUnderlineText(false);
+                    ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                    ds.setColor(context.getResources().getColor(R.color.color_secondary));
+                }
+
+                @Override
+                public void onClick(@NonNull View widget) {
+                    onClick.run();
+                }
+            };
+            current.setSpan(learnMoreSpan, start, end, 0);
+        }
+        return current;
     }
 
     private static class MediumSpan extends CharacterStyle {

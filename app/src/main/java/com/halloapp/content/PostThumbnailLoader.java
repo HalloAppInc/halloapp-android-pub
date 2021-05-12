@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
@@ -112,6 +113,11 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
             @Override
             public void showResult(@NonNull ImageView view, Drawable result) {
                 view.setImageDrawable(result);
+                if (result == null) {
+                    view.setVisibility(View.GONE);
+                } else {
+                    view.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

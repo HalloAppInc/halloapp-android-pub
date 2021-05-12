@@ -2,10 +2,18 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.graphics.Outline;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Selection;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,9 +36,13 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.ui.home.HomeViewModel;
+import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -131,6 +143,11 @@ public class ActivityCenterActivity extends HalloActivity {
         }
     }
 
+    private void onInvitesNotificationClicked() {
+        startActivity(new Intent(this, InviteContactsActivity.class));
+        viewModel.markInvitesNotificationSeen();
+    }
+
     private class SocialEventsAdapter extends RecyclerView.Adapter<SocialEventsAdapter.ViewHolder> {
 
         private List<ActivityCenterViewModel.SocialActionEvent> socialEvents;
@@ -220,7 +237,7 @@ public class ActivityCenterActivity extends HalloActivity {
                 }
                 TimeFormatter.setTimePostsFormat(timeView, timestamp);
 
-                if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
+                if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
                     if (socialEvent.postSenderUserId.isMe()) {
                         infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
                                 R.string.commented_on_your_post_1,
@@ -239,10 +256,10 @@ public class ActivityCenterActivity extends HalloActivity {
                                     R.plurals.commented_on_someones_post_4, names, contact.getDisplayName())));
                         }
                     }
-                } else if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_POST) {
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_POST) {
                     final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
                     infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_their_post, contact.getDisplayName())));
-                } else if (socialEvent.action == HomeViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_COMMENT) {
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_COMMENT) {
                     if (socialEvent.postSenderUserId.isMe()) {
                         infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_your_post, names.get(0))));
                     } else {
@@ -253,11 +270,20 @@ public class ActivityCenterActivity extends HalloActivity {
                             infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_someones_post, names.get(0), contact.getDisplayName())));
                         }
                     }
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
+                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getQuantityString(R.plurals.welcome_notification_invites, socialEvent.numInvites, socialEvent.numInvites));
+                    text = StringUtils.replaceLink(infoView.getContext(), text, "invite-friend", ActivityCenterActivity.this::onInvitesNotificationClicked);
+                    infoView.setText(text);
+                    infoView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
 
                 avatarLoader.load(avatarView, socialEvent.postSenderUserId);
 
                 itemView.setOnClickListener(v -> {
+                    if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
+                        onInvitesNotificationClicked();
+                        return;
+                    }
                     if (clickListener != null) {
                         clickListener.onItemClicked(socialEvent);
                     }
