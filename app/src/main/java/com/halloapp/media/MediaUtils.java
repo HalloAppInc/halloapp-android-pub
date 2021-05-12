@@ -34,24 +34,13 @@ import com.halloapp.FileStore;
 import com.halloapp.content.Media;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.mediapicker.GalleryDataSource;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
-
-import org.mp4parser.Box;
-import org.mp4parser.IsoFile;
-import org.mp4parser.boxes.iso14496.part12.MediaBox;
-import org.mp4parser.boxes.iso14496.part12.MediaHeaderBox;
-import org.mp4parser.boxes.iso14496.part12.MovieBox;
-import org.mp4parser.boxes.iso14496.part12.MovieHeaderBox;
-import org.mp4parser.boxes.iso14496.part12.TrackBox;
-import org.mp4parser.boxes.iso14496.part12.TrackHeaderBox;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -516,56 +505,6 @@ public class MediaUtils {
             } catch (IllegalArgumentException e) {
                 Log.e("MediaUtils.getVideoDuration", e);
                 return 0;
-            }
-        }
-    }
-
-    public static void zeroVideoTimestampMetadata(@NonNull File file) throws IOException {
-        final Date zeroDate = new Date(0);
-        try (IsoFile isoFile = new IsoFile(file)) {
-            MovieBox movieBox = isoFile.getMovieBox();
-            if (movieBox != null) {
-                MovieHeaderBox movieHeaderBox = movieBox.getMovieHeaderBox();
-                if (movieHeaderBox != null) {
-                    movieHeaderBox.setCreationTime(zeroDate);
-                    movieHeaderBox.setModificationTime(zeroDate);
-                }
-
-                for (Box box : movieBox.getBoxes()) {
-                    if (box instanceof TrackBox) {
-                        TrackBox trackBox = (TrackBox) box;
-                        TrackHeaderBox trackHeaderBox = trackBox.getTrackHeaderBox();
-                        if (trackHeaderBox != null) {
-                            trackHeaderBox.setCreationTime(zeroDate);
-                            trackHeaderBox.setModificationTime(zeroDate);
-                        }
-                        MediaBox mediaBox = trackBox.getMediaBox();
-                        if (mediaBox != null) {
-                            MediaHeaderBox mediaHeaderBox = trackBox.getMediaBox().getMediaHeaderBox();
-                            if (mediaHeaderBox != null) {
-                                mediaHeaderBox.setCreationTime(zeroDate);
-                                mediaHeaderBox.setModificationTime(zeroDate);
-                            }
-                        }
-                    }
-                }
-            }
-
-            final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
-            try (FileOutputStream fileOutputStream = new FileOutputStream(tempFile)) {
-                isoFile.writeContainer(fileOutputStream.getChannel());
-            } catch (IOException e) {
-                tempFile.delete();
-                throw e;
-            }
-
-            if (!file.delete()) {
-                Log.e("MediaUtils.zeroVideoTimestampMetadata: failed to delete " + file.getAbsolutePath());
-            }
-            if (!tempFile.renameTo(file)) {
-                Log.e("MediaUtils.zeroVideoTimestampMetadata: failed to rename " + tempFile.getAbsolutePath() + " to " + file.getAbsolutePath());
-            } else {
-                tempFile.delete();
             }
         }
     }
