@@ -415,12 +415,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     switch (mediaItem.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             try {
-                                RectF cropRect = null;
-                                if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                                    final float padding = (mediaItem.height - Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) / 2;
-                                    cropRect = new RectF(0, padding / mediaItem.height, 1, 1 - padding / mediaItem.height);
-                                }
-                                MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
+                                MediaUtils.transcodeImage(mediaItem.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
                             } catch (IOException e) {
                                 Log.e("failed to transcode image", e);
                                 return null;

@@ -164,7 +164,14 @@ public class CropImageActivity extends HalloActivity {
         adapter = new MediaListAdapter();
         mediaListView.setAdapter(adapter);
 
-        viewModel.getMediaData().observe(this, adapter::onViewModelUpdate);
+        viewModel.getMediaData().observe(this, models -> {
+            if (models.size() > 1) {
+                mediaListView.setVisibility(View.VISIBLE);
+                adapter.onViewModelUpdate(models);
+            } else {
+                mediaListView.setVisibility(View.GONE);
+            }
+        });
 
         setupMediaListDragNDrop();
     }

@@ -659,10 +659,7 @@ public class ContentComposerActivity extends HalloActivity {
             intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
             intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(CropImageActivity.EXTRA_STATE, state);
-
-            if (chatId != null) {
-                intent.putExtra(CropImageActivity.EXTRA_MAX_ASPECT_RATIO, 0f);
-            }
+            intent.putExtra(CropImageActivity.EXTRA_MAX_ASPECT_RATIO, 0f);
 
             updatedMediaProcessed = false;
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {
