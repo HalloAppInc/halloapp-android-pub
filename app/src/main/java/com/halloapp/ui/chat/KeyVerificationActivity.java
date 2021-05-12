@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -43,6 +45,7 @@ public class KeyVerificationActivity extends HalloActivity {
 
     private static final String EXTRA_USER_ID = "user_id";
     private static final int SAFETY_NUMBER_SPACING_DP = 5;
+    private static final int VIBRATION_TIME_MS = 500;
 
     private KeyVerificationViewModel viewModel;
     private ImageView qrCode;
@@ -143,6 +146,13 @@ public class KeyVerificationActivity extends HalloActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= 26) {
+            v.vibrate(VibrationEffect.createOneShot(VIBRATION_TIME_MS, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(VIBRATION_TIME_MS);
+        }
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             String results = result.getContents();
