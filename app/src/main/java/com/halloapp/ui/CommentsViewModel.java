@@ -193,31 +193,38 @@ class CommentsViewModel extends AndroidViewModel {
                         // Allow mentioning poster
                         contactSet.add(parentPost.senderUserId);
                     } else {
-                        switch (parentPost.getAudienceType()) {
-                            case PrivacyList.Type.ALL: {
-                                List<Contact> contacts = contactsDb.getUsers();
-                                for(Contact contact : contacts) {
-                                    contactSet.add(contact.userId);
-                                }
-                                break;
-                            }
-                            case PrivacyList.Type.EXCEPT: {
-                                List<Contact> contacts = contactsDb.getUsers();
-                                for(Contact contact : contacts) {
-                                    contactSet.add(contact.userId);
-                                }
-                                if (parentPost.getExcludeList() != null) {
-                                    for (UserId id : parentPost.getExcludeList()) {
-                                        contactSet.remove(id);
+                        if (parentPost.getAudienceType() != null) {
+                            switch (parentPost.getAudienceType()) {
+                                case PrivacyList.Type.ALL: {
+                                    List<Contact> contacts = contactsDb.getUsers();
+                                    for (Contact contact : contacts) {
+                                        contactSet.add(contact.userId);
                                     }
+                                    break;
                                 }
-                                break;
+                                case PrivacyList.Type.EXCEPT: {
+                                    List<Contact> contacts = contactsDb.getUsers();
+                                    for (Contact contact : contacts) {
+                                        contactSet.add(contact.userId);
+                                    }
+                                    if (parentPost.getExcludeList() != null) {
+                                        for (UserId id : parentPost.getExcludeList()) {
+                                            contactSet.remove(id);
+                                        }
+                                    }
+                                    break;
+                                }
+                                case PrivacyList.Type.ONLY: {
+                                    if (parentPost.getAudienceList() != null) {
+                                        contactSet.addAll(parentPost.getAudienceList());
+                                    }
+                                    break;
+                                }
                             }
-                            case PrivacyList.Type.ONLY: {
-                                if (parentPost.getAudienceList() != null) {
-                                    contactSet.addAll(parentPost.getAudienceList());
-                                }
-                                break;
+                        } else {
+                            List<Contact> contacts = contactsDb.getUsers();
+                            for (Contact contact : contacts) {
+                                contactSet.add(contact.userId);
                             }
                         }
                     }
