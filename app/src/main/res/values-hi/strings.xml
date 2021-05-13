@@ -44,6 +44,8 @@
     <string name="set_avatar_reset">"रीसेट"</string>
     <string name="new_post">"नई पोस्ट"</string>
     <string name="new_message">"नया संदेश"</string>
+
+    <!-- Fuzzy -->
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_with_name_placeholder">"%s HalloApp पर हैI"</string>
     <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! 🎉"</string>
@@ -114,13 +116,13 @@
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in their post"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1s&lt;/b&gt; and &lt;b&gt;%2s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt;, and &lt;b&gt;%3s&lt;/b&gt; commented on your post"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string>
     <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt;, and %d other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt;, and %d other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
     </plurals>
     <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
     <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
@@ -132,7 +134,7 @@
     <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string>
-    <string name="list_of_two">"%s and %s"</string>
+    <string name="list_of_two">"%1$s and %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
     <string name="list_of_many_end">", and %s"</string>
@@ -182,8 +184,8 @@
         <item quantity="other">"%1$d new post from %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
-        <item quantity="one">"%d message from %s"</item>
-        <item quantity="other">"%d message from %s"</item>
+        <item quantity="one">"%1$d message from %2$s"</item>
+        <item quantity="other">"%1$d message from %2$s"</item>
     </plurals>
     <plurals name="new_messages_separator">
         <item quantity="one">"%d new message"</item>
@@ -191,7 +193,7 @@
     </plurals>
     <string name="new_comments_notification">"%s commented on your post"</string>
     <string name="new_comments_on_multiple_posts_notification">"%s commented on your posts"</string>
-    <string name="new_posts_and_comments_notification">"%s. %s."</string>
+    <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp has expired"</string>
     <string name="notification_app_expiration_body">"Please download the latest release"</string>
     <plurals name="notification_app_expiration_days_left_title">
@@ -223,7 +225,9 @@
     <string name="no">"No"</string>
     <string name="ok">"OK"</string>
     <string name="activity">"Activity"</string>
-    <string name="mark_all_read">"Mark all read"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <string name="mark_all_read">"Read all"</string>
     <string name="login_failed">"Login failed"</string>
     <string name="login_failed_explanation">"Please, re-verify your phone number"</string>
     <plurals name="app_expiration_days_left">
@@ -249,7 +253,7 @@
     <string name="today_at_time">"Today at %s"</string>
     <string name="yesterday">"Yesterday"</string>
     <string name="yesterday_at_time">"Yesterday at %s"</string>
-    <string name="day_of_week_at_time">"%s at %s"</string>
+    <string name="day_of_week_at_time">"%1$s at %2$s"</string>
     <string name="unknown_contact">"Unknown contact"</string>
     <string name="select_contact">"New message"</string>
     <string name="search_contacts">"Search contacts"</string>
@@ -258,10 +262,10 @@
     <string name="action_save">"Save"</string>
     <string name="invite_friends">"Invite friends &amp; family"</string>
     <string name="invite_friend_chooser_title">"Invite %s"</string>
-    <string name="invite_text_with_name_and_number">"Hey %s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %s to register. Get it at halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %2$s to register. Get it at halloapp.com/dl"</string>
     <string name="name_hint">"Your name"</string>
     <string name="name_must_be_specified">"Name must be specified"</string>
-    <string name="counter">"%d/%d"</string>
+    <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Pending"</string>
     <string name="failed_update_profile">"Failed to update profile, try again later"</string>
     <string name="profile_updated">"Profile updated"</string>
@@ -286,19 +290,19 @@ version: %s
     <string name="unblock_notification">"You unblocked this contact"</string>
     <string name="system_message_group_created">"This group was created by %s"</string>
     <string name="system_message_group_created_by_you">"This group was created by you"</string>
-    <string name="system_message_members_added">"%s added %s"</string>
+    <string name="system_message_members_added">"%1$s added %2$s"</string>
     <string name="system_message_members_added_by_you">"You added %s"</string>
-    <string name="system_message_members_removed">"%s removed %s"</string>
+    <string name="system_message_members_removed">"%1$s removed %2$s"</string>
     <string name="system_message_members_removed_by_you">"You removed %s"</string>
     <string name="system_message_member_left">"%s left"</string>
     <string name="system_message_member_you_left">"You left"</string>
-    <string name="system_message_members_promoted">"%s promoted %s to admin"</string>
+    <string name="system_message_members_promoted">"%1$s promoted %2$s to admin"</string>
     <string name="system_message_members_promoted_by_you">"You promoted %s to admin"</string>
-    <string name="system_message_members_demoted">"%s demoted %s from admin"</string>
+    <string name="system_message_members_demoted">"%1$s demoted %2$s from admin"</string>
     <string name="system_message_members_demoted_by_you">"You demoted %s from admin"</string>
     <string name="system_message_member_auto_promoted">"%s was auto-promoted to admin"</string>
     <string name="system_message_member_auto_promoted_you">"You were auto-promoted to admin"</string>
-    <string name="system_message_group_name_changed">"%s changed the group name to %s"</string>
+    <string name="system_message_group_name_changed">"%1$s changed the group name to %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"You changed the group name to %s"</string>
     <string name="system_message_group_avatar_changed">"%s changed the group avatar"</string>
     <string name="system_message_group_avatar_changed_by_you">"You changed the group avatar"</string>
@@ -306,19 +310,19 @@ version: %s
     <string name="system_message_group_deleted_by_you">"You deleted the group"</string>
     <string name="system_post_group_created">"This group was created by %s"</string>
     <string name="system_post_group_created_by_you">"This group was created by you"</string>
-    <string name="system_post_members_added">"%s added %s"</string>
+    <string name="system_post_members_added">"%1$s added %2$s"</string>
     <string name="system_post_members_added_by_you">"You added %s"</string>
-    <string name="system_post_members_removed">"%s removed %s"</string>
+    <string name="system_post_members_removed">"%1$s removed %2$s"</string>
     <string name="system_post_members_removed_by_you">"You removed %s"</string>
     <string name="system_post_member_left">"%s left"</string>
     <string name="system_post_member_you_left">"You left"</string>
-    <string name="system_post_members_promoted">"%s promoted %s to admin"</string>
+    <string name="system_post_members_promoted">"%1$s promoted %2$s to admin"</string>
     <string name="system_post_members_promoted_by_you">"You promoted %s to admin"</string>
-    <string name="system_post_members_demoted">"%s demoted %s from admin"</string>
+    <string name="system_post_members_demoted">"%1$s demoted %2$s from admin"</string>
     <string name="system_post_members_demoted_by_you">"You demoted %s from admin"</string>
     <string name="system_post_member_auto_promoted">"%s was auto-promoted to admin"</string>
     <string name="system_post_member_auto_promoted_you">"You were auto-promoted to admin"</string>
-    <string name="system_post_group_name_changed">"%s changed the group name to %s"</string>
+    <string name="system_post_group_name_changed">"%1$s changed the group name to %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"You changed the group name to %s"</string>
     <string name="system_post_group_avatar_changed">"%s changed the group avatar"</string>
     <string name="system_post_group_avatar_changed_by_you">"You changed the group avatar"</string>
@@ -447,7 +451,7 @@ version: %s
         <item quantity="other">"Sharing with %d of my contacts"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s shared a post"</string>
-    <string name="post_preview_with_caption">"%s: %s"</string>
+    <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Sending to %s"</string>
     <string name="composer_sharing_post">"Sharing with %s"</string>
     <string name="max_video_length">"Your video is over %d seconds long. Please select another video or edit it."</string>
@@ -535,4 +539,10 @@ version: %s
 
     <!-- Button to manage your feed privacy settings -->
     <string name="manage_feed_privacy">"Manage privacy"</string>
+
+    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
+    <plurals name="welcome_notification_invites">
+        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+    </plurals>
 </resources>

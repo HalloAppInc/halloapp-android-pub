@@ -45,6 +45,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="set_avatar_reset">"Zurücksetzen"</string>
     <string name="new_post">"Neuer Beitrag"</string>
     <string name="new_message">"Neue Nachricht"</string>
+
+    <!-- Fuzzy -->
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! 🎉"</string>
@@ -129,10 +131,18 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="mentioned_you_in_their_post">"Du wurdest im Beitrag von &lt;b&gt;%s&lt;/b&gt; erwähnt"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Kommentar zu deinem Beitrag erwähnt"</string>
     <string name="mentioned_you_in_comment_on_own_post">"Du wurdest im Beitrag von &lt;b&gt;%s&lt;/b&gt; erwähnt"</string>
+
+    <!-- Fuzzy -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Kommentar zu &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag erwähnt"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string>
+
+    <!-- Fuzzy -->
     <string name="commented_on_your_post_2">"&lt;b&gt;%1s&lt;/b&gt; und &lt;b&gt;%2s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
+
+    <!-- Fuzzy -->
     <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und &lt;b&gt;%3s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
+
+    <!-- Fuzzy -->
     <plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und  %d weitere Person haben deinen Beitrag kommentiert"</item>
         <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %d weitere Personen haben Deinen Beitrag kommentiert"</item>
@@ -147,6 +157,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere oberste Priorität"</string>
     <string name="contact_hashing_faq_dialog_info">"Um dich mit deinen Freunden auf HalloApp zu verbinden verwendet HalloApp nur das Telefonnummernfeld und wird keine weiteren Kontaktdaten erfassen."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
+
+    <!-- Fuzzy -->
     <string name="list_of_two">"%s und %s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -200,6 +212,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"%d neuer Beitrag von %s"</item>
         <item quantity="other">"%d neue Beiträge von %s"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <plurals name="new_messages_notification">
         <item quantity="one">"%d Nachricht von %s"</item>
         <item quantity="other">"%d Nachrichten von %s"</item>
@@ -212,6 +226,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="new_comments_on_multiple_posts_notification">"%s hat deine Beiträge kommentiert"</string>
 
     <!-- can you provide more details please? -->
+    <!-- Fuzzy -->
     <string name="new_posts_and_comments_notification">"%s. %s."</string>
     <string name="notification_app_expired_title">"HalloApp ist abgelaufen"</string>
     <string name="notification_app_expiration_body">"Bitte lade die neueste Version herunter"</string>
@@ -245,6 +260,9 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="no">"Nein"</string>
     <string name="ok">"OK"</string>
     <string name="activity">"Aktivität"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <!-- Fuzzy -->
     <string name="mark_all_read">"Alle als gelesen markieren"</string>
     <string name="login_failed">"Anmeldung fehlgeschlagen"</string>
     <string name="login_failed_explanation">"Bitte Telefonnummer erneut überprüfen"</string>
@@ -275,6 +293,8 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="today_at_time">"Heute um %s"</string>
     <string name="yesterday">"Gestern"</string>
     <string name="yesterday_at_time">"Gestern um %s"</string>
+
+    <!-- Fuzzy -->
     <string name="day_of_week_at_time">"%s um %s"</string>
     <string name="unknown_contact">"Kontakt unbekannt"</string>
     <string name="select_contact">"Neue Nachricht"</string>
@@ -283,16 +303,15 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="contact_search_empty">"Nichts gefunden für '%s'"</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
-
-    <!-- to keep it gender neutral I changed "a friend" to "friends" -->
     <string name="invite_friend_chooser_title">"%s einladen"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Hallo %s, ich lade dich ein, dich ebenfalls bei HalloApp anzumelden. Eine simple Social-App, um alltägliche Momente zu teilen. Nutze %s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
 
-    <!-- Is this a noun or a verb? -->
-
     <!-- Can I get a screenshot pls -->
+    <!-- Fuzzy -->
     <string name="counter">"%d/%d"</string>
     <string name="invite_pending">"In Bearbeitung"</string>
     <string name="failed_update_profile">"Fehler bei der Aktualisierung des Profils, probiere es später noch einmal"</string>
@@ -318,20 +337,30 @@ Version: %s"</string>
     <string name="unblock_notification">"Du hast diesen Kontakt freigegeben"</string>
     <string name="system_message_group_created">"%s hat diese Gruppe gegründet"</string>
     <string name="system_message_group_created_by_you">"Du hast diese Gruppe gegründet"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_added">"%s hat %s hinzugefügt"</string>
     <string name="system_message_members_added_by_you">"Du hast %s hinzugefügt"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_removed">"%s hat %s entfernt"</string>
     <string name="system_message_members_removed_by_you">"Du hast %s entfernt"</string>
 
     <!-- pls. send screen shot. Where is it used? Left what? -->
     <string name="system_message_member_left">"%s hat die Gruppe verlassen"</string>
     <string name="system_message_member_you_left">"Du hast die Gruppe verlassen"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_promoted">"%s hat %s zum Admin gemacht"</string>
     <string name="system_message_members_promoted_by_you">"Du hast %s zum Admin gemacht"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_demoted">"%s hat %s als Admin entfernt"</string>
     <string name="system_message_members_demoted_by_you">"Du hast %s als Admin entfernt"</string>
     <string name="system_message_member_auto_promoted">"%s wurde automatisch zum Admin gemacht"</string>
     <string name="system_message_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_name_changed">"%s hat die Gruppe in %s umbenannt"</string>
     <string name="system_message_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
     <string name="system_message_group_avatar_changed">"%s hat den Gruppen-Avatar geändert"</string>
@@ -340,18 +369,28 @@ Version: %s"</string>
     <string name="system_message_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>
     <string name="system_post_group_created">"%s hat diese Gruppe gegründet"</string>
     <string name="system_post_group_created_by_you">"Du hast diese Gruppe gegründet"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_added">"%s hat %s hinzugefügt"</string>
     <string name="system_post_members_added_by_you">"Du hast %s hinzugefügt"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_removed">"%s hat %s entfernt"</string>
     <string name="system_post_members_removed_by_you">"Du hast %s entfernt"</string>
     <string name="system_post_member_left">"%s hat die Gruppe verlassen"</string>
     <string name="system_post_member_you_left">"Du hast die Gruppe verlassen"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_promoted">"%s hat %s zum Admin gemacht"</string>
     <string name="system_post_members_promoted_by_you">"Du hast %s zum Admin gemacht"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_demoted">"%s hat %s als Admin entfernt"</string>
     <string name="system_post_members_demoted_by_you">"Du hast %s als Admin entfernt"</string>
     <string name="system_post_member_auto_promoted">"%s wurde automatisch zum Admin gemacht"</string>
     <string name="system_post_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_name_changed">"%s hat die Gruppe in %s umbenannt"</string>
     <string name="system_post_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
     <string name="system_post_group_avatar_changed">"%s hat den Gruppen-Avatar geändert"</string>
@@ -485,6 +524,8 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
         <item quantity="other">"Mit %d meiner Kontakte geteilt"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s hat einen Beitrag geteilt"</string>
+
+    <!-- Fuzzy -->
     <string name="post_preview_with_caption">"%s: %s"</string>
     <string name="composer_sharing_message">"Wird an %s gesendet"</string>
     <string name="composer_sharing_post">"Wird mit %s geteilt"</string>
@@ -578,4 +619,10 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
 
     <!-- Button to manage your feed privacy settings -->
     <string name="manage_feed_privacy">"Manage privacy"</string>
+
+    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
+    <plurals name="welcome_notification_invites">
+        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+    </plurals>
 </resources>

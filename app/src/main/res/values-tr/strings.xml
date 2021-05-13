@@ -24,7 +24,7 @@
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Metin"</string>
-    <string name="bad_image">"Desteklenmeyen ortam formatı"</string>
+    <string name="bad_image">"Desteklenmeyen görsel formatı"</string>
     <string name="time_diff_now">"Şimdi"</string>
     <string name="phone_number_hint">"Telefon numarası"</string>
     <string name="request_registration_title">"Hoş geldin!"</string>
@@ -44,6 +44,8 @@
     <string name="set_avatar_reset">"Sıfırla"</string>
     <string name="new_post">"Yeni gönderi"</string>
     <string name="new_message">"Yeni mesaj"</string>
+
+    <!-- Fuzzy -->
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
     <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! 🎉"</string>
@@ -65,14 +67,12 @@
         <item quantity="other">"%dd"</item>
     </plurals>
     <plurals name="time_diff_minutes_long">
-        <item quantity="one">"%d dakika önce
-"</item>
+        <item quantity="one">"%d dakika önce"</item>
         <item quantity="other">"%d dakika önce"</item>
     </plurals>
     <plurals name="time_diff_hours">
-        <item quantity="one">"%ds 
-"</item>
-        <item quantity="other">"%ds "</item>
+        <item quantity="one">"%ds"</item>
+        <item quantity="other">"%ds"</item>
     </plurals>
     <plurals name="time_diff_hours_long">
         <item quantity="one">"%d saat önce"</item>
@@ -87,24 +87,23 @@
         <item quantity="other">"%d gün önce"</item>
     </plurals>
     <plurals name="max_post_media_items">
-        <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin
-"</item>
+        <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin"</item>
         <item quantity="other">"Gönderi başına en fazla %d öge seçebilirsin"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Fotoğraf çekebilmek ve video kaydedebilmek için cihaz ayarlarından kamera ve ses kaydına erişim izni vermen gerekmektedir."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Fotoğraf çekebilmek ve video kaydedebilmek için cihaz ayarlarından kamera ve ses kaydına erişim izni vermen gerekmektedir.
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git."</string>
-    <string name="contacts_permission_rationale">"Ailen ve arkadaşlarınla bağlantı kurabilmek için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir"</string>
-    <string name="contacts_permission_rationale_denied">"Ailen ve arkadaşlarınla bağlantı kurabilmek için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir
+    <string name="contacts_permission_rationale">"Ailen ve arkadaşlarınla bağlantı kurabilmek için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir."</string>
+    <string name="contacts_permission_rationale_denied">"Ailen ve arkadaşlarınla bağlantı kurabilmek için cihaz ayarlarından kişilere erişim izni vermen gerekmektedir.
 
-Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git"</string>
-    <string name="storage_permission_rationale">"Bir ortam ögesi seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir"</string>
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git."</string>
+    <string name="storage_permission_rationale">"Bir görsel seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir."</string>
     <string name="storage_permission_rationale_denied">"Bir görsel seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir
 
-Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</string>
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</string>
     <string name="retry">"Tekrar dene"</string>
-    <string name="contact_rationale_upload">"Ailen ve arkadaşlarınla bağlantı kurabilmen için kişilerine erişim iznine ihtiyacımız olacak. Daha fazlasını öğren."</string>
+    <string name="contact_rationale_upload">"Ailen ve arkadaşlarınla bağlantı kurabilmen için kişilerine erişim iznine ihtiyacımız olacak. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;."</string>
     <string name="failed_to_initialize">"Başlatılamadı"</string>
     <string name="type_a_comment_hint">"Yorum ekle"</string>
     <string name="comments">"Yorumlar"</string>
@@ -117,28 +116,34 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisinde senden bahsetti"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt;, gönderindeki bir yorumda senden bahsetti"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisindeki bir yorumda senden bahsetti"</string>
+
+    <!-- Fuzzy -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yaptığı yorumda senden bahsetti"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt;, gönderine yorum yaptı"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%s&lt;/b&gt; ve  &lt;b&gt;%2s&lt;/b&gt; gönderine yorum yaptılar"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve &lt;b&gt;%3s&lt;/b&gt; gönderine yorum yaptılar"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı
 
-"</item>
+    <!-- Fuzzy -->
+    <string name="commented_on_your_post_2">"&lt;b&gt;%s&lt;/b&gt; ve  &lt;b&gt;%2s&lt;/b&gt; gönderine yorum yaptılar"</string>
+
+    <!-- Fuzzy -->
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve &lt;b&gt;%3s&lt;/b&gt; gönderine yorum yaptılar"</string>
+
+    <!-- Fuzzy -->
+    <plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı"</item>
         <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı"</item>
     </plurals>
     <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt;,  &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</string>
     <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt;,  &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string>
     <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt;,  &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string>
     <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı
-
-"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
     </plurals>
     <string name="contact_hashing_faq_dialog_title">"Gizliliğin önceliğimizdir"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp, seni HalloApp kullanan arkadaşlarınla eşleştirmek için yalnızca telefon numaranı kullanır; rehberindeki başka herhangi bir veriyi almaz"</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp, seni HalloApp kullanan arkadaşlarınla eşleştirmek için yalnızca telefon numaranı kullanır; rehberindeki başka herhangi bir veriyi almaz."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;, kendi gönderisine yorum yaptı"</string>
+
+    <!-- Fuzzy -->
     <string name="list_of_two">"%s ve %s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -155,15 +160,11 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="settings_feed_privacy">"Gönderiler"</string>
     <string name="settings_privacy">"Gizlilik"</string>
     <plurals name="contact_selection_subtitle">
-        <item quantity="one">"%d kişi seçildi
-
-"</item>
+        <item quantity="one">"%d kişi seçildi"</item>
         <item quantity="other">"%d kişi seçildi"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"En fazla %d kişi seçebilirsin
-
-"</item>
+        <item quantity="one">"En fazla %d kişi seçebilirsin"</item>
         <item quantity="other">"En fazla %d kişi seçebilirsin"</item>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Kişi seçilmedi"</string>
@@ -181,13 +182,9 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
     <plurals name="seen_by">
-        <item quantity="one">"%d kişi tarafından görüldü
-
-"</item>
+        <item quantity="one">"%d kişi tarafından görüldü"</item>
         <item quantity="other">"%d kişi tarafından görüldü"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
     <string name="options">"Seçenekler"</string>
     <string name="block">"Engelle"</string>
@@ -199,32 +196,28 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
 
     <!-- Fuzzy -->
     <plurals name="new_posts_notification">
-        <item quantity="one">"%s, %d yeni gönderi paylaştı
-
-"</item>
-        <item quantity="other">"%s, %d yeni gönderi paylaştı"</item>
+        <item quantity="one">"%2$s, %1$d yeni gönderi paylaştı"</item>
+        <item quantity="other">"%2$s, %1$d yeni gönderi paylaştı"</item>
     </plurals>
-    <plurals name="new_messages_notification">
-        <item quantity="one">"%s kişisinden %d yeni mesaj 
 
-"</item>
-        <item quantity="other">"%s kişisinden %d yeni mesaj "</item>
+    <!-- Fuzzy -->
+    <plurals name="new_messages_notification">
+        <item quantity="one">"%s kişisinden %d yeni mesaj"</item>
+        <item quantity="other">"%s kişisinden %d yeni mesaj"</item>
     </plurals>
     <plurals name="new_messages_separator">
-        <item quantity="one">"%d yeni mesaj
-
-"</item>
+        <item quantity="one">"%d yeni mesaj"</item>
         <item quantity="other">"%d yeni mesaj"</item>
     </plurals>
     <string name="new_comments_notification">"%s, gönderine yorum yaptı"</string>
     <string name="new_comments_on_multiple_posts_notification">"%s, gönderilerine yorum yaptı"</string>
+
+    <!-- Fuzzy -->
     <string name="new_posts_and_comments_notification">"%s. %s."</string>
     <string name="notification_app_expired_title">"HalloApp'in süresi doldu"</string>
     <string name="notification_app_expiration_body">"Lütfen en son sürümü indir"</string>
     <plurals name="notification_app_expiration_days_left_title">
-        <item quantity="one">"HalloApp'in süresi, %d gün sonra dolacak
-
-"</item>
+        <item quantity="one">"HalloApp'in süresi, %d gün sonra dolacak"</item>
         <item quantity="other">"HalloApp'in süresi, %d gün sonra dolacak"</item>
     </plurals>
     <string name="app_expiration_download_button">"Güncellemeyi indir"</string>
@@ -240,15 +233,11 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="retract_post_confirmation">"Gönderini silmek mi istiyorsun?"</string>
     <string name="retract_comment_confirmation">"Yorumunu silmek mi istiyorsun?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="one">"Bu sohbeti silmek mi istiyorsun?
-
-"</item>
+        <item quantity="one">"Bu sohbeti silmek mi istiyorsun?"</item>
         <item quantity="other">"Seçtiğin %d sohbeti silmek mi istiyorsun?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
-        <item quantity="one">"Bu grubu silmek mi istiyorsun? 
-
-"</item>
+        <item quantity="one">"Bu grubu silmek mi istiyorsun?"</item>
         <item quantity="other">"Seçtiğin %d grubu silmek mi istiyorsun?"</item>
     </plurals>
     <string name="delete_chat_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
@@ -256,13 +245,14 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="no">"Hayır"</string>
     <string name="ok">"Tamam"</string>
     <string name="activity">"Hareketler"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <!-- Fuzzy -->
     <string name="mark_all_read">"Hepsini okundu olarak işaretle"</string>
     <string name="login_failed">"Giriş başarısız"</string>
     <string name="login_failed_explanation">"Lütfen telefon numaranı kontrol et"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="one">"HalloApp'in bu sürümünün süresi, %d gün içinde dolacak. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir. 
-
-"</item>
+        <item quantity="one">"HalloApp'in bu sürümünün süresi, %d gün içinde dolacak. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</item>
         <item quantity="other">"HalloApp'in bu sürümünün süresi, %d gün içinde dolacak. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</item>
     </plurals>
     <string name="could_not_set_avatar">"Lütfen başka bir resim dene"</string>
@@ -284,6 +274,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="today_at_time">"Bugün saat %s'de/te"</string>
     <string name="yesterday">"Dün"</string>
     <string name="yesterday_at_time">"Dün saat %s'de/te"</string>
+
+    <!-- Fuzzy -->
     <string name="day_of_week_at_time">"%s saat %s'de/te"</string>
     <string name="unknown_contact">"Bilinmeyen kişi"</string>
     <string name="select_contact">"Yeni mesaj"</string>
@@ -295,9 +287,12 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="invite_friend_chooser_title">"% kişisini davet et"</string>
 
     <!-- Will the second %s here be a link? -->
-    <string name="invite_text_with_name_and_number">"Selam %s, HalloApp'te (günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması) bana katılman için seni davet ediyorum. Kaydolmak için %s kullan. halloapp.com/dl adresinden indir."</string>
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Merhaba %s, HalloApp'te (günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması) bana katılman için seni davet ediyorum. Kaydolmak için %s numarasını kullan. halloapp.com/dl adresinden indir."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
+
+    <!-- Fuzzy -->
     <string name="counter">"%d/%d"</string>
     <string name="invite_pending">"Beklemede"</string>
     <string name="failed_update_profile">"Profil güncellemesi başarısız, daha sonra tekrar dene"</string>
@@ -306,8 +301,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="email_logs_subject">"HalloApp Android %s %s"</string>
 
     <!-- Fuzzy -->
-    <string name="email_logs_text">"Lüften sorununu yukarıda açıkla.
-"</string>
+    <string name="email_logs_text">"Lüften sorununu yukarıda açıkla."</string>
     <string name="share">"Paylaş"</string>
     <string name="unblock">"Engeli kaldır"</string>
     <string name="unblock_user_confirmation">"%s kişisinin engelini kaldırmak mı istiyorsun?"</string>
@@ -320,18 +314,28 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="unblock_notification">"Bu kişinin engelini kaldırdın."</string>
     <string name="system_message_group_created">"Bu grup %s tarafından kuruldu"</string>
     <string name="system_message_group_created_by_you">"Bu grubu sen kurdun"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_added">"%s, %s kişisini ekledi"</string>
     <string name="system_message_members_added_by_you">"%s kişisini ekledin"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_removed">"%s, %s kişisini çıkardı"</string>
     <string name="system_message_members_removed_by_you">"%s kişisini çıkardın"</string>
     <string name="system_message_member_left">"%s ayrıldı"</string>
     <string name="system_message_member_you_left">"Ayrıldın"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_promoted">"%s, %s kişisini yönetici yaptı"</string>
     <string name="system_message_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_demoted">"%s, %s kişisini yöneticilikten çıkardı"</string>
     <string name="system_message_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
     <string name="system_message_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
     <string name="system_message_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_name_changed">"%s, grubun adını %s olarak değiştirdi"</string>
     <string name="system_message_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
     <string name="system_message_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
@@ -340,18 +344,28 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="system_message_group_deleted_by_you">"Grubu sildin"</string>
     <string name="system_post_group_created">"Bu grup, %s tarafından kuruldu"</string>
     <string name="system_post_group_created_by_you">"Bu grubu sen kurdun"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_added">"%s, %s kişisini ekledi"</string>
     <string name="system_post_members_added_by_you">"%s kişisini ekledin"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_removed">"%s, %s kişisini sildi"</string>
     <string name="system_post_members_removed_by_you">"%s kişisini sildin"</string>
     <string name="system_post_member_left">"%s ayrıldı"</string>
     <string name="system_post_member_you_left">"Ayrıldın"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_promoted">"%s, %s kişisini yönetici yaptı"</string>
     <string name="system_post_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_demoted">"%s, %s kişisini yöneticilikten çıkardı"</string>
     <string name="system_post_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
     <string name="system_post_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
     <string name="system_post_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_name_changed">"%s, grubun adını %s olarak değiştirdi"</string>
     <string name="system_post_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
     <string name="system_post_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
@@ -378,9 +392,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="invite_creation_in_progress">"Davet oluşturuluyor..."</string>
     <string name="invite_info_fetch_internet">"Davet bilgileri alınamadı. İnternet bağlantını kontrol et ve tekrar dene"</string>
     <plurals name="invites_remaining">
-        <item quantity="one">"%s davet hakkın kaldı
-
-"</item>
+        <item quantity="one">"%s davet hakkın kaldı"</item>
         <item quantity="other">"%s davet hakkın kaldı"</item>
     </plurals>
     <string name="no_invites_remaining">"Bu pazartesi daha fazla davet hakkı gelecek!"</string>
@@ -412,37 +424,29 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="failed_remove_member">"Üye çıkarma başarısız, daha sonra tekrar dene"</string>
     <string name="leave_group">"Gruptan ayrıl"</string>
     <plurals name="leave_group_plural">
-        <item quantity="one">"Gruptan ayrıl 
-
-"</item>
+        <item quantity="one">"Gruptan ayrıl"</item>
         <item quantity="other">"Gruplardan ayrıl"</item>
     </plurals>
     <string name="leave_group_confirmation">"Bu gruptan ayrılmak mı istiyorsun?"</string>
     <plurals name="leave_multiple_groups_confirmation">
-        <item quantity="one">"Bu gruptan ayrılmak mı istiyorsun?
-
-"</item>
+        <item quantity="one">"Bu gruptan ayrılmak mı istiyorsun?"</item>
         <item quantity="other">"Seçtiğin %d gruptan ayrılmak mı istiyorsun?"</item>
     </plurals>
+
+    <!-- I guess this means "you are leaving the group?", right? I might change with a better translation if so. -->
     <string name="leave_group_in_progress">"Gruptan ayrılınıyor..."</string>
     <plurals name="leave_groups_progress">
-        <item quantity="one">"Gruptan ayrılınıyor... 
-
-"</item>
+        <item quantity="one">"Gruptan ayrılınıyor... "</item>
         <item quantity="other">"Gruplardan ayrılınıyor..."</item>
     </plurals>
     <string name="failed_leave_group">"Gruptan ayrılma başarısız, daha sonra tekrar dene"</string>
     <string name="delete_group">"Grubu sil"</string>
     <plurals name="friends_on_halloapp">
-        <item quantity="one">"HalloApp'te bağlantın olan %d kişi var
-
-"</item>
+        <item quantity="one">"HalloApp'te bağlantın olan %d kişi var"</item>
         <item quantity="other">"HalloApp'te bağlantın olan %d kişi var"</item>
     </plurals>
     <plurals name="settings_block_list_summary">
-        <item quantity="one">"%d kişi
-
-"</item>
+        <item quantity="one">"%d kişi"</item>
         <item quantity="other">"%d kişi"</item>
     </plurals>
 
@@ -450,15 +454,11 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="settings_block_list_none_summary">"Yok"</string>
     <string name="settings_feed_contacts_summary">"Rehberimdeki kişiler"</string>
     <plurals name="settings_feed_excluded_summary">
-        <item quantity="one">"%d kişi hariç
-
-"</item>
+        <item quantity="one">"%d kişi hariç"</item>
         <item quantity="other">"%d kişi hariç"</item>
     </plurals>
     <plurals name="settings_feed_selected">
-        <item quantity="one">"%d kişi seçildi 
-
-"</item>
+        <item quantity="one">"%d kişi seçildi"</item>
         <item quantity="other">"%d kişi seçildi"</item>
     </plurals>
     <string name="settings_feed_selected_empty">"Kişi seçilmedi"</string>
@@ -483,34 +483,32 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
 
 Bu yayınları görmesini istediğin kişilerle telefon numaralarınızın birbirinizde ekli olması gerekir. 
 
-Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçtiğin kişilerle paylaşabilirsin. Yayın gizliliğini değiştirmek için ayarlara git. "</string>
+Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçtiğin kişilerle paylaşabilirsin. Yayın gizliliğini değiştirmek için ayarlara git."</string>
     <string name="messages_nux_text">"Ailenden ve arkadaşlarından gelen mesajları burada bulabilirsin. HalloApp'e yeni biri katıldığında, onu burada görebilirsin."</string>
     <string name="post_audience_nux_text">"Gönderilerin, rehberinde bulunan ve HalloApp kullanan kişilerle paylaşılacak. Profil→Ayarlar'a giderek gönderilerine erişimlerini sınırlayabilirsin."</string>
-    <string name="activity_center_nux">"Burası senin hareket merkezin. En son etkinliğini görmek için dokun"</string>
+    <string name="activity_center_nux">"Burası senin hareket merkezin. En son etkinliğini görmek için dokun."</string>
     <string name="home_feed_nux">"Ana sayfana hoş geldin! Rehberinde bulunan ve HalloApp kullanan kişilerin gönderilerini burada görebilirsin"</string>
     <string name="home_feed_nux_learn_more">"Daha fazlasını öğren"</string>
     <string name="camera_error_generic">"Kamera çalışmıyor"</string>
     <string name="camera_error_photo">"Fotoğraf çekilemiyor"</string>
     <string name="camera_error_video">"Video kaydedilemiyor"</string>
     <plurals name="group_feed_members">
-        <item quantity="one">"%d üye
-
-"</item>
+        <item quantity="one">"%d üye"</item>
         <item quantity="other">"%d üye"</item>
     </plurals>
     <string name="composer_sharing_all_summary">"Kişilerimle paylaşılıyor"</string>
     <string name="composer_sharing_except_summary">"Kişilerimden bazılarıyla paylaşılıyor"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Kişilerimden %d tanesi ile paylaşılıyor
-
-"</item>
+        <item quantity="one">"Kişilerimden %d tanesi ile paylaşılıyor"</item>
         <item quantity="other">"Kişilerimden %d tanesi ile paylaşılıyor"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s, bir gönderi paylaştı"</string>
+
+    <!-- Fuzzy -->
     <string name="post_preview_with_caption">"%s: %s"</string>
     <string name="composer_sharing_message">"%s kişisine gönderiliyor"</string>
     <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
-    <string name="max_video_length">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç"</string>
+    <string name="max_video_length">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</string>
     <string name="video_edit_unable_trim">"Video kırpma başarısız"</string>
     <string name="mute">"Sessize al"</string>
     <string name="share_link">"İlişimi paylaş"</string>
@@ -549,50 +547,56 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <string name="not_now">"Şimdi değil"</string>
     <string name="continue_button">"Devam"</string>
     <string name="contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
-    <string name="contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Daha fazlasını öğren. Ayarlar &gt; İzinler'e git ve Kişiler'i aç."</string>
+    <string name="contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;. Ayarlar &gt; İzinler'e git ve Kişiler'i aç."</string>
     <string name="home_contact_permissions_nag">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var."</string>
     <string name="home_contact_permissions_nag_permanently_blocked">"Ailen ve arkadaşlarınla bağlantı kurmana yardımcı olmak için kişilerine erişim iznine ihtiyacımız var. Ayarlar &gt; İzinler'e git ve Kişiler'i aç."</string>
     <string name="invite_link_load_failed">"Grup davet ilişimi açılamadı"</string>
-    <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. Daha fazlasını öğren."</string>
+    <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. &lt;a href=\"https://halloapp.com/help/\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"HalloApp sürümün, bu tür mesajları desteklemiyor. Uygulamanı güncelle"</string>
+    <string name="message_upgrade_placeholder">"HalloApp sürümün, bu tür mesajları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"HalloApp sürümün, bu tür gönderileri desteklemiyor. Uygulamanı güncelle"</string>
+    <string name="post_upgrade_placeholder">"HalloApp sürümün, bu tür gönderileri desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"HalloApp sürümün, bu tür yorumları desteklemiyor. Uygulamanı güncelle"</string>
+    <string name="comment_upgrade_placeholder">"HalloApp sürümün, bu tür yorumları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+    <string name="registration_sms_retry_progress">"Yeni SMS kodu isteniyor..."</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+    <string name="registration_phone_code_progress">"Arama yoluyla kod isteniyor..."</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"Resend SMS"</string>
+    <string name="resend_sms">"SMS'i tekrar gönder"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="call_me">"Call me"</string>
-    <string name="verify_keys">"Verify keys"</string>
+    <string name="call_me">"Beni ara"</string>
+    <string name="verify_keys">"Doğrulama kodu"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
-    <string name="key_verification_success">"Verification succeeded"</string>
+    <string name="key_verification_success">"Doğrulama başarılı"</string>
 
     <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
-    <string name="key_verification_failure">"Verification failed"</string>
+    <string name="key_verification_failure">"Doğrulama başarısız"</string>
 
     <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
-    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+    <string name="key_verification_tap_to_scan">"Taramak için dokun"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"%s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya %s kişisinin telefonundaki QR kodunu tara. "<![CDATA[<a href="https://halloapp.com/help/">Daha fazlasını öğren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
-    <string name="view_more">"More"</string>
+    <string name="view_more">"Daha fazla"</string>
 
     <!-- Button to manage your feed privacy settings -->
-    <string name="manage_feed_privacy">"Manage privacy"</string>
+    <string name="manage_feed_privacy">"Gizliliği yönet"</string>
+
+    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
+    <plurals name="welcome_notification_invites">
+        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+    </plurals>
 </resources>

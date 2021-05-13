@@ -5,9 +5,9 @@
     <string name="title_messages">"Chats"</string>
     <string name="title_profile">"Perfil"</string>
     <string name="title_groups">"Grupos"</string>
-    <string name="comment">"Comentario"</string>
+    <string name="comment">"Comentar"</string>
     <string name="next">"Siguiente"</string>
-    <string name="message">"Enviar un mensaje"</string>
+    <string name="message">"Envía un mensaje"</string>
     <string name="add_post">"Agrega una publicación"</string>
     <string name="new_chat">"Nuevo chat"</string>
     <string name="new_group">"Nuevo grupo"</string>
@@ -43,6 +43,8 @@
     <string name="set_avatar_reset">"Restablecer"</string>
     <string name="new_post">"Nuevo comentario"</string>
     <string name="new_message">"Nuevo mensaje"</string>
+
+    <!-- Fuzzy -->
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está en HalloApp."</string>
     <string name="new_chat_name_placeholder">"¡%s está usando HalloApp!"</string>
@@ -97,16 +99,16 @@ Abre la pantalla de configuración de la aplicación para modificar los permisos
 Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
 
     <!-- Fuzzy -->
-    <string name="storage_permission_rationale">"Escoge el medio, necesitamos permiso para tener acceso al almacenamiento de tu dispositivo."</string>
+    <string name="storage_permission_rationale">"Para escoger el medio necesitamos permiso para tener acceso al almacenamiento de tu dispositivo."</string>
 
     <!-- Fuzzy -->
-    <string name="storage_permission_rationale_denied">"Escoge el medio necesitamos permiso para tener acceso al almacenamiento de tu dispositivo.
+    <string name="storage_permission_rationale_denied">"Para escoger el medio necesitamos permiso para tener acceso al almacenamiento de tu dispositivo.
 
 Para modificar los permisos abre la pantalla de configuración de la aplicación."</string>
     <string name="retry">"Inténtalo de nuevo"</string>
     <string name="contact_rationale_upload">"Para poder conectarte con tu familia y amigos necesitamos permiso para tener acceso a tus contactos. Más información"</string>
     <string name="failed_to_initialize">"No se pudo iniciar"</string>
-    <string name="type_a_comment_hint">"Comentar"</string>
+    <string name="type_a_comment_hint">"Hacer un comentario"</string>
     <string name="comments">"Comentarios"</string>
     <string name="reply">"Responder"</string>
     <string name="close">"Cerrar"</string>
@@ -117,10 +119,18 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; te mencionó en una publicación suya"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; te mencionó en un comentario en tu publicación"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; te mencionó en un comentario en su publicación"</string>
+
+    <!-- Fuzzy -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; te mencionó en un comentario en algo que publicó &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hizo un comentario en tu publicación"</string>
+
+    <!-- Fuzzy -->
     <string name="commented_on_your_post_2">"&lt;b&gt;%1s&lt;/b&gt; y &lt;b&gt;%2s&lt;/b&gt; comentaron en tu publicación"</string>
+
+    <!-- Fuzzy -->
     <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; y &lt;b&gt;%3s&lt;/b&gt; comentaron en tu publicación"</string>
+
+    <!-- Fuzzy -->
     <plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; y %d comentaron en tu publicación"</item>
         <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; y %d otros comentaron en tu publicación"</item>
@@ -135,6 +145,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="contact_hashing_faq_dialog_title">"Tu privacidad es nuestra prioridad"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp solo usa el número de teléfono para conectarte con tus amigos en HalloApp, y no captura ninguna otra información adicional de tu libreta de contactos. "</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación"</string>
+
+    <!-- Fuzzy -->
     <string name="list_of_two">"%s y %s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -172,9 +184,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
         <item quantity="one">"Visto por %d persona"</item>
         <item quantity="other">"Visto por %d personas"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="empty_viewed_by">"Nadie ha visto tu publicación"</string>
+    <string name="empty_viewed_by">"Todavía nadie ha visto tu publicación"</string>
     <string name="options">"Opciones"</string>
     <string name="block">"Bloquear"</string>
     <string name="play">"Jugar"</string>
@@ -188,6 +198,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
         <item quantity="one">"%d nueva publicación de %s"</item>
         <item quantity="other">"%d nuevas publicaciones de %s"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <plurals name="new_messages_notification">
         <item quantity="one">"%d nuevo mensaje de %s"</item>
         <item quantity="other">"%d mensajes de %s"</item>
@@ -198,6 +210,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     </plurals>
     <string name="new_comments_notification">"%s comentó en tu publicación"</string>
     <string name="new_comments_on_multiple_posts_notification">"%s comentó en tus publicaciones"</string>
+
+    <!-- Fuzzy -->
     <string name="new_posts_and_comments_notification">"%s. %s."</string>
     <string name="notification_app_expired_title">"HalloApp ha expirado"</string>
     <string name="notification_app_expiration_body">"Descarga la versión más reciente"</string>
@@ -232,11 +246,14 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="no">"No"</string>
     <string name="ok">"Ok"</string>
     <string name="activity">"Actividad"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <!-- Fuzzy -->
     <string name="mark_all_read">"Marcar todos como leídos"</string>
     <string name="login_failed">"No se pudo iniciar sesión"</string>
     <string name="login_failed_explanation">"Por favor verifica tu número de teléfono"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="one">"Esta versión de HalloApp se va a vencer en %d día. Ve a Google Play Store y descarga la última versión."</item>
+        <item quantity="one">"Esta versión de HalloApp se vence en %d día. Ve a Google Play Store y descarga la última versión."</item>
         <item quantity="other">"Esta versión de HalloApp se vence en %d días. Ve a Google Play Store y descarga la última versión."</item>
     </plurals>
     <string name="could_not_set_avatar">"Por favor intenta con una imagen diferente"</string>
@@ -258,6 +275,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="today_at_time">"Hoy a las %s"</string>
     <string name="yesterday">"Ayer"</string>
     <string name="yesterday_at_time">"Ayer a las %s"</string>
+
+    <!-- Fuzzy -->
     <string name="day_of_week_at_time">"El %s a las %s"</string>
     <string name="unknown_contact">"Contacto desconocido"</string>
     <string name="select_contact">"Nuevo mensaje"</string>
@@ -265,11 +284,15 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="search">"Buscar"</string>
     <string name="contact_search_empty">"No se encontró nada para '%s'"</string>
     <string name="action_save">"Guardar"</string>
-    <string name="invite_friends">"Invitar a familiares y amigos"</string>
+    <string name="invite_friends">"Invitar a tu familia y amigos"</string>
     <string name="invite_friend_chooser_title">"Invita a %s"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Hola %s, tengo una invitación para que te unas a mí en HalloApp (una aplicación social sencilla para compartir los momentos cotidianos). Usa %s para registrarte. Obténla en halloapp.com/dl"</string>
     <string name="name_hint">"Tu nombre"</string>
     <string name="name_must_be_specified">"Debes especificar tu nombre"</string>
+
+    <!-- Fuzzy -->
     <string name="counter">"%d/%d"</string>
     <string name="invite_pending">"Pendiente"</string>
     <string name="failed_update_profile">"Tu perfil no se pudo actualizar, trata de nuevo más tarde"</string>
@@ -296,18 +319,28 @@ version: %s
     <string name="unblock_notification">"Desbloqueaste a este contacto."</string>
     <string name="system_message_group_created">"Este grupo fue creado por %s"</string>
     <string name="system_message_group_created_by_you">"Este grupo fue creado por ti"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_added">"%s agrego a %s"</string>
     <string name="system_message_members_added_by_you">"Tú agregaste a %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_removed">"%s eliminó a %s"</string>
     <string name="system_message_members_removed_by_you">"Tú eliminaste a %s"</string>
     <string name="system_message_member_left">"%s se salió"</string>
     <string name="system_message_member_you_left">"Tu te saliste"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_promoted">"%s designó a %s como administrador"</string>
     <string name="system_message_members_promoted_by_you">"Tú designaste a %s como administrador"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_members_demoted">"%s descartó a %s como administrador"</string>
     <string name="system_message_members_demoted_by_you">"Tu descartaste a %s como administrador"</string>
     <string name="system_message_member_auto_promoted">"%s fue autopromovido como administrador"</string>
     <string name="system_message_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_name_changed">"%s cambió el nombre del grupo a %s"</string>
     <string name="system_message_group_name_changed_by_you">"Tu cambiaste el nombre del grupo a %s"</string>
     <string name="system_message_group_avatar_changed">"%s cambió el avatar del grupo"</string>
@@ -316,18 +349,28 @@ version: %s
     <string name="system_message_group_deleted_by_you">"Tú eliminaste el grupo"</string>
     <string name="system_post_group_created">"Este grupo fue creado por %s"</string>
     <string name="system_post_group_created_by_you">"Este grupo fue creado por ti"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_added">"%s agregó a %s"</string>
     <string name="system_post_members_added_by_you">"Tú agregaste a %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_removed">"%s sacó a %s"</string>
     <string name="system_post_members_removed_by_you">"Tú sacaste a %s"</string>
     <string name="system_post_member_left">"%s se salió"</string>
     <string name="system_post_member_you_left">"Tú te saliste"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_promoted">"%s designó a %s como administrador"</string>
     <string name="system_post_members_promoted_by_you">"Tú designaste a %s como administrador"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_members_demoted">"%s descartó a %s como administrador"</string>
     <string name="system_post_members_demoted_by_you">"Tú descargaste a %s como administrador"</string>
     <string name="system_post_member_auto_promoted">"%s fue autopromovido como administrador"</string>
     <string name="system_post_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_name_changed">"%s cambió el nombre del grupo a %s"</string>
     <string name="system_post_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
     <string name="system_post_group_avatar_changed">"%s cambió el avatar del grupo"</string>
@@ -360,7 +403,7 @@ version: %s
         <item quantity="other">"Te quedan %s invitaciones esta semana"</item>
     </plurals>
     <string name="no_invites_remaining">"¡Este lunes llegan más invitaciones!"</string>
-    <string name="invite_friends_title">"Invita a tu familia y a tus amigos"</string>
+    <string name="invite_friends_title">"Invita a tu familia y amigos"</string>
     <string name="invite_title">"Invitación"</string>
     <string name="settings_invite_option">"Invitar a HalloApp"</string>
     <string name="invite_already_on_halloapp">"Ya está en HalloApp"</string>
@@ -413,7 +456,7 @@ version: %s
         <item quantity="one">"%d contacto"</item>
         <item quantity="other">"%d contactos"</item>
     </plurals>
-    <string name="settings_block_list_none_summary">"Ninguna"</string>
+    <string name="settings_block_list_none_summary">"Ninguno"</string>
     <string name="settings_feed_contacts_summary">"Mi libreta de teléfonos"</string>
     <plurals name="settings_feed_excluded_summary">
         <item quantity="one">"%d excluído"</item>
@@ -441,11 +484,11 @@ version: %s
     <string name="group_user_typing">"%s está escribiendo…"</string>
     <string name="group_many_users_typing">"muchos usuarios están escribiendo…"</string>
     <string name="feed_nux_bottom_sheet_title">"Acerca de HalloApp"</string>
-    <string name="feed_nux_bottom_sheet_text">"El contenido de la página de inicio te permite compartir novedades en textos, fotos y videos que desaparecen después de 30 días.
+    <string name="feed_nux_bottom_sheet_text">"El contenido de la página de inicio te permite compartir lo que te interesa en textos, fotos y videos que desaparecen después de 30 días.
 
-Si quieres compartir una novedad con alguien, ambas partes deben tener el número de teléfono de cada uno guardado en sus teléfonos.
+Si quieres compartir algo con alguien, ambos deben tener el número de teléfono de cada uno guardado en sus teléfonos.
 
-Puedes compartir estas novedades con todos tus contactos o solo con las personas que elijas. Ve a configuración para cambiar la privacidad del contenido."</string>
+Puedes compartir estas historias con todos tus contactos o solo con las personas que elijas. Ve a configuración para cambiar la privacidad del contenido."</string>
     <string name="messages_nux_text">"Aquí encontrarás mensajes de tu familia y de tus amigos. Cuando alguien nuevo se une a HalloApp los puedes ver aquí."</string>
     <string name="post_audience_nux_text">"Tu publicación será compartida con tus contactos de teléfono que usan HalloApp. Puedes restringir el acceso a tus publicaciones si vas a Perfil→Configuración."</string>
     <string name="activity_center_nux">"Este es tu centro de actividades. Toca la pantalla para ver tu actividad más reciente."</string>
@@ -465,6 +508,8 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
         <item quantity="other">"Compartir con %d de mis contactos"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s compartió una publicación"</string>
+
+    <!-- Fuzzy -->
     <string name="post_preview_with_caption">"%s: %s"</string>
     <string name="composer_sharing_message">"Enviar a %s"</string>
     <string name="composer_sharing_post">"Compartir con %s"</string>
@@ -553,4 +598,10 @@ Puedes compartir estas novedades con todos tus contactos o solo con las personas
 
     <!-- Button to manage your feed privacy settings -->
     <string name="manage_feed_privacy">"Manage privacy"</string>
+
+    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
+    <plurals name="welcome_notification_invites">
+        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+    </plurals>
 </resources>
