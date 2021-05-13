@@ -21,7 +21,6 @@
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp 🎉 angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"Du"</string>
-    <string name="copy_text">"Text kopieren"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Gallerie"</string>
     <string name="text_post">"Text"</string>
@@ -47,7 +46,6 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="new_post">"Neuer Beitrag"</string>
     <string name="new_message">"Neue Nachricht"</string>
     <string name="chat_message_attribution">"%s: %s"</string>
-    <string name="empty_chat_placeholder">"Hallo! Ich bin auf HalloApp"</string>
     <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! 🎉"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
@@ -57,9 +55,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="chats_search_empty">"Keine Chats gefunden für '%s'"</string>
     <string name="groups_page_empty">"Deine Gruppen erscheinen hier"</string>
     <string name="groups_search_empty">"Keine Gruppen gefunden für '%s'"</string>
-    <string name="your_post_title">"Dein Beitrag"</string>
     <string name="contact_profile_empty">"%s's Beiträge erscheinen hier"</string>
-    <string name="contact_profile_not_friends">"Du bist nicht mit %s auf HalloApp befreundet"</string>
     <string name="invalid_phone_number">"Ungültige Telefonnummer"</string>
     <string name="share_option_post">"Beitrag"</string>
 
@@ -117,12 +113,10 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="storage_permission_rationale_denied">"Für die Medienauswahl benötigen wir die Berechtigung, auf deinen Speicher zuzugreifen.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
-    <string name="initializing_please_wait">"Initialisierung, bitte warten..."</string>
     <string name="retry">"Noch einmal probieren"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
     <string name="contact_rationale_upload">"Um dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
-    <string name="contact_rationale_continue">"Annehmen"</string>
     <string name="failed_to_initialize">"Fehler bei der Initialisierung"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
@@ -182,7 +176,6 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="read_more">"Mehr erfahren"</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
     <string name="gallery">"Gallerie"</string>
-    <string name="select">"OK"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
     <string name="group_avatar_picker_title">"Gruppen-Avatar"</string>
     <string name="other_media">"Andere Medien"</string>
@@ -194,11 +187,9 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
     <!-- Fuzzy -->
     <string name="empty_viewed_by">"Niemand hat deinen Beitrag gesehen"</string>
-    <string name="empty_sent_to">"Niemand hat deinen Beitrag erhalten"</string>
     <string name="options">"Optionen"</string>
     <string name="block">"Blocken"</string>
     <string name="play">"Wiedergabe"</string>
-    <string name="pause">"Pause"</string>
     <string name="new_posts">"Neue Beiträge"</string>
     <string name="alert_discard_changes_message">"Änderungen verwerfen?"</string>
     <string name="action_discard">"Verwerfen"</string>
@@ -232,8 +223,6 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="app_expired_explanation">"Diese HalloApp-Version ist veraltet und kann nicht länger genutzt werden. 
 Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="app_expiration_no_play_store">"Google Play ist nicht installiert"</string>
-    <string name="see_all_comments">"Alle Kommentare anzeigen"</string>
-    <string name="add_comment">"Kommentar hinzufügen"</string>
     <string name="refresh_contacts">"Kontakte aktualisieren"</string>
     <string name="post_retracted_with_name">"%s hat den Beitrag gelöscht"</string>
     <string name="post_retracted_by_me">"Du hast deinen Beitrag gelöscht"</string>
@@ -252,7 +241,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
         <item quantity="other">"Möchtest Du diese %d ausgewählten Gruppen löschen?"</item>
     </plurals>
     <string name="delete_chat_confirmation">"Möchtest du diese Gruppe löschen?"</string>
-    <string name="delete_multiple_chats_confirmation">"Möchtest du die ausgewählten Chats löschen?"</string>
     <string name="yes">"Ja"</string>
     <string name="no">"Nein"</string>
     <string name="ok">"OK"</string>
@@ -278,7 +266,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_hide">"Verbergen"</string>
     <string name="hide_my_posts">"Meine Beiträge verbergen"</string>
     <string name="my_posts">"Meine Beiträge"</string>
-    <string name="about_halloapp">"Über HalloApp"</string>
 
     <!-- pls give example -->
     <string name="last_seen">"Zuletzt online %s"</string>
@@ -298,26 +285,19 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
 
     <!-- to keep it gender neutral I changed "a friend" to "friends" -->
-    <string name="invite_a_friend">"Freunde einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
-    <string name="invite_text">"Mach mit bei HalloApp — halte ganz simpel und privat den Kontakt zu Freunden und zur Familie. Hol sie dir auf: https://halloapp.com/dl"</string>
     <string name="invite_text_with_name_and_number">"Hallo %s, ich lade dich ein, dich ebenfalls bei HalloApp anzumelden. Eine simple Social-App, um alltägliche Momente zu teilen. Nutze %s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
 
     <!-- Is this a noun or a verb? -->
-    <string name="update">"Aktualisieren"</string>
 
     <!-- Can I get a screenshot pls -->
     <string name="counter">"%d/%d"</string>
     <string name="invite_pending">"In Bearbeitung"</string>
     <string name="failed_update_profile">"Fehler bei der Aktualisierung des Profils, probiere es später noch einmal"</string>
     <string name="profile_updated">"Profil wurde aktualisiert"</string>
-    <string name="try_again">"Bitte noch einmal versuchen"</string>
-    <string name="crop">"Zuschneiden"</string>
     <string name="flip">"Drehen"</string>
-    <string name="no_one_seen_your_post">"Niemand hat deinen Beitrag gesehen :-("</string>
-    <string name="other_friends">"Senden an"</string>
     <string name="email_logs_subject">"HalloApp Android %s %s"</string>
 
     <!-- How will it look like? Text will be above the dotted line? -->
@@ -397,17 +377,14 @@ Version: %s"</string>
     <string name="invite_failed_unknown">"Fehler beim Versenden der Einladung"</string>
     <string name="invite_creation_in_progress">"Einladung wird erstellt..."</string>
     <string name="invite_info_fetch_internet">"Fehler beim Abrufen der Einladungs-Info, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
-    <string name="invite_confirmation_message">"Möchtest du eine deiner Einladungen nutzen, um %s einzuladen?"</string>
     <plurals name="invites_remaining">
         <item quantity="one">"Du hast noch %s Einladung"</item>
         <item quantity="other">"Du hast noch %s Einladungen"</item>
     </plurals>
     <string name="no_invites_remaining">"Weitere Einladungen kommen diesen Montag!"</string>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
-    <string name="invite_action">"Einladen"</string>
     <string name="invite_title">"Einladung"</string>
     <string name="settings_invite_option">"Einladung zu HalloApp"</string>
-    <string name="invite_already_a_user_subtitle">"Ist bereits aktiv auf HalloApp"</string>
     <string name="invite_already_on_halloapp">"Ist bereits auf HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ungültige Telefonnummer"</string>
     <string name="edit">"Bearbeiten"</string>
@@ -416,7 +393,6 @@ Version: %s"</string>
     <string name="add_members">"Mitglieder hinzufügen"</string>
     <string name="add_members_in_progress">"Mitglieder werden hinzugefügt..."</string>
     <string name="failed_add_members">"Fehler beim Hinzufügen von Mitgliedern, probiere es später noch einmal"</string>
-    <string name="create_group">"Neue Gruppe gründen"</string>
     <string name="create_group_in_progress">"Gruppe %s… wird gegründet"</string>
     <string name="new_group_title">"Gruppennamen erstellen"</string>
     <string name="group_picker_title">"Neue Gruppe"</string>
@@ -449,18 +425,10 @@ Version: %s"</string>
     </plurals>
     <string name="failed_leave_group">"Fehler beim Verlassen der Gruppe, probiere es später noch einmal"</string>
     <string name="delete_group">"Gruppe löschen"</string>
-    <string name="delete_group_confirmation">"Möchtest du diese Gruppe löschen?"</string>
-    <string name="delete_group_in_progress">"Gruppe wird gelöscht..."</string>
-    <string name="failed_delete_group">"Fehler bei der Löschung der Gruppe, probiere es später noch einmal"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d Kontakt auf HalloApp"</item>
         <item quantity="other">"%d Kontakte auf HalloApp"</item>
     </plurals>
-    <plurals name="settings_invite_summary">
-        <item quantity="one">"%d Einladung ist verfügbar"</item>
-        <item quantity="other">"%d Einladungen sind verfügbar"</item>
-    </plurals>
-    <string name="settings_invite_none_summary">"Keine Einladungen verfügbar"</string>
     <plurals name="settings_block_list_summary">
         <item quantity="one">"%d Kontakt"</item>
         <item quantity="other">"%d Kontakte"</item>
@@ -499,18 +467,13 @@ Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweili
 
 Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewählte Personen freigeben. Dazu unter Einstellungen den Datenschutz-Feed ändern."</string>
     <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden &amp; deiner Familie. Du siehst hier auch wenn sich jemand neu bei HalloApp angemeldet hat."</string>
-    <string name="profile_nux_text">"Hier ist dein Profil. Deine eigenen Beiträge werden hier gesammelt. Jeder Beitrag ist nur für 30 Tage sichtbar."</string>
-    <string name="post_audience_nux_title">"Wer wird meine Beiträge sehen?"</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
-    <string name="make_post_nux">"Tippe hier, um ein Update mit deinen Freunden &amp; deiner Familie auf Hallo App zu teilen"</string>
     <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Um deine letzte Aktivität zu sehen tippe hier."</string>
     <string name="home_feed_nux">"Willkommen auf deiner Home-Feed-Seite! Hier siehst du Beiträge deiner HalloApp-Kontakte."</string>
     <string name="home_feed_nux_learn_more">"Mehr erfahren"</string>
     <string name="camera_error_generic">"Kamerafehler."</string>
     <string name="camera_error_photo">"Foto konnte nicht gemacht werden."</string>
     <string name="camera_error_video">"Video konnte nicht aufgenommen werden."</string>
-    <string name="discard_photo_title">"Foto löschen"</string>
-    <string name="discard_photo_warning">"Möchtest du dieses Foto wirklich löschen?"</string>
     <plurals name="group_feed_members">
         <item quantity="one">"%d Mitglied"</item>
         <item quantity="other">"%d Mitglieder"</item>

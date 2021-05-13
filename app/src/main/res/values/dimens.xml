@@ -4,15 +4,12 @@
     <dimen name="badge_offset_vertical">4dp</dimen>
     <dimen name="action_bar_elevation">4dp</dimen>
     <dimen name="media_pager_margin">8dp</dimen>
-    <dimen name="media_pager_left_padding">36dp</dimen>
-    <dimen name="media_pager_right_padding">36dp</dimen>
     <dimen name="toolbar_title_offset">72dp</dimen>
     <dimen name="comment_media_list_spacing">4dp</dimen>
     <dimen name="comment_media_list_height">72dp</dimen>
     <dimen name="comment_media_list_corner_radius">4dp</dimen>
     <dimen name="comment_media_preview_corner_radius">10dp</dimen>
     <dimen name="comment_media_corner_radius">10dp</dimen>
-    <dimen name="details_media_list_spacing">4dp</dimen>
     <dimen name="details_media_list_height">70dp</dimen>
     <dimen name="details_media_list_corner_radius">5dp</dimen>
     <dimen name="details_media_list_thumb_radius">3dp</dimen>
@@ -52,7 +49,6 @@
     <dimen name="post_text_size_large">20sp</dimen>
     <dimen name="composer_text_size">15sp</dimen>
     <dimen name="composer_text_size_large">20sp</dimen>
-    <dimen name="composer_index_text_size">20sp</dimen>
     <dimen name="message_text_size">16sp</dimen>
     <dimen name="message_text_size_few_emoji">32sp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">54dp</dimen>
@@ -62,7 +58,6 @@
     <dimen name="content_composer_button_margins">20dp</dimen>
     <dimen name="content_composer_button_padding">9dp</dimen>
     <dimen name="content_composer_button_padding_delete">7dp</dimen>
-    <dimen name="content_composer_button_top_offset">20dp</dimen>
     <dimen name="content_composer_button_bottom_offset">-20dp</dimen>
     <dimen name="content_composer_media_border">15dp</dimen>
     <dimen name="content_composer_frame_border">20dp</dimen>
@@ -81,7 +76,6 @@
 
     <!-- Message Bubbles -->
     <dimen name="message_bubble_corner_radius">15dp</dimen>
-    <dimen name="message_bubble_corner_sequence_radius">6dp</dimen>
     <dimen name="message_vertical_separator_sequence">4dp</dimen>
     <dimen name="message_vertical_separator">6dp</dimen>
 </resources>

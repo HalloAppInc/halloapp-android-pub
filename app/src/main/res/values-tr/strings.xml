@@ -21,7 +21,6 @@
     <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti 🎉"</string>
     <string name="me">"Ben"</string>
     <string name="you">"Sen"</string>
-    <string name="copy_text">"Metni kopyala"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Metin"</string>
@@ -46,7 +45,6 @@
     <string name="new_post">"Yeni gönderi"</string>
     <string name="new_message">"Yeni mesaj"</string>
     <string name="chat_message_attribution">"%s: %s"</string>
-    <string name="empty_chat_placeholder">"Selam! Ben HalloApp kullanıyorum"</string>
     <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
     <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! 🎉"</string>
     <string name="posts_empty">"Gönderilerin burada görünecek"</string>
@@ -56,9 +54,7 @@
     <string name="chats_search_empty">"%s ile yapılmış herhangi bir sohbet bulunamadı"</string>
     <string name="groups_page_empty">"Grupların burada görünecek"</string>
     <string name="groups_search_empty">"%s kişisinin bulunduğu bir grup bulunamadı"</string>
-    <string name="your_post_title">"Gönderin"</string>
     <string name="contact_profile_empty">"%s kişisinin gönderileri burada görünecek"</string>
-    <string name="contact_profile_not_friends">"%s ile HalloApp'te arkadaş değilsiniz"</string>
     <string name="invalid_phone_number">"Geçersiz numara"</string>
 
     <!-- Noun or verb? -->
@@ -107,10 +103,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git"</strin
     <string name="storage_permission_rationale_denied">"Bir görsel seçmek için cihaz ayarlarından galeriye erişim izni vermen gerekmektedir
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</string>
-    <string name="initializing_please_wait">"Başlatılıyor, lütfen bekle..."</string>
     <string name="retry">"Tekrar dene"</string>
     <string name="contact_rationale_upload">"Ailen ve arkadaşlarınla bağlantı kurabilmen için kişilerine erişim iznine ihtiyacımız olacak. Daha fazlasını öğren."</string>
-    <string name="contact_rationale_continue">"Onayla"</string>
     <string name="failed_to_initialize">"Başlatılamadı"</string>
     <string name="type_a_comment_hint">"Yorum ekle"</string>
     <string name="comments">"Yorumlar"</string>
@@ -182,7 +176,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="read_more">"Devamını oku"</string>
     <string name="no_photos_or_videos_found">"Fotoğraf veya video bulunamadı"</string>
     <string name="gallery">"Galeri"</string>
-    <string name="select">"Tamam"</string>
     <string name="avatar_picker_title">"Profil fotoğrafı"</string>
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
     <string name="other_media">"Diğer görseller"</string>
@@ -196,11 +189,9 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
 
     <!-- Fuzzy -->
     <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
-    <string name="empty_sent_to">"Gönderini henüz kimse almadı"</string>
     <string name="options">"Seçenekler"</string>
     <string name="block">"Engelle"</string>
     <string name="play">"Oynat"</string>
-    <string name="pause">"Durdur"</string>
     <string name="new_posts">"Yeni gönderiler"</string>
     <string name="alert_discard_changes_message">"Değişiklikleri iptal et?"</string>
     <string name="action_discard">"İptal et"</string>
@@ -239,8 +230,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="app_expiration_download_button">"Güncellemeyi indir"</string>
     <string name="app_expired_explanation">"HalloApp'in bu sürümü çok eski ve artık kullanılamaz. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</string>
     <string name="app_expiration_no_play_store">"Google Play yüklü değil"</string>
-    <string name="see_all_comments">"Bütün yorumları gör"</string>
-    <string name="add_comment">"Yorum ekle"</string>
     <string name="refresh_contacts">"Kişileri yenile"</string>
     <string name="post_retracted_with_name">"%s, gönderisini sildi"</string>
     <string name="post_retracted_by_me">"Gönderini sildin"</string>
@@ -263,7 +252,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
         <item quantity="other">"Seçtiğin %d grubu silmek mi istiyorsun?"</item>
     </plurals>
     <string name="delete_chat_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
-    <string name="delete_multiple_chats_confirmation">"Seçilen sohbetleri silmek mi istiyorsun?"</string>
     <string name="yes">"Evet"</string>
     <string name="no">"Hayır"</string>
     <string name="ok">"Tamam"</string>
@@ -289,7 +277,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="action_hide">"Gizle"</string>
     <string name="hide_my_posts">"Gönderilerimi gizle"</string>
     <string name="my_posts">"Gönderilerim"</string>
-    <string name="about_halloapp">"HalloApp hakkında"</string>
     <string name="last_seen">"Son görülme %s"</string>
     <string name="last_seen_less_minute">"Son görülme 1 dakikadan daha kısa süre önce"</string>
     <string name="online">"Çevrimiçi"</string>
@@ -305,24 +292,17 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="contact_search_empty">"%s için bir şey bulunamadı"</string>
     <string name="action_save">"Kaydet"</string>
     <string name="invite_friends">"Aile ve arkadaşlarını davet et"</string>
-    <string name="invite_a_friend">"Bir arkadaşını davet et "</string>
     <string name="invite_friend_chooser_title">"% kişisini davet et"</string>
-    <string name="invite_text">"HalloApp'te bana katıl — ailen ve arkadaşlarınla iletişimde kalmanın kolay ve özel bir yolu. https://halloapp.com/dl adresinden indir."</string>
 
     <!-- Will the second %s here be a link? -->
     <string name="invite_text_with_name_and_number">"Selam %s, HalloApp'te (günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması) bana katılman için seni davet ediyorum. Kaydolmak için %s kullan. halloapp.com/dl adresinden indir."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
-    <string name="update">"Güncelle"</string>
     <string name="counter">"%d/%d"</string>
     <string name="invite_pending">"Beklemede"</string>
     <string name="failed_update_profile">"Profil güncellemesi başarısız, daha sonra tekrar dene"</string>
     <string name="profile_updated">"Profil güncellendi"</string>
-    <string name="try_again">"Tekrar dene"</string>
-    <string name="crop">"Kes"</string>
     <string name="flip">"Çevir"</string>
-    <string name="no_one_seen_your_post">"Gönderini kimse görmedi :("</string>
-    <string name="other_friends">"Şunlara gönderildi: "</string>
     <string name="email_logs_subject">"HalloApp Android %s %s"</string>
 
     <!-- Fuzzy -->
@@ -397,7 +377,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="invite_failed_unknown">"Davet gönderilemedi"</string>
     <string name="invite_creation_in_progress">"Davet oluşturuluyor..."</string>
     <string name="invite_info_fetch_internet">"Davet bilgileri alınamadı. İnternet bağlantını kontrol et ve tekrar dene"</string>
-    <string name="invite_confirmation_message">"%s kişisini davet etmek için davetlerinden birini kullanmak ister misin?"</string>
     <plurals name="invites_remaining">
         <item quantity="one">"%s davet hakkın kaldı
 
@@ -406,10 +385,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     </plurals>
     <string name="no_invites_remaining">"Bu pazartesi daha fazla davet hakkı gelecek!"</string>
     <string name="invite_friends_title">"Aileni ve arkadaşlarını davet et"</string>
-    <string name="invite_action">"Davet et"</string>
     <string name="invite_title">"Davet"</string>
     <string name="settings_invite_option">"HalloApp'e davet et"</string>
-    <string name="invite_already_a_user_subtitle">"Halihazırda HalloApp kullanıcısı"</string>
     <string name="invite_already_on_halloapp">"Halihazırda HalloApp'te"</string>
     <string name="invite_invalid_phone_number">"Telefon numarası geçersiz"</string>
     <string name="edit">"Düzenle"</string>
@@ -418,7 +395,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     <string name="add_members">"Üye ekle"</string>
     <string name="add_members_in_progress">"Üye ekleniyor…"</string>
     <string name="failed_add_members">"Üye ekleme başarısız, daha sonra tekrar dene"</string>
-    <string name="create_group">"Yeni grup oluştur"</string>
     <string name="create_group_in_progress">" %s adlı grup oluşturuluyor..."</string>
     <string name="new_group_title">"Grubuna bir ad ver"</string>
     <string name="group_picker_title">"Yeni grup"</string>
@@ -457,22 +433,12 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git"</stri
     </plurals>
     <string name="failed_leave_group">"Gruptan ayrılma başarısız, daha sonra tekrar dene"</string>
     <string name="delete_group">"Grubu sil"</string>
-    <string name="delete_group_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
-    <string name="delete_group_in_progress">"Grup siliniyor..."</string>
-    <string name="failed_delete_group">"Grup silme başarısız, daha sonra tekrar dene"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"HalloApp'te bağlantın olan %d kişi var
 
 "</item>
         <item quantity="other">"HalloApp'te bağlantın olan %d kişi var"</item>
     </plurals>
-    <plurals name="settings_invite_summary">
-        <item quantity="one">"Mevcut %d davetin var 
-
-"</item>
-        <item quantity="other">"Mevcut %d davetin var"</item>
-    </plurals>
-    <string name="settings_invite_none_summary">"Hiç davetin kalmadı"</string>
     <plurals name="settings_block_list_summary">
         <item quantity="one">"%d kişi
 
@@ -519,18 +485,13 @@ Bu yayınları görmesini istediğin kişilerle telefon numaralarınızın birbi
 
 Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçtiğin kişilerle paylaşabilirsin. Yayın gizliliğini değiştirmek için ayarlara git. "</string>
     <string name="messages_nux_text">"Ailenden ve arkadaşlarından gelen mesajları burada bulabilirsin. HalloApp'e yeni biri katıldığında, onu burada görebilirsin."</string>
-    <string name="profile_nux_text">"Burası senin profilin. Gönderilerin burada toplanacak. Her gönderi, 30 gün sonra kaybolur."</string>
-    <string name="post_audience_nux_title">"Gönderilerimi kimler görebilir?"</string>
     <string name="post_audience_nux_text">"Gönderilerin, rehberinde bulunan ve HalloApp kullanan kişilerle paylaşılacak. Profil→Ayarlar'a giderek gönderilerine erişimlerini sınırlayabilirsin."</string>
-    <string name="make_post_nux">"HalloApp'te ailen ve arkadaşlarınla bir gönderi paylaşmak için dokun"</string>
     <string name="activity_center_nux">"Burası senin hareket merkezin. En son etkinliğini görmek için dokun"</string>
     <string name="home_feed_nux">"Ana sayfana hoş geldin! Rehberinde bulunan ve HalloApp kullanan kişilerin gönderilerini burada görebilirsin"</string>
     <string name="home_feed_nux_learn_more">"Daha fazlasını öğren"</string>
     <string name="camera_error_generic">"Kamera çalışmıyor"</string>
     <string name="camera_error_photo">"Fotoğraf çekilemiyor"</string>
     <string name="camera_error_video">"Video kaydedilemiyor"</string>
-    <string name="discard_photo_title">"Fotoğrafı kaldır"</string>
-    <string name="discard_photo_warning">"Fotoğrafı kaldırmak istediğine emin misin?"</string>
     <plurals name="group_feed_members">
         <item quantity="one">"%d üye
 
