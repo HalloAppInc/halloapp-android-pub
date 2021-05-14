@@ -226,7 +226,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         if (mediaPagerView != null) {
             final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius));
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius), Constants.MAX_IMAGE_ASPECT_RATIO);
             mediaPagerAdapter.setMediaInset(0, 0, 0, defaultMediaInset);
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
