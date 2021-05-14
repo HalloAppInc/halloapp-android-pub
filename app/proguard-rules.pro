@@ -37,3 +37,7 @@
 -dontwarn java.awt.*
 -keep class com.sun.jna.* { *; }
 -keepclassmembers class * extends com.sun.jna.* { public *; }
+
+# https://github.com/sannies/mp4parser/blob/master/isoparser/src/main/java/org/mp4parser/PropertyBoxParserImpl.java
+# is loading box classes using reflection.
+-keep class org.mp4parser.boxes.** { *; }
