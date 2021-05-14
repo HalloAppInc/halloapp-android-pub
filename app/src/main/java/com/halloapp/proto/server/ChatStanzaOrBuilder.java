@@ -55,6 +55,18 @@ public interface ChatStanzaOrBuilder extends
       getSenderNameBytes();
 
   /**
+   * <code>string sender_phone = 7;</code>
+   * @return The senderPhone.
+   */
+  java.lang.String getSenderPhone();
+  /**
+   * <code>string sender_phone = 7;</code>
+   * @return The bytes for senderPhone.
+   */
+  com.google.protobuf.ByteString
+      getSenderPhoneBytes();
+
+  /**
    * <pre>
    * Use &gt;=16 for temporary elements since 1-15 encode smaller
    * </pre>

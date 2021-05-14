@@ -16,6 +16,7 @@ public  final class ChatStanza extends
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
     publicKey_ = com.google.protobuf.ByteString.EMPTY;
     senderName_ = "";
+    senderPhone_ = "";
     senderLogInfo_ = "";
     senderClientVersion_ = "";
   }
@@ -211,6 +212,53 @@ public  final class ChatStanza extends
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     senderName_ = value.toStringUtf8();
+    
+  }
+
+  public static final int SENDER_PHONE_FIELD_NUMBER = 7;
+  private java.lang.String senderPhone_;
+  /**
+   * <code>string sender_phone = 7;</code>
+   * @return The senderPhone.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderPhone() {
+    return senderPhone_;
+  }
+  /**
+   * <code>string sender_phone = 7;</code>
+   * @return The bytes for senderPhone.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderPhoneBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderPhone_);
+  }
+  /**
+   * <code>string sender_phone = 7;</code>
+   * @param value The senderPhone to set.
+   */
+  private void setSenderPhone(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderPhone_ = value;
+  }
+  /**
+   * <code>string sender_phone = 7;</code>
+   */
+  private void clearSenderPhone() {
+    
+    senderPhone_ = getDefaultInstance().getSenderPhone();
+  }
+  /**
+   * <code>string sender_phone = 7;</code>
+   * @param value The bytes for senderPhone to set.
+   */
+  private void setSenderPhoneBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderPhone_ = value.toStringUtf8();
     
   }
 
@@ -628,6 +676,55 @@ public  final class ChatStanza extends
     }
 
     /**
+     * <code>string sender_phone = 7;</code>
+     * @return The senderPhone.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderPhone() {
+      return instance.getSenderPhone();
+    }
+    /**
+     * <code>string sender_phone = 7;</code>
+     * @return The bytes for senderPhone.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderPhoneBytes() {
+      return instance.getSenderPhoneBytes();
+    }
+    /**
+     * <code>string sender_phone = 7;</code>
+     * @param value The senderPhone to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderPhone(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderPhone(value);
+      return this;
+    }
+    /**
+     * <code>string sender_phone = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderPhone() {
+      copyOnWrite();
+      instance.clearSenderPhone();
+      return this;
+    }
+    /**
+     * <code>string sender_phone = 7;</code>
+     * @param value The bytes for senderPhone to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderPhoneBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderPhoneBytes(value);
+      return this;
+    }
+
+    /**
      * <pre>
      * Use &gt;=16 for temporary elements since 1-15 encode smaller
      * </pre>
@@ -767,12 +864,13 @@ public  final class ChatStanza extends
             "publicKey_",
             "oneTimePreKeyId_",
             "senderName_",
+            "senderPhone_",
             "senderLogInfo_",
             "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\u0011\b\u0000\u0000\u0000\u0001\u0002\u0002\n\u0003\n" +
-              "\u0004\n\u0005\u0002\u0006\u0208\u0010\u0208\u0011\u0208";
+              "\u0000\t\u0000\u0000\u0001\u0011\t\u0000\u0000\u0000\u0001\u0002\u0002\n\u0003\n" +
+              "\u0004\n\u0005\u0002\u0006\u0208\u0007\u0208\u0010\u0208\u0011\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
