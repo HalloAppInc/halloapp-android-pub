@@ -1451,7 +1451,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(24);
+                    String rawReplySenderId = cursor.getString(25);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
