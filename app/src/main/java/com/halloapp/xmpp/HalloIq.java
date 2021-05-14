@@ -2,6 +2,7 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.Preferences;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -12,8 +13,10 @@ import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 
 public abstract class HalloIq extends HalloStanza {
 
+    private static final Preferences preferences = Preferences.getInstance();
+
     public HalloIq() {
-        super();
+        super(preferences.getAndIncrementShortId());
     }
 
     public HalloIq(@NonNull String id) {

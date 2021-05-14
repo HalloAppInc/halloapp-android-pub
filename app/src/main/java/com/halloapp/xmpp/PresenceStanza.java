@@ -18,7 +18,7 @@ public class PresenceStanza extends HalloStanza {
     public final Long lastSeen;
 
     PresenceStanza(@Nullable UserId userId, @NonNull String type) {
-        super(preferences.getAndIncrementPresenceId());
+        super(preferences.getAndIncrementShortId());
         this.userId = userId;
         this.type = type;
         this.lastSeen = null;

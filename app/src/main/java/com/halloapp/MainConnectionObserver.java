@@ -66,7 +66,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final ContactsDb contactsDb;
     private final GroupsSync groupsSync;
     private final KeyManager keyManager;
-    private final ServerProps serverProps;
+    private final Preferences preferences;
     private final AvatarLoader avatarLoader;
     private final PostsManager postsManager;
     private final Notifications notifications;
@@ -92,7 +92,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
                             KeyManager.getInstance(),
-                            ServerProps.getInstance(),
+                            Preferences.getInstance(),
                             AvatarLoader.getInstance(),
                             PostsManager.getInstance(),
                             Notifications.getInstance(context),
@@ -120,7 +120,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ContactsDb contactsDb,
             @NonNull GroupsSync groupsSync,
             @NonNull KeyManager keyManager,
-            @NonNull ServerProps serverProps,
+            @NonNull Preferences preferences,
             @NonNull AvatarLoader avatarLoader,
             @NonNull PostsManager postsManager,
             @NonNull Notifications notifications,
@@ -141,7 +141,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.contactsDb = contactsDb;
         this.groupsSync = groupsSync;
         this.keyManager = keyManager;
-        this.serverProps = serverProps;
+        this.preferences = preferences;
         this.avatarLoader = avatarLoader;
         this.postsManager = postsManager;
         this.notifications = notifications;
@@ -161,6 +161,7 @@ public class MainConnectionObserver extends Connection.Observer {
         bgWorkers.execute(feedPrivacyManager::fetchFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
 
+        preferences.randomizeShortId();
         connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
         HalloApp.updateFirebasePushTokenIfNeeded();

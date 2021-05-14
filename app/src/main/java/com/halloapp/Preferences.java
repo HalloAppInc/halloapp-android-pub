@@ -2,15 +2,20 @@ package com.halloapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
+import com.google.android.gms.common.util.Hex;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Random;
 
 public class Preferences {
 
@@ -326,15 +331,31 @@ public class Preferences {
     }
 
     @WorkerThread
-    public String getAndIncrementPresenceId() {
-        final int max = 65536; // 2^16 for 4 hex chars
-        int dow = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+    public String getAndIncrementShortId() {
+        final int max = 16777216; // 2^24 (3 bytes)
         int id = getPreferences().getInt(PREF_KEY_NEXT_PRESENCE_ID, 0);
         int nextId = (id + 1) % max;
         if (!getPreferences().edit().putInt(PREF_KEY_NEXT_PRESENCE_ID, nextId).commit()) {
-            Log.e("preferences: failed to increment presence id");
+            Log.e("preferences: failed to increment short id");
         }
-        return String.format(Locale.US, "%dD%04x", dow, id);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.putInt(id);
+        return Base64.encodeToString(Arrays.copyOfRange(byteBuffer.array(), 1, 4), Base64.URL_SAFE | Base64.NO_WRAP);
+    }
+
+    @WorkerThread
+    public void randomizeShortId() {
+        final int max = 16777216; // 2^24 (3 bytes)
+        byte[] bytes = new byte[3];
+        new Random().nextBytes(bytes);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.put(new byte[] {0});
+        byteBuffer.put(bytes);
+        byteBuffer.rewind();
+        int id = byteBuffer.getInt() % max;
+        if (!getPreferences().edit().putInt(PREF_KEY_NEXT_PRESENCE_ID, id).commit()) {
+            Log.e("preferences: failed to randomize short id");
+        }
     }
 
     @WorkerThread
