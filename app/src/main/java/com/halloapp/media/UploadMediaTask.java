@@ -92,11 +92,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         int numVideos = 0;
         long totalSize = 0;
         int totalRetries = 0;
+        int index = 0;
 
         boolean success = true;
 
         for (Media media : contentItem.media) {
-            Log.i("Resumable Uploader media transferred: " + media.transferred);
+            Log.i("Resumable Uploader media index " + index++ + " transferred: " + media.transferred);
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
                 continue;
             }
