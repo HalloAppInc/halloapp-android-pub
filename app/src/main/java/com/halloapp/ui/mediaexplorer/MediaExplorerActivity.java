@@ -251,8 +251,6 @@ public class MediaExplorerActivity extends HalloActivity {
             indicator.setVisibility(View.GONE);
         }
 
-        toggleSystemUI();
-
         if (chatId == null) {
             viewModel.setPosition(selected);
             pager.setCurrentItem(viewModel.getPosition(), false);
@@ -322,10 +320,10 @@ public class MediaExplorerActivity extends HalloActivity {
                 } else if (isSwipeExitInProgress) {
                     onSwipeExitMove(event);
                 } else if (swipeExitStart != null) {
-                    float distanceX = event.getX() - swipeExitStart.getX();
-                    float distanceY = event.getY() - swipeExitStart.getY();
+                    float distanceX = Math.abs(event.getX() - swipeExitStart.getX());
+                    float distanceY = Math.abs(event.getY() - swipeExitStart.getY());
 
-                    if (distanceY > swipeExitStartThreshold && distanceY > Math.abs(distanceX)) {
+                    if (distanceY > swipeExitStartThreshold && distanceY > distanceX) {
                         isSwipeExitInProgress = true;
                         onSwipeExitMove(event);
                     }
