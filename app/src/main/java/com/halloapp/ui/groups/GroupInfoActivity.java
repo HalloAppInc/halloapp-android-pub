@@ -151,12 +151,7 @@ public class GroupInfoActivity extends HalloActivity {
         TextView groupBgDesc = findViewById(R.id.group_background_description);
         TextView memberTitle = findViewById(R.id.member_title);
 
-        if (ServerProps.getInstance().getIsInternalUser()) {
-            bgContainer.setVisibility(View.VISIBLE);
-        } else {
-            bgContainer.setVisibility(View.GONE);
-        }
-
+        bgContainer.setVisibility(View.VISIBLE);
         bgContainer.setOnClickListener(v -> {
             if (getChatIsActive()) {
                 Intent i = GroupBackgroundActivity.newIntent(this, groupId);
