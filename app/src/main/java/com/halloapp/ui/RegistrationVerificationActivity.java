@@ -136,7 +136,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken).observe(this, result -> {
                 if (result != null) {
                     progressDialog.dismiss();
-                    registrationVerificationViewModel.updateRetry(result.retryWaitTimeSeconds);
+                    registrationVerificationViewModel.updateCallRetry(result.retryWaitTimeSeconds);
                 }
             });
         });
@@ -147,13 +147,13 @@ public class RegistrationVerificationActivity extends HalloActivity {
             registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken).observe(this, result -> {
                 if (result != null) {
                     progressDialog.dismiss();
-                    registrationVerificationViewModel.updateRetry(result.retryWaitTimeSeconds);
+                    registrationVerificationViewModel.updateSMSRetry(result.retryWaitTimeSeconds);
                 }
             });
         });
 
         int waitTimeSeconds = getIntent().getIntExtra(EXTRA_RETRY_WAIT_TIME, 0);
-        registrationVerificationViewModel.updateRetry(waitTimeSeconds);
+        registrationVerificationViewModel.updateSMSRetry(waitTimeSeconds);
 
         registrationVerificationViewModel.getCallRetryWait().observe(this, callWait -> {
             if (callWait == null || callWait == 0) {
@@ -201,7 +201,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
         private final MutableLiveData<Integer> callRetryWaitSeconds = new MutableLiveData<>();
         private final MutableLiveData<Integer> smsRetryWaitSeconds = new MutableLiveData<>();
 
-        private CountDownTimer countDownTimer;
+        private CountDownTimer smsCountDownTimer;
+        private CountDownTimer callCountDownTimer;
 
         public RegistrationVerificationViewModel(@NonNull Application application) {
             super(application);
@@ -225,29 +226,53 @@ public class RegistrationVerificationActivity extends HalloActivity {
         }
 
         @UiThread
-        public void updateRetry(int retryWait) {
-            callRetryWaitSeconds.postValue(retryWait);
+        public void updateSMSRetry(int retryWait) {
             smsRetryWaitSeconds.postValue(retryWait);
 
             synchronized (this) {
-                if (countDownTimer == null && retryWait > 0) {
-                    countDownTimer = new CountDownTimer(retryWait * 1000L, 1000L) {
+                if (smsCountDownTimer == null && retryWait > 0) {
+                    smsCountDownTimer = new CountDownTimer(retryWait * 1000L, 1000L) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             int seconds = (int) (millisUntilFinished / 1000);
-                            callRetryWaitSeconds.postValue(seconds);
                             smsRetryWaitSeconds.postValue(seconds);
                         }
 
                         @Override
                         public void onFinish() {
                             synchronized (RegistrationVerificationViewModel.this) {
-                                countDownTimer = null;
-                                updateRetry(0);
+                                smsCountDownTimer = null;
+                                updateSMSRetry(0);
                             }
                         }
                     };
-                    countDownTimer.start();
+                    smsCountDownTimer.start();
+                }
+            }
+        }
+
+        @UiThread
+        public void updateCallRetry(int retryWait) {
+            callRetryWaitSeconds.postValue(retryWait);
+
+            synchronized (this) {
+                if (callCountDownTimer == null && retryWait > 0) {
+                    callCountDownTimer = new CountDownTimer(retryWait * 1000L, 1000L) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            int seconds = (int) (millisUntilFinished / 1000);
+                            callRetryWaitSeconds.postValue(seconds);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            synchronized (RegistrationVerificationViewModel.this) {
+                                callCountDownTimer = null;
+                                updateCallRetry(0);
+                            }
+                        }
+                    };
+                    callCountDownTimer.start();
                 }
             }
         }

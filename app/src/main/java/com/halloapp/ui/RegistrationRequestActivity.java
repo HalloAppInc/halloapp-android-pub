@@ -125,6 +125,12 @@ public class RegistrationRequestActivity extends HalloActivity {
                 } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_CLIENT_EXPIRED) {
                     AppExpirationActivity.open(this, 0);
                     finish();
+                } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_RETRIED_TOO_SOON && result.phone != null) {
+                    final Intent intent = new Intent(this, RegistrationVerificationActivity.class);
+                    intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
+                    intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);
+                    intent.putExtra(RegistrationVerificationActivity.EXTRA_GROUP_INVITE_TOKEN, registrationRequestViewModel.groupInviteToken);
+                    startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
                 } else {
                     SnackbarHelper.showInfo(this, R.string.registration_failed);
                 }

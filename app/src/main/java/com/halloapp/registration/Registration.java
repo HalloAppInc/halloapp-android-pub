@@ -126,7 +126,7 @@ public class Registration {
             }
             Log.i("Registration.requestRegistration result=" + result + " error=" + error + " phone=" + normalizedPhone);
             if (!"ok".equals(result)) {
-                return new RegistrationRequestResult(RegistrationRequestResult.translateServerErrorCode(error), retryTime);
+                return new RegistrationRequestResult(phone, RegistrationRequestResult.translateServerErrorCode(error), retryTime);
             }
             if (TextUtils.isEmpty(phone)) {
                 return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, retryTime);
@@ -332,7 +332,10 @@ public class Registration {
     public static class RegistrationRequestResult {
 
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL, RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS, RESULT_FAILED_SERVER_NOT_INVITED, RESULT_FAILED_CLIENT_EXPIRED})
+        @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL,
+                RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS,
+                RESULT_FAILED_SERVER_NOT_INVITED, RESULT_FAILED_CLIENT_EXPIRED,
+                RESULT_FAILED_RETRIED_TOO_SOON})
         @interface Result {}
         public static final int RESULT_OK = 0;
         public static final int RESULT_FAILED_NETWORK = 1;
@@ -342,6 +345,7 @@ public class Registration {
         public static final int RESULT_FAILED_SERVER_NO_FRIENDS = 5; // The Phone number is not in any existing users contacts. We don't let users create accounts if they are not going to have any friends. Note this error is not returned for 555 phone numbers.
         public static final int RESULT_FAILED_SERVER_NOT_INVITED = 6; // Phone number trying to register has not been invited using the in-app invites system.
         public static final int RESULT_FAILED_CLIENT_EXPIRED = 7;
+        public static final int RESULT_FAILED_RETRIED_TOO_SOON = 8;
 
         public final String phone;
         public final @Result int result;
@@ -353,11 +357,15 @@ public class Registration {
             this.retryWaitTimeSeconds = retryWaitTimeSeconds;
         }
 
-        RegistrationRequestResult(@Result int result, int retryWaitTimeSeconds) {
+        RegistrationRequestResult(@Nullable String phone, @Result int result, int retryWaitTimeSeconds) {
             Preconditions.checkState(result != RESULT_OK);
-            this.phone = null;
+            this.phone = phone;
             this.result = result;
             this.retryWaitTimeSeconds = retryWaitTimeSeconds;
+        }
+
+        RegistrationRequestResult(@Result int result, int retryWaitTimeSeconds) {
+            this(null, result, retryWaitTimeSeconds);
         }
 
         static @Result int translateServerErrorCode(String error) {
@@ -371,6 +379,8 @@ public class Registration {
                 return RESULT_FAILED_SERVER_NOT_INVITED;
             } else if ("invalid_client_version".equals(error)) {
                 return RESULT_FAILED_CLIENT_EXPIRED;
+            } else if ("retried_too_soon".equals(error)) {
+                return RESULT_FAILED_RETRIED_TOO_SOON;
             }
             return RESULT_FAILED_SERVER;
         }
