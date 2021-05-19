@@ -60,6 +60,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
     public InviteContactsViewModel(@NonNull Application application) {
         super(application);
+        bgWorkers = BgWorkers.getInstance();
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
@@ -140,15 +141,17 @@ public class InviteContactsViewModel extends AndroidViewModel {
     }
 
     private void fetchInvites() {
-        invitesApi.getAvailableInviteCount().onResponse(response -> {
-            if (response == null) {
+        bgWorkers.execute(() -> {
+            invitesApi.getAvailableInviteCount().onResponse(response -> {
+                if (response == null) {
+                    inviteCountData.postValue(RESPONSE_RETRYABLE);
+                } else {
+                    preferences.setInvitesRemaining(response);
+                    inviteCountData.postValue(response);
+                }
+            }).onError(e -> {
                 inviteCountData.postValue(RESPONSE_RETRYABLE);
-            } else {
-                preferences.setInvitesRemaining(response);
-                inviteCountData.postValue(response);
-            }
-        }).onError(e -> {
-            inviteCountData.postValue(RESPONSE_RETRYABLE);
+            });
         });
     }
 
