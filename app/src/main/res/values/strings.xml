@@ -515,4 +515,6 @@
     <string name="view_more">More</string>
     <!-- Button to manage your feed privacy settings -->
     <string name="manage_feed_privacy">Manage privacy</string>
+    <!-- Shown below on seen by to explain that posts disappear -->
+    <string name="seen_by_post_expiration_notice">Your posts will disappear after 30 days.</string>
 </resources>

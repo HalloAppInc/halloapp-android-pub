@@ -170,6 +170,14 @@ public class PostSeenByActivity extends HalloActivity {
         }
     }
 
+    static class InviteFriendsListItem implements ListItem {
+
+        @Override
+        public int getType() {
+            return ContactsAdapter.VIEW_TYPE_INVITE_FRIENDS;
+        }
+    }
+
     static class ExpandListItem implements ListItem {
 
         @Override
@@ -200,6 +208,7 @@ public class PostSeenByActivity extends HalloActivity {
         static final int VIEW_TYPE_CONTACT = 1;
         static final int VIEW_TYPE_EMPTY = 2;
         static final int VIEW_TYPE_DIVIDER = 3;
+        static final int VIEW_TYPE_INVITE_FRIENDS = 4;
         static final int VIEW_TYPE_MANAGE_PRIVACY = 5;
         static final int VIEW_TYPE_EXPAND = 6;
 
@@ -237,6 +246,7 @@ public class PostSeenByActivity extends HalloActivity {
             }
             listItems.add(new DividerListItem());
             listItems.add(new ManagePrivacyListItem());
+            listItems.add(new InviteFriendsListItem());
         }
 
 
@@ -262,6 +272,9 @@ public class PostSeenByActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_MANAGE_PRIVACY: {
                     return new ManagePrivacyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_manage_privacy, parent, false));
+                }
+                case VIEW_TYPE_INVITE_FRIENDS: {
+                    return new InviteFriendsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_invite_friends, parent, false));
                 }
                 case VIEW_TYPE_EXPAND: {
                     return new ExpandViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seen_by_view_more, parent, false));
@@ -410,6 +423,23 @@ public class PostSeenByActivity extends HalloActivity {
 
             @Override
             void bindTo(@NonNull ManagePrivacyListItem item) {
+
+            }
+        }
+
+        private class InviteFriendsViewHolder extends ViewHolder<InviteFriendsListItem> {
+
+
+            InviteFriendsViewHolder(@NonNull View itemView) {
+                super(itemView);
+                itemView.setOnClickListener(v -> {
+                    final Intent intent = new Intent(itemView.getContext(), InviteContactsActivity.class);
+                    startActivity(intent);
+                });
+            }
+
+            @Override
+            void bindTo(@NonNull InviteFriendsListItem item) {
 
             }
         }

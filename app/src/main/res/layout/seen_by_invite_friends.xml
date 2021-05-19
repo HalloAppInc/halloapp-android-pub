@@ -7,13 +7,14 @@
     android:paddingEnd="@dimen/toolbar_title_offset"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
+    android:layout_marginBottom="20dp"
     android:orientation="horizontal"
     android:background="?selectableItemBackground">
 
     <ImageView
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:src="@drawable/ic_settings_privacy"
+        android:src="@drawable/ic_person_outline"
         android:layout_gravity="center"
         app:tint="@color/color_secondary"/>
 
@@ -23,7 +24,7 @@
         android:textSize="14sp"
         android:padding="8dp"
         android:fontFamily="sans-serif-medium"
-        android:text="@string/manage_feed_privacy"
+        android:text="@string/settings_invite_option"
         android:textColor="@color/color_secondary" />
 
 </LinearLayout>
