@@ -174,16 +174,18 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
     public LiveData<Integer> sendInvite(@NonNull Contact contact) {
         MutableLiveData<Integer> inviteResult = new MutableLiveData<>();
-        invitesApi.sendInvite(Preconditions.checkNotNull(contact.normalizedPhone)).onResponse(result -> {
-            inviteResult.postValue(result);
-            if (result != null && InvitesResponseIq.Result.SUCCESS == result) {
-                contactsDb.markInvited(contact);
-                fetchInvites();
-                refreshContacts();
-            }
-        }).onError(e -> {
-            inviteResult.postValue(InvitesResponseIq.Result.UNKNOWN);
-            Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);
+        bgWorkers.execute(() -> {
+            invitesApi.sendInvite(Preconditions.checkNotNull(contact.normalizedPhone)).onResponse(result -> {
+                inviteResult.postValue(result);
+                if (result != null && InvitesResponseIq.Result.SUCCESS == result) {
+                    contactsDb.markInvited(contact);
+                    fetchInvites();
+                    refreshContacts();
+                }
+            }).onError(e -> {
+                inviteResult.postValue(InvitesResponseIq.Result.UNKNOWN);
+                Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);
+            });
         });
         return inviteResult;
     }
