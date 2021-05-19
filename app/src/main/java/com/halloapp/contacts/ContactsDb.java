@@ -536,7 +536,7 @@ public class ContactsDb {
             while (cursor.moveToNext()) {
                 final String addressBookIdStr = cursor.getString(1);
                 final String phoneNumberStr = cursor.getString(4);
-                if (addressBookIdStr != null && phoneNumberStr != null && addressIdSet.add(addressBookIdStr) && phoneNumberSet.add(phoneNumberStr)) {
+                if (addressBookIdStr != null && !TextUtils.isEmpty(phoneNumberStr) && addressIdSet.add(addressBookIdStr) && phoneNumberSet.add(phoneNumberStr)) {
                     final String userIdStr = cursor.getString(6);
                     final Contact contact = new Contact(
                             cursor.getLong(0),
