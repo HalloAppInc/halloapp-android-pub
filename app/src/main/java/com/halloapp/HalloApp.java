@@ -46,11 +46,15 @@ public class HalloApp extends Application {
         if (!BuildConfig.DEBUG) {
             Log.uploadUnsentReports();
         } else {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+            StrictMode.ThreadPolicy.Builder threadPolicyBuilder = new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
-                    .penaltyDeath()
-                    .penaltyDeathOnNetwork()
-                    .build());
+                    .penaltyDeathOnNetwork();
+            if (AndroidHallOfShame.deviceDoesWorkOnUIThread()) {
+                threadPolicyBuilder.penaltyFlashScreen();
+            } else {
+                threadPolicyBuilder.penaltyDeath();
+            }
+            StrictMode.setThreadPolicy(threadPolicyBuilder.build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
