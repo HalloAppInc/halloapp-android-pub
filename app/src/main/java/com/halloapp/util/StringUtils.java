@@ -77,6 +77,9 @@ public class StringUtils {
         SpannableStringBuilder current = new SpannableStringBuilder(str);
         URLSpan[] spans = current.getSpans(0, str.length(), URLSpan.class);
         for (URLSpan span : spans) {
+            if (!url.equals(span.getURL())) {
+                continue;
+            }
             int start = current.getSpanStart(span);
             int end = current.getSpanEnd(span);
             current.removeSpan(span);

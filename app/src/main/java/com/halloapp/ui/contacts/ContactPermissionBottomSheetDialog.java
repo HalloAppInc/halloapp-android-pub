@@ -8,9 +8,11 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Html;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -29,6 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.util.DialogFragmentUtils;
+import com.halloapp.util.StringUtils;
 
 import java.util.Arrays;
 
@@ -91,34 +94,11 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
         info = view.findViewById(R.id.info);
         title.setText(R.string.contact_permissions_dialog_title);
 
-        SpannableStringBuilder current= new SpannableStringBuilder(info.getText());
-        URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
-
         Bundle args = requireArguments();
 
         int requestCode = args.getInt(ARG_REQUEST_CODE);
 
-        for (URLSpan span : spans) {
-            int start = current.getSpanStart(span);
-            int end = current.getSpanEnd(span);
-            current.removeSpan(span);
-
-            ClickableSpan learnMoreSpan = new ClickableSpan() {
-                @Override
-                public void updateDrawState(@NonNull TextPaint ds) {
-                    ds.setUnderlineText(false);
-                    ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                    ds.setColor(requireContext().getResources().getColor(R.color.color_secondary));
-                }
-
-                @Override
-                public void onClick(@NonNull View widget) {
-                    DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getChildFragmentManager());
-                    Selection.removeSelection((Spannable)info.getText());
-                }
-            };
-            current.setSpan(learnMoreSpan, start, end, 0);
-        }
+        Spanned current = replaceLearnMore(info.getText());
         info.setText(current);
         info.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -150,12 +130,18 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
         return view;
     }
 
+    private Spanned replaceLearnMore(CharSequence text) {
+        return StringUtils.replaceLink(requireContext(), text, "learn-more", () -> {
+            DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getChildFragmentManager());
+        });
+    }
+
     private void updateNagContents() {
         if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
-            info.setText(R.string.contact_permissions_nag_permanently_blocked);
+            info.setText(replaceLearnMore(Html.fromHtml(getString(R.string.contact_permissions_nag_permanently_blocked))));
             continueButton.setText(R.string.settings);
         } else {
-            info.setText(R.string.contact_permissions_nag);
+            info.setText(replaceLearnMore(Html.fromHtml(getString(R.string.contact_permissions_nag))));
             continueButton.setText(R.string.continue_button);
         }
     }

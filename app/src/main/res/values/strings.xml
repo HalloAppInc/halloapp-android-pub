@@ -111,8 +111,8 @@
     <string name="comments">Comments</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
-    <string name="contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a></string>
-    <string name="contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a>. Tap Settings > Permissions, and turn Contacts on</string>
+    <string name="contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href="learn-more"&gt;Learn more&lt;/a&gt;</string>
+    <string name="contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href="learn-more"&gt;Learn more&lt;/a&gt;. Tap Settings > Permissions, and turn Contacts on</string>
     <string name="home_contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts.</string>
     <string name="home_contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. Tap Settings > Permissions, and turn Contacts on</string>
     <string name="reply_to_self">Reply to myself</string>
