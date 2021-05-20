@@ -78,11 +78,12 @@ public class GroupInfoActivity extends HalloActivity {
     private RecyclerView membersView;
     private ImageView avatarView;
     private View addMembersView;
+    private View inviteLinkView;
+    private View addDivider;
     private View leaveGroup;
 
     private MenuItem deleteMenuItem;
     private MenuItem leaveMenuItem;
-    private MenuItem inviteLinkMenuItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,8 +118,21 @@ public class GroupInfoActivity extends HalloActivity {
         membersView.setLayoutManager(layoutManager);
         membersView.setAdapter(adapter);
 
+        addDivider = findViewById(R.id.add_divider);
+
         avatarView = findViewById(R.id.avatar);
         avatarLoader.load(avatarView, groupId, false);
+
+        inviteLinkView = findViewById(R.id.invite_link_container);
+        inviteLinkView.setOnClickListener(v -> {
+            startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
+        });
+
+        if (!ServerProps.getInstance().getGroupInviteLinksEnabled()) {
+            inviteLinkView.setVisibility(View.VISIBLE);
+        } else {
+            inviteLinkView.setVisibility(View.GONE);
+        }
 
         addMembersView = findViewById(R.id.add_members);
         addMembersView.setOnClickListener(v -> {
@@ -187,11 +201,10 @@ public class GroupInfoActivity extends HalloActivity {
         boolean chatIsActive = getChatIsActive();
         boolean both = userIsAdmin && chatIsActive;
         addMembersView.setVisibility(both ? View.VISIBLE : View.GONE);
+        addDivider.setVisibility(both ? View.VISIBLE : View.GONE);
+        inviteLinkView.setVisibility(both ? View.VISIBLE : View.GONE);
         if (deleteMenuItem != null) {
             deleteMenuItem.setVisible(both);
-        }
-        if (inviteLinkMenuItem != null) {
-            inviteLinkMenuItem.setVisible(both && ServerProps.getInstance().getGroupInviteLinksEnabled());
         }
         if (leaveMenuItem != null) {
             leaveMenuItem.setVisible(chatIsActive);
@@ -212,7 +225,6 @@ public class GroupInfoActivity extends HalloActivity {
         getMenuInflater().inflate(R.menu.group_info_menu, menu);
         deleteMenuItem = menu.findItem(R.id.delete);
         leaveMenuItem = menu.findItem(R.id.leave);
-        inviteLinkMenuItem = menu.findItem(R.id.invite_link);
 
         updateVisibilities();
         return true;
@@ -233,8 +245,6 @@ public class GroupInfoActivity extends HalloActivity {
         if (item.getItemId() == R.id.leave) {
             askLeaveGroup();
             return true;
-        } else if (item.getItemId() == R.id.invite_link) {
-            startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
         }
         return super.onOptionsItemSelected(item);
     }

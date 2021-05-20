@@ -13,10 +13,4 @@
         android:visible="false"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/invite_link"
-        android:title="@string/invite_link_title"
-        android:visible="false"
-        app:showAsAction="never"/>
-
 </menu>
