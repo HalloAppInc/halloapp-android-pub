@@ -365,7 +365,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
         }
         if (media.type == Media.MEDIA_TYPE_VIDEO) {
-            MediaUtils.zeroVideoTimestampMetadata(media.file);
+            MediaUtils.reconstructVideoContainer(media.file);
         }
     }
 

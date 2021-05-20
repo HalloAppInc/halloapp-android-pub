@@ -38,17 +38,25 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
 import org.mp4parser.Box;
-import org.mp4parser.IsoFile;
+import org.mp4parser.Container;
 import org.mp4parser.boxes.iso14496.part12.MediaBox;
 import org.mp4parser.boxes.iso14496.part12.MediaHeaderBox;
 import org.mp4parser.boxes.iso14496.part12.MovieBox;
 import org.mp4parser.boxes.iso14496.part12.MovieHeaderBox;
 import org.mp4parser.boxes.iso14496.part12.TrackBox;
 import org.mp4parser.boxes.iso14496.part12.TrackHeaderBox;
+import org.mp4parser.muxer.FileRandomAccessSourceImpl;
+import org.mp4parser.muxer.Movie;
+import org.mp4parser.muxer.RandomAccessSource;
+import org.mp4parser.muxer.builder.DefaultMp4Builder;
+import org.mp4parser.muxer.builder.Mp4Builder;
+import org.mp4parser.muxer.container.mp4.MovieCreator;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -520,52 +528,64 @@ public class MediaUtils {
         }
     }
 
-    public static void zeroVideoTimestampMetadata(@NonNull File file) throws IOException {
+    public static void reconstructVideoContainer(@NonNull File videoFile) throws IOException {
         final Date zeroDate = new Date(0);
-        try (IsoFile isoFile = new IsoFile(file)) {
-            MovieBox movieBox = isoFile.getMovieBox();
-            if (movieBox != null) {
-                MovieHeaderBox movieHeaderBox = movieBox.getMovieHeaderBox();
-                if (movieHeaderBox != null) {
-                    movieHeaderBox.setCreationTime(zeroDate);
-                    movieHeaderBox.setModificationTime(zeroDate);
-                }
+        try (FileInputStream fileInputStream = new FileInputStream(videoFile)) {
+            try (RandomAccessSource randomAccessSource = new FileRandomAccessSourceImpl(new RandomAccessFile(videoFile, "r"))) {
+                final Movie inputMovie = MovieCreator.build(fileInputStream.getChannel(), randomAccessSource, "video");
+                final Mp4Builder mp4Builder = new DefaultMp4Builder();
+                final Container container = mp4Builder.build(inputMovie);
 
-                for (Box box : movieBox.getBoxes()) {
-                    if (box instanceof TrackBox) {
-                        TrackBox trackBox = (TrackBox) box;
-                        TrackHeaderBox trackHeaderBox = trackBox.getTrackHeaderBox();
-                        if (trackHeaderBox != null) {
-                            trackHeaderBox.setCreationTime(zeroDate);
-                            trackHeaderBox.setModificationTime(zeroDate);
-                        }
-                        MediaBox mediaBox = trackBox.getMediaBox();
-                        if (mediaBox != null) {
-                            MediaHeaderBox mediaHeaderBox = trackBox.getMediaBox().getMediaHeaderBox();
-                            if (mediaHeaderBox != null) {
-                                mediaHeaderBox.setCreationTime(zeroDate);
-                                mediaHeaderBox.setModificationTime(zeroDate);
+                MovieBox movieBox = null;
+                for (Box box : container.getBoxes()) {
+                    if (box instanceof MovieBox) {
+                        movieBox = (MovieBox) box;
+                        break;
+                    }
+                }
+                if (movieBox != null) {
+                    MovieHeaderBox movieHeaderBox = movieBox.getMovieHeaderBox();
+                    if (movieHeaderBox != null) {
+                        movieHeaderBox.setCreationTime(zeroDate);
+                        movieHeaderBox.setModificationTime(zeroDate);
+                    }
+
+                    for (Box box : movieBox.getBoxes()) {
+                        if (box instanceof TrackBox) {
+                            TrackBox trackBox = (TrackBox) box;
+                            TrackHeaderBox trackHeaderBox = trackBox.getTrackHeaderBox();
+                            if (trackHeaderBox != null) {
+                                trackHeaderBox.setCreationTime(zeroDate);
+                                trackHeaderBox.setModificationTime(zeroDate);
+                            }
+                            MediaBox mediaBox = trackBox.getMediaBox();
+                            if (mediaBox != null) {
+                                MediaHeaderBox mediaHeaderBox = trackBox.getMediaBox().getMediaHeaderBox();
+                                if (mediaHeaderBox != null) {
+                                    mediaHeaderBox.setCreationTime(zeroDate);
+                                    mediaHeaderBox.setModificationTime(zeroDate);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
-            try (FileOutputStream fileOutputStream = new FileOutputStream(tempFile)) {
-                isoFile.writeContainer(fileOutputStream.getChannel());
-            } catch (IOException e) {
-                tempFile.delete();
-                throw e;
-            }
+                final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
+                try (FileOutputStream fileOutputStream = new FileOutputStream(tempFile)) {
+                    container.writeContainer(fileOutputStream.getChannel());
+                } catch (IOException e) {
+                    tempFile.delete();
+                    throw e;
+                }
 
-            if (!file.delete()) {
-                Log.e("MediaUtils.zeroVideoTimestampMetadata: failed to delete " + file.getAbsolutePath());
-            }
-            if (!tempFile.renameTo(file)) {
-                Log.e("MediaUtils.zeroVideoTimestampMetadata: failed to rename " + tempFile.getAbsolutePath() + " to " + file.getAbsolutePath());
-            } else {
-                tempFile.delete();
+                if (!videoFile.delete()) {
+                    Log.e("MediaUtils.zeroVideoTimestampMetadata: failed to delete " + videoFile.getAbsolutePath());
+                }
+                if (!tempFile.renameTo(videoFile)) {
+                    Log.e("MediaUtils.zeroVideoTimestampMetadata: failed to rename " + tempFile.getAbsolutePath() + " to " + videoFile.getAbsolutePath());
+                } else {
+                    tempFile.delete();
+                }
             }
         }
     }
