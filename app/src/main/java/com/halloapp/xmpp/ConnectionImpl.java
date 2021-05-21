@@ -15,8 +15,6 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.FutureProofComment;
-import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -29,16 +27,10 @@ import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
 import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.Album;
-import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.CommentContainer;
-import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Container;
-import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.PostContainer;
-import com.halloapp.proto.clients.Text;
-import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -94,12 +86,15 @@ import com.halloapp.xmpp.util.ResponseHandler;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.WeakHashMap;
@@ -136,6 +131,8 @@ public class ConnectionImpl extends Connection {
 
     private FeedContentParser feedContentParser;
 
+    private int iqShortId;
+
     ConnectionImpl(
             @NonNull Me me,
             @NonNull BgWorkers bgWorkers,
@@ -147,6 +144,8 @@ public class ConnectionImpl extends Connection {
         this.connectionObservers = connectionObservers;
 
         this.feedContentParser = new FeedContentParser(me);
+
+        randomizeShortId();
     }
 
     @Override
@@ -204,13 +203,25 @@ public class ConnectionImpl extends Connection {
                 packetReader.init();
                 iqRouter.init();
             }
-
+            randomizeShortId();
             connectionObservers.notifyConnected();
             isAuthenticated = true;
             Log.i("connection: established");
         } catch (IOException | NoiseException e) {
             Log.e("connection: cannot create connection", e);
         }
+    }
+
+    @WorkerThread
+    private synchronized void randomizeShortId() {
+        final int max = 16777216; // 2^24 (3 bytes)
+        byte[] bytes = new byte[3];
+        new Random().nextBytes(bytes);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.put(new byte[] {0});
+        byteBuffer.put(bytes);
+        byteBuffer.rewind();
+        iqShortId = byteBuffer.getInt() % max;
     }
 
     private AuthRequest createAuthRequest() {
@@ -802,6 +813,15 @@ public class ConnectionImpl extends Connection {
     @Override
     public boolean getClientExpired() {
         return clientExpired;
+    }
+
+    @Override
+    public synchronized String getAndIncrementShortId() {
+        final int max = 16777216; // 2^24 (3 bytes)
+        iqShortId = (iqShortId + 1) % max;
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.putInt(iqShortId);
+        return Base64.encodeToString(Arrays.copyOfRange(byteBuffer.array(), 1, 4), Base64.URL_SAFE | Base64.NO_WRAP);
     }
 
     private void processMentions(@NonNull Collection<Mention> mentions) {

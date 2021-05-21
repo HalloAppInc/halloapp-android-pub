@@ -161,7 +161,6 @@ public class MainConnectionObserver extends Connection.Observer {
         bgWorkers.execute(feedPrivacyManager::fetchFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
 
-        preferences.randomizeShortId();
         connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
         HalloApp.updateFirebasePushTokenIfNeeded();

@@ -13,10 +13,10 @@ import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 
 public abstract class HalloIq extends HalloStanza {
 
-    private static final Preferences preferences = Preferences.getInstance();
+    private static final Connection connection = Connection.getInstance();
 
     public HalloIq() {
-        super(preferences.getAndIncrementShortId());
+        super(connection.getAndIncrementShortId());
     }
 
     public HalloIq(@NonNull String id) {

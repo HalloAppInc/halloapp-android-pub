@@ -158,4 +158,6 @@ public abstract class Connection {
     public abstract UserId getUserId(@NonNull String user);
 
     public abstract boolean getClientExpired();
+
+    public abstract String getAndIncrementShortId();
 }

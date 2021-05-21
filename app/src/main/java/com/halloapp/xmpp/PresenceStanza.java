@@ -11,14 +11,14 @@ import java.util.Locale;
 
 public class PresenceStanza extends HalloStanza {
 
-    private static final Preferences preferences = Preferences.getInstance();
+    private static final Connection connection = Connection.getInstance();
 
     public final UserId userId;
     public final String type;
     public final Long lastSeen;
 
     PresenceStanza(@Nullable UserId userId, @NonNull String type) {
-        super(preferences.getAndIncrementShortId());
+        super(connection.getAndIncrementShortId());
         this.userId = userId;
         this.type = type;
         this.lastSeen = null;
