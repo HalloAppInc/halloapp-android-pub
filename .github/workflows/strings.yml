@@ -1,0 +1,35 @@
+name: Strings
+
+on:
+  push:
+    branches: [ master, ci-test ]
+    paths: 
+      - 'app/src/main/res/values/strings.xml'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  upload-strings:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+          
+      - name: Setup token
+        run: |
+          mkdir tools/tokens
+          echo 'a0db7f62bf50c12de97044e1ca28d2b9' >> tools/tokens/poeditor_token
+
+      # GitHub servers currently come with only version 21 installed. See: https://github.com/actions/virtual-environments/issues/578#issuecomment-605886387
+      # For other options, see https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
+      #    - name: Install NDK
+      #      run: echo "y" | sudo $ANDROID_HOME/tools/bin/sdkmanager --install "ndk;20.0.5594570"
+
+      - name: Upload strings
+        run: ./gradlew uploadStrings
+        
