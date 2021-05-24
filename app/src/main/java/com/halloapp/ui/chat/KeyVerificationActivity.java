@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -50,6 +51,7 @@ public class KeyVerificationActivity extends HalloActivity {
 
     private KeyVerificationViewModel viewModel;
     private ImageView qrCode;
+    private ProgressDialog fetchingKeysDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +75,9 @@ public class KeyVerificationActivity extends HalloActivity {
             finish();
             return;
         }
+
+        fetchingKeysDialog = ProgressDialog.show(this, null, getString(R.string.key_verification_fetching_keys), true);
+        fetchingKeysDialog.show();
 
         qrCode = findViewById(R.id.qr_code);
         View qrRegion = findViewById(R.id.qr_region);
@@ -103,7 +108,14 @@ public class KeyVerificationActivity extends HalloActivity {
         });
 
         viewModel.verificationInfo.getLiveData().observe(this, info -> {
+            if (info == null) {
+                SnackbarHelper.showWarning(this, R.string.key_verification_key_fetch_failed);
+                return;
+            }
+
             qrCode.setImageBitmap(info.qrCode);
+
+            fetchingKeysDialog.dismiss();
 
             List<String> sn = info.safetyNumber;
             if (sn == null || sn.size() < 12) {

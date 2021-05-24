@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -20,12 +21,17 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.WhisperKeysResponseIq;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +54,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
 
     private final Me me = Me.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final Connection connection = Connection.getInstance();
     private final EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
 
     public KeyVerificationViewModel(@NonNull Application application, @NonNull UserId userId) {
@@ -69,8 +76,20 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                 try {
                     peerIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getPeerPublicIdentityKey(userId));
                 } catch (CryptoException e) {
-                    Log.e("KeyVerification: Failed to fetch peer identity key", e);
-                    return null;
+                    Log.e("KeyVerification: Failed to get peer identity key; trying to fetch from server", e);
+                    try {
+                        WhisperKeysResponseIq keysIq = connection.downloadKeys(userId).await();
+                        IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
+                        byte[] identityKeyBytes = identityKeyProto.getPublicKey().toByteArray();
+                        PublicEdECKey peerEdECIdentityKey = new PublicEdECKey(identityKeyBytes);
+
+                        encryptedKeyStore.setPeerPublicIdentityKey(userId, peerEdECIdentityKey);
+
+                        peerIdentityKey = CryptoUtils.convertPublicEdToX(peerEdECIdentityKey);
+                    } catch (ObservableErrorException | InterruptedException | InvalidProtocolBufferException | CryptoException e2) {
+                        Log.e("KeyVerification: Failed to fetch the key from the server", e2);
+                        return null;
+                    }
                 }
 
                 PublicXECKey myIdentityKey;
