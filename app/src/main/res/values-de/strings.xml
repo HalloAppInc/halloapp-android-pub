@@ -16,7 +16,7 @@
     <string name="notifications">"Mitteilungen"</string>
     <string name="feed_notifications_channel_name">"Feed-Mitteilungen"</string>
     <string name="message_notifications_channel_name">"Benachrichtigungen"</string>
-    <string name="critical_notifications_channel_name">"Kritische App-Benachrichtigungen"</string>
+    <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp 🎉 angenommen"</string>
     <string name="me">"Ich"</string>
@@ -25,7 +25,7 @@
     <string name="gallery_post">"Gallerie"</string>
     <string name="text_post">"Text"</string>
     <string name="bad_image">"Nicht unterstützter Medientyp"</string>
-    <string name="time_diff_now">"Jetzt"</string>
+    <string name="time_diff_now">"Gerade eben"</string>
     <string name="phone_number_hint">"Telefonnummer"</string>
     <string name="request_registration_title">"Willkommen!"</string>
     <string name="reverify_registration_title">"Bitte deine Telefonnummer erneut eingeben"</string>
@@ -46,6 +46,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="new_post">"Neuer Beitrag"</string>
     <string name="new_message">"Neue Nachricht"</string>
 
+    <!-- Fuzzy translation?  Pls. provide more details -->
     <!-- Fuzzy -->
     <string name="chat_message_attribution">"%s: %s"</string>
     <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
@@ -132,10 +133,12 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Kommentar zu deinem Beitrag erwähnt"</string>
     <string name="mentioned_you_in_comment_on_own_post">"Du wurdest im Beitrag von &lt;b&gt;%s&lt;/b&gt; erwähnt"</string>
 
+    <!-- Fuzzy translation? Pls. provide more details -->
     <!-- Fuzzy -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Kommentar zu &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag erwähnt"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string>
 
+    <!-- also marked as fuzzy - pls. provide more details -->
     <!-- Fuzzy -->
     <string name="commented_on_your_post_2">"&lt;b&gt;%1s&lt;/b&gt; und &lt;b&gt;%2s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
 
@@ -166,12 +169,12 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="no_activity">"Keine Aktivität"</string>
     <string name="failed_to_load_media">"Fehler beim Hochladen des Mediums"</string>
     <string name="settings">"Einstellungen"</string>
-    <string name="send_logs">"Feedback &amp; Protokolle teilen"</string>
+    <string name="send_logs">"Feedback &amp; Logs teilen"</string>
     <string name="terms_of_service">"Nutzungsbedingungen"</string>
     <string name="privacy_policy">"Datenschutzrichtlinie"</string>
     <string name="settings_block_list">"Blockierte Kontakte"</string>
     <string name="settings_feed_privacy">"Beiträge"</string>
-    <string name="settings_privacy">"Datenschutz"</string>
+    <string name="settings_privacy">"Privatsphäre"</string>
     <plurals name="contact_selection_subtitle">
         <item quantity="one">"%d Kontakt ausgewählt"</item>
         <item quantity="other">"%d Kontakte ausgewählt"</item>
@@ -182,23 +185,23 @@ Kosten deines Service-Providers könnten anfallen."</string>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Keine Kontakte ausgewählt"</string>
     <string name="help">"Hilfe"</string>
-    <string name="about">"Über uns"</string>
+    <string name="about">"Über HalloApp"</string>
     <string name="notify_posts">"Beiträge"</string>
     <string name="notify_comments">"Kommentare"</string>
     <string name="read_more">"Mehr erfahren"</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
     <string name="gallery">"Gallerie"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
-    <string name="group_avatar_picker_title">"Gruppen-Avatar"</string>
+    <string name="group_avatar_picker_title">"Gruppenbild"</string>
     <string name="other_media">"Andere Medien"</string>
     <string name="rotate">"Drehen"</string>
+
+    <!-- in version 0.153 when no one saw post yet -  header still reads "Seen by" in English -->
     <plurals name="seen_by">
         <item quantity="one">"Gesehen von %d Person"</item>
         <item quantity="other">"Gesehen von %d Personen"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="empty_viewed_by">"Niemand hat deinen Beitrag gesehen"</string>
+    <string name="empty_viewed_by">"Noch hat keiner deinen Beitrag gesehen"</string>
     <string name="options">"Optionen"</string>
     <string name="block">"Blocken"</string>
     <string name="play">"Wiedergabe"</string>
@@ -262,7 +265,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="activity">"Aktivität"</string>
 
     <!-- In activity center, mark all comments/mentions as read -->
-    <!-- Fuzzy -->
     <string name="mark_all_read">"Alle als gelesen markieren"</string>
     <string name="login_failed">"Anmeldung fehlgeschlagen"</string>
     <string name="login_failed_explanation">"Bitte Telefonnummer erneut überprüfen"</string>
@@ -306,7 +308,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Hallo %s, ich lade dich ein, dich ebenfalls bei HalloApp anzumelden. Eine simple Social-App, um alltägliche Momente zu teilen. Nutze %s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Hallo %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Eine einfache Social-App, um alltägliche Momente zu teilen. Nutze %2$s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
 
@@ -322,7 +324,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <!-- How will it look like? Text will be above the dotted line? -->
     <!-- Fuzzy -->
     <string name="email_logs_text">"----------------------------------------
-Bitte dein Anliegen im Feld oben beschreiben.
+Bitte im Feld oben das Problem beschreiben.
 uid: %s
 Version: %s"</string>
     <string name="share">"Teilen"</string>
@@ -363,8 +365,8 @@ Version: %s"</string>
     <!-- Fuzzy -->
     <string name="system_message_group_name_changed">"%s hat die Gruppe in %s umbenannt"</string>
     <string name="system_message_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
-    <string name="system_message_group_avatar_changed">"%s hat den Gruppen-Avatar geändert"</string>
-    <string name="system_message_group_avatar_changed_by_you">"Du hast den Gruppen-Avatar geändert"</string>
+    <string name="system_message_group_avatar_changed">"%s hat das Gruppenbild geändert"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Du hast das Gruppenbild geändert"</string>
     <string name="system_message_group_deleted">"%s hat die Gruppe gelöscht"</string>
     <string name="system_message_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>
     <string name="system_post_group_created">"%s hat diese Gruppe gegründet"</string>
@@ -393,8 +395,8 @@ Version: %s"</string>
     <!-- Fuzzy -->
     <string name="system_post_group_name_changed">"%s hat die Gruppe in %s umbenannt"</string>
     <string name="system_post_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
-    <string name="system_post_group_avatar_changed">"%s hat den Gruppen-Avatar geändert"</string>
-    <string name="system_post_group_avatar_changed_by_you">"Du hast den Gruppen-Avatar geändert"</string>
+    <string name="system_post_group_avatar_changed">"%s hat das Gruppenbild geändert"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Du hast das Gruppenbild geändert"</string>
     <string name="system_post_group_deleted">"%s hat die Gruppe gelöscht"</string>
     <string name="system_post_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>
     <string name="group_info_title">"Gruppen-Info"</string>
@@ -406,7 +408,7 @@ Version: %s"</string>
     <string name="setting_feed_all">"Meine Kontakte"</string>
     <string name="setting_feed_only">"Nur teilen mit..."</string>
     <string name="setting_feed_except">"Meine Kontakte außer ..."</string>
-    <string name="feed_privacy_fail_to_load">"Fehler beim Hochladen der Datenschutzeinstellungen"</string>
+    <string name="feed_privacy_fail_to_load">"Fehler beim Hochladen der Privatsphäre-Einstellungen"</string>
     <string name="feed_privacy_update_success">"Einstellung erfolgreich aktualisiert"</string>
     <string name="feed_privacy_update_failure">"Fehler bei der Aktualisierung der Einstellung"</string>
     <string name="invite_failed_internet">"Fehler beim Versenden der Einladung. Überprüfe dein Internetverbindung und versuche es noch einmal"</string>
@@ -494,8 +496,8 @@ Version: %s"</string>
     <string name="unblocking_user_in_progress">"Freigabe von %s"</string>
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
-    <string name="feed_privacy_hide_success">"Feed-Datenschutz wurde aktualisiert. Beiträge von %s werden ausgeblendet"</string>
-    <string name="feed_privacy_hide_failure">"Fehler bei der Feed-Datenschutz-Aktualisierung, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
+    <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge von %s werden ausgeblendet"</string>
+    <string name="feed_privacy_hide_failure">"Fehler bei der Aktualisierung des Privatsphäre-Feeds. Überprüfe deine Internetverbindung und versuche es noch einmal"</string>
     <string name="user_typing">"schreibt..."</string>
     <string name="group_user_typing">"%s schreibt..."</string>
     <string name="group_many_users_typing">"mehrere Benutzer schreiben..."</string>
@@ -504,9 +506,11 @@ Version: %s"</string>
 
 Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Telefonen gespeichert haben.
 
-Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewählte Personen freigeben. Dazu unter Einstellungen den Datenschutz-Feed ändern."</string>
+Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewählte Personen freigeben. Dazu unter Einstellungen den Privatsphäre-Feed ändern."</string>
     <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden &amp; deiner Familie. Du siehst hier auch wenn sich jemand neu bei HalloApp angemeldet hat."</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
+
+    <!-- Aktivitäten-Center is the German translation for "activity center". But it is really not that common and it really does not "sit with me well" . Would it be ok to just go with "Tap to see..."? -->
     <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Um deine letzte Aktivität zu sehen tippe hier."</string>
     <string name="home_feed_nux">"Willkommen auf deiner Home-Feed-Seite! Hier siehst du Beiträge deiner HalloApp-Kontakte."</string>
     <string name="home_feed_nux_learn_more">"Mehr erfahren"</string>
@@ -523,6 +527,8 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
         <item quantity="one">"Mit %d meiner Kontakte geteilt"</item>
         <item quantity="other">"Mit %d meiner Kontakte geteilt"</item>
     </plurals>
+
+    <!-- Note: This is translated when someone else did it. Need new string for when "you" did it. -->
     <string name="post_preview_no_caption">"%s hat einen Beitrag geteilt"</string>
 
     <!-- Fuzzy -->
@@ -553,6 +559,8 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="system_message_you_joined">"Du bist der Gruppe über einen Einladungs-Link beigetreten"</string>
     <string name="system_message_joined">"%s ist der Gruppe über einen Einladungs-Link beigetreten"</string>
     <string name="activity_center_welcome">"Hallo!"</string>
+
+    <!-- Note: This is translated when someone else did it. Need new string for when "you" did it. -->
     <string name="post_preview_retracted">"%s hat einen Beitrag gelöscht"</string>
     <string name="system_message_group_bg_changed">"%s hat die Hintergrundfarbe geändert"</string>
     <string name="system_message_group_bg_changed_by_you">"Du hast die Hintergrundfarbe geändert"</string>
@@ -570,9 +578,13 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Fortfahren"</string>
     <string name="contact_permissions_nag">"Um dir zu helfen, dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
-    <string name="contact_permissions_nag_permanently_blocked">"Um dir zu helfen, dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;. Tap-Einstellungen &gt; Berechtigungen und Kontakte aktivieren"</string>
+
+    <!-- pls note: I added another ">" (after settings and permissions follows another tap to enable access to contacts) -->
+    <string name="contact_permissions_nag_permanently_blocked">"Um dir zu helfen, dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
     <string name="home_contact_permissions_nag">"Um dir zu helfen, dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte."</string>
-    <string name="home_contact_permissions_nag_permanently_blocked">"Um dir zu helfen, dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte. Tap-Einstellungen &gt; Berechtigungen und Kontakte aktivieren"</string>
+
+    <!-- Text got not updated in version 0.156 -->
+    <string name="home_contact_permissions_nag_permanently_blocked">"Um dir zu helfen, dich mit Freunden &amp; der Familie zu verbinden, benötigen wir die Zugriffsberechtigung auf deine Kontakte. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
     <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
     <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. &lt;a href=\"https://halloapp.com/help/\"&gt;Mehr erfahren&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
@@ -618,11 +630,17 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="view_more">"More"</string>
 
     <!-- Button to manage your feed privacy settings -->
-    <string name="manage_feed_privacy">"Manage privacy"</string>
+    <string name="manage_feed_privacy">"Privatsphäre"</string>
 
     <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
     <plurals name="welcome_notification_invites">
-        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
-        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
+        <item quantity="one">"Willkommen bei HalloApp! Du hast noch %d Einladung. &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</item>
+        <item quantity="other">"Willkommen bei HalloApp! Du hast noch %d Einladungen. &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</item>
     </plurals>
+
+    <!-- Button to invite a contact to a group with an invite link -->
+    <string name="group_invite_via_link">"Invite to group via link"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear -->
+    <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
 </resources>

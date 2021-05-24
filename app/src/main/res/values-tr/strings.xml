@@ -288,7 +288,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
 
     <!-- Will the second %s here be a link? -->
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Merhaba %s, HalloApp'te (günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması) bana katılman için seni davet ediyorum. Kaydolmak için %s numarasını kullan. halloapp.com/dl adresinden indir."</string>
+    <string name="invite_text_with_name_and_number">"Merhaba %s, seni, günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması olan HalloApp'te bana katılmaya davet ediyorum. Kaydolmak için %s numarasını kullanabilir ya da halloapp.com/dl adresinden indirebilirsin."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
 
@@ -599,4 +599,10 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
         <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
         <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
     </plurals>
+
+    <!-- Button to invite a contact to a group with an invite link -->
+    <string name="group_invite_via_link">"Invite to group via link"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear -->
+    <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
 </resources>
